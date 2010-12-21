@@ -192,11 +192,7 @@ namespace SharpQuake
     {
         public string basedir;
 	    public string cachedir;		// for development over ISDN lines
-	    //public int argc;
         public string[] argv; 
-	    //char	**argv;
-	    //void	*membase;
-	    //int		memsize;
 
         public quakeparms_t()
         {

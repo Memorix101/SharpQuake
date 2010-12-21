@@ -97,6 +97,7 @@ namespace SharpQuake
             Cmd.Add("edicts", PrintEdicts);
             Cmd.Add("edictcount", EdictCount);
             Cmd.Add("profile", Profile_f);
+            Cmd.Add("test5", Test5_f);
 
             if (_NoMonsters == null)
             {
@@ -111,6 +112,33 @@ namespace SharpQuake
                 _Saved2 = new Cvar("saved2", "0", true);
                 _Saved3 = new Cvar("saved3", "0", true);
                 _Saved4 = new Cvar("saved4", "0", true);
+            }
+        }
+
+        static void Test5_f()
+        {
+            entity_t p = Client.ViewEntity;
+            if (p == null)
+                return;
+            
+            OpenTK.Vector3 org = p.origin;
+
+            for (int i = 0; i < Server.sv.edicts.Length; i++)
+            {
+                edict_t ed = Server.sv.edicts[i];
+                
+                if (ed.free)
+                    continue;
+                
+                OpenTK.Vector3 vmin, vmax;
+                Mathlib.Copy(ref ed.v.absmax, out vmax);
+                Mathlib.Copy(ref ed.v.absmin, out vmin);
+
+                if (org.X >= vmin.X && org.Y >= vmin.Y && org.Z >= vmin.Z &&
+                    org.X <= vmax.X && org.Y <= vmax.Y && org.Z <= vmax.Z)
+                {
+                    Con.Print("{0}\n", i);
+                }
             }
         }
 
@@ -237,7 +265,7 @@ namespace SharpQuake
 
         /// <summary>
         /// ED_PrintEdict_f
-        /// For debugging, prints a single edicy
+        /// For debugging, prints a single edict
         /// </summary>
         static void PrintEdict_f()
         {
@@ -537,11 +565,10 @@ namespace SharpQuake
                     break;
 
                 case etype_t.ev_vector:
-                    // Uze: how about validation of s param?
                     string[] vs = s.Split(' ');
                     ((float*)d)[0] = Common.atof(vs[0]);
-                    ((float*)d)[1] = Common.atof(vs[1]);
-                    ((float*)d)[2] = Common.atof(vs[2]);
+                    ((float*)d)[1] = (vs.Length > 1 ? Common.atof(vs[1]) : 0);
+                    ((float*)d)[2] = (vs.Length > 2 ? Common.atof(vs[2]) : 0);
                     break;
 
                 case etype_t.ev_entity:
@@ -790,7 +817,7 @@ namespace SharpQuake
                 return _DynamicStrings[offset];
             }
 
-            return null;
+            return String.Empty;
         }
 
         public static bool SameName(int name1, string name2)

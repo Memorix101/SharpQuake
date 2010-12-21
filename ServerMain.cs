@@ -951,6 +951,10 @@ namespace SharpQuake
             ent = EdictNum(0);
             ent.Clear();
             ent.v.model = Progs.StringOffset(sv.worldmodel.name);
+            if (ent.v.model == -1)
+            {
+                ent.v.model = Progs.NewString(sv.worldmodel.name);
+            }
             ent.v.modelindex = 1;		// world model
             ent.v.solid = Solids.SOLID_BSP;
             ent.v.movetype = Movetypes.MOVETYPE_PUSH;
