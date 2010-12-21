@@ -564,7 +564,7 @@ namespace SharpQuake
 
         static void InitVCR(quakeparms_t parms)
         {
-            if (Common.CheckParm("-playback") != 0)
+            if (Common.HasParam("-playback"))
             {
                 if (Common.Argc != 2)
                     Sys.Error("No other parameters allowed with -playback\n");

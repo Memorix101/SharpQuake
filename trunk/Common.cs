@@ -223,10 +223,10 @@ namespace SharpQuake
 
             _GameKind = GameKind.StandardQuake;
 
-            if (CheckParm("-rogue") != 0)
+            if (HasParam("-rogue"))
                 _GameKind = GameKind.Rogue;
 
-            if (CheckParm("-hipnotic") != 0)
+            if (HasParam("-hipnotic"))
                 _GameKind = GameKind.Hipnotic;
         }
         
@@ -681,9 +681,9 @@ namespace SharpQuake
             //
 	        AddGameDirectory(basedir + "/" + QDef.GAMENAME);
 
-            if (CheckParm("-rogue") != 0)
+            if (HasParam("-rogue"))
                 AddGameDirectory(basedir + "/rogue");
-	        if (CheckParm("-hipnotic") != 0)
+	        if (HasParam("-hipnotic"))
 		        AddGameDirectory (basedir + "/hipnotic");
 
             //
@@ -732,15 +732,15 @@ namespace SharpQuake
             //
             // add any pak files in the format pak0.pak pak1.pak, ...
             //
-	        for (int i=0; ; i++)
-	        {
+            for (int i = 0; ; i++)
+            {
                 string pakfile = String.Format("{0}/pak{1}.pak", dir, i);
-		        pack_t pak = LoadPackFile(pakfile);
-		        if (pak == null)
-			        break;
+                pack_t pak = LoadPackFile(pakfile);
+                if (pak == null)
+                    break;
 
                 _SearchPaths.Insert(0, new searchpath_t(pak));
-	        }
+            }
         }
 
         public static int atoi(string s)

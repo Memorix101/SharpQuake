@@ -399,14 +399,6 @@ namespace SharpQuake
 
         static void SetMinMaxSize(edict_t e, ref Vector3 min, ref Vector3 max, bool rotate)
         {
-            //    float	*angles;
-            //    vec3_t	rmin, rmax;
-            //    float	bounds[2][3];
-            //    float	xvector[2], yvector[2];
-            //    float	a;
-            //    vec3_t	base, transformed;
-            //    int		i, j, k, l;
-
             if (min.X > max.X || min.Y > max.Y || min.Z > max.Z)
                 Progs.RunError("backwards mins/maxs");
 
@@ -930,7 +922,7 @@ namespace SharpQuake
             edict_t self = Server.ProgToEdict(Progs.GlobalStruct.self);
             Vector3 view = Common.ToVector(ref self.v.origin) + Common.ToVector(ref self.v.view_ofs);
             mleaf_t leaf = Mod.PointInLeaf(ref view, Server.sv.worldmodel);
-            int l = Array.IndexOf(Server.sv.worldmodel.leafs, leaf);// -1; ??????????
+            int l = Array.IndexOf(Server.sv.worldmodel.leafs, leaf) - 1;
             if ((l < 0) || (_CheckPvs[l >> 3] & (1 << (l & 7))) == 0)
             {
                 _NotVisCount++;
@@ -1096,7 +1088,7 @@ namespace SharpQuake
             int e = GetInt(OFS.OFS_PARM0);
             int f = GetInt(OFS.OFS_PARM1);
             string s = GetString(OFS.OFS_PARM2);
-            if (String.IsNullOrEmpty(s))
+            if (s == null)
                 Progs.RunError("PF_Find: bad search string");
 
             for (e++; e < Server.sv.num_edicts; e++)

@@ -144,6 +144,9 @@ namespace SharpQuake
         // PR_Profile_f
         static void Profile_f()
         {
+            if (_Functions == null)
+                return;
+            
             dfunction_t best;
             int num = 0;
             do
@@ -300,7 +303,7 @@ namespace SharpQuake
                         break;
 
                     case OP.OP_NOT_S:
-                        c->_float = (a->_string == 0 || GetString(a->_string) == null) ? 1 : 0;
+                        c->_float = (a->_string == 0 || String.IsNullOrEmpty(GetString(a->_string))) ? 1 : 0;
                         break;
 
                     case OP.OP_NOT_FNC:
@@ -340,8 +343,7 @@ namespace SharpQuake
 
                     case OP.OP_NE_V:
                         c->_float = ((a->vector[0] != b->vector[0]) ||
-                                    (a->vector[1] != b->vector[1]) ||
-                                    (a->vector[2] != b->vector[2])) ? 1 : 0;
+                            (a->vector[1] != b->vector[1]) || (a->vector[2] != b->vector[2])) ? 1 : 0;
                         break;
 
                     case OP.OP_NE_S:
@@ -356,7 +358,6 @@ namespace SharpQuake
                         c->_float = (a->function != b->function) ? 1 : 0;
                         break;
 
-                    //==================
                     case OP.OP_STORE_F:
                     case OP.OP_STORE_ENT:
                     case OP.OP_STORE_FLD:		// integers
@@ -377,7 +378,6 @@ namespace SharpQuake
                     case OP.OP_STOREP_S:
                     case OP.OP_STOREP_FNC:		// pointers
                         ed = EdictFromAddr(b->_int, out ofs);
-                        float old = ed.v.modelindex;
                         ed.StoreInt(ofs, a);
                         break;
 
@@ -388,9 +388,6 @@ namespace SharpQuake
 
                     case OP.OP_ADDRESS:
                         ed = Server.ProgToEdict(a->edict);
-#if PARANOID
-                        Server.NumForEdict(ed);		// make sure it's in range
-#endif
                         if (ed == Server.sv.edicts[0] && Server.IsActive)
                             RunError("assignment to world entity");
                         c->_int = MakeAddr(a->edict, b->_int);
@@ -402,17 +399,11 @@ namespace SharpQuake
                     case OP.OP_LOAD_S:
                     case OP.OP_LOAD_FNC:
                         ed = Server.ProgToEdict(a->edict);
-#if PARANOID
-                        Server.NumForEdict(ed);		// make sure it's in range
-#endif
                         ed.LoadInt(b->_int, c);
                         break;
 
                     case OP.OP_LOAD_V:
                         ed = Server.ProgToEdict(a->edict);
-#if PARANOID
-                        Server.NumForEdict(ed);		// make sure it's in range
-#endif
                         ed.LoadVector(b->_int, c);
                         break;
 
@@ -461,9 +452,10 @@ namespace SharpQuake
                     case OP.OP_DONE:
                     case OP.OP_RETURN:
                         float* ptr = (float*)_GlobalStructAddr;
-                        ptr[OFS.OFS_RETURN + 0] = *(float*)a;
-                        ptr[OFS.OFS_RETURN + 1] = *(float*)b;
-                        ptr[OFS.OFS_RETURN + 2] = *(float*)c;
+                        int sta = _Statements[s].a;
+                        ptr[OFS.OFS_RETURN + 0] = *(float*)Get(sta);
+                        ptr[OFS.OFS_RETURN + 1] = *(float*)Get(sta + 1);
+                        ptr[OFS.OFS_RETURN + 2] = *(float*)Get(sta + 2);
 
                         s = LeaveFunction();
                         if (_Depth == exitdepth)

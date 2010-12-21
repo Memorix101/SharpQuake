@@ -443,6 +443,15 @@ namespace SharpQuake
 
         public static int SizeInBytes = Marshal.SizeOf(typeof(dfunction_t));
 
+        public string FileName
+        {
+            get { return Progs.GetString(this.s_file); }
+        }
+        public string Name
+        {
+            get { return Progs.GetString(this.s_name); }
+        }
+
         public void SwapBytes()
         {
             this.first_statement = Common.LittleLong(this.first_statement);
@@ -455,7 +464,7 @@ namespace SharpQuake
 
         public override string ToString()
         {
-            return String.Format("{{{0}: {1}()}}", Progs.GetString(this.s_file), Progs.GetString(this.s_name));
+            return String.Format("{{{0}: {1}()}}", this.FileName, this.Name);
         }
     } // dfunction_t;
 
