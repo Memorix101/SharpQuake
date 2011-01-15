@@ -493,7 +493,7 @@ namespace SharpQuake
         /// </summary>
         public static void LoadSpriteModel(model_t mod, byte[] buffer)
         {
-            dsprite_t pin = (dsprite_t)Sys.BytesToStructure<dsprite_t>(buffer, 0);
+            dsprite_t pin = Sys.BytesToStructure<dsprite_t>(buffer, 0);
 
             int version = Common.LittleLong(pin.version);
             if (version != SPRITE_VERSION)
@@ -979,7 +979,7 @@ namespace SharpQuake
                 tx.pixels = new byte[pixels];
                 Buffer.BlockCopy(_ModBase, mtOffset + miptex_t.SizeInBytes, tx.pixels, 0, pixels);
 
-                if (tx.name.StartsWith("sky"))// !Q_strncmp(mt->name,"sky",3))
+                if (tx.name != null && tx.name.StartsWith("sky"))// !Q_strncmp(mt->name,"sky",3))
                     Render.InitSky(tx);
                 else
                 {
@@ -1243,24 +1243,26 @@ namespace SharpQuake
                 }
 
                 // set the drawing flags flag
-
-                if (dest[surfnum].texinfo.texture.name.StartsWith("sky"))	// sky
+                if (dest[surfnum].texinfo.texture.name != null)
                 {
-                    dest[surfnum].flags |= (Surf.SURF_DRAWSKY | Surf.SURF_DRAWTILED);
-                    Render.SubdivideSurface(dest[surfnum]);	// cut up polygon for warps
-                    continue;
-                }
-
-                if (dest[surfnum].texinfo.texture.name.StartsWith("*"))		// turbulent
-                {
-                    dest[surfnum].flags |= (Surf.SURF_DRAWTURB | Surf.SURF_DRAWTILED);
-                    for (int i = 0; i < 2; i++)
+                    if (dest[surfnum].texinfo.texture.name.StartsWith("sky"))	// sky
                     {
-                        dest[surfnum].extents[i] = 16384;
-                        dest[surfnum].texturemins[i] = -8192;
+                        dest[surfnum].flags |= (Surf.SURF_DRAWSKY | Surf.SURF_DRAWTILED);
+                        Render.SubdivideSurface(dest[surfnum]);	// cut up polygon for warps
+                        continue;
                     }
-                    Render.SubdivideSurface(dest[surfnum]);	// cut up polygon for warps
-                    continue;
+
+                    if (dest[surfnum].texinfo.texture.name.StartsWith("*"))		// turbulent
+                    {
+                        dest[surfnum].flags |= (Surf.SURF_DRAWTURB | Surf.SURF_DRAWTILED);
+                        for (int i = 0; i < 2; i++)
+                        {
+                            dest[surfnum].extents[i] = 16384;
+                            dest[surfnum].texturemins[i] = -8192;
+                        }
+                        Render.SubdivideSurface(dest[surfnum]);	// cut up polygon for warps
+                        continue;
+                    }
                 }
             }
         }
