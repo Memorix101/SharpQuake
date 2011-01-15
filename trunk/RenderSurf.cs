@@ -110,7 +110,7 @@ namespace SharpQuake
                 if (m == null)
                     break;
 
-                if (m.name.StartsWith("*"))
+                if (m.name != null && m.name.StartsWith("*"))
                     continue;
 
                 _CurrentVertBase = m.vertexes;

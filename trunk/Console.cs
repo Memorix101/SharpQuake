@@ -248,6 +248,9 @@ namespace SharpQuake
         // If no console is visible, the notify window will pop up.
         static void Print(string txt)
         {
+            if (String.IsNullOrEmpty(txt))
+                return;
+
 	        int mask, offset = 0;
 	
 	        BackScroll = 0;

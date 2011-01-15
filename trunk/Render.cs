@@ -1294,10 +1294,13 @@ namespace SharpQuake
             {
                 if (world.textures[i] == null)
                     continue;
-                if (world.textures[i].name.StartsWith("sky"))
-                    _SkyTextureNum = i;
-                if (world.textures[i].name.StartsWith("window02_1"))
-                    _MirrorTextureNum = i;
+                if (world.textures[i].name != null)
+                {
+                    if (world.textures[i].name.StartsWith("sky"))
+                        _SkyTextureNum = i;
+                    if (world.textures[i].name.StartsWith("window02_1"))
+                        _MirrorTextureNum = i;
+                }
                 world.textures[i].texturechain = null;
             }
         }
