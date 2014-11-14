@@ -7,6 +7,9 @@ To build with Windows-related stuff add _WINDOWS symbol to "Conditional Compilat
 
 On x64 platforms select x86 as a Platform.
 
+To run from any folder except Quake's one add -basedir switch and correct path to your directory of Quake (for example, if Quake is installed in C:\Games\Quake):
+SharpQuake.exe -basedir C:\Games\Quake
+
 To run from IDE go to the Project Properties -> Debug tab -> Start Options. In "Command line arguments" edit box add -basedir switch 
 and correct path to your directory of Quake (for example, if Quake is installed in C:\Games\Quake):
 -basedir C:\Games\Quake
