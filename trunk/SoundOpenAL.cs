@@ -77,11 +77,14 @@ namespace SharpQuake
             _Source = AL.GenSource();
             _Buffers = new int[AL_BUFFER_COUNT];
             _BufferBytes = new int[AL_BUFFER_COUNT];
+            _FreeBuffers = new Queue<int>(AL_BUFFER_COUNT);
 
             for (int i = 0; i < _Buffers.Length; i++)
+            {
                 _Buffers[i] = AL.GenBuffer();
+                _FreeBuffers.Enqueue(_Buffers[i]);
+            }
            
-            AL.SourceQueueBuffers(_Source, _Buffers.Length, _Buffers);
             AL.SourcePlay(_Source);
             AL.Source(_Source, ALSourceb.Looping, false);
 
@@ -109,8 +112,6 @@ namespace SharpQuake
                 else
                     _BufferFormat = ALFormat.Mono16;
             }
-
-            _FreeBuffers = new Queue<int>(AL_BUFFER_COUNT);
 
             _IsInitialized = true;
         }

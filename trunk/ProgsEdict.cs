@@ -320,7 +320,7 @@ namespace SharpQuake
         public static int StringOffset(string value)
         {
             string tmp = '\0' + value + '\0';
-            int offset = _Strings.IndexOf(tmp); // todo: optimize this
+            int offset = _Strings.IndexOf(tmp, StringComparison.Ordinal);
             if (offset != -1)
             {
                 return MakeStingId(offset + 1, true);

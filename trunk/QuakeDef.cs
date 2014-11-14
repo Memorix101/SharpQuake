@@ -34,7 +34,7 @@ namespace SharpQuake
     static class QDef
     {
         public const float VERSION	= 1.09f;
-        public const float CSQUAKE_VERSION = 1.00f;
+        public const float CSQUAKE_VERSION = 1.20f;
         public const float GLQUAKE_VERSION	= 1.00f;
         public const float D3DQUAKE_VERSION = 0.01f;
         public const float WINQUAKE_VERSION = 0.996f;
