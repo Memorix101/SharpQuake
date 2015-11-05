@@ -2,6 +2,8 @@ SharpQuake
 
 SharpQuake is a GLQuake rewritten in C# (.Net Framework 2.0) and using OpenTK library.
 
+Made by yurykiselev and Uze and brought to Github by Memorix101 
+
 Building and running
 
 To build project successfuly, provide correct reference to OpenTK library (see References).
@@ -23,3 +25,5 @@ If you have original mod packs (from Rogue or/and from Hipnotic) run them with a
 All mentioned switches are native Quake switches, so they documented in original Q-docs.
 
 Enjoy!
+
+![sq](https://cloud.githubusercontent.com/assets/1466920/10977605/5d97bd68-83f2-11e5-8d72-26691129cbff.jpg)
