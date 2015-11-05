@@ -1,4 +1,6 @@
-SharpQuake 1.2 release notes
+SharpQuake 
+
+SharpQuake is a GLQuake rewritten in C# (.Net Framework 2.0) and using OpenTK library.
 
 Building and running
 
@@ -19,17 +21,5 @@ To run in windowed mode add -window comand line switch.
 If you have original mod packs (from Rogue or/and from Hipnotic) run them with appropriate switch: -rogue or -hipnotic
 
 All mentioned switches are native Quake switches, so they documented in original Q-docs.
-
-
-Fixed bugs
-
-1) Audio initialization bug: sometimes programm starts without sound and (with developer=1) there is a 3 messages in console:
-UnlockBuffer: No free buffers!
-UnlockBuffer: No free buffers!
-UnlockBuffer: No free buffers!
-
-2) Wrong index returned by String.IndexOf () in ProgsEdict.cs in Linux (reported by Miguel G L):
-For example, in linux "String.IndexOf()" method returns an index "offset = 6633" in the case of Windows "offset = 6632". The correct value is 6632
-
 
 Enjoy!
