@@ -1,6 +1,6 @@
 SharpQuake 
 
-SharpQuake is a GLQuake rewritten in C# (.Net Framework 2.0) and using OpenTK library.
+SharpQuake is a GLQuake rewritten in C# (.Net Framework 4.7.1) and using OpenTK (3.0.1) library.
 
 Made by yurykiselev and Uze and brought to Github by Memorix101 
 

@@ -227,7 +227,7 @@ namespace SharpQuake
                 if( Common.HasParam( "-dedicated" ) )
                     throw new QuakeException( "Dedicated server mode not supported!" );
 
-                Size size = new Size( 640, 480 );
+                Size size = new Size( 1366, 768 );
                 GraphicsMode mode = new GraphicsMode();
                 bool fullScreen = false;
                 using( MainForm form = MainForm.CreateInstance( size, mode, fullScreen ) )
