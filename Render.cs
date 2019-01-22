@@ -518,7 +518,7 @@ namespace SharpQuake
             GL.Rotate( 90f, 0, 0, 1 );	    // put Z going up
 
             GL.Color4( View.Blend );
-            GL.Begin( BeginMode.Quads );
+            GL.Begin( PrimitiveType.Quads );
             GL.Vertex3( 10f, 100, 100 );
             GL.Vertex3( 10f, -100, 100 );
             GL.Vertex3( 10f, -100, -100 );
@@ -747,7 +747,7 @@ namespace SharpQuake
             Drawer.Bind( frame.gl_texturenum );
 
             GL.Enable( EnableCap.AlphaTest );
-            GL.Begin( BeginMode.Quads );
+            GL.Begin( PrimitiveType.Quads );
 
             GL.TexCoord2( 0f, 1 );
             Vector3 point = e.origin + up * frame.down + right * frame.left;
@@ -972,10 +972,10 @@ namespace SharpQuake
                 if( count < 0 )
                 {
                     count = -count;
-                    GL.Begin( BeginMode.TriangleFan );
+                    GL.Begin( PrimitiveType.TriangleFan );
                 }
                 else
-                    GL.Begin( BeginMode.TriangleStrip );
+                    GL.Begin( PrimitiveType.TriangleStrip );
 
                 do
                 {
@@ -1048,10 +1048,10 @@ namespace SharpQuake
                 if( count < 0 )
                 {
                     count = -count;
-                    GL.Begin( BeginMode.TriangleFan );
+                    GL.Begin( PrimitiveType.TriangleFan );
                 }
                 else
-                    GL.Begin( BeginMode.TriangleStrip );
+                    GL.Begin( PrimitiveType.TriangleStrip );
 
                 Union4b u1 = Union4b.Empty, u2 = Union4b.Empty;
                 do

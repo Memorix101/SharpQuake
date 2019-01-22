@@ -470,7 +470,7 @@ namespace SharpQuake
             Drawer.Bind( _ParticleTexture );
             GL.Enable( EnableCap.Blend );
             GL.TexEnv( TextureEnvTarget.TextureEnv, TextureEnvParameter.TextureEnvMode, (int)TextureEnvMode.Modulate );
-            GL.Begin( BeginMode.Triangles );
+            GL.Begin( PrimitiveType.Triangles );
 
             Vector3 up = Render.ViewUp * 1.5f;
             Vector3 right = Render.ViewRight * 1.5f;

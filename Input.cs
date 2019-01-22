@@ -23,6 +23,7 @@
 using System.Drawing;
 using System.Windows.Forms;
 using OpenTK;
+using OpenTK.Input;
 
 // input.h -- external (non-keyboard) input devices
 
@@ -70,10 +71,10 @@ namespace SharpQuake
                 _MouseFilter = new Cvar( "m_filter", "0" );
             }
 
-            _IsMouseActive = ( MainForm.Instance.Mouse != null );
+            _IsMouseActive = ( Mouse.GetState( 0 ).IsConnected != false );
             if( _IsMouseActive )
             {
-                _MouseButtons = MainForm.Instance.Mouse.NumberOfButtons;
+                _MouseButtons = 3; //??? TODO: properly upgrade this to 3.0.1
             }
         }
 
@@ -100,7 +101,7 @@ namespace SharpQuake
         {
             _MouseActivateToggle = true;
 
-            if( MainForm.Instance.Mouse != null )
+            if( Mouse.GetState( 0 ).IsConnected != false )
             {
                 //if (mouseparmsvalid)
                 //    restore_spi = SystemParametersInfo (SPI_SETMOUSE, 0, newmouseparms, 0);
@@ -123,7 +124,6 @@ namespace SharpQuake
             _MouseActivateToggle = false;
 
             Cursor.Clip = Screen.PrimaryScreen.Bounds;
-            //ReleaseCapture ();
 
             _IsMouseActive = false;
         }
@@ -212,7 +212,6 @@ namespace SharpQuake
             if( !_IsMouseActive )
                 return;
 
-            Rectangle bounds = MainForm.Instance.Bounds;
             Point current_pos = Cursor.Position;
             Point window_center = Input.WindowCenter;
 
@@ -243,24 +242,12 @@ namespace SharpQuake
             else
                 Client.cl.viewangles.Y -= Client.MYaw * _Mouse.X;
 
-            if( ClientInput.MLookBtn.IsDown )
-                View.StopPitchDrift();
+            View.StopPitchDrift();
 
-            if( ClientInput.MLookBtn.IsDown && !ClientInput.StrafeBtn.IsDown )
-            {
-                Client.cl.viewangles.X += Client.MPitch * _Mouse.Y;
-                if( Client.cl.viewangles.X > 80 )
-                    Client.cl.viewangles.X = 80;
-                if( Client.cl.viewangles.X < -70 )
-                    Client.cl.viewangles.X = -70;
-            }
-            else
-            {
-                if( ClientInput.StrafeBtn.IsDown && Host.NoClipAngleHack )
-                    cmd.upmove -= Client.MForward * _Mouse.Y;
-                else
-                    cmd.forwardmove -= Client.MForward * _Mouse.Y;
-            }
+            Client.cl.viewangles.X += Client.MPitch * _Mouse.Y;
+
+            // modernized to always use mouse look
+            Client.cl.viewangles.X = MathHelper.Clamp( Client.cl.viewangles.X, -70, 80 );
 
             // if the mouse has moved, force it to the center, so there's room to move
             if( mx != 0 || my != 0 )

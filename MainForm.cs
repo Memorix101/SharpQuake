@@ -318,19 +318,14 @@ namespace SharpQuake
             _Swatch = new Stopwatch();
             this.VSync = VSyncMode.On;
             this.Icon = Icon.ExtractAssociatedIcon( Application.ExecutablePath );
-            if( this.Keyboard != null )
-            {
-                this.Keyboard.KeyRepeat = true;
-                this.Keyboard.KeyDown += new EventHandler<OpenTK.Input.KeyboardKeyEventArgs>( Keyboard_KeyDown );
-                this.Keyboard.KeyUp += new EventHandler<OpenTK.Input.KeyboardKeyEventArgs>( Keyboard_KeyUp );
-            }
-            if( this.Mouse != null )
-            {
-                this.Mouse.Move += new EventHandler<OpenTK.Input.MouseMoveEventArgs>( Mouse_Move );
-                this.Mouse.ButtonDown += new EventHandler<OpenTK.Input.MouseButtonEventArgs>( Mouse_ButtonEvent );
-                this.Mouse.ButtonUp += new EventHandler<OpenTK.Input.MouseButtonEventArgs>( Mouse_ButtonEvent );
-                this.Mouse.WheelChanged += new EventHandler<OpenTK.Input.MouseWheelEventArgs>( Mouse_WheelChanged );
-            }
+
+            this.KeyDown += new EventHandler<OpenTK.Input.KeyboardKeyEventArgs>( Keyboard_KeyDown );
+            this.KeyUp += new EventHandler<OpenTK.Input.KeyboardKeyEventArgs>( Keyboard_KeyUp );
+
+            this.MouseMove += new EventHandler<OpenTK.Input.MouseMoveEventArgs>( Mouse_Move );
+            this.MouseDown += new EventHandler<OpenTK.Input.MouseButtonEventArgs>( Mouse_ButtonEvent );
+            this.MouseUp += new EventHandler<OpenTK.Input.MouseButtonEventArgs>( Mouse_ButtonEvent );
+            this.MouseWheel += new EventHandler<OpenTK.Input.MouseWheelEventArgs>( Mouse_WheelChanged );
         }
     }
 }

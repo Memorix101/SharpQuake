@@ -273,7 +273,7 @@ namespace SharpQuake
 
         public static void RotatePointAroundVector( out Vector3 dst, ref Vector3 dir, ref Vector3 point, float degrees )
         {
-            Matrix4 m = Matrix4.CreateFromAxisAngle( dir, (float)( degrees * Math.PI / 180.0 ) );
+            Matrix3 m = Matrix3.CreateFromAxisAngle( dir, (float)( degrees * Math.PI / 180.0 ) );
             Vector3.Transform( ref point, ref m, out dst );
         }
 

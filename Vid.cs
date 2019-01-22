@@ -143,8 +143,10 @@ namespace SharpQuake
         private static Cvar _WindowedMouse;// = { "_windowed_mouse", "1", true };
 
         private static bool _Windowed; // windowed
-        private static bool _IsInitialized; // vid_initialized
+
+        //private static bool _IsInitialized; // vid_initialized
         private static float _Gamma = 1.0f; // vid_gamma
+
         private static int _DefModeNum;
         private static bool _glMTexable = false; // gl_mtexable
 
@@ -259,7 +261,7 @@ namespace SharpQuake
                 }
             }
 
-            _IsInitialized = true;
+            //_IsInitialized = true;
 
             int i2 = Common.CheckParm( "-conwidth" );
             if( i2 > 0 )
@@ -320,7 +322,7 @@ namespace SharpQuake
         /// </summary>
         public static void Shutdown()
         {
-            _IsInitialized = false;
+            //_IsInitialized = false;
         }
 
         // VID_SetMode (int modenum, unsigned char *palette)
@@ -506,7 +508,7 @@ namespace SharpQuake
             Drawer.SetTextureFilters( TextureMinFilter.Nearest, TextureMagFilter.Nearest );
             GL.TexParameter( TextureTarget.Texture2D, TextureParameterName.TextureWrapS, (int)TextureWrapMode.Repeat );
             GL.TexParameter( TextureTarget.Texture2D, TextureParameterName.TextureWrapT, (int)TextureWrapMode.Repeat );
-            GL.BlendFunc( BlendingFactorSrc.SrcAlpha, BlendingFactorDest.OneMinusSrcAlpha );
+            GL.BlendFunc( BlendingFactor.SrcAlpha, BlendingFactor.OneMinusSrcAlpha );
             GL.TexEnv( TextureEnvTarget.TextureEnv, TextureEnvParameter.TextureEnvMode, (int)TextureEnvMode.Replace );
         }
 

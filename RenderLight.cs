@@ -108,7 +108,7 @@ namespace SharpQuake
             GL.Disable( EnableCap.Texture2D );
             GL.ShadeModel( ShadingModel.Smooth );
             GL.Enable( EnableCap.Blend );
-            GL.BlendFunc( BlendingFactorSrc.One, BlendingFactorDest.One );
+            GL.BlendFunc( BlendingFactor.One, BlendingFactor.One );
 
             for( int i = 0; i < Client.MAX_DLIGHTS; i++ )
             {
@@ -122,7 +122,7 @@ namespace SharpQuake
             GL.Color3( 1f, 1, 1 );
             GL.Disable( EnableCap.Blend );
             GL.Enable( EnableCap.Texture2D );
-            GL.BlendFunc( BlendingFactorSrc.SrcAlpha, BlendingFactorDest.OneMinusSrcAlpha );
+            GL.BlendFunc( BlendingFactor.SrcAlpha, BlendingFactor.OneMinusSrcAlpha );
             GL.DepthMask( true );
         }
 
@@ -266,7 +266,7 @@ namespace SharpQuake
                 return;
             }
 
-            GL.Begin( BeginMode.TriangleFan );
+            GL.Begin( PrimitiveType.TriangleFan );
             GL.Color3( 0.2f, 0.1f, 0 );
             v = light.origin - Render.ViewPn * rad;
             GL.Vertex3( v );
