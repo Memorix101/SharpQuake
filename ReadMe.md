@@ -1,29 +1,43 @@
-SharpQuake 
+# Description 
 
-SharpQuake is a GLQuake rewritten in C# (.Net Framework 4.7.1) and using OpenTK (3.0.1) library.
+SharpQuake is [GLQuake](https://github.com/dpteam/GLQuake3D) rewritten in C# using the [OpenTK](https://github.com/opentk/opentk) library.
 
-Made by yurykiselev and Uze and brought to Github by Memorix101 
+# Dependencies
+* OpenTK 3.0.1
+* [x86 OpenTK Dependencies](https://github.com/opentk/opentk-dependencies/tree/master/x86) (SDL2.dll & libEGL.dll)
+  
+# Building
 
-Building and running
+**Project is built against and tested for Visual Studio 2017 on .NET 4.7.1.**
 
-To build project successfuly, provide correct reference to OpenTK library (see References).
-To build with Windows-related stuff add _WINDOWS symbol to "Conditional Compilation Symbols" (there must be already defined GLQUAKE and QUAKE_GAME symbols).
+1) **Add the OpenTK nuget package with the package manager console in visual studio.**
+    - `Install-Package OpenTK -Version 3.0.1`
 
-On x64 platforms select x86 as a Platform.
+2) **Add SDL2.dll and libEGL.dll to your output directory (defaults to `<project root>/Quake`).**
+    - See link "x86 OpenTK Dependencies" under Dependencies header above
+3) **Add ld1, hipnotic, and rogue (minimum ld1) data directories to `<project root>/Quake`.**
+    - You only need the `<mod>\pak0.pak`, etc. and `<mod>\config.cfg` files of each directory if copying from a steam install.
 
-To run from any folder except Quake's one add -basedir switch and correct path to your directory of Quake (for example, if Quake is installed in C:\Games\Quake):
-SharpQuake.exe -basedir C:\Games\Quake
+The project is set up with windows (x86) as the default platform. (untested) removing the `_WINDOWS` symbol from `project properties > Build > Conditional compilation symbols` should remove this dependency. `GLQUAKE` and `QUAKE_GAME` must be defined.
 
-To run from IDE go to the Project Properties -> Debug tab -> Start Options. In "Command line arguments" edit box add -basedir switch 
-and correct path to your directory of Quake (for example, if Quake is installed in C:\Games\Quake):
--basedir C:\Games\Quake
+4) **Build solution.**
 
-To run in windowed mode add -window comand line switch.
+# Running
 
-If you have original mod packs (from Rogue or/and from Hipnotic) run them with appropriate switch: -rogue or -hipnotic
+The `-basedir <directory>` switch can be used to change the default data directory. e.g. `SharpQuake.exe -basedir C:\Quake\`
 
-All mentioned switches are native Quake switches, so they documented in original Q-docs.
+`-window` switch is pre-defined in project settings, but if you change the default directory of where you want your data, you may need to add `-basedir <directory>` to `project properties > Debug > Command line arguments` 
+
+The original expansion packs can be run using `-rogue` or `-hipnotic` switches if the data is present for it.
+
+Original quake switches apply and can be used.
 
 Enjoy!
 
 ![sq](https://cloud.githubusercontent.com/assets/1466920/10977605/5d97bd68-83f2-11e5-8d72-26691129cbff.jpg)
+
+
+# Credits
+* Made by **[yurykiselev](https://sourceforge.net/u/yurykiselev/profile/)** and **Uze** and brought to Github by **[Memorix101](https://github.com/Memorix101)** 
+
+* Updated to .NET 4.7.1 and OpenTK 3.0.1 by Daniel Cornelius (Kerfuffles/NukeAndBeans)
