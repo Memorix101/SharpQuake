@@ -1765,7 +1765,7 @@ namespace SharpQuake
     internal class searchpath_t
     {
         public string filename; // char[MAX_OSPATH];
-        public pack_t  pack;          // only one of filename / pack will be used
+        public pack_t pack; // only one of filename / pack will be used
 
         public searchpath_t( string path )
         {

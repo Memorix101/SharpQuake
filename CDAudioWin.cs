@@ -28,7 +28,7 @@ using System.Windows.Forms;
 
 namespace SharpQuake
 {
-    internal static class Mci
+    internal static partial class Mci
     {
         [StructLayout( LayoutKind.Sequential, Pack = 1, CharSet = CharSet.Ansi )]
         public struct OpenParams
@@ -149,24 +149,6 @@ namespace SharpQuake
         {
             return (uint)( ( (byte)t | ( (uint)m << 8 ) ) | ( ( (uint)(byte)s | ( (uint)f << 8 ) ) << 16 ) );
         }
-
-        [DllImport( "winmm.dll", EntryPoint = "mciSendCommandA", ExactSpelling = true )]
-        public static extern int Open( IntPtr device, int cmd, int flags, ref OpenParams p );
-
-        [DllImport( "winmm.dll", EntryPoint = "mciSendCommandA", ExactSpelling = true )]
-        public static extern int Set( IntPtr device, int cmd, int flags, ref SetParams p );
-
-        [DllImport( "winmm.dll", EntryPoint = "mciSendCommandA", ExactSpelling = true )]
-        public static extern int Play( IntPtr device, int cmd, int flags, ref PlayParams p );
-
-        [DllImport( "winmm.dll", EntryPoint = "mciSendCommandA", ExactSpelling = true )]
-        public static extern int Status( IntPtr device, int cmd, int flags, ref StatusParams p );
-
-        [DllImport( "winmm.dll", EntryPoint = "mciSendCommandA", ExactSpelling = true )]
-        public static extern int SendCommand( IntPtr device, int cmd, int flags, IntPtr p );
-
-        [DllImport( "winmm.dll", EntryPoint = "mciSendCommandA", ExactSpelling = true )]
-        public static extern int SendCommand( IntPtr device, int cmd, int flags, ref GenericParams p );
     }
 
     internal class CDAudioWinController : ICDAudioController
