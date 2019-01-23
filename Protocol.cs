@@ -8,32 +8,29 @@
 /// modify it under the terms of the GNU General Public License
 /// as published by the Free Software Foundation; either version 2
 /// of the License, or (at your option) any later version.
-/// 
+///
 /// This program is distributed in the hope that it will be useful,
 /// but WITHOUT ANY WARRANTY; without even the implied warranty of
-/// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  
-/// 
+/// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+///
 /// See the GNU General Public License for more details.
-/// 
+///
 /// You should have received a copy of the GNU General Public License
 /// along with this program; if not, write to the Free Software
 /// Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 /// </copyright>
 
-using System;
-using System.Collections.Generic;
-using System.Text;
-
 // protocol.h -- communications protocols
 
 namespace SharpQuake
 {
-    static class Protocol
+    internal static class Protocol
     {
         public const int PROTOCOL_VERSION = 15;
 
         // if the high bit of the servercmd is set, the low bits are fast update flags:
         public const int U_MOREBITS = (1 << 0);
+
         public const int U_ORIGIN1 = (1 << 1);
         public const int U_ORIGIN2 = (1 << 2);
         public const int U_ORIGIN3 = (1 << 3);
@@ -44,13 +41,13 @@ namespace SharpQuake
 
         // svc_update can pass all of the fast update bits, plus more
         public const int U_ANGLE1 = (1 << 8);
+
         public const int U_ANGLE3 = (1 << 9);
         public const int U_MODEL = (1 << 10);
         public const int U_COLORMAP = (1 << 11);
         public const int U_SKIN = (1 << 12);
         public const int U_EFFECTS = (1 << 13);
         public const int U_LONGENTITY = (1 << 14);
-
 
         public const int SU_VIEWHEIGHT = (1 << 0);
         public const int SU_IDEALPITCH = (1 << 1);
@@ -60,8 +57,10 @@ namespace SharpQuake
         public const int SU_VELOCITY1 = (1 << 5);
         public const int SU_VELOCITY2 = (1 << 6);
         public const int SU_VELOCITY3 = (1 << 7);
+
         //define	SU_AIMENT		(1<<8)  AVAILABLE BIT
         public const int SU_ITEMS = (1 << 9);
+
         public const int SU_ONGROUND = (1 << 10);		// no data follows, the bit is it
         public const int SU_INWATER = (1 << 11);		// no data follows, the bit is it
         public const int SU_WEAPONFRAME = (1 << 12);
@@ -70,17 +69,17 @@ namespace SharpQuake
 
         // a sound with no channel is a local only sound
         public const int SND_VOLUME = (1 << 0);		// a byte
+
         public const int SND_ATTENUATION = (1 << 1);		// a byte
         public const int SND_LOOPING = (1 << 2);		// a long
-
 
         // defaults for clientinfo messages
         public const int DEFAULT_VIEWHEIGHT = 22;
 
-
         // game types sent by serverinfo
         // these determine which intermission screen plays
         public const int GAME_COOP = 0;
+
         public const int GAME_DEATHMATCH = 1;
 
         //==================
@@ -92,6 +91,7 @@ namespace SharpQuake
         // server to client
         //
         public const int svc_bad = 0;
+
         public const int svc_nop = 1;
         public const int svc_disconnect = 2;
         public const int svc_updatestat = 3;	// [byte] [long]
@@ -101,14 +101,17 @@ namespace SharpQuake
         public const int svc_time = 7;	// [float] server time
         public const int svc_print = 8;	// [string] null terminated string
         public const int svc_stufftext = 9;	// [string] stuffed into client's console buffer
+
         // the string should be \n terminated
         public const int svc_setangle = 10;	// [angle3] set the view angle to this absolute value
 
         public const int svc_serverinfo = 11;	// [long] version
+
         // [string] signon string
         // [string]..[0]model cache
         // [string]...[0]sounds cache
         public const int svc_lightstyle = 12;	// [byte] [string]
+
         public const int svc_updatename = 13;	// [byte] [string]
         public const int svc_updatefrags = 14;	// [byte] [short]
         public const int svc_clientdata = 15;	// <shortbits + data>
@@ -118,6 +121,7 @@ namespace SharpQuake
         public const int svc_damage = 19;
 
         public const int svc_spawnstatic = 20;
+
         //	svc_spawnbinary		21
         public const int svc_spawnbaseline = 22;
 
@@ -145,16 +149,17 @@ namespace SharpQuake
         // client to server
         //
         public const int clc_bad = 0;
+
         public const int clc_nop = 1;
         public const int clc_disconnect = 2;
         public const int clc_move = 3;			// [usercmd_t]
         public const int clc_stringcmd = 4;		// [string] message
 
-
         //
         // temp entity events
         //
         public const int TE_SPIKE = 0;
+
         public const int TE_SUPERSPIKE = 1;
         public const int TE_GUNSHOT = 2;
         public const int TE_EXPLOSION = 3;
@@ -168,14 +173,14 @@ namespace SharpQuake
         public const int TE_TELEPORT = 11;
         public const int TE_EXPLOSION2 = 12;
 
-        // PGM 01/21/97 
+        // PGM 01/21/97
         public const int TE_BEAM = 13;
-        // PGM 01/21/97 
+
+        // PGM 01/21/97
 
 #if QUAKE2
         public const int TE_IMPLOSION	=	14;
         public const int TE_RAILTRAIL	=	15;
 #endif
-
     }
 }

@@ -8,13 +8,13 @@
 /// modify it under the terms of the GNU General Public License
 /// as published by the Free Software Foundation; either version 2
 /// of the License, or (at your option) any later version.
-/// 
+///
 /// This program is distributed in the hope that it will be useful,
 /// but WITHOUT ANY WARRANTY; without even the implied warranty of
-/// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  
-/// 
+/// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+///
 /// See the GNU General Public License for more details.
-/// 
+///
 /// You should have received a copy of the GNU General Public License
 /// along with this program; if not, write to the Free Software
 /// Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
@@ -23,61 +23,21 @@
 //define	PARANOID			// speed sapping error checking
 
 using System;
-using System.Collections.Generic;
-using System.Text;
-using OpenTK;
 
 // quakedef.h
 
 namespace SharpQuake
 {
-    static class QDef
+    internal struct entity_state_t
     {
-        public const float VERSION	= 1.09f;
-        public const float CSQUAKE_VERSION = 1.20f;
-        public const float GLQUAKE_VERSION	= 1.00f;
-        public const float D3DQUAKE_VERSION = 0.01f;
-        public const float WINQUAKE_VERSION = 0.996f;
-        public const float LINUX_VERSION = 1.30f;
-        public const float X11_VERSION = 1.10f;
-        
-        public const string GAMENAME = "id1";		// directory to look in by default
-
-        public const int MAX_NUM_ARGVS	= 50;
-
-        // up / down
-        public const int PITCH	= 0;
-        // left / right
-        public const int YAW = 1;
-        // fall over
-        public const int ROLL = 2;
-
-        public const int MAX_QPATH = 64;			// max length of a quake game pathname
-        public const int MAX_OSPATH = 128;			// max length of a filesystem pathname
-
-        public const float ON_EPSILON = 0.1f;		// point on plane side epsilon
-
-        public const int MAX_MSGLEN = 8000;		// max length of a reliable message
-        public const int MAX_DATAGRAM = 1024;		// max length of unreliable message
-
-        //
-        // per-level limits
-        //
-        public const int MAX_EDICTS = 600;			// FIXME: ouch! ouch! ouch!
-        public const int MAX_LIGHTSTYLES = 64;
-        public const int MAX_MODELS = 256;			// these are sent over the net as bytes
-        public const int MAX_SOUNDS = 256;			// so they cannot be blindly increased
-
-        public const int SAVEGAME_COMMENT_LENGTH = 39;
-
-        public const int MAX_STYLESTRING = 64;
-
-        public const int MAX_SCOREBOARD = 16;
-        public const int MAX_SCOREBOARDNAME = 32;
-
-        public const int SOUND_CHANNELS = 8;
-
-        public const double BACKFACE_EPSILON = 0.01;
+        public static readonly entity_state_t Empty = new entity_state_t();
+        public v3f origin;
+        public v3f angles;
+        public int modelindex;
+        public int frame;
+        public int colormap;
+        public int skin;
+        public int effects;
     }
 
     public static class QStats
@@ -86,6 +46,7 @@ namespace SharpQuake
         // stats are integers communicated to the client by the server
         //
         public static int MAX_CL_STATS = 32;
+
         public static int STAT_HEALTH = 0;
         public static int STAT_FRAGS = 1;
         public static int STAT_WEAPON = 2;
@@ -162,6 +123,7 @@ namespace SharpQuake
         //===========================================
         //hipnotic added defines
         public static int HIT_PROXIMITY_GUN_BIT = 16;
+
         public static int HIT_MJOLNIR_BIT = 7;
         public static int HIT_LASER_CANNON_BIT = 23;
         public static int HIT_PROXIMITY_GUN = (1<<HIT_PROXIMITY_GUN_BIT);
@@ -172,27 +134,68 @@ namespace SharpQuake
         //===========================================
     }
 
-    struct entity_state_t
+    internal static class QDef
     {
-	    public v3f origin;
-	    public v3f angles;
-	    public int modelindex;
-        public int frame;
-        public int colormap;
-        public int skin;
-        public int effects;
+        public const float VERSION  = 1.09f;
+        public const float CSQUAKE_VERSION = 1.20f;
+        public const float GLQUAKE_VERSION  = 1.00f;
+        public const float D3DQUAKE_VERSION = 0.01f;
+        public const float WINQUAKE_VERSION = 0.996f;
+        public const float LINUX_VERSION = 1.30f;
+        public const float X11_VERSION = 1.10f;
 
-        public static readonly entity_state_t Empty = new entity_state_t();
-    }// entity_state_t;
+        public const string GAMENAME = "id1";		// directory to look in by default
+
+        public const int MAX_NUM_ARGVS  = 50;
+
+        // up / down
+        public const int PITCH  = 0;
+
+        // left / right
+        public const int YAW = 1;
+
+        // fall over
+        public const int ROLL = 2;
+
+        public const int MAX_QPATH = 64;			// max length of a quake game pathname
+        public const int MAX_OSPATH = 128;			// max length of a filesystem pathname
+
+        public const float ON_EPSILON = 0.1f;		// point on plane side epsilon
+
+        public const int MAX_MSGLEN = 8000;		// max length of a reliable message
+        public const int MAX_DATAGRAM = 1024;		// max length of unreliable message
+
+        //
+        // per-level limits
+        //
+        public const int MAX_EDICTS = 600;			// FIXME: ouch! ouch! ouch!
+
+        public const int MAX_LIGHTSTYLES = 64;
+        public const int MAX_MODELS = 256;			// these are sent over the net as bytes
+        public const int MAX_SOUNDS = 256;			// so they cannot be blindly increased
+
+        public const int SAVEGAME_COMMENT_LENGTH = 39;
+
+        public const int MAX_STYLESTRING = 64;
+
+        public const int MAX_SCOREBOARD = 16;
+        public const int MAX_SCOREBOARDNAME = 32;
+
+        public const int SOUND_CHANNELS = 8;
+
+        public const double BACKFACE_EPSILON = 0.01;
+    }
+
+    // entity_state_t;
 
     // the host system specifies the base of the directory tree, the
     // command line parms passed to the program, and the amount of memory
     // available for the program to use
-    class quakeparms_t
+    internal class quakeparms_t
     {
         public string basedir;
-	    public string cachedir;		// for development over ISDN lines
-        public string[] argv; 
+        public string cachedir;		// for development over ISDN lines
+        public string[] argv;
 
         public quakeparms_t()
         {

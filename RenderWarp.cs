@@ -8,21 +8,19 @@
 /// modify it under the terms of the GNU General Public License
 /// as published by the Free Software Foundation; either version 2
 /// of the License, or (at your option) any later version.
-/// 
+///
 /// This program is distributed in the hope that it will be useful,
 /// but WITHOUT ANY WARRANTY; without even the implied warranty of
-/// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  
-/// 
+/// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+///
 /// See the GNU General Public License for more details.
-/// 
+///
 /// You should have received a copy of the GNU General Public License
 /// along with this program; if not, write to the Free Software
 /// Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 /// </copyright>
 
 using System;
-using System.Collections.Generic;
-using System.Text;
 using OpenTK;
 using OpenTK.Graphics.OpenGL;
 
@@ -32,8 +30,10 @@ namespace SharpQuake
 {
     partial class Render
     {
+        private const double TURBSCALE = ( 256.0 / ( 2 * Math.PI ) );
+
         // turbsin
-        static float[] _TurbSin = new float[]
+        private static float[] _TurbSin = new float[]
         {
             0f, 0.19633f, 0.392541f, 0.588517f, 0.784137f, 0.979285f, 1.17384f, 1.3677f,
             1.56072f, 1.75281f, 1.94384f, 2.1337f, 2.32228f, 2.50945f, 2.69512f, 2.87916f,
@@ -69,26 +69,23 @@ namespace SharpQuake
             -1.56072f, -1.3677f, -1.17384f, -0.979285f, -0.784137f, -0.588517f, -0.392541f, -0.19633f
         };
 
-        const double TURBSCALE = (256.0 / (2 * Math.PI));
+        private static int _SolidSkyTexture; // solidskytexture
+        private static int _AlphaSkyTexture; // alphaskytexture
 
-        static int _SolidSkyTexture; // solidskytexture
-        static int _AlphaSkyTexture; // alphaskytexture
+        private static msurface_t _WarpFace; // used by SubdivideSurface()
 
-        static msurface_t _WarpFace; // used by SubdivideSurface()
-        
-        
         /// <summary>
         /// R_InitSky
         /// called at level load
         /// A sky texture is 256*128, with the right side being a masked overlay
         /// </summary>
-        public static void InitSky(texture_t mt)
+        public static void InitSky( texture_t mt )
         {
             byte[] src = mt.pixels;
             int offset = mt.offsets[0];
 
-	        // make an average value for the back to avoid
-	        // a fringe on the top level
+            // make an average value for the back to avoid
+            // a fringe on the top level
             const int size = 128 * 128;
             uint[] trans = new uint[size];
             uint[] v8to24 = Vid.Table8to24;
@@ -96,45 +93,45 @@ namespace SharpQuake
             int g = 0;
             int b = 0;
             Union4b rgba = Union4b.Empty;
-	        for (int i=0 ; i<128 ; i++)
-		        for (int j=0 ; j<128 ; j++)
-		        {
-			        int p = src[offset + i*256 + j + 128];
+            for( int i = 0; i < 128; i++ )
+                for( int j = 0; j < 128; j++ )
+                {
+                    int p = src[offset + i * 256 + j + 128];
                     rgba.ui0 = v8to24[p];
-                    trans[(i * 128) + j] = rgba.ui0;
+                    trans[( i * 128 ) + j] = rgba.ui0;
                     r += rgba.b0;
                     g += rgba.b1;
                     b += rgba.b2;
-		        }
+                }
 
-            rgba.b0 = (byte)(r / size);
-            rgba.b1 = (byte)(g / size);
-            rgba.b2 = (byte)(b / size);
+            rgba.b0 = (byte)( r / size );
+            rgba.b1 = (byte)( g / size );
+            rgba.b2 = (byte)( b / size );
             rgba.b3 = 0;
 
             uint transpix = rgba.ui0;
 
-            if (_SolidSkyTexture == 0)
+            if( _SolidSkyTexture == 0 )
                 _SolidSkyTexture = Drawer.GenerateTextureNumber();
-	        Drawer.Bind (_SolidSkyTexture );
-            GL.TexImage2D(TextureTarget.Texture2D, 0, Drawer.SolidFormat, 128, 128, 0, PixelFormat.Rgba, PixelType.UnsignedByte, trans);
-            Drawer.SetTextureFilters(TextureMinFilter.Linear, TextureMagFilter.Linear);
+            Drawer.Bind( _SolidSkyTexture );
+            GL.TexImage2D( TextureTarget.Texture2D, 0, Drawer.SolidFormat, 128, 128, 0, PixelFormat.Rgba, PixelType.UnsignedByte, trans );
+            Drawer.SetTextureFilters( TextureMinFilter.Linear, TextureMagFilter.Linear );
 
-	        for (int i=0 ; i<128 ; i++)
-		        for (int j=0 ; j<128 ; j++)
-		        {
-			        int p = src[offset + i*256 + j];
-			        if (p == 0)
-				        trans[(i*128) + j] = transpix;
-			        else
-				        trans[(i*128) + j] = v8to24[p];
-		        }
+            for( int i = 0; i < 128; i++ )
+                for( int j = 0; j < 128; j++ )
+                {
+                    int p = src[offset + i * 256 + j];
+                    if( p == 0 )
+                        trans[( i * 128 ) + j] = transpix;
+                    else
+                        trans[( i * 128 ) + j] = v8to24[p];
+                }
 
-            if (_AlphaSkyTexture == 0)
+            if( _AlphaSkyTexture == 0 )
                 _AlphaSkyTexture = Drawer.GenerateTextureNumber();
-	        Drawer.Bind(_AlphaSkyTexture);
-            GL.TexImage2D(TextureTarget.Texture2D, 0, Drawer.AlphaFormat, 128, 128, 0, PixelFormat.Rgba, PixelType.UnsignedByte, trans);
-            Drawer.SetTextureFilters(TextureMinFilter.Linear, TextureMagFilter.Linear);
+            Drawer.Bind( _AlphaSkyTexture );
+            GL.TexImage2D( TextureTarget.Texture2D, 0, Drawer.AlphaFormat, 128, 128, 0, PixelFormat.Rgba, PixelType.UnsignedByte, trans );
+            Drawer.SetTextureFilters( TextureMinFilter.Linear, TextureMagFilter.Linear );
         }
 
         /// <summary>
@@ -142,7 +139,7 @@ namespace SharpQuake
         /// Breaks a polygon up along axial 64 unit boundaries
         /// so that turbulent and sky warps can be done reasonably.
         /// </summary>
-        public static void SubdivideSurface (msurface_t fa)
+        public static void SubdivideSurface( msurface_t fa )
         {
             _WarpFace = fa;
 
@@ -152,11 +149,11 @@ namespace SharpQuake
             int numverts = 0;
             Vector3[] verts = new Vector3[fa.numedges + 1]; // + 1 for wrap case
             model_t loadmodel = Mod.Model;
-            for (int i = 0; i < fa.numedges; i++)
+            for( int i = 0; i < fa.numedges; i++ )
             {
                 int lindex = loadmodel.surfedges[fa.firstedge + i];
 
-                if (lindex > 0)
+                if( lindex > 0 )
                     verts[numverts] = loadmodel.vertexes[loadmodel.edges[lindex].v[0]].position;
                 else
                     verts[numverts] = loadmodel.vertexes[loadmodel.edges[-lindex].v[1]].position;
@@ -164,33 +161,33 @@ namespace SharpQuake
                 numverts++;
             }
 
-            SubdividePolygon(numverts, verts);
+            SubdividePolygon( numverts, verts );
         }
 
         /// <summary>
         /// SubdividePolygon
         /// </summary>
-        static void SubdividePolygon(int numverts, Vector3[] verts)
+        private static void SubdividePolygon( int numverts, Vector3[] verts )
         {
-            if (numverts > 60)
-                Sys.Error("numverts = {0}", numverts);
+            if( numverts > 60 )
+                Sys.Error( "numverts = {0}", numverts );
 
             Vector3 mins, maxs;
-            BoundPoly(numverts, verts, out mins, out maxs);
+            BoundPoly( numverts, verts, out mins, out maxs );
 
             float[] dist = new float[64];
-            for (int i = 0; i < 3; i++)
+            for( int i = 0; i < 3; i++ )
             {
-                double m = (Mathlib.Comp(ref mins, i) + Mathlib.Comp(ref maxs, i)) * 0.5;
-                m = Mod.SubdivideSize * Math.Floor(m / Mod.SubdivideSize + 0.5);
-                if (Mathlib.Comp(ref maxs, i) - m < 8)
+                double m = ( Mathlib.Comp( ref mins, i ) + Mathlib.Comp( ref maxs, i ) ) * 0.5;
+                m = Mod.SubdivideSize * Math.Floor( m / Mod.SubdivideSize + 0.5 );
+                if( Mathlib.Comp( ref maxs, i ) - m < 8 )
                     continue;
 
-                if (m - Mathlib.Comp(ref mins, i) < 8)
+                if( m - Mathlib.Comp( ref mins, i ) < 8 )
                     continue;
 
-                for (int j = 0; j < numverts; j++)
-                    dist[j] = (float)(Mathlib.Comp(ref verts[j], i) - m);
+                for( int j = 0; j < numverts; j++ )
+                    dist[j] = (float)( Mathlib.Comp( ref verts[j], i ) - m );
 
                 Vector3[] front = new Vector3[64];
                 Vector3[] back = new Vector3[64];
@@ -202,44 +199,44 @@ namespace SharpQuake
                 verts[numverts] = verts[0]; // Uze: source array must be at least numverts + 1 elements long
 
                 int f = 0, b = 0;
-                for (int j = 0; j < numverts; j++)
+                for( int j = 0; j < numverts; j++ )
                 {
-                    if (dist[j] >= 0)
+                    if( dist[j] >= 0 )
                     {
                         front[f] = verts[j];
                         f++;
                     }
-                    if (dist[j] <= 0)
+                    if( dist[j] <= 0 )
                     {
                         back[b] = verts[j];
                         b++;
                     }
-                    if (dist[j] == 0 || dist[j + 1] == 0)
+                    if( dist[j] == 0 || dist[j + 1] == 0 )
                         continue;
-                    if ((dist[j] > 0) != (dist[j + 1] > 0))
+                    if( ( dist[j] > 0 ) != ( dist[j + 1] > 0 ) )
                     {
                         // clip point
-                        float frac = dist[j] / (dist[j] - dist[j + 1]);
-                        front[f] = back[b] = verts[j] + (verts[j + 1] - verts[j]) * frac;
+                        float frac = dist[j] / ( dist[j] - dist[j + 1] );
+                        front[f] = back[b] = verts[j] + ( verts[j + 1] - verts[j] ) * frac;
                         f++;
                         b++;
                     }
                 }
 
-                SubdividePolygon(f, front);
-                SubdividePolygon(b, back);
+                SubdividePolygon( f, front );
+                SubdividePolygon( b, back );
                 return;
             }
 
             glpoly_t poly = new glpoly_t();
             poly.next = _WarpFace.polys;
             _WarpFace.polys = poly;
-            poly.AllocVerts(numverts);
-            for (int i = 0; i < numverts; i++)
+            poly.AllocVerts( numverts );
+            for( int i = 0; i < numverts; i++ )
             {
-                Common.Copy(ref verts[i], poly.verts[i]);
-                float s = Vector3.Dot(verts[i], _WarpFace.texinfo.vecs[0].Xyz);
-                float t = Vector3.Dot(verts[i], _WarpFace.texinfo.vecs[1].Xyz);
+                Common.Copy( ref verts[i], poly.verts[i] );
+                float s = Vector3.Dot( verts[i], _WarpFace.texinfo.vecs[0].Xyz );
+                float t = Vector3.Dot( verts[i], _WarpFace.texinfo.vecs[1].Xyz );
                 poly.verts[i][3] = s;
                 poly.verts[i][4] = t;
             }
@@ -248,14 +245,14 @@ namespace SharpQuake
         /// <summary>
         /// BoundPoly
         /// </summary>
-        static void BoundPoly(int numverts, Vector3[] verts, out Vector3 mins, out Vector3 maxs)
+        private static void BoundPoly( int numverts, Vector3[] verts, out Vector3 mins, out Vector3 maxs )
         {
             mins = Vector3.One * 9999;
             maxs = Vector3.One * -9999;
-            for (int i = 0; i < numverts; i++)
+            for( int i = 0; i < numverts; i++ )
             {
-                Vector3.ComponentMin(ref verts[i], ref mins, out mins);
-                Vector3.ComponentMax(ref verts[i], ref maxs, out maxs);
+                Vector3.ComponentMin( ref verts[i], ref mins, out mins );
+                Vector3.ComponentMax( ref verts[i], ref maxs, out maxs );
             }
         }
 
@@ -263,25 +260,25 @@ namespace SharpQuake
         /// EmitWaterPolys
         /// Does a water warp on the pre-fragmented glpoly_t chain
         /// </summary>
-        static void EmitWaterPolys(msurface_t fa)
+        private static void EmitWaterPolys( msurface_t fa )
         {
-            for (glpoly_t p = fa.polys; p != null; p = p.next)
+            for( glpoly_t p = fa.polys; p != null; p = p.next )
             {
-                GL.Begin(BeginMode.Polygon);
-                for (int i = 0; i < p.numverts; i++)
+                GL.Begin( PrimitiveType.Polygon );
+                for( int i = 0; i < p.numverts; i++ )
                 {
                     float[] v = p.verts[i];
                     float os = v[3];
                     float ot = v[4];
 
-                    float s = os + _TurbSin[(int)((ot * 0.125 + Host.RealTime) * TURBSCALE) & 255];
-                    s *= (1.0f / 64);
+                    float s = os + _TurbSin[(int)( ( ot * 0.125 + Host.RealTime ) * TURBSCALE ) & 255];
+                    s *= ( 1.0f / 64 );
 
-                    float t = ot + _TurbSin[(int)((os * 0.125 + Host.RealTime) * TURBSCALE) & 255];
-                    t *= (1.0f / 64);
+                    float t = ot + _TurbSin[(int)( ( os * 0.125 + Host.RealTime ) * TURBSCALE ) & 255];
+                    t *= ( 1.0f / 64 );
 
-                    GL.TexCoord2(s, t);
-                    GL.Vertex3(v);
+                    GL.TexCoord2( s, t );
+                    GL.Vertex3( v );
                 }
                 GL.End();
             }
@@ -290,25 +287,25 @@ namespace SharpQuake
         /// <summary>
         /// EmitSkyPolys
         /// </summary>
-        static void EmitSkyPolys(msurface_t fa)
+        private static void EmitSkyPolys( msurface_t fa )
         {
-            for (glpoly_t p = fa.polys; p != null; p = p.next)
+            for( glpoly_t p = fa.polys; p != null; p = p.next )
             {
-                GL.Begin(BeginMode.Polygon);
-                for (int i = 0; i < p.numverts; i++)
+                GL.Begin( PrimitiveType.Polygon );
+                for( int i = 0; i < p.numverts; i++ )
                 {
                     float[] v = p.verts[i];
-                    Vector3 dir = new Vector3(v[0] - Render.Origin.X, v[1] - Render.Origin.Y, v[2] - Render.Origin.Z);
-                    dir.Z *= 3;	// flatten the sphere
-                    
+                    Vector3 dir = new Vector3( v[0] - Render.Origin.X, v[1] - Render.Origin.Y, v[2] - Render.Origin.Z );
+                    dir.Z *= 3; // flatten the sphere
+
                     dir.Normalize();
                     dir *= 6 * 63;
-                    
-                    float s = (_SpeedScale + dir.X) / 128.0f;
-                    float t = (_SpeedScale + dir.Y) / 128.0f;
 
-                    GL.TexCoord2(s, t);
-                    GL.Vertex3(v);
+                    float s = ( _SpeedScale + dir.X ) / 128.0f;
+                    float t = ( _SpeedScale + dir.Y ) / 128.0f;
+
+                    GL.TexCoord2( s, t );
+                    GL.Vertex3( v );
                 }
                 GL.End();
             }
@@ -317,27 +314,27 @@ namespace SharpQuake
         /// <summary>
         /// R_DrawSkyChain
         /// </summary>
-        private static void DrawSkyChain(msurface_t s)
+        private static void DrawSkyChain( msurface_t s )
         {
             DisableMultitexture();
 
             // used when gl_texsort is on
-            Drawer.Bind(_SolidSkyTexture);
+            Drawer.Bind( _SolidSkyTexture );
             _SpeedScale = (float)Host.RealTime * 8;
             _SpeedScale -= (int)_SpeedScale & ~127;
 
-            for (msurface_t fa = s; fa != null; fa = fa.texturechain)
-                EmitSkyPolys(fa);
+            for( msurface_t fa = s; fa != null; fa = fa.texturechain )
+                EmitSkyPolys( fa );
 
-            GL.Enable(EnableCap.Blend);
-            Drawer.Bind(_AlphaSkyTexture);
+            GL.Enable( EnableCap.Blend );
+            Drawer.Bind( _AlphaSkyTexture );
             _SpeedScale = (float)Host.RealTime * 16;
             _SpeedScale -= (int)_SpeedScale & ~127;
 
-            for (msurface_t fa = s; fa != null; fa = fa.texturechain)
-                EmitSkyPolys(fa);
+            for( msurface_t fa = s; fa != null; fa = fa.texturechain )
+                EmitSkyPolys( fa );
 
-            GL.Disable(EnableCap.Blend);
+            GL.Disable( EnableCap.Blend );
         }
 
         /// <summary>
@@ -346,24 +343,24 @@ namespace SharpQuake
         /// This will be called for brushmodels, the world
         /// will have them chained together.
         /// </summary>
-        private static void EmitBothSkyLayers(msurface_t fa)
+        private static void EmitBothSkyLayers( msurface_t fa )
         {
             DisableMultitexture();
 
-            Drawer.Bind(_SolidSkyTexture);
+            Drawer.Bind( _SolidSkyTexture );
             _SpeedScale = (float)Host.RealTime * 8;
             _SpeedScale -= (int)_SpeedScale & ~127;
 
-            EmitSkyPolys(fa);
+            EmitSkyPolys( fa );
 
-            GL.Enable(EnableCap.Blend);
-            Drawer.Bind(_AlphaSkyTexture);
+            GL.Enable( EnableCap.Blend );
+            Drawer.Bind( _AlphaSkyTexture );
             _SpeedScale = (float)Host.RealTime * 16;
             _SpeedScale -= (int)_SpeedScale & ~127;
 
-            EmitSkyPolys(fa);
+            EmitSkyPolys( fa );
 
-            GL.Disable(EnableCap.Blend);
+            GL.Disable( EnableCap.Blend );
         }
     }
 }
