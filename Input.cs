@@ -110,7 +110,7 @@ namespace SharpQuake
 
                 //SetCapture(mainwindow);
 
-                Cursor.Clip = MainForm.Instance.Bounds;
+                //Cursor.Clip = MainForm.Instance.Bounds;
 
                 _IsMouseActive = true;
             }
@@ -123,7 +123,7 @@ namespace SharpQuake
         {
             _MouseActivateToggle = false;
 
-            Cursor.Clip = Screen.PrimaryScreen.Bounds;
+            //Cursor.Clip = Screen.PrimaryScreen.Bounds;
 
             _IsMouseActive = false;
         }

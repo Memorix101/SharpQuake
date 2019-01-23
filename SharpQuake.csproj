@@ -113,6 +113,7 @@
     <Compile Include="CRC.cs" />
     <Compile Include="Cvar.cs" />
     <Compile Include="Draw.cs" />
+    <Compile Include="External.cs" />
     <Compile Include="Host.cs" />
     <Compile Include="HostCmd.cs" />
     <Compile Include="Input.cs" />
