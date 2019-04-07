@@ -999,7 +999,14 @@ namespace SharpQuake
                     tx.offsets[j] = (int)mt.offsets[j] - miptex_t.SizeInBytes;
                 // the pixels immediately follow the structures
                 tx.pixels = new byte[pixels];
-                Buffer.BlockCopy( _ModBase, mtOffset + miptex_t.SizeInBytes, tx.pixels, 0, pixels );
+#warning BlockCopy tries to copy data over the bounds of _ModBase if certain mods are loaded. Needs proof fix!
+                if (mtOffset + miptex_t.SizeInBytes + pixels <= _ModBase.Length)
+                    Buffer.BlockCopy(_ModBase, mtOffset + miptex_t.SizeInBytes, tx.pixels, 0, pixels);
+                else
+                {
+                    Buffer.BlockCopy(_ModBase, mtOffset, tx.pixels, 0, pixels);
+                    Con.Print("Texture info of {0} truncated to fit in bounds of _ModBase\n", _LoadModel.name);
+                }
 
                 if( tx.name != null && tx.name.StartsWith( "sky" ) )// !Q_strncmp(mt->name,"sky",3))
                     Render.InitSky( tx );
