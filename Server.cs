@@ -372,6 +372,7 @@ namespace SharpQuake
             this.datagram.Clear();
             this.reliable_datagram.Clear();
             this.signon.Clear();
+            GC.Collect();
         }
 
         public server_t()
