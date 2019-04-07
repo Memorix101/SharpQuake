@@ -270,7 +270,7 @@ namespace SharpQuake
         {
             _Params = parms;
 
-            Cache.Init( 1024 * 1024 * 16 ); // debug
+            Cache.Init( 1024 * 1024 * 512 ); // debug
             Cbuf.Init();
             Cmd.Init();
             View.Init();
