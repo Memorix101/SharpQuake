@@ -42,4 +42,4 @@ Enjoy!
 
 * Updated to .NET 4.7.1 and OpenTK 3.0.1 by Daniel Cornelius (Kerfuffles/NukeAndBeans)
 
-* Mod support additions and fixes by **[multiguy18](https://github.com/multiguy18)** 
+* Engine additions and fixes by **[multiguy18](https://github.com/multiguy18)** 
