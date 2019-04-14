@@ -1013,7 +1013,7 @@ namespace SharpQuake
                 else
                 {
                     tx.gl_texturenum = Drawer.LoadTexture( tx.name, (int)tx.width, (int)tx.height,
-                        new ByteArraySegment( tx.pixels ), true, false );
+                        new ByteArraySegment( tx.pixels ), true, false, _LoadModel.name );
                 }
             }
 

@@ -199,6 +199,7 @@ namespace SharpQuake
                 Cvar.Set( "gl_max_size", "256" );
 
             Cmd.Add( "gl_texturemode", TextureMode_f );
+            Cmd.Add( "imagelist", Imagelist_f );
 
             // load the console background and the charset
             // by hand, because we need to write the version
@@ -413,7 +414,7 @@ namespace SharpQuake
         /// <summary>
         /// GL_LoadTexture
         /// </summary>
-        public static int LoadTexture( string identifier, int width, int height, ByteArraySegment data, bool mipmap, bool alpha )
+        public static int LoadTexture( string identifier, int width, int height, ByteArraySegment data, bool mipmap, bool alpha, string owner = "" )
         {
             // see if the texture is allready present
             if( !String.IsNullOrEmpty( identifier ) )
@@ -421,7 +422,7 @@ namespace SharpQuake
                 for( int i = 0; i < _NumTextures; i++ )
                 {
                     gltexture_t glt = _glTextures[i];
-                    if( glt.identifier == identifier )
+                    if( glt.identifier == identifier && glt.owner == owner )
                     {
                         if( width != glt.width || height != glt.height )
                             Sys.Error( "GL_LoadTexture: cache mismatch!" );
@@ -437,6 +438,7 @@ namespace SharpQuake
             _NumTextures++;
 
             tex.identifier = identifier;
+            tex.owner = owner;
             tex.texnum = _TextureExtensionNumber;
             tex.width = width;
             tex.height = height;
@@ -740,6 +742,23 @@ namespace SharpQuake
             }
         }
 
+        private static void Imagelist_f()
+        {
+            short textureCount = 0;
+
+            foreach (gltexture_t glTexture in _glTextures)
+            {
+                if (glTexture != null)
+                {
+                    Con.Print( "{0} x {1}   {2}:{3}\n", glTexture.width, glTexture.height,
+                    glTexture.owner, glTexture.identifier );
+                    textureCount++;
+                }
+            }
+
+            Con.Print( "{0} textures currently loaded.\n", textureCount );
+        }
+
         /// <summary>
         /// GL_LoadPicTexture
         /// </summary>
@@ -1028,6 +1047,7 @@ Done:
         private class gltexture_t
         {
             public int texnum;
+            public string owner;
             public string identifier; //char	identifier[64];
             public int  width, height;
             public bool mipmap;

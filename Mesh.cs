@@ -124,11 +124,10 @@ namespace SharpQuake
             trivertx_t[] verts = new trivertx_t[_AliasHdr.numposes * _AliasHdr.poseverts]; // Hunk_Alloc (paliashdr->numposes * paliashdr->poseverts * sizeof(trivertx_t) );
             _AliasHdr.posedata = verts; // (byte*)verts - (byte*)paliashdr;
             int offset = 0;
-            for( int i = 0; i < _AliasHdr.numposes; i++ )
-                for( int j = 0; j < _NumOrder; j++ )
-                {
+
+            for (int i = 0; i < _AliasHdr.numposes; i++)
+                for (int j = 0; j < _NumOrder; j++)
                     verts[offset++] = poseverts[i][_VertexOrder[j]];  // *verts++ = poseverts[i][vertexorder[j]];
-                }
         }
 
         /// <summary>
