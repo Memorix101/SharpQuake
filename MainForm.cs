@@ -54,7 +54,7 @@ namespace SharpQuake
         {
             get
             {
-                return ( Instance.WindowState == WindowState.Fullscreen );
+                return (Instance.WindowState == WindowState.Fullscreen);
             }
         }
 
@@ -64,7 +64,7 @@ namespace SharpQuake
         {
             get
             {
-                return Path.Combine( Application.LocalUserAppDataPath, "error.txt" );
+                return Path.Combine(Application.LocalUserAppDataPath, "error.txt");
             }
         }
 
@@ -95,78 +95,78 @@ namespace SharpQuake
         private int _MouseBtnState;
         private Stopwatch _Swatch;
 
-        protected override void OnFocusedChanged( EventArgs e )
+        protected override void OnFocusedChanged(EventArgs e)
         {
-            base.OnFocusedChanged( e );
+            base.OnFocusedChanged(e);
 
-            if( this.Focused )
+            if (this.Focused)
                 Sound.UnblockSound();
             else
                 Sound.BlockSound();
         }
 
-        protected override void OnClosing( System.ComponentModel.CancelEventArgs e )
+        protected override void OnClosing(System.ComponentModel.CancelEventArgs e)
         {
-            if( this.ConfirmExit )
+            if (this.ConfirmExit)
             {
-                e.Cancel = ( MessageBox.Show( "Are you sure you want to quit?",
-                    "Confirm Exit", MessageBoxButtons.YesNo ) != DialogResult.Yes );
+                e.Cancel = (MessageBox.Show("Are you sure you want to quit?",
+                    "Confirm Exit", MessageBoxButtons.YesNo) != DialogResult.Yes);
             }
-            base.OnClosing( e );
+            base.OnClosing(e);
         }
 
-        protected override void OnUpdateFrame( FrameEventArgs e )
+        protected override void OnUpdateFrame(FrameEventArgs e)
         {
             try
             {
-                if( this.WindowState == OpenTK.WindowState.Minimized || Scr.BlockDrawing )
+                if (this.WindowState == OpenTK.WindowState.Minimized || Scr.BlockDrawing)
                     Scr.SkipUpdate = true;	// no point in bothering to draw
 
                 _Swatch.Stop();
                 double ts = _Swatch.Elapsed.TotalSeconds;
                 _Swatch.Reset();
                 _Swatch.Start();
-                Host.Frame( ts );
+                Host.Frame(ts);
             }
-            catch( EndGameException )
+            catch (EndGameException)
             {
                 // nothing to do
             }
         }
 
-        private static MainForm CreateInstance( Size size, GraphicsMode mode, bool fullScreen )
+        private static MainForm CreateInstance(Size size, GraphicsMode mode, bool fullScreen)
         {
-            if( _Instance != null )
+            if (_Instance != null)
             {
-                throw new Exception( "MainForm instance is already created!" );
+                throw new Exception("MainForm instance is already created!");
             }
-            return new MainForm( size, mode, fullScreen );
+            return new MainForm(size, mode, fullScreen);
         }
 
-        private static void DumpError( Exception ex )
+        private static void DumpError(Exception ex)
         {
             try
             {
-                FileStream fs = new FileStream( DumpFilePath, FileMode.Append, FileAccess.Write, FileShare.Read );
-                using( StreamWriter writer = new StreamWriter( fs ) )
+                FileStream fs = new FileStream(DumpFilePath, FileMode.Append, FileAccess.Write, FileShare.Read);
+                using (StreamWriter writer = new StreamWriter(fs))
                 {
                     writer.WriteLine();
 
                     Exception ex1 = ex;
-                    while( ex1 != null )
+                    while (ex1 != null)
                     {
-                        writer.WriteLine( "[" + DateTime.Now.ToString() + "] Unhandled exception:" );
-                        writer.WriteLine( ex1.Message );
+                        writer.WriteLine("[" + DateTime.Now.ToString() + "] Unhandled exception:");
+                        writer.WriteLine(ex1.Message);
                         writer.WriteLine();
-                        writer.WriteLine( "Stack trace:" );
-                        writer.WriteLine( ex1.StackTrace );
+                        writer.WriteLine("Stack trace:");
+                        writer.WriteLine(ex1.StackTrace);
                         writer.WriteLine();
 
                         ex1 = ex1.InnerException;
                     }
                 }
             }
-            catch( Exception )
+            catch (Exception)
             {
             }
         }
@@ -177,67 +177,67 @@ namespace SharpQuake
             {
                 Host.Shutdown();
             }
-            catch( Exception ex )
+            catch (Exception ex)
             {
-                DumpError( ex );
+                DumpError(ex);
 
-                if( Debugger.IsAttached )
-                    throw new Exception( "Exception in SafeShutdown()!", ex );
+                if (Debugger.IsAttached)
+                    throw new Exception("Exception in SafeShutdown()!", ex);
             }
         }
 
-        private static void HandleException( Exception ex )
+        private static void HandleException(Exception ex)
         {
-            DumpError( ex );
+            DumpError(ex);
 
-            if( Debugger.IsAttached )
-                throw new Exception( "Fatal error!", ex );
+            if (Debugger.IsAttached)
+                throw new Exception("Fatal error!", ex);
 
             Instance.CursorVisible = true;
-            MessageBox.Show( ex.Message );
+            MessageBox.Show(ex.Message);
             SafeShutdown();
         }
 
         [STAThread]
-        private static int Main( string[] args )
+        private static int Main(string[] args)
         {
 #if !DEBUG
             try
             {
 #endif
-                // select display device
-                _DisplayDevice = DisplayDevice.Default;
+            // select display device
+            _DisplayDevice = DisplayDevice.Default;
 
-                if( File.Exists( DumpFilePath ) )
-                    File.Delete( DumpFilePath );
+            if (File.Exists(DumpFilePath))
+                File.Delete(DumpFilePath);
 
-                quakeparms_t parms = new quakeparms_t();
+            quakeparms_t parms = new quakeparms_t();
 
-                parms.basedir = Application.StartupPath;
+            parms.basedir = Application.StartupPath;
 
-                string[] args2 = new string[args.Length + 1];
-                args2[0] = String.Empty;
-                args.CopyTo( args2, 1 );
+            string[] args2 = new string[args.Length + 1];
+            args2[0] = String.Empty;
+            args.CopyTo(args2, 1);
 
-                Common.InitArgv( args2 );
+            Common.InitArgv(args2);
 
-                parms.argv = new string[Common.Argc];
-                Common.Args.CopyTo( parms.argv, 0 );
+            parms.argv = new string[Common.Argc];
+            Common.Args.CopyTo(parms.argv, 0);
 
-                if( Common.HasParam( "-dedicated" ) )
-                    throw new QuakeException( "Dedicated server mode not supported!" );
+            if (Common.HasParam("-dedicated"))
+                throw new QuakeException("Dedicated server mode not supported!");
 
-                Size size = new Size( 1366, 768 );
-                GraphicsMode mode = new GraphicsMode();
-                bool fullScreen = false;
-                using( MainForm form = MainForm.CreateInstance( size, mode, fullScreen ) )
-                {
-                    Con.DPrint( "Host.Init\n" );
-                    Host.Init( parms );
-
-                    form.Run();
-                }
-                Host.Shutdown();
+            Size size = new Size(1366, 768);
+            GraphicsMode mode = new GraphicsMode();
+            bool fullScreen = false;
+            using (MainForm form = MainForm.CreateInstance(size, mode, fullScreen))
+            {
+                Con.DPrint("Host.Init\n");
+                Host.Init(parms);
+                Instance.CursorVisible = false; //hides mouse cursor during main menu on start up
+                form.Run();
+            }
+            Host.Shutdown();
 #if !DEBUG
             }
             catch( QuakeSystemError se )
@@ -252,80 +252,80 @@ namespace SharpQuake
             return 0; // all Ok
         }
 
-        private void Mouse_WheelChanged( object sender, OpenTK.Input.MouseWheelEventArgs e )
+        private void Mouse_WheelChanged(object sender, OpenTK.Input.MouseWheelEventArgs e)
         {
-            if( e.Delta > 0 )
+            if (e.Delta > 0)
             {
-                Key.Event( Key.K_MWHEELUP, true );
-                Key.Event( Key.K_MWHEELUP, false );
+                Key.Event(Key.K_MWHEELUP, true);
+                Key.Event(Key.K_MWHEELUP, false);
             }
             else
             {
-                Key.Event( Key.K_MWHEELDOWN, true );
-                Key.Event( Key.K_MWHEELDOWN, false );
+                Key.Event(Key.K_MWHEELDOWN, true);
+                Key.Event(Key.K_MWHEELDOWN, false);
             }
         }
 
-        private void Mouse_ButtonEvent( object sender, OpenTK.Input.MouseButtonEventArgs e )
+        private void Mouse_ButtonEvent(object sender, OpenTK.Input.MouseButtonEventArgs e)
         {
             _MouseBtnState = 0;
 
-            if( e.Button == MouseButton.Left && e.IsPressed )
+            if (e.Button == MouseButton.Left && e.IsPressed)
                 _MouseBtnState |= 1;
 
-            if( e.Button == MouseButton.Right && e.IsPressed )
+            if (e.Button == MouseButton.Right && e.IsPressed)
                 _MouseBtnState |= 2;
 
-            if( e.Button == MouseButton.Middle && e.IsPressed )
+            if (e.Button == MouseButton.Middle && e.IsPressed)
                 _MouseBtnState |= 4;
 
-            Input.MouseEvent( _MouseBtnState );
+            Input.MouseEvent(_MouseBtnState);
         }
 
-        private void Mouse_Move( object sender, OpenTK.Input.MouseMoveEventArgs e )
+        private void Mouse_Move(object sender, OpenTK.Input.MouseMoveEventArgs e)
         {
-            Input.MouseEvent( _MouseBtnState );
+            Input.MouseEvent(_MouseBtnState);
         }
 
-        private int MapKey( OpenTK.Input.Key srcKey )
+        private int MapKey(OpenTK.Input.Key srcKey)
         {
             int key = (int)srcKey;
             key &= 255;
 
-            if( key >= _KeyTable.Length )
+            if (key >= _KeyTable.Length)
                 return 0;
 
-            if( _KeyTable[key] == 0 )
-                Con.DPrint( "key 0x{0:X} has no translation\n", key );
+            if (_KeyTable[key] == 0)
+                Con.DPrint("key 0x{0:X} has no translation\n", key);
 
             return _KeyTable[key];
         }
 
-        private void Keyboard_KeyUp( object sender, OpenTK.Input.KeyboardKeyEventArgs e )
+        private void Keyboard_KeyUp(object sender, OpenTK.Input.KeyboardKeyEventArgs e)
         {
-            Key.Event( MapKey( e.Key ), false );
+            Key.Event(MapKey(e.Key), false);
         }
 
-        private void Keyboard_KeyDown( object sender, OpenTK.Input.KeyboardKeyEventArgs e )
+        private void Keyboard_KeyDown(object sender, OpenTK.Input.KeyboardKeyEventArgs e)
         {
-            Key.Event( MapKey( e.Key ), true );
+            Key.Event(MapKey(e.Key), true);
         }
 
-        private MainForm( Size size, GraphicsMode mode, bool fullScreen )
-                                                                                                                            : base( size.Width, size.Height, mode, "SharpQuake", fullScreen ? GameWindowFlags.Fullscreen : GameWindowFlags.Default )
+        private MainForm(Size size, GraphicsMode mode, bool fullScreen)
+        : base(size.Width, size.Height, mode, "SharpQuake", fullScreen ? GameWindowFlags.Fullscreen : GameWindowFlags.Default)
         {
-            _Instance = new WeakReference( this );
+            _Instance = new WeakReference(this);
             _Swatch = new Stopwatch();
             this.VSync = VSyncMode.On;
-            this.Icon = Icon.ExtractAssociatedIcon( Application.ExecutablePath );
+            this.Icon = Icon.ExtractAssociatedIcon(Application.ExecutablePath);
 
-            this.KeyDown += new EventHandler<OpenTK.Input.KeyboardKeyEventArgs>( Keyboard_KeyDown );
-            this.KeyUp += new EventHandler<OpenTK.Input.KeyboardKeyEventArgs>( Keyboard_KeyUp );
+            this.KeyDown += new EventHandler<OpenTK.Input.KeyboardKeyEventArgs>(Keyboard_KeyDown);
+            this.KeyUp += new EventHandler<OpenTK.Input.KeyboardKeyEventArgs>(Keyboard_KeyUp);
 
-            this.MouseMove += new EventHandler<OpenTK.Input.MouseMoveEventArgs>( Mouse_Move );
-            this.MouseDown += new EventHandler<OpenTK.Input.MouseButtonEventArgs>( Mouse_ButtonEvent );
-            this.MouseUp += new EventHandler<OpenTK.Input.MouseButtonEventArgs>( Mouse_ButtonEvent );
-            this.MouseWheel += new EventHandler<OpenTK.Input.MouseWheelEventArgs>( Mouse_WheelChanged );
+            this.MouseMove += new EventHandler<OpenTK.Input.MouseMoveEventArgs>(Mouse_Move);
+            this.MouseDown += new EventHandler<OpenTK.Input.MouseButtonEventArgs>(Mouse_ButtonEvent);
+            this.MouseUp += new EventHandler<OpenTK.Input.MouseButtonEventArgs>(Mouse_ButtonEvent);
+            this.MouseWheel += new EventHandler<OpenTK.Input.MouseWheelEventArgs>(Mouse_WheelChanged);
         }
     }
 }
