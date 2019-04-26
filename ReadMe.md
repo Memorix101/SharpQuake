@@ -32,7 +32,7 @@ The `-basedir <directory>` switch can be used to change the default data directo
 
 The original expansion packs can be run using `-rogue` or `-hipnotic` switches if the data is present for it.
 
-Original quake switches apply and can be used.
+Original Quake switches apply and can be used.
 
 Enjoy!
 
