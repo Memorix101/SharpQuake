@@ -1,12 +1,14 @@
-# Description 
+# SharpQuake
+
+### Description 
 
 SharpQuake is [GLQuake](https://github.com/dpteam/GLQuake3D) rewritten in C# using the [OpenTK](https://github.com/opentk/opentk) library.
 
-# Dependencies
+### Dependencies
 * OpenTK 3.0.1
 * [x86 OpenTK Dependencies](https://github.com/opentk/opentk-dependencies/tree/master/x86) (SDL2.dll & libEGL.dll)
   
-# Building
+### Building
 
 **Project is built against and tested for Visual Studio 2017 on .NET 4.7.1.**
 
@@ -22,7 +24,7 @@ The project is set up with windows (x86) as the default platform. (untested) rem
 
 4) **Build solution.**
 
-# Running
+### Running
 
 The `-basedir <directory>` switch can be used to change the default data directory. e.g. `SharpQuake.exe -basedir C:\Quake\`
 
@@ -34,12 +36,12 @@ Original quake switches apply and can be used.
 
 Enjoy!
 
-![sq](https://cloud.githubusercontent.com/assets/1466920/10977605/5d97bd68-83f2-11e5-8d72-26691129cbff.jpg)
+![](https://user-images.githubusercontent.com/1466920/56776265-a7a2d800-67cb-11e9-99dd-e00f69600cf0.png)
 
 
-# Credits
-* Made by **[yurykiselev](https://sourceforge.net/u/yurykiselev/profile/)** and **Uze** and brought to Github by **[Memorix101](https://github.com/Memorix101)** 
+### Credits
+* Made by **[yurykiselev](https://sourceforge.net/u/yurykiselev/profile/)** and **Uze** and brought to Github by **[Memorix101](https://github.com/Memorix101)**
 
 * Updated to .NET 4.7.1 and OpenTK 3.0.1 by Daniel Cornelius (Kerfuffles/NukeAndBeans)
 
-* Engine additions and fixes by **[multiguy18](https://github.com/multiguy18)** 
+* Engine additions and fixes by **[multiguy18](https://github.com/multiguy18)**
