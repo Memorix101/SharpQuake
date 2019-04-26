@@ -6,7 +6,7 @@ SharpQuake is [GLQuake](https://github.com/dpteam/GLQuake3D) rewritten in C# usi
 
 ### Dependencies
 * OpenTK 3.0.1
-* [x86 OpenTK Dependencies](https://github.com/opentk/opentk-dependencies/tree/master/x86) (SDL2.dll & libEGL.dll)
+* [OpenTK Dependencies](https://github.com/opentk/opentk-dependencies/tree/master) (for target architecture)
   
 ### Building
 
@@ -15,16 +15,16 @@ SharpQuake is [GLQuake](https://github.com/dpteam/GLQuake3D) rewritten in C# usi
 1) **Add the OpenTK nuget package with the package manager console in visual studio.**
     - `Install-Package OpenTK -Version 3.0.1`
 
-2) **Add SDL2.dll and libEGL.dll to your output directory (defaults to `<project root>/Quake`).**
-    - See link "x86 OpenTK Dependencies" under Dependencies header above
+2) **Add SDL2.dll and libEGL.dll for your target architecture in your output directory (defaults to `<project root>/Quake`).**
+    - See link "OpenTK Dependencies" under Dependencies header above
 3) **Add ld1, hipnotic, and rogue (minimum ld1) data directories to `<project root>/Quake`.**
     - You only need the `<mod>\pak0.pak`, etc. and `<mod>\config.cfg` files of each directory if copying from a steam install.
-
-The project is set up with windows (x86) as the default platform. (untested) removing the `_WINDOWS` symbol from `project properties > Build > Conditional compilation symbols` should remove this dependency. `GLQUAKE` and `QUAKE_GAME` must be defined.
 
 4) **Build solution.**
 
 ### Running
+
+In case you don't own a copy of Quake you can pruchase it on [GOG.com](https://www.gog.com/game/quake_the_offering), [Steam](https://store.steampowered.com/app/2310/QUAKE/) or use the [shareware version](https://www.moddb.com/games/quake/downloads/quake-shareware-106).
 
 The `-basedir <directory>` switch can be used to change the default data directory. e.g. `SharpQuake.exe -basedir C:\Quake\`
 
@@ -36,8 +36,7 @@ Original quake switches apply and can be used.
 
 Enjoy!
 
-![](https://user-images.githubusercontent.com/1466920/56776265-a7a2d800-67cb-11e9-99dd-e00f69600cf0.png)
-
+![](https://user-images.githubusercontent.com/1466920/56814073-a068e200-683e-11e9-8e90-b75ca617d9ce.png)
 
 ### Credits
 * Made by **[yurykiselev](https://sourceforge.net/u/yurykiselev/profile/)** and **Uze** and brought to Github by **[Memorix101](https://github.com/Memorix101)**
@@ -45,3 +44,5 @@ Enjoy!
 * Updated to .NET 4.7.1 and OpenTK 3.0.1 by **[Daniel Cornelius (Kerfuffles/NukeAndBeans)](https://github.com/Kerfuffles)**
 
 * Engine additions and fixes by **[multiguy18](https://github.com/multiguy18)**
+
+* Original source code on **[SourceForge.net](https://sourceforge.net/projects/sharpquake/)**
