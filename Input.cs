@@ -21,7 +21,6 @@
 /// </copyright>
 
 using System.Drawing;
-using System.Windows.Forms;
 using OpenTK;
 using OpenTK.Input;
 
@@ -106,7 +105,9 @@ namespace SharpQuake
                 //if (mouseparmsvalid)
                 //    restore_spi = SystemParametersInfo (SPI_SETMOUSE, 0, newmouseparms, 0);
 
-                Cursor.Position = Input.WindowCenter;
+                //Cursor.Position = Input.WindowCenter;
+                Mouse.SetPosition(Input.WindowCenter.X, Input.WindowCenter.Y);
+
 
                 //SetCapture(mainwindow);
 
@@ -135,7 +136,7 @@ namespace SharpQuake
         {
             if( _MouseShowToggle )
             {
-                Cursor.Hide();
+                //Cursor.Hide();
                 _MouseShowToggle = false;
             }
         }
@@ -149,7 +150,7 @@ namespace SharpQuake
             {
                 if( !MainForm.IsFullscreen )
                 {
-                    Cursor.Show();
+                    //Cursor.Show();
                 }
                 _MouseShowToggle = true;
             }
@@ -212,7 +213,7 @@ namespace SharpQuake
             if( !_IsMouseActive )
                 return;
 
-            Point current_pos = Cursor.Position;
+            Point current_pos = new Point(Mouse.GetCursorState().X, Mouse.GetCursorState().Y); //Cursor.Position;
             Point window_center = Input.WindowCenter;
 
             int mx = (int)( current_pos.X - window_center.X + _MouseAccum.X );
@@ -252,7 +253,8 @@ namespace SharpQuake
             // if the mouse has moved, force it to the center, so there's room to move
             if( mx != 0 || my != 0 )
             {
-                Cursor.Position = window_center;
+                //Cursor.Position = window_center;
+                Mouse.SetPosition(window_center.X, window_center.Y);
             }
         }
     }

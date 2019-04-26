@@ -24,7 +24,7 @@ SharpQuake is [GLQuake](https://github.com/dpteam/GLQuake3D) rewritten in C# usi
 
 ### Running
 
-In case you don't own a copy of Quake you can pruchase it on [GOG.com](https://www.gog.com/game/quake_the_offering), [Steam](https://store.steampowered.com/app/2310/QUAKE/) or use the [shareware version](https://www.moddb.com/games/quake/downloads/quake-shareware-106).
+In case you don't own a copy of Quake you can pruchase it on [GOG.com](https://www.gog.com/game/quake_the_offering), [Steam](https://store.steampowered.com/app/2310/QUAKE/) or use the [shareware version](https://community.pcgamingwiki.com/files/file/411-quake-shareware-pak/).
 
 The `-basedir <directory>` switch can be used to change the default data directory. e.g. `SharpQuake.exe -basedir C:\Quake\`
 
