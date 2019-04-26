@@ -21,10 +21,10 @@ using System;
 using System.Diagnostics;
 using System.Drawing;
 using System.IO;
-using System.Windows.Forms;
 using OpenTK;
 using OpenTK.Graphics;
 using OpenTK.Input;
+using SDL2;
 
 namespace SharpQuake
 {
@@ -64,7 +64,7 @@ namespace SharpQuake
         {
             get
             {
-                return Path.Combine(Application.LocalUserAppDataPath, "error.txt");
+                return Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "error.txt");
             }
         }
 
@@ -107,11 +107,11 @@ namespace SharpQuake
 
         protected override void OnClosing(System.ComponentModel.CancelEventArgs e)
         {
-            if (this.ConfirmExit)
+            /*if (this.ConfirmExit)
             {
                 e.Cancel = (MessageBox.Show("Are you sure you want to quit?",
                     "Confirm Exit", MessageBoxButtons.YesNo) != DialogResult.Yes);
-            }
+            }*/
             base.OnClosing(e);
         }
 
@@ -194,7 +194,7 @@ namespace SharpQuake
                 throw new Exception("Fatal error!", ex);
 
             Instance.CursorVisible = true;
-            MessageBox.Show(ex.Message);
+            SDL.SDL_ShowSimpleMessageBox(SDL.SDL_MessageBoxFlags.SDL_MESSAGEBOX_ERROR, "Fatal error!", ex.Message, IntPtr.Zero); //MessageBox.Show(ex.Message);
             SafeShutdown();
         }
 
@@ -213,7 +213,7 @@ namespace SharpQuake
 
             quakeparms_t parms = new quakeparms_t();
 
-            parms.basedir = Application.StartupPath;
+            parms.basedir = AppDomain.CurrentDomain.BaseDirectory; //Application.StartupPath;
 
             string[] args2 = new string[args.Length + 1];
             args2[0] = String.Empty;
@@ -227,10 +227,9 @@ namespace SharpQuake
             if (Common.HasParam("-dedicated"))
                 throw new QuakeException("Dedicated server mode not supported!");
 
-            Size size = new Size(1366, 768);
+            Size size = new Size(1280, 720);
             GraphicsMode mode = new GraphicsMode();
-            bool fullScreen = false;
-            using (MainForm form = MainForm.CreateInstance(size, mode, fullScreen))
+            using (MainForm form = MainForm.CreateInstance(size, mode, false))
             {
                 Con.DPrint("Host.Init\n");
                 Host.Init(parms);
@@ -317,7 +316,7 @@ namespace SharpQuake
             _Instance = new WeakReference(this);
             _Swatch = new Stopwatch();
             this.VSync = VSyncMode.On;
-            this.Icon = Icon.ExtractAssociatedIcon(Application.ExecutablePath);
+            //this.Icon = Icon.ExtractAssociatedIcon(AppDomain.CurrentDomain.BaseDirectory); //Application.ExecutablePath
 
             this.KeyDown += new EventHandler<OpenTK.Input.KeyboardKeyEventArgs>(Keyboard_KeyDown);
             this.KeyUp += new EventHandler<OpenTK.Input.KeyboardKeyEventArgs>(Keyboard_KeyUp);
