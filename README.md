@@ -16,7 +16,7 @@ SharpQuake is [GLQuake](https://github.com/dpteam/GLQuake3D) rewritten in C# usi
     - `Install-Package OpenTK -Version 3.0.1`
 
 2) **Add openal32.dll and libEGL.dll for your target architecture in your output directory (defaults to `<project root>/Quake`).**
-    - See link "OpenTK Dependencies" and "SDL2" under Dependencies header above
+    - See link "OpenTK Dependencies" under Dependencies header above
 3) **Add ld1, hipnotic, and rogue (minimum ld1) data directories to `<project root>/Quake`.**
     - You only need the `<mod>\pak0.pak`, etc. and `<mod>\config.cfg` files of each directory if copying from a steam install.
 
