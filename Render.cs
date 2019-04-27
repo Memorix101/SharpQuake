@@ -1313,7 +1313,7 @@ namespace SharpQuake
             {
                 _RefDef.viewangles.Y = (float)( i / 128.0 * 360.0 );
                 RenderView();
-                MainForm.Instance.SwapBuffers();
+                MainWindow.Instance.SwapBuffers();
             }
 
             GL.Finish();

@@ -11,7 +11,7 @@ SharpQuake is [GLQuake](https://github.com/dpteam/GLQuake3D) rewritten in C# usi
   
 ### Building
 
-**Project is built against and tested for Visual Studio 2017 on .NET 4.7.1.**
+**Project is built against and tested for Visual Studio 2019 on .NET 4.7.2**
 
 1) **Add the OpenTK nuget package with the package manager console in visual studio.**
     - `Install-Package OpenTK -Version 3.0.1`

@@ -1,8 +1,5 @@
-[Oo]bj/
-[Bb]in/
-[Qq]uake/
-[Pp]ackages
-.[Vv]s/
-packages.config
 SharpQuake.csproj.user
-OpenTK.dll.config
+packages/
+obj/
+\.vs/
+bin/

@@ -31,7 +31,7 @@
     <BootstrapperEnabled>true</BootstrapperEnabled>
   </PropertyGroup>
   <PropertyGroup>
-    <StartupObject>SharpQuake.MainForm</StartupObject>
+    <StartupObject>SharpQuake.MainWindow</StartupObject>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|AnyCPU'">
     <DebugSymbols>true</DebugSymbols>
@@ -91,7 +91,7 @@
     <Compile Include="HostCmd.cs" />
     <Compile Include="Input.cs" />
     <Compile Include="Keys.cs" />
-    <Compile Include="MainForm.cs" />
+    <Compile Include="MainWindow.cs" />
     <Compile Include="Mathlib.cs" />
     <Compile Include="Menu.cs" />
     <Compile Include="Mesh.cs" />

@@ -190,10 +190,10 @@ namespace SharpQuake
             _InUpdate = true;
             try
             {
-                if( MainForm.Instance != null )
+                if( MainWindow.Instance != null )
                 {
-                    if( ( MainForm.Instance.VSync == VSyncMode.On ) != Vid.Wait )
-                        MainForm.Instance.VSync = ( Vid.Wait ? VSyncMode.On : VSyncMode.Off );
+                    if( ( MainWindow.Instance.VSync == VSyncMode.On ) != Vid.Wait )
+                        MainWindow.Instance.VSync = ( Vid.Wait ? VSyncMode.On : VSyncMode.Off );
                 }
 
                 _VidDef.numpages = 2 + (int)_glTripleBuffer.Value;
@@ -299,7 +299,7 @@ namespace SharpQuake
         /// </summary>
         public static void EndRendering()
         {
-            MainForm form = MainForm.Instance;
+            MainWindow form = MainWindow.Instance;
             if( form == null )
                 return;
 
@@ -509,7 +509,7 @@ namespace SharpQuake
             glWidth = 0;
             glHeight = 0;
 
-            INativeWindow window = MainForm.Instance;
+            INativeWindow window = MainWindow.Instance;
             if( window != null )
             {
                 Size size = window.ClientSize;
