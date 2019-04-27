@@ -40,15 +40,15 @@ The original expansion packs can be run using `-rogue` or `-hipnotic` switches i
 
 Original Quake switches apply and can be used.
 
-Enjoy!
+Enjoy! 🙂
 
 ![](https://user-images.githubusercontent.com/1466920/56814073-a068e200-683e-11e9-8e90-b75ca617d9ce.png)
 
 ### Credits
-* Made by **[yurykiselev](https://sourceforge.net/u/yurykiselev/profile/)** and **Uze** and brought to Github by **[Memorix101](https://github.com/Memorix101)**
+* Made by **[yurykiselev](https://sourceforge.net/u/yurykiselev/profile/)** and brought to Github by **[Memorix101](https://github.com/Memorix101)**
 
 * Updated to .NET 4.7.1 and OpenTK 3.0.1 by **[Daniel Cornelius (Kerfuffles/NukeAndBeans)](https://github.com/Kerfuffles)**
 
-* Engine additions and fixes by **[multiguy18](https://github.com/multiguy18)**
+* Engine additions and fixes by **[multiguy18](https://github.com/multiguy18)** and **[Memorix101](https://github.com/Memorix101)**
 
 * Original source code on **[SourceForge.net](https://sourceforge.net/projects/sharpquake/)**
