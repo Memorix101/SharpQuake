@@ -28,7 +28,7 @@ SharpQuake is [GLQuake](https://github.com/dpteam/GLQuake3D) rewritten in C# usi
 
 In case you don't own a copy of Quake you can purchase it on [GOG.com](https://www.gog.com/game/quake_the_offering), [Steam](https://store.steampowered.com/app/2310/QUAKE/) or use the [shareware version](https://community.pcgamingwiki.com/files/file/411-quake-shareware-pak/).
 
-**As Linux is case-sensitive make sure your folder and file names are lower-case like this `id1` and `pak0.pak` and `pak1.pak` (in case you own the full version).**
+**As Linux is case-sensitive make sure your folder and file names are lower-case like this `id1`, `pak0.pak` and `pak1.pak` (in case you own the full version).**
 
 **macOS / OSX is not official supported as OpenGL on Mac is poorly supported and has been replaced in favour of their own graphics API [Metal](https://en.wikipedia.org/wiki/Metal_(API)).**
 
