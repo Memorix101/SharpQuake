@@ -212,7 +212,7 @@ namespace SharpQuake
         {
             if( !_IsMouseActive )
                 return;
-
+           
             Point current_pos = new Point(Mouse.GetCursorState().X, Mouse.GetCursorState().Y); //Cursor.Position;
             Point window_center = Input.WindowCenter;
 

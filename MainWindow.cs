@@ -24,7 +24,6 @@ using System.IO;
 using OpenTK;
 using OpenTK.Graphics;
 using OpenTK.Input;
-using SDL2;
 
 namespace SharpQuake
 {
@@ -194,58 +193,64 @@ namespace SharpQuake
                 throw new Exception("Fatal error!", ex);
 
             Instance.CursorVisible = true;
-            SDL.SDL_ShowSimpleMessageBox(SDL.SDL_MessageBoxFlags.SDL_MESSAGEBOX_ERROR, "Fatal error!", ex.Message, IntPtr.Zero); //MessageBox.Show(ex.Message);
+            //SDL.SDL_ShowSimpleMessageBox(SDL.SDL_MessageBoxFlags.SDL_MESSAGEBOX_ERROR, "Fatal error!", ex.Message, IntPtr.Zero); //MessageBox.Show(ex.Message);
             SafeShutdown();
         }
 
         [STAThread]
         private static int Main(string[] args)
         {
+            //workaround for SDL2 mouse input issues
+            var options = new ToolkitOptions();
+            options.Backend = PlatformBackend.PreferNative;
+            options.EnableHighResolution = true; //just for testing
+            Toolkit.Init(options);
+
 #if !DEBUG
             try
             {
 #endif
-            // select display device
-            _DisplayDevice = DisplayDevice.Default;
+                // select display device
+                _DisplayDevice = DisplayDevice.Default;
 
-            if (File.Exists(DumpFilePath))
-                File.Delete(DumpFilePath);
+                if (File.Exists(DumpFilePath))
+                    File.Delete(DumpFilePath);
 
-            quakeparms_t parms = new quakeparms_t();
+                quakeparms_t parms = new quakeparms_t();
 
-            parms.basedir = AppDomain.CurrentDomain.BaseDirectory; //Application.StartupPath;
+                parms.basedir = AppDomain.CurrentDomain.BaseDirectory; //Application.StartupPath;
 
-            string[] args2 = new string[args.Length + 1];
-            args2[0] = String.Empty;
-            args.CopyTo(args2, 1);
+                string[] args2 = new string[args.Length + 1];
+                args2[0] = String.Empty;
+                args.CopyTo(args2, 1);
 
-            Common.InitArgv(args2);
+                Common.InitArgv(args2);
 
-            parms.argv = new string[Common.Argc];
-            Common.Args.CopyTo(parms.argv, 0);
+                parms.argv = new string[Common.Argc];
+                Common.Args.CopyTo(parms.argv, 0);
 
-            if (Common.HasParam("-dedicated"))
-                throw new QuakeException("Dedicated server mode not supported!");
+                if (Common.HasParam("-dedicated"))
+                    throw new QuakeException("Dedicated server mode not supported!");
 
-            Size size = new Size(1280, 720);
-            GraphicsMode mode = new GraphicsMode();
-            using (MainWindow form = MainWindow.CreateInstance(size, mode, false))
-            {
-                Con.DPrint("Host.Init\n");
-                Host.Init(parms);
-                Instance.CursorVisible = false; //hides mouse cursor during main menu on start up
-                form.Run();
-            }
-            Host.Shutdown();
+                Size size = new Size(1280, 720);
+                GraphicsMode mode = new GraphicsMode();
+                using (MainWindow form = MainWindow.CreateInstance(size, mode, false))
+                {
+                    Con.DPrint("Host.Init\n");
+                    Host.Init(parms);
+                    Instance.CursorVisible = false; //hides mouse cursor during main menu on start up
+                    form.Run();
+                }
+                Host.Shutdown();
 #if !DEBUG
             }
-            catch( QuakeSystemError se )
+            catch (QuakeSystemError se)
             {
-                HandleException( se );
+                HandleException(se);
             }
-            catch( Exception ex )
+            catch (Exception ex)
             {
-                HandleException( ex );
+                HandleException(ex);
             }
 #endif
             return 0; // all Ok
@@ -316,7 +321,7 @@ namespace SharpQuake
             _Instance = new WeakReference(this);
             _Swatch = new Stopwatch();
             this.VSync = VSyncMode.On;
-            //this.Icon = Icon.ExtractAssociatedIcon(AppDomain.CurrentDomain.BaseDirectory); //Application.ExecutablePath
+            this.Icon = Icon.ExtractAssociatedIcon(AppDomain.CurrentDomain.FriendlyName); //Application.ExecutablePath
 
             this.KeyDown += new EventHandler<OpenTK.Input.KeyboardKeyEventArgs>(Keyboard_KeyDown);
             this.KeyUp += new EventHandler<OpenTK.Input.KeyboardKeyEventArgs>(Keyboard_KeyUp);

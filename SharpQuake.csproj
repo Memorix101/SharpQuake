@@ -119,11 +119,6 @@
     <Compile Include="Sbar.cs" />
     <Compile Include="Screen.cs" />
     <Compile Include="ScreenDraw.cs" />
-    <Compile Include="SDL2-CS\LPUtf8StrMarshaler.cs" />
-    <Compile Include="SDL2-CS\SDL2.cs" />
-    <Compile Include="SDL2-CS\SDL2_image.cs" />
-    <Compile Include="SDL2-CS\SDL2_mixer.cs" />
-    <Compile Include="SDL2-CS\SDL2_ttf.cs" />
     <Compile Include="Server.cs" />
     <Compile Include="ServerMain.cs" />
     <Compile Include="ServerMove.cs" />
