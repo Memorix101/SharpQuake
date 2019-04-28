@@ -29,7 +29,7 @@
 
 namespace SharpQuake
 {
-    internal static class CRC
+    internal static class crc
     {
         private const ushort CRC_INIT_VALUE = 0xffff;
         private const ushort CRC_XOR_VALUE = 0x0000;

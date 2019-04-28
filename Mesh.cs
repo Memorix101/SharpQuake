@@ -28,7 +28,7 @@ using System.Text;
 
 namespace SharpQuake
 {
-    internal static class Mesh
+    internal static class mesh
     {
         private const int MAX_COMMANDS = 8192;
         private const int MAX_STRIP = 128;
@@ -71,7 +71,7 @@ namespace SharpQuake
             string path = Path.ChangeExtension( "glquake/" + Path.GetFileNameWithoutExtension( m.name ), ".ms2" );
 
             DisposableWrapper<BinaryReader> file;
-            Common.FOpenFile( path, out file );
+            common.FOpenFile( path, out file );
             if( file != null )
             {
                 using( file )
@@ -97,8 +97,8 @@ namespace SharpQuake
                 //
                 // save out the cached version
                 //
-                string fullpath = Path.Combine( Common.GameDir, path );
-                Stream fs = Sys.FileOpenWrite( fullpath, true );
+                string fullpath = Path.Combine( common.GameDir, path );
+                Stream fs = sys.FileOpenWrite( fullpath, true );
                 if( fs != null )
                     using( BinaryWriter writer = new BinaryWriter( fs, Encoding.ASCII ) )
                     {

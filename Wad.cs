@@ -40,7 +40,7 @@ namespace SharpQuake
     /// <summary>
     /// W_functions
     /// </summary>
-    internal static class Wad
+    internal static class wad
     {
         public static byte[] Data
         {
@@ -79,9 +79,9 @@ namespace SharpQuake
         // W_LoadWadFile (char *filename)
         public static void LoadWadFile( string filename )
         {
-            _Data = Common.LoadFile( filename );
+            _Data = common.LoadFile( filename );
             if( _Data == null )
-                Sys.Error( "Wad.LoadWadFile: couldn't load {0}", filename );
+                sys.Error( "Wad.LoadWadFile: couldn't load {0}", filename );
 
             if( _Handle.IsAllocated )
             {
@@ -90,14 +90,14 @@ namespace SharpQuake
             _Handle = GCHandle.Alloc( _Data, GCHandleType.Pinned );
             _DataPtr = _Handle.AddrOfPinnedObject();
 
-            wadinfo_t header = Sys.BytesToStructure<wadinfo_t>( _Data, 0 );
+            wadinfo_t header = sys.BytesToStructure<wadinfo_t>( _Data, 0 );
 
             if( header.identification[0] != 'W' || header.identification[1] != 'A' ||
                 header.identification[2] != 'D' || header.identification[3] != '2' )
-                Sys.Error( "Wad file {0} doesn't have WAD2 id\n", filename );
+                sys.Error( "Wad file {0} doesn't have WAD2 id\n", filename );
 
-            int numlumps = Common.LittleLong( header.numlumps );
-            int infotableofs = Common.LittleLong( header.infotableofs );
+            int numlumps = common.LittleLong( header.numlumps );
+            int infotableofs = common.LittleLong( header.infotableofs );
             int lumpInfoSize = Marshal.SizeOf( typeof( lumpinfo_t ) );
 
             _Lumps = new Dictionary<string, lumpinfo_t>( numlumps );
@@ -106,8 +106,8 @@ namespace SharpQuake
             {
                 IntPtr ptr = new IntPtr( _DataPtr.ToInt64() + infotableofs + i * lumpInfoSize );
                 lumpinfo_t lump = (lumpinfo_t)Marshal.PtrToStructure( ptr, typeof( lumpinfo_t ) );
-                lump.filepos = Common.LittleLong( lump.filepos );
-                lump.size = Common.LittleLong( lump.size );
+                lump.filepos = common.LittleLong( lump.filepos );
+                lump.size = common.LittleLong( lump.size );
                 if( lump.type == TYP_QPIC )
                 {
                     ptr = new IntPtr( _DataPtr.ToInt64() + lump.filepos );
@@ -129,7 +129,7 @@ namespace SharpQuake
             }
             else
             {
-                Sys.Error( "W_GetLumpinfo: {0} not found", name );
+                sys.Error( "W_GetLumpinfo: {0} not found", name );
             }
             // We must never be there
             throw new InvalidOperationException( "W_GetLumpinfo: Unreachable code reached!" );
@@ -145,8 +145,8 @@ namespace SharpQuake
         // SwapPic (qpic_t *pic)
         public static void SwapPic( dqpicheader_t pic )
         {
-            pic.width = Common.LittleLong( pic.width );
-            pic.height = Common.LittleLong( pic.height );
+            pic.width = common.LittleLong( pic.width );
+            pic.height = common.LittleLong( pic.height );
         }
     }
 

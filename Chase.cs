@@ -30,7 +30,7 @@ namespace SharpQuake
     /// <summary>
     /// Chase_functions
     /// </summary>
-    internal static class Chase
+    internal static class chase
     {
         /// <summary>
         /// chase_active.value != 0
@@ -43,10 +43,10 @@ namespace SharpQuake
             }
         }
 
-        private static Cvar _Back;// = { "chase_back", "100" };
-        private static Cvar _Up;// = { "chase_up", "16" };
-        private static Cvar _Right;// = { "chase_right", "0" };
-        private static Cvar _Active;// = { "chase_active", "0" };
+        private static cvar _Back;// = { "chase_back", "100" };
+        private static cvar _Up;// = { "chase_up", "16" };
+        private static cvar _Right;// = { "chase_right", "0" };
+        private static cvar _Active;// = { "chase_active", "0" };
         private static Vector3 _Dest;
 
         // Chase_Init
@@ -54,10 +54,10 @@ namespace SharpQuake
         {
             if( _Back == null )
             {
-                _Back = new Cvar( "chase_back", "100" );
-                _Up = new Cvar( "chase_up", "16" );
-                _Right = new Cvar( "chase_right", "0" );
-                _Active = new Cvar( "chase_active", "0" );
+                _Back = new cvar( "chase_back", "100" );
+                _Up = new cvar( "chase_up", "16" );
+                _Right = new cvar( "chase_right", "0" );
+                _Active = new cvar( "chase_active", "0" );
             }
         }
 
@@ -73,37 +73,37 @@ namespace SharpQuake
         {
             // if can't see player, reset
             Vector3 forward, up, right;
-            Mathlib.AngleVectors( ref Client.cl.viewangles, out forward, out right, out up );
+            mathlib.AngleVectors( ref client.cl.viewangles, out forward, out right, out up );
 
             // calc exact destination
-            _Dest = Render.RefDef.vieworg - forward * _Back.Value - right * _Right.Value;
-            _Dest.Z = Render.RefDef.vieworg.Z + _Up.Value;
+            _Dest = render.RefDef.vieworg - forward * _Back.Value - right * _Right.Value;
+            _Dest.Z = render.RefDef.vieworg.Z + _Up.Value;
 
             // find the spot the player is looking at
-            Vector3 dest = Render.RefDef.vieworg + forward * 4096;
+            Vector3 dest = render.RefDef.vieworg + forward * 4096;
 
             Vector3 stop;
-            TraceLine( ref Render.RefDef.vieworg, ref dest, out stop );
+            TraceLine( ref render.RefDef.vieworg, ref dest, out stop );
 
             // calculate pitch to look at the same spot from camera
-            stop -= Render.RefDef.vieworg;
+            stop -= render.RefDef.vieworg;
             float dist;
             Vector3.Dot( ref stop, ref forward, out dist );
             if( dist < 1 )
                 dist = 1;
 
-            Render.RefDef.viewangles.X = (float)( -Math.Atan( stop.Z / dist ) / Math.PI * 180.0 );
+            render.RefDef.viewangles.X = (float)( -Math.Atan( stop.Z / dist ) / Math.PI * 180.0 );
             //r_refdef.viewangles[PITCH] = -atan(stop[2] / dist) / M_PI * 180;
 
             // move towards destination
-            Render.RefDef.vieworg = _Dest; //VectorCopy(chase_dest, r_refdef.vieworg);
+            render.RefDef.vieworg = _Dest; //VectorCopy(chase_dest, r_refdef.vieworg);
         }
 
         private static void TraceLine( ref Vector3 start, ref Vector3 end, out Vector3 impact )
         {
             trace_t trace = new trace_t();
 
-            Server.RecursiveHullCheck( Client.cl.worldmodel.hulls[0], 0, 0, 1, ref start, ref end, trace );
+            server.RecursiveHullCheck( client.cl.worldmodel.hulls[0], 0, 0, 1, ref start, ref end, trace );
 
             impact = trace.endpos; // VectorCopy(trace.endpos, impact);
         }

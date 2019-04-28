@@ -76,7 +76,7 @@ namespace SharpQuake
         public int state;			// low bit is down state
     }
 
-    static partial class Client
+    static partial class client
     {
         public static client_static_t cls
         {
@@ -252,25 +252,25 @@ namespace SharpQuake
         private static lightstyle_t[] _LightStyle = new lightstyle_t[QDef.MAX_LIGHTSTYLES]; // cl_lightstyle
         private static dlight_t[] _DLights = new dlight_t[MAX_DLIGHTS]; // cl_dlights
 
-        private static Cvar _Name;// = { "_cl_name", "player", true };
-        private static Cvar _Color;// = { "_cl_color", "0", true };
-        private static Cvar _ShowNet;// = { "cl_shownet", "0" };	// can be 0, 1, or 2
-        private static Cvar _NoLerp;// = { "cl_nolerp", "0" };
-        private static Cvar _LookSpring;// = { "lookspring", "0", true };
-        private static Cvar _LookStrafe;// = { "lookstrafe", "0", true };
-        private static Cvar _Sensitivity;// = { "sensitivity", "3", true };
-        private static Cvar _MPitch;// = { "m_pitch", "0.022", true };
-        private static Cvar _MYaw;// = { "m_yaw", "0.022", true };
-        private static Cvar _MForward;// = { "m_forward", "1", true };
-        private static Cvar _MSide;// = { "m_side", "0.8", true };
-        private static Cvar _UpSpeed;// = { "cl_upspeed", "200" };
-        private static Cvar _ForwardSpeed;// = { "cl_forwardspeed", "200", true };
-        private static Cvar _BackSpeed;// = { "cl_backspeed", "200", true };
-        private static Cvar _SideSpeed;// = { "cl_sidespeed", "350" };
-        private static Cvar _MoveSpeedKey;// = { "cl_movespeedkey", "2.0" };
-        private static Cvar _YawSpeed;// = { "cl_yawspeed", "140" };
-        private static Cvar _PitchSpeed;// = { "cl_pitchspeed", "150" };
-        private static Cvar _AngleSpeedKey;// = { "cl_anglespeedkey", "1.5" };
+        private static cvar _Name;// = { "_cl_name", "player", true };
+        private static cvar _Color;// = { "_cl_color", "0", true };
+        private static cvar _ShowNet;// = { "cl_shownet", "0" };	// can be 0, 1, or 2
+        private static cvar _NoLerp;// = { "cl_nolerp", "0" };
+        private static cvar _LookSpring;// = { "lookspring", "0", true };
+        private static cvar _LookStrafe;// = { "lookstrafe", "0", true };
+        private static cvar _Sensitivity;// = { "sensitivity", "3", true };
+        private static cvar _MPitch;// = { "m_pitch", "0.022", true };
+        private static cvar _MYaw;// = { "m_yaw", "0.022", true };
+        private static cvar _MForward;// = { "m_forward", "1", true };
+        private static cvar _MSide;// = { "m_side", "0.8", true };
+        private static cvar _UpSpeed;// = { "cl_upspeed", "200" };
+        private static cvar _ForwardSpeed;// = { "cl_forwardspeed", "200", true };
+        private static cvar _BackSpeed;// = { "cl_backspeed", "200", true };
+        private static cvar _SideSpeed;// = { "cl_sidespeed", "350" };
+        private static cvar _MoveSpeedKey;// = { "cl_movespeedkey", "2.0" };
+        private static cvar _YawSpeed;// = { "cl_yawspeed", "140" };
+        private static cvar _PitchSpeed;// = { "cl_pitchspeed", "150" };
+        private static cvar _AngleSpeedKey;// = { "cl_anglespeedkey", "1.5" };
 
         // cl_numvisedicts
         private static entity_t[] _VisEdicts = new entity_t[MAX_VISEDICTS]; // cl_visedicts[MAX_VISEDICTS]
@@ -299,7 +299,7 @@ namespace SharpQuake
 
         public scoreboard_t()
         {
-            this.translations = new byte[Vid.VID_GRADES * 256];
+            this.translations = new byte[vid.VID_GRADES * 256];
         }
     } // scoreboard_t;
 
@@ -409,7 +409,7 @@ namespace SharpQuake
 
         public client_static_t()
         {
-            this.demos = new string[Client.MAX_DEMOS];
+            this.demos = new string[client.MAX_DEMOS];
             this.message = new MsgWriter( 1024 ); // like in Client_Init()
         }
     } // client_static_t;

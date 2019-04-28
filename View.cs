@@ -37,7 +37,7 @@ namespace SharpQuake
     /// <summary>
     /// V_functions
     /// </summary>
-    internal static class View
+    internal static class view
     {
         public static float Crosshair
         {
@@ -58,42 +58,42 @@ namespace SharpQuake
         public static Color4 Blend;
         private static readonly Vector3 SmallOffset = Vector3.One / 32f;
 
-        private static Cvar _LcdX; // = { "lcd_x", "0" };
-        private static Cvar _LcdYaw; // = { "lcd_yaw", "0" };
+        private static cvar _LcdX; // = { "lcd_x", "0" };
+        private static cvar _LcdYaw; // = { "lcd_yaw", "0" };
 
-        private static Cvar _ScrOfsX; // = { "scr_ofsx", "0", false };
-        private static Cvar _ScrOfsY; // = { "scr_ofsy", "0", false };
-        private static Cvar _ScrOfsZ; // = { "scr_ofsz", "0", false };
+        private static cvar _ScrOfsX; // = { "scr_ofsx", "0", false };
+        private static cvar _ScrOfsY; // = { "scr_ofsy", "0", false };
+        private static cvar _ScrOfsZ; // = { "scr_ofsz", "0", false };
 
-        private static Cvar _ClRollSpeed; // = { "cl_rollspeed", "200" };
-        private static Cvar _ClRollAngle; // = { "cl_rollangle", "2.0" };
+        private static cvar _ClRollSpeed; // = { "cl_rollspeed", "200" };
+        private static cvar _ClRollAngle; // = { "cl_rollangle", "2.0" };
 
-        private static Cvar _ClBob; // = { "cl_bob", "0.02", false };
-        private static Cvar _ClBobCycle; // = { "cl_bobcycle", "0.6", false };
-        private static Cvar _ClBobUp; // = { "cl_bobup", "0.5", false };
+        private static cvar _ClBob; // = { "cl_bob", "0.02", false };
+        private static cvar _ClBobCycle; // = { "cl_bobcycle", "0.6", false };
+        private static cvar _ClBobUp; // = { "cl_bobup", "0.5", false };
 
-        private static Cvar _KickTime; // = { "v_kicktime", "0.5", false };
-        private static Cvar _KickRoll; // = { "v_kickroll", "0.6", false };
-        private static Cvar _KickPitch; // = { "v_kickpitch", "0.6", false };
+        private static cvar _KickTime; // = { "v_kicktime", "0.5", false };
+        private static cvar _KickRoll; // = { "v_kickroll", "0.6", false };
+        private static cvar _KickPitch; // = { "v_kickpitch", "0.6", false };
 
-        private static Cvar _IYawCycle; // = { "v_iyaw_cycle", "2", false };
-        private static Cvar _IRollCycle; // = { "v_iroll_cycle", "0.5", false };
-        private static Cvar _IPitchCycle;// = { "v_ipitch_cycle", "1", false };
-        private static Cvar _IYawLevel;// = { "v_iyaw_level", "0.3", false };
-        private static Cvar _IRollLevel;// = { "v_iroll_level", "0.1", false };
-        private static Cvar _IPitchLevel;// = { "v_ipitch_level", "0.3", false };
+        private static cvar _IYawCycle; // = { "v_iyaw_cycle", "2", false };
+        private static cvar _IRollCycle; // = { "v_iroll_cycle", "0.5", false };
+        private static cvar _IPitchCycle;// = { "v_ipitch_cycle", "1", false };
+        private static cvar _IYawLevel;// = { "v_iyaw_level", "0.3", false };
+        private static cvar _IRollLevel;// = { "v_iroll_level", "0.1", false };
+        private static cvar _IPitchLevel;// = { "v_ipitch_level", "0.3", false };
 
-        private static Cvar _IdleScale;// = { "v_idlescale", "0", false };
+        private static cvar _IdleScale;// = { "v_idlescale", "0", false };
 
-        private static Cvar _Crosshair;// = { "crosshair", "0", true };
-        private static Cvar _ClCrossX;// = { "cl_crossx", "0", false };
-        private static Cvar _ClCrossY;// = { "cl_crossy", "0", false };
+        private static cvar _Crosshair;// = { "crosshair", "0", true };
+        private static cvar _ClCrossX;// = { "cl_crossx", "0", false };
+        private static cvar _ClCrossY;// = { "cl_crossy", "0", false };
 
-        private static Cvar _glCShiftPercent;// = { "gl_cshiftpercent", "100", false };
+        private static cvar _glCShiftPercent;// = { "gl_cshiftpercent", "100", false };
 
-        private static Cvar _Gamma;// = { "gamma", "1", true };
-        private static Cvar _CenterMove;// = { "v_centermove", "0.15", false };
-        private static Cvar _CenterSpeed;// = { "v_centerspeed", "500" };
+        private static cvar _Gamma;// = { "gamma", "1", true };
+        private static cvar _CenterMove;// = { "v_centermove", "0.15", false };
+        private static cvar _CenterSpeed;// = { "v_centerspeed", "500" };
 
         private static byte[] _GammaTable; // [256];	// palette is sent through this
         private static cshift_t _CShift_empty;// = { { 130, 80, 50 }, 0 };
@@ -120,50 +120,50 @@ namespace SharpQuake
         // V_Init
         public static void Init()
         {
-            Cmd.Add( "v_cshift", CShift_f );
-            Cmd.Add( "bf", BonusFlash_f );
-            Cmd.Add( "centerview", StartPitchDrift );
+            cmd.Add( "v_cshift", CShift_f );
+            cmd.Add( "bf", BonusFlash_f );
+            cmd.Add( "centerview", StartPitchDrift );
 
             if( _LcdX == null )
             {
-                _LcdX = new Cvar( "lcd_x", "0" );
-                _LcdYaw = new Cvar( "lcd_yaw", "0" );
+                _LcdX = new cvar( "lcd_x", "0" );
+                _LcdYaw = new cvar( "lcd_yaw", "0" );
 
-                _ScrOfsX = new Cvar( "scr_ofsx", "0", false );
-                _ScrOfsY = new Cvar( "scr_ofsy", "0", false );
-                _ScrOfsZ = new Cvar( "scr_ofsz", "0", false );
+                _ScrOfsX = new cvar( "scr_ofsx", "0", false );
+                _ScrOfsY = new cvar( "scr_ofsy", "0", false );
+                _ScrOfsZ = new cvar( "scr_ofsz", "0", false );
 
-                _ClRollSpeed = new Cvar( "cl_rollspeed", "200" );
-                _ClRollAngle = new Cvar( "cl_rollangle", "2.0" );
+                _ClRollSpeed = new cvar( "cl_rollspeed", "200" );
+                _ClRollAngle = new cvar( "cl_rollangle", "2.0" );
 
-                _ClBob = new Cvar( "cl_bob", "0.02", false );
-                _ClBobCycle = new Cvar( "cl_bobcycle", "0.6", false );
-                _ClBobUp = new Cvar( "cl_bobup", "0.5", false );
+                _ClBob = new cvar( "cl_bob", "0.02", false );
+                _ClBobCycle = new cvar( "cl_bobcycle", "0.6", false );
+                _ClBobUp = new cvar( "cl_bobup", "0.5", false );
 
-                _KickTime = new Cvar( "v_kicktime", "0.5", false );
-                _KickRoll = new Cvar( "v_kickroll", "0.6", false );
-                _KickPitch = new Cvar( "v_kickpitch", "0.6", false );
+                _KickTime = new cvar( "v_kicktime", "0.5", false );
+                _KickRoll = new cvar( "v_kickroll", "0.6", false );
+                _KickPitch = new cvar( "v_kickpitch", "0.6", false );
 
-                _IYawCycle = new Cvar( "v_iyaw_cycle", "2", false );
-                _IRollCycle = new Cvar( "v_iroll_cycle", "0.5", false );
-                _IPitchCycle = new Cvar( "v_ipitch_cycle", "1", false );
-                _IYawLevel = new Cvar( "v_iyaw_level", "0.3", false );
-                _IRollLevel = new Cvar( "v_iroll_level", "0.1", false );
-                _IPitchLevel = new Cvar( "v_ipitch_level", "0.3", false );
+                _IYawCycle = new cvar( "v_iyaw_cycle", "2", false );
+                _IRollCycle = new cvar( "v_iroll_cycle", "0.5", false );
+                _IPitchCycle = new cvar( "v_ipitch_cycle", "1", false );
+                _IYawLevel = new cvar( "v_iyaw_level", "0.3", false );
+                _IRollLevel = new cvar( "v_iroll_level", "0.1", false );
+                _IPitchLevel = new cvar( "v_ipitch_level", "0.3", false );
 
-                _IdleScale = new Cvar( "v_idlescale", "0", false );
+                _IdleScale = new cvar( "v_idlescale", "0", false );
 
-                _Crosshair = new Cvar( "crosshair", "0", true );
-                _ClCrossX = new Cvar( "cl_crossx", "0", false );
-                _ClCrossY = new Cvar( "cl_crossy", "0", false );
+                _Crosshair = new cvar( "crosshair", "0", true );
+                _ClCrossX = new cvar( "cl_crossx", "0", false );
+                _ClCrossY = new cvar( "cl_crossy", "0", false );
 
-                _glCShiftPercent = new Cvar( "gl_cshiftpercent", "100", false );
+                _glCShiftPercent = new cvar( "gl_cshiftpercent", "100", false );
 
-                _CenterMove = new Cvar( "v_centermove", "0.15", false );
-                _CenterSpeed = new Cvar( "v_centerspeed", "500" );
+                _CenterMove = new cvar( "v_centermove", "0.15", false );
+                _CenterSpeed = new cvar( "v_centerspeed", "500" );
 
                 BuildGammaTable( 1.0f );	// no gamma yet
-                _Gamma = new Cvar( "gamma", "1", true );
+                _Gamma = new cvar( "gamma", "1", true );
             }
         }
 
@@ -178,22 +178,22 @@ namespace SharpQuake
                 return;
 
             // don't allow cheats in multiplayer
-            if( Client.cl.maxclients > 1 )
+            if( client.cl.maxclients > 1 )
             {
-                Cvar.Set( "scr_ofsx", "0" );
-                Cvar.Set( "scr_ofsy", "0" );
-                Cvar.Set( "scr_ofsz", "0" );
+                cvar.Set( "scr_ofsx", "0" );
+                cvar.Set( "scr_ofsy", "0" );
+                cvar.Set( "scr_ofsz", "0" );
             }
 
-            if( Client.cl.intermission > 0 )
+            if( client.cl.intermission > 0 )
             {
                 // intermission / finale rendering
                 CalcIntermissionRefDef();
             }
-            else if( !Client.cl.paused )
+            else if( !client.cl.paused )
                 CalcRefDef();
 
-            Render.PushDlights();
+            render.PushDlights();
 
             if( _LcdX.Value != 0 )
             {
@@ -201,7 +201,7 @@ namespace SharpQuake
                 // render two interleaved views
                 //
                 viddef_t vid = Scr.vid;
-                refdef_t rdef = Render.RefDef;
+                refdef_t rdef = render.RefDef;
 
                 vid.rowbytes <<= 1;
                 vid.aspect *= 0.5f;
@@ -209,16 +209,16 @@ namespace SharpQuake
                 rdef.viewangles.Y -= _LcdYaw.Value;
                 rdef.vieworg -= _Right * _LcdX.Value;
 
-                Render.RenderView();
+                render.RenderView();
 
                 // ???????? vid.buffer += vid.rowbytes>>1;
 
-                Render.PushDlights();
+                render.PushDlights();
 
                 rdef.viewangles.Y += _LcdYaw.Value * 2;
                 rdef.vieworg += _Right * _LcdX.Value * 2;
 
-                Render.RenderView();
+                render.RenderView();
 
                 // ????????? vid.buffer -= vid.rowbytes>>1;
 
@@ -229,7 +229,7 @@ namespace SharpQuake
             }
             else
             {
-                Render.RenderView();
+                render.RenderView();
             }
         }
 
@@ -239,7 +239,7 @@ namespace SharpQuake
         /// </summary>
         public static float CalcRoll( ref Vector3 angles, ref Vector3 velocity )
         {
-            Mathlib.AngleVectors( ref angles, out _Forward, out _Right, out _Up );
+            mathlib.AngleVectors( ref angles, out _Forward, out _Right, out _Up );
             float side = Vector3.Dot( velocity, _Right );
             float sign = side < 0 ? -1 : 1;
             side = Math.Abs( side );
@@ -260,7 +260,7 @@ namespace SharpQuake
 
             bool isnew = false;
 
-            client_state_t cl = Client.cl;
+            client_state_t cl = client.cl;
             for( int i = 0; i < ColorShift.NUM_CSHIFTS; i++ )
             {
                 if( cl.cshifts[i].percent != cl.prev_cshifts[i].percent )
@@ -277,12 +277,12 @@ namespace SharpQuake
             }
 
             // drop the damage value
-            cl.cshifts[ColorShift.CSHIFT_DAMAGE].percent -= (int)( Host.FrameTime * 150 );
+            cl.cshifts[ColorShift.CSHIFT_DAMAGE].percent -= (int)( host.FrameTime * 150 );
             if( cl.cshifts[ColorShift.CSHIFT_DAMAGE].percent < 0 )
                 cl.cshifts[ColorShift.CSHIFT_DAMAGE].percent = 0;
 
             // drop the bonus value
-            cl.cshifts[ColorShift.CSHIFT_BONUS].percent -= (int)( Host.FrameTime * 100 );
+            cl.cshifts[ColorShift.CSHIFT_BONUS].percent -= (int)( host.FrameTime * 100 );
             if( cl.cshifts[ColorShift.CSHIFT_BONUS].percent < 0 )
                 cl.cshifts[ColorShift.CSHIFT_BONUS].percent = 0;
 
@@ -315,7 +315,7 @@ namespace SharpQuake
                 _Ramps[2, i] = _GammaTable[ib];
             }
 
-            byte[] basepal = Host.BasePal;
+            byte[] basepal = host.BasePal;
             int offset = 0;
             byte[] newpal = new byte[768];
 
@@ -338,7 +338,7 @@ namespace SharpQuake
         // V_StartPitchDrift
         public static void StartPitchDrift()
         {
-            client_state_t cl = Client.cl;
+            client_state_t cl = client.cl;
             if( cl.laststop == cl.time )
             {
                 return; // something else is keeping it from drifting
@@ -354,7 +354,7 @@ namespace SharpQuake
         // V_StopPitchDrift
         public static void StopPitchDrift()
         {
-            client_state_t cl = Client.cl;
+            client_state_t cl = client.cl;
             cl.laststop = cl.time;
             cl.nodrift = true;
             cl.pitchvel = 0;
@@ -370,7 +370,7 @@ namespace SharpQuake
             float b = 0;
             float a = 0;
 
-            cshift_t[] cshifts = Client.cl.cshifts;
+            cshift_t[] cshifts = client.cl.cshifts;
 
             if( _glCShiftPercent.Value != 0 )
             {
@@ -403,15 +403,15 @@ namespace SharpQuake
         // V_ParseDamage
         public static void ParseDamage()
         {
-            int armor = Net.Reader.ReadByte();
-            int blood = Net.Reader.ReadByte();
-            Vector3 from = Net.Reader.ReadCoords();
+            int armor = net.Reader.ReadByte();
+            int blood = net.Reader.ReadByte();
+            Vector3 from = net.Reader.ReadCoords();
 
             float count = blood * 0.5f + armor * 0.5f;
             if( count < 10 )
                 count = 10;
 
-            client_state_t cl = Client.cl;
+            client_state_t cl = client.cl;
             cl.faceanimtime = (float)cl.time + 0.2f; // put sbar face into pain frame
 
             cl.cshifts[ColorShift.CSHIFT_DAMAGE].percent += (int)( 3 * count );
@@ -442,13 +442,13 @@ namespace SharpQuake
             //
             // calculate view angle kicks
             //
-            entity_t ent = Client.Entities[cl.viewentity];
+            entity_t ent = client.Entities[cl.viewentity];
 
             from -= ent.origin; //  VectorSubtract (from, ent->origin, from);
-            Mathlib.Normalize( ref from );
+            mathlib.Normalize( ref from );
 
             Vector3 forward, right, up;
-            Mathlib.AngleVectors( ref ent.angles, out forward, out right, out up );
+            mathlib.AngleVectors( ref ent.angles, out forward, out right, out up );
 
             float side = Vector3.Dot( from, right );
 
@@ -470,19 +470,19 @@ namespace SharpQuake
             {
                 case Contents.CONTENTS_EMPTY:
                 case Contents.CONTENTS_SOLID:
-                    Client.cl.cshifts[ColorShift.CSHIFT_CONTENTS] = _CShift_empty;
+                    client.cl.cshifts[ColorShift.CSHIFT_CONTENTS] = _CShift_empty;
                     break;
 
                 case Contents.CONTENTS_LAVA:
-                    Client.cl.cshifts[ColorShift.CSHIFT_CONTENTS] = _CShift_lava;
+                    client.cl.cshifts[ColorShift.CSHIFT_CONTENTS] = _CShift_lava;
                     break;
 
                 case Contents.CONTENTS_SLIME:
-                    Client.cl.cshifts[ColorShift.CSHIFT_CONTENTS] = _CShift_slime;
+                    client.cl.cshifts[ColorShift.CSHIFT_CONTENTS] = _CShift_slime;
                     break;
 
                 default:
-                    Client.cl.cshifts[ColorShift.CSHIFT_CONTENTS] = _CShift_water;
+                    client.cl.cshifts[ColorShift.CSHIFT_CONTENTS] = _CShift_water;
                     break;
             }
         }
@@ -514,10 +514,10 @@ namespace SharpQuake
         // V_cshift_f
         private static void CShift_f()
         {
-            int.TryParse( Cmd.Argv( 1 ), out _CShift_empty.destcolor[0] );
-            int.TryParse( Cmd.Argv( 2 ), out _CShift_empty.destcolor[1] );
-            int.TryParse( Cmd.Argv( 3 ), out _CShift_empty.destcolor[2] );
-            int.TryParse( Cmd.Argv( 4 ), out _CShift_empty.percent );
+            int.TryParse( cmd.Argv( 1 ), out _CShift_empty.destcolor[0] );
+            int.TryParse( cmd.Argv( 2 ), out _CShift_empty.destcolor[1] );
+            int.TryParse( cmd.Argv( 3 ), out _CShift_empty.destcolor[2] );
+            int.TryParse( cmd.Argv( 4 ), out _CShift_empty.percent );
         }
 
         // V_BonusFlash_f
@@ -525,7 +525,7 @@ namespace SharpQuake
         // When you run over an item, the server sends this command
         private static void BonusFlash_f()
         {
-            client_state_t cl = Client.cl;
+            client_state_t cl = client.cl;
             cl.cshifts[ColorShift.CSHIFT_BONUS].destcolor[0] = 215;
             cl.cshifts[ColorShift.CSHIFT_BONUS].destcolor[1] = 186;
             cl.cshifts[ColorShift.CSHIFT_BONUS].destcolor[2] = 69;
@@ -536,12 +536,12 @@ namespace SharpQuake
         private static void CalcIntermissionRefDef()
         {
             // ent is the player model (visible when out of body)
-            entity_t ent = Client.ViewEntity;
+            entity_t ent = client.ViewEntity;
 
             // view is the weapon model (only visible from inside body)
-            entity_t view = Client.ViewEnt;
+            entity_t view = client.ViewEnt;
 
-            refdef_t rdef = Render.RefDef;
+            refdef_t rdef = render.RefDef;
             rdef.vieworg = ent.origin;
             rdef.viewangles = ent.angles;
             view.model = null;
@@ -556,19 +556,19 @@ namespace SharpQuake
             DriftPitch();
 
             // ent is the player model (visible when out of body)
-            entity_t ent = Client.ViewEntity;
+            entity_t ent = client.ViewEntity;
             // view is the weapon model (only visible from inside body)
-            entity_t view = Client.ViewEnt;
+            entity_t view = client.ViewEnt;
 
             // transform the view offset by the model's matrix to get the offset from
             // model origin for the view
-            ent.angles.Y = Client.cl.viewangles.Y;	// the model should face the view dir
-            ent.angles.X = -Client.cl.viewangles.X;	// the model should face the view dir
+            ent.angles.Y = client.cl.viewangles.Y;	// the model should face the view dir
+            ent.angles.X = -client.cl.viewangles.X;	// the model should face the view dir
 
             float bob = CalcBob();
 
-            refdef_t rdef = Render.RefDef;
-            client_state_t cl = Client.cl;
+            refdef_t rdef = render.RefDef;
+            client_state_t cl = client.cl;
 
             // refresh position
             rdef.vieworg = ent.origin;
@@ -588,7 +588,7 @@ namespace SharpQuake
             angles.X = -angles.X; // because entity pitches are actually backward
 
             Vector3 forward, right, up;
-            Mathlib.AngleVectors( ref angles, out forward, out right, out up );
+            mathlib.AngleVectors( ref angles, out forward, out right, out up );
 
             rdef.vieworg += forward * _ScrOfsX.Value + right * _ScrOfsY.Value + up * _ScrOfsZ.Value;
 
@@ -642,8 +642,8 @@ namespace SharpQuake
             else
                 _OldZ = ent.origin.Z;
 
-            if( Chase.IsActive )
-                Chase.Update();
+            if( chase.IsActive )
+                chase.Update();
         }
 
         // V_AddIdle
@@ -651,12 +651,12 @@ namespace SharpQuake
         // Idle swaying
         private static void AddIdle( float idleScale )
         {
-            double time = Client.cl.time;
+            double time = client.cl.time;
             Vector3 v = new Vector3(
                 (float)( Math.Sin( time * _IPitchCycle.Value ) * _IPitchLevel.Value ),
                 (float)( Math.Sin( time * _IYawCycle.Value ) * _IYawLevel.Value ),
                 (float)( Math.Sin( time * _IRollCycle.Value ) * _IRollLevel.Value ) );
-            Render.RefDef.viewangles += v * idleScale;
+            render.RefDef.viewangles += v * idleScale;
         }
 
         // V_DriftPitch
@@ -670,8 +670,8 @@ namespace SharpQuake
         // lookspring is non 0, or when
         private static void DriftPitch()
         {
-            client_state_t cl = Client.cl;
-            if( Host.NoClipAngleHack || !cl.onground || Client.cls.demoplayback )
+            client_state_t cl = client.cl;
+            if( host.NoClipAngleHack || !cl.onground || client.cls.demoplayback )
             {
                 cl.driftmove = 0;
                 cl.pitchvel = 0;
@@ -681,10 +681,10 @@ namespace SharpQuake
             // don't count small mouse motion
             if( cl.nodrift )
             {
-                if( Math.Abs( cl.cmd.forwardmove ) < Client.ForwardSpeed )
+                if( Math.Abs( cl.cmd.forwardmove ) < client.ForwardSpeed )
                     cl.driftmove = 0;
                 else
-                    cl.driftmove += (float)Host.FrameTime;
+                    cl.driftmove += (float)host.FrameTime;
 
                 if( cl.driftmove > _CenterMove.Value )
                 {
@@ -700,8 +700,8 @@ namespace SharpQuake
                 return;
             }
 
-            float move = (float)Host.FrameTime * cl.pitchvel;
-            cl.pitchvel += (float)Host.FrameTime * _CenterSpeed.Value;
+            float move = (float)host.FrameTime * cl.pitchvel;
+            cl.pitchvel += (float)host.FrameTime * _CenterSpeed.Value;
 
             if( delta > 0 )
             {
@@ -726,7 +726,7 @@ namespace SharpQuake
         // V_CalcBob
         private static float CalcBob()
         {
-            client_state_t cl = Client.cl;
+            client_state_t cl = client.cl;
             float bobCycle = _ClBobCycle.Value;
             float bobUp = _ClBobUp.Value;
             float cycle = (float)( cl.time - (int)( cl.time / bobCycle ) * bobCycle );
@@ -753,16 +753,16 @@ namespace SharpQuake
         // Roll is induced by movement and damage
         private static void CalcViewRoll()
         {
-            client_state_t cl = Client.cl;
-            refdef_t rdef = Render.RefDef;
-            float side = CalcRoll( ref Client.ViewEntity.angles, ref cl.velocity );
+            client_state_t cl = client.cl;
+            refdef_t rdef = render.RefDef;
+            float side = CalcRoll( ref client.ViewEntity.angles, ref cl.velocity );
             rdef.viewangles.Z += side;
 
             if( _DmgTime > 0 )
             {
                 rdef.viewangles.Z += _DmgTime / _KickTime.Value * _DmgRoll;
                 rdef.viewangles.X += _DmgTime / _KickTime.Value * _DmgPitch;
-                _DmgTime -= (float)Host.FrameTime;
+                _DmgTime -= (float)host.FrameTime;
             }
 
             if( cl.stats[QStats.STAT_HEALTH] <= 0 )
@@ -775,11 +775,11 @@ namespace SharpQuake
         // V_BoundOffsets
         private static void BoundOffsets()
         {
-            entity_t ent = Client.ViewEntity;
+            entity_t ent = client.ViewEntity;
 
             // absolutely bound refresh reletive to entity clipping hull
             // so the view can never be inside a solid wall
-            refdef_t rdef = Render.RefDef;
+            refdef_t rdef = render.RefDef;
             if( rdef.vieworg.X < ent.origin.X - 14 )
                 rdef.vieworg.X = ent.origin.X - 14;
             else if( rdef.vieworg.X > ent.origin.X + 14 )
@@ -801,7 +801,7 @@ namespace SharpQuake
         /// </summary>
         private static void CalcGunAngle()
         {
-            refdef_t rdef = Render.RefDef;
+            refdef_t rdef = render.RefDef;
             float yaw = rdef.viewangles.Y;
             float pitch = -rdef.viewangles.X;
 
@@ -815,7 +815,7 @@ namespace SharpQuake
                 pitch = 10;
             if( pitch < -10 )
                 pitch = -10;
-            float move = (float)Host.FrameTime * 20;
+            float move = (float)host.FrameTime * 20;
             if( yaw > _OldYaw )
             {
                 if( _OldYaw + move < yaw )
@@ -841,7 +841,7 @@ namespace SharpQuake
             _OldYaw = yaw;
             _OldPitch = pitch;
 
-            client_state_t cl = Client.cl;
+            client_state_t cl = client.cl;
             cl.viewent.angles.Y = rdef.viewangles.Y + yaw;
             cl.viewent.angles.X = -( rdef.viewangles.X + pitch );
 
@@ -854,7 +854,7 @@ namespace SharpQuake
         // angledelta()
         private static float AngleDelta( float a )
         {
-            a = Mathlib.AngleMod( a );
+            a = mathlib.AngleMod( a );
             if( a > 180 )
                 a -= 360;
             return a;
@@ -863,7 +863,7 @@ namespace SharpQuake
         // V_CalcPowerupCshift
         private static void CalcPowerupCshift()
         {
-            client_state_t cl = Client.cl;
+            client_state_t cl = client.cl;
             if( cl.HasItems( QItems.IT_QUAD ) )
             {
                 cl.cshifts[ColorShift.CSHIFT_POWERUP].destcolor[0] = 0;
@@ -917,7 +917,7 @@ namespace SharpQuake
             //	gammaworks = SetDeviceGammaRamp (maindc, ramps);
         }
 
-        static View()
+        static view()
         {
             _GammaTable = new byte[256];
 

@@ -30,7 +30,7 @@ namespace SharpQuake
         Loading, Active
     }
 
-    static partial class Server
+    static partial class server
     {
         public static server_t sv
         {
@@ -83,16 +83,16 @@ namespace SharpQuake
         public const int NUM_PING_TIMES = 16;
         public const int NUM_SPAWN_PARMS = 16;
 
-        private static Cvar _Friction;// = { "sv_friction", "4", false, true };
-        private static Cvar _EdgeFriction;// = { "edgefriction", "2" };
-        private static Cvar _StopSpeed;// = { "sv_stopspeed", "100" };
-        private static Cvar _Gravity;// = { "sv_gravity", "800", false, true };
-        private static Cvar _MaxVelocity;// = { "sv_maxvelocity", "2000" };
-        private static Cvar _NoStep;// = { "sv_nostep", "0" };
-        private static Cvar _MaxSpeed;// = { "sv_maxspeed", "320", false, true };
-        private static Cvar _Accelerate;// = { "sv_accelerate", "10" };
-        private static Cvar _Aim;// = { "sv_aim", "0.93" };
-        private static Cvar _IdealPitchScale;// = { "sv_idealpitchscale", "0.8" };
+        private static cvar _Friction;// = { "sv_friction", "4", false, true };
+        private static cvar _EdgeFriction;// = { "edgefriction", "2" };
+        private static cvar _StopSpeed;// = { "sv_stopspeed", "100" };
+        private static cvar _Gravity;// = { "sv_gravity", "800", false, true };
+        private static cvar _MaxVelocity;// = { "sv_maxvelocity", "2000" };
+        private static cvar _NoStep;// = { "sv_nostep", "0" };
+        private static cvar _MaxSpeed;// = { "sv_maxspeed", "320", false, true };
+        private static cvar _Accelerate;// = { "sv_accelerate", "10" };
+        private static cvar _Aim;// = { "sv_aim", "0.93" };
+        private static cvar _IdealPitchScale;// = { "sv_idealpitchscale", "0.8" };
 
         private static server_t _Server;
         private static server_static_t _ServerStatic;
@@ -105,7 +105,7 @@ namespace SharpQuake
         public static edict_t EdictNum( int n )
         {
             if( n < 0 || n >= _Server.max_edicts )
-                Sys.Error( "EDICT_NUM: bad number {0}", n );
+                sys.Error( "EDICT_NUM: bad number {0}", n );
             return _Server.edicts[n];
         }
 
@@ -135,7 +135,7 @@ namespace SharpQuake
             }
 
             if( i == QDef.MAX_EDICTS )
-                Sys.Error( "ED_Alloc: no free edicts" );
+                sys.Error( "ED_Alloc: no free edicts" );
 
             sv.num_edicts++;
             e = EdictNum( i );
@@ -183,7 +183,7 @@ namespace SharpQuake
         public static edict_t ProgToEdict( int e )
         {
             if( e < 0 || e > sv.edicts.Length )
-                Sys.Error( "ProgToEdict: Bad prog!" );
+                sys.Error( "ProgToEdict: Bad prog!" );
             return sv.edicts[e];
         }
 
@@ -195,11 +195,11 @@ namespace SharpQuake
             int i = Array.IndexOf( sv.edicts, e ); // todo: optimize this
 
             if( i < 0 )
-                Sys.Error( "NUM_FOR_EDICT: bad pointer" );
+                sys.Error( "NUM_FOR_EDICT: bad pointer" );
             return i;
         }
 
-        static Server()
+        static server()
         {
             _Server = new server_t();
             _ServerStatic = new server_static_t();
@@ -444,8 +444,8 @@ namespace SharpQuake
 
         public client_t()
         {
-            this.ping_times = new float[Server.NUM_PING_TIMES];
-            this.spawn_parms = new float[Server.NUM_SPAWN_PARMS];
+            this.ping_times = new float[server.NUM_PING_TIMES];
+            this.spawn_parms = new float[server.NUM_SPAWN_PARMS];
             this.message = new MsgWriter( QDef.MAX_MSGLEN );
         }
     }// client_t;

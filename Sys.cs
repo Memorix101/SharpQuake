@@ -28,7 +28,7 @@ using System.Text;
 
 namespace SharpQuake
 {
-    internal static class Sys
+    internal static class sys
     {
         public static bool IsWindows
         {
@@ -210,7 +210,7 @@ namespace SharpQuake
         public static void SendKeyEvents()
         {
             Scr.SkipUpdate = false;
-            MainWindow.Instance.ProcessEvents();
+            main_window.Instance.ProcessEvents();
         }
 
         /// <summary>
@@ -226,10 +226,10 @@ namespace SharpQuake
         /// </summary>
         public static void Quit()
         {
-            if( MainWindow.Instance != null )
+            if( main_window.Instance != null )
             {
-                MainWindow.Instance.ConfirmExit = false;
-                MainWindow.Instance.Exit();
+                main_window.Instance.ConfirmExit = false;
+                main_window.Instance.Exit();
             }
         }
     }

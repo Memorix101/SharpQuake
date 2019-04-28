@@ -33,7 +33,7 @@ namespace SharpQuake
     /// <summary>
     /// Sbar_functions
     /// </summary>
-    internal static class Sbar
+    internal static class sbar
     {
         public static int Lines
         {
@@ -178,15 +178,15 @@ namespace SharpQuake
             _FaceInvisInvuln = Drawer.PicFromWad( "face_inv2" );
             _FaceQuad = Drawer.PicFromWad( "face_quad" );
 
-            Cmd.Add( "+showscores", ShowScores );
-            Cmd.Add( "-showscores", DontShowScores );
+            cmd.Add( "+showscores", ShowScores );
+            cmd.Add( "-showscores", DontShowScores );
 
             _SBar = Drawer.PicFromWad( "sbar" );
             _IBar = Drawer.PicFromWad( "ibar" );
             _ScoreBar = Drawer.PicFromWad( "scorebar" );
 
             //MED 01/04/97 added new hipnotic weapons
-            if( Common.GameKind == GameKind.Hipnotic )
+            if( common.GameKind == GameKind.Hipnotic )
             {
                 _HWeapons[0, 0] = Drawer.PicFromWad( "inv_laser" );
                 _HWeapons[0, 1] = Drawer.PicFromWad( "inv_mjolnir" );
@@ -214,7 +214,7 @@ namespace SharpQuake
                 _HItems[1] = Drawer.PicFromWad( "sb_eshld" );
             }
 
-            if( Common.GameKind == GameKind.Rogue )
+            if( common.GameKind == GameKind.Rogue )
             {
                 _RInvBar[0] = Drawer.PicFromWad( "r_invbar1" );
                 _RInvBar[1] = Drawer.PicFromWad( "r_invbar2" );
@@ -260,30 +260,30 @@ namespace SharpQuake
 
             _Updates++;
 
-            if( Sbar.Lines > 0 && vid.width > 320 )
-                Drawer.TileClear( 0, vid.height - Sbar.Lines, vid.width, Sbar.Lines );
+            if( sbar.Lines > 0 && vid.width > 320 )
+                Drawer.TileClear( 0, vid.height - sbar.Lines, vid.width, sbar.Lines );
 
-            if( Sbar.Lines > 24 )
+            if( sbar.Lines > 24 )
             {
                 DrawInventory();
-                if( Client.cl.maxclients != 1 )
+                if( client.cl.maxclients != 1 )
                     DrawFrags();
             }
 
-            client_state_t cl = Client.cl;
+            client_state_t cl = client.cl;
             if( _ShowScores || cl.stats[QStats.STAT_HEALTH] <= 0 )
             {
                 DrawPic( 0, 0, _ScoreBar );
                 DrawScoreboard();
                 _Updates = 0;
             }
-            else if( Sbar.Lines > 0 )
+            else if( sbar.Lines > 0 )
             {
                 DrawPic( 0, 0, _SBar );
 
                 // keys (hipnotic only)
                 //MED 01/04/97 moved keys here so they would not be overwritten
-                if( Common.GameKind == GameKind.Hipnotic )
+                if( common.GameKind == GameKind.Hipnotic )
                 {
                     if( cl.HasItems( QItems.IT_KEY1 ) )
                         DrawPic( 209, 3, _Items[0] );
@@ -298,7 +298,7 @@ namespace SharpQuake
                 }
                 else
                 {
-                    if( Common.GameKind == GameKind.Rogue )
+                    if( common.GameKind == GameKind.Rogue )
                     {
                         DrawNum( 24, 0, cl.stats[QStats.STAT_ARMOR], 3, cl.stats[QStats.STAT_ARMOR] <= 25 ? 1 : 0 ); // uze: corrected color param
                         if( cl.HasItems( QItems.RIT_ARMOR3 ) )
@@ -327,7 +327,7 @@ namespace SharpQuake
                 DrawNum( 136, 0, cl.stats[QStats.STAT_HEALTH], 3, cl.stats[QStats.STAT_HEALTH] <= 25 ? 1 : 0 );
 
                 // ammo icon
-                if( Common.GameKind == GameKind.Rogue )
+                if( common.GameKind == GameKind.Rogue )
                 {
                     if( cl.HasItems( QItems.RIT_SHELLS ) )
                         DrawPic( 224, 0, _Ammo[0] );
@@ -361,7 +361,7 @@ namespace SharpQuake
 
             if( vid.width > 320 )
             {
-                if( Client.cl.gametype == Protocol.GAME_DEATHMATCH )
+                if( client.cl.gametype == protocol.GAME_DEATHMATCH )
                     MiniDeathmatchOverlay();
             }
         }
@@ -375,9 +375,9 @@ namespace SharpQuake
             Scr.CopyEverithing = true;
             Scr.FullUpdate = 0;
 
-            if( Client.cl.gametype == Protocol.GAME_DEATHMATCH )
+            if( client.cl.gametype == protocol.GAME_DEATHMATCH )
             {
-                Sbar.DeathmatchOverlay();
+                sbar.DeathmatchOverlay();
                 return;
             }
 
@@ -388,20 +388,20 @@ namespace SharpQuake
             Drawer.DrawTransPic( 0, 56, pic );
 
             // time
-            int dig = Client.cl.completed_time / 60;
+            int dig = client.cl.completed_time / 60;
             IntermissionNumber( 160, 64, dig, 3, 0 );
-            int num = Client.cl.completed_time - dig * 60;
+            int num = client.cl.completed_time - dig * 60;
             Drawer.DrawTransPic( 234, 64, _Colon );
             Drawer.DrawTransPic( 246, 64, _Nums[0, num / 10] );
             Drawer.DrawTransPic( 266, 64, _Nums[0, num % 10] );
 
-            IntermissionNumber( 160, 104, Client.cl.stats[QStats.STAT_SECRETS], 3, 0 );
+            IntermissionNumber( 160, 104, client.cl.stats[QStats.STAT_SECRETS], 3, 0 );
             Drawer.DrawTransPic( 232, 104, _Slash );
-            IntermissionNumber( 240, 104, Client.cl.stats[QStats.STAT_TOTALSECRETS], 3, 0 );
+            IntermissionNumber( 240, 104, client.cl.stats[QStats.STAT_TOTALSECRETS], 3, 0 );
 
-            IntermissionNumber( 160, 144, Client.cl.stats[QStats.STAT_MONSTERS], 3, 0 );
+            IntermissionNumber( 160, 144, client.cl.stats[QStats.STAT_MONSTERS], 3, 0 );
             Drawer.DrawTransPic( 232, 144, _Slash );
-            IntermissionNumber( 240, 144, Client.cl.stats[QStats.STAT_TOTALMONSTERS], 3, 0 );
+            IntermissionNumber( 240, 144, client.cl.stats[QStats.STAT_TOTALMONSTERS], 3, 0 );
         }
 
         /// <summary>
@@ -442,8 +442,8 @@ namespace SharpQuake
         {
             int flashon;
 
-            client_state_t cl = Client.cl;
-            if( Common.GameKind == GameKind.Rogue )
+            client_state_t cl = client.cl;
+            if( common.GameKind == GameKind.Rogue )
             {
                 if( cl.stats[QStats.STAT_ACTIVEWEAPON] >= QItems.RIT_LAVA_NAILGUN )
                     DrawPic( 0, -24, _RInvBar[0] );
@@ -479,7 +479,7 @@ namespace SharpQuake
 
             // MED 01/04/97
             // hipnotic weapons
-            if( Common.GameKind == GameKind.Hipnotic )
+            if( common.GameKind == GameKind.Hipnotic )
             {
                 int grenadeflashing = 0;
                 for( int i = 0; i < 4; i++ )
@@ -534,7 +534,7 @@ namespace SharpQuake
                 }
             }
 
-            if( Common.GameKind == GameKind.Rogue )
+            if( common.GameKind == GameKind.Rogue )
             {
                 // check for powered up weapon.
                 if( cl.stats[QStats.STAT_ACTIVEWEAPON] >= QItems.RIT_LAVA_NAILGUN )
@@ -570,7 +570,7 @@ namespace SharpQuake
                     else
                     {
                         //MED 01/04/97 changed keys
-                        if( Common.GameKind != GameKind.Hipnotic || ( i > 1 ) )
+                        if( common.GameKind != GameKind.Hipnotic || ( i > 1 ) )
                         {
                             DrawPic( 192 + i * 16, -16, _Items[i] );
                         }
@@ -582,7 +582,7 @@ namespace SharpQuake
 
             //MED 01/04/97 added hipnotic items
             // hipnotic items
-            if( Common.GameKind == GameKind.Hipnotic )
+            if( common.GameKind == GameKind.Hipnotic )
             {
                 for( int i = 0; i < 2; i++ )
                 {
@@ -603,7 +603,7 @@ namespace SharpQuake
                 }
             }
 
-            if( Common.GameKind == GameKind.Rogue )
+            if( common.GameKind == GameKind.Rogue )
             {
                 // new rogue items
                 for( int i = 0; i < 2; i++ )
@@ -655,9 +655,9 @@ namespace SharpQuake
             // draw the text
             int l = _ScoreBoardLines <= 4 ? _ScoreBoardLines : 4;
             int xofs, x = 23;
-            client_state_t cl = Client.cl;
+            client_state_t cl = client.cl;
 
-            if( cl.gametype == Protocol.GAME_DEATHMATCH )
+            if( cl.gametype == protocol.GAME_DEATHMATCH )
                 xofs = 0;
             else
                 xofs = ( Scr.vid.width - 320 ) >> 1;
@@ -701,7 +701,7 @@ namespace SharpQuake
         // Sbar_DrawPic
         private static void DrawPic( int x, int y, glpic_t pic )
         {
-            if( Client.cl.gametype == Protocol.GAME_DEATHMATCH )
+            if( client.cl.gametype == protocol.GAME_DEATHMATCH )
                 Drawer.DrawPic( x, y + ( Scr.vid.height - SBAR_HEIGHT ), pic );
             else
                 Drawer.DrawPic( x + ( ( Scr.vid.width - 320 ) >> 1 ), y + ( Scr.vid.height - SBAR_HEIGHT ), pic );
@@ -711,7 +711,7 @@ namespace SharpQuake
         private static void DrawScoreboard()
         {
             SoloScoreboard();
-            if( Client.cl.gametype == Protocol.GAME_DEATHMATCH )
+            if( client.cl.gametype == protocol.GAME_DEATHMATCH )
                 DeathmatchOverlay();
         }
 
@@ -740,14 +740,14 @@ namespace SharpQuake
         // Sbar_DrawFace
         private static void DrawFace()
         {
-            client_state_t cl = Client.cl;
+            client_state_t cl = client.cl;
 
             // PGM 01/19/97 - team color drawing
             // PGM 03/02/97 - fixed so color swatch only appears in CTF modes
-            if( Common.GameKind == GameKind.Rogue &&
-                ( Client.cl.maxclients != 1 ) &&
-                ( Host.TeamPlay > 3 ) &&
-                ( Host.TeamPlay < 7 ) )
+            if( common.GameKind == GameKind.Rogue &&
+                ( client.cl.maxclients != 1 ) &&
+                ( host.TeamPlay > 3 ) &&
+                ( host.TeamPlay < 7 ) )
             {
                 scoreboard_t s = cl.scores[cl.viewentity - 1];
 
@@ -758,7 +758,7 @@ namespace SharpQuake
                 bottom = ColorForMap( bottom );
 
                 int xofs;
-                if( cl.gametype == Protocol.GAME_DEATHMATCH )
+                if( cl.gametype == protocol.GAME_DEATHMATCH )
                     xofs = 113;
                 else
                     xofs = ( ( Scr.vid.width - 320 ) >> 1 ) + 113;
@@ -831,7 +831,7 @@ namespace SharpQuake
         // Sbar_DeathmatchOverlay
         private static void MiniDeathmatchOverlay()
         {
-            if( Scr.vid.width < 512 || Sbar.Lines == 0 )
+            if( Scr.vid.width < 512 || sbar.Lines == 0 )
                 return;
 
             Scr.CopyEverithing = true;
@@ -842,15 +842,15 @@ namespace SharpQuake
 
             // draw the text
             int l = _ScoreBoardLines;
-            int y = Scr.vid.height - Sbar.Lines;
-            int numlines = Sbar.Lines / 8;
+            int y = Scr.vid.height - sbar.Lines;
+            int numlines = sbar.Lines / 8;
             if( numlines < 3 )
                 return;
 
             //find us
             int i;
             for( i = 0; i < _ScoreBoardLines; i++ )
-                if( _FragSort[i] == Client.cl.viewentity - 1 )
+                if( _FragSort[i] == client.cl.viewentity - 1 )
                     break;
 
             if( i == _ScoreBoardLines ) // we're not there
@@ -867,7 +867,7 @@ namespace SharpQuake
             for( ; i < _ScoreBoardLines && y < Scr.vid.height - 8; i++ )
             {
                 int k = _FragSort[i];
-                scoreboard_t s = Client.cl.scores[k];
+                scoreboard_t s = client.cl.scores[k];
                 if( String.IsNullOrEmpty( s.name ) )
                     continue;
 
@@ -886,7 +886,7 @@ namespace SharpQuake
                 Drawer.DrawCharacter( x + 16, y, num[1] );
                 Drawer.DrawCharacter( x + 24, y, num[2] );
 
-                if( k == Client.cl.viewentity - 1 )
+                if( k == client.cl.viewentity - 1 )
                 {
                     Drawer.DrawCharacter( x, y, 16 );
                     Drawer.DrawCharacter( x + 32, y, 17 );
@@ -902,7 +902,7 @@ namespace SharpQuake
         // Sbar_SortFrags
         private static void SortFrags()
         {
-            client_state_t cl = Client.cl;
+            client_state_t cl = client.cl;
 
             // sort by frags
             _ScoreBoardLines = 0;
@@ -932,7 +932,7 @@ namespace SharpQuake
         // Draws one solid graphics character
         private static void DrawCharacter( int x, int y, int num )
         {
-            if( Client.cl.gametype == Protocol.GAME_DEATHMATCH )
+            if( client.cl.gametype == protocol.GAME_DEATHMATCH )
                 Drawer.DrawCharacter( x + 4, y + Scr.vid.height - SBAR_HEIGHT, num );
             else
                 Drawer.DrawCharacter( x + ( ( Scr.vid.width - 320 ) >> 1 ) + 4, y + Scr.vid.height - SBAR_HEIGHT, num );
@@ -948,9 +948,9 @@ namespace SharpQuake
         private static void SoloScoreboard()
         {
             StringBuilder sb = new StringBuilder( 80 );
-            client_state_t cl = Client.cl;
+            client_state_t cl = client.cl;
 
-            sb.AppendFormat( "Monsters:{0,3:d} /{1,3:d}", cl.stats[QStats.STAT_MONSTERS], Client.cl.stats[QStats.STAT_TOTALMONSTERS] );
+            sb.AppendFormat( "Monsters:{0,3:d} /{1,3:d}", cl.stats[QStats.STAT_MONSTERS], client.cl.stats[QStats.STAT_TOTALMONSTERS] );
             DrawString( 8, 4, sb.ToString() );
 
             sb.Length = 0;
@@ -978,7 +978,7 @@ namespace SharpQuake
             Scr.FullUpdate = 0;
 
             glpic_t pic = Drawer.CachePic( "gfx/ranking.lmp" );
-            Menu.DrawPic( ( 320 - pic.width ) / 2, 8, pic );
+            menu.DrawPic( ( 320 - pic.width ) / 2, 8, pic );
 
             // scores
             SortFrags();
@@ -991,7 +991,7 @@ namespace SharpQuake
             for( int i = 0; i < l; i++ )
             {
                 int k = _FragSort[i];
-                scoreboard_t s = Client.cl.scores[k];
+                scoreboard_t s = client.cl.scores[k];
                 if( String.IsNullOrEmpty( s.name ) )
                     continue;
 
@@ -1011,7 +1011,7 @@ namespace SharpQuake
                 Drawer.DrawCharacter( x + 16, y, num[1] );
                 Drawer.DrawCharacter( x + 24, y, num[2] );
 
-                if( k == Client.cl.viewentity - 1 )
+                if( k == client.cl.viewentity - 1 )
                     Drawer.DrawCharacter( x - 8, y, 12 );
 
                 // draw name
@@ -1024,7 +1024,7 @@ namespace SharpQuake
         // Sbar_DrawTransPic
         private static void DrawTransPic( int x, int y, glpic_t pic )
         {
-            if( Client.cl.gametype == Protocol.GAME_DEATHMATCH )
+            if( client.cl.gametype == protocol.GAME_DEATHMATCH )
                 Drawer.DrawTransPic( x, y + ( Scr.vid.height - SBAR_HEIGHT ), pic );
             else
                 Drawer.DrawTransPic( x + ( ( Scr.vid.width - 320 ) >> 1 ), y + ( Scr.vid.height - SBAR_HEIGHT ), pic );
@@ -1033,7 +1033,7 @@ namespace SharpQuake
         // Sbar_DrawString
         private static void DrawString( int x, int y, string str )
         {
-            if( Client.cl.gametype == Protocol.GAME_DEATHMATCH )
+            if( client.cl.gametype == protocol.GAME_DEATHMATCH )
                 Drawer.DrawString( x, y + Scr.vid.height - SBAR_HEIGHT, str );
             else
                 Drawer.DrawString( x + ( ( Scr.vid.width - 320 ) >> 1 ), y + Scr.vid.height - SBAR_HEIGHT, str );

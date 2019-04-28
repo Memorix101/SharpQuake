@@ -95,7 +95,7 @@ namespace SharpQuake
         private static bool _IsInitialized; // qboolean con_initialized;
         private static bool _ForcedUp; // qboolean con_forcedup		// because no entities to refresh
         private static int _NotifyLines; // con_notifylines	// scan lines to clear for notify lines
-        private static Cvar _NotifyTime; // con_notifytime = { "con_notifytime", "3" };		//seconds
+        private static cvar _NotifyTime; // con_notifytime = { "con_notifytime", "3" };		//seconds
         private static float _CursorSpeed = 4; // con_cursorspeed
         private static FileStream _Log;
 
@@ -111,7 +111,7 @@ namespace SharpQuake
                 width = 38;
                 _LineWidth = width; // con_linewidth = width;
                 _TotalLines = CON_TEXTSIZE / _LineWidth;
-                Common.FillArray( _Text, ' ' ); // Q_memset (con_text, ' ', CON_TEXTSIZE);
+                common.FillArray( _Text, ' ' ); // Q_memset (con_text, ' ', CON_TEXTSIZE);
             }
             else
             {
@@ -131,7 +131,7 @@ namespace SharpQuake
 
                 char[] tmp = _Text;
                 _Text = new char[CON_TEXTSIZE];
-                Common.FillArray( _Text, ' ' );
+                common.FillArray( _Text, ' ' );
 
                 for( int i = 0; i < numlines; i++ )
                 {
@@ -152,10 +152,10 @@ namespace SharpQuake
         // Con_Init (void)
         public static void Init()
         {
-            _DebugLog = ( Common.CheckParm( "-condebug" ) > 0 );
+            _DebugLog = ( common.CheckParm( "-condebug" ) > 0 );
             if( _DebugLog )
             {
-                string path = Path.Combine( Common.GameDir, LOG_FILE_NAME );
+                string path = Path.Combine( common.GameDir, LOG_FILE_NAME );
                 if( File.Exists( path ) )
                     File.Delete( path );
 
@@ -172,13 +172,13 @@ namespace SharpQuake
             //
             if( _NotifyTime == null )
             {
-                _NotifyTime = new Cvar( "con_notifytime", "3" );
+                _NotifyTime = new cvar( "con_notifytime", "3" );
             }
 
-            Cmd.Add( "toggleconsole", ToggleConsole_f );
-            Cmd.Add( "messagemode", MessageMode_f );
-            Cmd.Add( "messagemode2", MessageMode2_f );
-            Cmd.Add( "clear", Clear_f );
+            cmd.Add( "toggleconsole", ToggleConsole_f );
+            cmd.Add( "messagemode", MessageMode_f );
+            cmd.Add( "messagemode2", MessageMode2_f );
+            cmd.Add( "clear", Clear_f );
 
             _IsInitialized = true;
         }
@@ -234,14 +234,14 @@ namespace SharpQuake
             if( !_IsInitialized )
                 return;
 
-            if( Client.cls.state == cactive_t.ca_dedicated )
+            if( client.cls.state == cactive_t.ca_dedicated )
                 return;		// no graphics mode
 
             // write it to the scrollable buffer
             Print( msg );
 
             // update the screen if the console is displayed
-            if( Client.cls.signon != Client.SIGNONS && !Scr.IsDisabledForLoading )
+            if( client.cls.signon != client.SIGNONS && !Scr.IsDisabledForLoading )
                 Scr.UpdateScreen();
         }
 
@@ -262,7 +262,7 @@ namespace SharpQuake
         public static void DPrint( string fmt, params object[] args )
         {
             // don't confuse non-developers with techie stuff...
-            if( Host.IsDeveloper )
+            if( host.IsDeveloper )
                 Print( fmt, args );
         }
 
@@ -290,7 +290,7 @@ namespace SharpQuake
                 double time = _Times[i % NUM_CON_TIMES];
                 if( time == 0 )
                     continue;
-                time = Host.RealTime - time;
+                time = host.RealTime - time;
                 if( time > _NotifyTime.Value )
                     continue;
 
@@ -318,7 +318,7 @@ namespace SharpQuake
                 {
                     Drawer.DrawCharacter( ( x + 5 ) << 3, v, chat[x] );
                 }
-                Drawer.DrawCharacter( ( x + 5 ) << 3, v, 10 + ( (int)( Host.RealTime * _CursorSpeed ) & 1 ) );
+                Drawer.DrawCharacter( ( x + 5 ) << 3, v, 10 + ( (int)( host.RealTime * _CursorSpeed ) & 1 ) );
                 v += 8;
             }
 
@@ -340,7 +340,7 @@ namespace SharpQuake
         {
             if( Key.Destination == keydest_t.key_console )
             {
-                if( Client.cls.state == cactive_t.ca_connected )
+                if( client.cls.state == cactive_t.ca_connected )
                 {
                     Key.Destination = keydest_t.key_game;
                     Key.Lines[Key.EditLine][1] = '\0';	// clear any typing
@@ -387,7 +387,7 @@ namespace SharpQuake
             if( txt.StartsWith( ( (char)1 ).ToString() ) )// [0] == 1)
             {
                 mask = 128;	// go to colored text
-                Sound.LocalSound( "misc/talk.wav" ); // play talk wav
+                snd.LocalSound( "misc/talk.wav" ); // play talk wav
                 offset++;
             }
             else if( txt.StartsWith( ( (char)2 ).ToString() ) ) //txt[0] == 2)
@@ -427,7 +427,7 @@ namespace SharpQuake
                     LineFeed();
                     // mark time for transparent overlay
                     if( _Current >= 0 )
-                        _Times[_Current % NUM_CON_TIMES] = Host.RealTime; // realtime
+                        _Times[_Current % NUM_CON_TIMES] = host.RealTime; // realtime
                 }
 
                 switch( c )
@@ -457,7 +457,7 @@ namespace SharpQuake
         /// </summary>
         private static void Clear_f()
         {
-            Common.FillArray( _Text, ' ' );
+            common.FillArray( _Text, ' ' );
         }
 
         // Con_MessageMode_f
@@ -495,7 +495,7 @@ namespace SharpQuake
                 return;		// don't draw anything
 
             // add the cursor frame
-            Key.Lines[Key.EditLine][Key.LinePos] = (char)( 10 + ( (int)( Host.RealTime * _CursorSpeed ) & 1 ) );
+            Key.Lines[Key.EditLine][Key.LinePos] = (char)( 10 + ( (int)( host.RealTime * _CursorSpeed ) & 1 ) );
 
             // fill out remainder with spaces
             for( int i = Key.LinePos + 1; i < _LineWidth; i++ )

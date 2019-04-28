@@ -24,7 +24,7 @@
 
 namespace SharpQuake
 {
-    internal static class Protocol
+    internal static class protocol
     {
         public const int PROTOCOL_VERSION = 15;
 

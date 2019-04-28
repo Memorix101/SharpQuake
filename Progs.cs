@@ -65,7 +65,7 @@ namespace SharpQuake
 
         public int num_leafs;
 
-        [MarshalAs(UnmanagedType.ByValArray, SizeConst = Progs.MAX_ENT_LEAFS)]
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = progs.MAX_ENT_LEAFS)]
         public short[] leafnums; // [MAX_ENT_LEAFS];
 
         public entity_state_t baseline;
@@ -171,10 +171,10 @@ namespace SharpQuake
 
         public void SwapBytes()
         {
-            this.op = (ushort)Common.LittleShort( (short)this.op );
-            this.a = Common.LittleShort( this.a );
-            this.b = Common.LittleShort( this.b );
-            this.c = Common.LittleShort( this.c );
+            this.op = (ushort)common.LittleShort( (short)this.op );
+            this.a = common.LittleShort( this.a );
+            this.b = common.LittleShort( this.b );
+            this.c = common.LittleShort( this.c );
         }
     }
 
@@ -285,7 +285,7 @@ namespace SharpQuake
     /// <summary>
     /// PR_functions
     /// </summary>
-    static partial class Progs
+    static partial class progs
     {
         public const int DEF_SAVEGLOBAL = (1<<15);
         public const int MAX_PARMS = 8;
@@ -509,8 +509,8 @@ namespace SharpQuake
         public edict_t()
         {
             this.area = new link_t( this );
-            this.leafnums = new short[Progs.MAX_ENT_LEAFS];
-            this.fields = new float[( Progs.EdictSize - entvars_t.SizeInBytes ) >> 2];
+            this.leafnums = new short[progs.MAX_ENT_LEAFS];
+            this.fields = new float[( progs.EdictSize - entvars_t.SizeInBytes ) >> 2];
         }
     } // edict_t;
 
@@ -536,9 +536,9 @@ namespace SharpQuake
 
         public void SwapBytes()
         {
-            this.type = (ushort)Common.LittleShort( (short)this.type );
-            this.ofs = (ushort)Common.LittleShort( (short)this.ofs );
-            this.s_name = Common.LittleLong( this.s_name );
+            this.type = (ushort)common.LittleShort( (short)this.type );
+            this.ofs = (ushort)common.LittleShort( (short)this.ofs );
+            this.s_name = common.LittleLong( this.s_name );
         }
     } // ddef_t;
 
@@ -556,7 +556,7 @@ namespace SharpQuake
 
         public int numparms;
 
-        [MarshalAs(UnmanagedType.ByValArray, SizeConst = Progs.MAX_PARMS)]
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = progs.MAX_PARMS)]
         public byte[] parm_size; // [MAX_PARMS];
 
         public static int SizeInBytes = Marshal.SizeOf(typeof(dfunction_t));
@@ -565,7 +565,7 @@ namespace SharpQuake
         {
             get
             {
-                return Progs.GetString( this.s_file );
+                return progs.GetString( this.s_file );
             }
         }
 
@@ -573,18 +573,18 @@ namespace SharpQuake
         {
             get
             {
-                return Progs.GetString( this.s_name );
+                return progs.GetString( this.s_name );
             }
         }
 
         public void SwapBytes()
         {
-            this.first_statement = Common.LittleLong( this.first_statement );
-            this.parm_start = Common.LittleLong( this.parm_start );
-            this.locals = Common.LittleLong( this.locals );
-            this.s_name = Common.LittleLong( this.s_name );
-            this.s_file = Common.LittleLong( this.s_file );
-            this.numparms = Common.LittleLong( this.numparms );
+            this.first_statement = common.LittleLong( this.first_statement );
+            this.parm_start = common.LittleLong( this.parm_start );
+            this.locals = common.LittleLong( this.locals );
+            this.s_name = common.LittleLong( this.s_name );
+            this.s_file = common.LittleLong( this.s_file );
+            this.numparms = common.LittleLong( this.numparms );
         }
 
         public override string ToString()
@@ -623,21 +623,21 @@ namespace SharpQuake
 
         public void SwapBytes()
         {
-            this.version = Common.LittleLong( this.version );
-            this.crc = Common.LittleLong( this.crc );
-            this.ofs_statements = Common.LittleLong( this.ofs_statements );
-            this.numstatements = Common.LittleLong( this.numstatements );
-            this.ofs_globaldefs = Common.LittleLong( this.ofs_globaldefs );
-            this.numglobaldefs = Common.LittleLong( this.numglobaldefs );
-            this.ofs_fielddefs = Common.LittleLong( this.ofs_fielddefs );
-            this.numfielddefs = Common.LittleLong( this.numfielddefs );
-            this.ofs_functions = Common.LittleLong( this.ofs_functions );
-            this.numfunctions = Common.LittleLong( this.numfunctions );
-            this.ofs_strings = Common.LittleLong( this.ofs_strings );
-            this.numstrings = Common.LittleLong( this.numstrings );
-            this.ofs_globals = Common.LittleLong( this.ofs_globals );
-            this.numglobals = Common.LittleLong( this.numglobals );
-            this.entityfields = Common.LittleLong( this.entityfields );
+            this.version = common.LittleLong( this.version );
+            this.crc = common.LittleLong( this.crc );
+            this.ofs_statements = common.LittleLong( this.ofs_statements );
+            this.numstatements = common.LittleLong( this.numstatements );
+            this.ofs_globaldefs = common.LittleLong( this.ofs_globaldefs );
+            this.numglobaldefs = common.LittleLong( this.numglobaldefs );
+            this.ofs_fielddefs = common.LittleLong( this.ofs_fielddefs );
+            this.numfielddefs = common.LittleLong( this.numfielddefs );
+            this.ofs_functions = common.LittleLong( this.ofs_functions );
+            this.numfunctions = common.LittleLong( this.numfunctions );
+            this.ofs_strings = common.LittleLong( this.ofs_strings );
+            this.numstrings = common.LittleLong( this.numstrings );
+            this.ofs_globals = common.LittleLong( this.ofs_globals );
+            this.numglobals = common.LittleLong( this.numglobals );
+            this.entityfields = common.LittleLong( this.entityfields );
         }
     } // dprograms_t;
 
@@ -708,8 +708,8 @@ namespace SharpQuake
 
         public void SetParams( float[] src )
         {
-            if( src.Length < Server.NUM_SPAWN_PARMS )
-                throw new ArgumentException( String.Format( "There must be {0} parameters!", Server.NUM_SPAWN_PARMS ) );
+            if( src.Length < server.NUM_SPAWN_PARMS )
+                throw new ArgumentException( String.Format( "There must be {0} parameters!", server.NUM_SPAWN_PARMS ) );
 
             this.parm1 = src[0];
             this.parm2 = src[1];

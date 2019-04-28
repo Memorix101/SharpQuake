@@ -439,16 +439,16 @@ namespace SharpQuake
                         break;
 
                     case keydest_t.key_menu:
-                        Menu.KeyDown( key );
+                        menu.KeyDown( key );
                         break;
 
                     case keydest_t.key_game:
                     case keydest_t.key_console:
-                        Menu.ToggleMenu_f();
+                        menu.ToggleMenu_f();
                         break;
 
                     default:
-                        Sys.Error( "Bad key_dest" );
+                        sys.Error( "Bad key_dest" );
                         break;
                 }
                 return;
@@ -480,9 +480,9 @@ namespace SharpQuake
             //
             // during demo playback, most keys bring up the main menu
             //
-            if( Client.cls.demoplayback && down && _ConsoleKeys[key] && _KeyDest == keydest_t.key_game )
+            if( client.cls.demoplayback && down && _ConsoleKeys[key] && _KeyDest == keydest_t.key_game )
             {
-                Menu.ToggleMenu_f();
+                menu.ToggleMenu_f();
                 return;
             }
 
@@ -525,7 +525,7 @@ namespace SharpQuake
                     break;
 
                 case keydest_t.key_menu:
-                    Menu.KeyDown( key );
+                    menu.KeyDown( key );
                     break;
 
                 case keydest_t.key_game:
@@ -534,7 +534,7 @@ namespace SharpQuake
                     break;
 
                 default:
-                    Sys.Error( "Bad key_dest" );
+                    sys.Error( "Bad key_dest" );
                     break;
             }
         }
@@ -602,9 +602,9 @@ namespace SharpQuake
             //
             // register our functions
             //
-            Cmd.Add( "bind", Bind_f );
-            Cmd.Add( "unbind", Unbind_f );
-            Cmd.Add( "unbindall", UnbindAll_f );
+            cmd.Add( "bind", Bind_f );
+            cmd.Add( "unbind", Unbind_f );
+            cmd.Add( "unbindall", UnbindAll_f );
         }
 
         /// <summary>
@@ -687,7 +687,7 @@ namespace SharpQuake
 
             foreach( keyname_t keyname in _KeyNames )
             {
-                if( Common.SameText( keyname.name, str ) )
+                if( common.SameText( keyname.name, str ) )
                     return keyname.keynum;
             }
             return -1;
@@ -696,16 +696,16 @@ namespace SharpQuake
         //Key_Unbind_f
         private static void Unbind_f()
         {
-            if( Cmd.Argc != 2 )
+            if( cmd.Argc != 2 )
             {
                 Con.Print( "unbind <key> : remove commands from a key\n" );
                 return;
             }
 
-            int b = StringToKeynum( Cmd.Argv( 1 ) );
+            int b = StringToKeynum( cmd.Argv( 1 ) );
             if( b == -1 )
             {
-                Con.Print( "\"{0}\" isn't a valid key\n", Cmd.Argv( 1 ) );
+                Con.Print( "\"{0}\" isn't a valid key\n", cmd.Argv( 1 ) );
                 return;
             }
 
@@ -723,26 +723,26 @@ namespace SharpQuake
         //Key_Bind_f
         private static void Bind_f()
         {
-            int c = Cmd.Argc;
+            int c = cmd.Argc;
             if( c != 2 && c != 3 )
             {
                 Con.Print( "bind <key> [command] : attach a command to a key\n" );
                 return;
             }
 
-            int b = StringToKeynum( Cmd.Argv( 1 ) );
+            int b = StringToKeynum( cmd.Argv( 1 ) );
             if( b == -1 )
             {
-                Con.Print( "\"{0}\" isn't a valid key\n", Cmd.Argv( 1 ) );
+                Con.Print( "\"{0}\" isn't a valid key\n", cmd.Argv( 1 ) );
                 return;
             }
 
             if( c == 2 )
             {
                 if( !String.IsNullOrEmpty( _Bindings[b] ) )// keybindings[b])
-                    Con.Print( "\"{0}\" = \"{1}\"\n", Cmd.Argv( 1 ), _Bindings[b] );
+                    Con.Print( "\"{0}\" = \"{1}\"\n", cmd.Argv( 1 ), _Bindings[b] );
                 else
-                    Con.Print( "\"{0}\" is not bound\n", Cmd.Argv( 1 ) );
+                    Con.Print( "\"{0}\" is not bound\n", cmd.Argv( 1 ) );
                 return;
             }
 
@@ -753,7 +753,7 @@ namespace SharpQuake
             {
                 if( i > 2 )
                     sb.Append( " " );
-                sb.Append( Cmd.Argv( i ) );
+                sb.Append( cmd.Argv( i ) );
             }
 
             SetBinding( b, sb.ToString() );
@@ -818,7 +818,7 @@ namespace SharpQuake
                 _HistoryLine = _EditLine;
                 _Lines[_EditLine][0] = ']';
                 Key.LinePos = 1;
-                if( Client.cls.state == cactive_t.ca_disconnected )
+                if( client.cls.state == cactive_t.ca_disconnected )
                     Scr.UpdateScreen();	// force an update, because the command
                 // may take some time
                 return;
@@ -828,8 +828,8 @@ namespace SharpQuake
             {
                 // command completion
                 string txt = new String( _Lines[_EditLine], 1, MAXCMDLINE - 1 ).TrimEnd( '\0', ' ' );
-                string[] cmds = Cmd.Complete( txt );
-                string[] vars = Cvar.CompleteName( txt );
+                string[] cmds = cmd.Complete( txt );
+                string[] vars = cvar.CompleteName( txt );
                 string match = null;
                 if( cmds != null )
                 {

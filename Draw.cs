@@ -134,13 +134,13 @@ namespace SharpQuake
         // pic_texels
         private static int _PicCount;
 
-        private static Cvar _glNoBind;
+        private static cvar _glNoBind;
 
         // = {"gl_nobind", "0"};
-        private static Cvar _glMaxSize;
+        private static cvar _glMaxSize;
 
         // = {"gl_max_size", "1024"};
-        private static Cvar _glPicMip;
+        private static cvar _glPicMip;
 
         private static glpic_t _Disc;
 
@@ -188,25 +188,25 @@ namespace SharpQuake
 
             if( _glNoBind == null )
             {
-                _glNoBind = new Cvar( "gl_nobind", "0" );
-                _glMaxSize = new Cvar( "gl_max_size", "1024" );
-                _glPicMip = new Cvar( "gl_picmip", "0" );
+                _glNoBind = new cvar( "gl_nobind", "0" );
+                _glMaxSize = new cvar( "gl_max_size", "1024" );
+                _glPicMip = new cvar( "gl_picmip", "0" );
             }
 
             // 3dfx can only handle 256 wide textures
             string renderer = GL.GetString( StringName.Renderer );
             if( renderer.Contains( "3dfx" ) || renderer.Contains( "Glide" ) )
-                Cvar.Set( "gl_max_size", "256" );
+                cvar.Set( "gl_max_size", "256" );
 
-            Cmd.Add( "gl_texturemode", TextureMode_f );
-            Cmd.Add( "imagelist", Imagelist_f );
+            cmd.Add( "gl_texturemode", TextureMode_f );
+            cmd.Add( "imagelist", Imagelist_f );
 
             // load the console background and the charset
             // by hand, because we need to write the version
             // string into the background before turning
             // it into a texture
-            int offset = Wad.GetLumpNameOffset( "conchars" );
-            byte[] draw_chars = Wad.Data; // draw_chars
+            int offset = wad.GetLumpNameOffset( "conchars" );
+            byte[] draw_chars = wad.Data; // draw_chars
             for( int i = 0; i < 256 * 64; i++ )
             {
                 if( draw_chars[offset + i] == 0 )
@@ -216,12 +216,12 @@ namespace SharpQuake
             // now turn them into textures
             _CharTexture = LoadTexture( "charset", 128, 128, new ByteArraySegment( draw_chars, offset ), false, true );
 
-            byte[] buf = Common.LoadFile( "gfx/conback.lmp" );
+            byte[] buf = common.LoadFile( "gfx/conback.lmp" );
             if( buf == null )
-                Sys.Error( "Couldn't load gfx/conback.lmp" );
+                sys.Error( "Couldn't load gfx/conback.lmp" );
 
-            dqpicheader_t cbHeader = Sys.BytesToStructure<dqpicheader_t>( buf, 0 );
-            Wad.SwapPic( cbHeader );
+            dqpicheader_t cbHeader = sys.BytesToStructure<dqpicheader_t>( buf, 0 );
+            wad.SwapPic( cbHeader );
 
             // hack the version number directly into the pic
             string ver = String.Format( "(c# {0,7:F2}) {1,7:F2}", (float)QDef.CSQUAKE_VERSION, (float)QDef.VERSION );
@@ -344,8 +344,8 @@ namespace SharpQuake
         //qpic_t *Draw_PicFromWad (char *name);
         public static glpic_t PicFromWad( string name )
         {
-            int offset = Wad.GetLumpNameOffset( name );
-            IntPtr ptr = new IntPtr( Wad.DataPointer.ToInt64() + offset );
+            int offset = wad.GetLumpNameOffset( name );
+            IntPtr ptr = new IntPtr( wad.DataPointer.ToInt64() + offset );
             dqpicheader_t header = (dqpicheader_t)Marshal.PtrToStructure( ptr, typeof( dqpicheader_t ) );
             glpic_t gl = new glpic_t(); // (glpic_t)Marshal.PtrToStructure(ptr, typeof(glpic_t));
             gl.width = header.width;
@@ -361,7 +361,7 @@ namespace SharpQuake
                 int k = 0;
                 for( int i = 0; i < gl.height; i++ )
                     for( int j = 0; j < gl.width; j++, k++ )
-                        _ScrapTexels[texnum][( y + i ) * BLOCK_WIDTH + x + j] = Wad.Data[offset + k];// p->data[k];
+                        _ScrapTexels[texnum][( y + i ) * BLOCK_WIDTH + x + j] = wad.Data[offset + k];// p->data[k];
                 texnum += _ScrapTexNum;
                 gl.texnum = texnum;
                 gl.sl = (float)( ( x + 0.01 ) / (float)BLOCK_WIDTH );
@@ -374,7 +374,7 @@ namespace SharpQuake
             }
             else
             {
-                gl.texnum = LoadTexture( gl, new ByteArraySegment( Wad.Data, offset ) );
+                gl.texnum = LoadTexture( gl, new ByteArraySegment( wad.Data, offset ) );
             }
             return gl;
         }
@@ -408,7 +408,7 @@ namespace SharpQuake
             GL.Enable( EnableCap.Texture2D );
             GL.Disable( EnableCap.Blend );
 
-            Sbar.Changed();
+            sbar.Changed();
         }
 
         /// <summary>
@@ -425,13 +425,13 @@ namespace SharpQuake
                     if( glt.identifier == identifier && glt.owner == owner )
                     {
                         if( width != glt.width || height != glt.height )
-                            Sys.Error( "GL_LoadTexture: cache mismatch!" );
+                            sys.Error( "GL_LoadTexture: cache mismatch!" );
                         return glt.texnum;
                     }
                 }
             }
             if( _NumTextures == _glTextures.Length )
-                Sys.Error( "GL_LoadTexture: no more texture slots available!" );
+                sys.Error( "GL_LoadTexture: no more texture slots available!" );
 
             gltexture_t tex = new gltexture_t();
             _glTextures[_NumTextures] = tex;
@@ -507,7 +507,7 @@ namespace SharpQuake
             }
 
             if( _MenuNumCachePics == MAX_CACHED_PICS )
-                Sys.Error( "menu_numcachepics == MAX_CACHED_PICS" );
+                sys.Error( "menu_numcachepics == MAX_CACHED_PICS" );
 
             cachepic_t pic = _MenuCachePics[_MenuNumCachePics];
             _MenuNumCachePics++;
@@ -516,11 +516,11 @@ namespace SharpQuake
             //
             // load the pic from disk
             //
-            byte[] data = Common.LoadFile( path );
+            byte[] data = common.LoadFile( path );
             if( data == null )
-                Sys.Error( "Draw_CachePic: failed to load {0}", path );
-            dqpicheader_t header = Sys.BytesToStructure<dqpicheader_t>( data, 0 );
-            Wad.SwapPic( header );
+                sys.Error( "Draw_CachePic: failed to load {0}", path );
+            dqpicheader_t header = sys.BytesToStructure<dqpicheader_t>( data, 0 );
+            wad.SwapPic( header );
 
             int headerSize = Marshal.SizeOf( typeof( dqpicheader_t ) );
 
@@ -555,7 +555,7 @@ namespace SharpQuake
         {
             GL.Disable( EnableCap.Texture2D );
 
-            byte[] pal = Host.BasePal;
+            byte[] pal = host.BasePal;
 
             GL.Color3( pal[c * 3] / 255.0f, pal[c * 3 + 1] / 255.0f, pal[c * 3 + 2] / 255.0f );
             GL.Begin( PrimitiveType.Quads );
@@ -574,7 +574,7 @@ namespace SharpQuake
             if( x < 0 || (uint)( x + pic.width ) > Scr.vid.width ||
                 y < 0 || (uint)( y + pic.height ) > Scr.vid.height )
             {
-                Sys.Error( "Draw_TransPic: bad coordinates" );
+                sys.Error( "Draw_TransPic: bad coordinates" );
             }
 
             DrawPic( x, y, pic );
@@ -601,7 +601,7 @@ namespace SharpQuake
                     if( p == 255 )
                         trans[destOffset + u] = p;
                     else
-                        trans[destOffset + u] = Vid.Table8to24[translation[p]];
+                        trans[destOffset + u] = vid.Table8to24[translation[p]];
                 }
             }
 
@@ -672,7 +672,7 @@ namespace SharpQuake
         /// </summary>
         public static void SelectTexture( MTexTarget target )
         {
-            if( !Vid.glMTexable )
+            if( !vid.glMTexable )
                 return;
 
             switch( target )
@@ -686,7 +686,7 @@ namespace SharpQuake
                     break;
 
                 default:
-                    Sys.Error( "GL_SelectTexture: Unknown target\n" );
+                    sys.Error( "GL_SelectTexture: Unknown target\n" );
                     break;
             }
 
@@ -704,7 +704,7 @@ namespace SharpQuake
         private static void TextureMode_f()
         {
             int i;
-            if( Cmd.Argc == 1 )
+            if( cmd.Argc == 1 )
             {
                 for( i = 0; i < 6; i++ )
                     if( _MinFilter == _Modes[i].minimize )
@@ -718,7 +718,7 @@ namespace SharpQuake
 
             for( i = 0; i < _Modes.Length; i++ )
             {
-                if( Common.SameText( _Modes[i].name, Cmd.Argv( 1 ) ) )
+                if( common.SameText( _Modes[i].name, cmd.Argv( 1 ) ) )
                     break;
             }
             if( i == _Modes.Length )
@@ -793,7 +793,7 @@ namespace SharpQuake
         {
             int s = width * height;
             uint[] trans = new uint[s];
-            uint[] table = Vid.Table8to24;
+            uint[] table = vid.Table8to24;
             byte[] data1 = data.Data;
             int offset = data.StartIndex;
 
@@ -816,7 +816,7 @@ namespace SharpQuake
             else
             {
                 if( ( s & 3 ) != 0 )
-                    Sys.Error( "GL_Upload8: s&3" );
+                    sys.Error( "GL_Upload8: s&3" );
 
                 for( int i = 0; i < s; i += 4, offset += 4 )
                 {
@@ -1015,7 +1015,7 @@ Done:
                 return texnum;
             }
 
-            Sys.Error( "Scrap_AllocBlock: full" );
+            sys.Error( "Scrap_AllocBlock: full" );
             return -1;
         }
 

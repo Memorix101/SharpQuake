@@ -45,7 +45,7 @@ namespace SharpQuake
         src_command		// from the command buffer
     }
 
-    internal static class Cmd
+    internal static class cmd
     {
         public static cmd_source_t Source
         {
@@ -114,11 +114,11 @@ namespace SharpQuake
         public static void Add( string name, xcommand_t function )
         {
             // ??? because hunk allocation would get stomped
-            if( Host.IsInitialized )
-                Sys.Error( "Cmd.Add after host initialized!" );
+            if( host.IsInitialized )
+                sys.Error( "Cmd.Add after host initialized!" );
 
             // fail if the command is a variable name
-            if( Cvar.Exists( name ) )
+            if( cvar.Exists( name ) )
             {
                 Con.Print( "Cmd.Add: {0} already defined as a var!\n", name );
                 return;
@@ -185,14 +185,14 @@ namespace SharpQuake
                 if( _Argc == 1 )
                     _Args = text;
 
-                text = Common.Parse( text );
+                text = common.Parse( text );
 
-                if( String.IsNullOrEmpty( Common.Token ) )
+                if( String.IsNullOrEmpty( common.Token ) )
                     break;
 
                 if( _Argc < MAX_ARGS )
                 {
-                    argv.Add( Common.Token );
+                    argv.Add( common.Token );
                     _Argc++;
                 }
             }
@@ -232,7 +232,7 @@ namespace SharpQuake
                 else
                 {
                     // check cvars
-                    if( !Cvar.Command() )
+                    if( !cvar.Command() )
                         Con.Print( "Unknown command \"{0}\"\n", _Argv[0] );
                 }
             }
@@ -246,24 +246,24 @@ namespace SharpQuake
         // Sends the entire command line over to the server
         public static void ForwardToServer()
         {
-            if( Client.cls.state != cactive_t.ca_connected )
+            if( client.cls.state != cactive_t.ca_connected )
             {
-                Con.Print( "Can't \"{0}\", not connected\n", Cmd.Argv( 0 ) );
+                Con.Print( "Can't \"{0}\", not connected\n", cmd.Argv( 0 ) );
                 return;
             }
 
-            if( Client.cls.demoplayback )
+            if( client.cls.demoplayback )
                 return;		// not really connected
 
-            MsgWriter writer = Client.cls.message;
-            writer.WriteByte( Protocol.clc_stringcmd );
-            if( !Cmd.Argv( 0 ).Equals( "cmd" ) )
+            MsgWriter writer = client.cls.message;
+            writer.WriteByte( protocol.clc_stringcmd );
+            if( !cmd.Argv( 0 ).Equals( "cmd" ) )
             {
-                writer.Print( Cmd.Argv( 0 ) + " " );
+                writer.Print( cmd.Argv( 0 ) + " " );
             }
-            if( Cmd.Argc > 1 )
+            if( cmd.Argc > 1 )
             {
-                writer.Print( Cmd.Args );
+                writer.Print( cmd.Args );
             }
             else
             {
@@ -354,7 +354,7 @@ namespace SharpQuake
                 return;
             }
 
-            byte[] bytes = Common.LoadFile( _Argv[1] );
+            byte[] bytes = common.LoadFile( _Argv[1] );
             if( bytes == null )
             {
                 Con.Print( "couldn't exec {0}\n", _Argv[1] );
@@ -409,7 +409,7 @@ namespace SharpQuake
             _Aliases[name] = sb.ToString();
         }
 
-        static Cmd()
+        static cmd()
         {
             _Aliases = new Dictionary<string, string>();
             _Functions = new Dictionary<string, xcommand_t>();
@@ -512,7 +512,7 @@ namespace SharpQuake
                 // execute the command line
                 if( !String.IsNullOrEmpty( line ) )
                 {
-                    Cmd.ExecuteString( line, cmd_source_t.src_command );
+                    cmd.ExecuteString( line, cmd_source_t.src_command );
 
                     if( _Wait )
                     {

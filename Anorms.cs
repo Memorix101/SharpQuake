@@ -24,7 +24,7 @@ using OpenTK;
 
 namespace SharpQuake
 {
-    internal static class Anorms
+    internal static class anorms
     {
         public const int NUMVERTEXNORMALS = 162;
 

@@ -45,7 +45,7 @@ namespace SharpQuake
             _BytesAllocated = 0;
             _Head = new CacheEntry( true );
 
-            Cmd.Add( "flush", Flush );
+            cmd.Add( "flush", Flush );
         }
 
         // Cache_Check
@@ -71,7 +71,7 @@ namespace SharpQuake
         public static cache_user_t Alloc( int size, string name )
         {
             if( size <= 0 )
-                Sys.Error( "Cache_Alloc: size {0}", size );
+                sys.Error( "Cache_Alloc: size {0}", size );
 
             size = ( size + 15 ) & ~15;
 
@@ -86,7 +86,7 @@ namespace SharpQuake
 
                 // free the least recently used cahedat
                 if( _Head.LruPrev == _Head )// cache_head.lru_prev == &cache_head)
-                    Sys.Error( "Cache_Alloc: out of memory" );
+                    sys.Error( "Cache_Alloc: out of memory" );
                 // not enough memory at all
                 Free( _Head.LruPrev );
             }
@@ -119,7 +119,7 @@ namespace SharpQuake
         private static void Free( cache_user_t c )
         {
             if( c.data == null )
-                Sys.Error( "Cache_Free: not allocated" );
+                sys.Error( "Cache_Free: not allocated" );
 
             CacheEntry entry = (CacheEntry)c;
             entry.Remove();
@@ -181,7 +181,7 @@ namespace SharpQuake
             public void RemoveFromLRU()
             {
                 if( _LruNext == null || _LruPrev == null )
-                    Sys.Error( "Cache_UnlinkLRU: NULL link" );
+                    sys.Error( "Cache_UnlinkLRU: NULL link" );
 
                 _LruNext._LruPrev = _LruPrev;
                 _LruPrev._LruNext = _LruNext;
@@ -192,7 +192,7 @@ namespace SharpQuake
             public void LRUInstertAfter( CacheEntry prev )
             {
                 if( _LruNext != null || _LruPrev != null )
-                    Sys.Error( "Cache_MakeLRU: active link" );
+                    sys.Error( "Cache_MakeLRU: active link" );
 
                 prev._LruNext._LruPrev = this;
                 _LruNext = prev._LruNext;

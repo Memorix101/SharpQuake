@@ -31,7 +31,7 @@ namespace SharpQuake
     /// <summary>
     /// Quake math functions
     /// </summary>
-    internal static class Mathlib
+    internal static class mathlib
     {
         /// <summary>
         /// AngleVectors
@@ -343,7 +343,7 @@ namespace SharpQuake
 
                 default:
                     dist1 = dist2 = 0;		// shut up compiler
-                    Sys.Error( "BoxOnPlaneSide:  Bad signbits" );
+                    sys.Error( "BoxOnPlaneSide:  Bad signbits" );
                     break;
             }
 

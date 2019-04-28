@@ -137,7 +137,7 @@ namespace SharpQuake
         }
     }
 
-    internal static class Common
+    internal static class common
     {
         public static bool IsBigEndian
         {
@@ -243,8 +243,8 @@ namespace SharpQuake
         };
 
         private static IByteOrderConverter _Converter;
-        private static Cvar _Registered;
-        private static Cvar _CmdLine;
+        private static cvar _Registered;
+        private static cvar _CmdLine;
         private static string _CacheDir; // com_cachedir[MAX_OSPATH];
         private static string _GameDir; // com_gamedir[MAX_OSPATH];
         private static List<searchpath_t> _SearchPaths; // searchpath_t    *com_searchpaths;
@@ -283,10 +283,10 @@ namespace SharpQuake
         public static void Init( string path, string[] argv )
         {
             _Argv = argv;
-            _Registered = new Cvar( "registered", "0" );
-            _CmdLine = new Cvar( "cmdline", "0", false, true );
+            _Registered = new cvar( "registered", "0" );
+            _CmdLine = new cvar( "cmdline", "0", false, true );
 
-            Cmd.Add( "path", Path_f );
+            cmd.Add( "path", Path_f );
 
             InitFileSystem();
             CheckRegistered();
@@ -440,7 +440,7 @@ namespace SharpQuake
                 {
                     int count = file.Object.Read( result, length - left, left );
                     if( count == 0 )
-                        Sys.Error( "COM_LoadFile: reading failed!" );
+                        sys.Error( "COM_LoadFile: reading failed!" );
                     left -= count;
                 }
                 Drawer.EndDisc();
@@ -456,15 +456,15 @@ namespace SharpQuake
         /// </summary>
         public static pack_t LoadPackFile( string packfile )
         {
-            FileStream file = Sys.FileOpenRead( packfile );
+            FileStream file = sys.FileOpenRead( packfile );
             if( file == null )
                 return null;
 
-            dpackheader_t header = Sys.ReadStructure<dpackheader_t>( file );
+            dpackheader_t header = sys.ReadStructure<dpackheader_t>( file );
 
             string id = Encoding.ASCII.GetString( header.id );
             if( id != "PACK" )
-                Sys.Error( "{0} is not a packfile", packfile );
+                sys.Error( "{0} is not a packfile", packfile );
 
             header.dirofs = LittleLong( header.dirofs );
             header.dirlen = LittleLong( header.dirlen );
@@ -472,7 +472,7 @@ namespace SharpQuake
             int numpackfiles = header.dirlen / Marshal.SizeOf( typeof( dpackfile_t ) );
 
             if( numpackfiles > MAX_FILES_IN_PACK )
-                Sys.Error( "{0} has {1} files", packfile, numpackfiles );
+                sys.Error( "{0} has {1} files", packfile, numpackfiles );
 
             //if (numpackfiles != PAK0_COUNT)
             //    _IsModified = true;    // not the original file
@@ -481,7 +481,7 @@ namespace SharpQuake
             byte[] buf = new byte[header.dirlen];
             if( file.Read( buf, 0, buf.Length ) != buf.Length )
             {
-                Sys.Error( "{0} buffering failed!", packfile );
+                sys.Error( "{0} buffering failed!", packfile );
             }
             List<dpackfile_t> info = new List<dpackfile_t>( MAX_FILES_IN_PACK );
             GCHandle handle = GCHandle.Alloc( buf, GCHandleType.Pinned );
@@ -498,7 +498,7 @@ namespace SharpQuake
                 }
                 if( numpackfiles != info.Count )
                 {
-                    Sys.Error( "{0} directory reading failed!", packfile );
+                    sys.Error( "{0} directory reading failed!", packfile );
                 }
             }
             finally
@@ -521,7 +521,7 @@ namespace SharpQuake
             for( int i = 0; i < numpackfiles; i++ )
             {
                 packfile_t pf = new packfile_t();
-                pf.name = Common.GetString( info[i].name );
+                pf.name = common.GetString( info[i].name );
                 pf.filepos = LittleLong( info[i].filepos );
                 pf.filelen = LittleLong( info[i].filelen );
                 newfiles[i] = pf;
@@ -744,11 +744,11 @@ namespace SharpQuake
         // needed.  This is for the convenience of developers using ISDN from home.
         private static void CopyFile( string netpath, string cachepath )
         {
-            using( Stream src = Sys.FileOpenRead( netpath ), dest = Sys.FileOpenWrite( cachepath ) )
+            using( Stream src = sys.FileOpenRead( netpath ), dest = sys.FileOpenWrite( cachepath ) )
             {
                 if( src == null )
                 {
-                    Sys.Error( "CopyFile: cannot open file {0}\n", netpath );
+                    sys.Error( "CopyFile: cannot open file {0}\n", netpath );
                 }
                 long remaining = src.Length;
                 string dirName = Path.GetDirectoryName( cachepath );
@@ -822,7 +822,7 @@ namespace SharpQuake
                     }
 
                     string netpath = sp.filename + "/" + filename;  //sprintf (netpath, "%s/%s",search->filename, filename);
-                    DateTime findtime = Sys.GetFileTime( netpath );
+                    DateTime findtime = sys.GetFileTime( netpath );
                     if( findtime == DateTime.MinValue )
                         continue;
 
@@ -833,7 +833,7 @@ namespace SharpQuake
                     }
                     else
                     {
-                        if( Sys.IsWindows )
+                        if( sys.IsWindows )
                         {
                             if( netpath.Length < 2 || netpath[1] != ':' )
                                 cachepath = _CacheDir + netpath;
@@ -845,14 +845,14 @@ namespace SharpQuake
                             cachepath = _CacheDir + netpath;
                         }
 
-                        DateTime cachetime = Sys.GetFileTime( cachepath );
+                        DateTime cachetime = sys.GetFileTime( cachepath );
                         if( cachetime < findtime )
                             CopyFile( netpath, cachepath );
                         netpath = cachepath;
                     }
 
                     Con.DPrint( "FindFile: {0}\n", netpath );
-                    FileStream fs = Sys.FileOpenRead( netpath );
+                    FileStream fs = sys.FileOpenRead( netpath );
                     if( fs == null )
                     {
                         file = null;
@@ -908,7 +908,7 @@ namespace SharpQuake
             {
                 Con.Print( "Playing shareware version.\n" );
                 if( _IsModified )
-                    Sys.Error( "You must have the registered version to use modified games" );
+                    sys.Error( "You must have the registered version to use modified games" );
                 return;
             }
 
@@ -917,11 +917,11 @@ namespace SharpQuake
             for( int i = 0; i < 128; i++ )
             {
                 if( _Pop[i] != (ushort)_Converter.BigShort( (short)check[i] ) )
-                    Sys.Error( "Corrupted data file." );
+                    sys.Error( "Corrupted data file." );
             }
 
-            Cvar.Set( "cmdline", _Args );
-            Cvar.Set( "registered", "1" );
+            cvar.Set( "cmdline", _Args );
+            cvar.Set( "registered", "1" );
             _StaticRegistered = true;
             Con.Print( "Playing registered version.\n" );
         }
@@ -941,7 +941,7 @@ namespace SharpQuake
             }
             else
             {
-                basedir = Host.Params.basedir;
+                basedir = host.Params.basedir;
             }
 
             if( !String.IsNullOrEmpty( basedir ) )
@@ -962,9 +962,9 @@ namespace SharpQuake
                 else
                     _CacheDir = _Argv[i + 1];
             }
-            else if( !String.IsNullOrEmpty( Host.Params.cachedir ) )
+            else if( !String.IsNullOrEmpty( host.Params.cachedir ) )
             {
-                _CacheDir = Host.Params.cachedir;
+                _CacheDir = host.Params.cachedir;
             }
             else
             {
@@ -1038,7 +1038,7 @@ namespace SharpQuake
             }
         }
 
-        static Common()
+        static common()
         {
             // set the byte swapping variables in a portable manner
             if( BitConverter.IsLittleEndian )
@@ -1258,7 +1258,7 @@ namespace SharpQuake
         {
             NeedRoom( 4 );
             _Val.f0 = f;
-            _Val.i0 = Common.LittleLong( _Val.i0 );
+            _Val.i0 = common.LittleLong( _Val.i0 );
 
             _Buffer[_Count++] = _Val.b0;
             _Buffer[_Count++] = _Val.b1;
@@ -1338,7 +1338,7 @@ namespace SharpQuake
         public int FillFrom( Socket socket, ref EndPoint ep )
         {
             Clear();
-            int result = Net.LanDriver.Read( socket, _Buffer, _Buffer.Length, ref ep );
+            int result = net.LanDriver.Read( socket, _Buffer, _Buffer.Length, ref ep );
             if( result >= 0 )
                 _Count = result;
             return result;
@@ -1356,12 +1356,12 @@ namespace SharpQuake
             if( _Count + bytes > _Buffer.Length )
             {
                 if( !this.AllowOverflow )
-                    Sys.Error( "MsgWriter: overflow without allowoverflow set!" );
+                    sys.Error( "MsgWriter: overflow without allowoverflow set!" );
 
                 this.IsOveflowed = true;
                 _Count = 0;
                 if( bytes > _Buffer.Length )
-                    Sys.Error( "MsgWriter: Requested more than whole buffer has!" );
+                    sys.Error( "MsgWriter: Requested more than whole buffer has!" );
             }
         }
 
@@ -1513,7 +1513,7 @@ namespace SharpQuake
 
             _Count += 4;
 
-            _Val.i0 = Common.LittleLong( _Val.i0 );
+            _Val.i0 = common.LittleLong( _Val.i0 );
             return _Val.f0;
         }
 
@@ -1771,9 +1771,9 @@ namespace SharpQuake
         {
             if( path.EndsWith( ".PAK" ) )
             {
-                this.pack = Common.LoadPackFile( path );
+                this.pack = common.LoadPackFile( path );
                 if( this.pack == null )
-                    Sys.Error( "Couldn't load packfile: {0}", path );
+                    sys.Error( "Couldn't load packfile: {0}", path );
             }
             else
                 this.filename = path;

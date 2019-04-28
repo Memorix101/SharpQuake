@@ -31,7 +31,7 @@ namespace SharpQuake
 {
     internal delegate void PollHandler( object arg );
 
-    internal static class Net
+    internal static class net
     {
         public static INetDriver[] Drivers
         {
@@ -129,7 +129,7 @@ namespace SharpQuake
         {
             get
             {
-                return NetTcpIp.Instance.IsInitialized;
+                return net_tcp_ip.Instance.IsInitialized;
             }
         }
 
@@ -253,10 +253,10 @@ namespace SharpQuake
 
         private static int _UnreliableMessagesReceived = 0;
 
-        private static Cvar _MessageTimeout;
+        private static cvar _MessageTimeout;
 
         // = { "net_messagetimeout", "300" };
-        private static Cvar _HostName;
+        private static cvar _HostName;
 
         private static PollProcedure _PollProcedureList;
 
@@ -290,19 +290,19 @@ namespace SharpQuake
 
             if( _Drivers == null )
             {
-                if( Common.HasParam( "-playback" ) )
+                if( common.HasParam( "-playback" ) )
                 {
                     _Drivers = new INetDriver[]
                     {
-                        new NetVcr()
+                        new net_vcr()
                     };
                 }
                 else
                 {
                     _Drivers = new INetDriver[]
                     {
-                        new NetLoop(),
-                        NetDatagram.Instance
+                        new net_loop(),
+                        net_datagram.Instance
                     };
                 }
             }
@@ -311,32 +311,32 @@ namespace SharpQuake
             {
                 _LanDrivers = new INetLanDriver[]
                 {
-                    NetTcpIp.Instance
+                    net_tcp_ip.Instance
                 };
             }
 
-            if( Common.HasParam( "-record" ) )
+            if( common.HasParam( "-record" ) )
                 _IsRecording = true;
 
-            int i = Common.CheckParm( "-port" );
+            int i = common.CheckParm( "-port" );
             if( i == 0 )
-                i = Common.CheckParm( "-udpport" );
+                i = common.CheckParm( "-udpport" );
             if( i == 0 )
-                i = Common.CheckParm( "-ipxport" );
+                i = common.CheckParm( "-ipxport" );
 
             if( i > 0 )
             {
-                if( i < Common.Argc - 1 )
-                    _DefHostPort = Common.atoi( Common.Argv( i + 1 ) );
+                if( i < common.Argc - 1 )
+                    _DefHostPort = common.atoi( common.Argv( i + 1 ) );
                 else
-                    Sys.Error( "Net.Init: you must specify a number after -port!" );
+                    sys.Error( "Net.Init: you must specify a number after -port!" );
             }
             HostPort = _DefHostPort;
 
-            if( Common.HasParam( "-listen" ) || Client.cls.state == cactive_t.ca_dedicated )
+            if( common.HasParam( "-listen" ) || client.cls.state == cactive_t.ca_dedicated )
                 _IsListening = true;
-            int numsockets = Server.svs.maxclientslimit;
-            if( Client.cls.state != cactive_t.ca_dedicated )
+            int numsockets = server.svs.maxclientslimit;
+            if( client.cls.state != cactive_t.ca_dedicated )
                 numsockets++;
 
             _FreeSockets = new List<qsocket_t>( numsockets );
@@ -349,18 +349,18 @@ namespace SharpQuake
 
             // allocate space for network message buffer
             Message = new MsgWriter( NET_MAXMESSAGE ); // SZ_Alloc (&net_message, NET_MAXMESSAGE);
-            Reader = new MsgReader( Net.Message );
+            Reader = new MsgReader( net.Message );
 
             if( _MessageTimeout == null )
             {
-                _MessageTimeout = new Cvar( "net_messagetimeout", "300" );
-                _HostName = new Cvar( "hostname", "UNNAMED" );
+                _MessageTimeout = new cvar( "net_messagetimeout", "300" );
+                _HostName = new cvar( "hostname", "UNNAMED" );
             }
 
-            Cmd.Add( "slist", Slist_f );
-            Cmd.Add( "listen", Listen_f );
-            Cmd.Add( "maxplayers", MaxPlayers_f );
-            Cmd.Add( "port", Port_f );
+            cmd.Add( "slist", Slist_f );
+            cmd.Add( "listen", Listen_f );
+            cmd.Add( "maxplayers", MaxPlayers_f );
+            cmd.Add( "port", Port_f );
 
             // initialize all the drivers
             _DriverLevel = 0;
@@ -426,22 +426,22 @@ namespace SharpQuake
                 if( _DriverLevel > 0 && !_IsListening )
                     continue;
 
-                qsocket_t ret = Net.Driver.CheckNewConnections();
+                qsocket_t ret = net.Driver.CheckNewConnections();
                 if( ret != null )
                 {
                     if( _IsRecording )
                     {
-                        _VcrConnect.time = Host.Time;
+                        _VcrConnect.time = host.Time;
                         _VcrConnect.op = VcrOp.VCR_OP_CONNECT;
                         _VcrConnect.session = 1; // (long)ret; // Uze: todo: make it work on 64bit systems
-                        byte[] buf = Sys.StructureToBytes( ref _VcrConnect );
-                        Host.VcrWriter.Write( buf, 0, buf.Length );
+                        byte[] buf = sys.StructureToBytes( ref _VcrConnect );
+                        host.VcrWriter.Write( buf, 0, buf.Length );
                         buf = Encoding.ASCII.GetBytes( ret.address );
                         int count = Math.Min( buf.Length, NET_NAMELEN );
                         int extra = NET_NAMELEN - count;
-                        Host.VcrWriter.Write( buf, 0, count );
+                        host.VcrWriter.Write( buf, 0, count );
                         for( int i = 0; i < extra; i++ )
-                            Host.VcrWriter.Write( (byte)0 );
+                            host.VcrWriter.Write( (byte)0 );
                     }
                     return ret;
                 }
@@ -449,11 +449,11 @@ namespace SharpQuake
 
             if( _IsRecording )
             {
-                _VcrConnect.time = Host.Time;
+                _VcrConnect.time = host.Time;
                 _VcrConnect.op = VcrOp.VCR_OP_CONNECT;
                 _VcrConnect.session = 0;
-                byte[] buf = Sys.StructureToBytes( ref _VcrConnect );
-                Host.VcrWriter.Write( buf, 0, buf.Length );
+                byte[] buf = sys.StructureToBytes( ref _VcrConnect );
+                host.VcrWriter.Write( buf, 0, buf.Length );
             }
 
             return null;
@@ -476,7 +476,7 @@ namespace SharpQuake
 
             if( host != null )
             {
-                if( Common.SameText( host, "local" ) )
+                if( common.SameText( host, "local" ) )
                 {
                     numdrivers = 1;
                     goto JustDoIt;
@@ -486,7 +486,7 @@ namespace SharpQuake
                 {
                     foreach( hostcache_t hc in _HostCache )
                     {
-                        if( Common.SameText( hc.name, host ) )
+                        if( common.SameText( hc.name, host ) )
                         {
                             host = hc.cname;
                             goto JustDoIt;
@@ -512,7 +512,7 @@ namespace SharpQuake
             _DriverLevel = 0;
             foreach( hostcache_t hc in _HostCache )
             {
-                if( Common.SameText( host, hc.name ) )
+                if( common.SameText( host, hc.name ) )
                 {
                     host = hc.cname;
                     break;
@@ -562,12 +562,12 @@ JustDoIt:
 
             if( _IsRecording )
             {
-                _VcrSendMessage.time = Host.Time;
+                _VcrSendMessage.time = host.Time;
                 _VcrSendMessage.op = VcrOp.VCR_OP_CANSENDMESSAGE;
                 _VcrSendMessage.session = 1; // (long)sock; Uze: todo: do something?
                 _VcrSendMessage.ret = r ? 1 : 0;
-                byte[] buf = Sys.StructureToBytes( ref _VcrSendMessage );
-                Host.VcrWriter.Write( buf, 0, buf.Length );
+                byte[] buf = sys.StructureToBytes( ref _VcrSendMessage );
+                host.VcrWriter.Write( buf, 0, buf.Length );
             }
 
             return r;
@@ -621,26 +621,26 @@ JustDoIt:
 
                 if( _IsRecording )
                 {
-                    _VcrGetMessage.time = Host.Time;
+                    _VcrGetMessage.time = host.Time;
                     _VcrGetMessage.op = VcrOp.VCR_OP_GETMESSAGE;
                     _VcrGetMessage.session = 1;// (long)sock; Uze todo: write somethisng meaningful
                     _VcrGetMessage.ret = ret;
-                    byte[] buf = Sys.StructureToBytes( ref _VcrGetMessage );
-                    Host.VcrWriter.Write( buf, 0, buf.Length );
-                    Host.VcrWriter.Write( Net.Message.Length );
-                    Host.VcrWriter.Write( Net.Message.Data, 0, Net.Message.Length );
+                    byte[] buf = sys.StructureToBytes( ref _VcrGetMessage );
+                    host.VcrWriter.Write( buf, 0, buf.Length );
+                    host.VcrWriter.Write( net.Message.Length );
+                    host.VcrWriter.Write( net.Message.Data, 0, net.Message.Length );
                 }
             }
             else
             {
                 if( _IsRecording )
                 {
-                    _VcrGetMessage.time = Host.Time;
+                    _VcrGetMessage.time = host.Time;
                     _VcrGetMessage.op = VcrOp.VCR_OP_GETMESSAGE;
                     _VcrGetMessage.session = 1; // (long)sock; Uze todo: fix this
                     _VcrGetMessage.ret = ret;
-                    byte[] buf = Sys.StructureToBytes( ref _VcrGetMessage );
-                    Host.VcrWriter.Write( buf, 0, buf.Length );
+                    byte[] buf = sys.StructureToBytes( ref _VcrGetMessage );
+                    host.VcrWriter.Write( buf, 0, buf.Length );
                 }
             }
 
@@ -674,12 +674,12 @@ JustDoIt:
 
             if( _IsRecording )
             {
-                _VcrSendMessage.time = Host.Time;
+                _VcrSendMessage.time = host.Time;
                 _VcrSendMessage.op = VcrOp.VCR_OP_SENDMESSAGE;
                 _VcrSendMessage.session = 1; // (long)sock; Uze: todo: do something?
                 _VcrSendMessage.ret = r;
-                byte[] buf = Sys.StructureToBytes( ref _VcrSendMessage );
-                Host.VcrWriter.Write( buf, 0, buf.Length );
+                byte[] buf = sys.StructureToBytes( ref _VcrSendMessage );
+                host.VcrWriter.Write( buf, 0, buf.Length );
             }
 
             return r;
@@ -711,12 +711,12 @@ JustDoIt:
 
             if( _IsRecording )
             {
-                _VcrSendMessage.time = Host.Time;
+                _VcrSendMessage.time = host.Time;
                 _VcrSendMessage.op = VcrOp.VCR_OP_SENDMESSAGE;
                 _VcrSendMessage.session = 1;// (long)sock; Uze todo: ???????
                 _VcrSendMessage.ret = r;
-                byte[] buf = Sys.StructureToBytes( ref _VcrSendMessage );
-                Host.VcrWriter.Write( buf );
+                byte[] buf = sys.StructureToBytes( ref _VcrSendMessage );
+                host.VcrWriter.Write( buf );
             }
 
             return r;
@@ -732,17 +732,17 @@ JustDoIt:
             bool[] state2 = new bool[QDef.MAX_SCOREBOARD];
 
             int count = 0;
-            for( int i = 0; i < Server.svs.maxclients; i++ )
+            for( int i = 0; i < server.svs.maxclients; i++ )
             {
-                Host.HostClient = Server.svs.clients[i];
-                if( Host.HostClient.netconnection == null )
+                host.HostClient = server.svs.clients[i];
+                if( host.HostClient.netconnection == null )
                     continue;
 
-                if( Host.HostClient.active )
+                if( host.HostClient.active )
                 {
-                    if( Host.HostClient.netconnection.driver == 0 )
+                    if( host.HostClient.netconnection.driver == 0 )
                     {
-                        SendMessage( Host.HostClient.netconnection, data );
+                        SendMessage( host.HostClient.netconnection, data );
                         state1[i] = true;
                         state2[i] = true;
                         continue;
@@ -758,23 +758,23 @@ JustDoIt:
                 }
             }
 
-            double start = Sys.GetFloatTime();
+            double start = sys.GetFloatTime();
             while( count > 0 )
             {
                 count = 0;
-                for( int i = 0; i < Server.svs.maxclients; i++ )
+                for( int i = 0; i < server.svs.maxclients; i++ )
                 {
-                    Host.HostClient = Server.svs.clients[i];
+                    host.HostClient = server.svs.clients[i];
                     if( !state1[i] )
                     {
-                        if( CanSendMessage( Host.HostClient.netconnection ) )
+                        if( CanSendMessage( host.HostClient.netconnection ) )
                         {
                             state1[i] = true;
-                            SendMessage( Host.HostClient.netconnection, data );
+                            SendMessage( host.HostClient.netconnection, data );
                         }
                         else
                         {
-                            GetMessage( Host.HostClient.netconnection );
+                            GetMessage( host.HostClient.netconnection );
                         }
                         count++;
                         continue;
@@ -782,19 +782,19 @@ JustDoIt:
 
                     if( !state2[i] )
                     {
-                        if( CanSendMessage( Host.HostClient.netconnection ) )
+                        if( CanSendMessage( host.HostClient.netconnection ) )
                         {
                             state2[i] = true;
                         }
                         else
                         {
-                            GetMessage( Host.HostClient.netconnection );
+                            GetMessage( host.HostClient.netconnection );
                         }
                         count++;
                         continue;
                     }
                 }
-                if( ( Sys.GetFloatTime() - start ) > blocktime )
+                if( ( sys.GetFloatTime() - start ) > blocktime )
                     break;
             }
             return count;
@@ -826,7 +826,7 @@ JustDoIt:
         {
             // remove it from active list
             if( !_ActiveSockets.Remove( sock ) )
-                Sys.Error( "NET_FreeQSocket: not active\n" );
+                sys.Error( "NET_FreeQSocket: not active\n" );
 
             // add it to free list
             _FreeSockets.Add( sock );
@@ -853,7 +853,7 @@ JustDoIt:
         // double SetNetTime
         public static double SetNetTime()
         {
-            _Time = Sys.GetFloatTime();
+            _Time = sys.GetFloatTime();
             return _Time;
         }
 
@@ -865,19 +865,19 @@ JustDoIt:
             if( _SlistInProgress )
                 return;
 
-            if( !Net.SlistSilent )
+            if( !net.SlistSilent )
             {
                 Con.Print( "Looking for Quake servers...\n" );
                 PrintSlistHeader();
             }
 
             _SlistInProgress = true;
-            _SlistStartTime = Sys.GetFloatTime();
+            _SlistStartTime = sys.GetFloatTime();
 
             SchedulePollProcedure( _SlistSendProcedure, 0.0 );
             SchedulePollProcedure( _SlistPollProcedure, 0.1 );
 
-            Net.HostCacheCount = 0;
+            net.HostCacheCount = 0;
         }
 
         /// <summary>
@@ -890,7 +890,7 @@ JustDoIt:
             if( _FreeSockets.Count == 0 )
                 return null;
 
-            if( Net.ActiveConnections >= Server.svs.maxclients )
+            if( net.ActiveConnections >= server.svs.maxclients )
                 return null;
 
             // get one from free list
@@ -937,9 +937,9 @@ JustDoIt:
             {
                 hostcache_t hc = _HostCache[i];
                 if( hc.maxusers != 0 )
-                    Con.Print( "{0,-15} {1,-15}\n {2,2}/{3,2}\n", Common.Copy( hc.name, 15 ), Common.Copy( hc.map, 15 ), hc.users, hc.maxusers );
+                    Con.Print( "{0,-15} {1,-15}\n {2,2}/{3,2}\n", common.Copy( hc.name, 15 ), common.Copy( hc.map, 15 ), hc.users, hc.maxusers );
                 else
-                    Con.Print( "{0,-15} {1,-15}\n", Common.Copy( hc.name, 15 ), Common.Copy( hc.map, 15 ) );
+                    Con.Print( "{0,-15} {1,-15}\n", common.Copy( hc.name, 15 ), common.Copy( hc.map, 15 ) );
             }
             _SlistLastShown = i;
         }
@@ -957,7 +957,7 @@ JustDoIt:
         /// </summary>
         private static void SchedulePollProcedure( PollProcedure proc, double timeOffset )
         {
-            proc.nextTime = Sys.GetFloatTime() + timeOffset;
+            proc.nextTime = sys.GetFloatTime() + timeOffset;
             PollProcedure pp, prev;
             for( pp = _PollProcedureList, prev = null; pp != null; pp = pp.next )
             {
@@ -980,13 +980,13 @@ JustDoIt:
         // NET_Listen_f
         private static void Listen_f()
         {
-            if( Cmd.Argc != 2 )
+            if( cmd.Argc != 2 )
             {
                 Con.Print( "\"listen\" is \"{0}\"\n", _IsListening ? 1 : 0 );
                 return;
             }
 
-            _IsListening = ( Common.atoi( Cmd.Argv( 1 ) ) != 0 );
+            _IsListening = ( common.atoi( cmd.Argv( 1 ) ) != 0 );
 
             foreach( INetDriver driver in _Drivers )
             {
@@ -1000,24 +1000,24 @@ JustDoIt:
         // MaxPlayers_f
         private static void MaxPlayers_f()
         {
-            if( Cmd.Argc != 2 )
+            if( cmd.Argc != 2 )
             {
-                Con.Print( "\"maxplayers\" is \"%u\"\n", Server.svs.maxclients );
+                Con.Print( "\"maxplayers\" is \"%u\"\n", server.svs.maxclients );
                 return;
             }
 
-            if( Server.sv.active )
+            if( server.sv.active )
             {
                 Con.Print( "maxplayers can not be changed while a server is running.\n" );
                 return;
             }
 
-            int n = Common.atoi( Cmd.Argv( 1 ) );
+            int n = common.atoi( cmd.Argv( 1 ) );
             if( n < 1 )
                 n = 1;
-            if( n > Server.svs.maxclientslimit )
+            if( n > server.svs.maxclientslimit )
             {
-                n = Server.svs.maxclientslimit;
+                n = server.svs.maxclientslimit;
                 Con.Print( "\"maxplayers\" set to \"{0}\"\n", n );
             }
 
@@ -1027,23 +1027,23 @@ JustDoIt:
             if( n > 1 && !_IsListening )
                 Cbuf.AddText( "listen 1\n" );
 
-            Server.svs.maxclients = n;
+            server.svs.maxclients = n;
             if( n == 1 )
-                Cvar.Set( "deathmatch", "0" );
+                cvar.Set( "deathmatch", "0" );
             else
-                Cvar.Set( "deathmatch", "1" );
+                cvar.Set( "deathmatch", "1" );
         }
 
         // NET_Port_f
         private static void Port_f()
         {
-            if( Cmd.Argc != 2 )
+            if( cmd.Argc != 2 )
             {
                 Con.Print( "\"port\" is \"{0}\"\n", HostPort );
                 return;
             }
 
-            int n = Common.atoi( Cmd.Argv( 1 ) );
+            int n = common.atoi( cmd.Argv( 1 ) );
             if( n < 1 || n > 65534 )
             {
                 Con.Print( "Bad value, must be between 1 and 65534\n" );
@@ -1068,7 +1068,7 @@ JustDoIt:
         {
             for( _DriverLevel = 0; _DriverLevel < _Drivers.Length; _DriverLevel++ )
             {
-                if( !Net.SlistLocal && _DriverLevel == 0 )
+                if( !net.SlistLocal && _DriverLevel == 0 )
                     continue;
                 if( !_Drivers[_DriverLevel].IsInitialized )
                     continue;
@@ -1076,7 +1076,7 @@ JustDoIt:
                 _Drivers[_DriverLevel].SearchForHosts( true );
             }
 
-            if( ( Sys.GetFloatTime() - _SlistStartTime ) < 0.5 )
+            if( ( sys.GetFloatTime() - _SlistStartTime ) < 0.5 )
                 SchedulePollProcedure( _SlistSendProcedure, 0.75 );
         }
 
@@ -1087,7 +1087,7 @@ JustDoIt:
         {
             for( _DriverLevel = 0; _DriverLevel < _Drivers.Length; _DriverLevel++ )
             {
-                if( !Net.SlistLocal && _DriverLevel == 0 )
+                if( !net.SlistLocal && _DriverLevel == 0 )
                     continue;
                 if( !_Drivers[_DriverLevel].IsInitialized )
                     continue;
@@ -1095,21 +1095,21 @@ JustDoIt:
                 _Drivers[_DriverLevel].SearchForHosts( false );
             }
 
-            if( !Net.SlistSilent )
+            if( !net.SlistSilent )
                 PrintSlist();
 
-            if( ( Sys.GetFloatTime() - _SlistStartTime ) < 1.5 )
+            if( ( sys.GetFloatTime() - _SlistStartTime ) < 1.5 )
             {
                 SchedulePollProcedure( _SlistPollProcedure, 0.1 );
                 return;
             }
 
-            if( !Net.SlistSilent )
+            if( !net.SlistSilent )
                 PrintSlistTrailer();
 
             _SlistInProgress = false;
-            Net.SlistSilent = false;
-            Net.SlistLocal = true;
+            net.SlistSilent = false;
+            net.SlistLocal = true;
         }
 
         [StructLayout( LayoutKind.Sequential, Pack = 1 )]
@@ -1167,7 +1167,7 @@ JustDoIt:
         {
             get
             {
-                return Net.LanDrivers[this.landriver];
+                return net.LanDrivers[this.landriver];
             }
         }
 
@@ -1218,8 +1218,8 @@ JustDoIt:
 
         public qsocket_t()
         {
-            this.sendMessage = new byte[Net.NET_MAXMESSAGE];
-            this.receiveMessage = new byte[Net.NET_MAXMESSAGE];
+            this.sendMessage = new byte[net.NET_MAXMESSAGE];
+            this.receiveMessage = new byte[net.NET_MAXMESSAGE];
             disconnected = true;
         }
     }

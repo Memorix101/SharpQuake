@@ -31,7 +31,7 @@ namespace SharpQuake
     /// <summary>
     /// In_functions
     /// </summary>
-    internal static class Input
+    internal static class input
     {
         public static bool IsMouseActive
         {
@@ -45,14 +45,14 @@ namespace SharpQuake
         {
             get
             {
-                Rectangle bounds = MainWindow.Instance.Bounds;
+                Rectangle bounds = main_window.Instance.Bounds;
                 Point p = bounds.Location;
                 p.Offset( bounds.Width / 2, bounds.Height / 2 );
                 return p;
             }
         }
 
-        private static Cvar _MouseFilter;// = { "m_filter", "0" };
+        private static cvar _MouseFilter;// = { "m_filter", "0" };
         private static Vector2 _OldMouse; // old_mouse_x, old_mouse_y
         private static Vector2 _Mouse; // mouse_x, mouse_y
         private static Vector2 _MouseAccum; // mx_accum, my_accum
@@ -67,7 +67,7 @@ namespace SharpQuake
         {
             if( _MouseFilter == null )
             {
-                _MouseFilter = new Cvar( "m_filter", "0" );
+                _MouseFilter = new cvar( "m_filter", "0" );
             }
 
             _IsMouseActive = ( Mouse.GetState( 0 ).IsConnected != false );
@@ -106,7 +106,7 @@ namespace SharpQuake
                 //    restore_spi = SystemParametersInfo (SPI_SETMOUSE, 0, newmouseparms, 0);
 
                 //Cursor.Position = Input.WindowCenter;
-                Mouse.SetPosition(Input.WindowCenter.X, Input.WindowCenter.Y);
+                Mouse.SetPosition(input.WindowCenter.X, input.WindowCenter.Y);
 
 
                 //SetCapture(mainwindow);
@@ -148,7 +148,7 @@ namespace SharpQuake
         {
             if( !_MouseShowToggle )
             {
-                if( !MainWindow.IsFullscreen )
+                if( !main_window.IsFullscreen )
                 {
                     //Cursor.Show();
                 }
@@ -160,10 +160,10 @@ namespace SharpQuake
         // add additional movement on top of the keyboard move cmd
         public static void Move( usercmd_t cmd )
         {
-            if( !MainWindow.Instance.Focused )
+            if( !main_window.Instance.Focused )
                 return;
 
-            if( MainWindow.Instance.WindowState == WindowState.Minimized )
+            if( main_window.Instance.WindowState == WindowState.Minimized )
                 return;
 
             MouseMove( cmd );
@@ -214,7 +214,7 @@ namespace SharpQuake
                 return;
            
             Point current_pos = new Point(Mouse.GetCursorState().X, Mouse.GetCursorState().Y); //Cursor.Position;
-            Point window_center = Input.WindowCenter;
+            Point window_center = input.WindowCenter;
 
             int mx = (int)( current_pos.X - window_center.X + _MouseAccum.X );
             int my = (int)( current_pos.Y - window_center.Y + _MouseAccum.Y );
@@ -235,20 +235,20 @@ namespace SharpQuake
             _OldMouse.X = mx;
             _OldMouse.Y = my;
 
-            _Mouse *= Client.Sensitivity;
+            _Mouse *= client.Sensitivity;
 
             // add mouse X/Y movement to cmd
-            if( ClientInput.StrafeBtn.IsDown || ( Client.LookStrafe && ClientInput.MLookBtn.IsDown ) )
-                cmd.sidemove += Client.MSide * _Mouse.X;
+            if( client_input.StrafeBtn.IsDown || ( client.LookStrafe && client_input.MLookBtn.IsDown ) )
+                cmd.sidemove += client.MSide * _Mouse.X;
             else
-                Client.cl.viewangles.Y -= Client.MYaw * _Mouse.X;
+                client.cl.viewangles.Y -= client.MYaw * _Mouse.X;
 
-            View.StopPitchDrift();
+            view.StopPitchDrift();
 
-            Client.cl.viewangles.X += Client.MPitch * _Mouse.Y;
+            client.cl.viewangles.X += client.MPitch * _Mouse.Y;
 
             // modernized to always use mouse look
-            Client.cl.viewangles.X = MathHelper.Clamp( Client.cl.viewangles.X, -70, 80 );
+            client.cl.viewangles.X = MathHelper.Clamp( client.cl.viewangles.X, -70, 80 );
 
             // if the mouse has moved, force it to the center, so there's room to move
             if( mx != 0 || my != 0 )
