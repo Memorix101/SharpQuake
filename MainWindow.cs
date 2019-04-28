@@ -24,6 +24,7 @@ using System.IO;
 using OpenTK;
 using OpenTK.Graphics;
 using OpenTK.Input;
+using SDL2;
 
 namespace SharpQuake
 {
@@ -106,11 +107,42 @@ namespace SharpQuake
 
         protected override void OnClosing(System.ComponentModel.CancelEventArgs e)
         {
+            // Turned this of as I hate this prompt so much 
             /*if (this.ConfirmExit)
             {
-                e.Cancel = (MessageBox.Show("Are you sure you want to quit?",
-                    "Confirm Exit", MessageBoxButtons.YesNo) != DialogResult.Yes);
-            }*/
+                int button_id;
+                SDL.SDL_MessageBoxButtonData[] buttons = new SDL.SDL_MessageBoxButtonData[2];
+
+                buttons[0].flags = SDL.SDL_MessageBoxButtonFlags.SDL_MESSAGEBOX_BUTTON_ESCAPEKEY_DEFAULT;
+                buttons[0].buttonid = 0;
+                buttons[0].text = "cancel";
+
+                buttons[1].flags = SDL.SDL_MessageBoxButtonFlags.SDL_MESSAGEBOX_BUTTON_RETURNKEY_DEFAULT;
+                buttons[1].buttonid = 1;
+                buttons[1].text = "yes";
+
+                SDL.SDL_MessageBoxData messageBoxData = new SDL.SDL_MessageBoxData();
+                messageBoxData.flags = SDL.SDL_MessageBoxFlags.SDL_MESSAGEBOX_INFORMATION;
+                messageBoxData.window = IntPtr.Zero;
+                messageBoxData.title = "test";
+                messageBoxData.message = "test";
+                messageBoxData.numbuttons = 2;
+                messageBoxData.buttons = buttons;
+                SDL.SDL_ShowMessageBox(ref messageBoxData, out button_id);
+
+                if (button_id == -1)
+                {
+                    "error displaying message box"
+                }
+                else
+                {
+                   "selection was %s"
+                }
+
+                // e.Cancel = (MessageBox.Show("Are you sure you want to quit?",
+                //"Confirm Exit", MessageBoxButtons.YesNo) != DialogResult.Yes);
+            }
+            */
             base.OnClosing(e);
         }
 
@@ -137,7 +169,7 @@ namespace SharpQuake
         {
             if (_Instance != null)
             {
-                throw new Exception("MainForm instance is already created!");
+                throw new Exception("Game instance is already created!");
             }
             return new MainWindow(size, mode, fullScreen);
         }
@@ -193,55 +225,54 @@ namespace SharpQuake
                 throw new Exception("Fatal error!", ex);
 
             Instance.CursorVisible = true;
-            //SDL.SDL_ShowSimpleMessageBox(SDL.SDL_MessageBoxFlags.SDL_MESSAGEBOX_ERROR, "Fatal error!", ex.Message, IntPtr.Zero); //MessageBox.Show(ex.Message);
+            SDL.SDL_ShowSimpleMessageBox(SDL.SDL_MessageBoxFlags.SDL_MESSAGEBOX_ERROR, "Fatal error!", ex.Message, IntPtr.Zero); //MessageBox.Show(ex.Message);
             SafeShutdown();
         }
 
         [STAThread]
         private static int Main(string[] args)
         {
-            //workaround for SDL2 mouse input issues
+            //Workaround for SDL2 mouse input issues
             var options = new ToolkitOptions();
             options.Backend = PlatformBackend.PreferNative;
-            options.EnableHighResolution = true; //just for testing
+            options.EnableHighResolution = true; //Just for testing
             Toolkit.Init(options);
-
 #if !DEBUG
             try
             {
 #endif
-                // select display device
-                _DisplayDevice = DisplayDevice.Default;
+            // select display device
+            _DisplayDevice = DisplayDevice.Default;
 
-                if (File.Exists(DumpFilePath))
-                    File.Delete(DumpFilePath);
+            if (File.Exists(DumpFilePath))
+                File.Delete(DumpFilePath);
 
-                quakeparms_t parms = new quakeparms_t();
+            quakeparms_t parms = new quakeparms_t();
 
-                parms.basedir = AppDomain.CurrentDomain.BaseDirectory; //Application.StartupPath;
+            parms.basedir = AppDomain.CurrentDomain.BaseDirectory; //Application.StartupPath;
 
-                string[] args2 = new string[args.Length + 1];
-                args2[0] = String.Empty;
-                args.CopyTo(args2, 1);
+            string[] args2 = new string[args.Length + 1];
+            args2[0] = String.Empty;
+            args.CopyTo(args2, 1);
 
-                Common.InitArgv(args2);
+            Common.InitArgv(args2);
 
-                parms.argv = new string[Common.Argc];
-                Common.Args.CopyTo(parms.argv, 0);
+            parms.argv = new string[Common.Argc];
+            Common.Args.CopyTo(parms.argv, 0);
 
-                if (Common.HasParam("-dedicated"))
-                    throw new QuakeException("Dedicated server mode not supported!");
+            if (Common.HasParam("-dedicated"))
+                throw new QuakeException("Dedicated server mode not supported!");
 
-                Size size = new Size(1280, 720);
-                GraphicsMode mode = new GraphicsMode();
-                using (MainWindow form = MainWindow.CreateInstance(size, mode, false))
-                {
-                    Con.DPrint("Host.Init\n");
-                    Host.Init(parms);
-                    Instance.CursorVisible = false; //hides mouse cursor during main menu on start up
-                    form.Run();
-                }
-                Host.Shutdown();
+            Size size = new Size(1280, 720);
+            GraphicsMode mode = new GraphicsMode();
+            using (MainWindow form = MainWindow.CreateInstance(size, mode, false))
+            {
+                Con.DPrint("Host.Init\n");
+                Host.Init(parms);
+                Instance.CursorVisible = false; //Hides mouse cursor during main menu on start up
+                form.Run();
+            }
+            Host.Shutdown();
 #if !DEBUG
             }
             catch (QuakeSystemError se)

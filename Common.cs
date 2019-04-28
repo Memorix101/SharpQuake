@@ -1029,7 +1029,7 @@ namespace SharpQuake
             //
             for( int i = 0; ; i++ )
             {
-                string pakfile = String.Format( "{0}/pak{1}.pak", dir, i );
+                string pakfile = String.Format( "{0}/PAK{1}.PAK", dir, i );
                 pack_t pak = LoadPackFile( pakfile );
                 if( pak == null )
                     break;
@@ -1769,7 +1769,7 @@ namespace SharpQuake
 
         public searchpath_t( string path )
         {
-            if( path.EndsWith( ".pak" ) )
+            if( path.EndsWith( ".PAK" ) )
             {
                 this.pack = Common.LoadPackFile( path );
                 if( this.pack == null )

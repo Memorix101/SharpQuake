@@ -348,7 +348,18 @@ namespace SharpQuake
             MainWindow form = MainWindow.Instance;
             if( _Windowed )
             {
+                try
+                {
+                    dev.ChangeResolution(mode.width, mode.height, mode.bpp, mode.refreshRate);
+                }
+                catch (Exception ex)
+                {
+                    Sys.Error("Couldn't set video mode: " + ex.Message);
+                }
                 form.WindowState = WindowState.Normal;
+                form.WindowBorder = WindowBorder.Fixed;
+
+                /*form.WindowState = WindowState.Normal;
                 form.WindowBorder = WindowBorder.Fixed;
                 form.Location = new Point( ( mode.width - form.Width ) / 2, ( mode.height - form.Height ) / 2 );
                 if( _WindowedMouse.Value != 0 && Key.Destination == keydest_t.key_game )
@@ -360,7 +371,7 @@ namespace SharpQuake
                 {
                     Input.DeactivateMouse();
                     Input.ShowMouse();
-                }
+                }*/
             }
             else
             {

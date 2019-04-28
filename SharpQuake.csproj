@@ -6,7 +6,7 @@
     <ProductVersion>8.0.30703</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{0FC3229A-25C5-49F9-80C6-237A3BC319B1}</ProjectGuid>
-    <OutputType>WinExe</OutputType>
+    <OutputType>Exe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>SharpQuake</RootNamespace>
     <AssemblyName>SharpQuake</AssemblyName>
@@ -119,6 +119,10 @@
     <Compile Include="Sbar.cs" />
     <Compile Include="Screen.cs" />
     <Compile Include="ScreenDraw.cs" />
+    <Compile Include="SDL2-CS\src\SDL2.cs" />
+    <Compile Include="SDL2-CS\src\SDL2_image.cs" />
+    <Compile Include="SDL2-CS\src\SDL2_mixer.cs" />
+    <Compile Include="SDL2-CS\src\SDL2_ttf.cs" />
     <Compile Include="Server.cs" />
     <Compile Include="ServerMain.cs" />
     <Compile Include="ServerMove.cs" />
@@ -161,6 +165,17 @@
       <DependentUpon>Settings.settings</DependentUpon>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
+    <None Include="SDL2-CS\.gitignore" />
+    <None Include="SDL2-CS\.gitlab-ci.yml" />
+    <None Include="SDL2-CS\gitlab-ci\build-net461.sh" />
+    <None Include="SDL2-CS\gitlab-ci\build-netcore.sh" />
+    <None Include="SDL2-CS\gitlab-ci\deploy.sh" />
+    <None Include="SDL2-CS\gitlab-ci\package.sh" />
+    <None Include="SDL2-CS\gitlab-ci\SDL2-CS.nuspec" />
+    <None Include="SDL2-CS\LICENSE" />
+    <None Include="SDL2-CS\Makefile" />
+    <None Include="SDL2-CS\README" />
+    <None Include="SDL2-CS\SDL2-CS.dll.config" />
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include="Microsoft.Net.Client.3.5">
@@ -176,6 +191,9 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="quake.ico" />
+    <Content Include="SDL2-CS\SDL2-CS.Core.csproj" />
+    <Content Include="SDL2-CS\SDL2-CS.csproj" />
+    <Content Include="SDL2-CS\SDL2-CS.sln" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

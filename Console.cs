@@ -225,6 +225,8 @@ namespace SharpQuake
         {
             string msg = ( args.Length > 0 ? String.Format( fmt, args ) : fmt );
 
+            Console.WriteLine(msg); // Debug stuff
+
             // log all messages to file
             if( _DebugLog )
                 DebugLog( msg );

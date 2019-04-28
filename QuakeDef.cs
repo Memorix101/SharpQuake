@@ -144,7 +144,7 @@ namespace SharpQuake
         public const float LINUX_VERSION = 1.30f;
         public const float X11_VERSION = 1.10f;
 
-        public const string GAMENAME = "id1";		// directory to look in by default
+        public const string GAMENAME = "Id1";		// directory to look in by default
 
         public const int MAX_NUM_ARGVS  = 50;
 
