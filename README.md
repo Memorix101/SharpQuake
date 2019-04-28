@@ -2,12 +2,12 @@
 
 ### Description 
 
-SharpQuake is [GLQuake](https://github.com/dpteam/GLQuake3D) rewritten in C# using the [OpenTK](https://github.com/opentk/opentk) library.
+SharpQuake is **[GLQuake](https://github.com/dpteam/GLQuake3D)** rewritten in C# using the **[OpenTK](https://github.com/opentk/opentk)** library.
 
 ### Dependencies
 * OpenTK 3.0.1
-* [OpenAL](https://www.openal.org/downloads/) (Windows) / libopenal on Linux
-* [SDL2](https://www.libsdl.org/download-2.0.php) (Windows and macOS) / libsdl2-2.0 on Linux (Runtime binaries)
+* **[OpenAL](https://www.openal.org/downloads/)** (Windows) / libopenal on Linux
+* **[SDL2](https://www.libsdl.org/download-2.0.php)** (Windows and macOS) / libsdl2-2.0 on Linux (Runtime binaries)
   
 ### Building
 
@@ -27,7 +27,7 @@ SharpQuake is [GLQuake](https://github.com/dpteam/GLQuake3D) rewritten in C# usi
 
 ### Running
 
-In case you don't own a copy of Quake you can purchase it on [GOG.com](https://www.gog.com/game/quake_the_offering), [Steam](https://store.steampowered.com/app/2310/QUAKE/) or use the [shareware version](https://community.pcgamingwiki.com/files/file/411-quake-shareware-pak/).
+In case you don't own a copy of Quake you can purchase it on **[GOG.com](https://www.gog.com/game/quake_the_offering)**, **[Steam](https://store.steampowered.com/app/2310/QUAKE/)** or use the **[shareware version](https://community.pcgamingwiki.com/files/file/411-quake-shareware-pak/)**.
 
 **macOS / OSX is not official supported as OpenGL on Mac is poorly supported and has been replaced in favour of their own graphics API [Metal](https://en.wikipedia.org/wiki/Metal_(API)).**
 
