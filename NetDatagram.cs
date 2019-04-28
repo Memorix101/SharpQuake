@@ -800,6 +800,8 @@ namespace SharpQuake
                 if( Net.Reader.ReadByte() != CCRep.CCREP_SERVER_INFO )
                     continue;
 
+                EndPoint _hostIP = readaddr;
+
                 readaddr = Net.LanDriver.GetAddrFromName( Net.Reader.ReadString() );
                 int n;
                 // search the cache for this server
@@ -823,11 +825,17 @@ namespace SharpQuake
                     hc.cname = hc.name;
                     hc.name = "*" + hc.name;
                 }
-                IPEndPoint ep = (IPEndPoint)readaddr;
-                hc.addr = new IPEndPoint( ep.Address, ep.Port );
+                //IPEndPoint ep = (IPEndPoint)readaddr;
+                //hc.addr = new IPEndPoint( ep.Address, ep.Port );
+                string[] ip = readaddr.ToString().Split(':'); //readaddr.ToString()
+                IPAddress _ipAddress;
+                int _port;
+                IPAddress.TryParse(ip[0].ToString(), out _ipAddress);
+                int.TryParse(ip[1].ToString(), out _port);
+                hc.addr = new IPEndPoint(_ipAddress, _port);
                 hc.driver = Net.DriverLevel;
                 hc.ldriver = Net.LanDriverLevel;
-                hc.cname = readaddr.ToString();
+                hc.cname = _hostIP.ToString(); //readaddr.ToString();
 
                 // check for a name conflict
                 for( int i = 0; i < Net.HostCacheCount; i++ )
