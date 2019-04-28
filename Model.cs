@@ -96,7 +96,7 @@ namespace SharpQuake
 
         public const int VERTEXSIZE = 7;
         public const int MAX_SKINS = 32;
-        public const int MAXALIASVERTS = 1024;
+        public const int MAXALIASVERTS = 2000; //1024
         public const int MAXALIASFRAMES = 256;
         public const int MAXALIASTRIS = 2048;
         public const int MAX_MOD_KNOWN = 512;

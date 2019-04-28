@@ -168,10 +168,10 @@ namespace SharpQuake
         //
         // per-level limits
         //
-        public const int MAX_EDICTS = 600;			// FIXME: ouch! ouch! ouch!
+        public const int MAX_EDICTS = 64000;	//600		// FIXME: ouch! ouch! ouch!
 
         public const int MAX_LIGHTSTYLES = 64;
-        public const int MAX_MODELS = 256;			// these are sent over the net as bytes
+        public const int MAX_MODELS = 1024;	//256		// these are sent over the net as bytes
         public const int MAX_SOUNDS = 256;			// so they cannot be blindly increased
 
         public const int SAVEGAME_COMMENT_LENGTH = 39;

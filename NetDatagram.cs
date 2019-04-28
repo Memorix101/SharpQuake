@@ -875,6 +875,7 @@ namespace SharpQuake
                 goto ErrorReturn;
 
             // send the connection request
+            Con.Print( "Connecting to " + sendaddr + "\n" );
             Con.Print( "trying...\n" );
             Scr.UpdateScreen();
             double start_time = Net.Time;

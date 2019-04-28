@@ -941,15 +941,23 @@ namespace SharpQuake
                     break;
             }
 
-            if( _Cursor == 12 && VideoMenu == null )
+            /*if( _Cursor == 12 && VideoMenu == null )
             {
                 if( key == Key.K_UPARROW )
                     _Cursor = 11;
                 else
                     _Cursor = 0;
+            }*/
+
+            if (_Cursor == 12)
+            {
+                if (key == Key.K_UPARROW)
+                    _Cursor = 11;
+                else
+                    _Cursor = 0;
             }
 
-#if _WIN32
+/*#if _WIN32
             if ((options_cursor == 13) && (modestate != MS_WINDOWED))
             {
                 if (k == K_UPARROW)
@@ -957,8 +965,8 @@ namespace SharpQuake
                 else
                     options_cursor = 0;
             }
-#endif
-        }
+#endif*/
+            }
 
         public override void Draw()
         {
@@ -1002,8 +1010,8 @@ namespace SharpQuake
             Menu.Print( 16, 120, "            Lookstrafe" );
             Menu.DrawCheckbox( 220, 120, Client.LookStrafe );
 
-            if( VideoMenu != null )
-                Menu.Print( 16, 128, "         Video Options" );
+            /*if( VideoMenu != null )
+                Menu.Print( 16, 128, "         Video Options" );*/
 
 #if _WIN32
 	if (modestate == MS_WINDOWED)
