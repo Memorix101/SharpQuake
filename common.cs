@@ -34,7 +34,7 @@ using OpenTK;
 // Source: common.h + common.c
 //
 
-// All of Quake's data access is through a hierchal file system, but the contents of the file system can be transparently merged from several sources.
+// All of Quake's data access is through a hierarchical file system, but the contents of the file system can be transparently merged from several sources.
 //
 // The "base directory" is the path to the directory holding the quake.exe and all game directories.  The sys_* files pass this to host_init in quakeparms_t->basedir.  This can be overridden with the "-basedir" command line parm to allow code debugging in a different directory.  The base directory is
 // only used during filesystem initialization.

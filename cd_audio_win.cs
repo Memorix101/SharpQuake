@@ -486,18 +486,18 @@ namespace SharpQuake
             if( !_IsEnabled )
                 return;
 
-            if( Sound.BgmVolume != _Volume )
+            if( snd.BgmVolume != _Volume )
             {
                 if( _Volume != 0 )
                 {
-                    Cvar.Set( "bgmvolume", 0f );
-                    _Volume = Sound.BgmVolume;
+                    cvar.Set( "bgmvolume", 0f );
+                    _Volume = snd.BgmVolume;
                     Pause();
                 }
                 else
                 {
-                    Cvar.Set( "bgmvolume", 1f );
-                    _Volume = Sound.BgmVolume;
+                    cvar.Set( "bgmvolume", 1f );
+                    _Volume = snd.BgmVolume;
                     Resume();
                 }
             }

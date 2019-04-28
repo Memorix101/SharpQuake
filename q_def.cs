@@ -91,10 +91,10 @@ namespace SharpQuake
         public static int IT_INVULNERABILITY = 1048576;
         public static int IT_SUIT = 2097152;
         public static int IT_QUAD = 4194304;
-        public static int IT_SIGIL1 = (1<<28);
-        public static int IT_SIGIL2 = (1<<29);
-        public static int IT_SIGIL3 = (1<<30);
-        public static int IT_SIGIL4 = (1<<31);
+        public static int IT_SIGIL1 = (1 << 28);
+        public static int IT_SIGIL2 = (1 << 29);
+        public static int IT_SIGIL3 = (1 << 30);
+        public static int IT_SIGIL4 = (1 << 31);
 
         //===========================================
         //rogue changed and added defines
@@ -126,19 +126,19 @@ namespace SharpQuake
 
         public static int HIT_MJOLNIR_BIT = 7;
         public static int HIT_LASER_CANNON_BIT = 23;
-        public static int HIT_PROXIMITY_GUN = (1<<HIT_PROXIMITY_GUN_BIT);
-        public static int HIT_MJOLNIR = (1<<HIT_MJOLNIR_BIT);
-        public static int HIT_LASER_CANNON = (1<<HIT_LASER_CANNON_BIT);
-        public static int HIT_WETSUIT = (1<<(23+2));
+        public static int HIT_PROXIMITY_GUN = (1 << HIT_PROXIMITY_GUN_BIT);
+        public static int HIT_MJOLNIR = (1 << HIT_MJOLNIR_BIT);
+        public static int HIT_LASER_CANNON = (1 << HIT_LASER_CANNON_BIT);
+        public static int HIT_WETSUIT = (1 << (23 + 2));
         public static int HIT_EMPATHY_SHIELDS = (1 << (23 + 3));
         //===========================================
     }
 
     internal static class QDef
     {
-        public const float VERSION  = 1.09f;
+        public const float VERSION = 1.09f;
         public const float CSQUAKE_VERSION = 1.20f;
-        public const float GLQUAKE_VERSION  = 1.00f;
+        public const float GLQUAKE_VERSION = 1.00f;
         public const float D3DQUAKE_VERSION = 0.01f;
         public const float WINQUAKE_VERSION = 0.996f;
         public const float LINUX_VERSION = 1.30f;
@@ -146,10 +146,10 @@ namespace SharpQuake
 
         public const string GAMENAME = "Id1";		// directory to look in by default
 
-        public const int MAX_NUM_ARGVS  = 50;
+        public const int MAX_NUM_ARGVS = 50;
 
         // up / down
-        public const int PITCH  = 0;
+        public const int PITCH = 0;
 
         // left / right
         public const int YAW = 1;
@@ -171,7 +171,7 @@ namespace SharpQuake
         public const int MAX_EDICTS = 600;	//600 	// FIXME: ouch! ouch! ouch!
 
         public const int MAX_LIGHTSTYLES = 64;
-        public const int MAX_MODELS = 1024;	//256		// these are sent over the net as bytes
+        public const int MAX_MODELS = 256;	//256		// these are sent over the net as bytes
         public const int MAX_SOUNDS = 256;			// so they cannot be blindly increased
 
         public const int SAVEGAME_COMMENT_LENGTH = 39;
