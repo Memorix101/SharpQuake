@@ -22,13 +22,21 @@
 
 // cdaudio.h
 
+using System;
+using NAudio.Vorbis;
+using NAudio.Wave;
+
 namespace SharpQuake
 {
     /// <summary>
     /// CDAudio_functions
     /// </summary>
+
     internal static class cd_audio
     {
+
+        //public static string basedir = string.Empty;
+
 #if _WINDOWS
         private static ICDAudioController _Controller = new CDAudioWinController();
 #else
@@ -40,27 +48,28 @@ namespace SharpQuake
         /// </summary>
         public static bool Init()
         {
-            if( client.cls.state == cactive_t.ca_dedicated )
+            if (client.cls.state == cactive_t.ca_dedicated)
                 return false;
 
-            if( common.HasParam( "-nocdaudio" ) )
+            if (common.HasParam("-nocdaudio"))
                 return false;
 
             _Controller.Init();
 
-            if( _Controller.IsInitialized )
+            if (_Controller.IsInitialized)
             {
-                cmd.Add( "cd", CD_f );
-                Con.Print( "CD Audio Initialized\n" );
+                cmd.Add("cd", CD_f);
+                Con.Print("CD Audio (Fallback) Initialized\n");
             }
 
             return _Controller.IsInitialized;
         }
 
         // CDAudio_Play(byte track, qboolean looping)
-        public static void Play( byte track, bool looping )
+        public static void Play(byte track, bool looping)
         {
-            _Controller.Play( track, looping );
+            _Controller.Play(track, looping);
+            //Console.WriteLine("DEBUG: track byte:{0} - loop byte: {1}", track, looping);
         }
 
         // CDAudio_Stop
@@ -95,113 +104,113 @@ namespace SharpQuake
 
         private static void CD_f()
         {
-            if( cmd.Argc < 2 )
+            if (cmd.Argc < 2)
                 return;
 
-            string command = cmd.Argv( 1 );
+            string command = cmd.Argv(1);
 
-            if( common.SameText( command, "on" ) )
+            if (common.SameText(command, "on"))
             {
                 _Controller.IsEnabled = true;
                 return;
             }
 
-            if( common.SameText( command, "off" ) )
+            if (common.SameText(command, "off"))
             {
-                if( _Controller.IsPlaying )
+                if (_Controller.IsPlaying)
                     _Controller.Stop();
                 _Controller.IsEnabled = false;
                 return;
             }
 
-            if( common.SameText( command, "reset" ) )
+            if (common.SameText(command, "reset"))
             {
                 _Controller.IsEnabled = true;
-                if( _Controller.IsPlaying )
+                if (_Controller.IsPlaying)
                     _Controller.Stop();
 
                 _Controller.ReloadDiskInfo();
                 return;
             }
 
-            if( common.SameText( command, "remap" ) )
+            if (common.SameText(command, "remap"))
             {
                 int ret = cmd.Argc - 2;
                 byte[] remap = _Controller.Remap;
-                if( ret <= 0 )
+                if (ret <= 0)
                 {
-                    for( int n = 1; n < 100; n++ )
-                        if( remap[n] != n )
-                            Con.Print( "  {0} -> {1}\n", n, remap[n] );
+                    for (int n = 1; n < 100; n++)
+                        if (remap[n] != n)
+                            Con.Print("  {0} -> {1}\n", n, remap[n]);
                     return;
                 }
-                for( int n = 1; n <= ret; n++ )
-                    remap[n] = (byte)common.atoi( cmd.Argv( n + 1 ) );
+                for (int n = 1; n <= ret; n++)
+                    remap[n] = (byte)common.atoi(cmd.Argv(n + 1));
                 return;
             }
 
-            if( common.SameText( command, "close" ) )
+            if (common.SameText(command, "close"))
             {
                 _Controller.CloseDoor();
                 return;
             }
 
-            if( !_Controller.IsValidCD )
+            if (!_Controller.IsValidCD)
             {
                 _Controller.ReloadDiskInfo();
-                if( !_Controller.IsValidCD )
+                if (!_Controller.IsValidCD)
                 {
-                    Con.Print( "No CD in player.\n" );
+                    Con.Print("No CD in player.\n");
                     return;
                 }
             }
 
-            if( common.SameText( command, "play" ) )
+            if (common.SameText(command, "play"))
             {
-                _Controller.Play( (byte)common.atoi( cmd.Argv( 2 ) ), false );
+                _Controller.Play((byte)common.atoi(cmd.Argv(2)), false);
                 return;
             }
 
-            if( common.SameText( command, "loop" ) )
+            if (common.SameText(command, "loop"))
             {
-                _Controller.Play( (byte)common.atoi( cmd.Argv( 2 ) ), true );
+                _Controller.Play((byte)common.atoi(cmd.Argv(2)), true);
                 return;
             }
 
-            if( common.SameText( command, "stop" ) )
+            if (common.SameText(command, "stop"))
             {
                 _Controller.Stop();
                 return;
             }
 
-            if( common.SameText( command, "pause" ) )
+            if (common.SameText(command, "pause"))
             {
                 _Controller.Pause();
                 return;
             }
 
-            if( common.SameText( command, "resume" ) )
+            if (common.SameText(command, "resume"))
             {
                 _Controller.Resume();
                 return;
             }
 
-            if( common.SameText( command, "eject" ) )
+            if (common.SameText(command, "eject"))
             {
-                if( _Controller.IsPlaying )
+                if (_Controller.IsPlaying)
                     _Controller.Stop();
-                _Controller.Edject();
+                _Controller.Eject();
                 return;
             }
 
-            if( common.SameText( command, "info" ) )
+            if (common.SameText(command, "info"))
             {
-                Con.Print( "%u tracks\n", _Controller.MaxTrack );
-                if( _Controller.IsPlaying )
-                    Con.Print( "Currently {0} track {1}\n", _Controller.IsLooping ? "looping" : "playing", _Controller.CurrentTrack );
-                else if( _Controller.IsPaused )
-                    Con.Print( "Paused {0} track {1}\n", _Controller.IsLooping ? "looping" : "playing", _Controller.CurrentTrack );
-                Con.Print( "Volume is {0}\n", _Controller.Volume );
+                Con.Print("%u tracks\n", _Controller.MaxTrack);
+                if (_Controller.IsPlaying)
+                    Con.Print("Currently {0} track {1}\n", _Controller.IsLooping ? "looping" : "playing", _Controller.CurrentTrack);
+                else if (_Controller.IsPaused)
+                    Con.Print("Paused {0} track {1}\n", _Controller.IsLooping ? "looping" : "playing", _Controller.CurrentTrack);
+                Con.Print("Volume is {0}\n", _Controller.Volume);
                 return;
             }
         }
@@ -210,6 +219,12 @@ namespace SharpQuake
     internal class NullCDAudioController : ICDAudioController
     {
         private byte[] _Remap;
+        private VorbisWaveReader reader;
+        private WaveOutEvent waveOut; // or WaveOutEvent()
+        private bool _isLooping;
+        string trackid;
+        string trackpath;
+        private bool _noAudio = false;
 
         public NullCDAudioController()
         {
@@ -265,7 +280,7 @@ namespace SharpQuake
         {
             get
             {
-                return false;
+                return _isLooping;
             }
         }
 
@@ -306,30 +321,91 @@ namespace SharpQuake
 
         public void Init()
         {
+            waveOut = new WaveOutEvent(); // or WaveOutEvent()
         }
 
-        public void Play( byte track, bool looping )
+        public void Play(byte track, bool looping)
         {
+            if (_noAudio == false)
+            {
+                trackid = track.ToString("00");
+                trackpath = string.Format("{0}\\{1}\\music\\track{2}.ogg", qparam.globalbasedir, qparam.globalgameid, trackid);
+                try
+                {
+                    _isLooping = looping;
+                    reader = new VorbisWaveReader(trackpath);
+                    waveOut.Stop();
+                    waveOut.Init(reader);
+                    waveOut.Play();
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine("Could not find or play {0}", trackpath);
+                    _noAudio = true;
+                    //throw;
+                }
+            }
         }
 
         public void Stop()
         {
+            if (waveOut == null)
+                return;
+
+            if (_noAudio == true)
+                return;
+
+            if (waveOut.PlaybackState == PlaybackState.Playing)
+                waveOut.Stop();
         }
 
         public void Pause()
         {
+            if (waveOut == null)
+                return;
+
+            if (_noAudio == true)
+                return;
+
+            if (waveOut.PlaybackState == PlaybackState.Playing)
+                waveOut.Pause();
         }
 
         public void Resume()
         {
+            if (waveOut == null)
+                return;
+
+            //if (waveOut.PlaybackState == PlaybackState.Paused)
+            //waveOut.Resume();
         }
 
         public void Shutdown()
         {
+            if (waveOut == null)
+                return;
+
+            if (_noAudio == true)
+                return;
+
+            waveOut.Dispose();
         }
 
         public void Update()
         {
+            if (waveOut == null)
+                return;
+
+            if (_noAudio == true)
+                return;
+
+            if (IsLooping && waveOut.PlaybackState == PlaybackState.Stopped)
+            {
+                reader = new VorbisWaveReader(trackpath);
+                waveOut.Stop();
+                waveOut.Init(reader);
+                waveOut.Play();
+            }
         }
 
         public void ReloadDiskInfo()
@@ -340,7 +416,7 @@ namespace SharpQuake
         {
         }
 
-        public void Edject()
+        public void Eject()
         {
         }
 
@@ -401,7 +477,7 @@ namespace SharpQuake
 
         void Init();
 
-        void Play( byte track, bool looping );
+        void Play(byte track, bool looping);
 
         void Stop();
 
@@ -417,6 +493,6 @@ namespace SharpQuake
 
         void CloseDoor();
 
-        void Edject();
+        void Eject();
     }
 }

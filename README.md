@@ -2,10 +2,11 @@
 
 ### Description 
 
-SharpQuake is **[GLQuake](https://github.com/dpteam/GLQuake3D)** rewritten in C# using the **[OpenTK](https://github.com/opentk/opentk)** library.
+SharpQuake is a **[GLQuake](https://github.com/dpteam/GLQuake3D)** reimplementation in C# using the **[OpenTK](https://github.com/opentk/opentk)** library.
 
 ### Dependencies
 * OpenTK 3.0.1
+* NAudio 1.8.5
 * **[OpenAL](https://www.openal.org/downloads/)** (Windows) / libopenal on Linux
 * **[SDL2](https://www.libsdl.org/download-2.0.php)** (Windows and macOS) / libsdl2-2.0 on Linux (Runtime binaries)
   
@@ -13,8 +14,10 @@ SharpQuake is **[GLQuake](https://github.com/dpteam/GLQuake3D)** rewritten in C#
 
 **Project is built against and tested for Visual Studio 2019 on .NET 4.7.2**
 
-1) **Add the OpenTK nuget package with the package manager console in visual studio.**
+1) **Add the OpenTK nuget package with the package manager console in Visual Studio.**
     - `Install-Package OpenTK -Version 3.0.1`
+    - `Install-Package NAudio -Version 1.8.5`
+    - `Install-Package NAudio.Vorbis -Version 1.0.0`
 
 2) **Initialize git submodules**
 
@@ -30,6 +33,8 @@ SharpQuake is **[GLQuake](https://github.com/dpteam/GLQuake3D)** rewritten in C#
 In case you don't own a copy of Quake you can purchase it on **[GOG.com](https://www.gog.com/game/quake_the_offering)**, **[Steam](https://store.steampowered.com/app/2310/QUAKE/)** or use the **[shareware version](https://community.pcgamingwiki.com/files/file/411-quake-shareware-pak/)**.
 
 **As Linux is case-sensitive make sure your folder and file names look like that `Id1` and `PAK0.PAK` and `PAK1.PAK` (in case you own the full version).**
+
+**To play with soundtrack add it to `Id1/music` or the mission pack folder you want to play in OGG Vorbis format like this `track002.ogg`. You can get it here** **[Steam Guide](https://steamcommunity.com/sharedfiles/filedetails/?id=119489135)**
 
 **macOS / OSX is not official supported as OpenGL on Mac is poorly supported and has been replaced in favour of their own graphics API [Metal](https://en.wikipedia.org/wiki/Metal_(API)).**
 

@@ -23,6 +23,7 @@
 //define	PARANOID			// speed sapping error checking
 
 using System;
+using System.Security.Cryptography.X509Certificates;
 
 // quakedef.h
 
@@ -184,6 +185,12 @@ namespace SharpQuake
         public const int SOUND_CHANNELS = 8;
 
         public const double BACKFACE_EPSILON = 0.01;
+    }
+
+    internal static class qparam
+    {
+        public static string globalbasedir;
+        public static string globalgameid;
     }
 
     // entity_state_t;

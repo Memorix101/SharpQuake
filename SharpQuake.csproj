@@ -62,6 +62,15 @@
     <ApplicationIcon>quake.ico</ApplicationIcon>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="NAudio, Version=1.8.5.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>packages\NAudio.1.8.5\lib\net35\NAudio.dll</HintPath>
+    </Reference>
+    <Reference Include="NAudio.Vorbis, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>packages\NAudio.Vorbis.1.0.0.0\lib\net35\NAudio.Vorbis.dll</HintPath>
+    </Reference>
+    <Reference Include="NVorbis, Version=0.8.6.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>packages\NVorbis.0.8.6\lib\net35\NVorbis.dll</HintPath>
+    </Reference>
     <Reference Include="OpenTK, Version=3.0.1.0, Culture=neutral, PublicKeyToken=bad199fe84eb3df4, processorArchitecture=MSIL">
       <HintPath>packages\OpenTK.3.0.1\lib\net20\OpenTK.dll</HintPath>
     </Reference>
