@@ -45,7 +45,7 @@ namespace SharpQuake
         {
             get
             {
-                Rectangle bounds = main_window.Instance.Bounds;
+                Rectangle bounds = mainwindow.Instance.Bounds;
                 Point p = bounds.Location;
                 p.Offset( bounds.Width / 2, bounds.Height / 2 );
                 return p;
@@ -148,7 +148,7 @@ namespace SharpQuake
         {
             if( !_MouseShowToggle )
             {
-                if( !main_window.IsFullscreen )
+                if( !mainwindow.IsFullscreen )
                 {
                     //Cursor.Show();
                 }
@@ -160,10 +160,10 @@ namespace SharpQuake
         // add additional movement on top of the keyboard move cmd
         public static void Move( usercmd_t cmd )
         {
-            if( !main_window.Instance.Focused )
+            if( !mainwindow.Instance.Focused )
                 return;
 
-            if( main_window.Instance.WindowState == WindowState.Minimized )
+            if( mainwindow.Instance.WindowState == WindowState.Minimized )
                 return;
 
             MouseMove( cmd );

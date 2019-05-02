@@ -865,14 +865,14 @@ namespace SharpQuake
     {
         private const int OPTIONS_ITEMS = 13;
 
-        private float _BgmVolumeCoeff = 0.1f;
+        //private float _BgmVolumeCoeff = 0.1f;
 
         public override void Show()
         {
-            if( sys.IsWindows )
+           /*if( sys.IsWindows )  fix cd audio first
             {
                 _BgmVolumeCoeff = 1.0f;
-            }
+            }*/
 
             if( _Cursor > OPTIONS_ITEMS - 1 )
                 _Cursor = 0;
@@ -1063,7 +1063,7 @@ namespace SharpQuake
                     break;
 
                 case 6:	// music volume
-                    value = snd.BgmVolume + dir * _BgmVolumeCoeff;
+                    value = snd.BgmVolume + dir * 0.1f; ///_BgmVolumeCoeff;
                     if( value < 0 )
                         value = 0;
                     if( value > 1 )

@@ -210,7 +210,7 @@ namespace SharpQuake
         public static void SendKeyEvents()
         {
             Scr.SkipUpdate = false;
-            main_window.Instance.ProcessEvents();
+            mainwindow.Instance.ProcessEvents();
         }
 
         /// <summary>
@@ -226,10 +226,10 @@ namespace SharpQuake
         /// </summary>
         public static void Quit()
         {
-            if( main_window.Instance != null )
+            if( mainwindow.Instance != null )
             {
-                main_window.Instance.ConfirmExit = false;
-                main_window.Instance.Exit();
+                mainwindow.Instance.ConfirmExit = false;
+                mainwindow.Instance.Exit();
             }
         }
     }

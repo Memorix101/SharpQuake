@@ -28,13 +28,13 @@ using SDL2;
 
 namespace SharpQuake
 {
-    public class main_window : GameWindow
+    public class mainwindow : GameWindow
     {
-        public static main_window Instance
+        public static mainwindow Instance
         {
             get
             {
-                return (main_window)_Instance.Target;
+                return (mainwindow)_Instance.Target;
             }
         }
 
@@ -165,13 +165,13 @@ namespace SharpQuake
             }
         }
 
-        private static main_window CreateInstance(Size size, GraphicsMode mode, bool fullScreen)
+        private static mainwindow CreateInstance(Size size, GraphicsMode mode, bool fullScreen)
         {
             if (_Instance != null)
             {
                 throw new Exception("Game instance is already created!");
             }
-            return new main_window(size, mode, fullScreen);
+            return new mainwindow(size, mode, fullScreen);
         }
 
         private static void DumpError(Exception ex)
@@ -265,7 +265,7 @@ namespace SharpQuake
 
             Size size = new Size(1280, 720);
             GraphicsMode mode = new GraphicsMode();
-            using (main_window form = main_window.CreateInstance(size, mode, false))
+            using (mainwindow form = mainwindow.CreateInstance(size, mode, false))
             {
                 Con.DPrint("Host.Init\n");
                 host.Init(parms);
@@ -346,7 +346,7 @@ namespace SharpQuake
             Key.Event(MapKey(e.Key), true);
         }
 
-        private main_window(Size size, GraphicsMode mode, bool fullScreen)
+        private mainwindow(Size size, GraphicsMode mode, bool fullScreen)
         : base(size.Width, size.Height, mode, "SharpQuake", fullScreen ? GameWindowFlags.Fullscreen : GameWindowFlags.Default)
         {
             _Instance = new WeakReference(this);

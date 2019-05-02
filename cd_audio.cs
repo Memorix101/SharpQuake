@@ -34,13 +34,10 @@ namespace SharpQuake
 
     internal static class cd_audio
     {
-
-        //public static string basedir = string.Empty;
-
 #if _WINDOWS
         private static ICDAudioController _Controller = new CDAudioWinController();
 #else
-        static ICDAudioController _Controller = new NullCDAudioController();
+        static NullCDAudioController _Controller = new NullCDAudioController();
 #endif
 
         /// <summary>
@@ -216,7 +213,7 @@ namespace SharpQuake
         }
     }
 
-    internal class NullCDAudioController : ICDAudioController
+    internal class NullCDAudioController
     {
         private byte[] _Remap;
         private VorbisWaveReader reader;
@@ -225,6 +222,9 @@ namespace SharpQuake
         string trackid;
         string trackpath;
         private bool _noAudio = false;
+        private float _Volume;
+        private bool _isPlaying;
+        private bool _isPaused;
 
         public NullCDAudioController()
         {
@@ -249,6 +249,7 @@ namespace SharpQuake
             }
             set
             {
+
             }
         }
 
@@ -256,7 +257,7 @@ namespace SharpQuake
         {
             get
             {
-                return false;
+                return _isPlaying;
             }
         }
 
@@ -264,7 +265,7 @@ namespace SharpQuake
         {
             get
             {
-                return false;
+                return _isPaused;
             }
         }
 
@@ -312,16 +313,18 @@ namespace SharpQuake
         {
             get
             {
-                return 0;
+                return _Volume;
             }
             set
             {
+                _Volume = value;
             }
         }
 
         public void Init()
         {
             waveOut = new WaveOutEvent(); // or WaveOutEvent()
+            _Volume = snd.BgmVolume;
         }
 
         public void Play(byte track, bool looping)
@@ -336,6 +339,7 @@ namespace SharpQuake
                     reader = new VorbisWaveReader(trackpath);
                     waveOut.Stop();
                     waveOut.Init(reader);
+                    waveOut.Volume = _Volume;
                     waveOut.Play();
                 }
                 catch (Exception e)
@@ -377,7 +381,7 @@ namespace SharpQuake
                 return;
 
             //if (waveOut.PlaybackState == PlaybackState.Paused)
-            //waveOut.Resume();
+            //waveOut.Play();
         }
 
         public void Shutdown()
@@ -406,6 +410,27 @@ namespace SharpQuake
                 waveOut.Init(reader);
                 waveOut.Play();
             }
+
+            if (waveOut.PlaybackState == PlaybackState.Paused)
+            {
+                _isPaused = true;
+            }
+            else if (waveOut.PlaybackState == PlaybackState.Playing)
+            {
+                _isPaused = false;
+            }
+
+            if (waveOut.PlaybackState == PlaybackState.Paused || waveOut.PlaybackState == PlaybackState.Stopped)
+            {
+                _isPlaying = false;
+            }
+            else if (waveOut.PlaybackState == PlaybackState.Playing)
+            {
+                _isPlaying = true;
+            }
+
+            _Volume = snd.BgmVolume;
+            waveOut.Volume = _Volume;
         }
 
         public void ReloadDiskInfo()
@@ -421,78 +446,5 @@ namespace SharpQuake
         }
 
         #endregion ICDAudioController Members
-    }
-
-    internal interface ICDAudioController
-    {
-        bool IsInitialized
-        {
-            get;
-        }
-
-        bool IsEnabled
-        {
-            get; set;
-        }
-
-        bool IsPlaying
-        {
-            get;
-        }
-
-        bool IsPaused
-        {
-            get;
-        }
-
-        bool IsValidCD
-        {
-            get;
-        }
-
-        bool IsLooping
-        {
-            get;
-        }
-
-        byte[] Remap
-        {
-            get;
-        }
-
-        byte MaxTrack
-        {
-            get;
-        }
-
-        byte CurrentTrack
-        {
-            get;
-        }
-
-        float Volume
-        {
-            get; set;
-        }
-
-        void Init();
-
-        void Play(byte track, bool looping);
-
-        void Stop();
-
-        void Pause();
-
-        void Resume();
-
-        void Shutdown();
-
-        void Update();
-
-        void ReloadDiskInfo();
-
-        void CloseDoor();
-
-        void Eject();
     }
 }

@@ -181,7 +181,7 @@ namespace SharpQuake
             cmd.Add( "vid_describemode", DescribeMode_f );
             cmd.Add( "vid_describemodes", DescribeModes_f );
 
-            DisplayDevice dev = main_window.DisplayDevice;
+            DisplayDevice dev = mainwindow.DisplayDevice;
 
             // Enumerate available modes, skip 8 bpp modes, and group by refresh rates
             List<mode_t> tmp = new List<mode_t>( dev.AvailableResolutions.Count );
@@ -344,8 +344,8 @@ namespace SharpQuake
             cd_audio.Pause();
 
             // Set either the fullscreen or windowed mode
-            DisplayDevice dev = main_window.DisplayDevice;
-            main_window form = main_window.Instance;
+            DisplayDevice dev = mainwindow.DisplayDevice;
+            mainwindow form = mainwindow.Instance;
             if( _Windowed )
             {
                 try
