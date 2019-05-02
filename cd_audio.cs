@@ -23,6 +23,7 @@
 // cdaudio.h
 
 using System;
+using System.IO;
 using NAudio.Vorbis;
 using NAudio.Wave;
 
@@ -66,7 +67,9 @@ namespace SharpQuake
         public static void Play(byte track, bool looping)
         {
             _Controller.Play(track, looping);
-            //Console.WriteLine("DEBUG: track byte:{0} - loop byte: {1}", track, looping);
+#if DEBUG
+            Console.WriteLine("DEBUG: track byte:{0} - loop byte: {1}", track, looping);
+#endif
         }
 
         // CDAudio_Stop
@@ -222,6 +225,7 @@ namespace SharpQuake
         string trackid;
         string trackpath;
         private bool _noAudio = false;
+        private bool _noPlayback = false;
         private float _Volume;
         private bool _isPlaying;
         private bool _isPaused;
@@ -325,6 +329,11 @@ namespace SharpQuake
         {
             waveOut = new WaveOutEvent(); // or WaveOutEvent()
             _Volume = snd.BgmVolume;
+
+            if (Directory.Exists(string.Format("{0}\\{1}\\music\\", qparam.globalbasedir, qparam.globalgameid)) == false)
+            {
+                _noAudio = true;
+            }
         }
 
         public void Play(byte track, bool looping)
@@ -333,6 +342,9 @@ namespace SharpQuake
             {
                 trackid = track.ToString("00");
                 trackpath = string.Format("{0}\\{1}\\music\\track{2}.ogg", qparam.globalbasedir, qparam.globalgameid, trackid);
+#if DEBUG
+                Console.WriteLine("DEBUG: track path:{0} ", trackpath);
+#endif
                 try
                 {
                     _isLooping = looping;
@@ -341,11 +353,12 @@ namespace SharpQuake
                     waveOut.Init(reader);
                     waveOut.Volume = _Volume;
                     waveOut.Play();
+                    _noPlayback = false;
                 }
                 catch (Exception e)
                 {
                     Console.WriteLine("Could not find or play {0}", trackpath);
-                    _noAudio = true;
+                    _noPlayback = true;
                     //throw;
                 }
             }
@@ -401,6 +414,9 @@ namespace SharpQuake
                 return;
 
             if (_noAudio == true)
+                return;
+
+            if (_noPlayback == true)
                 return;
 
             if (IsLooping && waveOut.PlaybackState == PlaybackState.Stopped)
