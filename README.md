@@ -6,7 +6,7 @@ SharpQuake is a **[GLQuake](https://github.com/dpteam/GLQuake3D)** reimplementat
 
 ### Dependencies
 * OpenTK 3.0.1
-* NAudio 1.8.5
+* NVorbis 0.8.6
 * **[OpenAL](https://www.openal.org/downloads/)** (Windows) / libopenal on Linux
 * **[SDL2](https://www.libsdl.org/download-2.0.php)** (Windows and macOS) / libsdl2-2.0 on Linux (Runtime binaries)
   
@@ -16,8 +16,8 @@ SharpQuake is a **[GLQuake](https://github.com/dpteam/GLQuake3D)** reimplementat
 
 1) **Add the OpenTK nuget package with the package manager console in Visual Studio.**
     - `Install-Package OpenTK -Version 3.0.1`
-    - `Install-Package NAudio -Version 1.8.5`
-    - `Install-Package NAudio.Vorbis -Version 1.0.0`
+    - `Install-Package NVorbis -Version 0.8.6`
+    - `Install-Package NVorbis.OpenTKSupport -Version 1.2.0`
 
 2) **Initialize git submodules**
 

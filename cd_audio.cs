@@ -24,8 +24,8 @@
 
 using System;
 using System.IO;
-using NAudio.Vorbis;
-using NAudio.Wave;
+using OpenTK.Audio;
+using NVorbis.OpenTKSupport;
 
 namespace SharpQuake
 {
@@ -219,8 +219,9 @@ namespace SharpQuake
     internal class NullCDAudioController
     {
         private byte[] _Remap;
-        private VorbisWaveReader reader;
-        private WaveOutEvent waveOut; // or WaveOutEvent()
+        private OggStream oggStream;
+        private OggStreamer streamer;
+        //private WaveOutEvent waveOut; // or WaveOutEvent()
         private bool _isLooping;
         string trackid;
         string trackpath;
@@ -229,6 +230,12 @@ namespace SharpQuake
         private float _Volume;
         private bool _isPlaying;
         private bool _isPaused;
+
+
+        //OGG file
+        int channels;
+        int sampleRate;
+        TimeSpan totalTime;
 
         public NullCDAudioController()
         {
@@ -327,10 +334,10 @@ namespace SharpQuake
 
         public void Init()
         {
-            waveOut = new WaveOutEvent(); // or WaveOutEvent()
+            streamer = new OggStreamer(441000);
             _Volume = snd.BgmVolume;
 
-            if (Directory.Exists(string.Format("{0}\\{1}\\music\\", qparam.globalbasedir, qparam.globalgameid)) == false)
+            if (Directory.Exists(string.Format("{0}/{1}/music/", qparam.globalbasedir, qparam.globalgameid)) == false)
             {
                 _noAudio = true;
             }
@@ -341,18 +348,19 @@ namespace SharpQuake
             if (_noAudio == false)
             {
                 trackid = track.ToString("00");
-                trackpath = string.Format("{0}\\{1}\\music\\track{2}.ogg", qparam.globalbasedir, qparam.globalgameid, trackid);
+                trackpath = string.Format("{0}/{1}/music/track{2}.ogg", qparam.globalbasedir, qparam.globalgameid, trackid);
 #if DEBUG
                 Console.WriteLine("DEBUG: track path:{0} ", trackpath);
 #endif
                 try
                 {
                     _isLooping = looping;
-                    reader = new VorbisWaveReader(trackpath);
-                    waveOut.Stop();
-                    waveOut.Init(reader);
-                    waveOut.Volume = _Volume;
-                    waveOut.Play();
+                    if(oggStream != null)
+                        oggStream.Stop();
+                    oggStream = new OggStream(trackpath, 3);
+                    oggStream.IsLooped = looping;
+                    oggStream.Play();
+                    oggStream.Volume = _Volume;
                     _noPlayback = false;
                 }
                 catch (Exception e)
@@ -366,51 +374,49 @@ namespace SharpQuake
 
         public void Stop()
         {
-            if (waveOut == null)
+            if (streamer == null)
                 return;
 
             if (_noAudio == true)
                 return;
 
-            if (waveOut.PlaybackState == PlaybackState.Playing)
-                waveOut.Stop();
+            oggStream.Stop();
         }
 
         public void Pause()
         {
-            if (waveOut == null)
+            if (streamer == null)
                 return;
 
             if (_noAudio == true)
                 return;
 
-            if (waveOut.PlaybackState == PlaybackState.Playing)
-                waveOut.Pause();
+            oggStream.Pause();
         }
 
         public void Resume()
         {
-            if (waveOut == null)
+            if (streamer == null)
                 return;
 
-            //if (waveOut.PlaybackState == PlaybackState.Paused)
-            //waveOut.Play();
+            oggStream.Resume();
         }
 
         public void Shutdown()
         {
-            if (waveOut == null)
+            if (streamer == null)
                 return;
 
             if (_noAudio == true)
                 return;
 
-            waveOut.Dispose();
+            //oggStream.Dispose();
+            streamer.Dispose();
         }
 
         public void Update()
         {
-            if (waveOut == null)
+            if (streamer == null)
                 return;
 
             if (_noAudio == true)
@@ -419,15 +425,7 @@ namespace SharpQuake
             if (_noPlayback == true)
                 return;
 
-            if (IsLooping && waveOut.PlaybackState == PlaybackState.Stopped)
-            {
-                reader = new VorbisWaveReader(trackpath);
-                waveOut.Stop();
-                waveOut.Init(reader);
-                waveOut.Play();
-            }
-
-            if (waveOut.PlaybackState == PlaybackState.Paused)
+            /*if (waveOut.PlaybackState == PlaybackState.Paused)
             {
                 _isPaused = true;
             }
@@ -443,10 +441,10 @@ namespace SharpQuake
             else if (waveOut.PlaybackState == PlaybackState.Playing)
             {
                 _isPlaying = true;
-            }
+            }*/
 
             _Volume = snd.BgmVolume;
-            waveOut.Volume = _Volume;
+            oggStream.Volume = _Volume;
         }
 
         public void ReloadDiskInfo()
