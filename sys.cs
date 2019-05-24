@@ -230,6 +230,7 @@ namespace SharpQuake
             {
                 mainwindow.Instance.ConfirmExit = false;
                 mainwindow.Instance.Exit();
+                mainwindow.Instance.Dispose();
             }
         }
     }
