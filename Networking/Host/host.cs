@@ -364,6 +364,9 @@ namespace SharpQuake
             finally
             {
                 _ShutdownDepth--;
+
+                // Hack to close process property
+                Environment.Exit( 0 );
             }
         }
 
