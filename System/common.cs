@@ -24,6 +24,7 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
+using System.IO.Compression;
 using System.Net;
 using System.Net.Sockets;
 using System.Runtime.InteropServices;
@@ -811,6 +812,24 @@ namespace SharpQuake
                         }
                     }
                 }
+                else if ( sp.pk3 != null ) // is the element a pk3 file?
+                {
+                    // look through all the pak file elements
+                    ZipArchive pk3 = sp.pk3;
+
+                    foreach ( var pfile in pk3.Entries )
+                    {
+                        if ( pfile.FullName.Equals( filename ) )
+                        {
+                            // found it!
+                            Con.DPrint( "PK3File: {0} : {1}\n", sp.pk3filename, filename );
+
+                            file = new DisposableWrapper<BinaryReader>( new BinaryReader( pfile.Open( ), Encoding.ASCII ), false );
+
+                            return ( Int32 ) pfile.Length;
+                        }
+                    }
+                }
                 else
                 {
                     // check a file in the directory tree
@@ -1043,6 +1062,28 @@ namespace SharpQuake
                     break;
 
                 _SearchPaths.Insert(0, new searchpath_t(pak));
+            }
+
+            //
+            // add any pk3 files in the format pak0.pk3 pak1.pk3, ...
+            //
+            for ( int i = 0; i < 10; i++ )
+            {
+                string pk3file = String.Format( "{0}/PAK{1}.PK3", dir, i );
+
+                FileStream file = sys.FileOpenRead( pk3file );
+
+                if ( file != null )
+                {
+                    file.Dispose( );
+
+                    ZipArchive pk3 = ZipFile.OpenRead( pk3file );
+
+                    if ( pk3 == null )
+                        break;
+
+                    _SearchPaths.Insert( 0, new searchpath_t( pk3 ) );
+                }
             }
         }
 
@@ -1774,6 +1815,8 @@ namespace SharpQuake
     {
         public string filename; // char[MAX_OSPATH];
         public pack_t pack; // only one of filename / pack will be used
+        public ZipArchive pk3;
+        public string pk3filename;
 
         public searchpath_t(string path)
         {
@@ -1783,6 +1826,13 @@ namespace SharpQuake
                 if (this.pack == null)
                     sys.Error("Couldn't load packfile: {0}", path);
             }
+            else if ( path.EndsWith( ".PK3" ) )
+            {
+                this.pk3 = ZipFile.OpenRead(path);
+                this.pk3filename = path;
+                if ( this.pk3 == null )
+                    sys.Error( "Couldn't load pk3file: {0}", path );
+            }
             else
                 this.filename = path;
         }
@@ -1790,6 +1840,11 @@ namespace SharpQuake
         public searchpath_t(pack_t pak)
         {
             this.pack = pak;
+        }
+
+        public searchpath_t(ZipArchive archive)
+        {
+            this.pk3 = archive;
         }
     } // searchpath_t;
 
