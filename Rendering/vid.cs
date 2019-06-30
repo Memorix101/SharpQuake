@@ -32,11 +32,6 @@ using SharpQuake.Framework;
 
 namespace SharpQuake
 {
-    internal struct vrect_t
-    {
-        public Int32 x, y, width, height;
-    }
-
     /// <summary>
     /// Vid_functions
     /// </summary>
@@ -98,7 +93,7 @@ namespace SharpQuake
             }
         }
 
-        public static mode_t[] Modes
+        public static VidMode[] Modes
         {
             get
             {
@@ -123,7 +118,7 @@ namespace SharpQuake
         private static UInt32[] _8to24table = new UInt32[256]; // d_8to24table[256]
         private static Byte[] _15to8table = new Byte[65536]; // d_15to8table[65536]
 
-        private static mode_t[] _Modes;
+        private static VidMode[] _Modes;
         private static Int32 _ModeNum; // vid_modenum
 
         private static CVar _glZTrick;// = { "gl_ztrick", "1" };
@@ -185,20 +180,20 @@ namespace SharpQuake
             DisplayDevice dev = MainWindow.DisplayDevice;
 
             // Enumerate available modes, skip 8 bpp modes, and group by refresh rates
-            List<mode_t> tmp = new List<mode_t>( dev.AvailableResolutions.Count );
+            List<VidMode> tmp = new List<VidMode>( dev.AvailableResolutions.Count );
             foreach( DisplayResolution res in dev.AvailableResolutions )
             {
                 if( res.BitsPerPixel <= 8 )
                     continue;
 
-                Predicate<mode_t> SameMode = delegate ( mode_t m )
+                Predicate<VidMode> SameMode = delegate ( VidMode m )
                 {
                     return ( m.width == res.Width && m.height == res.Height && m.bpp == res.BitsPerPixel );
                 };
                 if( tmp.Exists( SameMode ) )
                     continue;
 
-                mode_t mode = new mode_t();
+                VidMode mode = new VidMode();
                 mode.width = res.Width;
                 mode.height = res.Height;
                 mode.bpp = res.BitsPerPixel;
@@ -207,7 +202,7 @@ namespace SharpQuake
             }
             _Modes = tmp.ToArray();
 
-            mode_t mode1 = new mode_t();
+            VidMode mode1 = new VidMode();
             mode1.width = dev.Width;
             mode1.height = dev.Height;
             mode1.bpp = dev.BitsPerPixel;
@@ -298,7 +293,7 @@ namespace SharpQuake
             _DefModeNum = -1;
             for( i = 0; i < _Modes.Length; i++ )
             {
-                mode_t m = _Modes[i];
+                VidMode m = _Modes[i];
                 if( m.width != mode1.width || m.height != mode1.height )
                     continue;
 
@@ -336,7 +331,7 @@ namespace SharpQuake
                 Utilities.Error( "Bad video mode\n" );
             }
 
-            mode_t mode = _Modes[modenum];
+            VidMode mode = _Modes[modenum];
 
             // so Con_Printfs don't mess us up by forcing vid and snd updates
             var temp = Scr.IsDisabledForLoading;
@@ -388,7 +383,7 @@ namespace SharpQuake
                 form.WindowBorder = WindowBorder.Hidden;
             }
 
-            viddef_t vid = Scr.vid;
+            VidDef vid = Scr.vid;
             if( vid.conheight > dev.Height )
                 vid.conheight = dev.Height;
             if( vid.conwidth > dev.Width )
@@ -423,7 +418,7 @@ namespace SharpQuake
             if( mode < 0 || mode >= _Modes.Length )
                 return String.Empty;
 
-            mode_t m = _Modes[mode];
+            VidMode m = _Modes[mode];
             return String.Format( "{0}x{1}x{2} {3}", m.width, m.height, m.bpp, _Windowed ? "windowed" : "fullscreen" );
         }
 
@@ -625,32 +620,5 @@ namespace SharpQuake
                 _glMTexable = true;
             }
         }
-    }
-
-    // vrect_t;
-
-    internal class viddef_t
-    {
-        public Byte[] colormap;		// 256 * VID_GRADES size
-        public Int32 fullbright;		// index of first fullbright color
-        public Int32 rowbytes; // unsigned	// may be > width if displayed in a window
-        public Int32 width; // unsigned
-        public Int32 height; // unsigned
-        public Single aspect;		// width / height -- < 0 is taller than wide
-        public Int32 numpages;
-        public System.Boolean recalc_refdef;	// if true, recalc vid-based stuff
-        public Int32 conwidth; // unsigned
-        public Int32 conheight; // unsigned
-        public Int32 maxwarpwidth;
-        public Int32 maxwarpheight;
-    } // viddef_t;
-
-    internal class mode_t
-    {
-        public Int32 width;
-        public Int32 height;
-        public Int32 bpp;
-        public Single refreshRate;
-        public System.Boolean fullScreen;
     }
 }

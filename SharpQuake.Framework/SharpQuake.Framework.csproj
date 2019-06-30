@@ -54,10 +54,17 @@
     <Compile Include="Definitions\QItems.cs" />
     <Compile Include="Definitions\QStats.cs" />
     <Compile Include="IO\Pak\MemoryPakFile.cs" />
+    <Compile Include="IO\Wad\Wad.cs" />
+    <Compile Include="IO\Wad\WadInfo.cs" />
+    <Compile Include="IO\Wad\WadLumpInfo.cs" />
+    <Compile Include="IO\Wad\WadPicHeader.cs" />
     <Compile Include="Rendering\CachePic.cs" />
     <Compile Include="Rendering\GLMode.cs" />
     <Compile Include="Rendering\GLPic.cs" />
     <Compile Include="Rendering\GLTexture.cs" />
+    <Compile Include="Rendering\VidDef.cs" />
+    <Compile Include="Rendering\VidMode.cs" />
+    <Compile Include="Rendering\VRect.cs" />
     <Compile Include="System\CommandLine.cs" />
     <Compile Include="System\ConsoleWrapper.cs" />
     <Compile Include="System\DisposableWrapper.cs" />

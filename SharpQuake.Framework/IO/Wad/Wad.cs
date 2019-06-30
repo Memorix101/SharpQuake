@@ -24,24 +24,13 @@ using System;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using System.Text;
-using SharpQuake.Framework;
 
-namespace SharpQuake
+namespace SharpQuake.Framework
 {
-    [StructLayout( LayoutKind.Sequential, Pack = 1, CharSet = CharSet.Ansi )]
-    internal struct wadinfo_t
-    {
-        [MarshalAs(UnmanagedType.ByValArray, SizeConst=4)]
-        public Byte[] identification; // [4];		// should be WAD2 or 2DAW
-
-        public Int32 numlumps;
-        public Int32 infotableofs;
-    }
-
     /// <summary>
     /// W_functions
     /// </summary>
-    internal static class Wad
+    public static class Wad
     {
         public static Byte[] Data
         {
@@ -73,7 +62,7 @@ namespace SharpQuake
         public const Int32 TYP_MIPTEX = 68;
 
         private static Byte[] _Data; // void* wad_base
-        private static Dictionary<String, lumpinfo_t> _Lumps;
+        private static Dictionary<String, WadLumpInfo> _Lumps;
         private static GCHandle _Handle;
         private static IntPtr _DataPtr;
 
@@ -91,7 +80,7 @@ namespace SharpQuake
             _Handle = GCHandle.Alloc( _Data, GCHandleType.Pinned );
             _DataPtr = _Handle.AddrOfPinnedObject();
 
-            wadinfo_t header = Utilities.BytesToStructure<wadinfo_t>( _Data, 0 );
+            WadInfo header = Utilities.BytesToStructure<WadInfo>( _Data, 0 );
 
             if( header.identification[0] != 'W' || header.identification[1] != 'A' ||
                 header.identification[2] != 'D' || header.identification[3] != '2' )
@@ -99,20 +88,20 @@ namespace SharpQuake
 
             var numlumps = EndianHelper.LittleLong( header.numlumps );
             var infotableofs = EndianHelper.LittleLong( header.infotableofs );
-            var lumpInfoSize = Marshal.SizeOf( typeof( lumpinfo_t ) );
+            var lumpInfoSize = Marshal.SizeOf( typeof( WadLumpInfo ) );
 
-            _Lumps = new Dictionary<String, lumpinfo_t>( numlumps );
+            _Lumps = new Dictionary<String, WadLumpInfo>( numlumps );
 
             for( var i = 0; i < numlumps; i++ )
             {
                 IntPtr ptr = new IntPtr( _DataPtr.ToInt64() + infotableofs + i * lumpInfoSize );
-                lumpinfo_t lump = (lumpinfo_t)Marshal.PtrToStructure( ptr, typeof( lumpinfo_t ) );
+                WadLumpInfo lump = (WadLumpInfo)Marshal.PtrToStructure( ptr, typeof( WadLumpInfo ) );
                 lump.filepos = EndianHelper.LittleLong( lump.filepos );
                 lump.size = EndianHelper.LittleLong( lump.size );
                 if( lump.type == TYP_QPIC )
                 {
                     ptr = new IntPtr( _DataPtr.ToInt64() + lump.filepos );
-                    dqpicheader_t pic = (dqpicheader_t)Marshal.PtrToStructure( ptr, typeof( dqpicheader_t ) );
+                    WadPicHeader pic = (WadPicHeader)Marshal.PtrToStructure( ptr, typeof( WadPicHeader ) );
                     SwapPic( pic );
                     Marshal.StructureToPtr( pic, ptr, true );
                 }
@@ -121,9 +110,9 @@ namespace SharpQuake
         }
 
         // lumpinfo_t *W_GetLumpinfo (char *name)
-        public static lumpinfo_t GetLumpInfo( String name )
+        public static WadLumpInfo GetLumpInfo( String name )
         {
-            lumpinfo_t lump;
+            WadLumpInfo lump;
             if( _Lumps.TryGetValue( name, out lump ) )
             {
                 return lump;
@@ -144,32 +133,10 @@ namespace SharpQuake
         }
 
         // SwapPic (qpic_t *pic)
-        public static void SwapPic( dqpicheader_t pic )
+        public static void SwapPic( WadPicHeader pic )
         {
             pic.width = EndianHelper.LittleLong( pic.width );
             pic.height = EndianHelper.LittleLong( pic.height );
         }
     }
-
-    [StructLayout( LayoutKind.Sequential, Pack = 1 )]
-    internal class dqpicheader_t
-    {
-        public Int32 width, height;
-    }
-
-    //wadinfo_t;
-
-    [StructLayout( LayoutKind.Sequential, Pack = 1, CharSet = CharSet.Ansi )]
-    internal class lumpinfo_t
-    {
-        public Int32 filepos;
-        public Int32 disksize;
-        public Int32 size;                   // uncompressed
-        public Byte type;
-        public Byte compression;
-        private Byte pad1, pad2;
-
-        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 16)]
-        public Byte[] name; //[16];				// must be null terminated
-    } // lumpinfo_t;
 }

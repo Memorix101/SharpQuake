@@ -167,7 +167,6 @@
     <Compile Include="System\sys.cs" />
     <Compile Include="Rendering\vid.cs" />
     <Compile Include="Rendering\view.cs" />
-    <Compile Include="System\Wad.cs" />
     <Compile Include="Rendering\world.cs" />
     <Compile Include="System\zone.cs" />
     <EmbeddedResource Include="Properties\Resources.resx">

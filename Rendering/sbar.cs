@@ -250,7 +250,7 @@ namespace SharpQuake
         // called every frame by screen
         public static void Draw()
         {
-            viddef_t vid = Scr.vid;
+            VidDef vid = Scr.vid;
             if( Scr.ConCurrent == vid.height )
                 return;		// console is full screen
 

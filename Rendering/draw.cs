@@ -214,6 +214,8 @@ namespace SharpQuake
                     draw_chars[offset + i] = 255;	// proper transparent color
             }
 
+#warning Use this to abstract texture / wad loading into its own class
+
             // now turn them into textures
             _CharTexture = LoadTexture( "charset", 128, 128, new ByteArraySegment( draw_chars, offset ), false, true );
 
@@ -221,12 +223,12 @@ namespace SharpQuake
             if( buf == null )
                 Utilities.Error( "Couldn't load gfx/conback.lmp" );
 
-            dqpicheader_t cbHeader = Utilities.BytesToStructure<dqpicheader_t>( buf, 0 );
+            WadPicHeader cbHeader = Utilities.BytesToStructure<WadPicHeader>( buf, 0 );
             Wad.SwapPic( cbHeader );
 
             // hack the version number directly into the pic
             var ver = String.Format( "(c# {0,7:F2}) {1,7:F2}", ( Single ) QDef.CSQUAKE_VERSION, ( Single ) QDef.VERSION );
-            var offset2 = Marshal.SizeOf( typeof( dqpicheader_t ) ) + 320 * 186 + 320 - 11 - 8 * ver.Length;
+            var offset2 = Marshal.SizeOf( typeof( WadPicHeader ) ) + 320 * 186 + 320 - 11 - 8 * ver.Length;
             var y = ver.Length;
             for( var x = 0; x < y; x++ )
                 CharToConback( ver[x], new ByteArraySegment( buf, offset2 + ( x << 3 ) ), new ByteArraySegment( draw_chars, offset ) );
@@ -234,7 +236,7 @@ namespace SharpQuake
             _ConBack = new GLPic();
             _ConBack.width = cbHeader.width;
             _ConBack.height = cbHeader.height;
-            var ncdataIndex = Marshal.SizeOf( typeof( dqpicheader_t ) ); // cb->data;
+            var ncdataIndex = Marshal.SizeOf( typeof( WadPicHeader ) ); // cb->data;
 
             SetTextureFilters( TextureMinFilter.Nearest, TextureMagFilter.Nearest );
 
@@ -347,11 +349,11 @@ namespace SharpQuake
         {
             var offset = Wad.GetLumpNameOffset( name );
             IntPtr ptr = new IntPtr( Wad.DataPointer.ToInt64() + offset );
-            dqpicheader_t header = (dqpicheader_t)Marshal.PtrToStructure( ptr, typeof( dqpicheader_t ) );
+            WadPicHeader header = (WadPicHeader)Marshal.PtrToStructure( ptr, typeof( WadPicHeader ) );
             GLPic gl = new GLPic(); // (glpic_t)Marshal.PtrToStructure(ptr, typeof(glpic_t));
             gl.width = header.width;
             gl.height = header.height;
-            offset += Marshal.SizeOf( typeof( dqpicheader_t ) );
+            offset += Marshal.SizeOf( typeof( WadPicHeader ) );
 
             // load little ones into the scrap
             if( gl.width < 64 && gl.height < 64 )
@@ -563,10 +565,10 @@ namespace SharpQuake
             Byte[] data = FileSystem.LoadFile( path );
             if( data == null )
                 Utilities.Error( "Draw_CachePic: failed to load {0}", path );
-            dqpicheader_t header = Utilities.BytesToStructure<dqpicheader_t>( data, 0 );
+            WadPicHeader header = Utilities.BytesToStructure<WadPicHeader>( data, 0 );
             Wad.SwapPic( header );
 
-            var headerSize = Marshal.SizeOf( typeof( dqpicheader_t ) );
+            var headerSize = Marshal.SizeOf( typeof( WadPicHeader ) );
 
             // HACK HACK HACK --- we need to keep the bytes for
             // the translatable player picture just for the menu

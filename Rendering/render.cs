@@ -1428,7 +1428,7 @@ namespace SharpQuake
     // !!! if this is changed, it must be changed in asm_draw.h too !!!
     internal class refdef_t
     {
-        public vrect_t vrect;				// subwindow in video for refresh
+        public VRect vrect;				// subwindow in video for refresh
         public Vector3 vieworg;
         public Vector3 viewangles;
         public Single fov_x, fov_y;

@@ -37,7 +37,7 @@ namespace SharpQuake
     /// </summary>
     static partial class Scr
     {
-        public static viddef_t vid
+        public static VidDef vid
         {
             get
             {
@@ -93,8 +93,8 @@ namespace SharpQuake
         public static Int32 glHeight;
         public static Single CenterTimeOff;
         public static Int32 FullUpdate;
-        private static viddef_t _VidDef = new viddef_t();	// viddef_t vid (global video state)
-        private static vrect_t _VRect; // scr_vrect
+        private static VidDef _VidDef = new VidDef();	// viddef_t vid (global video state)
+        private static VRect _VRect; // scr_vrect
 
         // scr_disabled_for_loading
         private static System.Boolean _DrawLoading; // scr_drawloading

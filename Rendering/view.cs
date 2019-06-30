@@ -201,7 +201,7 @@ namespace SharpQuake
                 //
                 // render two interleaved views
                 //
-                viddef_t vid = Scr.vid;
+                VidDef vid = Scr.vid;
                 refdef_t rdef = render.RefDef;
 
                 vid.rowbytes <<= 1;

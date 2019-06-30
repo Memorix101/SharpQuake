@@ -47,7 +47,7 @@ namespace SharpQuake
 
             for ( var i = 1; ( i < lnummodes ) && ( _WModes < MAX_MODEDESCS ); i++ )
             {
-                mode_t m = vid.Modes[i];
+                VidMode m = vid.Modes[i];
 
                 var k = _WModes;
 

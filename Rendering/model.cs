@@ -997,6 +997,8 @@ namespace SharpQuake
 
                 tx.name = Utilities.GetString( mt.name );//   memcpy (tx->name, mt->name, sizeof(tx.name));
 
+#warning Needs to fix TGA loading / come up with better image loading
+
                 var tgaName = $"textures/{tx.name}.tga";
 
                 var file = FileSystem.LoadFile( tgaName );
@@ -1039,7 +1041,7 @@ namespace SharpQuake
                     tx.width = mt.width;
                     tx.height = mt.height;
                     tx.scaleX = 1f;
-                    tx.scaleX = 1f;
+                    tx.scaleY = 1f;
                     for ( var j = 0; j < bsp_file.MIPLEVELS; j++ )
                         tx.offsets[j] = ( Int32 ) mt.offsets[j] - miptex_t.SizeInBytes;
                     // the pixels immediately follow the structures
