@@ -1196,8 +1196,9 @@ namespace SharpQuake
                 case '7':
                 case '8':
                 case '9':
+                    // CHANGE
                     // MED 01/04/97 added hipnotic give stuff
-                    if ( Common.GameKind == GameKind.Hipnotic )
+                    if ( MainWindow.Common.GameKind == GameKind.Hipnotic )
                     {
                         if ( t[0] == '6' )
                         {
@@ -1221,14 +1222,14 @@ namespace SharpQuake
                     break;
 
                 case 's':
-                    if ( Common.GameKind == GameKind.Rogue )
+                    if ( MainWindow.Common.GameKind == GameKind.Rogue )
                         progs.SetEdictFieldFloat( server.Player, "ammo_shells1", v );
 
                     server.Player.v.ammo_shells = v;
                     break;
 
                 case 'n':
-                    if ( Common.GameKind == GameKind.Rogue )
+                    if ( MainWindow.Common.GameKind == GameKind.Rogue )
                     {
                         if ( progs.SetEdictFieldFloat( server.Player, "ammo_nails1", v ) )
                             if ( server.Player.v.weapon <= QItemsDef.IT_LIGHTNING )
@@ -1239,7 +1240,7 @@ namespace SharpQuake
                     break;
 
                 case 'l':
-                    if ( Common.GameKind == GameKind.Rogue )
+                    if ( MainWindow.Common.GameKind == GameKind.Rogue )
                     {
                         if ( progs.SetEdictFieldFloat( server.Player, "ammo_lava_nails", v ) )
                             if ( server.Player.v.weapon > QItemsDef.IT_LIGHTNING )
@@ -1248,7 +1249,7 @@ namespace SharpQuake
                     break;
 
                 case 'r':
-                    if ( Common.GameKind == GameKind.Rogue )
+                    if ( MainWindow.Common.GameKind == GameKind.Rogue )
                     {
                         if ( progs.SetEdictFieldFloat( server.Player, "ammo_rockets1", v ) )
                             if ( server.Player.v.weapon <= QItemsDef.IT_LIGHTNING )
@@ -1261,7 +1262,7 @@ namespace SharpQuake
                     break;
 
                 case 'm':
-                    if ( Common.GameKind == GameKind.Rogue )
+                    if ( MainWindow.Common.GameKind == GameKind.Rogue )
                     {
                         if ( progs.SetEdictFieldFloat( server.Player, "ammo_multi_rockets", v ) )
                             if ( server.Player.v.weapon > QItemsDef.IT_LIGHTNING )
@@ -1274,7 +1275,7 @@ namespace SharpQuake
                     break;
 
                 case 'c':
-                    if ( Common.GameKind == GameKind.Rogue )
+                    if ( MainWindow.Common.GameKind == GameKind.Rogue )
                     {
                         if ( progs.SetEdictFieldFloat( server.Player, "ammo_cells1", v ) )
                             if ( server.Player.v.weapon <= QItemsDef.IT_LIGHTNING )
@@ -1287,7 +1288,7 @@ namespace SharpQuake
                     break;
 
                 case 'p':
-                    if ( Common.GameKind == GameKind.Rogue )
+                    if ( MainWindow.Common.GameKind == GameKind.Rogue )
                     {
                         if ( progs.SetEdictFieldFloat( server.Player, "ammo_plasma", v ) )
                             if ( server.Player.v.weapon > QItemsDef.IT_LIGHTNING )

@@ -167,7 +167,7 @@ namespace SharpQuake
                         break;
 
                     case protocol.svc_damage:
-                        view.ParseDamage();
+                        Host.View.ParseDamage();
                         break;
 
                     case protocol.svc_serverinfo:
@@ -573,7 +573,8 @@ namespace SharpQuake
 
             i2 = net.Reader.ReadByte();
 
-            if( Common.GameKind == GameKind.StandardQuake )
+            // Change
+            if( MainWindow.Common.GameKind == GameKind.StandardQuake )
             {
                 if( cl.stats[QStatsDef.STAT_ACTIVEWEAPON] != i2 )
                 {

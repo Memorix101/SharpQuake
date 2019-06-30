@@ -217,10 +217,10 @@ namespace SharpQuake
                         Host.CommandBuffer.AddText( String.Format( "maxplayers {0}\n", _MaxPlayers ) );
                         Scr.BeginLoadingPlaque( );
 
-                        if ( Common.GameKind == GameKind.Hipnotic )
+                        if ( MainWindow.Common.GameKind == GameKind.Hipnotic )
                             Host.CommandBuffer.AddText( String.Format( "map {0}\n",
                                 HipnoticLevels[HipnoticEpisodes[_StartEpisode].firstLevel + _StartLevel].name ) );
-                        else if ( Common.GameKind == GameKind.Rogue )
+                        else if ( MainWindow.Common.GameKind == GameKind.Rogue )
                             Host.CommandBuffer.AddText( String.Format( "map {0}\n",
                                 RogueLevels[RogueEpisodes[_StartEpisode].firstLevel + _StartLevel].name ) );
                         else
@@ -253,7 +253,7 @@ namespace SharpQuake
                 Menu.Print( 160, 64, "Deathmatch" );
 
             Menu.Print( 0, 72, "        Teamplay" );
-            if ( Common.GameKind == GameKind.Rogue )
+            if ( MainWindow.Common.GameKind == GameKind.Rogue )
             {
                 String msg;
                 switch ( ( Int32 ) Host.TeamPlay )
@@ -332,23 +332,23 @@ namespace SharpQuake
 
             Menu.Print( 0, 112, "         Episode" );
             //MED 01/06/97 added hipnotic episodes
-            if ( Common.GameKind == GameKind.Hipnotic )
+            if ( MainWindow.Common.GameKind == GameKind.Hipnotic )
                 Menu.Print( 160, 112, HipnoticEpisodes[_StartEpisode].description );
             //PGM 01/07/97 added rogue episodes
-            else if ( Common.GameKind == GameKind.Rogue )
+            else if ( MainWindow.Common.GameKind == GameKind.Rogue )
                 Menu.Print( 160, 112, RogueEpisodes[_StartEpisode].description );
             else
                 Menu.Print( 160, 112, Episodes[_StartEpisode].description );
 
             Menu.Print( 0, 120, "           Level" );
             //MED 01/06/97 added hipnotic episodes
-            if ( Common.GameKind == GameKind.Hipnotic )
+            if ( MainWindow.Common.GameKind == GameKind.Hipnotic )
             {
                 Menu.Print( 160, 120, HipnoticLevels[HipnoticEpisodes[_StartEpisode].firstLevel + _StartLevel].description );
                 Menu.Print( 160, 128, HipnoticLevels[HipnoticEpisodes[_StartEpisode].firstLevel + _StartLevel].name );
             }
             //PGM 01/07/97 added rogue episodes
-            else if ( Common.GameKind == GameKind.Rogue )
+            else if ( MainWindow.Common.GameKind == GameKind.Rogue )
             {
                 Menu.Print( 160, 120, RogueLevels[RogueEpisodes[_StartEpisode].firstLevel + _StartLevel].description );
                 Menu.Print( 160, 128, RogueLevels[RogueEpisodes[_StartEpisode].firstLevel + _StartLevel].name );
@@ -433,7 +433,7 @@ namespace SharpQuake
                     break;
 
                 case 3:
-                    if ( Common.GameKind == GameKind.Rogue )
+                    if ( MainWindow.Common.GameKind == GameKind.Rogue )
                         count = 6;
                     else
                         count = 2;
@@ -477,13 +477,13 @@ namespace SharpQuake
                 case 7:
                     _StartEpisode += dir;
                     //MED 01/06/97 added hipnotic count
-                    if ( Common.GameKind == GameKind.Hipnotic )
+                    if ( MainWindow.Common.GameKind == GameKind.Hipnotic )
                         count = 6;
                     //PGM 01/07/97 added rogue count
                     //PGM 03/02/97 added 1 for dmatch episode
-                    else if ( Common.GameKind == GameKind.Rogue )
+                    else if ( MainWindow.Common.GameKind == GameKind.Rogue )
                         count = 4;
-                    else if ( Common.IsRegistered )
+                    else if ( MainWindow.Common.IsRegistered )
                         count = 7;
                     else
                         count = 2;
@@ -500,10 +500,10 @@ namespace SharpQuake
                 case 8:
                     _StartLevel += dir;
                     //MED 01/06/97 added hipnotic episodes
-                    if ( Common.GameKind == GameKind.Hipnotic )
+                    if ( MainWindow.Common.GameKind == GameKind.Hipnotic )
                         count = HipnoticEpisodes[_StartEpisode].levels;
                     //PGM 01/06/97 added hipnotic episodes
-                    else if ( Common.GameKind == GameKind.Rogue )
+                    else if ( MainWindow.Common.GameKind == GameKind.Rogue )
                         count = RogueEpisodes[_StartEpisode].levels;
                     else
                         count = Episodes[_StartEpisode].levels;

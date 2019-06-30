@@ -31,12 +31,12 @@ namespace SharpQuake
     /// <summary>
     /// Chase_functions
     /// </summary>
-    internal static class chase
+    public class ChaseView
     {
         /// <summary>
         /// chase_active.value != 0
         /// </summary>
-        public static Boolean IsActive
+        public Boolean IsActive
         {
             get
             {
@@ -44,14 +44,14 @@ namespace SharpQuake
             }
         }
 
-        private static CVar _Back;// = { "chase_back", "100" };
-        private static CVar _Up;// = { "chase_up", "16" };
-        private static CVar _Right;// = { "chase_right", "0" };
-        private static CVar _Active;// = { "chase_active", "0" };
-        private static Vector3 _Dest;
+        private CVar _Back;// = { "chase_back", "100" };
+        private CVar _Up;// = { "chase_up", "16" };
+        private CVar _Right;// = { "chase_right", "0" };
+        private  CVar _Active;// = { "chase_active", "0" };
+        private Vector3 _Dest;
 
         // Chase_Init
-        public static void Init()
+        public void Init()
         {
             if( _Back == null )
             {
@@ -63,14 +63,14 @@ namespace SharpQuake
         }
 
         // Chase_Reset
-        public static void Reset()
+        public void Reset()
         {
             // for respawning and teleporting
             //	start position 12 units behind head
         }
 
         // Chase_Update
-        public static void Update()
+        public void Update()
         {
             // if can't see player, reset
             Vector3 forward, up, right;
@@ -100,7 +100,7 @@ namespace SharpQuake
             render.RefDef.vieworg = _Dest; //VectorCopy(chase_dest, r_refdef.vieworg);
         }
 
-        private static void TraceLine( ref Vector3 start, ref Vector3 end, out Vector3 impact )
+        private void TraceLine( ref Vector3 start, ref Vector3 end, out Vector3 impact )
         {
             trace_t trace = new trace_t();
 

@@ -148,10 +148,10 @@ namespace SharpQuake
         }
 
         // Instances
-        private MainWindow Window
+        public MainWindow MainWindow
         {
             get;
-            set;
+            private set;
         }
 
         public client_t HostClient
@@ -173,6 +173,18 @@ namespace SharpQuake
         }
 
         public Command Command
+        {
+            get;
+            private set;
+        }
+
+        public View View
+        {
+            get;
+            private set;
+        }
+
+        public ChaseView ChaseView
         {
             get;
             private set;
@@ -212,11 +224,13 @@ namespace SharpQuake
 
         public Host( MainWindow window )
         {
-            Window = window;
+            MainWindow = window;
 
             Cache = new Cache( );
             CommandBuffer = new CommandBuffer( );
             Command = new Command( );
+            View = new View( );
+            ChaseView = new ChaseView( );
         }
 
         /// <summary>
@@ -301,10 +315,10 @@ namespace SharpQuake
             CommandBuffer.Initialise( this );
             Command.Initialise( this );
             CVar.Init( Command );
-            view.Init( this );
-            chase.Init( );
+            View.Initialise( this );
+            ChaseView.Init( );
             InitialiseVCR( parms );
-            Common.Init( this, parms.basedir, parms.argv );
+            MainWindow.Common.Init( MainWindow, parms.basedir, parms.argv );
             InitialiseLocal( );
             Wad.LoadWadFile( "gfx.wad" );
             Key.Init( CommandBuffer );
@@ -330,7 +344,7 @@ namespace SharpQuake
                     Utilities.Error( "Couldn't load gfx/colormap.lmp" );
 
                 // on non win32, mouse comes before video for security reasons
-                Input.Init( );
+                Input.Init( this );
                 vid.Init( this, BasePal );
                 Drawer.Init( this );
                 Scr.Init( this );

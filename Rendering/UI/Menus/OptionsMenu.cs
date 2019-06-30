@@ -129,7 +129,7 @@ namespace SharpQuake
             Menu.DrawSlider( 220, 56, r );
 
             Menu.Print( 16, 64, "            Brightness" );
-            r = ( 1.0f - view.Gamma ) / 0.5f;
+            r = ( 1.0f - Host.View.Gamma ) / 0.5f;
             Menu.DrawSlider( 220, 64, r );
 
             Menu.Print( 16, 72, "           Mouse Speed" );
@@ -191,7 +191,7 @@ namespace SharpQuake
                     break;
 
                 case 4:	// gamma
-                    value = view.Gamma - dir * 0.05f;
+                    value = Host.View.Gamma - dir * 0.05f;
                     if ( value < 0.5 )
                         value = 0.5f;
                     if ( value > 1 )

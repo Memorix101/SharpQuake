@@ -318,7 +318,7 @@ namespace SharpQuake
             MathLib.VectorAdd( ref _Player.v.v_angle, ref _Player.v.punchangle, out v_angle );
             Vector3 pang = Utilities.ToVector( ref _Player.v.angles );
             Vector3 pvel = Utilities.ToVector( ref _Player.v.velocity );
-            _Player.v.angles.z = view.CalcRoll( ref pang, ref pvel ) * 4;
+            _Player.v.angles.z = Host.View.CalcRoll( ref pang, ref pvel ) * 4;
             if( _Player.v.fixangle == 0 )
             {
                 _Player.v.angles.x = -v_angle.x / 3;

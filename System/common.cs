@@ -55,9 +55,9 @@ using SharpQuake.Framework;
 
 namespace SharpQuake
 {
-    internal static class Common
+    public class Common
     {
-        public static GameKind GameKind
+        public GameKind GameKind
         {
             get
             {
@@ -65,7 +65,7 @@ namespace SharpQuake
             }
         }
 
-        public static Boolean IsRegistered
+        public Boolean IsRegistered
         {
             get
             {
@@ -99,38 +99,38 @@ namespace SharpQuake
             ,0x0000,0x0000,0x0000,0x0000,0x6400,0x0000,0x0000,0x0000
         };
         
-        private static CVar _Registered;
-        private static CVar _CmdLine;
-        private static GameKind _GameKind; // qboolean		standard_quake = true, rogue, hipnotic;
+        private CVar _Registered;
+        private CVar _CmdLine;
+        private GameKind _GameKind; // qboolean		standard_quake = true, rogue, hipnotic;
 
 
-        // CHANGE
-        private static Host Host
+        // Instances
+        private MainWindow MainWindow
         {
             get;
             set;
         }
 
         // void COM_Init (char *path)
-        public static void Init( Host host, String path, String[] argv)
+        public void Init( MainWindow mainWindow, String path, String[] argv)
         {
-            Host = host;
+            MainWindow = mainWindow;
 
             CommandLine.Args = argv;
 
             _Registered = new CVar("registered", "0");
             _CmdLine = new CVar("cmdline", "0", false, true);
 
-            Host.Command.Add("path", FileSystem.Path_f );
+            MainWindow.Host.Command.Add("path", FileSystem.Path_f );
 
             CommandLine.Init( path, argv );
-            FileSystem.InitFileSystem( host.Parameters );
+            FileSystem.InitFileSystem( MainWindow.Host.Parameters );
 
             CheckRegistered();
         }
 
         // void COM_InitArgv (int argc, char **argv)
-        public static void InitArgv( String[] argv )
+        public void InitArgv( String[] argv )
         {
             CommandLine.InitArgv( argv );
 
@@ -149,7 +149,7 @@ namespace SharpQuake
         // Sets the "registered" cvar.
         // Immediately exits out if an alternate game was attempted to be started without
         // being registered.
-        private static void CheckRegistered()
+        private void CheckRegistered()
         {
             FileSystem._StaticRegistered = false;
 

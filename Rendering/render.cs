@@ -511,7 +511,7 @@ namespace SharpQuake
             if( _glPolyBlend.Value == 0 )
                 return;
 
-            if( view.Blend.A == 0 )
+            if( Host.View.Blend.A == 0 )
                 return;
 
             DisableMultitexture();
@@ -526,7 +526,7 @@ namespace SharpQuake
             GL.Rotate( -90f, 1, 0, 0 );	    // put Z going up
             GL.Rotate( 90f, 0, 0, 1 );	    // put Z going up
 
-            GL.Color4( view.Blend );
+            GL.Color4( Host.View.Blend );
             GL.Begin( PrimitiveType.Quads );
             GL.Vertex3( 10f, 100, 100 );
             GL.Vertex3( 10f, -100, 100 );
@@ -608,7 +608,7 @@ namespace SharpQuake
             if( _DrawViewModel.Value == 0 )
                 return;
 
-            if( chase.IsActive )
+            if( Host.ChaseView.IsActive )
                 return;
 
             if( _IsEnvMap )
@@ -1247,8 +1247,8 @@ namespace SharpQuake
             _OldViewLeaf = _ViewLeaf;
             _ViewLeaf = Mod.PointInLeaf( ref render.Origin, client.cl.worldmodel );
 
-            view.SetContentsColor( _ViewLeaf.contents );
-            view.CalcBlend();
+            Host.View.SetContentsColor( _ViewLeaf.contents );
+            Host.View.CalcBlend();
 
             _CacheThrash = false;
             _BrushPolys = 0;

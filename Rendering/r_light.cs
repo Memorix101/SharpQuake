@@ -283,15 +283,15 @@ namespace SharpQuake
 
         private static void AddLightBlend( Single r, Single g, Single b, Single a2 )
         {
-            view.Blend.A += a2 * ( 1 - view.Blend.A );
+            Host.View.Blend.A += a2 * ( 1 - Host.View.Blend.A );
 
-            var a = view.Blend.A;
+            var a = Host.View.Blend.A;
 
             a2 = a2 / a;
 
-            view.Blend.R = view.Blend.R * ( 1 - a2 ) + r * a2; // error? - v_blend[0] = v_blend[1] * (1 - a2) + r * a2;
-            view.Blend.G = view.Blend.G * ( 1 - a2 ) + g * a2;
-            view.Blend.B = view.Blend.B * ( 1 - a2 ) + b * a2;
+            Host.View.Blend.R = Host.View.Blend.R * ( 1 - a2 ) + r * a2; // error? - v_blend[0] = v_blend[1] * (1 - a2) + r * a2;
+            Host.View.Blend.G = Host.View.Blend.G * ( 1 - a2 ) + g * a2;
+            Host.View.Blend.B = Host.View.Blend.B * ( 1 - a2 ) + b * a2;
         }
     }
 }

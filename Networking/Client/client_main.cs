@@ -463,7 +463,7 @@ namespace SharpQuake
 
                 ent.forcelink = false;
 
-                if( i == cl.viewentity && !chase.IsActive )
+                if( i == cl.viewentity && !Host.ChaseView.IsActive )
                     continue;
 
                 if( NumVisEdicts < MAX_VISEDICTS )

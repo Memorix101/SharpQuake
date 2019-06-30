@@ -38,9 +38,9 @@ namespace SharpQuake
     /// <summary>
     /// V_functions
     /// </summary>
-    internal static class view
+    public class View
     {
-        public static Single Crosshair
+        public Single Crosshair
         {
             get
             {
@@ -48,7 +48,7 @@ namespace SharpQuake
             }
         }
 
-        public static Single Gamma
+        public Single Gamma
         {
             get
             {
@@ -56,77 +56,77 @@ namespace SharpQuake
             }
         }
 
-        public static Color4 Blend;
+        public Color4 Blend;
         private static readonly Vector3 SmallOffset = Vector3.One / 32f;
 
-        private static CVar _LcdX; // = { "lcd_x", "0" };
-        private static CVar _LcdYaw; // = { "lcd_yaw", "0" };
+        private CVar _LcdX; // = { "lcd_x", "0" };
+        private CVar _LcdYaw; // = { "lcd_yaw", "0" };
 
-        private static CVar _ScrOfsX; // = { "scr_ofsx", "0", false };
-        private static CVar _ScrOfsY; // = { "scr_ofsy", "0", false };
-        private static CVar _ScrOfsZ; // = { "scr_ofsz", "0", false };
+        private CVar _ScrOfsX; // = { "scr_ofsx", "0", false };
+        private CVar _ScrOfsY; // = { "scr_ofsy", "0", false };
+        private CVar _ScrOfsZ; // = { "scr_ofsz", "0", false };
 
-        private static CVar _ClRollSpeed; // = { "cl_rollspeed", "200" };
-        private static CVar _ClRollAngle; // = { "cl_rollangle", "2.0" };
+        private CVar _ClRollSpeed; // = { "cl_rollspeed", "200" };
+        private CVar _ClRollAngle; // = { "cl_rollangle", "2.0" };
 
-        private static CVar _ClBob; // = { "cl_bob", "0.02", false };
-        private static CVar _ClBobCycle; // = { "cl_bobcycle", "0.6", false };
-        private static CVar _ClBobUp; // = { "cl_bobup", "0.5", false };
+        private CVar _ClBob; // = { "cl_bob", "0.02", false };
+        private CVar _ClBobCycle; // = { "cl_bobcycle", "0.6", false };
+        private CVar _ClBobUp; // = { "cl_bobup", "0.5", false };
 
-        private static CVar _KickTime; // = { "v_kicktime", "0.5", false };
-        private static CVar _KickRoll; // = { "v_kickroll", "0.6", false };
-        private static CVar _KickPitch; // = { "v_kickpitch", "0.6", false };
+        private CVar _KickTime; // = { "v_kicktime", "0.5", false };
+        private CVar _KickRoll; // = { "v_kickroll", "0.6", false };
+        private CVar _KickPitch; // = { "v_kickpitch", "0.6", false };
 
-        private static CVar _IYawCycle; // = { "v_iyaw_cycle", "2", false };
-        private static CVar _IRollCycle; // = { "v_iroll_cycle", "0.5", false };
-        private static CVar _IPitchCycle;// = { "v_ipitch_cycle", "1", false };
-        private static CVar _IYawLevel;// = { "v_iyaw_level", "0.3", false };
-        private static CVar _IRollLevel;// = { "v_iroll_level", "0.1", false };
-        private static CVar _IPitchLevel;// = { "v_ipitch_level", "0.3", false };
+        private CVar _IYawCycle; // = { "v_iyaw_cycle", "2", false };
+        private CVar _IRollCycle; // = { "v_iroll_cycle", "0.5", false };
+        private CVar _IPitchCycle;// = { "v_ipitch_cycle", "1", false };
+        private CVar _IYawLevel;// = { "v_iyaw_level", "0.3", false };
+        private CVar _IRollLevel;// = { "v_iroll_level", "0.1", false };
+        private CVar _IPitchLevel;// = { "v_ipitch_level", "0.3", false };
 
-        private static CVar _IdleScale;// = { "v_idlescale", "0", false };
+        private CVar _IdleScale;// = { "v_idlescale", "0", false };
 
-        private static CVar _Crosshair;// = { "crosshair", "0", true };
-        private static CVar _ClCrossX;// = { "cl_crossx", "0", false };
-        private static CVar _ClCrossY;// = { "cl_crossy", "0", false };
+        private CVar _Crosshair;// = { "crosshair", "0", true };
+        private CVar _ClCrossX;// = { "cl_crossx", "0", false };
+        private CVar _ClCrossY;// = { "cl_crossy", "0", false };
 
-        private static CVar _glCShiftPercent;// = { "gl_cshiftpercent", "100", false };
+        private CVar _glCShiftPercent;// = { "gl_cshiftpercent", "100", false };
 
-        private static CVar _Gamma;// = { "gamma", "1", true };
-        private static CVar _CenterMove;// = { "v_centermove", "0.15", false };
-        private static CVar _CenterSpeed;// = { "v_centerspeed", "500" };
+        private CVar _Gamma;// = { "gamma", "1", true };
+        private CVar _CenterMove;// = { "v_centermove", "0.15", false };
+        private CVar _CenterSpeed;// = { "v_centerspeed", "500" };
 
-        private static Byte[] _GammaTable; // [256];	// palette is sent through this
-        private static cshift_t _CShift_empty;// = { { 130, 80, 50 }, 0 };
-        private static cshift_t _CShift_water;// = { { 130, 80, 50 }, 128 };
-        private static cshift_t _CShift_slime;// = { { 0, 25, 5 }, 150 };
-        private static cshift_t _CShift_lava;// = { { 255, 80, 0 }, 150 };
+        private Byte[] _GammaTable; // [256];	// palette is sent through this
+        private cshift_t _CShift_empty;// = { { 130, 80, 50 }, 0 };
+        private cshift_t _CShift_water;// = { { 130, 80, 50 }, 128 };
+        private cshift_t _CShift_slime;// = { { 0, 25, 5 }, 150 };
+        private cshift_t _CShift_lava;// = { { 255, 80, 0 }, 150 };
 
         // v_blend[4]		// rgba 0.0 - 1.0
-        private static Byte[,] _Ramps = new Byte[3, 256]; // ramps[3][256]
+        private Byte[,] _Ramps = new Byte[3, 256]; // ramps[3][256]
 
-        private static Vector3 _Forward; // vec3_t forward
-        private static Vector3 _Right; // vec3_t right
-        private static Vector3 _Up; // vec3_t up
+        private Vector3 _Forward; // vec3_t forward
+        private Vector3 _Right; // vec3_t right
+        private Vector3 _Up; // vec3_t up
 
-        private static Single _DmgTime; // v_dmg_time
-        private static Single _DmgRoll; // v_dmg_roll
-        private static Single _DmgPitch; // v_dmg_pitch
+        private Single _DmgTime; // v_dmg_time
+        private Single _DmgRoll; // v_dmg_roll
+        private Single _DmgPitch; // v_dmg_pitch
 
-        private static Single _OldZ = 0; // static oldz  from CalcRefdef()
-        private static Single _OldYaw = 0; // static oldyaw from CalcGunAngle
-        private static Single _OldPitch = 0; // static oldpitch from CalcGunAngle
-        private static Single _OldGammaValue; // static float oldgammavalue from CheckGamma
+        private Single _OldZ = 0; // static oldz  from CalcRefdef()
+        private Single _OldYaw = 0; // static oldyaw from CalcGunAngle
+        private Single _OldPitch = 0; // static oldpitch from CalcGunAngle
+        private Single _OldGammaValue; // static float oldgammavalue from CheckGamma
 
-        // CHANGE
-        private static Host Host
+        // Instances
+        private Host Host
         {
             get;
             set;
         }
 
         // V_Init
-        public static void Init( Host host )
+        public void Initialise( Host host )
         {
             Host = host;
 
@@ -182,7 +182,7 @@ namespace SharpQuake
         /// The player's clipping box goes from (-16 -16 -24) to (16 16 32) from
         /// the entity origin, so any view position inside that will be valid
         /// </summary>
-        public static void RenderView()
+        public void RenderView()
         {
             if( Con.ForcedUp )
                 return;
@@ -247,7 +247,7 @@ namespace SharpQuake
         /// V_CalcRoll
         /// Used by view and sv_user
         /// </summary>
-        public static Single CalcRoll( ref Vector3 angles, ref Vector3 velocity )
+        public Single CalcRoll( ref Vector3 angles, ref Vector3 velocity )
         {
             MathLib.AngleVectors( ref angles, out _Forward, out _Right, out _Up );
             var side = Vector3.Dot( velocity, _Right );
@@ -264,7 +264,7 @@ namespace SharpQuake
         }
 
         // V_UpdatePalette
-        public static void UpdatePalette()
+        public void UpdatePalette()
         {
             CalcPowerupCshift();
 
@@ -346,7 +346,7 @@ namespace SharpQuake
         }
 
         // V_StartPitchDrift
-        public static void StartPitchDrift()
+        public void StartPitchDrift()
         {
             client_state_t cl = client.cl;
             if( cl.laststop == cl.time )
@@ -362,7 +362,7 @@ namespace SharpQuake
         }
 
         // V_StopPitchDrift
-        public static void StopPitchDrift()
+        public void StopPitchDrift()
         {
             client_state_t cl = client.cl;
             cl.laststop = cl.time;
@@ -373,7 +373,7 @@ namespace SharpQuake
         /// <summary>
         /// V_CalcBlend
         /// </summary>
-        public static void CalcBlend()
+        public void CalcBlend()
         {
             Single r = 0;
             Single g = 0;
@@ -411,7 +411,7 @@ namespace SharpQuake
         }
 
         // V_ParseDamage
-        public static void ParseDamage()
+        public void ParseDamage()
         {
             var armor = net.Reader.ReadByte();
             var blood = net.Reader.ReadByte();
@@ -474,7 +474,7 @@ namespace SharpQuake
         /// V_SetContentsColor
         /// Underwater, lava, etc each has a color shift
         /// </summary>
-        public static void SetContentsColor( Int32 contents )
+        public void SetContentsColor( Int32 contents )
         {
             switch( contents )
             {
@@ -498,7 +498,7 @@ namespace SharpQuake
         }
 
         // BuildGammaTable
-        private static void BuildGammaTable( Single g )
+        private void BuildGammaTable( Single g )
         {
             if( g == 1.0f )
             {
@@ -522,7 +522,7 @@ namespace SharpQuake
         }
 
         // V_cshift_f
-        private static void CShift_f()
+        private void CShift_f()
         {
             Int32.TryParse( Host.Command.Argv( 1 ), out _CShift_empty.destcolor[0] );
             Int32.TryParse( Host.Command.Argv( 2 ), out _CShift_empty.destcolor[1] );
@@ -533,7 +533,7 @@ namespace SharpQuake
         // V_BonusFlash_f
         //
         // When you run over an item, the server sends this command
-        private static void BonusFlash_f()
+        private void BonusFlash_f()
         {
             client_state_t cl = client.cl;
             cl.cshifts[ColorShift.CSHIFT_BONUS].destcolor[0] = 215;
@@ -543,7 +543,7 @@ namespace SharpQuake
         }
 
         // V_CalcIntermissionRefdef
-        private static void CalcIntermissionRefDef()
+        private void CalcIntermissionRefDef()
         {
             // ent is the player model (visible when out of body)
             Entity ent = client.ViewEntity;
@@ -561,7 +561,7 @@ namespace SharpQuake
         }
 
         // V_CalcRefdef
-        private static void CalcRefDef()
+        private void CalcRefDef()
         {
             DriftPitch();
 
@@ -652,14 +652,14 @@ namespace SharpQuake
             else
                 _OldZ = ent.origin.Z;
 
-            if( chase.IsActive )
-                chase.Update();
+            if( Host.ChaseView.IsActive )
+                Host.ChaseView.Update();
         }
 
         // V_AddIdle
         //
         // Idle swaying
-        private static void AddIdle( Single idleScale )
+        private void AddIdle( Single idleScale )
         {
             var time = client.cl.time;
             Vector3 v = new Vector3(
@@ -678,7 +678,7 @@ namespace SharpQuake
         //
         // Drifting is enabled when the center view key is hit, mlook is released and
         // lookspring is non 0, or when
-        private static void DriftPitch()
+        private void DriftPitch()
         {
             client_state_t cl = client.cl;
             if( Host.NoClipAngleHack || !cl.onground || client.cls.demoplayback )
@@ -734,7 +734,7 @@ namespace SharpQuake
         }
 
         // V_CalcBob
-        private static Single CalcBob()
+        private Single CalcBob()
         {
             client_state_t cl = client.cl;
             var bobCycle = _ClBobCycle.Value;
@@ -761,7 +761,7 @@ namespace SharpQuake
         // V_CalcViewRoll
         //
         // Roll is induced by movement and damage
-        private static void CalcViewRoll()
+        private void CalcViewRoll()
         {
             client_state_t cl = client.cl;
             refdef_t rdef = render.RefDef;
@@ -783,7 +783,7 @@ namespace SharpQuake
         }
 
         // V_BoundOffsets
-        private static void BoundOffsets()
+        private void BoundOffsets()
         {
             Entity ent = client.ViewEntity;
 
@@ -809,7 +809,7 @@ namespace SharpQuake
         /// <summary>
         /// CalcGunAngle
         /// </summary>
-        private static void CalcGunAngle()
+        private void CalcGunAngle()
         {
             refdef_t rdef = render.RefDef;
             var yaw = rdef.viewangles.Y;
@@ -862,7 +862,7 @@ namespace SharpQuake
         }
 
         // angledelta()
-        private static Single AngleDelta( Single a )
+        private Single AngleDelta( Single a )
         {
             a = MathLib.AngleMod( a );
             if( a > 180 )
@@ -871,7 +871,7 @@ namespace SharpQuake
         }
 
         // V_CalcPowerupCshift
-        private static void CalcPowerupCshift()
+        private void CalcPowerupCshift()
         {
             client_state_t cl = client.cl;
             if( cl.HasItems( QItemsDef.IT_QUAD ) )
@@ -907,7 +907,7 @@ namespace SharpQuake
         }
 
         // V_CheckGamma
-        private static Boolean CheckGamma()
+        private Boolean CheckGamma()
         {
             if( _Gamma.Value == _OldGammaValue )
                 return false;
@@ -921,13 +921,13 @@ namespace SharpQuake
         }
 
         // VID_ShiftPalette from gl_vidnt.c
-        private static void ShiftPalette( Byte[] palette )
+        private void ShiftPalette( Byte[] palette )
         {
             //	VID_SetPalette (palette);
             //	gammaworks = SetDeviceGammaRamp (maindc, ramps);
         }
 
-        static view()
+        public View()
         {
             _GammaTable = new Byte[256];
 

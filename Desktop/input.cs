@@ -63,10 +63,19 @@ namespace SharpQuake
         private static System.Boolean _MouseActivateToggle; // mouseactivatetoggle
         private static System.Boolean _MouseShowToggle = true; // mouseshowtoggle
 
-        // IN_Init
-        public static void Init()
+        // CHANGE
+        private static Host Host
         {
-            if( _MouseFilter == null )
+            get;
+            set;
+        }
+
+        // IN_Init
+        public static void Init( Host host )
+        {
+            Host = host;
+
+            if ( _MouseFilter == null )
             {
                 _MouseFilter = new CVar( "m_filter", "0" );
             }
@@ -244,7 +253,7 @@ namespace SharpQuake
             else
                 client.cl.viewangles.Y -= client.MYaw * _Mouse.X;
 
-            view.StopPitchDrift();
+            Host.View.StopPitchDrift();
 
             client.cl.viewangles.X += client.MPitch * _Mouse.Y;
 

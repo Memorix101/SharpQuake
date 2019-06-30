@@ -249,7 +249,7 @@ namespace SharpQuake
                 //
                 SetUpToDrawConsole();
 
-                view.RenderView();
+                Host.View.RenderView();
 
                 Set2D();
 
@@ -281,7 +281,7 @@ namespace SharpQuake
                 }
                 else
                 {
-                    if( view.Crosshair > 0 )
+                    if( Host.View.Crosshair > 0 )
                         Drawer.DrawCharacter( _VRect.x + _VRect.width / 2, _VRect.y + _VRect.height / 2, '+' );
 
                     DrawRam();
@@ -294,7 +294,7 @@ namespace SharpQuake
                     Menu.Draw();
                 }
 
-                view.UpdatePalette();
+                Host.View.UpdatePalette();
                 EndRendering();
             }
             finally

@@ -162,7 +162,7 @@
     <Compile Include="Sound\snd_openal.cs" />
     <Compile Include="System\sys.cs" />
     <Compile Include="Rendering\vid.cs" />
-    <Compile Include="Rendering\view.cs" />
+    <Compile Include="Rendering\View.cs" />
     <Compile Include="Rendering\world.cs" />
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>

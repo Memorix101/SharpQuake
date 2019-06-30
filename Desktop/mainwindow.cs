@@ -97,6 +97,12 @@ namespace SharpQuake
             private set;
         }
 
+        public static Common Common
+        {
+            get;
+            private set;
+        }
+
         private static WeakReference _Instance;
         private static DisplayDevice _DisplayDevice;
 
@@ -270,6 +276,7 @@ namespace SharpQuake
             args2[0] = String.Empty;
             args.CopyTo(args2, 1);
 
+            Common = new Common( );
             Common.InitArgv(args2);
 
             parms.argv = new String[CommandLine.Argc];

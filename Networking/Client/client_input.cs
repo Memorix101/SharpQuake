@@ -175,7 +175,7 @@ namespace SharpQuake
             KeyUp( ref MLookBtn );
 
             if( ( MLookBtn.state & 1 ) == 0 && client.LookSpring )
-                view.StartPitchDrift();
+                Host.View.StartPitchDrift();
         }
 
         private static void UpDown()
@@ -463,7 +463,7 @@ namespace SharpQuake
 
             if( client_input.KLookBtn.IsDown )
             {
-                view.StopPitchDrift();
+                Host.View.StopPitchDrift();
                 cl.viewangles.X -= speed * _PitchSpeed.Value * KeyState( ref client_input.ForwardBtn );
                 cl.viewangles.X += speed * _PitchSpeed.Value * KeyState( ref client_input.BackBtn );
             }
@@ -475,7 +475,7 @@ namespace SharpQuake
             cl.viewangles.X += speed * _PitchSpeed.Value * down;
 
             if( up != 0 || down != 0 )
-                view.StopPitchDrift();
+                Host.View.StopPitchDrift();
 
             if( cl.viewangles.X > 80 )
                 cl.viewangles.X = 80;

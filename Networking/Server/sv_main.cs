@@ -472,7 +472,7 @@ namespace SharpQuake
             msg.WriteByte( ( Int32 ) ent.v.ammo_rockets );
             msg.WriteByte( ( Int32 ) ent.v.ammo_cells );
 
-            if( Common.GameKind == GameKind.StandardQuake )
+            if( MainWindow.Common.GameKind == GameKind.StandardQuake )
             {
                 msg.WriteByte( ( Int32 ) ent.v.weapon );
             }
