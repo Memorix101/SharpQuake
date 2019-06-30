@@ -85,7 +85,6 @@
   <ItemGroup>
     <Compile Include="Rendering\anorm_dots.cs" />
     <Compile Include="Rendering\anorms.cs" />
-    <Compile Include="Rendering\bsp_file.cs" />
     <Compile Include="Rendering\UI\Menus\GameOptionsMenu.cs" />
     <Compile Include="Rendering\UI\Menus\HelpMenu.cs" />
     <Compile Include="Rendering\UI\Menus\KeysMenu.cs" />

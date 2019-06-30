@@ -469,16 +469,16 @@ namespace SharpQuake
         {
             switch( contents )
             {
-                case Contents.CONTENTS_EMPTY:
-                case Contents.CONTENTS_SOLID:
+                case ContentsDef.CONTENTS_EMPTY:
+                case ContentsDef.CONTENTS_SOLID:
                     client.cl.cshifts[ColorShift.CSHIFT_CONTENTS] = _CShift_empty;
                     break;
 
-                case Contents.CONTENTS_LAVA:
+                case ContentsDef.CONTENTS_LAVA:
                     client.cl.cshifts[ColorShift.CSHIFT_CONTENTS] = _CShift_lava;
                     break;
 
-                case Contents.CONTENTS_SLIME:
+                case ContentsDef.CONTENTS_SLIME:
                     client.cl.cshifts[ColorShift.CSHIFT_CONTENTS] = _CShift_slime;
                     break;
 

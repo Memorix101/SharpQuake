@@ -268,7 +268,7 @@ namespace SharpQuake
                         for( j = i + 1; j < lnumverts; ++j )
                         {
                             //int k;
-                            for( var k = 0; k < Mod.VERTEXSIZE; ++k )
+                            for( var k = 0; k < ModelDef.VERTEXSIZE; ++k )
                                 poly.verts[j - 1][k] = poly.verts[j][k];
                         }
                         --lnumverts;
@@ -361,7 +361,7 @@ namespace SharpQuake
 
                 // add all the lightmaps
                 if( lightmap != null )
-                    for( var maps = 0; maps < bsp_file.MAXLIGHTMAPS && surf.styles[maps] != 255; maps++ )
+                    for( var maps = 0; maps < BspDef.MAXLIGHTMAPS && surf.styles[maps] != 255; maps++ )
                     {
                         var scale = _LightStyleValue[surf.styles[maps]];
                         surf.cached_light[maps] = scale;	// 8.8 fraction
@@ -744,7 +744,7 @@ namespace SharpQuake
 
             // check for lightmap modification
             var modified = false;
-            for( var maps = 0; maps < bsp_file.MAXLIGHTMAPS && fa.styles[maps] != 255; maps++ )
+            for( var maps = 0; maps < BspDef.MAXLIGHTMAPS && fa.styles[maps] != 255; maps++ )
                 if( _LightStyleValue[fa.styles[maps]] != fa.cached_light[maps] )
                 {
                     modified = true;
@@ -816,7 +816,7 @@ namespace SharpQuake
         /// </summary>
         private static void RecursiveWorldNode( mnodebase_t node )
         {
-            if( node.contents == Contents.CONTENTS_SOLID )
+            if( node.contents == ContentsDef.CONTENTS_SOLID )
                 return;		// solid
 
             if( node.visframe != _VisFrameCount )
@@ -860,15 +860,15 @@ namespace SharpQuake
 
             switch( plane.type )
             {
-                case Planes.PLANE_X:
+                case PlaneDef.PLANE_X:
                     dot = _ModelOrg.X - plane.dist;
                     break;
 
-                case Planes.PLANE_Y:
+                case PlaneDef.PLANE_Y:
                     dot = _ModelOrg.Y - plane.dist;
                     break;
 
-                case Planes.PLANE_Z:
+                case PlaneDef.PLANE_Z:
                     dot = _ModelOrg.Z - plane.dist;
                     break;
 
@@ -1197,7 +1197,7 @@ namespace SharpQuake
 
             // check for lightmap modification
             var flag = false;
-            for( var maps = 0; maps < bsp_file.MAXLIGHTMAPS && fa.styles[maps] != 255; maps++ )
+            for( var maps = 0; maps < BspDef.MAXLIGHTMAPS && fa.styles[maps] != 255; maps++ )
                 if( _LightStyleValue[fa.styles[maps]] != fa.cached_light[maps] )
                 {
                     flag = true;

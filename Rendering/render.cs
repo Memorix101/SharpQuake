@@ -1198,7 +1198,7 @@ namespace SharpQuake
 
             for( var i = 0; i < 4; i++ )
             {
-                _Frustum[i].type = Planes.PLANE_ANYZ;
+                _Frustum[i].type = PlaneDef.PLANE_ANYZ;
                 _Frustum[i].dist = Vector3.Dot( render.Origin, _Frustum[i].normal );
                 _Frustum[i].signbits = ( Byte ) SignbitsForPlane( _Frustum[i] );
             }

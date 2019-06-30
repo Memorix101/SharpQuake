@@ -172,7 +172,7 @@ namespace SharpQuake
             PF_setspawnparms
         };
 
-        private static Byte[] _CheckPvs = new Byte[bsp_file.MAX_MAP_LEAFS / 8]; // checkpvs
+        private static Byte[] _CheckPvs = new Byte[BspDef.MAX_MAP_LEAFS / 8]; // checkpvs
 
         private static Int32 _TempString = -1;
 

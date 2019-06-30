@@ -226,9 +226,9 @@ namespace SharpQuake
                 return;
             }
 
-            if( cont <= Contents.CONTENTS_WATER )
+            if( cont <= ContentsDef.CONTENTS_WATER )
             {
-                if( ent.v.watertype == Contents.CONTENTS_EMPTY )
+                if( ent.v.watertype == ContentsDef.CONTENTS_EMPTY )
                 {
                     // just crossed into water
                     StartSound( ent, 0, "misc/h2ohit1.wav", 255, 1 );
@@ -238,12 +238,12 @@ namespace SharpQuake
             }
             else
             {
-                if( ent.v.watertype != Contents.CONTENTS_EMPTY )
+                if( ent.v.watertype != ContentsDef.CONTENTS_EMPTY )
                 {
                     // just crossed into water
                     StartSound( ent, 0, "misc/h2ohit1.wav", 255, 1 );
                 }
-                ent.v.watertype = Contents.CONTENTS_EMPTY;
+                ent.v.watertype = ContentsDef.CONTENTS_EMPTY;
                 ent.v.waterlevel = cont;
             }
         }
@@ -671,20 +671,20 @@ namespace SharpQuake
             point.Z = ent.v.origin.z + ent.v.mins.z + 1;
 
             ent.v.waterlevel = 0;
-            ent.v.watertype = Contents.CONTENTS_EMPTY;
+            ent.v.watertype = ContentsDef.CONTENTS_EMPTY;
             var cont = PointContents( ref point );
-            if( cont <= Contents.CONTENTS_WATER )
+            if( cont <= ContentsDef.CONTENTS_WATER )
             {
                 ent.v.watertype = cont;
                 ent.v.waterlevel = 1;
                 point.Z = ent.v.origin.z + ( ent.v.mins.z + ent.v.maxs.z ) * 0.5f;
                 cont = PointContents( ref point );
-                if( cont <= Contents.CONTENTS_WATER )
+                if( cont <= ContentsDef.CONTENTS_WATER )
                 {
                     ent.v.waterlevel = 2;
                     point.Z = ent.v.origin.z + ent.v.view_ofs.z;
                     cont = PointContents( ref point );
-                    if( cont <= Contents.CONTENTS_WATER )
+                    if( cont <= ContentsDef.CONTENTS_WATER )
                         ent.v.waterlevel = 3;
                 }
             }

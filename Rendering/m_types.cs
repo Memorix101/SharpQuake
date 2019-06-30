@@ -81,34 +81,7 @@ namespace SharpQuake
    
 
 
-    // Uze:
-    // WARNING: texture_t changed!!!
-    // in original Quake texture_t and it's data where allocated as one hunk
-    // texture_t* ptex = Alloc_Hunk(sizeof(texture_t) + size_of_mip_level_0 + ...)
-    // ptex->offset[0] = sizeof(texture_t)
-    // ptex->offset[1] = ptex->offset[0] + size_of_mip_level_0 and so on
-    // now there is field <pixels> and all offsets are just indices in this byte array
-    class texture_t
-    {
-        public String name; // char[16];
-        public UInt32 width, height;
-        public Int32 gl_texturenum;
-        public msurface_t texturechain;	// for gl_texsort drawing
-        public Int32 anim_total;				// total tenths in sequence ( 0 = no)
-        public Int32 anim_min, anim_max;		// time for this frame min <=time< max
-        public texture_t anim_next;		// in the animation sequence
-        public texture_t alternate_anims;	// bmodels in frmae 1 use these
-        public Int32[] offsets; //[MIPLEVELS];		// four mip maps stored
-        public Byte[] pixels; // added by Uze
-        public System.Drawing.Bitmap rawBitmap;
-        public Single scaleX;
-        public Single scaleY;
-
-        public texture_t()
-        {
-            offsets = new Int32[bsp_file.MIPLEVELS];
-        }
-    } //texture_t;
+    
 
     static class Surf
     {
@@ -128,93 +101,11 @@ namespace SharpQuake
         //public uint cachededgeoffset;
     } //medge_t;
 
-    class mtexinfo_t
-    {
-        public Vector4[] vecs; //public float[][] vecs; //[2][4];
-        public Single mipadjust;
-        public texture_t texture;
-        public Int32 flags;
+    
 
-        public mtexinfo_t()
-        {
-            vecs = new Vector4[2];// float[2][] { new float[4], new float[4] };
-        }
-    } //mtexinfo_t;
+    
 
-    class glpoly_t
-    {
-        public glpoly_t next;
-        public glpoly_t chain;
-        public Int32 numverts;
-        public Int32 flags;			// for SURF_UNDERWATER
-        /// <summary>
-        /// Changed! Original Quake glpoly_t has 4 vertex inplace and others immidiately after this struct
-        /// Now all vertices are in verts array of size [numverts,VERTEXSIZE]
-        /// </summary>
-        public Single[][] verts; //[4][VERTEXSIZE];	// variable sized (xyz s1t1 s2t2)
-
-        public void Clear()
-        {
-            this.next = null;
-            this.chain = null;
-            this.numverts = 0;
-            this.flags = 0;
-            this.verts = null;
-        }
-
-        public void AllocVerts( Int32 count )
-        {
-            this.numverts = count;
-            this.verts = new Single[count][];
-            for ( var i = 0; i < count; i++)
-                this.verts[i] = new Single[Mod.VERTEXSIZE];
-        }
-    } //glpoly_t;
-
-    class msurface_t
-    {
-        public Int32 visframe;		// should be drawn when node is crossed
-
-        public Plane plane;
-        public Int32 flags;
-
-        public Int32 firstedge;	// look up in model->surfedges[], negative numbers
-        public Int32 numedges;	// are backwards edges
-
-        public Int16[] texturemins; //[2];
-        public Int16[] extents; //[2];
-
-        public Int32 light_s, light_t;	// gl lightmap coordinates
-
-        public glpoly_t polys;			// multiple if warped
-        public msurface_t texturechain;
-
-        public mtexinfo_t texinfo;
-
-        // lighting info
-        public Int32 dlightframe;
-        public Int32 dlightbits;
-
-        public Int32 lightmaptexturenum;
-        public Byte[] styles; //[MAXLIGHTMAPS];
-        public Int32[] cached_light; //[MAXLIGHTMAPS];	// values currently used in lightmap
-        public Boolean cached_dlight;				// true if dynamic light in cache
-        /// <summary>
-        /// Former "samples" field. Use in pair with sampleofs field!!!
-        /// </summary>
-        public Byte[] sample_base;		// [numstyles*surfsize]
-        public Int32 sampleofs; // added by Uze. In original Quake samples = loadmodel->lightdata + offset;
-        // now samples = loadmodel->lightdata;
-
-        public msurface_t()
-        {
-            texturemins = new Int16[2];
-            extents = new Int16[2];
-            styles = new Byte[bsp_file.MAXLIGHTMAPS];
-            cached_light = new Int32[bsp_file.MAXLIGHTMAPS];
-            // samples is allocated when needed
-        }
-    } //msurface_t;
+    
 
     // commmon part of mnode_t and mleaf_t
     class mnodebase_t
@@ -270,14 +161,14 @@ namespace SharpQuake
 
         public mleaf_t()
         {
-            this.ambient_sound_level = new Byte[Ambients.NUM_AMBIENTS];
+            this.ambient_sound_level = new Byte[AmbientDef.NUM_AMBIENTS];
         }
     } //mleaf_t;
 
     // !!! if this is changed, it must be changed in asm_i386.h too !!!
     class hull_t
     {
-        public dclipnode_t[] clipnodes;
+        public BspClipNode[] clipnodes;
         public Plane[] planes;
         public Int32 firstclipnode;
         public Int32 lastclipnode;
@@ -389,12 +280,12 @@ namespace SharpQuake
         /// to commands array
         /// </summary>
         public Int32[] commands;	// gl command list with embedded s/t
-        [MarshalAs(UnmanagedType.ByValArray, SizeConst = (Mod.MAX_SKINS * 4))]
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = (ModelDef.MAX_SKINS * 4))]
         public Int32[,] gl_texturenum; // int gl_texturenum[MAX_SKINS][4];
         /// <summary>
         /// Changed from integers (offsets from this header start) to objects to hold pointers to arrays of byte
         /// </summary>
-        [MarshalAs(UnmanagedType.ByValArray, SizeConst = Mod.MAX_SKINS)]
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = ModelDef.MAX_SKINS)]
         public Object[] texels; // int texels[MAX_SKINS];	// only for player skins
         public maliasframedesc_t[] frames; // maliasframedesc_t	frames[1];	// variable sized
 
@@ -402,8 +293,8 @@ namespace SharpQuake
 
         public aliashdr_t()
         {
-            this.gl_texturenum = new Int32[Mod.MAX_SKINS, 4];//[];
-            this.texels = new Object[Mod.MAX_SKINS];
+            this.gl_texturenum = new Int32[ModelDef.MAX_SKINS, 4];//[];
+            this.texels = new Object[ModelDef.MAX_SKINS];
         }
     } // aliashdr_t;
 
@@ -459,7 +350,7 @@ namespace SharpQuake
         public Int32 firstmodelsurface, nummodelsurfaces;
 
         public Int32 numsubmodels;
-        public dmodel_t[] submodels;
+        public BspModel[] submodels;
 
         public Int32 numplanes;
         public Plane[] planes; // mplane_t*
@@ -486,7 +377,7 @@ namespace SharpQuake
         public Int32[] surfedges; // int *surfedges;
 
         public Int32 numclipnodes;
-        public dclipnode_t[] clipnodes; // public dclipnode_t* clipnodes;
+        public BspClipNode[] clipnodes; // public dclipnode_t* clipnodes;
 
         public Int32 nummarksurfaces;
         public msurface_t[] marksurfaces; // msurface_t **marksurfaces;
@@ -507,7 +398,7 @@ namespace SharpQuake
 
         public model_t()
         {
-            this.hulls = new hull_t[bsp_file.MAX_MAP_HULLS];
+            this.hulls = new hull_t[BspDef.MAX_MAP_HULLS];
             for ( var i = 0; i < this.hulls.Length; i++)
                 this.hulls[i] = new hull_t();
         }

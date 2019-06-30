@@ -66,7 +66,7 @@ namespace SharpQuake
         /// </summary>
         private static void SplitEntityOnNode( mnodebase_t node )
         {
-            if( node.contents == Contents.CONTENTS_SOLID )
+            if( node.contents == ContentsDef.CONTENTS_SOLID )
                 return;
 
             // add an efrag if the node is a leaf
