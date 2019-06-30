@@ -256,7 +256,7 @@ namespace SharpQuake
             if( _Speeds.Value != 0 )
             {
                 GL.Finish();
-                time1 = sys.GetFloatTime();
+                time1 = Timer.GetFloatTime();
                 _BrushPolys = 0;
                 _AliasPolys = 0;
             }
@@ -281,7 +281,7 @@ namespace SharpQuake
 
             if( _Speeds.Value != 0 )
             {
-                var time2 = sys.GetFloatTime();
+                var time2 = Timer.GetFloatTime();
                 Con.Print( "{0,3} ms  {1,4} wpoly {2,4} epoly\n", ( Int32 ) ( ( time2 - time1 ) * 1000 ), _BrushPolys, _AliasPolys );
             }
         }
@@ -1309,7 +1309,7 @@ namespace SharpQuake
             //GL.DrawBuffer(DrawBufferMode.Front);
             GL.Finish();
 
-            var start = sys.GetFloatTime();
+            var start = Timer.GetFloatTime();
             for( var i = 0; i < 128; i++ )
             {
                 _RefDef.viewangles.Y = ( Single ) ( i / 128.0 * 360.0 );
@@ -1318,7 +1318,7 @@ namespace SharpQuake
             }
 
             GL.Finish();
-            var stop = sys.GetFloatTime();
+            var stop = Timer.GetFloatTime();
             var time = stop - start;
             Con.Print( "{0:F} seconds ({1:F1} fps)\n", time, 128 / time );
 

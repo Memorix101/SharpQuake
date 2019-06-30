@@ -55,11 +55,6 @@ using SharpQuake.Framework;
 
 namespace SharpQuake
 {
-    internal enum GameKind
-    {
-        StandardQuake, Rogue, Hipnotic
-    }
-
     internal static class Common
     {
         public static GameKind GameKind

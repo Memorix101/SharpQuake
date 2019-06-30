@@ -115,7 +115,7 @@ namespace SharpQuake
                     ent.model = b.model;
                     ent.angles.X = pitch;
                     ent.angles.Y = yaw;
-                    ent.angles.Z = sys.Random() % 360;
+                    ent.angles.Z = MathLib.Random() % 360;
 
                     org += dist * 30;
                     // Uze: is this code bug (i is outer loop variable!!!) or what??????????????
@@ -175,11 +175,11 @@ namespace SharpQuake
 #else
                     render.RunParticleEffect( ref pos, ref Utilities.ZeroVector, 0, 10 );
 #endif
-                    if( ( sys.Random() % 5 ) != 0 )
+                    if( ( MathLib.Random() % 5 ) != 0 )
                         snd.StartSound( -1, 0, _SfxTink1, ref pos, 1, 1 );
                     else
                     {
-                        var rnd = sys.Random() & 3;
+                        var rnd = MathLib.Random() & 3;
                         if( rnd == 1 )
                             snd.StartSound( -1, 0, _SfxRic1, ref pos, 1, 1 );
                         else if( rnd == 2 )
@@ -193,11 +193,11 @@ namespace SharpQuake
                     pos = net.Reader.ReadCoords();
                     render.RunParticleEffect( ref pos, ref Utilities.ZeroVector, 0, 20 );
 
-                    if( ( sys.Random() % 5 ) != 0 )
+                    if( ( MathLib.Random() % 5 ) != 0 )
                         snd.StartSound( -1, 0, _SfxTink1, ref pos, 1, 1 );
                     else
                     {
-                        var rnd = sys.Random() & 3;
+                        var rnd = MathLib.Random() & 3;
                         if( rnd == 1 )
                             snd.StartSound( -1, 0, _SfxRic1, ref pos, 1, 1 );
                         else if( rnd == 2 )

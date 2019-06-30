@@ -937,7 +937,7 @@ namespace SharpQuake
                 progs.GlobalStruct.self = server.EdictToProg( server.Player );
                 progs.Execute( progs.GlobalStruct.ClientConnect );
 
-                if( ( sys.GetFloatTime() - host.HostClient.netconnection.connecttime ) <= server.sv.time )
+                if( ( Timer.GetFloatTime() - host.HostClient.netconnection.connecttime ) <= server.sv.time )
                     Con.DPrint( "{0} entered the game\n", host.HostClient.name );
 
                 progs.Execute( progs.GlobalStruct.PutClientInServer );

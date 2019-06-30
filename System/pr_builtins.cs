@@ -730,7 +730,7 @@ namespace SharpQuake
 
         private static void PF_random()
         {
-            var num = ( sys.Random() & 0x7fff ) / ( ( Single ) 0x7fff );
+            var num = ( MathLib.Random() & 0x7fff ) / ( ( Single ) 0x7fff );
             ReturnFloat( num );
         }
 

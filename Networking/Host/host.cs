@@ -436,9 +436,9 @@ namespace SharpQuake
                 return;
             }
 
-            var time1 = sys.GetFloatTime();
+            var time1 = Timer.GetFloatTime();
             InternalFrame( time );
-            var time2 = sys.GetFloatTime();
+            var time2 = Timer.GetFloatTime();
 
             _TimeTotal += time2 - time1;
             _TimeCount++;
@@ -486,7 +486,7 @@ namespace SharpQuake
                 client.Disconnect();
 
             // flush any pending messages - like the score!!!
-            var start = sys.GetFloatTime();
+            var start = Timer.GetFloatTime();
             Int32 count;
             do
             {
@@ -508,7 +508,7 @@ namespace SharpQuake
                         }
                     }
                 }
-                if( ( sys.GetFloatTime() - start ) > 3.0 )
+                if( ( Timer.GetFloatTime() - start ) > 3.0 )
                     break;
             }
             while( count > 0 );
@@ -692,7 +692,7 @@ namespace SharpQuake
         private static void InternalFrame( Double time )
         {
             // keep the random time dependent
-            sys.Random();
+            MathLib.Random();
 
             // decide the simulation time
             if( !FilterTime( time ) )
@@ -746,12 +746,12 @@ namespace SharpQuake
 
             // update video
             if( _Speeds.Value != 0 )
-                _Time1 = sys.GetFloatTime();
+                _Time1 = Timer.GetFloatTime();
 
             Scr.UpdateScreen();
 
             if( _Speeds.Value != 0 )
-                _Time2 = sys.GetFloatTime();
+                _Time2 = Timer.GetFloatTime();
 
             // update audio
             if( client.cls.signon == client.SIGNONS )
@@ -767,7 +767,7 @@ namespace SharpQuake
             if( _Speeds.Value != 0 )
             {
                 var pass1 = ( Int32 ) ( ( _Time1 - _Time3 ) * 1000 );
-                _Time3 = sys.GetFloatTime();
+                _Time3 = Timer.GetFloatTime();
                 var pass2 = ( Int32 ) ( ( _Time2 - _Time1 ) * 1000 );
                 var pass3 = ( Int32 ) ( ( _Time3 - _Time2 ) * 1000 );
                 Con.Print( "{0,3} tot {1,3} server {2,3} gfx {3,3} snd\n", pass1 + pass2 + pass3, pass1, pass2, pass3 );

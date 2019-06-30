@@ -113,26 +113,26 @@ namespace SharpQuake
                 switch( type )
                 {
                     case 0:	// rocket trail
-                        p.ramp = ( sys.Random() & 3 );
+                        p.ramp = ( MathLib.Random() & 3 );
                         p.color = _Ramp3[( Int32 ) p.ramp];
                         p.type = ptype_t.pt_fire;
-                        p.org = new Vector3( start.X + ( ( sys.Random() % 6 ) - 3 ),
-                            start.Y + ( ( sys.Random() % 6 ) - 3 ), start.Z + ( ( sys.Random() % 6 ) - 3 ) );
+                        p.org = new Vector3( start.X + ( ( MathLib.Random() % 6 ) - 3 ),
+                            start.Y + ( ( MathLib.Random() % 6 ) - 3 ), start.Z + ( ( MathLib.Random() % 6 ) - 3 ) );
                         break;
 
                     case 1:	// smoke smoke
-                        p.ramp = ( sys.Random() & 3 ) + 2;
+                        p.ramp = ( MathLib.Random() & 3 ) + 2;
                         p.color = _Ramp3[( Int32 ) p.ramp];
                         p.type = ptype_t.pt_fire;
-                        p.org = new Vector3( start.X + ( ( sys.Random() % 6 ) - 3 ),
-                            start.Y + ( ( sys.Random() % 6 ) - 3 ), start.Z + ( ( sys.Random() % 6 ) - 3 ) );
+                        p.org = new Vector3( start.X + ( ( MathLib.Random() % 6 ) - 3 ),
+                            start.Y + ( ( MathLib.Random() % 6 ) - 3 ), start.Z + ( ( MathLib.Random() % 6 ) - 3 ) );
                         break;
 
                     case 2:	// blood
                         p.type = ptype_t.pt_grav;
-                        p.color = 67 + ( sys.Random() & 3 );
-                        p.org = new Vector3( start.X + ( ( sys.Random() % 6 ) - 3 ),
-                            start.Y + ( ( sys.Random() % 6 ) - 3 ), start.Z + ( ( sys.Random() % 6 ) - 3 ) );
+                        p.color = 67 + ( MathLib.Random() & 3 );
+                        p.org = new Vector3( start.X + ( ( MathLib.Random() % 6 ) - 3 ),
+                            start.Y + ( ( MathLib.Random() % 6 ) - 3 ), start.Z + ( ( MathLib.Random() % 6 ) - 3 ) );
                         break;
 
                     case 3:
@@ -161,18 +161,18 @@ namespace SharpQuake
 
                     case 4:	// slight blood
                         p.type = ptype_t.pt_grav;
-                        p.color = 67 + ( sys.Random() & 3 );
-                        p.org = new Vector3( start.X + ( ( sys.Random() % 6 ) - 3 ),
-                            start.Y + ( ( sys.Random() % 6 ) - 3 ), start.Z + ( ( sys.Random() % 6 ) - 3 ) );
+                        p.color = 67 + ( MathLib.Random() & 3 );
+                        p.org = new Vector3( start.X + ( ( MathLib.Random() % 6 ) - 3 ),
+                            start.Y + ( ( MathLib.Random() % 6 ) - 3 ), start.Z + ( ( MathLib.Random() % 6 ) - 3 ) );
                         len -= 3;
                         break;
 
                     case 6:	// voor trail
-                        p.color = 9 * 16 + 8 + ( sys.Random() & 3 );
+                        p.color = 9 * 16 + 8 + ( MathLib.Random() & 3 );
                         p.type = ptype_t.pt_static;
                         p.die = ( Single ) client.cl.time + 0.3f;
-                        p.org = new Vector3( start.X + ( ( sys.Random() % 15 ) - 8 ),
-                            start.Y + ( ( sys.Random() % 15 ) - 8 ), start.Z + ( ( sys.Random() % 15 ) - 8 ) );
+                        p.org = new Vector3( start.X + ( ( MathLib.Random() % 15 ) - 8 ),
+                            start.Y + ( ( MathLib.Random() % 15 ) - 8 ), start.Z + ( ( MathLib.Random() % 15 ) - 8 ) );
                         break;
                 }
 
@@ -193,13 +193,13 @@ namespace SharpQuake
 
                 p.die = ( Single ) client.cl.time + 5;
                 p.color = _Ramp1[0];
-                p.ramp = sys.Random() & 3;
+                p.ramp = MathLib.Random() & 3;
                 if( ( i & 1 ) != 0 )
                     p.type = ptype_t.pt_explode;
                 else
                     p.type = ptype_t.pt_explode2;
-                p.org = org + new Vector3( ( sys.Random() % 32 ) - 16, ( sys.Random() % 32 ) - 16, ( sys.Random() % 32 ) - 16 );
-                p.vel = new Vector3( ( sys.Random() % 512 ) - 256, ( sys.Random() % 512 ) - 256, ( sys.Random() % 512 ) - 256 );
+                p.org = org + new Vector3( ( MathLib.Random() % 32 ) - 16, ( MathLib.Random() % 32 ) - 16, ( MathLib.Random() % 32 ) - 16 );
+                p.vel = new Vector3( ( MathLib.Random() % 512 ) - 256, ( MathLib.Random() % 512 ) - 256, ( MathLib.Random() % 512 ) - 256 );
             }
         }
 
@@ -218,20 +218,20 @@ namespace SharpQuake
                 {	// rocket explosion
                     p.die = ( Single ) client.cl.time + 5;
                     p.color = _Ramp1[0];
-                    p.ramp = sys.Random() & 3;
+                    p.ramp = MathLib.Random() & 3;
                     if( ( i & 1 ) != 0 )
                         p.type = ptype_t.pt_explode;
                     else
                         p.type = ptype_t.pt_explode2;
-                    p.org = org + new Vector3( ( sys.Random() % 32 ) - 16, ( sys.Random() % 32 ) - 16, ( sys.Random() % 32 ) - 16 );
-                    p.vel = new Vector3( ( sys.Random() % 512 ) - 256, ( sys.Random() % 512 ) - 256, ( sys.Random() % 512 ) - 256 );
+                    p.org = org + new Vector3( ( MathLib.Random() % 32 ) - 16, ( MathLib.Random() % 32 ) - 16, ( MathLib.Random() % 32 ) - 16 );
+                    p.vel = new Vector3( ( MathLib.Random() % 512 ) - 256, ( MathLib.Random() % 512 ) - 256, ( MathLib.Random() % 512 ) - 256 );
                 }
                 else
                 {
-                    p.die = ( Single ) client.cl.time + 0.1f * ( sys.Random() % 5 );
-                    p.color = ( color & ~7 ) + ( sys.Random() & 7 );
+                    p.die = ( Single ) client.cl.time + 0.1f * ( MathLib.Random() % 5 );
+                    p.color = ( color & ~7 ) + ( MathLib.Random() & 7 );
                     p.type = ptype_t.pt_slowgrav;
-                    p.org = org + new Vector3( ( sys.Random() & 15 ) - 8, ( sys.Random() & 15 ) - 8, ( sys.Random() & 15 ) - 8 );
+                    p.org = org + new Vector3( ( MathLib.Random() & 15 ) - 8, ( MathLib.Random() & 15 ) - 8, ( MathLib.Random() & 15 ) - 8 );
                     p.vel = dir * 15.0f;
                 }
             }
@@ -269,16 +269,16 @@ namespace SharpQuake
                         if( p == null )
                             return;
 
-                        p.die = ( Single ) ( client.cl.time + 0.2 + ( sys.Random() & 7 ) * 0.02 );
-                        p.color = 7 + ( sys.Random() & 7 );
+                        p.die = ( Single ) ( client.cl.time + 0.2 + ( MathLib.Random() & 7 ) * 0.02 );
+                        p.color = 7 + ( MathLib.Random() & 7 );
                         p.type = ptype_t.pt_slowgrav;
 
                         Vector3 dir = new Vector3( j * 8, i * 8, k * 8 );
 
-                        p.org = org + new Vector3( i + ( sys.Random() & 3 ), j + ( sys.Random() & 3 ), k + ( sys.Random() & 3 ) );
+                        p.org = org + new Vector3( i + ( MathLib.Random() & 3 ), j + ( MathLib.Random() & 3 ), k + ( MathLib.Random() & 3 ) );
 
                         MathLib.Normalize( ref dir );
-                        Single vel = 50 + ( sys.Random() & 63 );
+                        Single vel = 50 + ( MathLib.Random() & 63 );
                         p.vel = dir * vel;
                     }
         }
@@ -298,19 +298,19 @@ namespace SharpQuake
                         if( p == null )
                             return;
 
-                        p.die = ( Single ) ( client.cl.time + 2 + ( sys.Random() & 31 ) * 0.02 );
-                        p.color = 224 + ( sys.Random() & 7 );
+                        p.die = ( Single ) ( client.cl.time + 2 + ( MathLib.Random() & 31 ) * 0.02 );
+                        p.color = 224 + ( MathLib.Random() & 7 );
                         p.type = ptype_t.pt_slowgrav;
 
-                        dir.X = j * 8 + ( sys.Random() & 7 );
-                        dir.Y = i * 8 + ( sys.Random() & 7 );
+                        dir.X = j * 8 + ( MathLib.Random() & 7 );
+                        dir.Y = i * 8 + ( MathLib.Random() & 7 );
                         dir.Z = 256;
 
                         p.org = org + dir;
-                        p.org.Z += sys.Random() & 63;
+                        p.org.Z += MathLib.Random() & 63;
 
                         MathLib.Normalize( ref dir );
-                        Single vel = 50 + ( sys.Random() & 63 );
+                        Single vel = 50 + ( MathLib.Random() & 63 );
                         p.vel = dir * vel;
                     }
         }
@@ -333,8 +333,8 @@ namespace SharpQuake
                 colorMod++;
 
                 p.type = ptype_t.pt_blob;
-                p.org = org + new Vector3( ( sys.Random() % 32 ) - 16, ( sys.Random() % 32 ) - 16, ( sys.Random() % 32 ) - 16 );
-                p.vel = new Vector3( ( sys.Random() % 512 ) - 256, ( sys.Random() % 512 ) - 256, ( sys.Random() % 512 ) - 256 );
+                p.org = org + new Vector3( ( MathLib.Random() % 32 ) - 16, ( MathLib.Random() % 32 ) - 16, ( MathLib.Random() % 32 ) - 16 );
+                p.vel = new Vector3( ( MathLib.Random() % 512 ) - 256, ( MathLib.Random() % 512 ) - 256, ( MathLib.Random() % 512 ) - 256 );
             }
         }
 
@@ -349,20 +349,20 @@ namespace SharpQuake
                 if( p == null )
                     return;
 
-                p.die = ( Single ) ( client.cl.time + 1 + ( sys.Random() & 8 ) * 0.05 );
+                p.die = ( Single ) ( client.cl.time + 1 + ( MathLib.Random() & 8 ) * 0.05 );
 
                 if( ( i & 1 ) != 0 )
                 {
                     p.type = ptype_t.pt_blob;
-                    p.color = 66 + sys.Random() % 6;
+                    p.color = 66 + MathLib.Random() % 6;
                 }
                 else
                 {
                     p.type = ptype_t.pt_blob2;
-                    p.color = 150 + sys.Random() % 6;
+                    p.color = 150 + MathLib.Random() % 6;
                 }
-                p.org = org + new Vector3( ( sys.Random() % 32 ) - 16, ( sys.Random() % 32 ) - 16, ( sys.Random() % 32 ) - 16 );
-                p.vel = new Vector3( ( sys.Random() % 512 ) - 256, ( sys.Random() % 512 ) - 256, ( sys.Random() % 512 ) - 256 );
+                p.org = org + new Vector3( ( MathLib.Random() % 32 ) - 16, ( MathLib.Random() % 32 ) - 16, ( MathLib.Random() % 32 ) - 16 );
+                p.vel = new Vector3( ( MathLib.Random() % 512 ) - 256, ( MathLib.Random() % 512 ) - 256, ( MathLib.Random() % 512 ) - 256 );
             }
         }
 
@@ -377,9 +377,9 @@ namespace SharpQuake
             {
                 for( var i = 0; i < NUMVERTEXNORMALS; i++ )
                 {
-                    _AVelocities[i].X = ( sys.Random() & 255 ) * 0.01f;
-                    _AVelocities[i].Y = ( sys.Random() & 255 ) * 0.01f;
-                    _AVelocities[i].Z = ( sys.Random() & 255 ) * 0.01f;
+                    _AVelocities[i].X = ( MathLib.Random() & 255 ) * 0.01f;
+                    _AVelocities[i].Y = ( MathLib.Random() & 255 ) * 0.01f;
+                    _AVelocities[i].Z = ( MathLib.Random() & 255 ) * 0.01f;
                 }
             }
 

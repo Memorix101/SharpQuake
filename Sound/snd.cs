@@ -294,7 +294,7 @@ namespace SharpQuake
 
                 if( check.sfx == sfx && check.pos == 0 )
                 {
-                    var skip = sys.Random( ( Int32 ) ( 0.1 * _shm.speed ) );// rand() % (int)(0.1 * shm->speed);
+                    var skip = MathLib.Random( ( Int32 ) ( 0.1 * _shm.speed ) );// rand() % (int)(0.1 * shm->speed);
                     if( skip >= target_chan.end )
                         skip = target_chan.end - 1;
                     target_chan.pos += skip;

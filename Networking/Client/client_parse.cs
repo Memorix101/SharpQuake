@@ -388,7 +388,7 @@ namespace SharpQuake
                 if( model != null )
                 {
                     if( model.synctype == synctype_t.ST_RAND )
-                        ent.syncbase = ( Single ) ( sys.Random() & 0x7fff ) / 0x7fff;
+                        ent.syncbase = ( Single ) ( MathLib.Random() & 0x7fff ) / 0x7fff;
                     else
                         ent.syncbase = 0;
                 }
@@ -891,7 +891,7 @@ namespace SharpQuake
             net.Message.RestoreState( _MsgState );
 
             // check time
-            var time = ( Single ) sys.GetFloatTime();
+            var time = ( Single ) Timer.GetFloatTime();
             if( time - _LastMsg < 5 )
                 return;
 

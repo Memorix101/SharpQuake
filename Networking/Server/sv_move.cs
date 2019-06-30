@@ -229,7 +229,7 @@ RealCheck:
                 return;
 
             // bump around...
-            if( ( sys.Random() & 3 ) == 1 || !StepDirection( ent, ent.v.ideal_yaw, dist ) )
+            if( ( MathLib.Random() & 3 ) == 1 || !StepDirection( ent, ent.v.ideal_yaw, dist ) )
             {
                 NewChaseDir( ent, goal, dist );
             }
@@ -327,7 +327,7 @@ RealCheck:
             }
 
             // try other directions
-            if( ( ( sys.Random() & 3 ) & 1 ) != 0 || Math.Abs( deltay ) > Math.Abs( deltax ) )
+            if( ( ( MathLib.Random() & 3 ) & 1 ) != 0 || Math.Abs( deltay ) > Math.Abs( deltax ) )
             {
                 tdir = d.y;
                 d.y = d.z;
@@ -345,7 +345,7 @@ RealCheck:
             if( olddir != DI_NODIR && StepDirection( actor, olddir, dist ) )
                 return;
 
-            if( ( sys.Random() & 1 ) != 0 ) 	//randomly determine direction of search
+            if( ( MathLib.Random() & 1 ) != 0 ) 	//randomly determine direction of search
             {
                 for( tdir = 0; tdir <= 315; tdir += 45 )
                     if( tdir != turnaround && StepDirection( actor, tdir, dist ) )

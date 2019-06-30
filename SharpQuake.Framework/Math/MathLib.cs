@@ -34,6 +34,18 @@ namespace SharpQuake.Framework
     /// </summary>
     public static class MathLib
     {
+        private static Random _Random = new Random( );
+
+        public static Int32 Random( )
+        {
+            return _Random.Next( );
+        }
+
+        public static Int32 Random( Int32 maxValue )
+        {
+            return _Random.Next( maxValue );
+        }
+
         /// <summary>
         /// AngleVectors
         /// </summary>
@@ -410,6 +422,8 @@ namespace SharpQuake.Framework
             Single.TryParse( s, NumberStyles.Float, CultureInfo.InvariantCulture.NumberFormat, out v );
             return v;
         }
+
+
 
         //static Vector3 PerpendicularVector(ref Vector3 src)
         //{

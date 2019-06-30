@@ -759,7 +759,7 @@ JustDoIt:
                 }
             }
 
-            var start = sys.GetFloatTime();
+            var start = Timer.GetFloatTime();
             while( count > 0 )
             {
                 count = 0;
@@ -795,7 +795,7 @@ JustDoIt:
                         continue;
                     }
                 }
-                if( ( sys.GetFloatTime() - start ) > blocktime )
+                if( ( Timer.GetFloatTime() - start ) > blocktime )
                     break;
             }
             return count;
@@ -854,7 +854,7 @@ JustDoIt:
         // double SetNetTime
         public static Double SetNetTime()
         {
-            _Time = sys.GetFloatTime();
+            _Time = Timer.GetFloatTime();
             return _Time;
         }
 
@@ -873,7 +873,7 @@ JustDoIt:
             }
 
             _SlistInProgress = true;
-            _SlistStartTime = sys.GetFloatTime();
+            _SlistStartTime = Timer.GetFloatTime();
 
             SchedulePollProcedure( _SlistSendProcedure, 0.0 );
             SchedulePollProcedure( _SlistPollProcedure, 0.1 );
@@ -958,7 +958,7 @@ JustDoIt:
         /// </summary>
         private static void SchedulePollProcedure( PollProcedure proc, Double timeOffset )
         {
-            proc.nextTime = sys.GetFloatTime() + timeOffset;
+            proc.nextTime = Timer.GetFloatTime() + timeOffset;
             PollProcedure pp, prev;
             for( pp = _PollProcedureList, prev = null; pp != null; pp = pp.next )
             {
@@ -1077,7 +1077,7 @@ JustDoIt:
                 _Drivers[_DriverLevel].SearchForHosts( true );
             }
 
-            if( ( sys.GetFloatTime() - _SlistStartTime ) < 0.5 )
+            if( ( Timer.GetFloatTime() - _SlistStartTime ) < 0.5 )
                 SchedulePollProcedure( _SlistSendProcedure, 0.75 );
         }
 
@@ -1099,7 +1099,7 @@ JustDoIt:
             if( !net.SlistSilent )
                 PrintSlist();
 
-            if( ( sys.GetFloatTime() - _SlistStartTime ) < 1.5 )
+            if( ( Timer.GetFloatTime() - _SlistStartTime ) < 1.5 )
             {
                 SchedulePollProcedure( _SlistPollProcedure, 0.1 );
                 return;

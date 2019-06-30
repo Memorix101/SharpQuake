@@ -30,32 +30,6 @@ namespace SharpQuake
 {
     internal static class sys
     {
-        private static Stopwatch _StopWatch;
-        private static Random _Random = new Random();
-
-        /// <summary>
-        /// Sys_FloatTime
-        /// </summary>
-        public static Double GetFloatTime()
-        {
-            if( _StopWatch == null )
-            {
-                _StopWatch = new Stopwatch();
-                _StopWatch.Start();
-            }
-            return _StopWatch.Elapsed.TotalSeconds;
-        }
-
-        public static Int32 Random()
-        {
-            return _Random.Next();
-        }
-
-        public static Int32 Random( Int32 maxValue )
-        {
-            return _Random.Next( maxValue );
-        }
-
         /// <summary>
         /// Sys_SendKeyEvents
         /// </summary>

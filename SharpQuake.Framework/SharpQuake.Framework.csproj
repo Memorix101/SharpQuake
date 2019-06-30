@@ -83,6 +83,7 @@
     <Compile Include="Definitions\QDef.cs" />
     <Compile Include="Data\SwapHelper.cs" />
     <Compile Include="Math\Union4B.cs" />
+    <Compile Include="System\Timer.cs" />
     <Compile Include="System\Tokeniser.cs" />
     <Compile Include="System\Utilities.cs" />
   </ItemGroup>

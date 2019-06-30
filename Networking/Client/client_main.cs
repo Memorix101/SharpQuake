@@ -411,7 +411,7 @@ namespace SharpQuake
                     Vector3 fv, rv, uv;
                     MathLib.AngleVectors( ref ent.angles, out fv, out rv, out uv );
                     dl.origin += fv * 18;
-                    dl.radius = 200 + ( sys.Random() & 31 );
+                    dl.radius = 200 + ( MathLib.Random() & 31 );
                     dl.minlight = 32;
                     dl.die = ( Single ) cl.time + 0.1f;
                 }
@@ -420,14 +420,14 @@ namespace SharpQuake
                     dlight_t dl = AllocDlight( i );
                     dl.origin = ent.origin;
                     dl.origin.Z += 16;
-                    dl.radius = 400 + ( sys.Random() & 31 );
+                    dl.radius = 400 + ( MathLib.Random() & 31 );
                     dl.die = ( Single ) cl.time + 0.001f;
                 }
                 if( ( ent.effects & EntityEffects.EF_DIMLIGHT ) != 0 )
                 {
                     dlight_t dl = AllocDlight( i );
                     dl.origin = ent.origin;
-                    dl.radius = 200 + ( sys.Random() & 31 );
+                    dl.radius = 200 + ( MathLib.Random() & 31 );
                     dl.die = ( Single ) cl.time + 0.001f;
                 }
 
