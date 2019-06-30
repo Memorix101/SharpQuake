@@ -31,7 +31,7 @@ namespace SharpQuake
     /// </summary>
     internal static class Con
     {
-        public static bool IsInitialized
+        public static Boolean IsInitialized
         {
             get
             {
@@ -39,7 +39,7 @@ namespace SharpQuake
             }
         }
 
-        public static bool ForcedUp
+        public static Boolean ForcedUp
         {
             get
             {
@@ -51,7 +51,7 @@ namespace SharpQuake
             }
         }
 
-        public static int NotifyLines
+        public static Int32 NotifyLines
         {
             get
             {
@@ -63,7 +63,7 @@ namespace SharpQuake
             }
         }
 
-        public static int TotalLines
+        public static Int32 TotalLines
         {
             get
             {
@@ -71,38 +71,38 @@ namespace SharpQuake
             }
         }
 
-        public static int BackScroll;
-        private const string LOG_FILE_NAME = "qconsole.log";
+        public static Int32 BackScroll;
+        private const String LOG_FILE_NAME = "qconsole.log";
 
-        private const int CON_TEXTSIZE = 16384;
-        private const int NUM_CON_TIMES = 4;
+        private const Int32 CON_TEXTSIZE = 16384;
+        private const Int32 NUM_CON_TIMES = 4;
 
-        private static char[] _Text = new char[CON_TEXTSIZE]; // char		*con_text=0;
-        private static int _VisLines; // con_vislines
-        private static int _TotalLines; // con_totallines   // total lines in console scrollback
+        private static Char[] _Text = new Char[CON_TEXTSIZE]; // char		*con_text=0;
+        private static Int32 _VisLines; // con_vislines
+        private static Int32 _TotalLines; // con_totallines   // total lines in console scrollback
 
         // con_backscroll		// lines up from bottom to display
-        private static int _Current; // con_current		// where next message will be printed
+        private static Int32 _Current; // con_current		// where next message will be printed
 
-        private static int _X; // con_x		// offset in current line for next print
-        private static int _CR; // from Print()
-        private static double[] _Times = new double[NUM_CON_TIMES]; // con_times	// realtime time the line was generated
+        private static Int32 _X; // con_x		// offset in current line for next print
+        private static Int32 _CR; // from Print()
+        private static Double[] _Times = new Double[NUM_CON_TIMES]; // con_times	// realtime time the line was generated
 
         // for transparent notify lines
-        private static int _LineWidth; // con_linewidth
+        private static Int32 _LineWidth; // con_linewidth
 
-        private static bool _DebugLog; // qboolean	con_debuglog;
-        private static bool _IsInitialized; // qboolean con_initialized;
-        private static bool _ForcedUp; // qboolean con_forcedup		// because no entities to refresh
-        private static int _NotifyLines; // con_notifylines	// scan lines to clear for notify lines
+        private static Boolean _DebugLog; // qboolean	con_debuglog;
+        private static Boolean _IsInitialized; // qboolean con_initialized;
+        private static Boolean _ForcedUp; // qboolean con_forcedup		// because no entities to refresh
+        private static Int32 _NotifyLines; // con_notifylines	// scan lines to clear for notify lines
         private static CVar _NotifyTime; // con_notifytime = { "con_notifytime", "3" };		//seconds
-        private static float _CursorSpeed = 4; // con_cursorspeed
+        private static Single _CursorSpeed = 4; // con_cursorspeed
         private static FileStream _Log;
 
         // Con_CheckResize (void)
         public static void CheckResize()
         {
-            int width = ( Scr.vid.width >> 3 ) - 2;
+            var width = ( Scr.vid.width >> 3 ) - 2;
             if( width == _LineWidth )
                 return;
 
@@ -115,27 +115,27 @@ namespace SharpQuake
             }
             else
             {
-                int oldwidth = _LineWidth;
+                var oldwidth = _LineWidth;
                 _LineWidth = width;
-                int oldtotallines = _TotalLines;
+                var oldtotallines = _TotalLines;
                 _TotalLines = CON_TEXTSIZE / _LineWidth;
-                int numlines = oldtotallines;
+                var numlines = oldtotallines;
 
                 if( _TotalLines < numlines )
                     numlines = _TotalLines;
 
-                int numchars = oldwidth;
+                var numchars = oldwidth;
 
                 if( _LineWidth < numchars )
                     numchars = _LineWidth;
 
-                char[] tmp = _Text;
-                _Text = new char[CON_TEXTSIZE];
+                Char[] tmp = _Text;
+                _Text = new Char[CON_TEXTSIZE];
                 Common.FillArray( _Text, ' ' );
 
-                for( int i = 0; i < numlines; i++ )
+                for( var i = 0; i < numlines; i++ )
                 {
-                    for( int j = 0; j < numchars; j++ )
+                    for( var j = 0; j < numchars; j++ )
                     {
                         _Text[( _TotalLines - 1 - i ) * _LineWidth + j] = tmp[( ( _Current - i + oldtotallines ) %
                                       oldtotallines ) * oldwidth + j];
@@ -155,7 +155,7 @@ namespace SharpQuake
             _DebugLog = ( Common.CheckParm( "-condebug" ) > 0 );
             if( _DebugLog )
             {
-                string path = Path.Combine( Common.GameDir, LOG_FILE_NAME );
+                var path = Path.Combine( Common.GameDir, LOG_FILE_NAME );
                 if( File.Exists( path ) )
                     File.Delete( path );
 
@@ -187,7 +187,7 @@ namespace SharpQuake
         //
         // Draws the console with the solid background
         // The typing input line at the bottom should only be drawn if typing is allowed
-        public static void Draw( int lines, bool drawinput )
+        public static void Draw( Int32 lines, Boolean drawinput )
         {
             if( lines <= 0 )
                 return;
@@ -198,18 +198,18 @@ namespace SharpQuake
             // draw the text
             _VisLines = lines;
 
-            int rows = ( lines - 16 ) >> 3;		// rows of text to draw
-            int y = lines - 16 - ( rows << 3 );	// may start slightly negative
+            var rows = ( lines - 16 ) >> 3;		// rows of text to draw
+            var y = lines - 16 - ( rows << 3 );	// may start slightly negative
 
-            for( int i = _Current - rows + 1; i <= _Current; i++, y += 8 )
+            for( var i = _Current - rows + 1; i <= _Current; i++, y += 8 )
             {
-                int j = i - BackScroll;
+                var j = i - BackScroll;
                 if( j < 0 )
                     j = 0;
 
-                int offset = ( j % _TotalLines ) * _LineWidth;
+                var offset = ( j % _TotalLines ) * _LineWidth;
 
-                for( int x = 0; x < _LineWidth; x++ )
+                for( var x = 0; x < _LineWidth; x++ )
                     Drawer.DrawCharacter( ( x + 1 ) << 3, y, _Text[offset + x] );
             }
 
@@ -221,9 +221,9 @@ namespace SharpQuake
         /// <summary>
         /// Con_Printf
         /// </summary>
-        public static void Print( string fmt, params object[] args )
+        public static void Print( String fmt, params Object[] args )
         {
-            string msg = ( args.Length > 0 ? String.Format( fmt, args ) : fmt );
+            var msg = ( args.Length > 0 ? String.Format( fmt, args ) : fmt );
 
             Console.WriteLine(msg); // Debug stuff
 
@@ -259,7 +259,7 @@ namespace SharpQuake
         // Con_DPrintf
         //
         // A Con_Printf that only shows up if the "developer" cvar is set
-        public static void DPrint( string fmt, params object[] args )
+        public static void DPrint( String fmt, params Object[] args )
         {
             // don't confuse non-developers with techie stuff...
             if( host.IsDeveloper )
@@ -269,9 +269,9 @@ namespace SharpQuake
         // Con_SafePrintf (char *fmt, ...)
         //
         // Okay to call even when the screen can't be updated
-        public static void SafePrint( string fmt, params object[] args )
+        public static void SafePrint( String fmt, params Object[] args )
         {
-            bool temp = Scr.IsDisabledForLoading;
+            var temp = Scr.IsDisabledForLoading;
             Scr.IsDisabledForLoading = true;
             Print( fmt, args );
             Scr.IsDisabledForLoading = temp;
@@ -282,24 +282,24 @@ namespace SharpQuake
         /// </summary>
         public static void DrawNotify()
         {
-            int v = 0;
-            for( int i = _Current - NUM_CON_TIMES + 1; i <= _Current; i++ )
+            var v = 0;
+            for( var i = _Current - NUM_CON_TIMES + 1; i <= _Current; i++ )
             {
                 if( i < 0 )
                     continue;
-                double time = _Times[i % NUM_CON_TIMES];
+                var time = _Times[i % NUM_CON_TIMES];
                 if( time == 0 )
                     continue;
                 time = host.RealTime - time;
                 if( time > _NotifyTime.Value )
                     continue;
 
-                int textOffset = ( i % _TotalLines ) * _LineWidth;
+                var textOffset = ( i % _TotalLines ) * _LineWidth;
 
                 Scr.ClearNotify = 0;
                 Scr.CopyTop = true;
 
-                for( int x = 0; x < _LineWidth; x++ )
+                for( var x = 0; x < _LineWidth; x++ )
                     Drawer.DrawCharacter( ( x + 1 ) << 3, v, _Text[textOffset + x] );
 
                 v += 8;
@@ -310,15 +310,15 @@ namespace SharpQuake
                 Scr.ClearNotify = 0;
                 Scr.CopyTop = true;
 
-                int x = 0;
+                var x = 0;
 
                 Drawer.DrawString( 8, v, "say:" );
-                string chat = Key.ChatBuffer;
+                var chat = Key.ChatBuffer;
                 for( ; x < chat.Length; x++ )
                 {
                     Drawer.DrawCharacter( ( x + 5 ) << 3, v, chat[x] );
                 }
-                Drawer.DrawCharacter( ( x + 5 ) << 3, v, 10 + ( (int)( host.RealTime * _CursorSpeed ) & 1 ) );
+                Drawer.DrawCharacter( ( x + 5 ) << 3, v, 10 + ( ( Int32 ) ( host.RealTime * _CursorSpeed ) & 1 ) );
                 v += 8;
             }
 
@@ -329,7 +329,7 @@ namespace SharpQuake
         // Con_ClearNotify (void)
         public static void ClearNotify()
         {
-            for( int i = 0; i < NUM_CON_TIMES; i++ )
+            for( var i = 0; i < NUM_CON_TIMES; i++ )
                 _Times[i] = 0;
         }
 
@@ -361,11 +361,11 @@ namespace SharpQuake
         /// <summary>
         /// Con_DebugLog
         /// </summary>
-        private static void DebugLog( string msg )
+        private static void DebugLog( String msg )
         {
             if( _Log != null )
             {
-                byte[] tmp = Encoding.UTF8.GetBytes( msg );
+                Byte[] tmp = Encoding.UTF8.GetBytes( msg );
                 _Log.Write( tmp, 0, tmp.Length );
             }
         }
@@ -375,22 +375,22 @@ namespace SharpQuake
         // Handles cursor positioning, line wrapping, etc
         // All console printing must go through this in order to be logged to disk
         // If no console is visible, the notify window will pop up.
-        private static void Print( string txt )
+        private static void Print( String txt )
         {
             if( String.IsNullOrEmpty( txt ) )
                 return;
 
-            int mask, offset = 0;
+            Int32 mask, offset = 0;
 
             BackScroll = 0;
 
-            if( txt.StartsWith( ( (char)1 ).ToString() ) )// [0] == 1)
+            if( txt.StartsWith( ( ( Char ) 1 ).ToString() ) )// [0] == 1)
             {
                 mask = 128;	// go to colored text
                 snd.LocalSound( "misc/talk.wav" ); // play talk wav
                 offset++;
             }
-            else if( txt.StartsWith( ( (char)2 ).ToString() ) ) //txt[0] == 2)
+            else if( txt.StartsWith( ( ( Char ) 2 ).ToString() ) ) //txt[0] == 2)
             {
                 mask = 128; // go to colored text
                 offset++;
@@ -400,9 +400,9 @@ namespace SharpQuake
 
             while( offset < txt.Length )
             {
-                char c = txt[offset];
+                var c = txt[offset];
 
-                int l;
+                Int32 l;
                 // count word length
                 for( l = 0; l < _LineWidth && offset + l < txt.Length; l++ )
                 {
@@ -442,8 +442,8 @@ namespace SharpQuake
                         break;
 
                     default:    // display character and advance
-                        int y = _Current % _TotalLines;
-                        _Text[y * _LineWidth + _X] = (char)( c | mask );
+                        var y = _Current % _TotalLines;
+                        _Text[y * _LineWidth + _X] = ( Char ) ( c | mask );
                         _X++;
                         if( _X >= _LineWidth )
                             _X = 0;
@@ -480,7 +480,7 @@ namespace SharpQuake
             _X = 0;
             _Current++;
 
-            for( int i = 0; i < _LineWidth; i++ )
+            for( var i = 0; i < _LineWidth; i++ )
             {
                 _Text[( _Current % _TotalLines ) * _LineWidth + i] = ' ';
             }
@@ -495,22 +495,22 @@ namespace SharpQuake
                 return;		// don't draw anything
 
             // add the cursor frame
-            Key.Lines[Key.EditLine][Key.LinePos] = (char)( 10 + ( (int)( host.RealTime * _CursorSpeed ) & 1 ) );
+            Key.Lines[Key.EditLine][Key.LinePos] = ( Char ) ( 10 + ( ( Int32 ) ( host.RealTime * _CursorSpeed ) & 1 ) );
 
             // fill out remainder with spaces
-            for( int i = Key.LinePos + 1; i < _LineWidth; i++ )
+            for( var i = Key.LinePos + 1; i < _LineWidth; i++ )
                 Key.Lines[Key.EditLine][i] = ' ';
 
             //	prestep if horizontally scrolling
-            int offset = 0;
+            var offset = 0;
             if( Key.LinePos >= _LineWidth )
                 offset = 1 + Key.LinePos - _LineWidth;
             //text += 1 + key_linepos - con_linewidth;
 
             // draw it
-            int y = _VisLines - 16;
+            var y = _VisLines - 16;
 
-            for( int i = 0; i < _LineWidth; i++ )
+            for( var i = 0; i < _LineWidth; i++ )
                 Drawer.DrawCharacter( ( i + 1 ) << 3, _VisLines - 16, Key.Lines[Key.EditLine][offset + i] );
 
             // remove cursor

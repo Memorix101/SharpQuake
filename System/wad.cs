@@ -31,10 +31,10 @@ namespace SharpQuake
     internal struct wadinfo_t
     {
         [MarshalAs(UnmanagedType.ByValArray, SizeConst=4)]
-        public byte[] identification; // [4];		// should be WAD2 or 2DAW
+        public Byte[] identification; // [4];		// should be WAD2 or 2DAW
 
-        public int numlumps;
-        public int infotableofs;
+        public Int32 numlumps;
+        public Int32 infotableofs;
     }
 
     /// <summary>
@@ -42,7 +42,7 @@ namespace SharpQuake
     /// </summary>
     internal static class Wad
     {
-        public static byte[] Data
+        public static Byte[] Data
         {
             get
             {
@@ -58,26 +58,26 @@ namespace SharpQuake
             }
         }
 
-        public const int CMP_NONE = 0;
-        public const int CMP_LZSS = 1;
+        public const Int32 CMP_NONE = 0;
+        public const Int32 CMP_LZSS = 1;
 
-        public const int TYP_NONE = 0;
-        public const int TYP_LABEL = 1;
+        public const Int32 TYP_NONE = 0;
+        public const Int32 TYP_LABEL = 1;
 
-        public const int TYP_LUMPY = 64;				// 64 + grab command number
-        public const int TYP_PALETTE = 64;
-        public const int TYP_QTEX = 65;
-        public const int TYP_QPIC = 66;
-        public const int TYP_SOUND = 67;
-        public const int TYP_MIPTEX = 68;
+        public const Int32 TYP_LUMPY = 64;				// 64 + grab command number
+        public const Int32 TYP_PALETTE = 64;
+        public const Int32 TYP_QTEX = 65;
+        public const Int32 TYP_QPIC = 66;
+        public const Int32 TYP_SOUND = 67;
+        public const Int32 TYP_MIPTEX = 68;
 
-        private static byte[] _Data; // void* wad_base
-        private static Dictionary<string, lumpinfo_t> _Lumps;
+        private static Byte[] _Data; // void* wad_base
+        private static Dictionary<String, lumpinfo_t> _Lumps;
         private static GCHandle _Handle;
         private static IntPtr _DataPtr;
 
         // W_LoadWadFile (char *filename)
-        public static void LoadWadFile( string filename )
+        public static void LoadWadFile( String filename )
         {
             _Data = FileSystem.LoadFile( filename );
             if( _Data == null )
@@ -96,13 +96,13 @@ namespace SharpQuake
                 header.identification[2] != 'D' || header.identification[3] != '2' )
                 sys.Error( "Wad file {0} doesn't have WAD2 id\n", filename );
 
-            int numlumps = Common.LittleLong( header.numlumps );
-            int infotableofs = Common.LittleLong( header.infotableofs );
-            int lumpInfoSize = Marshal.SizeOf( typeof( lumpinfo_t ) );
+            var numlumps = Common.LittleLong( header.numlumps );
+            var infotableofs = Common.LittleLong( header.infotableofs );
+            var lumpInfoSize = Marshal.SizeOf( typeof( lumpinfo_t ) );
 
-            _Lumps = new Dictionary<string, lumpinfo_t>( numlumps );
+            _Lumps = new Dictionary<String, lumpinfo_t>( numlumps );
 
-            for( int i = 0; i < numlumps; i++ )
+            for( var i = 0; i < numlumps; i++ )
             {
                 IntPtr ptr = new IntPtr( _DataPtr.ToInt64() + infotableofs + i * lumpInfoSize );
                 lumpinfo_t lump = (lumpinfo_t)Marshal.PtrToStructure( ptr, typeof( lumpinfo_t ) );
@@ -120,7 +120,7 @@ namespace SharpQuake
         }
 
         // lumpinfo_t *W_GetLumpinfo (char *name)
-        public static lumpinfo_t GetLumpInfo( string name )
+        public static lumpinfo_t GetLumpInfo( String name )
         {
             lumpinfo_t lump;
             if( _Lumps.TryGetValue( name, out lump ) )
@@ -137,7 +137,7 @@ namespace SharpQuake
 
         // void	*W_GetLumpName (char *name)
         // Uze: returns index in _Data byte array where the lumpinfo_t starts
-        public static int GetLumpNameOffset( string name )
+        public static Int32 GetLumpNameOffset( String name )
         {
             return GetLumpInfo( name ).filepos; // GetLumpInfo() never returns null
         }
@@ -153,7 +153,7 @@ namespace SharpQuake
     [StructLayout( LayoutKind.Sequential, Pack = 1 )]
     internal class dqpicheader_t
     {
-        public int width, height;
+        public Int32 width, height;
     }
 
     //wadinfo_t;
@@ -161,14 +161,14 @@ namespace SharpQuake
     [StructLayout( LayoutKind.Sequential, Pack = 1, CharSet = CharSet.Ansi )]
     internal class lumpinfo_t
     {
-        public int  filepos;
-        public int  disksize;
-        public int  size;                   // uncompressed
-        public byte type;
-        public byte compression;
-        private byte pad1, pad2;
+        public Int32 filepos;
+        public Int32 disksize;
+        public Int32 size;                   // uncompressed
+        public Byte type;
+        public Byte compression;
+        private Byte pad1, pad2;
 
         [MarshalAs(UnmanagedType.ByValArray, SizeConst = 16)]
-        public byte[] name; //[16];				// must be null terminated
+        public Byte[] name; //[16];				// must be null terminated
     } // lumpinfo_t;
 }

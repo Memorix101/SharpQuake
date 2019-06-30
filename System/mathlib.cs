@@ -38,7 +38,7 @@ namespace SharpQuake
         /// </summary>
         public static void AngleVectors( ref Vector3 angles, out Vector3 forward, out Vector3 right, out Vector3 up )
         {
-            double angle, sr, sp, sy, cr, cp, cy;
+            Double angle, sr, sp, sy, cr, cp, cy;
 
             angle = angles.Y * ( Math.PI * 2 / 360 );
             sy = Math.Sin( angle );
@@ -50,23 +50,23 @@ namespace SharpQuake
             sr = Math.Sin( angle );
             cr = Math.Cos( angle );
 
-            forward.X = (float)( cp * cy );
-            forward.Y = (float)( cp * sy );
-            forward.Z = (float)-sp;
-            right.X = (float)( -1 * sr * sp * cy + -1 * cr * -sy );
-            right.Y = (float)( -1 * sr * sp * sy + -1 * cr * cy );
-            right.Z = (float)( -1 * sr * cp );
-            up.X = (float)( cr * sp * cy + -sr * -sy );
-            up.Y = (float)( cr * sp * sy + -sr * cy );
-            up.Z = (float)( cr * cp );
+            forward.X = ( Single ) ( cp * cy );
+            forward.Y = ( Single ) ( cp * sy );
+            forward.Z = -( ( System.Single ) sp );
+            right.X = ( Single ) ( -1 * sr * sp * cy + -1 * cr * -sy );
+            right.Y = ( Single ) ( -1 * sr * sp * sy + -1 * cr * cy );
+            right.Z = ( Single ) ( -1 * sr * cp );
+            up.X = ( Single ) ( cr * sp * cy + -sr * -sy );
+            up.Y = ( Single ) ( cr * sp * sy + -sr * cy );
+            up.Z = ( Single ) ( cr * cp );
         }
 
-        public static float Normalize( ref Vector3 v )
+        public static Single Normalize( ref Vector3 v )
         {
-            float length = v.Length;
+            var length = v.Length;
             if( length != 0 )
             {
-                float ool = 1 / length;
+                var ool = 1 / length;
                 v.X *= ool;
                 v.Y *= ool;
                 v.Z *= ool;
@@ -74,22 +74,22 @@ namespace SharpQuake
             return length;
         }
 
-        public static float Length( ref v3f v )
+        public static Single Length( ref v3f v )
         {
-            return (float)Math.Sqrt( v.x * v.x + v.y * v.y + v.z * v.z );
+            return ( Single ) Math.Sqrt( v.x * v.x + v.y * v.y + v.z * v.z );
         }
 
-        public static float LengthXY( ref v3f v )
+        public static Single LengthXY( ref v3f v )
         {
-            return (float)Math.Sqrt( v.x * v.x + v.y * v.y );
+            return ( Single ) Math.Sqrt( v.x * v.x + v.y * v.y );
         }
 
-        public static float Normalize( ref v3f v )
+        public static Single Normalize( ref v3f v )
         {
-            float length = (float)Math.Sqrt( v.x * v.x + v.y * v.y + v.z * v.z );
+            var length = ( Single ) Math.Sqrt( v.x * v.x + v.y * v.y + v.z * v.z );
             if( length != 0 )
             {
-                float ool = 1 / length;
+                var ool = 1 / length;
                 v.x *= ool;
                 v.y *= ool;
                 v.z *= ool;
@@ -100,14 +100,14 @@ namespace SharpQuake
         /// <summary>
         /// c = a + b * scale;
         /// </summary>
-        public static void VectorMA( ref v3f a, float scale, ref v3f b, out v3f c )
+        public static void VectorMA( ref v3f a, Single scale, ref v3f b, out v3f c )
         {
             c.x = a.x + b.x * scale;
             c.y = a.y + b.y * scale;
             c.z = a.z + b.z * scale;
         }
 
-        public static void VectorScale( ref v3f a, float scale, out v3f b )
+        public static void VectorScale( ref v3f a, Single scale, out v3f b )
         {
             b.x = a.x * scale;
             b.y = a.y * scale;
@@ -135,25 +135,25 @@ namespace SharpQuake
             dest.z = Math.Max( Math.Min( src.z, max.Z ), min.Z );
         }
 
-        public static float DotProduct( ref v3f a, ref v3f b )
+        public static Single DotProduct( ref v3f a, ref v3f b )
         {
             return a.x * b.x + a.y * b.y + a.z * b.z;
         }
 
-        public static bool CheckNaN( ref v3f v, float defValue )
+        public static Boolean CheckNaN( ref v3f v, Single defValue )
         {
-            bool flag = false;
-            if( float.IsNaN( v.x ) )
+            var flag = false;
+            if( Single.IsNaN( v.x ) )
             {
                 flag = true;
                 v.x = defValue;
             }
-            if( float.IsNaN( v.y ) )
+            if( Single.IsNaN( v.y ) )
             {
                 flag = true;
                 v.y = defValue;
             }
-            if( float.IsNaN( v.z ) )
+            if( Single.IsNaN( v.z ) )
             {
                 flag = true;
                 v.z = defValue;
@@ -161,14 +161,14 @@ namespace SharpQuake
             return flag;
         }
 
-        public static float Comp( ref v3f a, int index )
+        public static Single Comp( ref v3f a, Int32 index )
         {
             if( index < 0 || index > 2 )
                 throw new ArgumentOutOfRangeException( "index" );
             return ( index == 0 ? a.x : ( index == 1 ? a.y : a.z ) );
         }
 
-        public static float Comp( ref Vector3 a, int index )
+        public static Single Comp( ref Vector3 a, Int32 index )
         {
             if( index < 0 || index > 2 )
                 throw new ArgumentOutOfRangeException( "index" );
@@ -178,19 +178,19 @@ namespace SharpQuake
         /// <summary>
         /// anglemod()
         /// </summary>
-        public static float AngleMod( double a )
+        public static Single AngleMod( Double a )
         {
-            return (float)( ( 360.0 / 65536 ) * ( (int)( a * ( 65536 / 360.0 ) ) & 65535 ) );
+            return ( Single ) ( ( 360.0 / 65536 ) * ( ( Int32 ) ( a * ( 65536 / 360.0 ) ) & 65535 ) );
         }
 
-        public static float DotProduct( ref Vector3 a, ref Vector4 b )
+        public static Single DotProduct( ref Vector3 a, ref Vector4 b )
         {
             return ( a.X * b.X + a.Y * b.Y + a.Z * b.Z );
         }
 
-        public static int BoxOnPlaneSide( ref v3f emins, ref v3f emaxs, mplane_t p )
+        public static Int32 BoxOnPlaneSide( ref v3f emins, ref v3f emaxs, mplane_t p )
         {
-            float mindist, maxdist;
+            Single mindist, maxdist;
             switch( p.type )
             {
                 case 0:
@@ -217,9 +217,9 @@ namespace SharpQuake
             return ( p.dist <= mindist ? 1 : ( p.dist >= maxdist ? 2 : 3 ) );
         }
 
-        public static int BoxOnPlaneSide( ref Vector3 emins, ref Vector3 emaxs, mplane_t p )
+        public static Int32 BoxOnPlaneSide( ref Vector3 emins, ref Vector3 emaxs, mplane_t p )
         {
-            float mindist, maxdist;
+            Single mindist, maxdist;
             switch( p.type )
             {
                 case 0:
@@ -243,7 +243,7 @@ namespace SharpQuake
             return ( p.dist <= mindist ? 1 : ( p.dist >= maxdist ? 2 : 3 ) );
         }
 
-        public static void SetComp( ref Vector3 dest, int index, float value )
+        public static void SetComp( ref Vector3 dest, Int32 index, Single value )
         {
             if( index == 0 )
                 dest.X = value;
@@ -271,9 +271,9 @@ namespace SharpQuake
                 a.Z += 360;
         }
 
-        public static void RotatePointAroundVector( out Vector3 dst, ref Vector3 dir, ref Vector3 point, float degrees )
+        public static void RotatePointAroundVector( out Vector3 dst, ref Vector3 dir, ref Vector3 point, Single degrees )
         {
-            Matrix3 m = Matrix3.CreateFromAxisAngle( dir, (float)( degrees * Math.PI / 180.0 ) );
+            Matrix3 m = Matrix3.CreateFromAxisAngle( dir, ( Single ) ( degrees * Math.PI / 180.0 ) );
             Vector3.Transform( ref point, ref m, out dst );
         }
 
@@ -294,10 +294,10 @@ namespace SharpQuake
         }
 
         //Returns 1, 2, or 1 + 2
-        private static int _BoxOnPlaneSide( ref Vector3 emins, ref Vector3 emaxs, mplane_t p )
+        private static Int32 _BoxOnPlaneSide( ref Vector3 emins, ref Vector3 emaxs, mplane_t p )
         {
             // general case
-            float dist1, dist2;
+            Single dist1, dist2;
 
             switch( p.signbits )
             {
@@ -347,7 +347,7 @@ namespace SharpQuake
                     break;
             }
 
-            int sides = 0;
+            var sides = 0;
             if( dist1 >= p.dist )
                 sides = 1;
             if( dist2 < p.dist )

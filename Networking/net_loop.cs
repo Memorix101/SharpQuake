@@ -26,14 +26,14 @@ namespace SharpQuake
 {
     internal class net_loop : INetDriver
     {
-        private bool _IsInitialized;
-        private bool _LocalConnectPending; // localconnectpending
+        private Boolean _IsInitialized;
+        private Boolean _LocalConnectPending; // localconnectpending
         private qsocket_t _Client; // loop_client
         private qsocket_t _Server; // loop_server
 
         #region INetDriver Members
 
-        public string Name
+        public String Name
         {
             get
             {
@@ -41,7 +41,7 @@ namespace SharpQuake
             }
         }
 
-        public bool IsInitialized
+        public Boolean IsInitialized
         {
             get
             {
@@ -57,12 +57,12 @@ namespace SharpQuake
             _IsInitialized = true;
         }
 
-        public void Listen( bool state )
+        public void Listen( Boolean state )
         {
             // nothig to do
         }
 
-        public void SearchForHosts( bool xmit )
+        public void SearchForHosts( Boolean xmit )
         {
             if( !server.sv.active )
                 return;
@@ -80,7 +80,7 @@ namespace SharpQuake
             net.HostCache[0].cname = "local";
         }
 
-        public qsocket_t Connect( string host )
+        public qsocket_t Connect( String host )
         {
             if( host != "local" )
                 return null;
@@ -132,13 +132,13 @@ namespace SharpQuake
             return _Server;
         }
 
-        public int GetMessage( qsocket_t sock )
+        public Int32 GetMessage( qsocket_t sock )
         {
             if( sock.receiveMessageLength == 0 )
                 return 0;
 
-            int ret = sock.receiveMessage[0];
-            int length = sock.receiveMessage[1] + ( sock.receiveMessage[2] << 8 );
+            Int32 ret = sock.receiveMessage[0];
+            var length = sock.receiveMessage[1] + ( sock.receiveMessage[2] << 8 );
 
             // alignment byte skipped here
             net.Message.Clear();
@@ -156,7 +156,7 @@ namespace SharpQuake
             return ret;
         }
 
-        public int SendMessage( qsocket_t sock, MsgWriter data )
+        public Int32 SendMessage( qsocket_t sock, MessageWriter data )
         {
             if( sock.driverdata == null )
                 return -1;
@@ -167,12 +167,12 @@ namespace SharpQuake
                 sys.Error( "Loop_SendMessage: overflow\n" );
 
             // message type
-            int offset = sock2.receiveMessageLength;
+            var offset = sock2.receiveMessageLength;
             sock2.receiveMessage[offset++] = 1;
 
             // length
-            sock2.receiveMessage[offset++] = (byte)( data.Length & 0xff );
-            sock2.receiveMessage[offset++] = (byte)( data.Length >> 8 );
+            sock2.receiveMessage[offset++] = ( Byte ) ( data.Length & 0xff );
+            sock2.receiveMessage[offset++] = ( Byte ) ( data.Length >> 8 );
 
             // align
             offset++;
@@ -185,24 +185,24 @@ namespace SharpQuake
             return 1;
         }
 
-        public int SendUnreliableMessage( qsocket_t sock, MsgWriter data )
+        public Int32 SendUnreliableMessage( qsocket_t sock, MessageWriter data )
         {
             if( sock.driverdata == null )
                 return -1;
 
             qsocket_t sock2 = (qsocket_t)sock.driverdata;
 
-            if( ( sock2.receiveMessageLength + data.Length + sizeof( byte ) + sizeof( short ) ) > net.NET_MAXMESSAGE )
+            if( ( sock2.receiveMessageLength + data.Length + sizeof( Byte ) + sizeof( Int16 ) ) > net.NET_MAXMESSAGE )
                 return 0;
 
-            int offset = sock2.receiveMessageLength;
+            var offset = sock2.receiveMessageLength;
 
             // message type
             sock2.receiveMessage[offset++] = 2;
 
             // length
-            sock2.receiveMessage[offset++] = (byte)( data.Length & 0xff );
-            sock2.receiveMessage[offset++] = (byte)( data.Length >> 8 );
+            sock2.receiveMessage[offset++] = ( Byte ) ( data.Length & 0xff );
+            sock2.receiveMessage[offset++] = ( Byte ) ( data.Length >> 8 );
 
             // align
             offset++;
@@ -214,14 +214,14 @@ namespace SharpQuake
             return 1;
         }
 
-        public bool CanSendMessage( qsocket_t sock )
+        public Boolean CanSendMessage( qsocket_t sock )
         {
             if( sock.driverdata == null )
                 return false;
             return sock.canSend;
         }
 
-        public bool CanSendUnreliableMessage( qsocket_t sock )
+        public Boolean CanSendUnreliableMessage( qsocket_t sock )
         {
             return true;
         }
@@ -244,9 +244,9 @@ namespace SharpQuake
             _IsInitialized = false;
         }
 
-        private int IntAlign( int value )
+        private Int32 IntAlign( Int32 value )
         {
-            return ( value + ( sizeof( int ) - 1 ) ) & ( ~( sizeof( int ) - 1 ) );
+            return ( value + ( sizeof( Int32 ) - 1 ) ) & ( ~( sizeof( Int32 ) - 1 ) );
         }
 
         #endregion INetDriver Members

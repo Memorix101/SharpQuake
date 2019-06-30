@@ -34,12 +34,12 @@ namespace SharpQuake
     {
         private static CacheEntry _Head;
 
-        private static int _Capacity;
+        private static System.Int32 _Capacity;
 
-        private static int _BytesAllocated;
+        private static System.Int32 _BytesAllocated;
 
         // Cache_Init
-        public static void Init( int capacity )
+        public static void Init( System.Int32 capacity )
         {
             _Capacity = capacity;
             _BytesAllocated = 0;
@@ -53,7 +53,7 @@ namespace SharpQuake
         /// Cache_Check
         /// Returns value of c.data if still cached or null
         /// </summary>
-        public static object Check( cache_user_t c )
+        public static System.Object Check( cache_user_t c )
         {
             CacheEntry cs = (CacheEntry)c;
 
@@ -68,7 +68,7 @@ namespace SharpQuake
         }
 
         // Cache_Alloc
-        public static cache_user_t Alloc( int size, string name )
+        public static cache_user_t Alloc( System.Int32 size, System.String name )
         {
             if( size <= 0 )
                 sys.Error( "Cache_Alloc: size {0}", size );
@@ -101,7 +101,7 @@ namespace SharpQuake
         public static void Report()
         {
             Con.DPrint( "{0,4:F1} megabyte data cache, used {1,4:F1} megabyte\n",
-                _Capacity / (float)( 1024 * 1024 ), _BytesAllocated / (float)( 1024 * 1024 ) );
+                _Capacity / ( System.Single ) ( 1024 * 1024 ), _BytesAllocated / ( System.Single ) ( 1024 * 1024 ) );
         }
 
         //Cache_Flush
@@ -126,7 +126,7 @@ namespace SharpQuake
         }
 
         // Cache_TryAlloc
-        private static CacheEntry TryAlloc( int size )
+        private static CacheEntry TryAlloc( System.Int32 size )
         {
             if( _BytesAllocated + size > _Capacity )
                 return null;
@@ -175,7 +175,7 @@ namespace SharpQuake
             private CacheEntry _Next;
             private CacheEntry _LruPrev;
             private CacheEntry _LruNext;
-            private int _Size;
+            private System.Int32 _Size;
 
             // Cache_UnlinkLRU
             public void RemoveFromLRU()
@@ -232,7 +232,7 @@ namespace SharpQuake
                 RemoveFromLRU();
             }
 
-            public CacheEntry( bool isHead = false )
+            public CacheEntry( System.Boolean isHead = false )
             {
                 if( isHead )
                 {
@@ -243,7 +243,7 @@ namespace SharpQuake
                 }
             }
 
-            public CacheEntry( int size )
+            public CacheEntry( System.Int32 size )
             {
                 _Size = size;
                 Cache._BytesAllocated += _Size;
@@ -258,6 +258,6 @@ namespace SharpQuake
 
     internal class cache_user_t
     {
-        public object data;
+        public System.Object data;
     }
 }

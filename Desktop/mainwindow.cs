@@ -50,7 +50,7 @@ namespace SharpQuake
             }
         }
 
-        public static bool IsFullscreen
+        public static Boolean IsFullscreen
         {
             get
             {
@@ -58,9 +58,9 @@ namespace SharpQuake
             }
         }
 
-        public bool ConfirmExit = true;
+        public Boolean ConfirmExit = true;
 
-        private static string DumpFilePath
+        private static String DumpFilePath
         {
             get
             {
@@ -68,7 +68,7 @@ namespace SharpQuake
             }
         }
 
-        private static byte[] _KeyTable = new byte[130]
+        private static Byte[] _KeyTable = new Byte[130]
         {
             0, Key.K_SHIFT, Key.K_SHIFT, Key.K_CTRL, Key.K_CTRL, Key.K_ALT, Key.K_ALT, 0, // 0 - 7
             0, 0, Key.K_F1, Key.K_F2, Key.K_F3, Key.K_F4, Key.K_F5, Key.K_F6, // 8 - 15
@@ -79,21 +79,34 @@ namespace SharpQuake
             Key.K_RIGHTARROW, Key.K_ENTER, Key.K_ESCAPE, Key.K_SPACE, Key.K_TAB, Key.K_BACKSPACE, Key.K_INS, Key.K_DEL, // 48 - 55
             Key.K_PGUP, Key.K_PGDN, Key.K_HOME, Key.K_END, 0, 0, 0, Key.K_PAUSE, // 56 - 63
             0, 0, 0, Key.K_INS, Key.K_END, Key.K_DOWNARROW, Key.K_PGDN, Key.K_LEFTARROW, // 64 - 71
-            0, Key.K_RIGHTARROW, Key.K_HOME, Key.K_UPARROW, Key.K_PGUP, (byte)'/', (byte)'*', (byte)'-', // 72 - 79
-            (byte)'+', (byte)'.', Key.K_ENTER, (byte)'a', (byte)'b', (byte)'c', (byte)'d', (byte)'e', // 80 - 87
-            (byte)'f', (byte)'g', (byte)'h', (byte)'i', (byte)'j', (byte)'k', (byte)'l', (byte)'m', // 88 - 95
-            (byte)'n', (byte)'o', (byte)'p', (byte)'q', (byte)'r', (byte)'s', (byte)'t', (byte)'u', // 96 - 103
-            (byte)'v', (byte)'w', (byte)'x', (byte)'y', (byte)'z', (byte)'0', (byte)'1', (byte)'2', // 104 - 111
-            (byte)'3', (byte)'4', (byte)'5', (byte)'6', (byte)'7', (byte)'8', (byte)'9', (byte)'`', // 112 - 119
-            (byte)'-', (byte)'+', (byte)'[', (byte)']', (byte)';', (byte)'\'', (byte)',', (byte)'.', // 120 - 127
-            (byte)'/', (byte)'\\' // 128 - 129
+            0, Key.K_RIGHTARROW, Key.K_HOME, Key.K_UPARROW, Key.K_PGUP, (Byte)'/', (Byte)'*', (Byte)'-', // 72 - 79
+            (Byte)'+', (Byte)'.', Key.K_ENTER, (Byte)'a', (Byte)'b', (Byte)'c', (Byte)'d', (Byte)'e', // 80 - 87
+            (Byte)'f', (Byte)'g', (Byte)'h', (Byte)'i', (Byte)'j', (Byte)'k', (Byte)'l', (Byte)'m', // 88 - 95
+            (Byte)'n', (Byte)'o', (Byte)'p', (Byte)'q', (Byte)'r', (Byte)'s', (Byte)'t', (Byte)'u', // 96 - 103
+            (Byte)'v', (Byte)'w', (Byte)'x', (Byte)'y', (Byte)'z', (Byte)'0', (Byte)'1', (Byte)'2', // 104 - 111
+            (Byte)'3', (Byte)'4', (Byte)'5', (Byte)'6', (Byte)'7', (Byte)'8', (Byte)'9', (Byte)'`', // 112 - 119
+            (Byte)'-', (Byte)'+', (Byte)'[', (Byte)']', (Byte)';', (Byte)'\'', (Byte)',', (Byte)'.', // 120 - 127
+            (Byte)'/', (Byte)'\\' // 128 - 129
         };
 
         private static WeakReference _Instance;
         private static DisplayDevice _DisplayDevice;
 
-        private int _MouseBtnState;
+        private Int32 _MouseBtnState;
         private Stopwatch _Swatch;
+
+        public Boolean IsDisposed
+        {
+            get;
+            private set;
+        }
+
+        public override void Dispose( )
+        {
+            IsDisposed = true;
+
+            base.Dispose( );
+        }
 
         protected override void OnFocusedChanged(EventArgs e)
         {
@@ -154,7 +167,7 @@ namespace SharpQuake
                     Scr.SkipUpdate = true;	// no point in bothering to draw
 
                 _Swatch.Stop();
-                double ts = _Swatch.Elapsed.TotalSeconds;
+                var ts = _Swatch.Elapsed.TotalSeconds;
                 _Swatch.Reset();
                 _Swatch.Start();
                 host.Frame(ts);
@@ -165,7 +178,7 @@ namespace SharpQuake
             }
         }
 
-        private static MainWindow CreateInstance(Size size, GraphicsMode mode, bool fullScreen)
+        private static MainWindow CreateInstance(Size size, GraphicsMode mode, Boolean fullScreen )
         {
             if (_Instance != null)
             {
@@ -230,7 +243,7 @@ namespace SharpQuake
         }
 
         [STAThread]
-        private static int Main(string[] args)
+        private static Int32 Main( String[] args)
         {
             //Workaround for SDL2 mouse input issues
             var options = new ToolkitOptions();
@@ -251,13 +264,13 @@ namespace SharpQuake
 
             parms.basedir = AppDomain.CurrentDomain.BaseDirectory; //Application.StartupPath;
 
-            string[] args2 = new string[args.Length + 1];
+            String[] args2 = new String[args.Length + 1];
             args2[0] = String.Empty;
             args.CopyTo(args2, 1);
 
             Common.InitArgv(args2);
 
-            parms.argv = new string[Common.Argc];
+            parms.argv = new String[Common.Argc];
             Common.Args.CopyTo(parms.argv, 0);
 
             if (Common.HasParam("-dedicated"))
@@ -287,7 +300,7 @@ namespace SharpQuake
             return 0; // all Ok
         }
 
-        private void Mouse_WheelChanged(object sender, OpenTK.Input.MouseWheelEventArgs e)
+        private void Mouse_WheelChanged( Object sender, OpenTK.Input.MouseWheelEventArgs e)
         {
             if (e.Delta > 0)
             {
@@ -301,7 +314,7 @@ namespace SharpQuake
             }
         }
 
-        private void Mouse_ButtonEvent(object sender, OpenTK.Input.MouseButtonEventArgs e)
+        private void Mouse_ButtonEvent( Object sender, OpenTK.Input.MouseButtonEventArgs e)
         {
             _MouseBtnState = 0;
 
@@ -317,14 +330,14 @@ namespace SharpQuake
             input.MouseEvent(_MouseBtnState);
         }
 
-        private void Mouse_Move(object sender, OpenTK.Input.MouseMoveEventArgs e)
+        private void Mouse_Move( Object sender, OpenTK.Input.MouseMoveEventArgs e)
         {
             input.MouseEvent(_MouseBtnState);
         }
 
-        private int MapKey(OpenTK.Input.Key srcKey)
+        private Int32 MapKey(OpenTK.Input.Key srcKey)
         {
-            int key = (int)srcKey;
+            var key = ( Int32 ) srcKey;
             key &= 255;
 
             if (key >= _KeyTable.Length)
@@ -336,17 +349,17 @@ namespace SharpQuake
             return _KeyTable[key];
         }
 
-        private void Keyboard_KeyUp(object sender, OpenTK.Input.KeyboardKeyEventArgs e)
+        private void Keyboard_KeyUp( Object sender, OpenTK.Input.KeyboardKeyEventArgs e)
         {
             Key.Event(MapKey(e.Key), false);
         }
 
-        private void Keyboard_KeyDown(object sender, OpenTK.Input.KeyboardKeyEventArgs e)
+        private void Keyboard_KeyDown( Object sender, OpenTK.Input.KeyboardKeyEventArgs e)
         {
             Key.Event(MapKey(e.Key), true);
         }
 
-        private MainWindow(Size size, GraphicsMode mode, bool fullScreen)
+        private MainWindow(Size size, GraphicsMode mode, Boolean fullScreen )
         : base(size.Width, size.Height, mode, "SharpQuake", fullScreen ? GameWindowFlags.Fullscreen : GameWindowFlags.Default)
         {
             _Instance = new WeakReference(this);

@@ -48,7 +48,7 @@ namespace SharpQuake
             }
         }
 
-        public static bool IsActive
+        public static Boolean IsActive
         {
             get
             {
@@ -56,7 +56,7 @@ namespace SharpQuake
             }
         }
 
-        public static float Gravity
+        public static Single Gravity
         {
             get
             {
@@ -64,7 +64,7 @@ namespace SharpQuake
             }
         }
 
-        public static bool IsLoading
+        public static Boolean IsLoading
         {
             get
             {
@@ -72,7 +72,7 @@ namespace SharpQuake
             }
         }
 
-        public static float Aim
+        public static Single Aim
         {
             get
             {
@@ -80,8 +80,8 @@ namespace SharpQuake
             }
         }
 
-        public const int NUM_PING_TIMES = 16;
-        public const int NUM_SPAWN_PARMS = 16;
+        public const Int32 NUM_PING_TIMES = 16;
+        public const Int32 NUM_SPAWN_PARMS = 16;
 
         private static CVar _Friction;// = { "sv_friction", "4", false, true };
         private static CVar _EdgeFriction;// = { "edgefriction", "2" };
@@ -97,12 +97,12 @@ namespace SharpQuake
         private static server_t _Server;
         private static server_static_t _ServerStatic;
 
-        private static string[] _LocalModels = new string[QDef.MAX_MODELS]; //[MAX_MODELS][5];	// inline model names for precache
+        private static String[] _LocalModels = new String[QDef.MAX_MODELS]; //[MAX_MODELS][5];	// inline model names for precache
 
         /// <summary>
         /// EDICT_NUM
         /// </summary>
-        public static edict_t EdictNum( int n )
+        public static edict_t EdictNum( Int32 n )
         {
             if( n < 0 || n >= _Server.max_edicts )
                 sys.Error( "EDICT_NUM: bad number {0}", n );
@@ -120,7 +120,7 @@ namespace SharpQuake
         public static edict_t AllocEdict()
         {
             edict_t e;
-            int i;
+            Int32 i;
             for( i = svs.maxclients + 1; i < sv.num_edicts; i++ )
             {
                 e = EdictNum( i );
@@ -165,13 +165,13 @@ namespace SharpQuake
             ed.v.nextthink = -1;
             ed.v.solid = 0;
 
-            ed.freetime = (float)sv.time;
+            ed.freetime = ( Single ) sv.time;
         }
 
         /// <summary>
         /// EDICT_TO_PROG(e)
         /// </summary>
-        public static int EdictToProg( edict_t e )
+        public static Int32 EdictToProg( edict_t e )
         {
             return Array.IndexOf( _Server.edicts, e ); // todo: optimize this
         }
@@ -180,7 +180,7 @@ namespace SharpQuake
         /// PROG_TO_EDICT(e)
         /// Offset in bytes!
         /// </summary>
-        public static edict_t ProgToEdict( int e )
+        public static edict_t ProgToEdict( Int32 e )
         {
             if( e < 0 || e > sv.edicts.Length )
                 sys.Error( "ProgToEdict: Bad prog!" );
@@ -190,9 +190,9 @@ namespace SharpQuake
         /// <summary>
         /// NUM_FOR_EDICT
         /// </summary>
-        public static int NumForEdict( edict_t e )
+        public static Int32 NumForEdict( edict_t e )
         {
-            int i = Array.IndexOf( sv.edicts, e ); // todo: optimize this
+            var i = Array.IndexOf( sv.edicts, e ); // todo: optimize this
 
             if( i < 0 )
                 sys.Error( "NUM_FOR_EDICT: bad pointer" );
@@ -209,17 +209,17 @@ namespace SharpQuake
     // edict->movetype values
     internal static class Movetypes
     {
-        public const int MOVETYPE_NONE = 0;		// never moves
-        public const int MOVETYPE_ANGLENOCLIP = 1;
-        public const int MOVETYPE_ANGLECLIP = 2;
-        public const int MOVETYPE_WALK = 3;		// gravity
-        public const int MOVETYPE_STEP = 4;		// gravity, special edge handling
-        public const int MOVETYPE_FLY = 5;
-        public const int MOVETYPE_TOSS = 6;		// gravity
-        public const int MOVETYPE_PUSH = 7;		// no clip to world, push and crush
-        public const int MOVETYPE_NOCLIP = 8;
-        public const int MOVETYPE_FLYMISSILE = 9;		// extra size to monsters
-        public const int MOVETYPE_BOUNCE = 10;
+        public const Int32 MOVETYPE_NONE = 0;		// never moves
+        public const Int32 MOVETYPE_ANGLENOCLIP = 1;
+        public const Int32 MOVETYPE_ANGLECLIP = 2;
+        public const Int32 MOVETYPE_WALK = 3;		// gravity
+        public const Int32 MOVETYPE_STEP = 4;		// gravity, special edge handling
+        public const Int32 MOVETYPE_FLY = 5;
+        public const Int32 MOVETYPE_TOSS = 6;		// gravity
+        public const Int32 MOVETYPE_PUSH = 7;		// no clip to world, push and crush
+        public const Int32 MOVETYPE_NOCLIP = 8;
+        public const Int32 MOVETYPE_FLYMISSILE = 9;		// extra size to monsters
+        public const Int32 MOVETYPE_BOUNCE = 10;
 #if QUAKE2
         public const int MOVETYPE_BOUNCEMISSILE = 11;		// bounce w/o gravity
         public const int MOVETYPE_FOLLOW = 12;		// track movement of aiment
@@ -229,47 +229,47 @@ namespace SharpQuake
     // edict->solid values
     internal static class Solids
     {
-        public const int SOLID_NOT = 0;		// no interaction with other objects
-        public const int SOLID_TRIGGER = 1;		// touch on edge, but not blocking
-        public const int SOLID_BBOX = 2;		// touch on edge, block
-        public const int SOLID_SLIDEBOX = 3;		// touch on edge, but not an onground
-        public const int SOLID_BSP = 4;		// bsp clip, touch on edge, block
+        public const Int32 SOLID_NOT = 0;		// no interaction with other objects
+        public const Int32 SOLID_TRIGGER = 1;		// touch on edge, but not blocking
+        public const Int32 SOLID_BBOX = 2;		// touch on edge, block
+        public const Int32 SOLID_SLIDEBOX = 3;		// touch on edge, but not an onground
+        public const Int32 SOLID_BSP = 4;		// bsp clip, touch on edge, block
     }
 
     // edict->deadflag values
     internal static class DeadFlags
     {
-        public const int DEAD_NO = 0;
-        public const int DEAD_DYING = 1;
-        public const int DEAD_DEAD = 2;
+        public const Int32 DEAD_NO = 0;
+        public const Int32 DEAD_DYING = 1;
+        public const Int32 DEAD_DEAD = 2;
     }
 
     internal static class Damages
     {
-        public const int DAMAGE_NO = 0;
-        public const int DAMAGE_YES = 1;
-        public const int DAMAGE_AIM = 2;
+        public const Int32 DAMAGE_NO = 0;
+        public const Int32 DAMAGE_YES = 1;
+        public const Int32 DAMAGE_AIM = 2;
     }
 
     // edict->flags
     internal static class EdictFlags
     {
-        public const int FL_FLY = 1;
-        public const int FL_SWIM = 2;
+        public const Int32 FL_FLY = 1;
+        public const Int32 FL_SWIM = 2;
 
         //public const int FL_GLIMPSE	=			4;
-        public const int FL_CONVEYOR = 4;
+        public const Int32 FL_CONVEYOR = 4;
 
-        public const int FL_CLIENT = 8;
-        public const int FL_INWATER = 16;
-        public const int FL_MONSTER = 32;
-        public const int FL_GODMODE = 64;
-        public const int FL_NOTARGET = 128;
-        public const int FL_ITEM = 256;
-        public const int FL_ONGROUND = 512;
-        public const int FL_PARTIALGROUND = 1024;	// not all corners are valid
-        public const int FL_WATERJUMP = 2048;	// player jumping out of water
-        public const int FL_JUMPRELEASED = 4096;    // for jump debouncing
+        public const Int32 FL_CLIENT = 8;
+        public const Int32 FL_INWATER = 16;
+        public const Int32 FL_MONSTER = 32;
+        public const Int32 FL_GODMODE = 64;
+        public const Int32 FL_NOTARGET = 128;
+        public const Int32 FL_ITEM = 256;
+        public const Int32 FL_ONGROUND = 512;
+        public const Int32 FL_PARTIALGROUND = 1024;	// not all corners are valid
+        public const Int32 FL_WATERJUMP = 2048;	// player jumping out of water
+        public const Int32 FL_JUMPRELEASED = 4096;    // for jump debouncing
 #if QUAKE2
         public const int FL_FLASHLIGHT = 8192;
         public const int FL_ARCHIVE_OVERRIDE = 1048576;
@@ -278,16 +278,16 @@ namespace SharpQuake
 
     internal static class SpawnFlags
     {
-        public const int SPAWNFLAG_NOT_EASY = 256;
-        public const int SPAWNFLAG_NOT_MEDIUM = 512;
-        public const int SPAWNFLAG_NOT_HARD = 1024;
-        public const int SPAWNFLAG_NOT_DEATHMATCH = 2048;
+        public const Int32 SPAWNFLAG_NOT_EASY = 256;
+        public const Int32 SPAWNFLAG_NOT_MEDIUM = 512;
+        public const Int32 SPAWNFLAG_NOT_HARD = 1024;
+        public const Int32 SPAWNFLAG_NOT_DEATHMATCH = 2048;
     }
 
     internal class areanode_t
     {
-        public int axis;		// -1 = leaf node
-        public float dist;
+        public Int32 axis;		// -1 = leaf node
+        public Single dist;
         public areanode_t[] children; // [2];
         public link_t trigger_edicts;
         public link_t solid_edicts;
@@ -312,11 +312,11 @@ namespace SharpQuake
 
     internal class server_static_t
     {
-        public int maxclients;
-        public int maxclientslimit;
+        public Int32 maxclients;
+        public Int32 maxclientslimit;
         public client_t[] clients; // [maxclients]
-        public int serverflags;     // episode completion information
-        public bool changelevel_issued;	// cleared when at SV_SpawnServer
+        public Int32 serverflags;     // episode completion information
+        public Boolean changelevel_issued;	// cleared when at SV_SpawnServer
     }// server_static_t;
 
     //=============================================================================
@@ -325,30 +325,30 @@ namespace SharpQuake
 
     internal class server_t
     {
-        public bool active;             // false if only a net client
-        public bool paused;
-        public bool loadgame;           // handle connections specially
-        public double time;
-        public int lastcheck;           // used by PF_checkclient
-        public double lastchecktime;
-        public string name;// char		name[64];			// map name
-        public string modelname;// char		modelname[64];		// maps/<name>.bsp, for model_precache[0]
+        public Boolean active;             // false if only a net client
+        public Boolean paused;
+        public Boolean loadgame;           // handle connections specially
+        public Double time;
+        public Int32 lastcheck;           // used by PF_checkclient
+        public Double lastchecktime;
+        public String name;// char		name[64];			// map name
+        public String modelname;// char		modelname[64];		// maps/<name>.bsp, for model_precache[0]
         public model_t worldmodel;
-        public string[] model_precache; //[MAX_MODELS];	// NULL terminated
+        public String[] model_precache; //[MAX_MODELS];	// NULL terminated
         public model_t[] models; //[MAX_MODELS];
-        public string[] sound_precache; //[MAX_SOUNDS];	// NULL terminated
-        public string[] lightstyles; // [MAX_LIGHTSTYLES];
-        public int num_edicts;
-        public int max_edicts;
+        public String[] sound_precache; //[MAX_SOUNDS];	// NULL terminated
+        public String[] lightstyles; // [MAX_LIGHTSTYLES];
+        public Int32 num_edicts;
+        public Int32 max_edicts;
         public edict_t[] edicts;        // can NOT be array indexed, because
 
         // edict_t is variable sized, but can
         // be used to reference the world ent
         public server_state_t state;			// some actions are only valid during load
 
-        public MsgWriter datagram;
-        public MsgWriter reliable_datagram; // copied to all clients at end of frame
-        public MsgWriter signon;
+        public MessageWriter datagram;
+        public MessageWriter reliable_datagram; // copied to all clients at end of frame
+        public MessageWriter signon;
 
         public void Clear()
         {
@@ -377,25 +377,25 @@ namespace SharpQuake
 
         public server_t()
         {
-            this.model_precache = new string[QDef.MAX_MODELS];
+            this.model_precache = new String[QDef.MAX_MODELS];
             this.models = new model_t[QDef.MAX_MODELS];
-            this.sound_precache = new string[QDef.MAX_SOUNDS];
-            this.lightstyles = new string[QDef.MAX_LIGHTSTYLES];
-            this.datagram = new MsgWriter( QDef.MAX_DATAGRAM );
-            this.reliable_datagram = new MsgWriter( QDef.MAX_DATAGRAM );
-            this.signon = new MsgWriter( 8192 );
+            this.sound_precache = new String[QDef.MAX_SOUNDS];
+            this.lightstyles = new String[QDef.MAX_LIGHTSTYLES];
+            this.datagram = new MessageWriter( QDef.MAX_DATAGRAM );
+            this.reliable_datagram = new MessageWriter( QDef.MAX_DATAGRAM );
+            this.signon = new MessageWriter( 8192 );
         }
     }// server_t;
 
     internal class client_t
     {
-        public bool active;             // false = client is free
-        public bool spawned;            // false = don't send datagrams
-        public bool dropasap;           // has been told to go to another level
-        public bool privileged;         // can execute any host command
-        public bool sendsignon;         // only valid before spawned
+        public Boolean active;             // false = client is free
+        public Boolean spawned;            // false = don't send datagrams
+        public Boolean dropasap;           // has been told to go to another level
+        public Boolean privileged;         // can execute any host command
+        public Boolean sendsignon;         // only valid before spawned
 
-        public double last_message;     // reliable messages must be sent
+        public Double last_message;     // reliable messages must be sent
 
         // periodically
         public qsocket_t netconnection; // communications handle
@@ -403,23 +403,23 @@ namespace SharpQuake
         public usercmd_t cmd;               // movement
         public Vector3 wishdir;			// intended motion calced from cmd
 
-        public MsgWriter message;
+        public MessageWriter message;
         //public sizebuf_t		message;			// can be added to at any time,
         // copied and clear once per frame
         //public byte[] msgbuf;//[MAX_MSGLEN];
 
         public edict_t edict; // edict_t *edict	// EDICT_NUM(clientnum+1)
-        public string name;//[32];			// for printing to other people
-        public int colors;
+        public String name;//[32];			// for printing to other people
+        public Int32 colors;
 
-        public float[] ping_times;//[NUM_PING_TIMES];
-        public int num_pings;           // ping_times[num_pings%NUM_PING_TIMES]
+        public Single[] ping_times;//[NUM_PING_TIMES];
+        public Int32 num_pings;           // ping_times[num_pings%NUM_PING_TIMES]
 
         // spawn parms are carried from level to level
-        public float[] spawn_parms;//[NUM_SPAWN_PARMS];
+        public Single[] spawn_parms;//[NUM_SPAWN_PARMS];
 
         // client known data for deltas
-        public int old_frags;
+        public Int32 old_frags;
 
         public void Clear()
         {
@@ -444,9 +444,9 @@ namespace SharpQuake
 
         public client_t()
         {
-            this.ping_times = new float[server.NUM_PING_TIMES];
-            this.spawn_parms = new float[server.NUM_SPAWN_PARMS];
-            this.message = new MsgWriter( QDef.MAX_MSGLEN );
+            this.ping_times = new Single[server.NUM_PING_TIMES];
+            this.spawn_parms = new Single[server.NUM_SPAWN_PARMS];
+            this.message = new MessageWriter( QDef.MAX_MSGLEN );
         }
     }// client_t;
 }

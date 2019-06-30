@@ -44,7 +44,7 @@ namespace SharpQuake
         /// <summary>
         /// CDAudio_Init
         /// </summary>
-        public static bool Init()
+        public static Boolean Init()
         {
             if (client.cls.state == cactive_t.ca_dedicated)
                 return false;
@@ -64,7 +64,7 @@ namespace SharpQuake
         }
 
         // CDAudio_Play(byte track, qboolean looping)
-        public static void Play(byte track, bool looping)
+        public static void Play( Byte track, Boolean looping )
         {
             _Controller.Play(track, looping);
 #if DEBUG
@@ -107,7 +107,7 @@ namespace SharpQuake
             if (Command.Argc < 2)
                 return;
 
-            string command = Command.Argv(1);
+            var command = Command.Argv(1);
 
             if (Common.SameText(command, "on"))
             {
@@ -135,17 +135,17 @@ namespace SharpQuake
 
             if (Common.SameText(command, "remap"))
             {
-                int ret = Command.Argc - 2;
-                byte[] remap = _Controller.Remap;
+                var ret = Command.Argc - 2;
+                Byte[] remap = _Controller.Remap;
                 if (ret <= 0)
                 {
-                    for (int n = 1; n < 100; n++)
+                    for ( var n = 1; n < 100; n++)
                         if (remap[n] != n)
                             Con.Print("  {0} -> {1}\n", n, remap[n]);
                     return;
                 }
-                for (int n = 1; n <= ret; n++)
-                    remap[n] = (byte)Common.atoi(Command.Argv(n + 1));
+                for ( var n = 1; n <= ret; n++)
+                    remap[n] = ( Byte ) Common.atoi(Command.Argv(n + 1));
                 return;
             }
 
@@ -167,13 +167,13 @@ namespace SharpQuake
 
             if (Common.SameText(command, "play"))
             {
-                _Controller.Play((byte)Common.atoi(Command.Argv(2)), false);
+                _Controller.Play(( Byte ) Common.atoi(Command.Argv(2)), false);
                 return;
             }
 
             if (Common.SameText(command, "loop"))
             {
-                _Controller.Play((byte)Common.atoi(Command.Argv(2)), true);
+                _Controller.Play(( Byte ) Common.atoi(Command.Argv(2)), true);
                 return;
             }
 
@@ -218,33 +218,33 @@ namespace SharpQuake
 
     internal class NullCDAudioController
     {
-        private byte[] _Remap;
+        private Byte[] _Remap;
         private OggStream oggStream;
         private OggStreamer streamer;
         //private WaveOutEvent waveOut; // or WaveOutEvent()
-        private bool _isLooping;
-        string trackid;
-        string trackpath;
-        private bool _noAudio = false;
-        private bool _noPlayback = false;
-        private float _Volume;
-        private bool _isPlaying;
-        private bool _isPaused;
+        private Boolean _isLooping;
+        String trackid;
+        String trackpath;
+        private Boolean _noAudio = false;
+        private Boolean _noPlayback = false;
+        private Single _Volume;
+        private Boolean _isPlaying;
+        private Boolean _isPaused;
 
 
         //OGG file
-        int channels;
-        int sampleRate;
+        Int32 channels;
+        Int32 sampleRate;
         TimeSpan totalTime;
 
         public NullCDAudioController()
         {
-            _Remap = new byte[100];
+            _Remap = new Byte[100];
         }
 
         #region ICDAudioController Members
 
-        public bool IsInitialized
+        public Boolean IsInitialized
         {
             get
             {
@@ -252,7 +252,7 @@ namespace SharpQuake
             }
         }
 
-        public bool IsEnabled
+        public Boolean IsEnabled
         {
             get
             {
@@ -264,7 +264,7 @@ namespace SharpQuake
             }
         }
 
-        public bool IsPlaying
+        public Boolean IsPlaying
         {
             get
             {
@@ -272,7 +272,7 @@ namespace SharpQuake
             }
         }
 
-        public bool IsPaused
+        public Boolean IsPaused
         {
             get
             {
@@ -280,7 +280,7 @@ namespace SharpQuake
             }
         }
 
-        public bool IsValidCD
+        public Boolean IsValidCD
         {
             get
             {
@@ -288,7 +288,7 @@ namespace SharpQuake
             }
         }
 
-        public bool IsLooping
+        public Boolean IsLooping
         {
             get
             {
@@ -296,7 +296,7 @@ namespace SharpQuake
             }
         }
 
-        public byte[] Remap
+        public Byte[] Remap
         {
             get
             {
@@ -304,7 +304,7 @@ namespace SharpQuake
             }
         }
 
-        public byte MaxTrack
+        public Byte MaxTrack
         {
             get
             {
@@ -312,7 +312,7 @@ namespace SharpQuake
             }
         }
 
-        public byte CurrentTrack
+        public Byte CurrentTrack
         {
             get
             {
@@ -320,7 +320,7 @@ namespace SharpQuake
             }
         }
 
-        public float Volume
+        public Single Volume
         {
             get
             {
@@ -337,18 +337,18 @@ namespace SharpQuake
             streamer = new OggStreamer(441000);
             _Volume = snd.BgmVolume;
 
-            if (Directory.Exists(string.Format("{0}/{1}/music/", qparam.globalbasedir, qparam.globalgameid)) == false)
+            if (Directory.Exists( String.Format("{0}/{1}/music/", qparam.globalbasedir, qparam.globalgameid)) == false)
             {
                 _noAudio = true;
             }
         }
 
-        public void Play(byte track, bool looping)
+        public void Play( Byte track, Boolean looping )
         {
             if (_noAudio == false)
             {
                 trackid = track.ToString("00");
-                trackpath = string.Format("{0}/{1}/music/track{2}.ogg", qparam.globalbasedir, qparam.globalgameid, trackid);
+                trackpath = String.Format("{0}/{1}/music/track{2}.ogg", qparam.globalbasedir, qparam.globalgameid, trackid);
 #if DEBUG
                 Console.WriteLine("DEBUG: track path:{0} ", trackpath);
 #endif

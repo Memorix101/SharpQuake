@@ -35,16 +35,16 @@ namespace SharpQuake
     /// </summary>
     internal static class sbar
     {
-        public static int Lines
+        public static Int32 Lines
         {
             get; set;
         }
 
-        public const int SBAR_HEIGHT = 24;
+        public const Int32 SBAR_HEIGHT = 24;
 
-        private const int STAT_MINUS = 10;
-        private static int _Updates; // sb_updates		// if >= vid.numpages, no update needed
-        private static bool _ShowScores; // sb_showscores
+        private const Int32 STAT_MINUS = 10;
+        private static Int32 _Updates; // sb_updates		// if >= vid.numpages, no update needed
+        private static Boolean _ShowScores; // sb_showscores
 
         // num frame for '-' stats digit
 
@@ -80,7 +80,7 @@ namespace SharpQuake
         private static glpic_t[,] _HWeapons = new glpic_t[7, 5];   // 0 is active, 1 is owned, 2-5 are flashes
 
         //MED 01/04/97 added array to simplify weapon parsing
-        private static int[] _HipWeapons = new int[]
+        private static Int32[] _HipWeapons = new Int32[]
         {
             QItems.HIT_LASER_CANNON_BIT, QItems.HIT_MJOLNIR_BIT, 4, QItems.HIT_PROXIMITY_GUN_BIT
         };
@@ -88,21 +88,21 @@ namespace SharpQuake
         //MED 01/04/97 added hipnotic items array
         private static glpic_t[] _HItems = new glpic_t[2];
 
-        private static int[] _FragSort = new int[QDef.MAX_SCOREBOARD];
-        private static string[] _ScoreBoardText = new string[QDef.MAX_SCOREBOARD];
-        private static int[] _ScoreBoardTop = new int[QDef.MAX_SCOREBOARD];
-        private static int[] _ScoreBoardBottom = new int[QDef.MAX_SCOREBOARD];
-        private static int[] _ScoreBoardCount = new int[QDef.MAX_SCOREBOARD];
-        private static int _ScoreBoardLines;
+        private static Int32[] _FragSort = new Int32[QDef.MAX_SCOREBOARD];
+        private static String[] _ScoreBoardText = new String[QDef.MAX_SCOREBOARD];
+        private static Int32[] _ScoreBoardTop = new Int32[QDef.MAX_SCOREBOARD];
+        private static Int32[] _ScoreBoardBottom = new Int32[QDef.MAX_SCOREBOARD];
+        private static Int32[] _ScoreBoardCount = new Int32[QDef.MAX_SCOREBOARD];
+        private static Int32 _ScoreBoardLines;
 
         // sb_lines scan lines to draw
 
         // Sbar_Init
         public static void Init()
         {
-            for( int i = 0; i < 10; i++ )
+            for( var i = 0; i < 10; i++ )
             {
-                string str = i.ToString();
+                var str = i.ToString();
                 _Nums[0, i] = Drawer.PicFromWad( "num_" + str );
                 _Nums[1, i] = Drawer.PicFromWad( "anum_" + str );
             }
@@ -129,9 +129,9 @@ namespace SharpQuake
             _Weapons[1, 5] = Drawer.PicFromWad( "inv2_srlaunch" );
             _Weapons[1, 6] = Drawer.PicFromWad( "inv2_lightng" );
 
-            for( int i = 0; i < 5; i++ )
+            for( var i = 0; i < 5; i++ )
             {
-                string s = "inva" + ( i + 1 ).ToString();
+                var s = "inva" + ( i + 1 ).ToString();
                 _Weapons[2 + i, 0] = Drawer.PicFromWad( s + "_shotgun" );
                 _Weapons[2 + i, 1] = Drawer.PicFromWad( s + "_sshotgun" );
                 _Weapons[2 + i, 2] = Drawer.PicFromWad( s + "_nailgun" );
@@ -200,9 +200,9 @@ namespace SharpQuake
                 _HWeapons[1, 3] = Drawer.PicFromWad( "inv2_prox_gren" );
                 _HWeapons[1, 4] = Drawer.PicFromWad( "inv2_prox" );
 
-                for( int i = 0; i < 5; i++ )
+                for( var i = 0; i < 5; i++ )
                 {
-                    string s = "inva" + ( i + 1 ).ToString();
+                    var s = "inva" + ( i + 1 ).ToString();
                     _HWeapons[2 + i, 0] = Drawer.PicFromWad( s + "_laser" );
                     _HWeapons[2 + i, 1] = Drawer.PicFromWad( s + "_mjolnir" );
                     _HWeapons[2 + i, 2] = Drawer.PicFromWad( s + "_gren_prox" );
@@ -388,9 +388,9 @@ namespace SharpQuake
             Drawer.DrawTransPic( 0, 56, pic );
 
             // time
-            int dig = client.cl.completed_time / 60;
+            var dig = client.cl.completed_time / 60;
             IntermissionNumber( 160, 64, dig, 3, 0 );
-            int num = client.cl.completed_time - dig * 60;
+            var num = client.cl.completed_time - dig * 60;
             Drawer.DrawTransPic( 234, 64, _Colon );
             Drawer.DrawTransPic( 246, 64, _Nums[0, num / 10] );
             Drawer.DrawTransPic( 266, 64, _Nums[0, num % 10] );
@@ -418,9 +418,9 @@ namespace SharpQuake
         /// <summary>
         /// Sbar_IntermissionNumber
         /// </summary>
-        private static void IntermissionNumber( int x, int y, int num, int digits, int color )
+        private static void IntermissionNumber( Int32 x, Int32 y, Int32 num, Int32 digits, Int32 color )
         {
-            string str = num.ToString();
+            var str = num.ToString();
             if( str.Length > digits )
             {
                 str = str.Remove( 0, str.Length - digits );
@@ -429,9 +429,9 @@ namespace SharpQuake
             if( str.Length < digits )
                 x += ( digits - str.Length ) * 24;
 
-            for( int i = 0; i < str.Length; i++ )
+            for( var i = 0; i < str.Length; i++ )
             {
-                int frame = ( str[i] == '-' ? STAT_MINUS : str[i] - '0' );
+                var frame = ( str[i] == '-' ? STAT_MINUS : str[i] - '0' );
                 Drawer.DrawTransPic( x, y, _Nums[color, frame] );
                 x += 24;
             }
@@ -440,7 +440,7 @@ namespace SharpQuake
         // Sbar_DrawInventory
         private static void DrawInventory()
         {
-            int flashon;
+            Int32 flashon;
 
             client_state_t cl = client.cl;
             if( Common.GameKind == GameKind.Rogue )
@@ -454,12 +454,12 @@ namespace SharpQuake
                 DrawPic( 0, -24, _IBar );
 
             // weapons
-            for( int i = 0; i < 7; i++ )
+            for( var i = 0; i < 7; i++ )
             {
                 if( cl.HasItems( QItems.IT_SHOTGUN << i ) )
                 {
-                    float time = cl.item_gettime[i];
-                    flashon = (int)( ( cl.time - time ) * 10 );
+                    var time = cl.item_gettime[i];
+                    flashon = ( Int32 ) ( ( cl.time - time ) * 10 );
                     if( flashon >= 10 )
                     {
                         if( cl.stats[QStats.STAT_ACTIVEWEAPON] == ( QItems.IT_SHOTGUN << i ) )
@@ -481,13 +481,13 @@ namespace SharpQuake
             // hipnotic weapons
             if( Common.GameKind == GameKind.Hipnotic )
             {
-                int grenadeflashing = 0;
-                for( int i = 0; i < 4; i++ )
+                var grenadeflashing = 0;
+                for( var i = 0; i < 4; i++ )
                 {
                     if( cl.HasItems( 1 << _HipWeapons[i] ) )
                     {
-                        float time = cl.item_gettime[_HipWeapons[i]];
-                        flashon = (int)( ( cl.time - time ) * 10 );
+                        var time = cl.item_gettime[_HipWeapons[i]];
+                        flashon = ( Int32 ) ( ( cl.time - time ) * 10 );
                         if( flashon >= 10 )
                         {
                             if( cl.stats[QStats.STAT_ACTIVEWEAPON] == ( 1 << _HipWeapons[i] ) )
@@ -538,15 +538,15 @@ namespace SharpQuake
             {
                 // check for powered up weapon.
                 if( cl.stats[QStats.STAT_ACTIVEWEAPON] >= QItems.RIT_LAVA_NAILGUN )
-                    for( int i = 0; i < 5; i++ )
+                    for( var i = 0; i < 5; i++ )
                         if( cl.stats[QStats.STAT_ACTIVEWEAPON] == ( QItems.RIT_LAVA_NAILGUN << i ) )
                             DrawPic( ( i + 2 ) * 24, -16, _RWeapons[i] );
             }
 
             // ammo counts
-            for( int i = 0; i < 4; i++ )
+            for( var i = 0; i < 4; i++ )
             {
-                string num = cl.stats[QStats.STAT_SHELLS + i].ToString().PadLeft( 3 );
+                var num = cl.stats[QStats.STAT_SHELLS + i].ToString().PadLeft( 3 );
                 //sprintf(num, "%3i", cl.stats[QStats.STAT_SHELLS + i]);
                 if( num[0] != ' ' )
                     DrawCharacter( ( 6 * i + 1 ) * 8 - 2, -24, 18 + num[0] - '0' );
@@ -558,11 +558,11 @@ namespace SharpQuake
 
             flashon = 0;
             // items
-            for( int i = 0; i < 6; i++ )
+            for( var i = 0; i < 6; i++ )
             {
                 if( cl.HasItems( 1 << ( 17 + i ) ) )
                 {
-                    float time = cl.item_gettime[17 + i];
+                    var time = cl.item_gettime[17 + i];
                     if( time > 0 && time > cl.time - 2 && flashon > 0 )
                     {  // flash frame
                         _Updates = 0;
@@ -584,11 +584,11 @@ namespace SharpQuake
             // hipnotic items
             if( Common.GameKind == GameKind.Hipnotic )
             {
-                for( int i = 0; i < 2; i++ )
+                for( var i = 0; i < 2; i++ )
                 {
                     if( cl.HasItems( 1 << ( 24 + i ) ) )
                     {
-                        float time = cl.item_gettime[24 + i];
+                        var time = cl.item_gettime[24 + i];
                         if( time > 0 && time > cl.time - 2 && flashon > 0 )
                         {  // flash frame
                             _Updates = 0;
@@ -606,11 +606,11 @@ namespace SharpQuake
             if( Common.GameKind == GameKind.Rogue )
             {
                 // new rogue items
-                for( int i = 0; i < 2; i++ )
+                for( var i = 0; i < 2; i++ )
                 {
                     if( cl.HasItems( 1 << ( 29 + i ) ) )
                     {
-                        float time = cl.item_gettime[29 + i];
+                        var time = cl.item_gettime[29 + i];
 
                         if( time > 0 && time > cl.time - 2 && flashon > 0 )
                         {	// flash frame
@@ -629,11 +629,11 @@ namespace SharpQuake
             else
             {
                 // sigils
-                for( int i = 0; i < 4; i++ )
+                for( var i = 0; i < 4; i++ )
                 {
                     if( cl.HasItems( 1 << ( 28 + i ) ) )
                     {
-                        float time = cl.item_gettime[28 + i];
+                        var time = cl.item_gettime[28 + i];
                         if( time > 0 && time > cl.time - 2 && flashon > 0 )
                         {	// flash frame
                             _Updates = 0;
@@ -653,8 +653,8 @@ namespace SharpQuake
             SortFrags();
 
             // draw the text
-            int l = _ScoreBoardLines <= 4 ? _ScoreBoardLines : 4;
-            int xofs, x = 23;
+            var l = _ScoreBoardLines <= 4 ? _ScoreBoardLines : 4;
+            Int32 xofs, x = 23;
             client_state_t cl = client.cl;
 
             if( cl.gametype == protocol.GAME_DEATHMATCH )
@@ -662,18 +662,18 @@ namespace SharpQuake
             else
                 xofs = ( Scr.vid.width - 320 ) >> 1;
 
-            int y = Scr.vid.height - SBAR_HEIGHT - 23;
+            var y = Scr.vid.height - SBAR_HEIGHT - 23;
 
-            for( int i = 0; i < l; i++ )
+            for( var i = 0; i < l; i++ )
             {
-                int k = _FragSort[i];
+                var k = _FragSort[i];
                 scoreboard_t s = cl.scores[k];
                 if( String.IsNullOrEmpty( s.name ) )
                     continue;
 
                 // draw background
-                int top = s.colors & 0xf0;
-                int bottom = ( s.colors & 15 ) << 4;
+                var top = s.colors & 0xf0;
+                var bottom = ( s.colors & 15 ) << 4;
                 top = ColorForMap( top );
                 bottom = ColorForMap( bottom );
 
@@ -681,8 +681,8 @@ namespace SharpQuake
                 Drawer.Fill( xofs + x * 8 + 10, y + 4, 28, 3, bottom );
 
                 // draw number
-                int f = s.frags;
-                string num = f.ToString().PadLeft( 3 );
+                var f = s.frags;
+                var num = f.ToString().PadLeft( 3 );
                 //sprintf(num, "%3i", f);
 
                 DrawCharacter( ( x + 1 ) * 8, -24, num[0] );
@@ -699,7 +699,7 @@ namespace SharpQuake
         }
 
         // Sbar_DrawPic
-        private static void DrawPic( int x, int y, glpic_t pic )
+        private static void DrawPic( Int32 x, Int32 y, glpic_t pic )
         {
             if( client.cl.gametype == protocol.GAME_DEATHMATCH )
                 Drawer.DrawPic( x, y + ( Scr.vid.height - SBAR_HEIGHT ), pic );
@@ -716,16 +716,16 @@ namespace SharpQuake
         }
 
         // Sbar_DrawNum
-        private static void DrawNum( int x, int y, int num, int digits, int color )
+        private static void DrawNum( Int32 x, Int32 y, Int32 num, Int32 digits, Int32 color )
         {
-            string str = num.ToString();// int l = Sbar_itoa(num, str);
+            var str = num.ToString();// int l = Sbar_itoa(num, str);
 
             if( str.Length > digits )
                 str = str.Remove( str.Length - digits );
             if( str.Length < digits )
                 x += ( digits - str.Length ) * 24;
 
-            for( int i = 0, frame; i < str.Length; i++ )
+            for( Int32 i = 0, frame; i < str.Length; i++ )
             {
                 if( str[i] == '-' )
                     frame = STAT_MINUS;
@@ -752,12 +752,12 @@ namespace SharpQuake
                 scoreboard_t s = cl.scores[cl.viewentity - 1];
 
                 // draw background
-                int top = s.colors & 0xf0;
-                int bottom = ( s.colors & 15 ) << 4;
+                var top = s.colors & 0xf0;
+                var bottom = ( s.colors & 15 ) << 4;
                 top = ColorForMap( top );
                 bottom = ColorForMap( bottom );
 
-                int xofs;
+                Int32 xofs;
                 if( cl.gametype == protocol.GAME_DEATHMATCH )
                     xofs = 113;
                 else
@@ -768,7 +768,7 @@ namespace SharpQuake
                 Drawer.Fill( xofs, Scr.vid.height - SBAR_HEIGHT + 12, 22, 9, bottom );
 
                 // draw number
-                string num = s.frags.ToString().PadLeft( 3 );
+                var num = s.frags.ToString().PadLeft( 3 );
                 if( top == 8 )
                 {
                     if( num[0] != ' ' )
@@ -789,7 +789,7 @@ namespace SharpQuake
             }
             // PGM 01/19/97 - team color drawing
 
-            int f, anim;
+            Int32 f, anim;
 
             if( cl.HasItems( QItems.IT_INVISIBILITY | QItems.IT_INVULNERABILITY ) )
             {
@@ -841,14 +841,14 @@ namespace SharpQuake
             SortFrags();
 
             // draw the text
-            int l = _ScoreBoardLines;
-            int y = Scr.vid.height - sbar.Lines;
-            int numlines = sbar.Lines / 8;
+            var l = _ScoreBoardLines;
+            var y = Scr.vid.height - sbar.Lines;
+            var numlines = sbar.Lines / 8;
             if( numlines < 3 )
                 return;
 
             //find us
-            int i;
+            Int32 i;
             for( i = 0; i < _ScoreBoardLines; i++ )
                 if( _FragSort[i] == client.cl.viewentity - 1 )
                     break;
@@ -863,17 +863,17 @@ namespace SharpQuake
             if( i < 0 )
                 i = 0;
 
-            int x = 324;
+            var x = 324;
             for( ; i < _ScoreBoardLines && y < Scr.vid.height - 8; i++ )
             {
-                int k = _FragSort[i];
+                var k = _FragSort[i];
                 scoreboard_t s = client.cl.scores[k];
                 if( String.IsNullOrEmpty( s.name ) )
                     continue;
 
                 // draw background
-                int top = s.colors & 0xf0;
-                int bottom = ( s.colors & 15 ) << 4;
+                var top = s.colors & 0xf0;
+                var bottom = ( s.colors & 15 ) << 4;
                 top = ColorForMap( top );
                 bottom = ColorForMap( bottom );
 
@@ -881,7 +881,7 @@ namespace SharpQuake
                 Drawer.Fill( x, y + 4, 40, 4, bottom );
 
                 // draw number
-                string num = s.frags.ToString().PadLeft( 3 );
+                var num = s.frags.ToString().PadLeft( 3 );
                 Drawer.DrawCharacter( x + 8, y, num[0] );
                 Drawer.DrawCharacter( x + 16, y, num[1] );
                 Drawer.DrawCharacter( x + 24, y, num[2] );
@@ -906,7 +906,7 @@ namespace SharpQuake
 
             // sort by frags
             _ScoreBoardLines = 0;
-            for( int i = 0; i < cl.maxclients; i++ )
+            for( var i = 0; i < cl.maxclients; i++ )
             {
                 if( !String.IsNullOrEmpty( cl.scores[i].name ) )
                 {
@@ -915,12 +915,12 @@ namespace SharpQuake
                 }
             }
 
-            for( int i = 0; i < _ScoreBoardLines; i++ )
+            for( var i = 0; i < _ScoreBoardLines; i++ )
             {
-                for( int j = 0; j < _ScoreBoardLines - 1 - i; j++ )
+                for( var j = 0; j < _ScoreBoardLines - 1 - i; j++ )
                     if( cl.scores[_FragSort[j]].frags < cl.scores[_FragSort[j + 1]].frags )
                     {
-                        int k = _FragSort[j];
+                        var k = _FragSort[j];
                         _FragSort[j] = _FragSort[j + 1];
                         _FragSort[j + 1] = k;
                     }
@@ -930,7 +930,7 @@ namespace SharpQuake
         // Sbar_DrawCharacter
         //
         // Draws one solid graphics character
-        private static void DrawCharacter( int x, int y, int num )
+        private static void DrawCharacter( Int32 x, Int32 y, Int32 num )
         {
             if( client.cl.gametype == protocol.GAME_DEATHMATCH )
                 Drawer.DrawCharacter( x + 4, y + Scr.vid.height - SBAR_HEIGHT, num );
@@ -939,7 +939,7 @@ namespace SharpQuake
         }
 
         // Sbar_ColorForMap
-        private static int ColorForMap( int m )
+        private static Int32 ColorForMap( Int32 m )
         {
             return m < 128 ? m + 8 : m + 8;
         }
@@ -958,16 +958,16 @@ namespace SharpQuake
             DrawString( 8, 12, sb.ToString() );
 
             // time
-            int minutes = (int)( cl.time / 60.0 );
-            int seconds = (int)( cl.time - 60 * minutes );
-            int tens = seconds / 10;
-            int units = seconds - 10 * tens;
+            var minutes = ( Int32 ) ( cl.time / 60.0 );
+            var seconds = ( Int32 ) ( cl.time - 60 * minutes );
+            var tens = seconds / 10;
+            var units = seconds - 10 * tens;
             sb.Length = 0;
             sb.AppendFormat( "Time :{0,3}:{1}{2}", minutes, tens, units );
             DrawString( 184, 4, sb.ToString() );
 
             // draw level name
-            int l = cl.levelname.Length;
+            var l = cl.levelname.Length;
             DrawString( 232 - l * 4, 12, cl.levelname );
         }
 
@@ -984,20 +984,20 @@ namespace SharpQuake
             SortFrags();
 
             // draw the text
-            int l = _ScoreBoardLines;
+            var l = _ScoreBoardLines;
 
-            int x = 80 + ( ( Scr.vid.width - 320 ) >> 1 );
-            int y = 40;
-            for( int i = 0; i < l; i++ )
+            var x = 80 + ( ( Scr.vid.width - 320 ) >> 1 );
+            var y = 40;
+            for( var i = 0; i < l; i++ )
             {
-                int k = _FragSort[i];
+                var k = _FragSort[i];
                 scoreboard_t s = client.cl.scores[k];
                 if( String.IsNullOrEmpty( s.name ) )
                     continue;
 
                 // draw background
-                int top = s.colors & 0xf0;
-                int bottom = ( s.colors & 15 ) << 4;
+                var top = s.colors & 0xf0;
+                var bottom = ( s.colors & 15 ) << 4;
                 top = ColorForMap( top );
                 bottom = ColorForMap( bottom );
 
@@ -1005,7 +1005,7 @@ namespace SharpQuake
                 Drawer.Fill( x, y + 4, 40, 4, bottom );
 
                 // draw number
-                string num = s.frags.ToString().PadLeft( 3 );
+                var num = s.frags.ToString().PadLeft( 3 );
 
                 Drawer.DrawCharacter( x + 8, y, num[0] );
                 Drawer.DrawCharacter( x + 16, y, num[1] );
@@ -1022,7 +1022,7 @@ namespace SharpQuake
         }
 
         // Sbar_DrawTransPic
-        private static void DrawTransPic( int x, int y, glpic_t pic )
+        private static void DrawTransPic( Int32 x, Int32 y, glpic_t pic )
         {
             if( client.cl.gametype == protocol.GAME_DEATHMATCH )
                 Drawer.DrawTransPic( x, y + ( Scr.vid.height - SBAR_HEIGHT ), pic );
@@ -1031,7 +1031,7 @@ namespace SharpQuake
         }
 
         // Sbar_DrawString
-        private static void DrawString( int x, int y, string str )
+        private static void DrawString( Int32 x, Int32 y, String str )
         {
             if( client.cl.gametype == protocol.GAME_DEATHMATCH )
                 Drawer.DrawString( x, y + Scr.vid.height - SBAR_HEIGHT, str );

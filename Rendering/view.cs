@@ -39,7 +39,7 @@ namespace SharpQuake
     /// </summary>
     internal static class view
     {
-        public static float Crosshair
+        public static Single Crosshair
         {
             get
             {
@@ -47,7 +47,7 @@ namespace SharpQuake
             }
         }
 
-        public static float Gamma
+        public static Single Gamma
         {
             get
             {
@@ -95,27 +95,27 @@ namespace SharpQuake
         private static CVar _CenterMove;// = { "v_centermove", "0.15", false };
         private static CVar _CenterSpeed;// = { "v_centerspeed", "500" };
 
-        private static byte[] _GammaTable; // [256];	// palette is sent through this
+        private static Byte[] _GammaTable; // [256];	// palette is sent through this
         private static cshift_t _CShift_empty;// = { { 130, 80, 50 }, 0 };
         private static cshift_t _CShift_water;// = { { 130, 80, 50 }, 128 };
         private static cshift_t _CShift_slime;// = { { 0, 25, 5 }, 150 };
         private static cshift_t _CShift_lava;// = { { 255, 80, 0 }, 150 };
 
         // v_blend[4]		// rgba 0.0 - 1.0
-        private static byte[,] _Ramps = new byte[3, 256]; // ramps[3][256]
+        private static Byte[,] _Ramps = new Byte[3, 256]; // ramps[3][256]
 
         private static Vector3 _Forward; // vec3_t forward
         private static Vector3 _Right; // vec3_t right
         private static Vector3 _Up; // vec3_t up
 
-        private static float _DmgTime; // v_dmg_time
-        private static float _DmgRoll; // v_dmg_roll
-        private static float _DmgPitch; // v_dmg_pitch
+        private static Single _DmgTime; // v_dmg_time
+        private static Single _DmgRoll; // v_dmg_roll
+        private static Single _DmgPitch; // v_dmg_pitch
 
-        private static float _OldZ = 0; // static oldz  from CalcRefdef()
-        private static float _OldYaw = 0; // static oldyaw from CalcGunAngle
-        private static float _OldPitch = 0; // static oldpitch from CalcGunAngle
-        private static float _OldGammaValue; // static float oldgammavalue from CheckGamma
+        private static Single _OldZ = 0; // static oldz  from CalcRefdef()
+        private static Single _OldYaw = 0; // static oldyaw from CalcGunAngle
+        private static Single _OldPitch = 0; // static oldpitch from CalcGunAngle
+        private static Single _OldGammaValue; // static float oldgammavalue from CheckGamma
 
         // V_Init
         public static void Init()
@@ -237,14 +237,14 @@ namespace SharpQuake
         /// V_CalcRoll
         /// Used by view and sv_user
         /// </summary>
-        public static float CalcRoll( ref Vector3 angles, ref Vector3 velocity )
+        public static Single CalcRoll( ref Vector3 angles, ref Vector3 velocity )
         {
             MathLib.AngleVectors( ref angles, out _Forward, out _Right, out _Up );
-            float side = Vector3.Dot( velocity, _Right );
-            float sign = side < 0 ? -1 : 1;
+            var side = Vector3.Dot( velocity, _Right );
+            Single sign = side < 0 ? -1 : 1;
             side = Math.Abs( side );
 
-            float value = _ClRollAngle.Value;
+            var value = _ClRollAngle.Value;
             if( side < _ClRollSpeed.Value )
                 side = side * value / _ClRollSpeed.Value;
             else
@@ -258,17 +258,17 @@ namespace SharpQuake
         {
             CalcPowerupCshift();
 
-            bool isnew = false;
+            var isnew = false;
 
             client_state_t cl = client.cl;
-            for( int i = 0; i < ColorShift.NUM_CSHIFTS; i++ )
+            for( var i = 0; i < ColorShift.NUM_CSHIFTS; i++ )
             {
                 if( cl.cshifts[i].percent != cl.prev_cshifts[i].percent )
                 {
                     isnew = true;
                     cl.prev_cshifts[i].percent = cl.cshifts[i].percent;
                 }
-                for( int j = 0; j < 3; j++ )
+                for( var j = 0; j < 3; j++ )
                     if( cl.cshifts[i].destcolor[j] != cl.prev_cshifts[i].destcolor[j] )
                     {
                         isnew = true;
@@ -277,32 +277,32 @@ namespace SharpQuake
             }
 
             // drop the damage value
-            cl.cshifts[ColorShift.CSHIFT_DAMAGE].percent -= (int)( host.FrameTime * 150 );
+            cl.cshifts[ColorShift.CSHIFT_DAMAGE].percent -= ( Int32 ) ( host.FrameTime * 150 );
             if( cl.cshifts[ColorShift.CSHIFT_DAMAGE].percent < 0 )
                 cl.cshifts[ColorShift.CSHIFT_DAMAGE].percent = 0;
 
             // drop the bonus value
-            cl.cshifts[ColorShift.CSHIFT_BONUS].percent -= (int)( host.FrameTime * 100 );
+            cl.cshifts[ColorShift.CSHIFT_BONUS].percent -= ( Int32 ) ( host.FrameTime * 100 );
             if( cl.cshifts[ColorShift.CSHIFT_BONUS].percent < 0 )
                 cl.cshifts[ColorShift.CSHIFT_BONUS].percent = 0;
 
-            bool force = CheckGamma();
+            var force = CheckGamma();
             if( !isnew && !force )
                 return;
 
             CalcBlend();
 
-            float a = Blend.A;
-            float r = 255 * Blend.R * a;
-            float g = 255 * Blend.G * a;
-            float b = 255 * Blend.B * a;
+            var a = Blend.A;
+            var r = 255 * Blend.R * a;
+            var g = 255 * Blend.G * a;
+            var b = 255 * Blend.B * a;
 
             a = 1 - a;
-            for( int i = 0; i < 256; i++ )
+            for( var i = 0; i < 256; i++ )
             {
-                int ir = (int)( i * a + r );
-                int ig = (int)( i * a + g );
-                int ib = (int)( i * a + b );
+                var ir = ( Int32 ) ( i * a + r );
+                var ig = ( Int32 ) ( i * a + g );
+                var ib = ( Int32 ) ( i * a + b );
                 if( ir > 255 )
                     ir = 255;
                 if( ig > 255 )
@@ -315,15 +315,15 @@ namespace SharpQuake
                 _Ramps[2, i] = _GammaTable[ib];
             }
 
-            byte[] basepal = host.BasePal;
-            int offset = 0;
-            byte[] newpal = new byte[768];
+            Byte[] basepal = host.BasePal;
+            var offset = 0;
+            Byte[] newpal = new Byte[768];
 
-            for( int i = 0; i < 256; i++ )
+            for( var i = 0; i < 256; i++ )
             {
-                int ir = basepal[offset + 0];
-                int ig = basepal[offset + 1];
-                int ib = basepal[offset + 2];
+                Int32 ir = basepal[offset + 0];
+                Int32 ig = basepal[offset + 1];
+                Int32 ib = basepal[offset + 2];
 
                 newpal[offset + 0] = _Ramps[0, ir];
                 newpal[offset + 1] = _Ramps[1, ig];
@@ -365,18 +365,18 @@ namespace SharpQuake
         /// </summary>
         public static void CalcBlend()
         {
-            float r = 0;
-            float g = 0;
-            float b = 0;
-            float a = 0;
+            Single r = 0;
+            Single g = 0;
+            Single b = 0;
+            Single a = 0;
 
             cshift_t[] cshifts = client.cl.cshifts;
 
             if( _glCShiftPercent.Value != 0 )
             {
-                for( int j = 0; j < ColorShift.NUM_CSHIFTS; j++ )
+                for( var j = 0; j < ColorShift.NUM_CSHIFTS; j++ )
                 {
-                    float a2 = ( ( cshifts[j].percent * _glCShiftPercent.Value ) / 100.0f ) / 255.0f;
+                    var a2 = ( ( cshifts[j].percent * _glCShiftPercent.Value ) / 100.0f ) / 255.0f;
 
                     if( a2 == 0 )
                         continue;
@@ -403,18 +403,18 @@ namespace SharpQuake
         // V_ParseDamage
         public static void ParseDamage()
         {
-            int armor = net.Reader.ReadByte();
-            int blood = net.Reader.ReadByte();
+            var armor = net.Reader.ReadByte();
+            var blood = net.Reader.ReadByte();
             Vector3 from = net.Reader.ReadCoords();
 
-            float count = blood * 0.5f + armor * 0.5f;
+            var count = blood * 0.5f + armor * 0.5f;
             if( count < 10 )
                 count = 10;
 
             client_state_t cl = client.cl;
-            cl.faceanimtime = (float)cl.time + 0.2f; // put sbar face into pain frame
+            cl.faceanimtime = ( Single ) cl.time + 0.2f; // put sbar face into pain frame
 
-            cl.cshifts[ColorShift.CSHIFT_DAMAGE].percent += (int)( 3 * count );
+            cl.cshifts[ColorShift.CSHIFT_DAMAGE].percent += ( Int32 ) ( 3 * count );
             if( cl.cshifts[ColorShift.CSHIFT_DAMAGE].percent < 0 )
                 cl.cshifts[ColorShift.CSHIFT_DAMAGE].percent = 0;
             if( cl.cshifts[ColorShift.CSHIFT_DAMAGE].percent > 150 )
@@ -450,7 +450,7 @@ namespace SharpQuake
             Vector3 forward, right, up;
             MathLib.AngleVectors( ref ent.angles, out forward, out right, out up );
 
-            float side = Vector3.Dot( from, right );
+            var side = Vector3.Dot( from, right );
 
             _DmgRoll = count * side * _KickRoll.Value;
 
@@ -464,7 +464,7 @@ namespace SharpQuake
         /// V_SetContentsColor
         /// Underwater, lava, etc each has a color shift
         /// </summary>
-        public static void SetContentsColor( int contents )
+        public static void SetContentsColor( Int32 contents )
         {
             switch( contents )
             {
@@ -488,25 +488,25 @@ namespace SharpQuake
         }
 
         // BuildGammaTable
-        private static void BuildGammaTable( float g )
+        private static void BuildGammaTable( Single g )
         {
             if( g == 1.0f )
             {
-                for( int i = 0; i < 256; i++ )
+                for( var i = 0; i < 256; i++ )
                 {
-                    _GammaTable[i] = (byte)i;
+                    _GammaTable[i] = ( Byte ) i;
                 }
             }
             else
             {
-                for( int i = 0; i < 256; i++ )
+                for( var i = 0; i < 256; i++ )
                 {
-                    int inf = (int)( 255 * Math.Pow( ( i + 0.5 ) / 255.5, g ) + 0.5 );
+                    var inf = ( Int32 ) ( 255 * Math.Pow( ( i + 0.5 ) / 255.5, g ) + 0.5 );
                     if( inf < 0 )
                         inf = 0;
                     if( inf > 255 )
                         inf = 255;
-                    _GammaTable[i] = (byte)inf;
+                    _GammaTable[i] = ( Byte ) inf;
                 }
             }
         }
@@ -514,10 +514,10 @@ namespace SharpQuake
         // V_cshift_f
         private static void CShift_f()
         {
-            int.TryParse( Command.Argv( 1 ), out _CShift_empty.destcolor[0] );
-            int.TryParse( Command.Argv( 2 ), out _CShift_empty.destcolor[1] );
-            int.TryParse( Command.Argv( 3 ), out _CShift_empty.destcolor[2] );
-            int.TryParse( Command.Argv( 4 ), out _CShift_empty.percent );
+            Int32.TryParse( Command.Argv( 1 ), out _CShift_empty.destcolor[0] );
+            Int32.TryParse( Command.Argv( 2 ), out _CShift_empty.destcolor[1] );
+            Int32.TryParse( Command.Argv( 3 ), out _CShift_empty.destcolor[2] );
+            Int32.TryParse( Command.Argv( 4 ), out _CShift_empty.percent );
         }
 
         // V_BonusFlash_f
@@ -565,7 +565,7 @@ namespace SharpQuake
             ent.angles.Y = client.cl.viewangles.Y;	// the model should face the view dir
             ent.angles.X = -client.cl.viewangles.X;	// the model should face the view dir
 
-            float bob = CalcBob();
+            var bob = CalcBob();
 
             refdef_t rdef = render.RefDef;
             client_state_t cl = client.cl;
@@ -606,7 +606,7 @@ namespace SharpQuake
 
             // fudge position around to keep amount of weapon visible
             // roughly equal with different FOV
-            float viewSize = Scr.ViewSize.Value; // scr_viewsize
+            var viewSize = Scr.ViewSize.Value; // scr_viewsize
 
             if( viewSize == 110 )
                 view.origin.Z += 1;
@@ -627,7 +627,7 @@ namespace SharpQuake
             // smooth out stair step ups
             if( cl.onground && ent.origin.Z - _OldZ > 0 )
             {
-                float steptime = (float)( cl.time - cl.oldtime );
+                var steptime = ( Single ) ( cl.time - cl.oldtime );
                 if( steptime < 0 )
                     steptime = 0;
 
@@ -649,13 +649,13 @@ namespace SharpQuake
         // V_AddIdle
         //
         // Idle swaying
-        private static void AddIdle( float idleScale )
+        private static void AddIdle( Single idleScale )
         {
-            double time = client.cl.time;
+            var time = client.cl.time;
             Vector3 v = new Vector3(
-                (float)( Math.Sin( time * _IPitchCycle.Value ) * _IPitchLevel.Value ),
-                (float)( Math.Sin( time * _IYawCycle.Value ) * _IYawLevel.Value ),
-                (float)( Math.Sin( time * _IRollCycle.Value ) * _IRollLevel.Value ) );
+                ( Single ) ( Math.Sin( time * _IPitchCycle.Value ) * _IPitchLevel.Value ),
+                ( Single ) ( Math.Sin( time * _IYawCycle.Value ) * _IYawLevel.Value ),
+                ( Single ) ( Math.Sin( time * _IRollCycle.Value ) * _IRollLevel.Value ) );
             render.RefDef.viewangles += v * idleScale;
         }
 
@@ -684,7 +684,7 @@ namespace SharpQuake
                 if( Math.Abs( cl.cmd.forwardmove ) < client.ForwardSpeed )
                     cl.driftmove = 0;
                 else
-                    cl.driftmove += (float)host.FrameTime;
+                    cl.driftmove += ( Single ) host.FrameTime;
 
                 if( cl.driftmove > _CenterMove.Value )
                 {
@@ -693,15 +693,15 @@ namespace SharpQuake
                 return;
             }
 
-            float delta = cl.idealpitch - cl.viewangles.X;
+            var delta = cl.idealpitch - cl.viewangles.X;
             if( delta == 0 )
             {
                 cl.pitchvel = 0;
                 return;
             }
 
-            float move = (float)host.FrameTime * cl.pitchvel;
-            cl.pitchvel += (float)host.FrameTime * _CenterSpeed.Value;
+            var move = ( Single ) host.FrameTime * cl.pitchvel;
+            cl.pitchvel += ( Single ) host.FrameTime * _CenterSpeed.Value;
 
             if( delta > 0 )
             {
@@ -724,28 +724,28 @@ namespace SharpQuake
         }
 
         // V_CalcBob
-        private static float CalcBob()
+        private static Single CalcBob()
         {
             client_state_t cl = client.cl;
-            float bobCycle = _ClBobCycle.Value;
-            float bobUp = _ClBobUp.Value;
-            float cycle = (float)( cl.time - (int)( cl.time / bobCycle ) * bobCycle );
+            var bobCycle = _ClBobCycle.Value;
+            var bobUp = _ClBobUp.Value;
+            var cycle = ( Single ) ( cl.time - ( Int32 ) ( cl.time / bobCycle ) * bobCycle );
             cycle /= bobCycle;
             if( cycle < bobUp )
-                cycle = (float)Math.PI * cycle / bobUp;
+                cycle = ( Single ) Math.PI * cycle / bobUp;
             else
-                cycle = (float)( Math.PI + Math.PI * ( cycle - bobUp ) / ( 1.0 - bobUp ) );
+                cycle = ( Single ) ( Math.PI + Math.PI * ( cycle - bobUp ) / ( 1.0 - bobUp ) );
 
             // bob is proportional to velocity in the xy plane
             // (don't count Z, or jumping messes it up)
             Vector2 tmp = cl.velocity.Xy;
-            double bob = tmp.Length * _ClBob.Value;
+            Double bob = tmp.Length * _ClBob.Value;
             bob = bob * 0.3 + bob * 0.7 * Math.Sin( cycle );
             if( bob > 4 )
                 bob = 4;
             else if( bob < -7 )
                 bob = -7;
-            return (float)bob;
+            return ( Single ) bob;
         }
 
         // V_CalcViewRoll
@@ -755,14 +755,14 @@ namespace SharpQuake
         {
             client_state_t cl = client.cl;
             refdef_t rdef = render.RefDef;
-            float side = CalcRoll( ref client.ViewEntity.angles, ref cl.velocity );
+            var side = CalcRoll( ref client.ViewEntity.angles, ref cl.velocity );
             rdef.viewangles.Z += side;
 
             if( _DmgTime > 0 )
             {
                 rdef.viewangles.Z += _DmgTime / _KickTime.Value * _DmgRoll;
                 rdef.viewangles.X += _DmgTime / _KickTime.Value * _DmgPitch;
-                _DmgTime -= (float)host.FrameTime;
+                _DmgTime -= ( Single ) host.FrameTime;
             }
 
             if( cl.stats[QStats.STAT_HEALTH] <= 0 )
@@ -802,8 +802,8 @@ namespace SharpQuake
         private static void CalcGunAngle()
         {
             refdef_t rdef = render.RefDef;
-            float yaw = rdef.viewangles.Y;
-            float pitch = -rdef.viewangles.X;
+            var yaw = rdef.viewangles.Y;
+            var pitch = -rdef.viewangles.X;
 
             yaw = AngleDelta( yaw - rdef.viewangles.Y ) * 0.4f;
             if( yaw > 10 )
@@ -815,7 +815,7 @@ namespace SharpQuake
                 pitch = 10;
             if( pitch < -10 )
                 pitch = -10;
-            float move = (float)host.FrameTime * 20;
+            var move = ( Single ) host.FrameTime * 20;
             if( yaw > _OldYaw )
             {
                 if( _OldYaw + move < yaw )
@@ -845,14 +845,14 @@ namespace SharpQuake
             cl.viewent.angles.Y = rdef.viewangles.Y + yaw;
             cl.viewent.angles.X = -( rdef.viewangles.X + pitch );
 
-            float idleScale = _IdleScale.Value;
-            cl.viewent.angles.Z -= (float)( idleScale * Math.Sin( cl.time * _IRollCycle.Value ) * _IRollLevel.Value );
-            cl.viewent.angles.X -= (float)( idleScale * Math.Sin( cl.time * _IPitchCycle.Value ) * _IPitchLevel.Value );
-            cl.viewent.angles.Y -= (float)( idleScale * Math.Sin( cl.time * _IYawCycle.Value ) * _IYawLevel.Value );
+            var idleScale = _IdleScale.Value;
+            cl.viewent.angles.Z -= ( Single ) ( idleScale * Math.Sin( cl.time * _IRollCycle.Value ) * _IRollLevel.Value );
+            cl.viewent.angles.X -= ( Single ) ( idleScale * Math.Sin( cl.time * _IPitchCycle.Value ) * _IPitchLevel.Value );
+            cl.viewent.angles.Y -= ( Single ) ( idleScale * Math.Sin( cl.time * _IYawCycle.Value ) * _IYawLevel.Value );
         }
 
         // angledelta()
-        private static float AngleDelta( float a )
+        private static Single AngleDelta( Single a )
         {
             a = MathLib.AngleMod( a );
             if( a > 180 )
@@ -897,7 +897,7 @@ namespace SharpQuake
         }
 
         // V_CheckGamma
-        private static bool CheckGamma()
+        private static Boolean CheckGamma()
         {
             if( _Gamma.Value == _OldGammaValue )
                 return false;
@@ -911,7 +911,7 @@ namespace SharpQuake
         }
 
         // VID_ShiftPalette from gl_vidnt.c
-        private static void ShiftPalette( byte[] palette )
+        private static void ShiftPalette( Byte[] palette )
         {
             //	VID_SetPalette (palette);
             //	gammaworks = SetDeviceGammaRamp (maindc, ramps);
@@ -919,7 +919,7 @@ namespace SharpQuake
 
         static view()
         {
-            _GammaTable = new byte[256];
+            _GammaTable = new Byte[256];
 
             _CShift_empty = new cshift_t( new[] { 130, 80, 50 }, 0 );
             _CShift_water = new cshift_t( new[] { 130, 80, 50 }, 128 );

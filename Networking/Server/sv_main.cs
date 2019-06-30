@@ -27,21 +27,21 @@ namespace SharpQuake
 {
     partial class server
     {
-        private static int _FatBytes; // fatbytes
-        private static byte[] _FatPvs = new byte[bsp_file.MAX_MAP_LEAFS / 8]; // fatpvs
+        private static Int32 _FatBytes; // fatbytes
+        private static Byte[] _FatPvs = new Byte[bsp_file.MAX_MAP_LEAFS / 8]; // fatpvs
 
         // SV_Init
         public static void Init()
         {
-            for( int i = 0; i < _BoxClipNodes.Length; i++ )
+            for( var i = 0; i < _BoxClipNodes.Length; i++ )
             {
-                _BoxClipNodes[i].children = new short[2];
+                _BoxClipNodes[i].children = new Int16[2];
             }
-            for( int i = 0; i < _BoxPlanes.Length; i++ )
+            for( var i = 0; i < _BoxPlanes.Length; i++ )
             {
                 _BoxPlanes[i] = new mplane_t();
             }
-            for( int i = 0; i < _AreaNodes.Length; i++ )
+            for( var i = 0; i < _AreaNodes.Length; i++ )
             {
                 _AreaNodes[i] = new areanode_t();
             }
@@ -60,7 +60,7 @@ namespace SharpQuake
                 _IdealPitchScale = new CVar( "sv_idealpitchscale", "0.8" );
             }
 
-            for( int i = 0; i < QDef.MAX_MODELS; i++ )
+            for( var i = 0; i < QDef.MAX_MODELS; i++ )
                 _LocalModels[i] = "*" + i.ToString();
         }
 
@@ -68,7 +68,7 @@ namespace SharpQuake
         /// SV_StartParticle
         /// Make sure the event gets sent to all clients
         /// </summary>
-        public static void StartParticle( ref Vector3 org, ref Vector3 dir, int color, int count )
+        public static void StartParticle( ref Vector3 org, ref Vector3 dir, Int32 color, Int32 count )
         {
             if( sv.datagram.Length > QDef.MAX_DATAGRAM - 16 )
                 return;
@@ -81,9 +81,9 @@ namespace SharpQuake
             Vector3 max = Vector3.One * 127;
             Vector3 min = Vector3.One * -128;
             Vector3 v = Vector3.Clamp( dir * 16, min, max );
-            sv.datagram.WriteChar( (int)v.X );
-            sv.datagram.WriteChar( (int)v.Y );
-            sv.datagram.WriteChar( (int)v.Z );
+            sv.datagram.WriteChar( ( Int32 ) v.X );
+            sv.datagram.WriteChar( ( Int32 ) v.Y );
+            sv.datagram.WriteChar( ( Int32 ) v.Z );
             sv.datagram.WriteByte( count );
             sv.datagram.WriteByte( color );
         }
@@ -99,7 +99,7 @@ namespace SharpQuake
         /// An attenuation of 0 will play full volume everywhere in the level.
         /// Larger attenuations will drop off.  (max 4 attenuation)
         /// </summary>
-        public static void StartSound( edict_t entity, int channel, string sample, int volume, float attenuation )
+        public static void StartSound( edict_t entity, Int32 channel, String sample, Int32 volume, Single attenuation )
         {
             if( volume < 0 || volume > 255 )
                 sys.Error( "SV_StartSound: volume = {0}", volume );
@@ -114,7 +114,7 @@ namespace SharpQuake
                 return;
 
             // find precache number for sound
-            int sound_num;
+            Int32 sound_num;
             for( sound_num = 1; sound_num < QDef.MAX_SOUNDS && sv.sound_precache[sound_num] != null; sound_num++ )
                 if( sample == sv.sound_precache[sound_num] )
                     break;
@@ -125,11 +125,11 @@ namespace SharpQuake
                 return;
             }
 
-            int ent = NumForEdict( entity );
+            var ent = NumForEdict( entity );
 
             channel = ( ent << 3 ) | channel;
 
-            int field_mask = 0;
+            var field_mask = 0;
             if( volume != snd.DEFAULT_SOUND_PACKET_VOLUME )
                 field_mask |= protocol.SND_VOLUME;
             if( attenuation != snd.DEFAULT_SOUND_PACKET_ATTENUATION )
@@ -141,7 +141,7 @@ namespace SharpQuake
             if( ( field_mask & protocol.SND_VOLUME ) != 0 )
                 sv.datagram.WriteByte( volume );
             if( ( field_mask & protocol.SND_ATTENUATION ) != 0 )
-                sv.datagram.WriteByte( (int)( attenuation * 64 ) );
+                sv.datagram.WriteByte( ( Int32 ) ( attenuation * 64 ) );
             sv.datagram.WriteShort( channel );
             sv.datagram.WriteByte( sound_num );
             v3f v;
@@ -157,7 +157,7 @@ namespace SharpQuake
         /// Called when the player is getting totally kicked off the host
         /// if (crash = true), don't bother sending signofs
         /// </summary>
-        public static void DropClient( bool crash )
+        public static void DropClient( Boolean crash )
         {
             client_t client = host.HostClient;
 
@@ -166,7 +166,7 @@ namespace SharpQuake
                 // send any final messages (don't check for errors)
                 if( net.CanSendMessage( client.netconnection ) )
                 {
-                    MsgWriter msg = client.message;
+                    MessageWriter msg = client.message;
                     msg.WriteByte( protocol.svc_disconnect );
                     net.SendMessage( client.netconnection, msg );
                 }
@@ -175,7 +175,7 @@ namespace SharpQuake
                 {
                     // call the prog function for removing a client
                     // this will set the body to a dead frame, among other things
-                    int saveSelf = progs.GlobalStruct.self;
+                    var saveSelf = progs.GlobalStruct.self;
                     progs.GlobalStruct.self = EdictToProg( client.edict );
                     progs.Execute( progs.GlobalStruct.ClientDisconnect );
                     progs.GlobalStruct.self = saveSelf;
@@ -195,7 +195,7 @@ namespace SharpQuake
             net.ActiveConnections--;
 
             // send notification to all clients
-            for( int i = 0; i < SharpQuake.server.svs.maxclients; i++ )
+            for( var i = 0; i < SharpQuake.server.svs.maxclients; i++ )
             {
                 client_t cl = SharpQuake.server.svs.clients[i];
                 if( !cl.active )
@@ -222,7 +222,7 @@ namespace SharpQuake
             UpdateToReliableMessages();
 
             // build individual updates
-            for( int i = 0; i < svs.maxclients; i++ )
+            for( var i = 0; i < svs.maxclients; i++ )
             {
                 host.HostClient = svs.clients[i];
 
@@ -292,12 +292,12 @@ namespace SharpQuake
         /// <summary>
         /// SV_ModelIndex
         /// </summary>
-        public static int ModelIndex( string name )
+        public static Int32 ModelIndex( String name )
         {
             if( String.IsNullOrEmpty( name ) )
                 return 0;
 
-            int i;
+            Int32 i;
             for( i = 0; i < QDef.MAX_MODELS && sv.model_precache[i] != null; i++ )
                 if( sv.model_precache[i] == name )
                     return i;
@@ -312,9 +312,9 @@ namespace SharpQuake
         /// Sends text across to be displayed
         /// FIXME: make this just a stuffed echo?
         /// </summary>
-        public static void ClientPrint( string fmt, params object[] args )
+        public static void ClientPrint( String fmt, params Object[] args )
         {
-            string tmp = String.Format( fmt, args );
+            var tmp = String.Format( fmt, args );
             host.HostClient.message.WriteByte( protocol.svc_print );
             host.HostClient.message.WriteString( tmp );
         }
@@ -322,13 +322,13 @@ namespace SharpQuake
         /// <summary>
         /// SV_BroadcastPrint
         /// </summary>
-        public static void BroadcastPrint( string fmt, params object[] args )
+        public static void BroadcastPrint( String fmt, params Object[] args )
         {
-            string tmp = args.Length > 0 ? String.Format( fmt, args ) : fmt;
-            for( int i = 0; i < svs.maxclients; i++ )
+            var tmp = args.Length > 0 ? String.Format( fmt, args ) : fmt;
+            for( var i = 0; i < svs.maxclients; i++ )
                 if( svs.clients[i].active && svs.clients[i].spawned )
                 {
-                    MsgWriter msg = svs.clients[i].message;
+                    MessageWriter msg = svs.clients[i].message;
                     msg.WriteByte( protocol.svc_print );
                     msg.WriteString( tmp );
                 }
@@ -337,7 +337,7 @@ namespace SharpQuake
         /// <summary>
         /// SV_WriteClientdataToMessage
         /// </summary>
-        public static void WriteClientDataToMessage( edict_t ent, MsgWriter msg )
+        public static void WriteClientDataToMessage( edict_t ent, MessageWriter msg )
         {
             //
             // send a damage message
@@ -346,8 +346,8 @@ namespace SharpQuake
             {
                 edict_t other = ProgToEdict( ent.v.dmg_inflictor );
                 msg.WriteByte( protocol.svc_damage );
-                msg.WriteByte( (int)ent.v.dmg_save );
-                msg.WriteByte( (int)ent.v.dmg_take );
+                msg.WriteByte( ( Int32 ) ent.v.dmg_save );
+                msg.WriteByte( ( Int32 ) ent.v.dmg_take );
                 msg.WriteCoord( other.v.origin.x + 0.5f * ( other.v.mins.x + other.v.maxs.x ) );
                 msg.WriteCoord( other.v.origin.y + 0.5f * ( other.v.mins.y + other.v.maxs.y ) );
                 msg.WriteCoord( other.v.origin.z + 0.5f * ( other.v.mins.z + other.v.maxs.z ) );
@@ -371,7 +371,7 @@ namespace SharpQuake
                 ent.v.fixangle = 0;
             }
 
-            int bits = 0;
+            var bits = 0;
 
             if( ent.v.view_ofs.z != protocol.DEFAULT_VIEWHEIGHT )
                 bits |= protocol.SU_VIEWHEIGHT;
@@ -381,16 +381,16 @@ namespace SharpQuake
 
             // stuff the sigil bits into the high bits of items for sbar, or else
             // mix in items2
-            float val = progs.GetEdictFieldFloat( ent, "items2", 0 );
-            int items;
+            var val = progs.GetEdictFieldFloat( ent, "items2", 0 );
+            Int32 items;
             if( val != 0 )
-                items = (int)ent.v.items | ( (int)val << 23 );
+                items = ( Int32 ) ent.v.items | ( ( Int32 ) val << 23 );
             else
-                items = (int)ent.v.items | ( (int)progs.GlobalStruct.serverflags << 28 );
+                items = ( Int32 ) ent.v.items | ( ( Int32 ) progs.GlobalStruct.serverflags << 28 );
 
             bits |= protocol.SU_ITEMS;
 
-            if( ( (int)ent.v.flags & EdictFlags.FL_ONGROUND ) != 0 )
+            if( ( ( Int32 ) ent.v.flags & EdictFlags.FL_ONGROUND ) != 0 )
                 bits |= protocol.SU_ONGROUND;
 
             if( ent.v.waterlevel >= 2 )
@@ -425,52 +425,52 @@ namespace SharpQuake
             msg.WriteShort( bits );
 
             if( ( bits & protocol.SU_VIEWHEIGHT ) != 0 )
-                msg.WriteChar( (int)ent.v.view_ofs.z );
+                msg.WriteChar( ( Int32 ) ent.v.view_ofs.z );
 
             if( ( bits & protocol.SU_IDEALPITCH ) != 0 )
-                msg.WriteChar( (int)ent.v.idealpitch );
+                msg.WriteChar( ( Int32 ) ent.v.idealpitch );
 
             if( ( bits & protocol.SU_PUNCH1 ) != 0 )
-                msg.WriteChar( (int)ent.v.punchangle.x );
+                msg.WriteChar( ( Int32 ) ent.v.punchangle.x );
             if( ( bits & protocol.SU_VELOCITY1 ) != 0 )
-                msg.WriteChar( (int)( ent.v.velocity.x / 16 ) );
+                msg.WriteChar( ( Int32 ) ( ent.v.velocity.x / 16 ) );
 
             if( ( bits & protocol.SU_PUNCH2 ) != 0 )
-                msg.WriteChar( (int)ent.v.punchangle.y );
+                msg.WriteChar( ( Int32 ) ent.v.punchangle.y );
             if( ( bits & protocol.SU_VELOCITY2 ) != 0 )
-                msg.WriteChar( (int)( ent.v.velocity.y / 16 ) );
+                msg.WriteChar( ( Int32 ) ( ent.v.velocity.y / 16 ) );
 
             if( ( bits & protocol.SU_PUNCH3 ) != 0 )
-                msg.WriteChar( (int)ent.v.punchangle.z );
+                msg.WriteChar( ( Int32 ) ent.v.punchangle.z );
             if( ( bits & protocol.SU_VELOCITY3 ) != 0 )
-                msg.WriteChar( (int)( ent.v.velocity.z / 16 ) );
+                msg.WriteChar( ( Int32 ) ( ent.v.velocity.z / 16 ) );
 
             // always sent
             msg.WriteLong( items );
 
             if( ( bits & protocol.SU_WEAPONFRAME ) != 0 )
-                msg.WriteByte( (int)ent.v.weaponframe );
+                msg.WriteByte( ( Int32 ) ent.v.weaponframe );
             if( ( bits & protocol.SU_ARMOR ) != 0 )
-                msg.WriteByte( (int)ent.v.armorvalue );
+                msg.WriteByte( ( Int32 ) ent.v.armorvalue );
             if( ( bits & protocol.SU_WEAPON ) != 0 )
                 msg.WriteByte( ModelIndex( progs.GetString( ent.v.weaponmodel ) ) );
 
-            msg.WriteShort( (int)ent.v.health );
-            msg.WriteByte( (int)ent.v.currentammo );
-            msg.WriteByte( (int)ent.v.ammo_shells );
-            msg.WriteByte( (int)ent.v.ammo_nails );
-            msg.WriteByte( (int)ent.v.ammo_rockets );
-            msg.WriteByte( (int)ent.v.ammo_cells );
+            msg.WriteShort( ( Int32 ) ent.v.health );
+            msg.WriteByte( ( Int32 ) ent.v.currentammo );
+            msg.WriteByte( ( Int32 ) ent.v.ammo_shells );
+            msg.WriteByte( ( Int32 ) ent.v.ammo_nails );
+            msg.WriteByte( ( Int32 ) ent.v.ammo_rockets );
+            msg.WriteByte( ( Int32 ) ent.v.ammo_cells );
 
             if( Common.GameKind == GameKind.StandardQuake )
             {
-                msg.WriteByte( (int)ent.v.weapon );
+                msg.WriteByte( ( Int32 ) ent.v.weapon );
             }
             else
             {
-                for( int i = 0; i < 32; i++ )
+                for( var i = 0; i < 32; i++ )
                 {
-                    if( ( ( (int)ent.v.weapon ) & ( 1 << i ) ) != 0 )
+                    if( ( ( ( Int32 ) ent.v.weapon ) & ( 1 << i ) ) != 0 )
                     {
                         msg.WriteByte( i );
                         break;
@@ -496,7 +496,7 @@ namespace SharpQuake
                 //
                 // init a new client structure
                 //
-                int i;
+                Int32 i;
                 for( i = 0; i < svs.maxclients; i++ )
                     if( !svs.clients[i].active )
                         break;
@@ -517,9 +517,9 @@ namespace SharpQuake
         /// </summary>
         public static void SaveSpawnparms()
         {
-            SharpQuake.server.svs.serverflags = (int)progs.GlobalStruct.serverflags;
+            SharpQuake.server.svs.serverflags = ( Int32 ) progs.GlobalStruct.serverflags;
 
-            for( int i = 0; i < svs.maxclients; i++ )
+            for( var i = 0; i < svs.maxclients; i++ )
             {
                 host.HostClient = SharpQuake.server.svs.clients[i];
                 if( !host.HostClient.active )
@@ -535,7 +535,7 @@ namespace SharpQuake
         /// <summary>
         /// SV_SpawnServer
         /// </summary>
-        public static void SpawnServer( string server )
+        public static void SpawnServer( String server )
         {
             // let's not have any servers with no name
             if( String.IsNullOrEmpty( net.HostName ) )
@@ -560,13 +560,13 @@ namespace SharpQuake
             if( host.IsCoop )
                 CVar.Set( "deathmatch", 0 );
 
-            host.CurrentSkill = (int)( host.Skill + 0.5 );
+            host.CurrentSkill = ( Int32 ) ( host.Skill + 0.5 );
             if( host.CurrentSkill < 0 )
                 host.CurrentSkill = 0;
             if( host.CurrentSkill > 3 )
                 host.CurrentSkill = 3;
 
-            CVar.Set( "skill", (float)host.CurrentSkill );
+            CVar.Set( "skill", ( Single ) host.CurrentSkill );
 
             //
             // set up the new server
@@ -584,7 +584,7 @@ namespace SharpQuake
             sv.max_edicts = QDef.MAX_EDICTS;
 
             sv.edicts = new edict_t[sv.max_edicts];
-            for( int i = 0; i < sv.edicts.Length; i++ )
+            for( var i = 0; i < sv.edicts.Length; i++ )
             {
                 sv.edicts[i] = new edict_t();
             }
@@ -592,7 +592,7 @@ namespace SharpQuake
             // leave slots at start for clients only
             sv.num_edicts = svs.maxclients + 1;
             edict_t ent;
-            for( int i = 0; i < svs.maxclients; i++ )
+            for( var i = 0; i < svs.maxclients; i++ )
             {
                 ent = EdictNum( i + 1 );
                 svs.clients[i].edict = ent;
@@ -620,7 +620,7 @@ namespace SharpQuake
             sv.model_precache[0] = String.Empty;
 
             sv.model_precache[1] = sv.modelname;
-            for( int i = 1; i < sv.worldmodel.numsubmodels; i++ )
+            for( var i = 1; i < sv.worldmodel.numsubmodels; i++ )
             {
                 sv.model_precache[1 + i] = _LocalModels[i];
                 sv.models[i + 1] = Mod.ForName( _LocalModels[i], false );
@@ -645,7 +645,7 @@ namespace SharpQuake
             else
                 progs.GlobalStruct.deathmatch = host.Deathmatch;
 
-            int offset = progs.NewString( sv.name );
+            var offset = progs.NewString( sv.name );
             progs.GlobalStruct.mapname = offset;
 
             // serverflags are for cross level information (sigils)
@@ -667,7 +667,7 @@ namespace SharpQuake
             CreateBaseline();
 
             // send serverinfo to all connected clients
-            for( int i = 0; i < svs.maxclients; i++ )
+            for( var i = 0; i < svs.maxclients; i++ )
             {
                 host.HostClient = svs.clients[i];
                 if( host.HostClient.active )
@@ -683,10 +683,10 @@ namespace SharpQuake
         /// </summary>
         private static void CleanupEnts()
         {
-            for( int i = 1; i < sv.num_edicts; i++ )
+            for( var i = 1; i < sv.num_edicts; i++ )
             {
                 edict_t ent = sv.edicts[i];
-                ent.v.effects = (int)ent.v.effects & ~EntityEffects.EF_MUZZLEFLASH;
+                ent.v.effects = ( Int32 ) ent.v.effects & ~EntityEffects.EF_MUZZLEFLASH;
             }
         }
 
@@ -697,7 +697,7 @@ namespace SharpQuake
         /// </summary>
         private static void SendNop( client_t client )
         {
-            MsgWriter msg = new MsgWriter( 4 );
+            MessageWriter msg = new MessageWriter( 4 );
             msg.WriteChar( protocol.svc_nop );
 
             if( net.SendUnreliableMessage( client.netconnection, msg ) == -1 )
@@ -708,12 +708,12 @@ namespace SharpQuake
         /// <summary>
         /// SV_SendClientDatagram
         /// </summary>
-        private static bool SendClientDatagram( client_t client )
+        private static Boolean SendClientDatagram( client_t client )
         {
-            MsgWriter msg = new MsgWriter( QDef.MAX_DATAGRAM ); // Uze todo: make static?
+            MessageWriter msg = new MessageWriter( QDef.MAX_DATAGRAM ); // Uze todo: make static?
 
             msg.WriteByte( protocol.svc_time );
-            msg.WriteFloat( (float)sv.time );
+            msg.WriteFloat( ( Single ) sv.time );
 
             // add the client specific data to the datagram
             WriteClientDataToMessage( client.edict, msg );
@@ -737,25 +737,25 @@ namespace SharpQuake
         /// <summary>
         /// SV_WriteEntitiesToClient
         /// </summary>
-        private static void WriteEntitiesToClient( edict_t clent, MsgWriter msg )
+        private static void WriteEntitiesToClient( edict_t clent, MessageWriter msg )
         {
             // find the client's PVS
             Vector3 org = Common.ToVector( ref clent.v.origin ) + Common.ToVector( ref clent.v.view_ofs );
-            byte[] pvs = FatPVS( ref org );
+            Byte[] pvs = FatPVS( ref org );
 
             // send over all entities (except the client) that touch the pvs
-            for( int e = 1; e < sv.num_edicts; e++ )
+            for( var e = 1; e < sv.num_edicts; e++ )
             {
                 edict_t ent = sv.edicts[e];
                 // ignore if not touching a PV leaf
                 if( ent != clent )	// clent is ALLWAYS sent
                 {
                     // ignore ents without visible models
-                    string mname = progs.GetString( ent.v.model );
+                    var mname = progs.GetString( ent.v.model );
                     if( String.IsNullOrEmpty( mname ) )
                         continue;
 
-                    int i;
+                    Int32 i;
                     for( i = 0; i < ent.num_leafs; i++ )
                         if( ( pvs[ent.leafnums[i] >> 3] & ( 1 << ( ent.leafnums[i] & 7 ) ) ) != 0 )
                             break;
@@ -771,7 +771,7 @@ namespace SharpQuake
                 }
 
                 // send an update
-                int bits = 0;
+                var bits = 0;
                 v3f miss;
                 MathLib.VectorSubtract( ref ent.v.origin, ref ent.baseline.origin, out miss );
                 if( miss.x < -0.1f || miss.x > 0.1f )
@@ -827,15 +827,15 @@ namespace SharpQuake
                     msg.WriteByte( e );
 
                 if( ( bits & protocol.U_MODEL ) != 0 )
-                    msg.WriteByte( (int)ent.v.modelindex );
+                    msg.WriteByte( ( Int32 ) ent.v.modelindex );
                 if( ( bits & protocol.U_FRAME ) != 0 )
-                    msg.WriteByte( (int)ent.v.frame );
+                    msg.WriteByte( ( Int32 ) ent.v.frame );
                 if( ( bits & protocol.U_COLORMAP ) != 0 )
-                    msg.WriteByte( (int)ent.v.colormap );
+                    msg.WriteByte( ( Int32 ) ent.v.colormap );
                 if( ( bits & protocol.U_SKIN ) != 0 )
-                    msg.WriteByte( (int)ent.v.skin );
+                    msg.WriteByte( ( Int32 ) ent.v.skin );
                 if( ( bits & protocol.U_EFFECTS ) != 0 )
-                    msg.WriteByte( (int)ent.v.effects );
+                    msg.WriteByte( ( Int32 ) ent.v.effects );
                 if( ( bits & protocol.U_ORIGIN1 ) != 0 )
                     msg.WriteCoord( ent.v.origin.x );
                 if( ( bits & protocol.U_ANGLE1 ) != 0 )
@@ -856,7 +856,7 @@ namespace SharpQuake
         /// Calculates a PVS that is the inclusive or of all leafs within 8 pixels of the
         /// given point.
         /// </summary>
-        private static byte[] FatPVS( ref Vector3 org )
+        private static Byte[] FatPVS( ref Vector3 org )
         {
             _FatBytes = ( sv.worldmodel.numleafs + 31 ) >> 3;
             Array.Clear( _FatPvs, 0, _FatPvs.Length );
@@ -880,8 +880,8 @@ namespace SharpQuake
                 {
                     if( node.contents != Contents.CONTENTS_SOLID )
                     {
-                        byte[] pvs = Mod.LeafPVS( (mleaf_t)node, sv.worldmodel );
-                        for( int i = 0; i < _FatBytes; i++ )
+                        Byte[] pvs = Mod.LeafPVS( (mleaf_t)node, sv.worldmodel );
+                        for( var i = 0; i < _FatBytes; i++ )
                             _FatPvs[i] |= pvs[i];
                     }
                     return;
@@ -889,7 +889,7 @@ namespace SharpQuake
 
                 mnode_t n = (mnode_t)node;
                 mplane_t plane = n.plane;
-                float d = Vector3.Dot( org, plane.normal ) - plane.dist;
+                var d = Vector3.Dot( org, plane.normal ) - plane.dist;
                 if( d > 8 )
                     node = n.children[0];
                 else if( d < -8 )
@@ -908,12 +908,12 @@ namespace SharpQuake
         private static void UpdateToReliableMessages()
         {
             // check for changes to be sent over the reliable streams
-            for( int i = 0; i < svs.maxclients; i++ )
+            for( var i = 0; i < svs.maxclients; i++ )
             {
                 host.HostClient = svs.clients[i];
                 if( host.HostClient.old_frags != host.HostClient.edict.v.frags )
                 {
-                    for( int j = 0; j < svs.maxclients; j++ )
+                    for( var j = 0; j < svs.maxclients; j++ )
                     {
                         client_t client = svs.clients[j];
                         if( !client.active )
@@ -921,14 +921,14 @@ namespace SharpQuake
 
                         client.message.WriteByte( protocol.svc_updatefrags );
                         client.message.WriteByte( i );
-                        client.message.WriteShort( (int)host.HostClient.edict.v.frags );
+                        client.message.WriteShort( ( Int32 ) host.HostClient.edict.v.frags );
                     }
 
-                    host.HostClient.old_frags = (int)host.HostClient.edict.v.frags;
+                    host.HostClient.old_frags = ( Int32 ) host.HostClient.edict.v.frags;
                 }
             }
 
-            for( int j = 0; j < svs.maxclients; j++ )
+            for( var j = 0; j < svs.maxclients; j++ )
             {
                 client_t client = svs.clients[j];
                 if( !client.active )
@@ -944,19 +944,19 @@ namespace SharpQuake
         /// Initializes a client_t for a new net connection.  This will only be called
         /// once for a player each game, not once for each level change.
         /// </summary>
-        private static void ConnectClient( int clientnum )
+        private static void ConnectClient( Int32 clientnum )
         {
             client_t client = svs.clients[clientnum];
 
             Con.DPrint( "Client {0} connected\n", client.netconnection.address );
 
-            int edictnum = clientnum + 1;
+            var edictnum = clientnum + 1;
             edict_t ent = EdictNum( edictnum );
 
             // set up the client_t
             qsocket_t netconnection = client.netconnection;
 
-            float[] spawn_parms = new float[NUM_SPAWN_PARMS];
+            Single[] spawn_parms = new Single[NUM_SPAWN_PARMS];
             if( sv.loadgame )
             {
                 Array.Copy( client.spawn_parms, spawn_parms, spawn_parms.Length );
@@ -1016,10 +1016,10 @@ namespace SharpQuake
         /// </summary>
         private static void SendServerInfo( client_t client )
         {
-            MsgWriter writer = client.message;
+            MessageWriter writer = client.message;
 
             writer.WriteByte( protocol.svc_print );
-            writer.WriteString( String.Format( "{0}\nVERSION {1,4:F2} SERVER ({2} CRC)", (char)2, QDef.VERSION, progs.Crc ) );
+            writer.WriteString( String.Format( "{0}\nVERSION {1,4:F2} SERVER ({2} CRC)", ( Char ) 2, QDef.VERSION, progs.Crc ) );
 
             writer.WriteByte( protocol.svc_serverinfo );
             writer.WriteLong( protocol.PROTOCOL_VERSION );
@@ -1030,22 +1030,22 @@ namespace SharpQuake
             else
                 writer.WriteByte( protocol.GAME_COOP );
 
-            string message = progs.GetString( sv.edicts[0].v.message );
+            var message = progs.GetString( sv.edicts[0].v.message );
 
             writer.WriteString( message );
 
-            for( int i = 1; i < sv.model_precache.Length; i++ )
+            for( var i = 1; i < sv.model_precache.Length; i++ )
             {
-                string tmp = sv.model_precache[i];
+                var tmp = sv.model_precache[i];
                 if( String.IsNullOrEmpty( tmp ) )
                     break;
                 writer.WriteString( tmp );
             }
             writer.WriteByte( 0 );
 
-            for( int i = 1; i < sv.sound_precache.Length; i++ )
+            for( var i = 1; i < sv.sound_precache.Length; i++ )
             {
-                string tmp = sv.sound_precache[i];
+                var tmp = sv.sound_precache[i];
                 if( tmp == null )
                     break;
                 writer.WriteString( tmp );
@@ -1054,8 +1054,8 @@ namespace SharpQuake
 
             // send music
             writer.WriteByte( protocol.svc_cdtrack );
-            writer.WriteByte( (int)sv.edicts[0].v.sounds );
-            writer.WriteByte( (int)sv.edicts[0].v.sounds );
+            writer.WriteByte( ( Int32 ) sv.edicts[0].v.sounds );
+            writer.WriteByte( ( Int32 ) sv.edicts[0].v.sounds );
 
             // set view
             writer.WriteByte( protocol.svc_setview );
@@ -1074,7 +1074,7 @@ namespace SharpQuake
         /// </summary>
         private static void SendReconnect()
         {
-            MsgWriter msg = new MsgWriter( 128 );
+            MessageWriter msg = new MessageWriter( 128 );
 
             msg.WriteChar( protocol.svc_stufftext );
             msg.WriteString( "reconnect\n" );
@@ -1089,7 +1089,7 @@ namespace SharpQuake
         /// </summary>
         private static void CreateBaseline()
         {
-            for( int entnum = 0; entnum < sv.num_edicts; entnum++ )
+            for( var entnum = 0; entnum < sv.num_edicts; entnum++ )
             {
                 // get the current server version
                 edict_t svent = EdictNum( entnum );
@@ -1103,8 +1103,8 @@ namespace SharpQuake
                 //
                 svent.baseline.origin = svent.v.origin;
                 svent.baseline.angles = svent.v.angles;
-                svent.baseline.frame = (int)svent.v.frame;
-                svent.baseline.skin = (int)svent.v.skin;
+                svent.baseline.frame = ( Int32 ) svent.v.frame;
+                svent.baseline.skin = ( Int32 ) svent.v.skin;
                 if( entnum > 0 && entnum <= svs.maxclients )
                 {
                     svent.baseline.colormap = entnum;

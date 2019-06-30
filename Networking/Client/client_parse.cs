@@ -29,9 +29,9 @@ namespace SharpQuake
 {
     partial class client
     {
-        private const string ConsoleBar = "\n\n\u001D\u001E\u001E\u001E\u001E\u001E\u001E\u001E\u001E\u001E\u001E\u001E\u001E\u001E\u001E\u001E\u001E\u001E\u001E\u001E\u001E\u001E\u001E\u001E\u001E\u001E\u001E\u001E\u001E\u001E\u001E\u001E\u001E\u001E\u001E\u001E\u001E\u001E\u001F\n\n";
+        private const String ConsoleBar = "\n\n\u001D\u001E\u001E\u001E\u001E\u001E\u001E\u001E\u001E\u001E\u001E\u001E\u001E\u001E\u001E\u001E\u001E\u001E\u001E\u001E\u001E\u001E\u001E\u001E\u001E\u001E\u001E\u001E\u001E\u001E\u001E\u001E\u001E\u001E\u001E\u001E\u001E\u001E\u001F\n\n";
 
-        private static string[] _SvcStrings = new string[]
+        private static String[] _SvcStrings = new String[]
         {
             "svc_bad",
             "svc_nop",
@@ -77,9 +77,9 @@ namespace SharpQuake
             "svc_cutscene"
         };
 
-        private static int[] _BitCounts = new int[16]; // bitcounts
-        private static object _MsgState; // used by KeepaliveMessage function
-        private static float _LastMsg; // static float lastmsg from CL_KeepaliveMessage
+        private static Int32[] _BitCounts = new Int32[16]; // bitcounts
+        private static Object _MsgState; // used by KeepaliveMessage function
+        private static Single _LastMsg; // static float lastmsg from CL_KeepaliveMessage
 
         /// <summary>
         /// CL_ParseServerMessage
@@ -100,13 +100,13 @@ namespace SharpQuake
             // parse the message
             //
             net.Reader.Reset();
-            int i;
+            Int32 i;
             while( true )
             {
                 if( net.Reader.IsBadRead )
                     host.Error( "CL_ParseServerMessage: Bad server message" );
 
-                int cmd = net.Reader.ReadByte();
+                var cmd = net.Reader.ReadByte();
                 if( cmd == -1 )
                 {
                     ShowNet( "END OF MESSAGE" );
@@ -289,27 +289,27 @@ namespace SharpQuake
                         cl.cdtrack = net.Reader.ReadByte();
                         cl.looptrack = net.Reader.ReadByte();
                         if( ( cls.demoplayback || cls.demorecording ) && ( cls.forcetrack != -1 ) )
-                            cd_audio.Play( (byte)cls.forcetrack, true );
+                            cd_audio.Play( ( Byte ) cls.forcetrack, true );
                         else
-                            cd_audio.Play( (byte)cl.cdtrack, true );
+                            cd_audio.Play( ( Byte ) cl.cdtrack, true );
                         break;
 
                     case protocol.svc_intermission:
                         cl.intermission = 1;
-                        cl.completed_time = (int)cl.time;
+                        cl.completed_time = ( Int32 ) cl.time;
                         Scr.vid.recalc_refdef = true;	// go to full screen
                         break;
 
                     case protocol.svc_finale:
                         cl.intermission = 2;
-                        cl.completed_time = (int)cl.time;
+                        cl.completed_time = ( Int32 ) cl.time;
                         Scr.vid.recalc_refdef = true;	// go to full screen
                         Scr.CenterPrint( net.Reader.ReadString() );
                         break;
 
                     case protocol.svc_cutscene:
                         cl.intermission = 3;
-                        cl.completed_time = (int)cl.time;
+                        cl.completed_time = ( Int32 ) cl.time;
                         Scr.vid.recalc_refdef = true;	// go to full screen
                         Scr.CenterPrint( net.Reader.ReadString() );
                         break;
@@ -321,7 +321,7 @@ namespace SharpQuake
             }
         }
 
-        private static void ShowNet( string s )
+        private static void ShowNet( String s )
         {
             if( _ShowNet.Value == 2 )
                 Con.Print( "{0,3}:{1}\n", net.Reader.Position - 1, s );
@@ -334,9 +334,9 @@ namespace SharpQuake
         /// If an entities model or origin changes from frame to frame, it must be
         /// relinked.  Other attributes can change without relinking.
         /// </summary>
-        private static void ParseUpdate( int bits )
+        private static void ParseUpdate( Int32 bits )
         {
-            int i;
+            Int32 i;
 
             if( cls.signon == SIGNONS - 1 )
             {
@@ -351,7 +351,7 @@ namespace SharpQuake
                 bits |= ( i << 8 );
             }
 
-            int num;
+            Int32 num;
 
             if( ( bits & protocol.U_LONGENTITY ) != 0 )
                 num = net.Reader.ReadShort();
@@ -363,12 +363,12 @@ namespace SharpQuake
                 if( ( bits & ( 1 << i ) ) != 0 )
                     _BitCounts[i]++;
 
-            bool forcelink = false;
+            var forcelink = false;
             if( ent.msgtime != cl.mtime[1] )
                 forcelink = true;	// no previous frame to lerp from
 
             ent.msgtime = cl.mtime[0];
-            int modnum;
+            Int32 modnum;
             if( ( bits & protocol.U_MODEL ) != 0 )
             {
                 modnum = net.Reader.ReadByte();
@@ -387,7 +387,7 @@ namespace SharpQuake
                 if( model != null )
                 {
                     if( model.synctype == synctype_t.ST_RAND )
-                        ent.syncbase = (float)( sys.Random() & 0x7fff ) / 0x7fff;
+                        ent.syncbase = ( Single ) ( sys.Random() & 0x7fff ) / 0x7fff;
                     else
                         ent.syncbase = 0;
                 }
@@ -416,7 +416,7 @@ namespace SharpQuake
                 ent.colormap = cl.scores[i - 1].translations;
             }
 
-            int skin;
+            Int32 skin;
             if( ( bits & protocol.U_SKIN ) != 0 )
                 skin = net.Reader.ReadByte();
             else
@@ -481,7 +481,7 @@ namespace SharpQuake
         /// CL_ParseClientdata
         /// Server information pertaining to this client only
         /// </summary>
-        private static void ParseClientData( int bits )
+        private static void ParseClientData( Int32 bits )
         {
             if( ( bits & protocol.SU_VIEWHEIGHT ) != 0 )
                 cl.viewheight = net.Reader.ReadChar();
@@ -494,7 +494,7 @@ namespace SharpQuake
                 cl.idealpitch = 0;
 
             cl.mvelocity[1] = cl.mvelocity[0];
-            for( int i = 0; i < 3; i++ )
+            for( var i = 0; i < 3; i++ )
             {
                 if( ( bits & ( protocol.SU_PUNCH1 << i ) ) != 0 )
                     MathLib.SetComp( ref cl.punchangle, i, net.Reader.ReadChar() );
@@ -507,14 +507,14 @@ namespace SharpQuake
             }
 
             // [always sent]	if (bits & SU_ITEMS)
-            int i2 = net.Reader.ReadLong();
+            var i2 = net.Reader.ReadLong();
 
             if( cl.items != i2 )
             {	// set flash times
                 sbar.Changed();
-                for( int j = 0; j < 32; j++ )
+                for( var j = 0; j < 32; j++ )
                     if( ( i2 & ( 1 << j ) ) != 0 && ( cl.items & ( 1 << j ) ) == 0 )
-                        cl.item_gettime[j] = (float)cl.time;
+                        cl.item_gettime[j] = ( Single ) cl.time;
                 cl.items = i2;
             }
 
@@ -562,7 +562,7 @@ namespace SharpQuake
 
             for( i2 = 0; i2 < 4; i2++ )
             {
-                int j = net.Reader.ReadByte();
+                var j = net.Reader.ReadByte();
                 if( cl.stats[QStats.STAT_SHELLS + i2] != j )
                 {
                     cl.stats[QStats.STAT_SHELLS + i2] = j;
@@ -603,7 +603,7 @@ namespace SharpQuake
             ClearState();
 
             // parse protocol version number
-            int i = net.Reader.ReadLong();
+            var i = net.Reader.ReadLong();
             if( i != protocol.PROTOCOL_VERSION )
             {
                 Con.Print( "Server returned version {0}, not {1}", i, protocol.PROTOCOL_VERSION );
@@ -625,12 +625,12 @@ namespace SharpQuake
             cl.gametype = net.Reader.ReadByte();
 
             // parse signon message
-            string str = net.Reader.ReadString();
+            var str = net.Reader.ReadString();
             cl.levelname = Common.Copy( str, 40 );
 
             // seperate the printfs so the server message can have a color
             Con.Print( ConsoleBar );
-            Con.Print( "{0}{1}\n", (char)2, str );
+            Con.Print( "{0}{1}\n", ( Char ) 2, str );
 
             //
             // first we go through and touch all of the precache data that still
@@ -640,8 +640,8 @@ namespace SharpQuake
 
             // precache models
             Array.Clear( cl.model_precache, 0, cl.model_precache.Length );
-            int nummodels;
-            string[] model_precache = new string[QDef.MAX_MODELS];
+            Int32 nummodels;
+            String[] model_precache = new String[QDef.MAX_MODELS];
             for( nummodels = 1; ; nummodels++ )
             {
                 str = net.Reader.ReadString();
@@ -659,8 +659,8 @@ namespace SharpQuake
 
             // precache sounds
             Array.Clear( cl.sound_precache, 0, cl.sound_precache.Length );
-            int numsounds;
-            string[] sound_precache = new string[QDef.MAX_SOUNDS];
+            Int32 numsounds;
+            String[] sound_precache = new String[QDef.MAX_SOUNDS];
             for( numsounds = 1; ; numsounds++ )
             {
                 str = net.Reader.ReadString();
@@ -710,9 +710,9 @@ namespace SharpQuake
         // CL_ParseStartSoundPacket
         private static void ParseStartSoundPacket()
         {
-            int field_mask = net.Reader.ReadByte();
-            int volume;
-            float attenuation;
+            var field_mask = net.Reader.ReadByte();
+            Int32 volume;
+            Single attenuation;
 
             if( ( field_mask & protocol.SND_VOLUME ) != 0 )
                 volume = net.Reader.ReadByte();
@@ -724,10 +724,10 @@ namespace SharpQuake
             else
                 attenuation = snd.DEFAULT_SOUND_PACKET_ATTENUATION;
 
-            int channel = net.Reader.ReadShort();
-            int sound_num = net.Reader.ReadByte();
+            var channel = net.Reader.ReadShort();
+            var sound_num = net.Reader.ReadByte();
 
-            int ent = channel >> 3;
+            var ent = channel >> 3;
             channel &= 7;
 
             if( ent > QDef.MAX_EDICTS )
@@ -738,32 +738,32 @@ namespace SharpQuake
         }
 
         // CL_NewTranslation
-        private static void NewTranslation( int slot )
+        private static void NewTranslation( Int32 slot )
         {
             if( slot > cl.maxclients )
                 sys.Error( "CL_NewTranslation: slot > cl.maxclients" );
 
-            byte[] dest = cl.scores[slot].translations;
-            byte[] source = Scr.vid.colormap;
+            Byte[] dest = cl.scores[slot].translations;
+            Byte[] source = Scr.vid.colormap;
             Array.Copy( source, dest, dest.Length );
 
-            int top = cl.scores[slot].colors & 0xf0;
-            int bottom = ( cl.scores[slot].colors & 15 ) << 4;
+            var top = cl.scores[slot].colors & 0xf0;
+            var bottom = ( cl.scores[slot].colors & 15 ) << 4;
 
             render.TranslatePlayerSkin( slot );
 
-            for( int i = 0, offset = 0; i < vid.VID_GRADES; i++ )//, dest += 256, source+=256)
+            for( Int32 i = 0, offset = 0; i < vid.VID_GRADES; i++ )//, dest += 256, source+=256)
             {
                 if( top < 128 )	// the artists made some backwards ranges.  sigh.
                     Buffer.BlockCopy( source, offset + top, dest, offset + render.TOP_RANGE, 16 );  //memcpy (dest + Render.TOP_RANGE, source + top, 16);
                 else
-                    for( int j = 0; j < 16; j++ )
+                    for( var j = 0; j < 16; j++ )
                         dest[offset + render.TOP_RANGE + j] = source[offset + top + 15 - j];
 
                 if( bottom < 128 )
                     Buffer.BlockCopy( source, offset + bottom, dest, offset + render.BOTTOM_RANGE, 16 ); // memcpy(dest + Render.BOTTOM_RANGE, source + bottom, 16);
                 else
-                    for( int j = 0; j < 16; j++ )
+                    for( var j = 0; j < 16; j++ )
                         dest[offset + render.BOTTOM_RANGE + j] = source[offset + bottom + 15 - j];
 
                 offset += 256;
@@ -777,7 +777,7 @@ namespace SharpQuake
         /// </summary>
         /// <param name="num"></param>
         /// <returns></returns>
-        private static entity_t EntityNum( int num )
+        private static entity_t EntityNum( Int32 num )
         {
             if( num >= cl.num_entities )
             {
@@ -816,7 +816,7 @@ namespace SharpQuake
         /// </summary>
         private static void ParseStatic()
         {
-            int i = cl.num_statics;
+            var i = cl.num_statics;
             if( i >= MAX_STATIC_ENTITIES )
                 host.Error( "Too many static entities" );
 
@@ -841,9 +841,9 @@ namespace SharpQuake
         private static void ParseStaticSound()
         {
             Vector3 org = net.Reader.ReadCoords();
-            int sound_num = net.Reader.ReadByte();
-            int vol = net.Reader.ReadByte();
-            int atten = net.Reader.ReadByte();
+            var sound_num = net.Reader.ReadByte();
+            var vol = net.Reader.ReadByte();
+            var atten = net.Reader.ReadByte();
 
             snd.StaticSound( cl.sound_precache[sound_num], ref org, vol, atten );
         }
@@ -863,7 +863,7 @@ namespace SharpQuake
             // read messages from server, should just be nops
             net.Message.SaveState( ref _MsgState );
 
-            int ret;
+            Int32 ret;
             do
             {
                 ret = GetMessage();
@@ -890,7 +890,7 @@ namespace SharpQuake
             net.Message.RestoreState( _MsgState );
 
             // check time
-            float time = (float)sys.GetFloatTime();
+            var time = ( Single ) sys.GetFloatTime();
             if( time - _LastMsg < 5 )
                 return;
 

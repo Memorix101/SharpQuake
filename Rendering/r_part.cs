@@ -35,21 +35,21 @@ namespace SharpQuake
             pt_static, pt_grav, pt_slowgrav, pt_fire, pt_explode, pt_explode2, pt_blob, pt_blob2
         } //ptype_t;
 
-        private const int MAX_PARTICLES = 2048;
+        private const Int32 MAX_PARTICLES = 2048;
 
         // default max # of particles at one time
-        private const int ABSOLUTE_MIN_PARTICLES = 512;
+        private const Int32 ABSOLUTE_MIN_PARTICLES = 512;
 
         // no fewer than this no matter what's on the command line
-        private const int NUMVERTEXNORMALS = 162;
+        private const Int32 NUMVERTEXNORMALS = 162;
 
-        private static int[] _Ramp1 = new int[] { 0x6f, 0x6d, 0x6b, 0x69, 0x67, 0x65, 0x63, 0x61 };
+        private static Int32[] _Ramp1 = new Int32[] { 0x6f, 0x6d, 0x6b, 0x69, 0x67, 0x65, 0x63, 0x61 };
 
-        private static int[] _Ramp2 = new int[] { 0x6f, 0x6e, 0x6d, 0x6c, 0x6b, 0x6a, 0x68, 0x66 };
+        private static Int32[] _Ramp2 = new Int32[] { 0x6f, 0x6e, 0x6d, 0x6c, 0x6b, 0x6a, 0x68, 0x66 };
 
-        private static int[] _Ramp3 = new int[] { 0x6d, 0x6b, 6, 5, 4, 3 };
+        private static Int32[] _Ramp3 = new Int32[] { 0x6d, 0x6b, 6, 5, 4, 3 };
 
-        private static byte[,] _DotTexture = new byte[8, 8]
+        private static Byte[,] _DotTexture = new Byte[8, 8]
         {
             {0,1,1,0,0,0,0,0},
             {1,1,1,1,0,0,0,0},
@@ -61,12 +61,12 @@ namespace SharpQuake
             {0,0,0,0,0,0,0,0},
         };
 
-        private static int _NumParticles;
+        private static Int32 _NumParticles;
 
         // r_numparticles
         private static particle_t[] _Particles;
 
-        private static int _ParticleTexture;
+        private static Int32 _ParticleTexture;
 
         private static particle_t _ActiveParticles;
 
@@ -74,22 +74,22 @@ namespace SharpQuake
         private static particle_t _FreeParticles;
 
         // free_particles
-        private static int _TracerCount;
+        private static Int32 _TracerCount;
 
         // static tracercount from RocketTrail()
         private static Vector3[] _AVelocities = new Vector3[NUMVERTEXNORMALS];
 
         // avelocities
-        private static float _BeamLength = 16;
+        private static Single _BeamLength = 16;
 
         /// <summary>
         /// R_RocketTrail
         /// </summary>
-        public static void RocketTrail( ref Vector3 start, ref Vector3 end, int type )
+        public static void RocketTrail( ref Vector3 start, ref Vector3 end, Int32 type )
         {
             Vector3 vec = end - start;
-            float len = MathLib.Normalize( ref vec );
-            int dec;
+            var len = MathLib.Normalize( ref vec );
+            Int32 dec;
             if( type < 128 )
                 dec = 3;
             else
@@ -107,13 +107,13 @@ namespace SharpQuake
                     return;
 
                 p.vel = Vector3.Zero;
-                p.die = (float)client.cl.time + 2;
+                p.die = ( Single ) client.cl.time + 2;
 
                 switch( type )
                 {
                     case 0:	// rocket trail
                         p.ramp = ( sys.Random() & 3 );
-                        p.color = _Ramp3[(int)p.ramp];
+                        p.color = _Ramp3[( Int32 ) p.ramp];
                         p.type = ptype_t.pt_fire;
                         p.org = new Vector3( start.X + ( ( sys.Random() % 6 ) - 3 ),
                             start.Y + ( ( sys.Random() % 6 ) - 3 ), start.Z + ( ( sys.Random() % 6 ) - 3 ) );
@@ -121,7 +121,7 @@ namespace SharpQuake
 
                     case 1:	// smoke smoke
                         p.ramp = ( sys.Random() & 3 ) + 2;
-                        p.color = _Ramp3[(int)p.ramp];
+                        p.color = _Ramp3[( Int32 ) p.ramp];
                         p.type = ptype_t.pt_fire;
                         p.org = new Vector3( start.X + ( ( sys.Random() % 6 ) - 3 ),
                             start.Y + ( ( sys.Random() % 6 ) - 3 ), start.Z + ( ( sys.Random() % 6 ) - 3 ) );
@@ -136,7 +136,7 @@ namespace SharpQuake
 
                     case 3:
                     case 5:	// tracer
-                        p.die = (float)client.cl.time + 0.5f;
+                        p.die = ( Single ) client.cl.time + 0.5f;
                         p.type = ptype_t.pt_static;
                         if( type == 3 )
                             p.color = 52 + ( ( _TracerCount & 4 ) << 1 );
@@ -169,7 +169,7 @@ namespace SharpQuake
                     case 6:	// voor trail
                         p.color = 9 * 16 + 8 + ( sys.Random() & 3 );
                         p.type = ptype_t.pt_static;
-                        p.die = (float)client.cl.time + 0.3f;
+                        p.die = ( Single ) client.cl.time + 0.3f;
                         p.org = new Vector3( start.X + ( ( sys.Random() % 15 ) - 8 ),
                             start.Y + ( ( sys.Random() % 15 ) - 8 ), start.Z + ( ( sys.Random() % 15 ) - 8 ) );
                         break;
@@ -184,13 +184,13 @@ namespace SharpQuake
         /// </summary>
         public static void ParticleExplosion( ref Vector3 org )
         {
-            for( int i = 0; i < 1024; i++ ) // Uze: Why 1024 if MAX_PARTICLES = 2048?
+            for( var i = 0; i < 1024; i++ ) // Uze: Why 1024 if MAX_PARTICLES = 2048?
             {
                 particle_t p = AllocParticle();
                 if( p == null )
                     return;
 
-                p.die = (float)client.cl.time + 5;
+                p.die = ( Single ) client.cl.time + 5;
                 p.color = _Ramp1[0];
                 p.ramp = sys.Random() & 3;
                 if( ( i & 1 ) != 0 )
@@ -205,9 +205,9 @@ namespace SharpQuake
         /// <summary>
         /// R_RunParticleEffect
         /// </summary>
-        public static void RunParticleEffect( ref Vector3 org, ref Vector3 dir, int color, int count )
+        public static void RunParticleEffect( ref Vector3 org, ref Vector3 dir, Int32 color, Int32 count )
         {
-            for( int i = 0; i < count; i++ )
+            for( var i = 0; i < count; i++ )
             {
                 particle_t p = AllocParticle();
                 if( p == null )
@@ -215,7 +215,7 @@ namespace SharpQuake
 
                 if( count == 1024 )
                 {	// rocket explosion
-                    p.die = (float)client.cl.time + 5;
+                    p.die = ( Single ) client.cl.time + 5;
                     p.color = _Ramp1[0];
                     p.ramp = sys.Random() & 3;
                     if( ( i & 1 ) != 0 )
@@ -227,7 +227,7 @@ namespace SharpQuake
                 }
                 else
                 {
-                    p.die = (float)client.cl.time + 0.1f * ( sys.Random() % 5 );
+                    p.die = ( Single ) client.cl.time + 0.1f * ( sys.Random() % 5 );
                     p.color = ( color & ~7 ) + ( sys.Random() & 7 );
                     p.type = ptype_t.pt_slowgrav;
                     p.org = org + new Vector3( ( sys.Random() & 15 ) - 8, ( sys.Random() & 15 ) - 8, ( sys.Random() & 15 ) - 8 );
@@ -246,8 +246,8 @@ namespace SharpQuake
             Vector3 dir = new Vector3( net.Reader.ReadChar() * ONE_OVER_16,
                 net.Reader.ReadChar() * ONE_OVER_16,
                 net.Reader.ReadChar() * ONE_OVER_16 );
-            int count = net.Reader.ReadByte();
-            int color = net.Reader.ReadByte();
+            var count = net.Reader.ReadByte();
+            var color = net.Reader.ReadByte();
 
             if( count == 255 )
                 count = 1024;
@@ -260,15 +260,15 @@ namespace SharpQuake
         /// </summary>
         public static void TeleportSplash( ref Vector3 org )
         {
-            for( int i = -16; i < 16; i += 4 )
-                for( int j = -16; j < 16; j += 4 )
-                    for( int k = -24; k < 32; k += 4 )
+            for( var i = -16; i < 16; i += 4 )
+                for( var j = -16; j < 16; j += 4 )
+                    for( var k = -24; k < 32; k += 4 )
                     {
                         particle_t p = AllocParticle();
                         if( p == null )
                             return;
 
-                        p.die = (float)( client.cl.time + 0.2 + ( sys.Random() & 7 ) * 0.02 );
+                        p.die = ( Single ) ( client.cl.time + 0.2 + ( sys.Random() & 7 ) * 0.02 );
                         p.color = 7 + ( sys.Random() & 7 );
                         p.type = ptype_t.pt_slowgrav;
 
@@ -277,7 +277,7 @@ namespace SharpQuake
                         p.org = org + new Vector3( i + ( sys.Random() & 3 ), j + ( sys.Random() & 3 ), k + ( sys.Random() & 3 ) );
 
                         MathLib.Normalize( ref dir );
-                        float vel = 50 + ( sys.Random() & 63 );
+                        Single vel = 50 + ( sys.Random() & 63 );
                         p.vel = dir * vel;
                     }
         }
@@ -289,15 +289,15 @@ namespace SharpQuake
         {
             Vector3 dir;
 
-            for( int i = -16; i < 16; i++ )
-                for( int j = -16; j < 16; j++ )
-                    for( int k = 0; k < 1; k++ )
+            for( var i = -16; i < 16; i++ )
+                for( var j = -16; j < 16; j++ )
+                    for( var k = 0; k < 1; k++ )
                     {
                         particle_t p = AllocParticle();
                         if( p == null )
                             return;
 
-                        p.die = (float)( client.cl.time + 2 + ( sys.Random() & 31 ) * 0.02 );
+                        p.die = ( Single ) ( client.cl.time + 2 + ( sys.Random() & 31 ) * 0.02 );
                         p.color = 224 + ( sys.Random() & 7 );
                         p.type = ptype_t.pt_slowgrav;
 
@@ -309,7 +309,7 @@ namespace SharpQuake
                         p.org.Z += sys.Random() & 63;
 
                         MathLib.Normalize( ref dir );
-                        float vel = 50 + ( sys.Random() & 63 );
+                        Single vel = 50 + ( sys.Random() & 63 );
                         p.vel = dir * vel;
                     }
         }
@@ -317,17 +317,17 @@ namespace SharpQuake
         /// <summary>
         /// R_ParticleExplosion2
         /// </summary>
-        public static void ParticleExplosion( ref Vector3 org, int colorStart, int colorLength )
+        public static void ParticleExplosion( ref Vector3 org, Int32 colorStart, Int32 colorLength )
         {
-            int colorMod = 0;
+            var colorMod = 0;
 
-            for( int i = 0; i < 512; i++ )
+            for( var i = 0; i < 512; i++ )
             {
                 particle_t p = AllocParticle();
                 if( p == null )
                     return;
 
-                p.die = (float)( client.cl.time + 0.3 );
+                p.die = ( Single ) ( client.cl.time + 0.3 );
                 p.color = colorStart + ( colorMod % colorLength );
                 colorMod++;
 
@@ -342,13 +342,13 @@ namespace SharpQuake
         /// </summary>
         public static void BlobExplosion( ref Vector3 org )
         {
-            for( int i = 0; i < 1024; i++ )
+            for( var i = 0; i < 1024; i++ )
             {
                 particle_t p = AllocParticle();
                 if( p == null )
                     return;
 
-                p.die = (float)( client.cl.time + 1 + ( sys.Random() & 8 ) * 0.05 );
+                p.die = ( Single ) ( client.cl.time + 1 + ( sys.Random() & 8 ) * 0.05 );
 
                 if( ( i & 1 ) != 0 )
                 {
@@ -370,11 +370,11 @@ namespace SharpQuake
         /// </summary>
         public static void EntityParticles( entity_t ent )
         {
-            float dist = 64;
+            Single dist = 64;
 
             if( _AVelocities[0].X == 0 )
             {
-                for( int i = 0; i < NUMVERTEXNORMALS; i++ )
+                for( var i = 0; i < NUMVERTEXNORMALS; i++ )
                 {
                     _AVelocities[i].X = ( sys.Random() & 255 ) * 0.01f;
                     _AVelocities[i].Y = ( sys.Random() & 255 ) * 0.01f;
@@ -382,24 +382,24 @@ namespace SharpQuake
                 }
             }
 
-            for( int i = 0; i < NUMVERTEXNORMALS; i++ )
+            for( var i = 0; i < NUMVERTEXNORMALS; i++ )
             {
-                double angle = client.cl.time * _AVelocities[i].X;
-                double sy = Math.Sin( angle );
-                double cy = Math.Cos( angle );
+                var angle = client.cl.time * _AVelocities[i].X;
+                var sy = Math.Sin( angle );
+                var cy = Math.Cos( angle );
                 angle = client.cl.time * _AVelocities[i].Y;
-                double sp = Math.Sin( angle );
-                double cp = Math.Cos( angle );
+                var sp = Math.Sin( angle );
+                var cp = Math.Cos( angle );
                 angle = client.cl.time * _AVelocities[i].Z;
-                double sr = Math.Sin( angle );
-                double cr = Math.Cos( angle );
+                var sr = Math.Sin( angle );
+                var cr = Math.Cos( angle );
 
-                Vector3 forward = new Vector3( (float)( cp * cy ), (float)( cp * sy ), (float)-sp );
+                Vector3 forward = new Vector3( ( Single ) ( cp * cy ), ( Single ) ( cp * sy ),  -( ( System.Single ) sp ) );
                 particle_t p = AllocParticle();
                 if( p == null )
                     return;
 
-                p.die = (float)( client.cl.time + 0.01 );
+                p.die = ( Single ) ( client.cl.time + 0.01 );
                 p.color = 0x6f;
                 p.type = ptype_t.pt_explode;
 
@@ -410,10 +410,10 @@ namespace SharpQuake
         // R_InitParticles
         private static void InitParticles()
         {
-            int i = Common.CheckParm( "-particles" );
+            var i = Common.CheckParm( "-particles" );
             if( i > 0 && i < Common.Argc - 1 )
             {
-                _NumParticles = int.Parse( Common.Argv( i + 1 ) );
+                _NumParticles = Int32.Parse( Common.Argv( i + 1 ) );
                 if( _NumParticles < ABSOLUTE_MIN_PARTICLES )
                     _NumParticles = ABSOLUTE_MIN_PARTICLES;
             }
@@ -432,19 +432,19 @@ namespace SharpQuake
             _ParticleTexture = Drawer.GenerateTextureNumber();// texture_extension_number++;
             Drawer.Bind( _ParticleTexture );
 
-            byte[,,] data = new byte[8, 8, 4];
-            for( int x = 0; x < 8; x++ )
+            Byte[,,] data = new Byte[8, 8, 4];
+            for( var x = 0; x < 8; x++ )
             {
-                for( int y = 0; y < 8; y++ )
+                for( var y = 0; y < 8; y++ )
                 {
                     data[y, x, 0] = 255;
                     data[y, x, 1] = 255;
                     data[y, x, 2] = 255;
-                    data[y, x, 3] = (byte)( _DotTexture[x, y] * 255 );
+                    data[y, x, 3] = ( Byte ) ( _DotTexture[x, y] * 255 );
                 }
             }
             GL.TexImage2D( TextureTarget.Texture2D, 0, Drawer.AlphaFormat, 8, 8, 0, PixelFormat.Rgba, PixelType.UnsignedByte, data );
-            GL.TexEnv( TextureEnvTarget.TextureEnv, TextureEnvParameter.TextureEnvMode, (int)TextureEnvMode.Modulate );
+            GL.TexEnv( TextureEnvTarget.TextureEnv, TextureEnvParameter.TextureEnvMode, ( Int32 ) TextureEnvMode.Modulate );
             Drawer.SetTextureFilters( TextureMinFilter.Linear, TextureMagFilter.Linear );
         }
 
@@ -457,7 +457,7 @@ namespace SharpQuake
             _FreeParticles = _Particles[0];
             _ActiveParticles = null;
 
-            for( int i = 0; i < _NumParticles - 1; i++ )
+            for( var i = 0; i < _NumParticles - 1; i++ )
                 _Particles[i].next = _Particles[i + 1];
             _Particles[_NumParticles - 1].next = null;
         }
@@ -469,17 +469,17 @@ namespace SharpQuake
         {
             Drawer.Bind( _ParticleTexture );
             GL.Enable( EnableCap.Blend );
-            GL.TexEnv( TextureEnvTarget.TextureEnv, TextureEnvParameter.TextureEnvMode, (int)TextureEnvMode.Modulate );
+            GL.TexEnv( TextureEnvTarget.TextureEnv, TextureEnvParameter.TextureEnvMode, ( Int32 ) TextureEnvMode.Modulate );
             GL.Begin( PrimitiveType.Triangles );
 
             Vector3 up = render.ViewUp * 1.5f;
             Vector3 right = render.ViewRight * 1.5f;
-            float frametime = (float)( client.cl.time - client.cl.oldtime );
-            float time3 = frametime * 15;
-            float time2 = frametime * 10;
-            float time1 = frametime * 5;
-            float grav = frametime * server.Gravity * 0.05f;
-            float dvel = 4 * frametime;
+            var frametime = ( Single ) ( client.cl.time - client.cl.oldtime );
+            var time3 = frametime * 15;
+            var time2 = frametime * 10;
+            var time1 = frametime * 5;
+            var grav = frametime * server.Gravity * 0.05f;
+            var dvel = 4 * frametime;
 
             while( true )
             {
@@ -510,15 +510,15 @@ namespace SharpQuake
                 }
 
                 // hack a scale up to keep particles from disapearing
-                float scale = Vector3.Dot( ( p.org - render.Origin ), render.ViewPn );
+                var scale = Vector3.Dot( ( p.org - render.Origin ), render.ViewPn );
                 if( scale < 20 )
                     scale = 1;
                 else
                     scale = 1 + scale * 0.004f;
 
                 // Uze todo: check if this is correct
-                uint color = vid.Table8to24[(byte)p.color];
-                GL.Color4( (byte)( color & 0xff ), (byte)( ( color >> 8 ) & 0xff ), (byte)( ( color >> 16 ) & 0xff ), (byte)( ( color >> 24 ) & 0xff ) );
+                var color = vid.Table8to24[( Byte ) p.color];
+                GL.Color4( ( Byte ) ( color & 0xff ), ( Byte ) ( ( color >> 8 ) & 0xff ), ( Byte ) ( ( color >> 16 ) & 0xff ), ( Byte ) ( ( color >> 24 ) & 0xff ) );
                 GL.TexCoord2( 0f, 0 );
                 GL.Vertex3( p.org );
                 GL.TexCoord2( 1f, 0 );
@@ -540,7 +540,7 @@ namespace SharpQuake
                         if( p.ramp >= 6 )
                             p.die = -1;
                         else
-                            p.color = _Ramp3[(int)p.ramp];
+                            p.color = _Ramp3[( Int32 ) p.ramp];
                         p.vel.Z += grav;
                         break;
 
@@ -549,7 +549,7 @@ namespace SharpQuake
                         if( p.ramp >= 8 )
                             p.die = -1;
                         else
-                            p.color = _Ramp1[(int)p.ramp];
+                            p.color = _Ramp1[( Int32 ) p.ramp];
                         p.vel += p.vel * dvel;
                         p.vel.Z -= grav;
                         break;
@@ -559,7 +559,7 @@ namespace SharpQuake
                         if( p.ramp >= 8 )
                             p.die = -1;
                         else
-                            p.color = _Ramp2[(int)p.ramp];
+                            p.color = _Ramp2[( Int32 ) p.ramp];
                         p.vel -= p.vel * frametime;
                         p.vel.Z -= grav;
                         break;
@@ -582,7 +582,7 @@ namespace SharpQuake
             }
             GL.End();
             GL.Disable( EnableCap.Blend );
-            GL.TexEnv( TextureEnvTarget.TextureEnv, TextureEnvParameter.TextureEnvMode, (int)TextureEnvMode.Replace );
+            GL.TexEnv( TextureEnvTarget.TextureEnv, TextureEnvParameter.TextureEnvMode, ( Int32 ) TextureEnvMode.Replace );
         }
 
         private static particle_t AllocParticle()
@@ -604,14 +604,14 @@ namespace SharpQuake
             // driver-usable fields
             public Vector3  org; // vec3_t
 
-            public float color;
+            public Single color;
 
             // drivers never touch the following fields
             public particle_t next;
 
             public Vector3 vel; // vec3_t
-            public float ramp;
-            public float die;
+            public Single ramp;
+            public Single die;
             public ptype_t type;
         } // particle_t;
     }

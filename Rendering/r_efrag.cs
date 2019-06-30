@@ -38,7 +38,7 @@ namespace SharpQuake
         /// and may be a reference to entity_t, in wich case assign *lastlink to ((entity_t)_LastObj).efrag
         /// or to efrag_t in wich case assign *lastlink value to ((efrag_t)_LastObj).entnext
         /// </summary>
-        private static object _LastObj; // see comments
+        private static System.Object _LastObj; // see comments
 
         /// <summary>
         /// R_AddEfrags
@@ -74,7 +74,7 @@ namespace SharpQuake
                 if( _EfragTopNode == null )
                     _EfragTopNode = node as mnode_t;
 
-                mleaf_t leaf = (mleaf_t)(object)node;
+                mleaf_t leaf = (mleaf_t)( System.Object ) node;
 
                 // grab an efrag off the free list
                 efrag_t ef = client.cl.free_efrags;
@@ -114,7 +114,7 @@ namespace SharpQuake
                 return;
 
             mplane_t splitplane = n.plane;
-            int sides = MathLib.BoxOnPlaneSide( ref _EMins, ref _EMaxs, splitplane );
+            var sides = MathLib.BoxOnPlaneSide( ref _EMins, ref _EMaxs, splitplane );
 
             if( sides == 3 )
             {

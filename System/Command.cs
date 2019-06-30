@@ -55,7 +55,7 @@ namespace SharpQuake
             }
         }
 
-        public static int Argc
+        public static Int32 Argc
         {
             get
             {
@@ -64,7 +64,7 @@ namespace SharpQuake
         }
 
         // char	*Cmd_Args (void);
-        public static string Args
+        public static String Args
         {
             get
             {
@@ -72,7 +72,7 @@ namespace SharpQuake
             }
         }
 
-        internal static bool Wait
+        internal static Boolean Wait
         {
             get
             {
@@ -84,16 +84,16 @@ namespace SharpQuake
             }
         }
 
-        private const int MAX_ALIAS_NAME = 32;
-        private const int MAX_ARGS = 80;
+        private const Int32 MAX_ALIAS_NAME = 32;
+        private const Int32 MAX_ARGS = 80;
 
         private static cmd_source_t _Source; // extern	cmd_source_t	cmd_source;
-        private static Dictionary<string, string> _Aliases;
-        private static Dictionary<string, xcommand_t> _Functions;
-        private static int _Argc;
-        private static string[] _Argv;// char	*cmd_argv[MAX_ARGS];
-        private static string _Args;// char* cmd_args = NULL;
-        private static bool _Wait; // qboolean cmd_wait;
+        private static Dictionary<String, String> _Aliases;
+        private static Dictionary<String, xcommand_t> _Functions;
+        private static Int32 _Argc;
+        private static String[] _Argv;// char	*cmd_argv[MAX_ARGS];
+        private static String _Args;// char* cmd_args = NULL;
+        private static Boolean _Wait; // qboolean cmd_wait;
 
         public static void Init()
         {
@@ -111,7 +111,7 @@ namespace SharpQuake
         // Cmd_AddCommand()
         // called by the init functions of other parts of the program to
         // register commands and functions to call for them.
-        public static void Add( string name, xcommand_t function )
+        public static void Add( String name, xcommand_t function )
         {
             // ??? because hunk allocation would get stomped
             if( host.IsInitialized )
@@ -137,13 +137,13 @@ namespace SharpQuake
         // Cmd_CompleteCommand()
         // attempts to match a partial command for automatic command line completion
         // returns NULL if nothing fits
-        public static string[] Complete( string partial )
+        public static String[] Complete( String partial )
         {
             if( String.IsNullOrEmpty( partial ) )
                 return null;
 
-            List<string> result = new List<string>();
-            foreach( string cmd in _Functions.Keys )
+            List<String> result = new List<String>();
+            foreach( var cmd in _Functions.Keys )
             {
                 if( cmd.StartsWith( partial ) )
                     result.Add( cmd );
@@ -154,7 +154,7 @@ namespace SharpQuake
         // Cmd_Argv ()
         // will return an empty string, not a NULL
         // if arg > argc, so string operations are allways safe.
-        public static string Argv( int arg )
+        public static String Argv( Int32 arg )
         {
             if( arg < 0 || arg >= _Argc )
                 return String.Empty;
@@ -163,7 +163,7 @@ namespace SharpQuake
         }
 
         // Cmd_Exists
-        public static bool Exists( string name )
+        public static Boolean Exists( String name )
         {
             return ( Find( name ) != null );
         }
@@ -172,14 +172,14 @@ namespace SharpQuake
         // Takes a null terminated string.  Does not need to be /n terminated.
         // breaks the string up into arg tokens.
         // Parses the given string into command line tokens.
-        public static void TokenizeString( string text )
+        public static void TokenizeString( String text )
         {
             // clear the args from the last string
             _Argc = 0;
             _Args = null;
             _Argv = null;
 
-            List<string> argv = new List<string>( MAX_ARGS );
+            List<String> argv = new List<String>( MAX_ARGS );
             while( !String.IsNullOrEmpty( text ) )
             {
                 if( _Argc == 1 )
@@ -205,7 +205,7 @@ namespace SharpQuake
         //
         // A complete command line has been parsed, so try to execute it
         // FIXME: lookupnoadd the token to speed search?
-        public static void ExecuteString( string text, cmd_source_t src )
+        public static void ExecuteString( String text, cmd_source_t src )
         {
             _Source = src;
 
@@ -224,7 +224,7 @@ namespace SharpQuake
             else
             {
                 // check alias
-                string alias = FindAlias( _Argv[0] ); // must search with compare func like Q_strcasecmp
+                var alias = FindAlias( _Argv[0] ); // must search with compare func like Q_strcasecmp
                 if( !String.IsNullOrEmpty( alias ) )
                 {
                     Cbuf.InsertText( alias );
@@ -255,7 +255,7 @@ namespace SharpQuake
             if( client.cls.demoplayback )
                 return;		// not really connected
 
-            MsgWriter writer = client.cls.message;
+            MessageWriter writer = client.cls.message;
             writer.WriteByte( protocol.clc_stringcmd );
             if( !Command.Argv( 0 ).Equals( "cmd" ) )
             {
@@ -271,21 +271,21 @@ namespace SharpQuake
             }
         }
 
-        public static string JoinArgv()
+        public static String JoinArgv()
         {
             return String.Join( " ", _Argv );
         }
 
-        private static xcommand_t Find( string name )
+        private static xcommand_t Find( String name )
         {
             xcommand_t result;
             _Functions.TryGetValue( name, out result );
             return result;
         }
 
-        private static string FindAlias( string name )
+        private static String FindAlias( String name )
         {
-            string result;
+            String result;
             _Aliases.TryGetValue( name, out result );
             return result;
         }
@@ -307,7 +307,7 @@ namespace SharpQuake
 
             // build the combined string to parse from
             StringBuilder sb = new StringBuilder( 1024 );
-            for( int i = 1; i < _Argc; i++ )
+            for( var i = 1; i < _Argc; i++ )
             {
                 if( !String.IsNullOrEmpty( _Argv[i] ) )
                 {
@@ -318,16 +318,16 @@ namespace SharpQuake
             }
 
             // pull out the commands
-            string text = sb.ToString();
+            var text = sb.ToString();
             sb.Length = 0;
 
-            for( int i = 0; i < text.Length; i++ )
+            for( var i = 0; i < text.Length; i++ )
             {
                 if( text[i] == '+' )
                 {
                     i++;
 
-                    int j = i;
+                    var j = i;
                     while( ( j < text.Length ) && ( text[j] != '+' ) && ( text[j] != '-' ) )
                     {
                         j++;
@@ -354,13 +354,13 @@ namespace SharpQuake
                 return;
             }
 
-            byte[] bytes = FileSystem.LoadFile( _Argv[1] );
+            Byte[] bytes = FileSystem.LoadFile( _Argv[1] );
             if( bytes == null )
             {
                 Con.Print( "couldn't exec {0}\n", _Argv[1] );
                 return;
             }
-            string script = Encoding.ASCII.GetString( bytes );
+            var script = Encoding.ASCII.GetString( bytes );
             Con.Print( "execing {0}\n", _Argv[1] );
             Cbuf.InsertText( script );
         }
@@ -369,7 +369,7 @@ namespace SharpQuake
         // Just prints the rest of the line to the console
         private static void Echo_f()
         {
-            for( int i = 1; i < _Argc; i++ )
+            for( var i = 1; i < _Argc; i++ )
             {
                 Con.Print( "{0} ", _Argv[i] );
             }
@@ -383,14 +383,14 @@ namespace SharpQuake
             if( _Argc == 1 )
             {
                 Con.Print( "Current alias commands:\n" );
-                foreach( KeyValuePair<string, string> alias in _Aliases )
+                foreach( KeyValuePair<String, String> alias in _Aliases )
                 {
                     Con.Print( "{0} : {1}\n", alias.Key, alias.Value );
                 }
                 return;
             }
 
-            string name = _Argv[1];
+            var name = _Argv[1];
             if( name.Length >= MAX_ALIAS_NAME )
             {
                 Con.Print( "Alias name is too long\n" );
@@ -399,7 +399,7 @@ namespace SharpQuake
 
             // copy the rest of the command line
             StringBuilder sb = new StringBuilder( 1024 );
-            for( int i = 2; i < _Argc; i++ )
+            for( var i = 2; i < _Argc; i++ )
             {
                 sb.Append( _Argv[i] );
                 if( i + 1 < _Argc )
@@ -411,8 +411,8 @@ namespace SharpQuake
 
         static Command()
         {
-            _Aliases = new Dictionary<string, string>();
-            _Functions = new Dictionary<string, xcommand_t>();
+            _Aliases = new Dictionary<String, String>();
+            _Functions = new Dictionary<String, xcommand_t>();
         }
     }
 
@@ -429,7 +429,7 @@ namespace SharpQuake
     internal static class Cbuf
     {
         private static StringBuilder _Buf;
-        private static bool _Wait;
+        private static Boolean _Wait;
 
         // Cbuf_Init()
         // allocates an initial text buffer that will grow as needed
@@ -441,12 +441,12 @@ namespace SharpQuake
         // Cbuf_AddText()
         // as new commands are generated from the console or keybindings,
         // the text is added to the end of the command buffer.
-        public static void AddText( string text )
+        public static void AddText( String text )
         {
             if( String.IsNullOrEmpty( text ) )
                 return;
 
-            int len = text.Length;
+            var len = text.Length;
             if( _Buf.Length + len > _Buf.Capacity )
             {
                 Con.Print( "Cbuf.AddText: overflow!\n" );
@@ -464,7 +464,7 @@ namespace SharpQuake
         // Adds command text immediately after the current command
         // ???Adds a \n to the text
         // FIXME: actually change the command buffer to do less copying
-        public static void InsertText( string text )
+        public static void InsertText( String text )
         {
             _Buf.Insert( 0, text );
         }
@@ -478,10 +478,10 @@ namespace SharpQuake
         {
             while( _Buf.Length > 0 )
             {
-                string text = _Buf.ToString();
+                var text = _Buf.ToString();
 
                 // find a \n or ; line break
-                int quotes = 0, i;
+                Int32 quotes = 0, i;
                 for( i = 0; i < text.Length; i++ )
                 {
                     if( text[i] == '"' )
@@ -494,7 +494,7 @@ namespace SharpQuake
                         break;
                 }
 
-                string line = text.Substring( 0, i ).TrimEnd( '\n', ';' );
+                var line = text.Substring( 0, i ).TrimEnd( '\n', ';' );
 
                 // delete the text from the command buffer and move remaining commands down
                 // this is necessary because commands (exec, alias) can insert data at the

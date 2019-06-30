@@ -59,64 +59,9 @@ namespace SharpQuake
         StandardQuake, Rogue, Hipnotic
     }
 
-    [StructLayout(LayoutKind.Explicit)]
-    internal struct Union4b
-    {
-        [FieldOffset(0)]
-        public uint ui0;
-
-        [FieldOffset(0)]
-        public int i0;
-
-        [FieldOffset(0)]
-        public float f0;
-
-        [FieldOffset(0)]
-        public short s0;
-
-        [FieldOffset(2)]
-        public short s1;
-
-        [FieldOffset(0)]
-        public ushort us0;
-
-        [FieldOffset(2)]
-        public ushort us1;
-
-        [FieldOffset(0)]
-        public byte b0;
-
-        [FieldOffset(1)]
-        public byte b1;
-
-        [FieldOffset(2)]
-        public byte b2;
-
-        [FieldOffset(3)]
-        public byte b3;
-
-        public static readonly Union4b Empty = new Union4b(0, 0, 0, 0);
-
-        public Union4b(byte b0, byte b1, byte b2, byte b3)
-        {
-            // Shut up compiler
-            this.ui0 = 0;
-            this.i0 = 0;
-            this.f0 = 0;
-            this.s0 = 0;
-            this.s1 = 0;
-            this.us0 = 0;
-            this.us1 = 0;
-            this.b0 = b0;
-            this.b1 = b1;
-            this.b2 = b2;
-            this.b3 = b3;
-        }
-    }
-
     internal static class Common
     {
-        public static bool IsBigEndian
+        public static Boolean IsBigEndian
         {
             get
             {
@@ -124,7 +69,7 @@ namespace SharpQuake
             }
         }
 
-        public static string GameDir
+        public static String GameDir
         {
             get
             {
@@ -140,7 +85,7 @@ namespace SharpQuake
             }
         }
 
-        public static int Argc
+        public static Int32 Argc
         {
             get
             {
@@ -148,7 +93,7 @@ namespace SharpQuake
             }
         }
 
-        public static string[] Args
+        public static String[] Args
         {
             get
             {
@@ -156,13 +101,13 @@ namespace SharpQuake
             }
             set
             {
-                _Argv = new string[value.Length];
+                _Argv = new String[value.Length];
                 value.CopyTo(_Argv, 0);
                 _Args = String.Join(" ", value);
             }
         }
 
-        public static string Token
+        public static String Token
         {
             get
             {
@@ -170,7 +115,7 @@ namespace SharpQuake
             }
         }
 
-        public static bool IsRegistered
+        public static Boolean IsRegistered
         {
             get
             {
@@ -180,19 +125,19 @@ namespace SharpQuake
 
 
         // if a packfile directory differs from this, it is assumed to be hacked
-        public const int PAK0_COUNT = 339;
+        public const Int32 PAK0_COUNT = 339;
 
-        public const int PAK0_CRC = 32981;
+        public const Int32 PAK0_CRC = 32981;
 
         public static Vector3 ZeroVector = Vector3.Zero;
 
         // for passing as reference
         public static v3f ZeroVector3f = default(v3f);
 
-        private static readonly byte[] ZeroBytes = new byte[4096];
+        private static readonly Byte[] ZeroBytes = new Byte[4096];
 
         // this graphic needs to be in the pak file to use registered features
-        private static ushort[] _Pop = new ushort[]
+        private static UInt16[] _Pop = new UInt16[]
         {
              0x0000,0x0000,0x0000,0x0000,0x0000,0x0000,0x0000,0x0000
             ,0x0000,0x0000,0x6600,0x0000,0x0000,0x0000,0x6600,0x0000
@@ -213,7 +158,7 @@ namespace SharpQuake
         };
 
         // for passing as reference
-        private static string[] safeargvs = new string[]
+        private static String[] safeargvs = new String[]
         {
             "-stdvid", "-nolan", "-nosound", "-nocdaudio", "-nojoy", "-nomouse", "-dibonly"
         };
@@ -221,13 +166,13 @@ namespace SharpQuake
         private static IByteOrderConverter _Converter;
         private static CVar _Registered;
         private static CVar _CmdLine;
-        public static string[] _Argv;
-        public static string _Args; // com_cmdline
+        public static String[] _Argv;
+        public static String _Args; // com_cmdline
         private static GameKind _GameKind; // qboolean		standard_quake = true, rogue, hipnotic;
-        private static char[] _Slashes = new char[] { '/', '\\' };
-        private static string _Token; // com_token
+        private static Char[] _Slashes = new Char[] { '/', '\\' };
+        private static String _Token; // com_token
 
-        public static string Argv(int index)
+        public static String Argv( Int32 index )
         {
             return _Argv[index];
         }
@@ -235,9 +180,9 @@ namespace SharpQuake
         // int COM_CheckParm (char *parm)
         // Returns the position (1 to argc-1) in the program's argument list
         // where the given parameter apears, or 0 if not present
-        public static int CheckParm(string parm)
+        public static Int32 CheckParm( String parm )
         {
-            for (int i = 1; i < _Argv.Length; i++)
+            for ( var i = 1; i < _Argv.Length; i++)
             {
                 if (_Argv[i].Equals(parm))
                     return i;
@@ -245,13 +190,13 @@ namespace SharpQuake
             return 0;
         }
 
-        public static bool HasParam(string parm)
+        public static Boolean HasParam( String parm )
         {
             return (CheckParm(parm) > 0);
         }
 
         // void COM_Init (char *path)
-        public static void Init(string path, string[] argv)
+        public static void Init( String path, String[] argv)
         {
             _Argv = argv;
 
@@ -265,15 +210,15 @@ namespace SharpQuake
         }
 
         // void COM_InitArgv (int argc, char **argv)
-        public static void InitArgv(string[] argv)
+        public static void InitArgv( String[] argv)
         {
             // reconstitute the command line for the cmdline externally visible cvar
             _Args = String.Join(" ", argv);
-            _Argv = new string[argv.Length];
+            _Argv = new String[argv.Length];
             argv.CopyTo(_Argv, 0);
 
-            bool safe = false;
-            foreach (string arg in _Argv)
+            var safe = false;
+            foreach ( var arg in _Argv)
             {
                 if (arg == "-safe")
                 {
@@ -286,7 +231,7 @@ namespace SharpQuake
             {
                 // force all the safe-mode switches. Note that we reserved extra space in
                 // case we need to add these, so we don't need an overflow check
-                string[] largv = new string[_Argv.Length + safeargvs.Length];
+                String[] largv = new String[_Argv.Length + safeargvs.Length];
                 _Argv.CopyTo(largv, 0);
                 safeargvs.CopyTo(largv, _Argv.Length);
                 _Argv = largv;
@@ -305,7 +250,7 @@ namespace SharpQuake
         /// COM_Parse
         /// Parse a token out of a string
         /// </summary>
-        public static string Parse(string data)
+        public static String Parse( String data )
         {
             _Token = String.Empty;
 
@@ -313,7 +258,7 @@ namespace SharpQuake
                 return null;
 
             // skip whitespace
-            int i = 0;
+            var i = 0;
             while (i < data.Length)
             {
                 while (i < data.Length)
@@ -340,7 +285,7 @@ namespace SharpQuake
             if (i >= data.Length)
                 return null;
 
-            int i0 = i;
+            var i0 = i;
 
             // handle quoted strings specially
             if (data[i] == '\"')
@@ -363,7 +308,7 @@ namespace SharpQuake
             }
 
             // parse single characters
-            char c = data[i];
+            var c = data[i];
             if (c == '{' || c == '}' || c == ')' || c == '(' || c == '\'' || c == ':')
             {
                 _Token = data.Substring(i, 1);
@@ -392,21 +337,21 @@ namespace SharpQuake
             return (i + 1 < data.Length ? data.Substring(i + 1) : null);
         }
 
-        public static int atoi(string s)
+        public static Int32 atoi( String s )
         {
             if (String.IsNullOrEmpty(s))
                 return 0;
 
-            int sign = 1;
-            int result = 0;
-            int offset = 0;
+            var sign = 1;
+            var result = 0;
+            var offset = 0;
             if (s.StartsWith("-"))
             {
                 sign = -1;
                 offset++;
             }
 
-            int i = -1;
+            var i = -1;
 
             if (s.Length > 2)
             {
@@ -419,64 +364,64 @@ namespace SharpQuake
 
             if (i == offset)
             {
-                int.TryParse(s.Substring(offset + 2), System.Globalization.NumberStyles.HexNumber, null, out result);
+                Int32.TryParse(s.Substring(offset + 2), System.Globalization.NumberStyles.HexNumber, null, out result);
             }
             else
             {
                 i = s.IndexOf('\'', offset, 1);
                 if (i != -1)
                 {
-                    result = (byte)s[i + 1];
+                    result = ( Byte ) s[i + 1];
                 }
                 else
-                    int.TryParse(s.Substring(offset), out result);
+                    Int32.TryParse(s.Substring(offset), out result);
             }
             return sign * result;
         }
 
-        public static float atof(string s)
+        public static Single atof( String s )
         {
-            float v;
-            float.TryParse(s, NumberStyles.Float, CultureInfo.InvariantCulture.NumberFormat, out v);
+            Single v;
+            Single.TryParse(s, NumberStyles.Float, CultureInfo.InvariantCulture.NumberFormat, out v);
             return v;
         }
 
-        public static bool SameText(string a, string b)
+        public static Boolean SameText( String a, String b )
         {
             return (String.Compare(a, b, true) == 0);
         }
 
-        public static bool SameText(string a, string b, int count)
+        public static Boolean SameText( String a, String b, Int32 count )
         {
             return (String.Compare(a, 0, b, 0, count, true) == 0);
         }
 
-        public static short BigShort(short l)
+        public static Int16 BigShort( Int16 l )
         {
             return _Converter.BigShort(l);
         }
 
-        public static short LittleShort(short l)
+        public static Int16 LittleShort( Int16 l )
         {
             return _Converter.LittleShort(l);
         }
 
-        public static int BigLong(int l)
+        public static Int32 BigLong( Int32 l )
         {
             return _Converter.BigLong(l);
         }
 
-        public static int LittleLong(int l)
+        public static Int32 LittleLong( Int32 l )
         {
             return _Converter.LittleLong(l);
         }
 
-        public static float BigFloat(float l)
+        public static Single BigFloat( Single l )
         {
             return _Converter.BigFloat(l);
         }
 
-        public static float LittleFloat(float l)
+        public static Single LittleFloat( Single l )
         {
             return _Converter.LittleFloat(l);
         }
@@ -487,13 +432,13 @@ namespace SharpQuake
                 _Converter.LittleFloat(src.Y), _Converter.LittleFloat(src.Z));
         }
 
-        public static Vector3 LittleVector3(float[] src)
+        public static Vector3 LittleVector3( Single[] src)
         {
             return new Vector3(_Converter.LittleFloat(src[0]),
                 _Converter.LittleFloat(src[1]), _Converter.LittleFloat(src[2]));
         }
 
-        public static Vector4 LittleVector4(float[] src, int offset)
+        public static Vector4 LittleVector4( Single[] src, Int32 offset )
         {
             return new Vector4(_Converter.LittleFloat(src[offset + 0]),
                 _Converter.LittleFloat(src[offset + 1]),
@@ -503,17 +448,17 @@ namespace SharpQuake
 
         public static void FillArray<T>(T[] dest, T value)
         {
-            int elementSizeInBytes = Marshal.SizeOf(typeof(T));
-            int blockSize = Math.Min(dest.Length, 4096 / elementSizeInBytes);
-            for (int i = 0; i < blockSize; i++)
+            var elementSizeInBytes = Marshal.SizeOf(typeof(T));
+            var blockSize = Math.Min(dest.Length, 4096 / elementSizeInBytes);
+            for ( var i = 0; i < blockSize; i++)
                 dest[i] = value;
 
-            int blockSizeInBytes = blockSize * elementSizeInBytes;
-            int offset = blockSizeInBytes;
-            int lengthInBytes = Buffer.ByteLength(dest);
+            var blockSizeInBytes = blockSize * elementSizeInBytes;
+            var offset = blockSizeInBytes;
+            var lengthInBytes = Buffer.ByteLength(dest);
             while (true)// offset + blockSize <= lengthInBytes)
             {
-                int left = lengthInBytes - offset;
+                var left = lengthInBytes - offset;
                 if (left < blockSizeInBytes)
                     blockSizeInBytes = left;
 
@@ -525,14 +470,14 @@ namespace SharpQuake
             }
         }
 
-        public static void ZeroArray<T>(T[] dest, int startIndex, int length)
+        public static void ZeroArray<T>(T[] dest, Int32 startIndex, Int32 length )
         {
-            int elementBytes = Marshal.SizeOf(typeof(T));
-            int offset = startIndex * elementBytes;
-            int sizeInBytes = dest.Length * elementBytes - offset;
+            var elementBytes = Marshal.SizeOf(typeof(T));
+            var offset = startIndex * elementBytes;
+            var sizeInBytes = dest.Length * elementBytes - offset;
             while (true)
             {
-                int blockSize = sizeInBytes - offset;
+                var blockSize = sizeInBytes - offset;
                 if (blockSize > ZeroBytes.Length)
                     blockSize = ZeroBytes.Length;
 
@@ -544,7 +489,7 @@ namespace SharpQuake
             }
         }
 
-        public static string Copy(string src, int maxLength)
+        public static String Copy( String src, Int32 maxLength )
         {
             if (src == null)
                 return null;
@@ -552,23 +497,23 @@ namespace SharpQuake
             return (src.Length > maxLength ? src.Substring(1, maxLength) : src);
         }
 
-        public static void Copy(float[] src, out Vector3 dest)
+        public static void Copy( Single[] src, out Vector3 dest)
         {
             dest.X = src[0];
             dest.Y = src[1];
             dest.Z = src[2];
         }
 
-        public static void Copy(ref Vector3 src, float[] dest)
+        public static void Copy(ref Vector3 src, Single[] dest)
         {
             dest[0] = src.X;
             dest[1] = src.Y;
             dest[2] = src.Z;
         }
 
-        public static string GetString(byte[] src)
+        public static String GetString( Byte[] src)
         {
-            int count = 0;
+            var count = 0;
             while (count < src.Length && src[count] != 0)
                 count++;
 
@@ -580,9 +525,9 @@ namespace SharpQuake
             return new Vector3(v.x, v.y, v.z);
         }
 
-        public static void WriteInt(byte[] dest, int offset, int value)
+        public static void WriteInt( Byte[] dest, Int32 offset, Int32 value )
         {
-            Union4b u = Union4b.Empty;
+            Union4B u = Union4B.Empty;
             u.i0 = value;
             dest[offset + 0] = u.b0;
             dest[offset + 1] = u.b1;
@@ -600,7 +545,7 @@ namespace SharpQuake
         {
             FileSystem._StaticRegistered = false;
 
-            byte[] buf = FileSystem.LoadFile("gfx/pop.lmp");
+            Byte[] buf = FileSystem.LoadFile("gfx/pop.lmp");
             if (buf == null || buf.Length < 256)
             {
                 Con.Print("Playing shareware version.\n");
@@ -609,11 +554,11 @@ namespace SharpQuake
                 return;
             }
 
-            ushort[] check = new ushort[buf.Length / 2];
+            UInt16[] check = new UInt16[buf.Length / 2];
             Buffer.BlockCopy(buf, 0, check, 0, buf.Length);
-            for (int i = 0; i < 128; i++)
+            for ( var i = 0; i < 128; i++)
             {
-                if (_Pop[i] != (ushort)_Converter.BigShort((short)check[i]))
+                if (_Pop[i] != ( UInt16 ) _Converter.BigShort(( Int16 ) check[i]))
                     sys.Error("Corrupted data file.");
             }
 
@@ -634,804 +579,6 @@ namespace SharpQuake
             {
                 _Converter = new BigEndianConverter();
             }
-        }
-    }
-
-    [StructLayout(LayoutKind.Sequential, Pack = 1)]
-    internal class link_t
-    {
-        private link_t _Prev, _Next;
-        private object _Owner;
-
-        public link_t Prev
-        {
-            get
-            {
-                return _Prev;
-            }
-        }
-
-        public link_t Next
-        {
-            get
-            {
-                return _Next;
-            }
-        }
-
-        public object Owner
-        {
-            get
-            {
-                return _Owner;
-            }
-        }
-
-        public link_t(object owner)
-        {
-            _Owner = owner;
-        }
-
-        public void Clear()
-        {
-            _Prev = _Next = this;
-        }
-
-        public void ClearToNulls()
-        {
-            _Prev = _Next = null;
-        }
-
-        public void Remove()
-        {
-            _Next._Prev = _Prev;
-            _Prev._Next = _Next;
-            _Next = null;
-            _Prev = null;
-        }
-
-        public void InsertBefore(link_t before)
-        {
-            _Next = before;
-            _Prev = before._Prev;
-            _Prev._Next = this;
-            _Next._Prev = this;
-        }
-
-        public void InsertAfter(link_t after)
-        {
-            _Next = after.Next;
-            _Prev = after;
-            _Prev._Next = this;
-            _Next._Prev = this;
-        }
-    } // link_t;
-
-    // MSG_WriteXxx() functions
-    internal class MsgWriter
-    {
-        public byte[] Data
-        {
-            get
-            {
-                return _Buffer;
-            }
-        }
-
-        public bool IsEmpty
-        {
-            get
-            {
-                return (_Count == 0);
-            }
-        }
-
-        public int Length
-        {
-            get
-            {
-                return _Count;
-            }
-        }
-
-        public bool AllowOverflow
-        {
-            get; set;
-        }
-
-        public bool IsOveflowed
-        {
-            get; set;
-        }
-
-        public int Capacity
-        {
-            get
-            {
-                return _Buffer.Length;
-            }
-            set
-            {
-                SetBufferSize(value);
-            }
-        }
-
-        private byte[] _Buffer;
-
-        private int _Count;
-
-        private Union4b _Val = Union4b.Empty;
-
-        public object GetState()
-        {
-            object st = null;
-            SaveState(ref st);
-            return st;
-        }
-
-        public void SaveState(ref object state)
-        {
-            if (state == null)
-            {
-                state = new State();
-            }
-            State st = GetState(state);
-            if (st.Buffer == null || st.Buffer.Length != _Buffer.Length)
-            {
-                st.Buffer = new byte[_Buffer.Length];
-            }
-            Buffer.BlockCopy(_Buffer, 0, st.Buffer, 0, _Buffer.Length);
-            st.Count = _Count;
-        }
-
-        public void RestoreState(object state)
-        {
-            State st = GetState(state);
-            SetBufferSize(st.Buffer.Length);
-            Buffer.BlockCopy(st.Buffer, 0, _Buffer, 0, _Buffer.Length);
-            _Count = st.Count;
-        }
-
-        // void MSG_WriteChar(sizebuf_t* sb, int c);
-        public void WriteChar(int c)
-        {
-#if PARANOID
-            if (c < -128 || c > 127)
-                Sys.Error("MSG_WriteChar: range error");
-#endif
-            NeedRoom(1);
-            _Buffer[_Count++] = (byte)c;
-        }
-
-        // MSG_WriteByte(sizebuf_t* sb, int c);
-        public void WriteByte(int c)
-        {
-#if PARANOID
-            if (c < 0 || c > 255)
-                Sys.Error("MSG_WriteByte: range error");
-#endif
-            NeedRoom(1);
-            _Buffer[_Count++] = (byte)c;
-        }
-
-        // MSG_WriteShort(sizebuf_t* sb, int c)
-        public void WriteShort(int c)
-        {
-#if PARANOID
-            if (c < short.MinValue || c > short.MaxValue)
-                Sys.Error("MSG_WriteShort: range error");
-#endif
-            NeedRoom(2);
-            _Buffer[_Count++] = (byte)(c & 0xff);
-            _Buffer[_Count++] = (byte)(c >> 8);
-        }
-
-        // MSG_WriteLong(sizebuf_t* sb, int c);
-        public void WriteLong(int c)
-        {
-            NeedRoom(4);
-            _Buffer[_Count++] = (byte)(c & 0xff);
-            _Buffer[_Count++] = (byte)((c >> 8) & 0xff);
-            _Buffer[_Count++] = (byte)((c >> 16) & 0xff);
-            _Buffer[_Count++] = (byte)(c >> 24);
-        }
-
-        // MSG_WriteFloat(sizebuf_t* sb, float f)
-        public void WriteFloat(float f)
-        {
-            NeedRoom(4);
-            _Val.f0 = f;
-            _Val.i0 = Common.LittleLong(_Val.i0);
-
-            _Buffer[_Count++] = _Val.b0;
-            _Buffer[_Count++] = _Val.b1;
-            _Buffer[_Count++] = _Val.b2;
-            _Buffer[_Count++] = _Val.b3;
-        }
-
-        // MSG_WriteString(sizebuf_t* sb, char* s)
-        public void WriteString(string s)
-        {
-            int count = 1;
-            if (!String.IsNullOrEmpty(s))
-                count += s.Length;
-
-            NeedRoom(count);
-            for (int i = 0; i < count - 1; i++)
-                _Buffer[_Count++] = (byte)s[i];
-            _Buffer[_Count++] = 0;
-        }
-
-        // SZ_Print()
-        public void Print(string s)
-        {
-            if (_Count > 0 && _Buffer[_Count - 1] == 0)
-                _Count--; // remove previous trailing 0
-            WriteString(s);
-        }
-
-        // MSG_WriteCoord(sizebuf_t* sb, float f)
-        public void WriteCoord(float f)
-        {
-            WriteShort((int)(f * 8));
-        }
-
-        // MSG_WriteAngle(sizebuf_t* sb, float f)
-        public void WriteAngle(float f)
-        {
-            WriteByte(((int)f * 256 / 360) & 255);
-        }
-
-        public void Write(byte[] src, int offset, int count)
-        {
-            if (count > 0)
-            {
-                NeedRoom(count);
-                Buffer.BlockCopy(src, offset, _Buffer, _Count, count);
-                _Count += count;
-            }
-        }
-
-        public void Clear()
-        {
-            _Count = 0;
-        }
-
-        public void FillFrom(Stream src, int count)
-        {
-            Clear();
-            NeedRoom(count);
-            while (_Count < count)
-            {
-                int r = src.Read(_Buffer, _Count, count - _Count);
-                if (r == 0)
-                    break;
-                _Count += r;
-            }
-        }
-
-        public void FillFrom(byte[] src, int startIndex, int count)
-        {
-            Clear();
-            NeedRoom(count);
-            Buffer.BlockCopy(src, startIndex, _Buffer, 0, count);
-            _Count = count;
-        }
-
-        public int FillFrom(Socket socket, ref EndPoint ep)
-        {
-            Clear();
-            int result = net.LanDriver.Read(socket, _Buffer, _Buffer.Length, ref ep);
-            if (result >= 0)
-                _Count = result;
-            return result;
-        }
-
-        public void AppendFrom(byte[] src, int startIndex, int count)
-        {
-            NeedRoom(count);
-            Buffer.BlockCopy(src, startIndex, _Buffer, _Count, count);
-            _Count += count;
-        }
-
-        protected void NeedRoom(int bytes)
-        {
-            if (_Count + bytes > _Buffer.Length)
-            {
-                if (!this.AllowOverflow)
-                    sys.Error("MsgWriter: overflow without allowoverflow set!");
-
-                this.IsOveflowed = true;
-                _Count = 0;
-                if (bytes > _Buffer.Length)
-                    sys.Error("MsgWriter: Requested more than whole buffer has!");
-            }
-        }
-
-        private class State
-        {
-            public byte[] Buffer;
-            public int Count;
-        }
-
-        private void SetBufferSize(int value)
-        {
-            if (_Buffer != null)
-            {
-                if (_Buffer.Length == value)
-                    return;
-
-                Array.Resize(ref _Buffer, value);
-
-                if (_Count > _Buffer.Length)
-                    _Count = _Buffer.Length;
-            }
-            else
-                _Buffer = new byte[value];
-        }
-
-        private State GetState(object state)
-        {
-            if (state == null)
-            {
-                throw new ArgumentNullException();
-            }
-            State st = state as State;
-            if (st == null)
-            {
-                throw new ArgumentException("Passed object is not a state!");
-            }
-            return st;
-        }
-
-        public MsgWriter()
-                    : this(0)
-        {
-        }
-
-        public MsgWriter(int capacity)
-        {
-            SetBufferSize(capacity);
-            this.AllowOverflow = false;
-        }
-    }
-
-    // MSG_ReadXxx() functions
-    internal class MsgReader
-    {
-        /// <summary>
-        /// msg_badread
-        /// </summary>
-        public bool IsBadRead
-        {
-            get
-            {
-                return _IsBadRead;
-            }
-        }
-
-        /// <summary>
-        /// msg_readcount
-        /// </summary>
-        public int Position
-        {
-            get
-            {
-                return _Count;
-            }
-        }
-
-        private MsgWriter _Source;
-        private bool _IsBadRead;
-        private int _Count;
-        private Union4b _Val;
-        private char[] _Tmp;
-
-        /// <summary>
-        /// MSG_BeginReading
-        /// </summary>
-        public void Reset()
-        {
-            _IsBadRead = false;
-            _Count = 0;
-        }
-
-        /// <summary>
-        /// MSG_ReadChar
-        /// reads sbyte
-        /// </summary>
-        public int ReadChar()
-        {
-            if (!HasRoom(1))
-                return -1;
-
-            return (sbyte)_Source.Data[_Count++];
-        }
-
-        // MSG_ReadByte (void)
-        public int ReadByte()
-        {
-            if (!HasRoom(1))
-                return -1;
-
-            return (byte)_Source.Data[_Count++];
-        }
-
-        // MSG_ReadShort (void)
-        public int ReadShort()
-        {
-            if (!HasRoom(2))
-                return -1;
-
-            int c = (short)(_Source.Data[_Count + 0] + (_Source.Data[_Count + 1] << 8));
-            _Count += 2;
-            return c;
-        }
-
-        // MSG_ReadLong (void)
-        public int ReadLong()
-        {
-            if (!HasRoom(4))
-                return -1;
-
-            int c = _Source.Data[_Count + 0] +
-                (_Source.Data[_Count + 1] << 8) +
-                (_Source.Data[_Count + 2] << 16) +
-                (_Source.Data[_Count + 3] << 24);
-
-            _Count += 4;
-            return c;
-        }
-
-        // MSG_ReadFloat (void)
-        public float ReadFloat()
-        {
-            if (!HasRoom(4))
-                return 0;
-
-            _Val.b0 = _Source.Data[_Count + 0];
-            _Val.b1 = _Source.Data[_Count + 1];
-            _Val.b2 = _Source.Data[_Count + 2];
-            _Val.b3 = _Source.Data[_Count + 3];
-
-            _Count += 4;
-
-            _Val.i0 = Common.LittleLong(_Val.i0);
-            return _Val.f0;
-        }
-
-        // char *MSG_ReadString (void)
-        public string ReadString()
-        {
-            int l = 0;
-            do
-            {
-                int c = ReadChar();
-                if (c == -1 || c == 0)
-                    break;
-                _Tmp[l] = (char)c;
-                l++;
-            } while (l < _Tmp.Length - 1);
-
-            return new String(_Tmp, 0, l);
-        }
-
-        // float MSG_ReadCoord (void)
-        public float ReadCoord()
-        {
-            return ReadShort() * (1.0f / 8);
-        }
-
-        // float MSG_ReadAngle (void)
-        public float ReadAngle()
-        {
-            return ReadChar() * (360.0f / 256);
-        }
-
-        public Vector3 ReadCoords()
-        {
-            Vector3 result;
-            result.X = ReadCoord();
-            result.Y = ReadCoord();
-            result.Z = ReadCoord();
-            return result;
-        }
-
-        public Vector3 ReadAngles()
-        {
-            Vector3 result;
-            result.X = ReadAngle();
-            result.Y = ReadAngle();
-            result.Z = ReadAngle();
-            return result;
-        }
-
-        private bool HasRoom(int bytes)
-        {
-            if (_Count + bytes > _Source.Length)
-            {
-                _IsBadRead = true;
-                return false;
-            }
-            return true;
-        }
-
-        public MsgReader(MsgWriter source)
-        {
-            _Source = source;
-            _Val = Union4b.Empty;
-            _Tmp = new char[2048];
-        }
-    }
-
-    #region Byte order converters
-
-    internal static class SwapHelper
-    {
-        public static short ShortSwap(short l)
-        {
-            byte b1, b2;
-
-            b1 = (byte)(l & 255);
-            b2 = (byte)((l >> 8) & 255);
-
-            return (short)((b1 << 8) + b2);
-        }
-
-        public static int LongSwap(int l)
-        {
-            byte b1, b2, b3, b4;
-
-            b1 = (byte)(l & 255);
-            b2 = (byte)((l >> 8) & 255);
-            b3 = (byte)((l >> 16) & 255);
-            b4 = (byte)((l >> 24) & 255);
-
-            return ((int)b1 << 24) + ((int)b2 << 16) + ((int)b3 << 8) + b4;
-        }
-
-        public static float FloatSwap(float f)
-        {
-            byte[] bytes = BitConverter.GetBytes(f);
-            byte[] bytes2 = new byte[4];
-
-            bytes2[0] = bytes[3];
-            bytes2[1] = bytes[2];
-            bytes2[2] = bytes[1];
-            bytes2[3] = bytes[0];
-
-            return BitConverter.ToSingle(bytes2, 0);
-        }
-
-        public static void Swap4b(byte[] buff, int offset)
-        {
-            byte b1, b2, b3, b4;
-
-            b1 = buff[offset + 0];
-            b2 = buff[offset + 1];
-            b3 = buff[offset + 2];
-            b4 = buff[offset + 3];
-
-            buff[offset + 0] = b4;
-            buff[offset + 1] = b3;
-            buff[offset + 2] = b2;
-            buff[offset + 3] = b1;
-        }
-    }
-
-    internal class LittleEndianConverter : IByteOrderConverter
-    {
-        #region IByteOrderConverter Members
-
-        short IByteOrderConverter.BigShort(short l)
-        {
-            return SwapHelper.ShortSwap(l);
-        }
-
-        short IByteOrderConverter.LittleShort(short l)
-        {
-            return l;
-        }
-
-        int IByteOrderConverter.BigLong(int l)
-        {
-            return SwapHelper.LongSwap(l);
-        }
-
-        int IByteOrderConverter.LittleLong(int l)
-        {
-            return l;
-        }
-
-        float IByteOrderConverter.BigFloat(float l)
-        {
-            return SwapHelper.FloatSwap(l);
-        }
-
-        float IByteOrderConverter.LittleFloat(float l)
-        {
-            return l;
-        }
-
-        #endregion IByteOrderConverter Members
-    }
-
-    internal class BigEndianConverter : IByteOrderConverter
-    {
-        #region IByteOrderConverter Members
-
-        short IByteOrderConverter.BigShort(short l)
-        {
-            return l;
-        }
-
-        short IByteOrderConverter.LittleShort(short l)
-        {
-            return SwapHelper.ShortSwap(l);
-        }
-
-        int IByteOrderConverter.BigLong(int l)
-        {
-            return l;
-        }
-
-        int IByteOrderConverter.LittleLong(int l)
-        {
-            return SwapHelper.LongSwap(l);
-        }
-
-        float IByteOrderConverter.BigFloat(float l)
-        {
-            return l;
-        }
-
-        float IByteOrderConverter.LittleFloat(float l)
-        {
-            return SwapHelper.FloatSwap(l);
-        }
-
-        #endregion IByteOrderConverter Members
-    }
-
-    internal interface IByteOrderConverter
-    {
-        short BigShort(short l);
-
-        short LittleShort(short l);
-
-        int BigLong(int l);
-
-        int LittleLong(int l);
-
-        float BigFloat(float l);
-
-        float LittleFloat(float l);
-    }
-
-    #endregion Byte order converters
-
-
-    public class DisposableWrapper<T> : IDisposable where T : class, IDisposable
-    {
-        public T Object
-        {
-            get
-            {
-                return _Object;
-            }
-        }
-
-        private T _Object;
-        private bool _Owned;
-
-        private void Dispose(bool disposing)
-        {
-            if (_Object != null && _Owned)
-            {
-                _Object.Dispose();
-                _Object = null;
-            }
-        }
-
-        public DisposableWrapper(T obj, bool dispose)
-        {
-            _Object = obj;
-            _Owned = dispose;
-        }
-
-        ~DisposableWrapper()
-        {
-            Dispose(false);
-        }
-
-        #region IDisposable Members
-
-        public void Dispose()
-        {
-            Dispose(true);
-            GC.SuppressFinalize(this);
-        }
-
-        #endregion IDisposable Members
-    }
-
-    internal class ByteArraySegment
-    {
-        public byte[] Data
-        {
-            get
-            {
-                return _Segment.Array;
-            }
-        }
-
-        public int StartIndex
-        {
-            get
-            {
-                return _Segment.Offset;
-            }
-        }
-
-        public int Length
-        {
-            get
-            {
-                return _Segment.Count;
-            }
-        }
-
-        private ArraySegment<byte> _Segment;
-
-        public ByteArraySegment(byte[] array)
-            : this(array, 0, -1)
-        {
-        }
-
-        public ByteArraySegment(byte[] array, int startIndex)
-            : this(array, startIndex, -1)
-        {
-        }
-
-        public ByteArraySegment(byte[] array, int startIndex, int length)
-        {
-            if (array == null)
-            {
-                throw new ArgumentNullException("array");
-            }
-            if (length == -1)
-            {
-                length = array.Length - startIndex;
-            }
-            if (length <= 0)
-            {
-                throw new ArgumentException("Invalid length!");
-            }
-            _Segment = new ArraySegment<byte>(array, startIndex, length);
-        }
-    }
-
-    internal class QuakeException : Exception
-    {
-        public QuakeException()
-        {
-        }
-
-        public QuakeException(string message)
-            : base(message)
-        {
-        }
-    }
-
-    internal class EndGameException : QuakeException
-    {
-    }
-
-    internal class QuakeSystemError : QuakeException
-    {
-        public QuakeSystemError(string message)
-            : base(message)
-        {
         }
     }
 }

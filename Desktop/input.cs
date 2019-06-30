@@ -33,7 +33,7 @@ namespace SharpQuake
     /// </summary>
     internal static class input
     {
-        public static bool IsMouseActive
+        public static System.Boolean IsMouseActive
         {
             get
             {
@@ -56,11 +56,11 @@ namespace SharpQuake
         private static Vector2 _OldMouse; // old_mouse_x, old_mouse_y
         private static Vector2 _Mouse; // mouse_x, mouse_y
         private static Vector2 _MouseAccum; // mx_accum, my_accum
-        private static bool _IsMouseActive; // mouseactive
-        private static int _MouseButtons; // mouse_buttons
-        private static int _MouseOldButtonState; // mouse_oldbuttonstate
-        private static bool _MouseActivateToggle; // mouseactivatetoggle
-        private static bool _MouseShowToggle = true; // mouseshowtoggle
+        private static System.Boolean _IsMouseActive; // mouseactive
+        private static System.Int32 _MouseButtons; // mouse_buttons
+        private static System.Int32 _MouseOldButtonState; // mouse_oldbuttonstate
+        private static System.Boolean _MouseActivateToggle; // mouseactivatetoggle
+        private static System.Boolean _MouseShowToggle = true; // mouseshowtoggle
 
         // IN_Init
         public static void Init()
@@ -183,12 +183,12 @@ namespace SharpQuake
         /// <summary>
         /// IN_MouseEvent
         /// </summary>
-        public static void MouseEvent( int mstate )
+        public static void MouseEvent( System.Int32 mstate )
         {
             if( _IsMouseActive )
             {
                 // perform button actions
-                for( int i = 0; i < _MouseButtons; i++ )
+                for( var i = 0; i < _MouseButtons; i++ )
                 {
                     if( ( mstate & ( 1 << i ) ) != 0 && ( _MouseOldButtonState & ( 1 << i ) ) == 0 )
                     {
@@ -216,8 +216,8 @@ namespace SharpQuake
             Point current_pos = new Point(Mouse.GetCursorState().X, Mouse.GetCursorState().Y); //Cursor.Position;
             Point window_center = input.WindowCenter;
 
-            int mx = (int)( current_pos.X - window_center.X + _MouseAccum.X );
-            int my = (int)( current_pos.Y - window_center.Y + _MouseAccum.Y );
+            var mx = ( System.Int32 ) ( current_pos.X - window_center.X + _MouseAccum.X );
+            var my = ( System.Int32 ) ( current_pos.Y - window_center.Y + _MouseAccum.Y );
             _MouseAccum.X = 0;
             _MouseAccum.Y = 0;
 

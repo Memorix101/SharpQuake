@@ -26,7 +26,7 @@ namespace SharpQuake
 {
     internal static class anorms
     {
-        public const int NUMVERTEXNORMALS = 162;
+        public const System.Int32 NUMVERTEXNORMALS = 162;
 
         public static readonly Vector3[] Values = new Vector3[NUMVERTEXNORMALS]
         {

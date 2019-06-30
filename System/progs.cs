@@ -36,22 +36,22 @@ namespace SharpQuake
     internal unsafe struct eval_t
     {
         [FieldOffset(0)]
-        public int _string;
+        public string_t _string;
 
         [FieldOffset(0)]
-        public float _float;
+        public Single _float;
 
         [FieldOffset(0)]
-        public fixed float vector[3];
+        public fixed Single vector[3];
 
         [FieldOffset(0)]
-        public int function;
+        public string_t function;
 
         [FieldOffset(0)]
-        public int _int;
+        public string_t _int;
 
         [FieldOffset(0)]
-        public int edict;
+        public string_t edict;
     }
 
     /// <summary>
@@ -60,21 +60,21 @@ namespace SharpQuake
     [StructLayout( LayoutKind.Sequential, Pack = 1 )]
     internal struct dedict_t
     {
-        public bool free;
-        public int dummy1, dummy2;	 // former link_t area
+        public Boolean free;
+        public string_t dummy1, dummy2;	 // former link_t area
 
-        public int num_leafs;
+        public string_t num_leafs;
 
         [MarshalAs(UnmanagedType.ByValArray, SizeConst = progs.MAX_ENT_LEAFS)]
-        public short[] leafnums; // [MAX_ENT_LEAFS];
+        public Int16[] leafnums; // [MAX_ENT_LEAFS];
 
         public entity_state_t baseline;
 
-        public float freetime;			// sv.time when the object was freed
+        public Single freetime;			// sv.time when the object was freed
         public entvars_t v;					// C exported fields from progs
         // other fields from progs come immediately after
 
-        public static int SizeInBytes = Marshal.SizeOf(typeof(dedict_t));
+        public static string_t SizeInBytes = Marshal.SizeOf(typeof(dedict_t));
     }
 
     internal enum etype_t
@@ -164,14 +164,14 @@ namespace SharpQuake
     [StructLayout( LayoutKind.Sequential, Pack = 1 )]
     internal struct dstatement_t
     {
-        public ushort op;
-        public short a, b, c;
+        public UInt16 op;
+        public Int16 a, b, c;
 
-        public static int SizeInBytes = Marshal.SizeOf(typeof(dstatement_t));
+        public static string_t SizeInBytes = Marshal.SizeOf(typeof(dstatement_t));
 
         public void SwapBytes()
         {
-            this.op = (ushort)Common.LittleShort( (short)this.op );
+            this.op = ( UInt16 ) Common.LittleShort( ( Int16 ) this.op );
             this.a = Common.LittleShort( this.a );
             this.b = Common.LittleShort( this.b );
             this.c = Common.LittleShort( this.c );
@@ -181,9 +181,9 @@ namespace SharpQuake
     [StructLayout( LayoutKind.Sequential, Pack = 1 )]
     internal struct v3f
     {
-        public float x, y, z;
+        public Single x, y, z;
 
-        public bool IsEmpty
+        public Boolean IsEmpty
         {
             get
             {
@@ -201,12 +201,12 @@ namespace SharpQuake
     [StructLayout( LayoutKind.Sequential, Pack = 1 )]
     internal struct entvars_t
     {
-        public float modelindex;
+        public Single modelindex;
         public v3f absmin;
         public v3f absmax;
-        public float ltime;
-        public float movetype;
-        public float solid;
+        public Single ltime;
+        public Single movetype;
+        public Single solid;
         public v3f origin;
         public v3f oldorigin;
         public v3f velocity;
@@ -215,9 +215,9 @@ namespace SharpQuake
         public v3f punchangle;
         public string_t classname;
         public string_t model;
-        public float frame;
-        public float skin;
-        public float effects;
+        public Single frame;
+        public Single skin;
+        public Single effects;
         public v3f mins;
         public v3f maxs;
         public v3f size;
@@ -225,61 +225,61 @@ namespace SharpQuake
         public func_t use;
         public func_t think;
         public func_t blocked;
-        public float nextthink;
-        public int groundentity;
-        public float health;
-        public float frags;
-        public float weapon;
+        public Single nextthink;
+        public string_t groundentity;
+        public Single health;
+        public Single frags;
+        public Single weapon;
         public string_t weaponmodel;
-        public float weaponframe;
-        public float currentammo;
-        public float ammo_shells;
-        public float ammo_nails;
-        public float ammo_rockets;
-        public float ammo_cells;
-        public float items;
-        public float takedamage;
-        public int chain;
-        public float deadflag;
+        public Single weaponframe;
+        public Single currentammo;
+        public Single ammo_shells;
+        public Single ammo_nails;
+        public Single ammo_rockets;
+        public Single ammo_cells;
+        public Single items;
+        public Single takedamage;
+        public string_t chain;
+        public Single deadflag;
         public v3f view_ofs;
-        public float button0;
-        public float button1;
-        public float button2;
-        public float impulse;
-        public float fixangle;
+        public Single button0;
+        public Single button1;
+        public Single button2;
+        public Single impulse;
+        public Single fixangle;
         public v3f v_angle;
-        public float idealpitch;
+        public Single idealpitch;
         public string_t netname;
-        public int enemy;
-        public float flags;
-        public float colormap;
-        public float team;
-        public float max_health;
-        public float teleport_time;
-        public float armortype;
-        public float armorvalue;
-        public float waterlevel;
-        public float watertype;
-        public float ideal_yaw;
-        public float yaw_speed;
-        public int aiment;
-        public int goalentity;
-        public float spawnflags;
+        public string_t enemy;
+        public Single flags;
+        public Single colormap;
+        public Single team;
+        public Single max_health;
+        public Single teleport_time;
+        public Single armortype;
+        public Single armorvalue;
+        public Single waterlevel;
+        public Single watertype;
+        public Single ideal_yaw;
+        public Single yaw_speed;
+        public string_t aiment;
+        public string_t goalentity;
+        public Single spawnflags;
         public string_t target;
         public string_t targetname;
-        public float dmg_take;
-        public float dmg_save;
-        public int dmg_inflictor;
-        public int owner;
+        public Single dmg_take;
+        public Single dmg_save;
+        public string_t dmg_inflictor;
+        public string_t owner;
         public v3f movedir;
         public string_t message;
-        public float sounds;
+        public Single sounds;
         public string_t noise;
         public string_t noise1;
         public string_t noise2;
         public string_t noise3;
 
-        public static int SizeInBytes = Marshal.SizeOf(typeof(entvars_t));
+        public static string_t SizeInBytes = Marshal.SizeOf(typeof(entvars_t));
     }
 
     /// <summary>
@@ -287,29 +287,29 @@ namespace SharpQuake
     /// </summary>
     static partial class progs
     {
-        public const int DEF_SAVEGLOBAL = (1<<15);
-        public const int MAX_PARMS = 8;
-        public const int MAX_ENT_LEAFS = 16;
+        public const string_t DEF_SAVEGLOBAL = (1<<15);
+        public const string_t MAX_PARMS = 8;
+        public const string_t MAX_ENT_LEAFS = 16;
 
-        private const int PROG_VERSION = 6;
-        private const int PROGHEADER_CRC = 5927;
+        private const string_t PROG_VERSION = 6;
+        private const string_t PROGHEADER_CRC = 5927;
     }
 
     // eval_t;
 
     internal static class OFS
     {
-        public const int OFS_NULL = 0;
-        public const int OFS_RETURN = 1;
-        public const int OFS_PARM0 = 4;		// leave 3 ofs for each parm to hold vectors
-        public const int OFS_PARM1 = 7;
-        public const int OFS_PARM2 = 10;
-        public const int OFS_PARM3 = 13;
-        public const int OFS_PARM4 = 16;
-        public const int OFS_PARM5 = 19;
-        public const int OFS_PARM6 = 22;
-        public const int OFS_PARM7 = 25;
-        public const int RESERVED_OFS = 28;
+        public const string_t OFS_NULL = 0;
+        public const string_t OFS_RETURN = 1;
+        public const string_t OFS_PARM0 = 4;		// leave 3 ofs for each parm to hold vectors
+        public const string_t OFS_PARM1 = 7;
+        public const string_t OFS_PARM2 = 10;
+        public const string_t OFS_PARM3 = 13;
+        public const string_t OFS_PARM4 = 16;
+        public const string_t OFS_PARM5 = 19;
+        public const string_t OFS_PARM6 = 22;
+        public const string_t OFS_PARM7 = 25;
+        public const string_t RESERVED_OFS = 28;
     }
 
     /// <summary>
@@ -317,17 +317,17 @@ namespace SharpQuake
     /// </summary>
     internal class edict_t
     {
-        public bool free;
+        public Boolean free;
         public link_t area; // linked to a division node or leaf
 
-        public int num_leafs;
-        public short[] leafnums; // [MAX_ENT_LEAFS];
+        public string_t num_leafs;
+        public Int16[] leafnums; // [MAX_ENT_LEAFS];
 
         public entity_state_t baseline;
 
-        public float freetime;			// sv.time when the object was freed
+        public Single freetime;			// sv.time when the object was freed
         public entvars_t v;					// C exported fields from progs
-        public float[] fields; // other fields from progs
+        public Single[] fields; // other fields from progs
 
         public void Clear()
         {
@@ -337,7 +337,7 @@ namespace SharpQuake
             this.free = false;
         }
 
-        public bool IsV( int offset, out int correctedOffset )
+        public Boolean IsV( string_t offset, out string_t correctedOffset )
         {
             if( offset < ( entvars_t.SizeInBytes >> 2 ) )
             {
@@ -348,14 +348,14 @@ namespace SharpQuake
             return false;
         }
 
-        public unsafe void LoadInt( int offset, eval_t* result )
+        public unsafe void LoadInt( string_t offset, eval_t* result )
         {
-            int offset1;
+            Int32 offset1;
             if( IsV( offset, out offset1 ) )
             {
                 fixed ( void* pv = &this.v )
                 {
-                    eval_t* a = (eval_t*)( (int*)pv + offset1 );
+                    eval_t* a = (eval_t*)( ( Int32* )pv + offset1 );
                     result->_int = a->_int;
                 }
             }
@@ -363,20 +363,20 @@ namespace SharpQuake
             {
                 fixed ( void* pv = this.fields )
                 {
-                    eval_t* a = (eval_t*)( (int*)pv + offset1 );
+                    eval_t* a = (eval_t*)( ( Int32* )pv + offset1 );
                     result->_int = a->_int;
                 }
             }
         }
 
-        public unsafe void StoreInt( int offset, eval_t* value )
+        public unsafe void StoreInt( string_t offset, eval_t* value )
         {
-            int offset1;
+            Int32 offset1;
             if( IsV( offset, out offset1 ) )
             {
                 fixed ( void* pv = &this.v )
                 {
-                    eval_t* a = (eval_t*)( (int*)pv + offset1 );
+                    eval_t* a = (eval_t*)( ( Int32* )pv + offset1 );
                     a->_int = value->_int;
                 }
             }
@@ -384,20 +384,20 @@ namespace SharpQuake
             {
                 fixed ( void* pv = this.fields )
                 {
-                    eval_t* a = (eval_t*)( (int*)pv + offset1 );
+                    eval_t* a = (eval_t*)( ( Int32* )pv + offset1 );
                     a->_int = value->_int;
                 }
             }
         }
 
-        public unsafe void LoadVector( int offset, eval_t* result )
+        public unsafe void LoadVector( string_t offset, eval_t* result )
         {
-            int offset1;
+            Int32 offset1;
             if( IsV( offset, out offset1 ) )
             {
                 fixed ( void* pv = &this.v )
                 {
-                    eval_t* a = (eval_t*)( (int*)pv + offset1 );
+                    eval_t* a = (eval_t*)( ( Int32* )pv + offset1 );
                     result->vector[0] = a->vector[0];
                     result->vector[1] = a->vector[1];
                     result->vector[2] = a->vector[2];
@@ -407,7 +407,7 @@ namespace SharpQuake
             {
                 fixed ( void* pf = this.fields )
                 {
-                    eval_t* a = (eval_t*)( (int*)pf + offset1 );
+                    eval_t* a = (eval_t*)( ( Int32* )pf + offset1 );
                     result->vector[0] = a->vector[0];
                     result->vector[1] = a->vector[1];
                     result->vector[2] = a->vector[2];
@@ -415,14 +415,14 @@ namespace SharpQuake
             }
         }
 
-        public unsafe void StoreVector( int offset, eval_t* value )
+        public unsafe void StoreVector( string_t offset, eval_t* value )
         {
-            int offset1;
+            Int32 offset1;
             if( IsV( offset, out offset1 ) )
             {
                 fixed ( void* pv = &this.v )
                 {
-                    eval_t* a = (eval_t*)( (int*)pv + offset1 );
+                    eval_t* a = (eval_t*)( ( Int32* )pv + offset1 );
                     a->vector[0] = value->vector[0];
                     a->vector[1] = value->vector[1];
                     a->vector[2] = value->vector[2];
@@ -432,7 +432,7 @@ namespace SharpQuake
             {
                 fixed ( void* pf = this.fields )
                 {
-                    eval_t* a = (eval_t*)( (int*)pf + offset1 );
+                    eval_t* a = (eval_t*)( ( Int32* )pf + offset1 );
                     a->vector[0] = value->vector[0];
                     a->vector[1] = value->vector[1];
                     a->vector[2] = value->vector[2];
@@ -440,14 +440,14 @@ namespace SharpQuake
             }
         }
 
-        public unsafe int GetInt( int offset )
+        public unsafe string_t GetInt( string_t offset )
         {
-            int offset1, result;
+            Int32 offset1, result;
             if( IsV( offset, out offset1 ) )
             {
                 fixed ( void* pv = &this.v )
                 {
-                    eval_t* a = (eval_t*)( (int*)pv + offset1 );
+                    eval_t* a = (eval_t*)( ( Int32* )pv + offset1 );
                     result = a->_int;
                 }
             }
@@ -455,22 +455,22 @@ namespace SharpQuake
             {
                 fixed ( void* pv = this.fields )
                 {
-                    eval_t* a = (eval_t*)( (int*)pv + offset1 );
+                    eval_t* a = (eval_t*)( ( Int32* )pv + offset1 );
                     result = a->_int;
                 }
             }
             return result;
         }
 
-        public unsafe float GetFloat( int offset )
+        public unsafe Single GetFloat( string_t offset )
         {
-            int offset1;
-            float result;
+            Int32 offset1;
+            Single result;
             if( IsV( offset, out offset1 ) )
             {
                 fixed ( void* pv = &this.v )
                 {
-                    eval_t* a = (eval_t*)( (float*)pv + offset1 );
+                    eval_t* a = (eval_t*)( ( Single* )pv + offset1 );
                     result = a->_float;
                 }
             }
@@ -478,21 +478,21 @@ namespace SharpQuake
             {
                 fixed ( void* pv = this.fields )
                 {
-                    eval_t* a = (eval_t*)( (float*)pv + offset1 );
+                    eval_t* a = (eval_t*)( ( Single* )pv + offset1 );
                     result = a->_float;
                 }
             }
             return result;
         }
 
-        public unsafe void SetFloat( int offset, float value )
+        public unsafe void SetFloat( string_t offset, Single value )
         {
-            int offset1;
+            Int32 offset1;
             if( IsV( offset, out offset1 ) )
             {
                 fixed ( void* pv = &this.v )
                 {
-                    eval_t* a = (eval_t*)( (float*)pv + offset1 );
+                    eval_t* a = (eval_t*)( ( Single* )pv + offset1 );
                     a->_float = value;
                 }
             }
@@ -500,7 +500,7 @@ namespace SharpQuake
             {
                 fixed ( void* pv = this.fields )
                 {
-                    eval_t* a = (eval_t*)( (float*)pv + offset1 );
+                    eval_t* a = (eval_t*)( ( Single* )pv + offset1 );
                     a->_float = value;
                 }
             }
@@ -509,8 +509,8 @@ namespace SharpQuake
         public edict_t()
         {
             this.area = new link_t( this );
-            this.leafnums = new short[progs.MAX_ENT_LEAFS];
-            this.fields = new float[( progs.EdictSize - entvars_t.SizeInBytes ) >> 2];
+            this.leafnums = new Int16[progs.MAX_ENT_LEAFS];
+            this.fields = new Single[( progs.EdictSize - entvars_t.SizeInBytes ) >> 2];
         }
     } // edict_t;
 
@@ -525,19 +525,19 @@ namespace SharpQuake
     [StructLayout( LayoutKind.Sequential, Pack = 1 )]
     internal class ddef_t
     {
-        public ushort type;		// if DEF_SAVEGLOBGAL bit is set
+        public UInt16 type;		// if DEF_SAVEGLOBGAL bit is set
 
         // the variable needs to be saved in savegames
-        public ushort ofs;
+        public UInt16 ofs;
 
-        public int s_name;
+        public string_t s_name;
 
-        public static int SizeInBytes = Marshal.SizeOf(typeof(ddef_t));
+        public static string_t SizeInBytes = Marshal.SizeOf(typeof(ddef_t));
 
         public void SwapBytes()
         {
-            this.type = (ushort)Common.LittleShort( (short)this.type );
-            this.ofs = (ushort)Common.LittleShort( (short)this.ofs );
+            this.type = ( UInt16 ) Common.LittleShort( ( Int16 ) this.type );
+            this.ofs = ( UInt16 ) Common.LittleShort( ( Int16 ) this.ofs );
             this.s_name = Common.LittleLong( this.s_name );
         }
     } // ddef_t;
@@ -545,23 +545,23 @@ namespace SharpQuake
     [StructLayout( LayoutKind.Sequential, Pack = 1 )]
     internal class dfunction_t
     {
-        public int first_statement;	// negative numbers are builtins
-        public int parm_start;
-        public int locals;				// total ints of parms + locals
+        public string_t first_statement;	// negative numbers are builtins
+        public string_t parm_start;
+        public string_t locals;				// total ints of parms + locals
 
-        public int profile;		// runtime
+        public string_t profile;		// runtime
 
-        public int s_name;
-        public int s_file;			// source file defined in
+        public string_t s_name;
+        public string_t s_file;			// source file defined in
 
-        public int numparms;
+        public string_t numparms;
 
         [MarshalAs(UnmanagedType.ByValArray, SizeConst = progs.MAX_PARMS)]
-        public byte[] parm_size; // [MAX_PARMS];
+        public Byte[] parm_size; // [MAX_PARMS];
 
-        public static int SizeInBytes = Marshal.SizeOf(typeof(dfunction_t));
+        public static string_t SizeInBytes = Marshal.SizeOf(typeof(dfunction_t));
 
-        public string FileName
+        public String FileName
         {
             get
             {
@@ -569,7 +569,7 @@ namespace SharpQuake
             }
         }
 
-        public string Name
+        public String Name
         {
             get
             {
@@ -587,7 +587,7 @@ namespace SharpQuake
             this.numparms = Common.LittleLong( this.numparms );
         }
 
-        public override string ToString()
+        public override String ToString()
         {
             return String.Format( "{{{0}: {1}()}}", this.FileName, this.Name );
         }
@@ -596,30 +596,30 @@ namespace SharpQuake
     [StructLayout( LayoutKind.Sequential, Pack = 1 )]
     internal class dprograms_t
     {
-        public int version;
-        public int crc;			// check of header file
+        public string_t version;
+        public string_t crc;			// check of header file
 
-        public int ofs_statements;
-        public int numstatements;	// statement 0 is an error
+        public string_t ofs_statements;
+        public string_t numstatements;	// statement 0 is an error
 
-        public int ofs_globaldefs;
-        public int numglobaldefs;
+        public string_t ofs_globaldefs;
+        public string_t numglobaldefs;
 
-        public int ofs_fielddefs;
-        public int numfielddefs;
+        public string_t ofs_fielddefs;
+        public string_t numfielddefs;
 
-        public int ofs_functions;
-        public int numfunctions;	// function 0 is an empty
+        public string_t ofs_functions;
+        public string_t numfunctions;	// function 0 is an empty
 
-        public int ofs_strings;
-        public int numstrings;		// first string is a null string
+        public string_t ofs_strings;
+        public string_t numstrings;		// first string is a null string
 
-        public int ofs_globals;
-        public int numglobals;
+        public string_t ofs_globals;
+        public string_t numglobals;
 
-        public int entityfields;
+        public string_t entityfields;
 
-        public static int SizeInBytes = Marshal.SizeOf(typeof(dprograms_t));
+        public static string_t SizeInBytes = Marshal.SizeOf(typeof(dprograms_t));
 
         public void SwapBytes()
         {
@@ -649,50 +649,50 @@ namespace SharpQuake
     internal class globalvars_t
     {
         private pad_int28 pad; //int pad[28];
-        public int self;
-        public int other;
-        public int world;
-        public float time;
-        public float frametime;
-        public float force_retouch;
+        public string_t self;
+        public string_t other;
+        public string_t world;
+        public Single time;
+        public Single frametime;
+        public Single force_retouch;
         public string_t mapname;
-        public float deathmatch;
-        public float coop;
-        public float teamplay;
-        public float serverflags;
-        public float total_secrets;
-        public float total_monsters;
-        public float found_secrets;
-        public float killed_monsters;
-        public float parm1;
-        public float parm2;
-        public float parm3;
-        public float parm4;
-        public float parm5;
-        public float parm6;
-        public float parm7;
-        public float parm8;
-        public float parm9;
-        public float parm10;
-        public float parm11;
-        public float parm12;
-        public float parm13;
-        public float parm14;
-        public float parm15;
-        public float parm16;
+        public Single deathmatch;
+        public Single coop;
+        public Single teamplay;
+        public Single serverflags;
+        public Single total_secrets;
+        public Single total_monsters;
+        public Single found_secrets;
+        public Single killed_monsters;
+        public Single parm1;
+        public Single parm2;
+        public Single parm3;
+        public Single parm4;
+        public Single parm5;
+        public Single parm6;
+        public Single parm7;
+        public Single parm8;
+        public Single parm9;
+        public Single parm10;
+        public Single parm11;
+        public Single parm12;
+        public Single parm13;
+        public Single parm14;
+        public Single parm15;
+        public Single parm16;
         public v3f v_forward;
         public v3f v_up;
         public v3f v_right;
-        public float trace_allsolid;
-        public float trace_startsolid;
-        public float trace_fraction;
+        public Single trace_allsolid;
+        public Single trace_startsolid;
+        public Single trace_fraction;
         public v3f trace_endpos;
         public v3f trace_plane_normal;
-        public float trace_plane_dist;
-        public int trace_ent;
-        public float trace_inopen;
-        public float trace_inwater;
-        public int msg_entity;
+        public Single trace_plane_dist;
+        public string_t trace_ent;
+        public Single trace_inopen;
+        public Single trace_inwater;
+        public string_t msg_entity;
         public func_t main;
         public func_t StartFrame;
         public func_t PlayerPreThink;
@@ -704,9 +704,9 @@ namespace SharpQuake
         public func_t SetNewParms;
         public func_t SetChangeParms;
 
-        public static int SizeInBytes = Marshal.SizeOf(typeof(globalvars_t));
+        public static string_t SizeInBytes = Marshal.SizeOf(typeof(globalvars_t));
 
-        public void SetParams( float[] src )
+        public void SetParams( Single[] src )
         {
             if( src.Length < server.NUM_SPAWN_PARMS )
                 throw new ArgumentException( String.Format( "There must be {0} parameters!", server.NUM_SPAWN_PARMS ) );

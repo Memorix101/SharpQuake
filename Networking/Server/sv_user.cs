@@ -35,10 +35,10 @@ namespace SharpQuake
             }
         }
 
-        private const int MAX_FORWARD = 6;
+        private const Int32 MAX_FORWARD = 6;
 
         private static edict_t _Player; // sv_player
-        private static bool _OnGround; // onground
+        private static Boolean _OnGround; // onground
 
         // world
         //static v3f angles - this must be a reference to _Player.v.angles
@@ -52,14 +52,14 @@ namespace SharpQuake
         private static Vector3 _Up; // up
 
         private static Vector3 _WishDir; // wishdir
-        private static float _WishSpeed; // wishspeed
+        private static Single _WishSpeed; // wishspeed
 
         /// <summary>
         /// SV_RunClients
         /// </summary>
         public static void RunClients()
         {
-            for( int i = 0; i < svs.maxclients; i++ )
+            for( var i = 0; i < svs.maxclients; i++ )
             {
                 host.HostClient = svs.clients[i];
                 if( !host.HostClient.active )
@@ -91,18 +91,18 @@ namespace SharpQuake
         /// </summary>
         public static void SetIdealPitch()
         {
-            if( ( (int)_Player.v.flags & EdictFlags.FL_ONGROUND ) == 0 )
+            if( ( ( Int32 ) _Player.v.flags & EdictFlags.FL_ONGROUND ) == 0 )
                 return;
 
-            double angleval = _Player.v.angles.y * Math.PI * 2 / 360;
-            double sinval = Math.Sin( angleval );
-            double cosval = Math.Cos( angleval );
-            float[] z = new float[MAX_FORWARD];
-            for( int i = 0; i < MAX_FORWARD; i++ )
+            var angleval = _Player.v.angles.y * Math.PI * 2 / 360;
+            var sinval = Math.Sin( angleval );
+            var cosval = Math.Cos( angleval );
+            Single[] z = new Single[MAX_FORWARD];
+            for( var i = 0; i < MAX_FORWARD; i++ )
             {
                 v3f top = _Player.v.origin;
-                top.x += (float)( cosval * ( i + 3 ) * 12 );
-                top.y += (float)( sinval * ( i + 3 ) * 12 );
+                top.x += ( Single ) ( cosval * ( i + 3 ) * 12 );
+                top.y += ( Single ) ( sinval * ( i + 3 ) * 12 );
                 top.z += _Player.v.view_ofs.z;
 
                 v3f bottom = top;
@@ -118,11 +118,11 @@ namespace SharpQuake
                 z[i] = top.z + tr.fraction * ( bottom.z - top.z );
             }
 
-            float dir = 0; // Uze: int in original code???
-            int steps = 0;
-            for( int j = 1; j < MAX_FORWARD; j++ )
+            Single dir = 0; // Uze: int in original code???
+            var steps = 0;
+            for( var j = 1; j < MAX_FORWARD; j++ )
             {
-                float step = z[j] - z[j - 1]; // Uze: int in original code???
+                var step = z[j] - z[j - 1]; // Uze: int in original code???
                 if( step > -QDef.ON_EPSILON && step < QDef.ON_EPSILON ) // Uze: comparing int with ON_EPSILON (0.1)???
                     continue;
 
@@ -148,11 +148,11 @@ namespace SharpQuake
         /// SV_ReadClientMessage
         /// Returns false if the client should be killed
         /// </summary>
-        private static bool ReadClientMessage()
+        private static Boolean ReadClientMessage()
         {
             while( true )
             {
-                int ret = net.GetMessage( host.HostClient.netconnection );
+                var ret = net.GetMessage( host.HostClient.netconnection );
                 if( ret == -1 )
                 {
                     Con.DPrint( "SV_ReadClientMessage: NET_GetMessage failed\n" );
@@ -163,7 +163,7 @@ namespace SharpQuake
 
                 net.Reader.Reset();
 
-                bool flag = true;
+                var flag = true;
                 while( flag )
                 {
                     if( !host.HostClient.active )
@@ -175,7 +175,7 @@ namespace SharpQuake
                         return false;
                     }
 
-                    int cmd = net.Reader.ReadChar();
+                    var cmd = net.Reader.ReadChar();
                     switch( cmd )
                     {
                         case -1:
@@ -187,7 +187,7 @@ namespace SharpQuake
                             break;
 
                         case protocol.clc_stringcmd:
-                            string s = net.Reader.ReadString();
+                            var s = net.Reader.ReadString();
                             if( host.HostClient.privileged )
                                 ret = 2;
                             else
@@ -266,7 +266,7 @@ namespace SharpQuake
             client_t client = host.HostClient;
 
             // read ping time
-            client.ping_times[client.num_pings % NUM_PING_TIMES] = (float)( sv.time - net.Reader.ReadFloat() );
+            client.ping_times[client.num_pings % NUM_PING_TIMES] = ( Single ) ( sv.time - net.Reader.ReadFloat() );
             client.num_pings++;
 
             // read current angles
@@ -279,11 +279,11 @@ namespace SharpQuake
             move.upmove = net.Reader.ReadShort();
 
             // read buttons
-            int bits = net.Reader.ReadByte();
+            var bits = net.Reader.ReadByte();
             client.edict.v.button0 = bits & 1;
             client.edict.v.button2 = ( bits & 2 ) >> 1;
 
-            int i = net.Reader.ReadByte();
+            var i = net.Reader.ReadByte();
             if( i != 0 )
                 client.edict.v.impulse = i;
         }
@@ -298,7 +298,7 @@ namespace SharpQuake
             if( _Player.v.movetype == Movetypes.MOVETYPE_NONE )
                 return;
 
-            _OnGround = ( (int)_Player.v.flags & EdictFlags.FL_ONGROUND ) != 0;
+            _OnGround = ( ( Int32 ) _Player.v.flags & EdictFlags.FL_ONGROUND ) != 0;
 
             DropPunchAngle();
 
@@ -324,7 +324,7 @@ namespace SharpQuake
                 _Player.v.angles.y = v_angle.y;
             }
 
-            if( ( (int)_Player.v.flags & EdictFlags.FL_WATERJUMP ) != 0 )
+            if( ( ( Int32 ) _Player.v.flags & EdictFlags.FL_WATERJUMP ) != 0 )
             {
                 WaterJump();
                 return;
@@ -344,10 +344,10 @@ namespace SharpQuake
         private static void DropPunchAngle()
         {
             Vector3 v = Common.ToVector( ref _Player.v.punchangle );
-            double len = MathLib.Normalize( ref v ) - 10 * host.FrameTime;
+            var len = MathLib.Normalize( ref v ) - 10 * host.FrameTime;
             if( len < 0 )
                 len = 0;
-            v *= (float)len;
+            v *= ( Single ) len;
             MathLib.Copy( ref v, out _Player.v.punchangle );
         }
 
@@ -358,7 +358,7 @@ namespace SharpQuake
         {
             if( sv.time > _Player.v.teleport_time || _Player.v.waterlevel == 0 )
             {
-                _Player.v.flags = (int)_Player.v.flags & ~EdictFlags.FL_WATERJUMP;
+                _Player.v.flags = ( Int32 ) _Player.v.flags & ~EdictFlags.FL_WATERJUMP;
                 _Player.v.teleport_time = 0;
             }
             _Player.v.velocity.x = _Player.v.movedir.x;
@@ -382,7 +382,7 @@ namespace SharpQuake
             else
                 wishvel.Z += _Cmd.upmove;
 
-            float wishspeed = wishvel.Length;
+            var wishspeed = wishvel.Length;
             if( wishspeed > _MaxSpeed.Value )
             {
                 wishvel *= _MaxSpeed.Value / wishspeed;
@@ -393,10 +393,10 @@ namespace SharpQuake
             //
             // water friction
             //
-            float newspeed, speed = MathLib.Length( ref _Player.v.velocity );
+            Single newspeed, speed = MathLib.Length( ref _Player.v.velocity );
             if( speed != 0 )
             {
-                newspeed = (float)( speed - host.FrameTime * speed * _Friction.Value );
+                newspeed = ( Single ) ( speed - host.FrameTime * speed * _Friction.Value );
                 if( newspeed < 0 )
                     newspeed = 0;
                 MathLib.VectorScale( ref _Player.v.velocity, newspeed / speed, out _Player.v.velocity );
@@ -410,12 +410,12 @@ namespace SharpQuake
             if( wishspeed == 0 )
                 return;
 
-            float addspeed = wishspeed - newspeed;
+            var addspeed = wishspeed - newspeed;
             if( addspeed <= 0 )
                 return;
 
             MathLib.Normalize( ref wishvel );
-            float accelspeed = (float)( _Accelerate.Value * wishspeed * host.FrameTime );
+            var accelspeed = ( Single ) ( _Accelerate.Value * wishspeed * host.FrameTime );
             if( accelspeed > addspeed )
                 accelspeed = addspeed;
 
@@ -433,8 +433,8 @@ namespace SharpQuake
             Vector3 pangles = Common.ToVector( ref _Player.v.angles );
             MathLib.AngleVectors( ref pangles, out _Forward, out _Right, out _Up );
 
-            float fmove = _Cmd.forwardmove;
-            float smove = _Cmd.sidemove;
+            var fmove = _Cmd.forwardmove;
+            var smove = _Cmd.sidemove;
 
             // hack to not let you back into teleporter
             if( sv.time < _Player.v.teleport_time && fmove < 0 )
@@ -442,7 +442,7 @@ namespace SharpQuake
 
             Vector3 wishvel = _Forward * fmove + _Right * smove;
 
-            if( (int)_Player.v.movetype != Movetypes.MOVETYPE_WALK )
+            if( ( Int32 ) _Player.v.movetype != Movetypes.MOVETYPE_WALK )
                 wishvel.Z = _Cmd.upmove;
             else
                 wishvel.Z = 0;
@@ -476,7 +476,7 @@ namespace SharpQuake
         /// </summary>
         private static void UserFriction()
         {
-            float speed = MathLib.LengthXY( ref _Player.v.velocity );
+            var speed = MathLib.LengthXY( ref _Player.v.velocity );
             if( speed == 0 )
                 return;
 
@@ -488,13 +488,13 @@ namespace SharpQuake
             stop.Z = start.Z - 34;
 
             trace_t trace = Move( ref start, ref Common.ZeroVector, ref Common.ZeroVector, ref stop, 1, _Player );
-            float friction = _Friction.Value;
+            var friction = _Friction.Value;
             if( trace.fraction == 1.0 )
                 friction *= _EdgeFriction.Value;
 
             // apply friction
-            float control = speed < _StopSpeed.Value ? _StopSpeed.Value : speed;
-            float newspeed = (float)( speed - host.FrameTime * control * friction );
+            var control = speed < _StopSpeed.Value ? _StopSpeed.Value : speed;
+            var newspeed = ( Single ) ( speed - host.FrameTime * control * friction );
 
             if( newspeed < 0 )
                 newspeed = 0;
@@ -508,12 +508,12 @@ namespace SharpQuake
         /// </summary>
         private static void Accelerate()
         {
-            float currentspeed = Vector3.Dot( Common.ToVector( ref _Player.v.velocity ), _WishDir );
-            float addspeed = _WishSpeed - currentspeed;
+            var currentspeed = Vector3.Dot( Common.ToVector( ref _Player.v.velocity ), _WishDir );
+            var addspeed = _WishSpeed - currentspeed;
             if( addspeed <= 0 )
                 return;
 
-            float accelspeed = (float)( _Accelerate.Value * host.FrameTime * _WishSpeed );
+            var accelspeed = ( Single ) ( _Accelerate.Value * host.FrameTime * _WishSpeed );
             if( accelspeed > addspeed )
                 accelspeed = addspeed;
 
@@ -527,14 +527,14 @@ namespace SharpQuake
         /// </summary>
         private static void AirAccelerate( Vector3 wishveloc )
         {
-            float wishspd = MathLib.Normalize( ref wishveloc );
+            var wishspd = MathLib.Normalize( ref wishveloc );
             if( wishspd > 30 )
                 wishspd = 30;
-            float currentspeed = Vector3.Dot( Common.ToVector( ref _Player.v.velocity ), wishveloc );
-            float addspeed = wishspd - currentspeed;
+            var currentspeed = Vector3.Dot( Common.ToVector( ref _Player.v.velocity ), wishveloc );
+            var addspeed = wishspd - currentspeed;
             if( addspeed <= 0 )
                 return;
-            float accelspeed = (float)( _Accelerate.Value * _WishSpeed * host.FrameTime );
+            var accelspeed = ( Single ) ( _Accelerate.Value * _WishSpeed * host.FrameTime );
             if( accelspeed > addspeed )
                 accelspeed = addspeed;
 

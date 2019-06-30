@@ -33,7 +33,7 @@ namespace SharpQuake
 {
     internal struct vrect_t
     {
-        public int x, y, width, height;
+        public Int32 x, y, width, height;
     }
 
     /// <summary>
@@ -41,7 +41,7 @@ namespace SharpQuake
     /// </summary>
     internal static class vid
     {
-        public static ushort[] Table8to16
+        public static UInt16[] Table8to16
         {
             get
             {
@@ -49,7 +49,7 @@ namespace SharpQuake
             }
         }
 
-        public static uint[] Table8to24
+        public static UInt32[] Table8to24
         {
             get
             {
@@ -57,7 +57,7 @@ namespace SharpQuake
             }
         }
 
-        public static byte[] Table15to8
+        public static Byte[] Table15to8
         {
             get
             {
@@ -65,7 +65,7 @@ namespace SharpQuake
             }
         }
 
-        public static bool glMTexable
+        public static System.Boolean glMTexable
         {
             get
             {
@@ -73,7 +73,7 @@ namespace SharpQuake
             }
         }
 
-        public static bool glZTrick
+        public static System.Boolean glZTrick
         {
             get
             {
@@ -81,7 +81,7 @@ namespace SharpQuake
             }
         }
 
-        public static bool WindowedMouse
+        public static System.Boolean WindowedMouse
         {
             get
             {
@@ -89,7 +89,7 @@ namespace SharpQuake
             }
         }
 
-        public static bool Wait
+        public static System.Boolean Wait
         {
             get
             {
@@ -105,7 +105,7 @@ namespace SharpQuake
             }
         }
 
-        public static int ModeNum
+        public static Int32 ModeNum
         {
             get
             {
@@ -113,17 +113,17 @@ namespace SharpQuake
             }
         }
 
-        public const int VID_CBITS = 6;
-        public const int VID_GRADES = (1 << VID_CBITS);
-        public const int VID_ROW_SIZE = 3;
-        private const int WARP_WIDTH = 320;
-        private const int WARP_HEIGHT = 200;
-        private static ushort[] _8to16table = new ushort[256]; // d_8to16table[256]
-        private static uint[] _8to24table = new uint[256]; // d_8to24table[256]
-        private static byte[] _15to8table = new byte[65536]; // d_15to8table[65536]
+        public const Int32 VID_CBITS = 6;
+        public const Int32 VID_GRADES = (1 << VID_CBITS);
+        public const Int32 VID_ROW_SIZE = 3;
+        private const Int32 WARP_WIDTH = 320;
+        private const Int32 WARP_HEIGHT = 200;
+        private static UInt16[] _8to16table = new UInt16[256]; // d_8to16table[256]
+        private static UInt32[] _8to24table = new UInt32[256]; // d_8to24table[256]
+        private static Byte[] _15to8table = new Byte[65536]; // d_15to8table[65536]
 
         private static mode_t[] _Modes;
-        private static int _ModeNum; // vid_modenum
+        private static Int32 _ModeNum; // vid_modenum
 
         private static CVar _glZTrick;// = { "gl_ztrick", "1" };
         private static CVar _Mode;// = { "vid_mode", "0", false };
@@ -142,24 +142,24 @@ namespace SharpQuake
         private static CVar _StretchBy2;// = { "vid_stretch_by_2", "1", true };
         private static CVar _WindowedMouse;// = { "_windowed_mouse", "1", true };
 
-        private static bool _Windowed; // windowed
+        private static System.Boolean _Windowed; // windowed
 
         //private static bool _IsInitialized; // vid_initialized
-        private static float _Gamma = 1.0f; // vid_gamma
+        private static Single _Gamma = 1.0f; // vid_gamma
 
-        private static int _DefModeNum;
-        private static bool _glMTexable = false; // gl_mtexable
+        private static Int32 _DefModeNum;
+        private static System.Boolean _glMTexable = false; // gl_mtexable
 
-        private static string _glVendor; // gl_vendor
-        private static string _glRenderer; // gl_renderer
-        private static string _glVersion; // gl_version
-        private static string _glExtensions; // gl_extensions
+        private static String _glVendor; // gl_vendor
+        private static String _glRenderer; // gl_renderer
+        private static String _glVersion; // gl_version
+        private static String _glExtensions; // gl_extensions
 
         // VID_Init (unsigned char *palette)
         // Called at startup to set up translation tables, takes 256 8 bit RGB values
         // the palette data will go away after the call, so it must be copied off if
         // the video driver will need it again
-        public static void Init( byte[] palette )
+        public static void Init( Byte[] palette )
         {
             if( _glZTrick == null )
             {
@@ -213,8 +213,8 @@ namespace SharpQuake
             mode1.refreshRate = dev.RefreshRate;
             mode1.fullScreen = true;
 
-            int width = dev.Width, height = dev.Height;
-            int i = Common.CheckParm( "-width" );
+            Int32 width = dev.Width, height = dev.Height;
+            var i = Common.CheckParm( "-width" );
             if( i > 0 && i < Common.Argc - 1 )
             {
                 width = Common.atoi( Common.Argv( i + 1 ) );
@@ -251,7 +251,7 @@ namespace SharpQuake
                 }
                 else
                 {
-                    int bpp = mode1.bpp;
+                    var bpp = mode1.bpp;
                     i = Common.CheckParm( "-bpp" );
                     if( i > 0 && i < Common.Argc - 1 )
                     {
@@ -263,7 +263,7 @@ namespace SharpQuake
 
             //_IsInitialized = true;
 
-            int i2 = Common.CheckParm( "-conwidth" );
+            var i2 = Common.CheckParm( "-conwidth" );
             if( i2 > 0 )
                 Scr.vid.conwidth = Common.atoi( Common.Argv( i2 + 1 ) );
             else
@@ -286,7 +286,7 @@ namespace SharpQuake
             Scr.vid.maxwarpwidth = WARP_WIDTH;
             Scr.vid.maxwarpheight = WARP_HEIGHT;
             Scr.vid.colormap = host.ColorMap;
-            int v = BitConverter.ToInt32( host.ColorMap, 2048 );
+            var v = BitConverter.ToInt32( host.ColorMap, 2048 );
             Scr.vid.fullbright = 256 - Common.LittleLong( v );
 
             CheckGamma( palette );
@@ -328,7 +328,7 @@ namespace SharpQuake
         // VID_SetMode (int modenum, unsigned char *palette)
         // sets the mode; only used by the Quake engine for resetting to mode 0 (the
         // base mode) on memory allocation failures
-        public static void SetMode( int modenum, byte[] palette )
+        public static void SetMode( Int32 modenum, Byte[] palette )
         {
             if( modenum < 0 || modenum >= _Modes.Length )
             {
@@ -338,7 +338,7 @@ namespace SharpQuake
             mode_t mode = _Modes[modenum];
 
             // so Con_Printfs don't mess us up by forcing vid and snd updates
-            bool temp = Scr.IsDisabledForLoading;
+            var temp = Scr.IsDisabledForLoading;
             Scr.IsDisabledForLoading = true;
 
             cd_audio.Pause();
@@ -402,7 +402,7 @@ namespace SharpQuake
             Scr.IsDisabledForLoading = temp;
 
             _ModeNum = modenum;
-            CVar.Set( "vid_mode", (float)_ModeNum );
+            CVar.Set( "vid_mode", ( Single ) _ModeNum );
 
             // fix the leftover Alt from any Alt-Tab or the like that switched us away
             ClearAllStates();
@@ -417,7 +417,7 @@ namespace SharpQuake
         /// <summary>
         /// VID_GetModeDescription
         /// </summary>
-        public static string GetModeDescription( int mode )
+        public static String GetModeDescription( Int32 mode )
         {
             if( mode < 0 || mode >= _Modes.Length )
                 return String.Empty;
@@ -430,21 +430,21 @@ namespace SharpQuake
         /// VID_SetPalette
         /// called at startup and after any gamma correction
         /// </summary>
-        public static void SetPalette( byte[] palette )
+        public static void SetPalette( Byte[] palette )
         {
             //
             // 8 8 8 encoding
             //
-            int offset = 0;
-            byte[] pal = palette;
-            uint[] table = _8to24table;
-            for( int i = 0; i < table.Length; i++ )
+            var offset = 0;
+            Byte[] pal = palette;
+            UInt32[] table = _8to24table;
+            for( var i = 0; i < table.Length; i++ )
             {
-                uint r = pal[offset + 0];
-                uint g = pal[offset + 1];
-                uint b = pal[offset + 2];
+                UInt32 r = pal[offset + 0];
+                UInt32 g = pal[offset + 1];
+                UInt32 b = pal[offset + 2];
 
-                table[i] = ( (uint)0xff << 24 ) + ( r << 0 ) + ( g << 8 ) + ( b << 16 );
+                table[i] = ( ( UInt32 ) 0xff << 24 ) + ( r << 0 ) + ( g << 8 ) + ( b << 16 );
                 offset += 3;
             }
 
@@ -452,33 +452,33 @@ namespace SharpQuake
 
             // JACK: 3D distance calcs - k is last closest, l is the distance.
             // FIXME: Precalculate this and cache to disk.
-            Union4b val = Union4b.Empty;
-            for( uint i = 0; i < ( 1 << 15 ); i++ )
+            Union4B val = Union4B.Empty;
+            for( UInt32 i = 0; i < ( 1 << 15 ); i++ )
             {
                 // Maps
                 // 000000000000000
                 // 000000000011111 = Red  = 0x1F
                 // 000001111100000 = Blue = 0x03E0
                 // 111110000000000 = Grn  = 0x7C00
-                uint r = ( ( ( i & 0x1F ) << 3 ) + 4 );
-                uint g = ( ( ( i & 0x03E0 ) >> 2 ) + 4 );
-                uint b = ( ( ( i & 0x7C00 ) >> 7 ) + 4 );
-                uint k = 0;
-                uint l = 10000 * 10000;
-                for( uint v = 0; v < 256; v++ )
+                var r = ( ( ( i & 0x1F ) << 3 ) + 4 );
+                var g = ( ( ( i & 0x03E0 ) >> 2 ) + 4 );
+                var b = ( ( ( i & 0x7C00 ) >> 7 ) + 4 );
+                UInt32 k = 0;
+                UInt32 l = 10000 * 10000;
+                for( UInt32 v = 0; v < 256; v++ )
                 {
                     val.ui0 = _8to24table[v];
-                    uint r1 = r - val.b0;
-                    uint g1 = g - val.b1;
-                    uint b1 = b - val.b2;
-                    uint j = ( r1 * r1 ) + ( g1 * g1 ) + ( b1 * b1 );
+                    var r1 = r - val.b0;
+                    var g1 = g - val.b1;
+                    var b1 = b - val.b2;
+                    var j = ( r1 * r1 ) + ( g1 * g1 ) + ( b1 * b1 );
                     if( j < l )
                     {
                         k = v;
                         l = j;
                     }
                 }
-                _15to8table[i] = (byte)k;
+                _15to8table[i] = ( Byte ) k;
             }
         }
 
@@ -517,16 +517,16 @@ namespace SharpQuake
             GL.ShadeModel( ShadingModel.Flat );
 
             Drawer.SetTextureFilters( TextureMinFilter.Nearest, TextureMagFilter.Nearest );
-            GL.TexParameter( TextureTarget.Texture2D, TextureParameterName.TextureWrapS, (int)TextureWrapMode.Repeat );
-            GL.TexParameter( TextureTarget.Texture2D, TextureParameterName.TextureWrapT, (int)TextureWrapMode.Repeat );
+            GL.TexParameter( TextureTarget.Texture2D, TextureParameterName.TextureWrapS, ( Int32 ) TextureWrapMode.Repeat );
+            GL.TexParameter( TextureTarget.Texture2D, TextureParameterName.TextureWrapT, ( Int32 ) TextureWrapMode.Repeat );
             GL.BlendFunc( BlendingFactor.SrcAlpha, BlendingFactor.OneMinusSrcAlpha );
-            GL.TexEnv( TextureEnvTarget.TextureEnv, TextureEnvParameter.TextureEnvMode, (int)TextureEnvMode.Replace );
+            GL.TexEnv( TextureEnvTarget.TextureEnv, TextureEnvParameter.TextureEnvMode, ( Int32 ) TextureEnvMode.Replace );
         }
 
         // VID_NumModes_f
         private static void NumModes_f()
         {
-            int nummodes = _Modes.Length;
+            var nummodes = _Modes.Length;
             if( nummodes == 1 )
                 Con.Print( "{0} video mode is available\n", nummodes );
             else
@@ -542,7 +542,7 @@ namespace SharpQuake
         // VID_DescribeMode_f
         private static void DescribeMode_f()
         {
-            int modenum = Common.atoi( Command.Argv( 1 ) );
+            var modenum = Common.atoi( Command.Argv( 1 ) );
 
             Con.Print( "{0}\n", GetExtModeDescription( modenum ) );
         }
@@ -550,42 +550,42 @@ namespace SharpQuake
         // VID_DescribeModes_f
         private static void DescribeModes_f()
         {
-            for( int i = 0; i < _Modes.Length; i++ )
+            for( var i = 0; i < _Modes.Length; i++ )
             {
                 Con.Print( "{0}:{1}\n", i, GetExtModeDescription( i ) );
             }
         }
 
-        private static string GetExtModeDescription( int mode )
+        private static String GetExtModeDescription( Int32 mode )
         {
             return GetModeDescription( mode );
         }
 
         // Check_Gamma
-        private static void CheckGamma( byte[] pal )
+        private static void CheckGamma( Byte[] pal )
         {
-            int i = Common.CheckParm( "-gamma" );
+            var i = Common.CheckParm( "-gamma" );
             if( i == 0 )
             {
-                string renderer = GL.GetString( StringName.Renderer );
-                string vendor = GL.GetString( StringName.Vendor );
+                var renderer = GL.GetString( StringName.Renderer );
+                var vendor = GL.GetString( StringName.Vendor );
                 if( renderer.Contains( "Voodoo" ) || vendor.Contains( "3Dfx" ) )
                     _Gamma = 1;
                 else
                     _Gamma = 0.7f; // default to 0.7 on non-3dfx hardware
             }
             else
-                _Gamma = float.Parse( Common.Argv( i + 1 ) );
+                _Gamma = Single.Parse( Common.Argv( i + 1 ) );
 
             for( i = 0; i < pal.Length; i++ )
             {
-                double f = Math.Pow( ( pal[i] + 1 ) / 256.0, _Gamma );
-                double inf = f * 255 + 0.5;
+                var f = Math.Pow( ( pal[i] + 1 ) / 256.0, _Gamma );
+                var inf = f * 255 + 0.5;
                 if( inf < 0 )
                     inf = 0;
                 if( inf > 255 )
                     inf = 255;
-                pal[i] = (byte)inf;
+                pal[i] = ( Byte ) inf;
             }
         }
 
@@ -593,7 +593,7 @@ namespace SharpQuake
         private static void ClearAllStates()
         {
             // send an up event for each key, to make sure the server clears them all
-            for( int i = 0; i < 256; i++ )
+            for( var i = 0; i < 256; i++ )
             {
                 Key.Event( i, false );
             }
@@ -607,10 +607,10 @@ namespace SharpQuake
         /// </summary>
         private static void CheckTextureExtensions()
         {
-            const string TEXTURE_EXT_STRING = "GL_EXT_texture_object";
+            const String TEXTURE_EXT_STRING = "GL_EXT_texture_object";
 
             // check for texture extension
-            bool texture_ext = _glExtensions.Contains( TEXTURE_EXT_STRING );
+            var texture_ext = _glExtensions.Contains( TEXTURE_EXT_STRING );
         }
 
         /// <summary>
@@ -630,26 +630,26 @@ namespace SharpQuake
 
     internal class viddef_t
     {
-        public byte[] colormap;		// 256 * VID_GRADES size
-        public int fullbright;		// index of first fullbright color
-        public int rowbytes; // unsigned	// may be > width if displayed in a window
-        public int width; // unsigned
-        public int height; // unsigned
-        public float aspect;		// width / height -- < 0 is taller than wide
-        public int numpages;
-        public bool recalc_refdef;	// if true, recalc vid-based stuff
-        public int conwidth; // unsigned
-        public int conheight; // unsigned
-        public int maxwarpwidth;
-        public int maxwarpheight;
+        public Byte[] colormap;		// 256 * VID_GRADES size
+        public Int32 fullbright;		// index of first fullbright color
+        public Int32 rowbytes; // unsigned	// may be > width if displayed in a window
+        public Int32 width; // unsigned
+        public Int32 height; // unsigned
+        public Single aspect;		// width / height -- < 0 is taller than wide
+        public Int32 numpages;
+        public System.Boolean recalc_refdef;	// if true, recalc vid-based stuff
+        public Int32 conwidth; // unsigned
+        public Int32 conheight; // unsigned
+        public Int32 maxwarpwidth;
+        public Int32 maxwarpheight;
     } // viddef_t;
 
     internal class mode_t
     {
-        public int width;
-        public int height;
-        public int bpp;
-        public float refreshRate;
-        public bool fullScreen;
+        public Int32 width;
+        public Int32 height;
+        public Int32 bpp;
+        public Single refreshRate;
+        public System.Boolean fullScreen;
     }
 }

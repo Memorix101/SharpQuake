@@ -29,17 +29,17 @@ namespace SharpQuake
 {
     internal class OpenALController : ISoundController
     {
-        private const int AL_BUFFER_COUNT = 24;
-        private const int BUFFER_SIZE = 0x10000;
+        private const Int32 AL_BUFFER_COUNT = 24;
+        private const Int32 BUFFER_SIZE = 0x10000;
 
-        private bool _IsInitialized;
+        private Boolean _IsInitialized;
         private AudioContext _Context;
-        private int _Source;
-        private int[] _Buffers;
-        private int[] _BufferBytes;
+        private Int32 _Source;
+        private Int32[] _Buffers;
+        private Int32[] _BufferBytes;
         private ALFormat _BufferFormat;
-        private int _SamplesSent;
-        private Queue<int> _FreeBuffers;
+        private Int32 _SamplesSent;
+        private Queue<Int32> _FreeBuffers;
 
         private void FreeContext()
         {
@@ -63,7 +63,7 @@ namespace SharpQuake
 
         #region ISoundController Members
 
-        public bool IsInitialized
+        public Boolean IsInitialized
         {
             get
             {
@@ -77,11 +77,11 @@ namespace SharpQuake
 
             _Context = new AudioContext();
             _Source = AL.GenSource();
-            _Buffers = new int[AL_BUFFER_COUNT];
-            _BufferBytes = new int[AL_BUFFER_COUNT];
-            _FreeBuffers = new Queue<int>( AL_BUFFER_COUNT );
+            _Buffers = new Int32[AL_BUFFER_COUNT];
+            _BufferBytes = new Int32[AL_BUFFER_COUNT];
+            _FreeBuffers = new Queue<Int32>( AL_BUFFER_COUNT );
 
-            for( int i = 0; i < _Buffers.Length; i++ )
+            for( var i = 0; i < _Buffers.Length; i++ )
             {
                 _Buffers[i] = AL.GenBuffer();
                 _FreeBuffers.Enqueue( _Buffers[i] );
@@ -93,7 +93,7 @@ namespace SharpQuake
             snd.shm.channels = 2;
             snd.shm.samplebits = 16;
             snd.shm.speed = 11025;
-            snd.shm.buffer = new byte[BUFFER_SIZE];
+            snd.shm.buffer = new Byte[BUFFER_SIZE];
             snd.shm.soundalive = true;
             snd.shm.splitbuffer = false;
             snd.shm.samples = snd.shm.buffer.Length / ( snd.shm.samplebits / 8 );
@@ -129,24 +129,24 @@ namespace SharpQuake
             AL.SourceStop( _Source );
         }
 
-        public byte[] LockBuffer()
+        public Byte[] LockBuffer()
         {
             return snd.shm.buffer;
         }
 
-        public void UnlockBuffer( int bytes )
+        public void UnlockBuffer( Int32 bytes )
         {
-            int processed;
+            Int32 processed;
             AL.GetSource( _Source, ALGetSourcei.BuffersProcessed, out processed );
             if( processed > 0 )
             {
-                int[] bufs = AL.SourceUnqueueBuffers( _Source, processed );
-                foreach( int buffer in bufs )
+                Int32[] bufs = AL.SourceUnqueueBuffers( _Source, processed );
+                foreach( var buffer in bufs )
                 {
                     if( buffer == 0 )
                         continue;
 
-                    int idx = Array.IndexOf( _Buffers, buffer );
+                    var idx = Array.IndexOf( _Buffers, buffer );
                     if( idx != -1 )
                     {
                         _SamplesSent += _BufferBytes[idx] >> ( ( snd.shm.samplebits / 8 ) - 1 );
@@ -164,19 +164,19 @@ namespace SharpQuake
                 return;
             }
 
-            int buf = _FreeBuffers.Dequeue();
+            var buf = _FreeBuffers.Dequeue();
             if( buf != 0 )
             {
                 AL.BufferData( buf, _BufferFormat, snd.shm.buffer, bytes, snd.shm.speed );
                 AL.SourceQueueBuffer( _Source, buf );
 
-                int idx = Array.IndexOf( _Buffers, buf );
+                var idx = Array.IndexOf( _Buffers, buf );
                 if( idx != -1 )
                 {
                     _BufferBytes[idx] = bytes;
                 }
 
-                int state;
+                Int32 state;
                 AL.GetSource( _Source, ALGetSourcei.SourceState, out state );
                 if( (ALSourceState)state != ALSourceState.Playing )
                 {
@@ -187,13 +187,13 @@ namespace SharpQuake
             }
         }
 
-        public int GetPosition()
+        public Int32 GetPosition()
         {
-            int state, offset = 0;
+            Int32 state, offset = 0;
             AL.GetSource( _Source, ALGetSourcei.SourceState, out state );
             if( (ALSourceState)state != ALSourceState.Playing )
             {
-                for( int i = 0; i < _BufferBytes.Length; i++ )
+                for( var i = 0; i < _BufferBytes.Length; i++ )
                 {
                     _SamplesSent += _BufferBytes[i] >> ( ( snd.shm.samplebits / 8 ) - 1 );
                     _BufferBytes[i] = 0;

@@ -35,10 +35,10 @@ namespace SharpQuake
     [StructLayout( LayoutKind.Sequential, Pack = 1 )]
     internal struct portable_samplepair_t
     {
-        public int left;
-        public int right;
+        public Int32 left;
+        public Int32 right;
 
-        public override string ToString()
+        public override String ToString()
         {
             return String.Format( "{{{0}, {1}}}", this.left, this.right );
         }
@@ -49,7 +49,7 @@ namespace SharpQuake
     /// </summary>
     static partial class snd
     {
-        public static bool IsInitialized
+        public static Boolean IsInitialized
         {
             get
             {
@@ -65,7 +65,7 @@ namespace SharpQuake
             }
         }
 
-        public static float BgmVolume
+        public static Single BgmVolume
         {
             get
             {
@@ -73,7 +73,7 @@ namespace SharpQuake
             }
         }
 
-        public static float Volume
+        public static Single Volume
         {
             get
             {
@@ -81,12 +81,12 @@ namespace SharpQuake
             }
         }
 
-        public const int DEFAULT_SOUND_PACKET_VOLUME = 255;
-        public const float DEFAULT_SOUND_PACKET_ATTENUATION = 1.0f;
-        public const int MAX_CHANNELS = 128;
-        public const int MAX_DYNAMIC_CHANNELS = 8;
+        public const Int32 DEFAULT_SOUND_PACKET_VOLUME = 255;
+        public const Single DEFAULT_SOUND_PACKET_ATTENUATION = 1.0f;
+        public const Int32 MAX_CHANNELS = 128;
+        public const Int32 MAX_DYNAMIC_CHANNELS = 8;
 
-        private const int MAX_SFX = 512;
+        private const Int32 MAX_SFX = 512;
 
         private static CVar _BgmVolume = new CVar( "bgmvolume", "1", true );// = { "bgmvolume", "1", true };
         private static CVar _Volume = new CVar( "volume", "0.7", true );// = { "volume", "0.7", true };
@@ -101,12 +101,12 @@ namespace SharpQuake
         private static CVar _MixAhead = new CVar( "_snd_mixahead", "0.1", true );// = { "_snd_mixahead", "0.1", true };
 
         private static ISoundController _Controller = new OpenALController();// NullSoundController();
-        private static bool _IsInitialized; // snd_initialized
+        private static Boolean _IsInitialized; // snd_initialized
 
         private static sfx_t[] _KnownSfx = new sfx_t[MAX_SFX]; // hunk allocated [MAX_SFX]
-        private static int _NumSfx; // num_sfx
+        private static Int32 _NumSfx; // num_sfx
         private static sfx_t[] _AmbientSfx = new sfx_t[Ambients.NUM_AMBIENTS]; // *ambient_sfx[NUM_AMBIENTS]
-        private static bool _Ambient = true; // snd_ambient
+        private static Boolean _Ambient = true; // snd_ambient
         private static dma_t _shm = new dma_t(); // shm
 
         // 0 to MAX_DYNAMIC_CHANNELS-1	= normal entity sounds
@@ -114,22 +114,22 @@ namespace SharpQuake
         // MAX_DYNAMIC_CHANNELS + NUM_AMBIENTS to total_channels = static sounds
         private static channel_t[] _Channels = new channel_t[MAX_CHANNELS]; // channels[MAX_CHANNELS]
 
-        private static int _TotalChannels; // total_channels
+        private static Int32 _TotalChannels; // total_channels
 
-        private static float _SoundNominalClipDist = 1000.0f; // sound_nominal_clip_dist
+        private static Single _SoundNominalClipDist = 1000.0f; // sound_nominal_clip_dist
         private static Vector3 _ListenerOrigin; // listener_origin
         private static Vector3 _ListenerForward; // listener_forward
         private static Vector3 _ListenerRight; // listener_right
         private static Vector3 _ListenerUp; // listener_up
 
-        private static int _SoundTime; // soundtime		// sample PAIRS
-        private static int _PaintedTime; // paintedtime 	// sample PAIRS
-        private static bool _SoundStarted; // sound_started
-        private static int _SoundBlocked = 0; // snd_blocked
-        private static int _OldSamplePos; // oldsamplepos from GetSoundTime()
-        private static int _Buffers; // buffers from GetSoundTime()
-        private static int _PlayHash = 345; // hash from S_Play()
-        private static int _PlayVolHash = 543; // hash S_PlayVol
+        private static Int32 _SoundTime; // soundtime		// sample PAIRS
+        private static Int32 _PaintedTime; // paintedtime 	// sample PAIRS
+        private static Boolean _SoundStarted; // sound_started
+        private static Int32 _SoundBlocked = 0; // snd_blocked
+        private static Int32 _OldSamplePos; // oldsamplepos from GetSoundTime()
+        private static Int32 _Buffers; // buffers from GetSoundTime()
+        private static Int32 _PlayHash = 345; // hash from S_Play()
+        private static Int32 _PlayVolHash = 543; // hash S_PlayVol
 
         // S_Init (void)
         public static void Init()
@@ -139,7 +139,7 @@ namespace SharpQuake
             if( Common.HasParam( "-nosound" ) )
                 return;
 
-            for( int i = 0; i < _Channels.Length; i++ )
+            for( var i = 0; i < _Channels.Length; i++ )
                 _Channels[i] = new channel_t();
 
             Command.Add( "play", Play );
@@ -191,7 +191,7 @@ namespace SharpQuake
         }
 
         // S_TouchSound (char *sample)
-        public static void TouchSound( string sample )
+        public static void TouchSound( String sample )
         {
             if( !_Controller.IsInitialized )
                 return;
@@ -210,7 +210,7 @@ namespace SharpQuake
         }
 
         // S_StaticSound (sfx_t *sfx, vec3_t origin, float vol, float attenuation)
-        public static void StaticSound( sfx_t sfx, ref Vector3 origin, float vol, float attenuation )
+        public static void StaticSound( sfx_t sfx, ref Vector3 origin, Single vol, Single attenuation )
         {
             if( sfx == null )
                 return;
@@ -236,7 +236,7 @@ namespace SharpQuake
 
             ss.sfx = sfx;
             ss.origin = origin;
-            ss.master_vol = (int)vol;
+            ss.master_vol = ( Int32 ) vol;
             ss.dist_mult = ( attenuation / 64 ) / _SoundNominalClipDist;
             ss.end = _PaintedTime + sc.length;
 
@@ -244,7 +244,7 @@ namespace SharpQuake
         }
 
         // S_StartSound (int entnum, int entchannel, sfx_t *sfx, vec3_t origin, float fvol,  float attenuation)
-        public static void StartSound( int entnum, int entchannel, sfx_t sfx, ref Vector3 origin, float fvol, float attenuation )
+        public static void StartSound( Int32 entnum, Int32 entchannel, sfx_t sfx, ref Vector3 origin, Single fvol, Single attenuation )
         {
             if( !_SoundStarted || sfx == null )
                 return;
@@ -252,7 +252,7 @@ namespace SharpQuake
             if( _NoSound.Value != 0 )
                 return;
 
-            int vol = (int)( fvol * 255 );
+            var vol = ( Int32 ) ( fvol * 255 );
 
             // pick a channel to play on
             channel_t target_chan = PickChannel( entnum, entchannel );
@@ -285,7 +285,7 @@ namespace SharpQuake
 
             // if an identical sound has also been started this frame, offset the pos
             // a bit to keep it from just making the first one louder
-            for( int i = Ambients.NUM_AMBIENTS; i < Ambients.NUM_AMBIENTS + MAX_DYNAMIC_CHANNELS; i++ )
+            for( var i = Ambients.NUM_AMBIENTS; i < Ambients.NUM_AMBIENTS + MAX_DYNAMIC_CHANNELS; i++ )
             {
                 channel_t check = _Channels[i];
                 if( check == target_chan )
@@ -293,7 +293,7 @@ namespace SharpQuake
 
                 if( check.sfx == sfx && check.pos == 0 )
                 {
-                    int skip = sys.Random( (int)( 0.1 * _shm.speed ) );// rand() % (int)(0.1 * shm->speed);
+                    var skip = sys.Random( ( Int32 ) ( 0.1 * _shm.speed ) );// rand() % (int)(0.1 * shm->speed);
                     if( skip >= target_chan.end )
                         skip = target_chan.end - 1;
                     target_chan.pos += skip;
@@ -304,9 +304,9 @@ namespace SharpQuake
         }
 
         // S_StopSound (int entnum, int entchannel)
-        public static void StopSound( int entnum, int entchannel )
+        public static void StopSound( Int32 entnum, Int32 entchannel )
         {
-            for( int i = 0; i < MAX_DYNAMIC_CHANNELS; i++ )
+            for( var i = 0; i < MAX_DYNAMIC_CHANNELS; i++ )
             {
                 if( _Channels[i].entnum == entnum &&
                     _Channels[i].entchannel == entchannel )
@@ -319,7 +319,7 @@ namespace SharpQuake
         }
 
         // sfx_t *S_PrecacheSound (char *sample)
-        public static sfx_t PrecacheSound( string sample )
+        public static sfx_t PrecacheSound( String sample )
         {
             if( !_IsInitialized || _NoSound.Value != 0 )
                 return null;
@@ -359,7 +359,7 @@ namespace SharpQuake
 
             // update spatialization for static and dynamic sounds
             //channel_t ch = channels + NUM_AMBIENTS;
-            for( int i = Ambients.NUM_AMBIENTS; i < _TotalChannels; i++ )
+            for( var i = Ambients.NUM_AMBIENTS; i < _TotalChannels; i++ )
             {
                 channel_t ch = _Channels[i];// channels + NUM_AMBIENTS;
                 if( ch.sfx == null )
@@ -383,7 +383,7 @@ namespace SharpQuake
                     }
                     // search for one
                     combine = _Channels[MAX_DYNAMIC_CHANNELS + Ambients.NUM_AMBIENTS];// channels + MAX_DYNAMIC_CHANNELS + NUM_AMBIENTS;
-                    int j;
+                    Int32 j;
                     for( j = MAX_DYNAMIC_CHANNELS + Ambients.NUM_AMBIENTS; j < i; j++ )
                     {
                         combine = _Channels[j];
@@ -413,8 +413,8 @@ namespace SharpQuake
             //
             if( _Show.Value != 0 )
             {
-                int total = 0;
-                for( int i = 0; i < _TotalChannels; i++ )
+                var total = 0;
+                for( var i = 0; i < _TotalChannels; i++ )
                 {
                     channel_t ch = _Channels[i];
                     if( ch.sfx != null && ( ch.leftvol > 0 || ch.rightvol > 0 ) )
@@ -430,14 +430,14 @@ namespace SharpQuake
         }
 
         // S_StopAllSounds (qboolean clear)
-        public static void StopAllSounds( bool clear )
+        public static void StopAllSounds( Boolean clear )
         {
             if( !_Controller.IsInitialized )
                 return;
 
             _TotalChannels = MAX_DYNAMIC_CHANNELS + Ambients.NUM_AMBIENTS;	// no statics
 
-            for( int i = 0; i < MAX_CHANNELS; i++ )
+            for( var i = 0; i < MAX_CHANNELS; i++ )
                 if( _Channels[i].sfx != null )
                     _Channels[i].Clear();
 
@@ -473,7 +473,7 @@ namespace SharpQuake
         }
 
         // void S_LocalSound (char *s)
-        public static void LocalSound( string sound )
+        public static void LocalSound( String sound )
         {
             if( _NoSound.Value != 0 )
                 return;
@@ -524,10 +524,10 @@ namespace SharpQuake
         // S_Play
         private static void Play()
         {
-            for( int i = 1; i < Command.Argc; i++ )
+            for( var i = 1; i < Command.Argc; i++ )
             {
-                string name = Command.Argv( i );
-                int k = name.IndexOf( '.' );
+                var name = Command.Argv( i );
+                var k = name.IndexOf( '.' );
                 if( k == -1 )
                     name += ".wav";
 
@@ -539,15 +539,15 @@ namespace SharpQuake
         // S_PlayVol
         private static void PlayVol()
         {
-            for( int i = 1; i < Command.Argc; i += 2 )
+            for( var i = 1; i < Command.Argc; i += 2 )
             {
-                string name = Command.Argv( i );
-                int k = name.IndexOf( '.' );
+                var name = Command.Argv( i );
+                var k = name.IndexOf( '.' );
                 if( k == -1 )
                     name += ".wav";
 
                 sfx_t sfx = PrecacheSound( name );
-                float vol = float.Parse( Command.Argv( i + 1 ) );
+                var vol = Single.Parse( Command.Argv( i + 1 ) );
                 StartSound( _PlayVolHash++, 0, sfx, ref _ListenerOrigin, vol, 1.0f );
             }
         }
@@ -555,15 +555,15 @@ namespace SharpQuake
         // S_SoundList
         private static void SoundList()
         {
-            int total = 0;
-            for( int i = 0; i < _NumSfx; i++ )
+            var total = 0;
+            for( var i = 0; i < _NumSfx; i++ )
             {
                 sfx_t sfx = _KnownSfx[i];
                 sfxcache_t sc = (sfxcache_t)Cache.Check( sfx.cache );
                 if( sc == null )
                     continue;
 
-                int size = sc.length * sc.width * ( sc.stereo + 1 );
+                var size = sc.length * sc.width * ( sc.stereo + 1 );
                 total += size;
                 if( sc.loopstart >= 0 )
                     Con.Print( "L" );
@@ -600,7 +600,7 @@ namespace SharpQuake
         }
 
         // S_FindName
-        private static sfx_t FindName( string name )
+        private static sfx_t FindName( String name )
         {
             if( String.IsNullOrEmpty( name ) )
                 sys.Error( "S_FindName: NULL or empty\n" );
@@ -609,7 +609,7 @@ namespace SharpQuake
                 sys.Error( "Sound name too long: {0}", name );
 
             // see if already loaded
-            for( int i = 0; i < _NumSfx; i++ )
+            for( var i = 0; i < _NumSfx; i++ )
             {
                 if( _KnownSfx[i].name == name )// !Q_strcmp(known_sfx[i].name, name))
                     return _KnownSfx[i];
@@ -640,10 +640,10 @@ namespace SharpQuake
             sfx_t snd = ch.sfx;
             Vector3 source_vec = ch.origin - _ListenerOrigin;
 
-            float dist = MathLib.Normalize( ref source_vec ) * ch.dist_mult;
-            float dot = Vector3.Dot( _ListenerRight, source_vec );
+            var dist = MathLib.Normalize( ref source_vec ) * ch.dist_mult;
+            var dot = Vector3.Dot( _ListenerRight, source_vec );
 
-            float rscale, lscale;
+            Single rscale, lscale;
             if( _shm.channels == 1 )
             {
                 rscale = 1.0f;
@@ -656,13 +656,13 @@ namespace SharpQuake
             }
 
             // add in distance effect
-            float scale = ( 1.0f - dist ) * rscale;
-            ch.rightvol = (int)( ch.master_vol * scale );
+            var scale = ( 1.0f - dist ) * rscale;
+            ch.rightvol = ( Int32 ) ( ch.master_vol * scale );
             if( ch.rightvol < 0 )
                 ch.rightvol = 0;
 
             scale = ( 1.0f - dist ) * lscale;
-            ch.leftvol = (int)( ch.master_vol * scale );
+            ch.leftvol = ( Int32 ) ( ch.master_vol * scale );
             if( ch.leftvol < 0 )
                 ch.leftvol = 0;
         }
@@ -676,9 +676,9 @@ namespace SharpQuake
                 return sc;
 
             // load it in
-            string namebuffer = "sound/" + s.name;
+            var namebuffer = "sound/" + s.name;
 
-            byte[] data = FileSystem.LoadFile( namebuffer );
+            Byte[] data = FileSystem.LoadFile( namebuffer );
             if( data == null )
             {
                 Con.Print( "Couldn't load {0}\n", namebuffer );
@@ -692,8 +692,8 @@ namespace SharpQuake
                 return null;
             }
 
-            float stepscale = info.rate / (float)_shm.speed;
-            int len = (int)( info.samples / stepscale );
+            var stepscale = info.rate / ( Single ) _shm.speed;
+            var len = ( Int32 ) ( info.samples / stepscale );
 
             len *= info.width * info.channels;
 
@@ -715,12 +715,12 @@ namespace SharpQuake
         }
 
         // SND_PickChannel
-        private static channel_t PickChannel( int entnum, int entchannel )
+        private static channel_t PickChannel( Int32 entnum, Int32 entchannel )
         {
             // Check for replacement sound, or find the best one to replace
-            int first_to_die = -1;
-            int life_left = 0x7fffffff;
-            for( int ch_idx = Ambients.NUM_AMBIENTS; ch_idx < Ambients.NUM_AMBIENTS + MAX_DYNAMIC_CHANNELS; ch_idx++ )
+            var first_to_die = -1;
+            var life_left = 0x7fffffff;
+            for( var ch_idx = Ambients.NUM_AMBIENTS; ch_idx < Ambients.NUM_AMBIENTS + MAX_DYNAMIC_CHANNELS; ch_idx++ )
             {
                 if( entchannel != 0		// channel 0 never overrides
                     && _Channels[ch_idx].entnum == entnum
@@ -764,32 +764,32 @@ namespace SharpQuake
             mleaf_t l = Mod.PointInLeaf( ref _ListenerOrigin, client.cl.worldmodel );
             if( l == null || _AmbientLevel.Value == 0 )
             {
-                for( int i = 0; i < Ambients.NUM_AMBIENTS; i++ )
+                for( var i = 0; i < Ambients.NUM_AMBIENTS; i++ )
                     _Channels[i].sfx = null;
                 return;
             }
 
-            for( int i = 0; i < Ambients.NUM_AMBIENTS; i++ )
+            for( var i = 0; i < Ambients.NUM_AMBIENTS; i++ )
             {
                 channel_t chan = _Channels[i];
                 chan.sfx = _AmbientSfx[i];
 
-                float vol = _AmbientLevel.Value * l.ambient_sound_level[i];
+                var vol = _AmbientLevel.Value * l.ambient_sound_level[i];
                 if( vol < 8 )
                     vol = 0;
 
                 // don't adjust volume too fast
                 if( chan.master_vol < vol )
                 {
-                    chan.master_vol += (int)( host.FrameTime * _AmbientFade.Value );
+                    chan.master_vol += ( Int32 ) ( host.FrameTime * _AmbientFade.Value );
                     if( chan.master_vol > vol )
-                        chan.master_vol = (int)vol;
+                        chan.master_vol = ( Int32 ) vol;
                 }
                 else if( chan.master_vol > vol )
                 {
-                    chan.master_vol -= (int)( host.FrameTime * _AmbientFade.Value );
+                    chan.master_vol -= ( Int32 ) ( host.FrameTime * _AmbientFade.Value );
                     if( chan.master_vol < vol )
-                        chan.master_vol = (int)vol;
+                        chan.master_vol = ( Int32 ) vol;
                 }
 
                 chan.leftvol = chan.rightvol = chan.master_vol;
@@ -810,8 +810,8 @@ namespace SharpQuake
                 _PaintedTime = _SoundTime;
 
             // mix ahead of current position
-            int endtime = (int)( _SoundTime + _MixAhead.Value * _shm.speed );
-            int samps = _shm.samples >> ( _shm.channels - 1 );
+            var endtime = ( Int32 ) ( _SoundTime + _MixAhead.Value * _shm.speed );
+            var samps = _shm.samples >> ( _shm.channels - 1 );
             if( endtime - _SoundTime > samps )
                 endtime = _SoundTime + samps;
 
@@ -821,8 +821,8 @@ namespace SharpQuake
         // GetSoundtime
         private static void GetSoundTime()
         {
-            int fullsamples = _shm.samples / _shm.channels;
-            int samplepos = _Controller.GetPosition();
+            var fullsamples = _shm.samples / _shm.channels;
+            var samplepos = _Controller.GetPosition();
             if( samplepos < _OldSamplePos )
             {
                 _Buffers++; // buffer wrapped
@@ -841,7 +841,7 @@ namespace SharpQuake
 
         static snd()
         {
-            for( int i = 0; i < _KnownSfx.Length; i++ )
+            for( var i = 0; i < _KnownSfx.Length; i++ )
                 _KnownSfx[i] = new sfx_t();
         }
     }
@@ -850,7 +850,7 @@ namespace SharpQuake
 
     internal class sfx_t
     {
-        public string name; // char[MAX_QPATH];
+        public String name; // char[MAX_QPATH];
         public cache_user_t cache; // cache_user_t
 
         public void Clear()
@@ -863,26 +863,26 @@ namespace SharpQuake
     // !!! if this is changed, it much be changed in asm_i386.h too !!!
     internal class sfxcache_t
     {
-        public int  length;
-        public int  loopstart;
-        public int  speed;
-        public int  width;
-        public int  stereo;
-        public byte[] data; // [1];		// variable sized
+        public Int32 length;
+        public Int32 loopstart;
+        public Int32 speed;
+        public Int32 width;
+        public Int32 stereo;
+        public Byte[] data; // [1];		// variable sized
     } // sfxcache_t;
 
     internal class dma_t
     {
-        public bool gamealive;
-        public bool soundalive;
-        public bool splitbuffer;
-        public int channels;
-        public int samples;             // mono samples in buffer
-        public int submission_chunk;        // don't mix less than this #
-        public int samplepos;               // in mono samples
-        public int samplebits;
-        public int speed;
-        public byte[] buffer;
+        public Boolean gamealive;
+        public Boolean soundalive;
+        public Boolean splitbuffer;
+        public Int32 channels;
+        public Int32 samples;             // mono samples in buffer
+        public Int32 submission_chunk;        // don't mix less than this #
+        public Int32 samplepos;               // in mono samples
+        public Int32 samplebits;
+        public Int32 speed;
+        public Byte[] buffer;
     } // dma_t;
 
     // !!! if this is changed, it much be changed in asm_i386.h too !!!
@@ -890,16 +890,16 @@ namespace SharpQuake
     internal class channel_t
     {
         public sfx_t sfx;			// sfx number
-        public int leftvol;		// 0-255 volume
-        public int rightvol;		// 0-255 volume
-        public int end;			// end time in global paintsamples
-        public int pos;			// sample position in sfx
-        public int looping;		// where to loop, -1 = no looping
-        public int entnum;			// to allow overriding a specific sound
-        public int entchannel;		//
+        public Int32 leftvol;		// 0-255 volume
+        public Int32 rightvol;		// 0-255 volume
+        public Int32 end;			// end time in global paintsamples
+        public Int32 pos;			// sample position in sfx
+        public Int32 looping;		// where to loop, -1 = no looping
+        public Int32 entnum;			// to allow overriding a specific sound
+        public Int32 entchannel;		//
         public Vector3 origin;			// origin of sound effect
-        public float dist_mult;		// distance multiplier (attenuation/clipK)
-        public int master_vol;		// 0-255 master volume
+        public Single dist_mult;		// distance multiplier (attenuation/clipK)
+        public Int32 master_vol;		// 0-255 master volume
 
         public void Clear()
         {
@@ -920,17 +920,17 @@ namespace SharpQuake
     //[StructLayout(LayoutKind.Sequential)]
     internal class wavinfo_t
     {
-        public int rate;
-        public int width;
-        public int channels;
-        public int loopstart;
-        public int samples;
-        public int dataofs;		// chunk starts this many bytes from file start
+        public Int32 rate;
+        public Int32 width;
+        public Int32 channels;
+        public Int32 loopstart;
+        public Int32 samples;
+        public Int32 dataofs;		// chunk starts this many bytes from file start
     } // wavinfo_t;
 
     internal interface ISoundController
     {
-        bool IsInitialized
+        Boolean IsInitialized
         {
             get;
         }
@@ -941,11 +941,11 @@ namespace SharpQuake
 
         void ClearBuffer();
 
-        byte[] LockBuffer();
+        Byte[] LockBuffer();
 
-        void UnlockBuffer( int count );
+        void UnlockBuffer( Int32 count );
 
-        int GetPosition();
+        Int32 GetPosition();
 
         //void Submit();
     }

@@ -30,7 +30,7 @@ namespace SharpQuake
 {
     internal static class sys
     {
-        public static bool IsWindows
+        public static Boolean IsWindows
         {
             get
             {
@@ -46,13 +46,13 @@ namespace SharpQuake
         /// Sys_Error
         /// an error will cause the entire program to exit
         /// </summary>
-        public static void Error( string fmt, params object[] args )
+        public static void Error( String fmt, params Object[] args )
         {
             throw new QuakeSystemError( args.Length > 0 ? String.Format( fmt, args ) : fmt );
         }
 
         // Sys_FileOpenRead
-        public static FileStream FileOpenRead( string path )
+        public static FileStream FileOpenRead( String path )
         {
             try
             {
@@ -67,7 +67,7 @@ namespace SharpQuake
         /// <summary>
         /// Sys_FileOpenWrite
         /// </summary>
-        public static FileStream FileOpenWrite( string path, bool allowFail = false )
+        public static FileStream FileOpenWrite( String path, Boolean allowFail = false )
         {
             try
             {
@@ -87,7 +87,7 @@ namespace SharpQuake
         /// <summary>
         /// Sys_FloatTime
         /// </summary>
-        public static double GetFloatTime()
+        public static Double GetFloatTime()
         {
             if( _StopWatch == null )
             {
@@ -97,27 +97,27 @@ namespace SharpQuake
             return _StopWatch.Elapsed.TotalSeconds;
         }
 
-        public static void WriteString( BinaryWriter dest, string value )
+        public static void WriteString( BinaryWriter dest, String value )
         {
-            byte[] buf = Encoding.ASCII.GetBytes( value );
+            Byte[] buf = Encoding.ASCII.GetBytes( value );
             dest.Write( buf.Length );
             dest.Write( buf );
         }
 
-        public static string ReadString( BinaryReader src )
+        public static String ReadString( BinaryReader src )
         {
-            int length = src.ReadInt32();
+            var length = src.ReadInt32();
             if( length <= 0 )
             {
                 throw new Exception( "Invalid string length: " + length.ToString() );
             }
-            byte[] buf = new byte[length];
+            Byte[] buf = new Byte[length];
             src.Read( buf, 0, length );
             return Encoding.ASCII.GetString( buf );
         }
 
         // Sys_FileTime()
-        public static DateTime GetFileTime( string path )
+        public static DateTime GetFileTime( String path )
         {
             if( String.IsNullOrEmpty( path ) || path.LastIndexOf( '*' ) != -1 )
                 return DateTime.MinValue;
@@ -137,8 +137,8 @@ namespace SharpQuake
 
         public static T ReadStructure<T>( Stream stream )
         {
-            int count = Marshal.SizeOf( typeof( T ) );
-            byte[] buf = new byte[count];
+            var count = Marshal.SizeOf( typeof( T ) );
+            Byte[] buf = new Byte[count];
             if( stream.Read( buf, 0, count ) < count )
             {
                 throw new IOException( "Stream reading error!" );
@@ -146,7 +146,7 @@ namespace SharpQuake
             return BytesToStructure<T>( buf, 0 );
         }
 
-        public static T BytesToStructure<T>( byte[] src, int startIndex )
+        public static T BytesToStructure<T>( Byte[] src, Int32 startIndex )
         {
             GCHandle handle = GCHandle.Alloc( src, GCHandleType.Pinned );
             try
@@ -154,7 +154,7 @@ namespace SharpQuake
                 IntPtr ptr = handle.AddrOfPinnedObject();
                 if( startIndex != 0 )
                 {
-                    long ptr2 = ptr.ToInt64() + startIndex;
+                    var ptr2 = ptr.ToInt64() + startIndex;
                     ptr = new IntPtr( ptr2 );
                 }
                 return (T)Marshal.PtrToStructure( ptr, typeof( T ) );
@@ -165,9 +165,9 @@ namespace SharpQuake
             }
         }
 
-        public static byte[] StructureToBytes<T>( ref T src )
+        public static Byte[] StructureToBytes<T>( ref T src )
         {
-            byte[] buf = new byte[Marshal.SizeOf( typeof( T ) )];
+            Byte[] buf = new Byte[Marshal.SizeOf( typeof( T ) )];
             GCHandle handle = GCHandle.Alloc( buf, GCHandleType.Pinned );
             try
             {
@@ -180,12 +180,12 @@ namespace SharpQuake
             return buf;
         }
 
-        public static void StructureToBytes<T>( ref T src, byte[] dest, int offset )
+        public static void StructureToBytes<T>( ref T src, Byte[] dest, Int32 offset )
         {
             GCHandle handle = GCHandle.Alloc( dest, GCHandleType.Pinned );
             try
             {
-                long addr = handle.AddrOfPinnedObject().ToInt64() + offset;
+                var addr = handle.AddrOfPinnedObject().ToInt64() + offset;
                 Marshal.StructureToPtr( src, new IntPtr( addr ), true );
             }
             finally
@@ -194,12 +194,12 @@ namespace SharpQuake
             }
         }
 
-        public static int Random()
+        public static Int32 Random()
         {
             return _Random.Next();
         }
 
-        public static int Random( int maxValue )
+        public static Int32 Random( Int32 maxValue )
         {
             return _Random.Next( maxValue );
         }
@@ -216,7 +216,7 @@ namespace SharpQuake
         /// <summary>
         /// Sys_ConsoleInput
         /// </summary>
-        public static string ConsoleInput()
+        public static String ConsoleInput()
         {
             return null; // this is needed only for dedicated servers
         }

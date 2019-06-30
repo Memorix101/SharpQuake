@@ -41,7 +41,7 @@ namespace SharpQuake
             }
         }
 
-        public static bool IsDedicated
+        public static Boolean IsDedicated
         {
             get
             {
@@ -49,7 +49,7 @@ namespace SharpQuake
             }
         }
 
-        public static bool IsInitialized
+        public static Boolean IsInitialized
         {
             get
             {
@@ -57,7 +57,7 @@ namespace SharpQuake
             }
         }
 
-        public static double Time
+        public static Double Time
         {
             get
             {
@@ -65,7 +65,7 @@ namespace SharpQuake
             }
         }
 
-        public static int FrameCount
+        public static Int32 FrameCount
         {
             get
             {
@@ -73,7 +73,7 @@ namespace SharpQuake
             }
         }
 
-        public static bool IsDeveloper
+        public static Boolean IsDeveloper
         {
             get
             {
@@ -81,7 +81,7 @@ namespace SharpQuake
             }
         }
 
-        public static byte[] ColorMap
+        public static Byte[] ColorMap
         {
             get
             {
@@ -89,7 +89,7 @@ namespace SharpQuake
             }
         }
 
-        public static float TeamPlay
+        public static Single TeamPlay
         {
             get
             {
@@ -97,7 +97,7 @@ namespace SharpQuake
             }
         }
 
-        public static byte[] BasePal
+        public static Byte[] BasePal
         {
             get
             {
@@ -105,7 +105,7 @@ namespace SharpQuake
             }
         }
 
-        public static bool IsCoop
+        public static Boolean IsCoop
         {
             get
             {
@@ -113,7 +113,7 @@ namespace SharpQuake
             }
         }
 
-        public static float Skill
+        public static Single Skill
         {
             get
             {
@@ -121,7 +121,7 @@ namespace SharpQuake
             }
         }
 
-        public static float Deathmatch
+        public static Single Deathmatch
         {
             get
             {
@@ -129,7 +129,7 @@ namespace SharpQuake
             }
         }
 
-        public static int ClientNum
+        public static Int32 ClientNum
         {
             get
             {
@@ -137,7 +137,7 @@ namespace SharpQuake
             }
         }
 
-        public static float FragLimit
+        public static Single FragLimit
         {
             get
             {
@@ -145,7 +145,7 @@ namespace SharpQuake
             }
         }
 
-        public static float TimeLimit
+        public static Single TimeLimit
         {
             get
             {
@@ -169,13 +169,13 @@ namespace SharpQuake
             }
         }
 
-        public static double FrameTime;
-        public static double RealTime;
-        public static int CurrentSkill;
-        public static bool NoClipAngleHack;
+        public static Double FrameTime;
+        public static Double RealTime;
+        public static Int32 CurrentSkill;
+        public static Boolean NoClipAngleHack;
         public static client_t HostClient;
-        private const int VCR_SIGNATURE = 0x56435231;
-        private const int SAVEGAME_VERSION = 5;
+        private const Int32 VCR_SIGNATURE = 0x56435231;
+        private const Int32 SAVEGAME_VERSION = 5;
 
         private static quakeparms_t _Params; // quakeparms_t host_parms;
 
@@ -195,17 +195,17 @@ namespace SharpQuake
         private static CVar _Pausable;// = {"pausable","1"};
         private static CVar _Temp1;// = {"temp1","0"};
 
-        private static bool _IsInitialized; //extern	qboolean	host_initialized;		// true if into command execution
-        private static int _FrameCount; //extern	int			host_framecount;	// incremented every frame, never reset
-        private static byte[] _BasePal; // host_basepal
-        private static byte[] _ColorMap; // host_colormap
+        private static Boolean _IsInitialized; //extern	qboolean	host_initialized;		// true if into command execution
+        private static Int32 _FrameCount; //extern	int			host_framecount;	// incremented every frame, never reset
+        private static Byte[] _BasePal; // host_basepal
+        private static Byte[] _ColorMap; // host_colormap
 
         // host_framtime
-        private static double _Time; // host_time
+        private static Double _Time; // host_time
 
         // realtime;		// not bounded in any way, changed at
         // start of every frame, never reset
-        private static double _OldRealTime; //double oldrealtime;			// last frame run
+        private static Double _OldRealTime; //double oldrealtime;			// last frame run
 
         // current_skill;		// skill level for currently loaded level (in case
         //  the user changes the cvar while the level is
@@ -218,14 +218,14 @@ namespace SharpQuake
 
         // client_t* host_client;			// current client
 
-        private static double _TimeTotal; // static double timetotal from Host_Frame
-        private static int _TimeCount; // static int timecount from Host_Frame
-        private static double _Time1 = 0; // static double time1 from _Host_Frame
-        private static double _Time2 = 0; // static double time2 from _Host_Frame
-        private static double _Time3 = 0; // static double time3 from _Host_Frame
+        private static Double _TimeTotal; // static double timetotal from Host_Frame
+        private static Int32 _TimeCount; // static int timecount from Host_Frame
+        private static Double _Time1 = 0; // static double time1 from _Host_Frame
+        private static Double _Time2 = 0; // static double time2 from _Host_Frame
+        private static Double _Time3 = 0; // static double time3 from _Host_Frame
 
-        private static int _ShutdownDepth;
-        private static int _ErrorDepth;
+        private static Int32 _ShutdownDepth;
+        private static Int32 _ErrorDepth;
 
         /// <summary>
         /// Host_ClearMemory
@@ -246,7 +246,7 @@ namespace SharpQuake
         public static void ServerFrame()
         {
             // run the world state
-            progs.GlobalStruct.frametime = (float)host.FrameTime;
+            progs.GlobalStruct.frametime = ( Single ) host.FrameTime;
 
             // set the time and clear the general datagram
             server.ClearDatagram();
@@ -374,7 +374,7 @@ namespace SharpQuake
         /// Host_Error
         /// This shuts down both the client and server
         /// </summary>
-        public static void Error( string error, params object[] args )
+        public static void Error( String error, params Object[] args )
         {
             _ErrorDepth++;
             try
@@ -384,7 +384,7 @@ namespace SharpQuake
 
                 Scr.EndLoadingPlaque();		// reenable screen updates
 
-                string message = ( args.Length > 0 ? String.Format( error, args ) : error );
+                var message = ( args.Length > 0 ? String.Format( error, args ) : error );
                 Con.Print( "Host_Error: {0}\n", message );
 
                 if( server.sv.active )
@@ -407,9 +407,9 @@ namespace SharpQuake
         /// <summary>
         /// Host_EndGame
         /// </summary>
-        public static void EndGame( string message, params object[] args )
+        public static void EndGame( String message, params Object[] args )
         {
-            string str = String.Format( message, args );
+            var str = String.Format( message, args );
             Con.DPrint( "Host_EndGame: {0}\n", str );
 
             if( server.IsActive )
@@ -427,7 +427,7 @@ namespace SharpQuake
         }
 
         // Host_Frame
-        public static void Frame( double time )
+        public static void Frame( Double time )
         {
             if( _ServerProfile.Value == 0 )
             {
@@ -435,9 +435,9 @@ namespace SharpQuake
                 return;
             }
 
-            double time1 = sys.GetFloatTime();
+            var time1 = sys.GetFloatTime();
             InternalFrame( time );
-            double time2 = sys.GetFloatTime();
+            var time2 = sys.GetFloatTime();
 
             _TimeTotal += time2 - time1;
             _TimeCount++;
@@ -445,10 +445,10 @@ namespace SharpQuake
             if( _TimeCount < 1000 )
                 return;
 
-            int m = (int)( _TimeTotal * 1000 / _TimeCount );
+            var m = ( Int32 ) ( _TimeTotal * 1000 / _TimeCount );
             _TimeCount = 0;
             _TimeTotal = 0;
-            int c = 0;
+            var c = 0;
             foreach( client_t cl in server.svs.clients )
             {
                 if( cl.active )
@@ -462,9 +462,9 @@ namespace SharpQuake
         /// Host_ClientCommands
         /// Send text over to the client to be executed
         /// </summary>
-        public static void ClientCommands( string fmt, params object[] args )
+        public static void ClientCommands( String fmt, params Object[] args )
         {
-            string tmp = String.Format( fmt, args );
+            var tmp = String.Format( fmt, args );
             HostClient.message.WriteByte( protocol.svc_stufftext );
             HostClient.message.WriteString( tmp );
         }
@@ -473,7 +473,7 @@ namespace SharpQuake
         /// Host_ShutdownServer
         /// This only happens at the end of a game, not between levels
         /// </summary>
-        public static void ShutdownServer( bool crash )
+        public static void ShutdownServer( Boolean crash )
         {
             if( !server.IsActive )
                 return;
@@ -485,12 +485,12 @@ namespace SharpQuake
                 client.Disconnect();
 
             // flush any pending messages - like the score!!!
-            double start = sys.GetFloatTime();
-            int count;
+            var start = sys.GetFloatTime();
+            Int32 count;
             do
             {
                 count = 0;
-                for( int i = 0; i < server.svs.maxclients; i++ )
+                for( var i = 0; i < server.svs.maxclients; i++ )
                 {
                     HostClient = server.svs.clients[i];
                     if( HostClient.active && !HostClient.message.IsEmpty )
@@ -513,13 +513,13 @@ namespace SharpQuake
             while( count > 0 );
 
             // make sure all the clients know we're disconnecting
-            MsgWriter writer = new MsgWriter( 4 );
+            MessageWriter writer = new MessageWriter( 4 );
             writer.WriteByte( protocol.svc_disconnect );
             count = net.SendToAll( writer, 5 );
             if( count != 0 )
                 Con.Print( "Host_ShutdownServer: NET_SendToAll failed for {0} clients\n", count );
 
-            for( int i = 0; i < server.svs.maxclients; i++ )
+            for( var i = 0; i < server.svs.maxclients; i++ )
             {
                 HostClient = server.svs.clients[i];
                 if( HostClient.active )
@@ -530,7 +530,7 @@ namespace SharpQuake
             // clear structures
             //
             server.sv.Clear();
-            for( int i = 0; i < server.svs.clients.Length; i++ )
+            for( var i = 0; i < server.svs.clients.Length; i++ )
                 server.svs.clients[i].Clear();
         }
 
@@ -544,7 +544,7 @@ namespace SharpQuake
             // config.cfg cvars
             if( _IsInitialized & !host.IsDedicated )
             {
-                string path = Path.Combine( Common.GameDir, "config.cfg" );
+                var path = Path.Combine( Common.GameDir, "config.cfg" );
                 using( FileStream fs = sys.FileOpenWrite( path, true ) )
                 {
                     if( fs != null )
@@ -595,7 +595,7 @@ namespace SharpQuake
 
             svs.maxclients = 1;
 
-            int i = Common.CheckParm( "-dedicated" );
+            var i = Common.CheckParm( "-dedicated" );
             if( i > 0 )
             {
                 cls.state = cactive_t.ca_dedicated;
@@ -649,15 +649,15 @@ namespace SharpQuake
                     sys.Error( "playback file not found\n" );
 
                 _VcrReader = new BinaryReader( file, Encoding.ASCII );
-                int signature = _VcrReader.ReadInt32();  //Sys_FileRead(vcrFile, &i, sizeof(int));
+                var signature = _VcrReader.ReadInt32();  //Sys_FileRead(vcrFile, &i, sizeof(int));
                 if( signature != host.VCR_SIGNATURE )
                     sys.Error( "Invalid signature in vcr file\n" );
 
-                int argc = _VcrReader.ReadInt32(); // Sys_FileRead(vcrFile, &com_argc, sizeof(int));
-                string[] argv = new string[argc + 1];
+                var argc = _VcrReader.ReadInt32(); // Sys_FileRead(vcrFile, &com_argc, sizeof(int));
+                String[] argv = new String[argc + 1];
                 argv[0] = parms.argv[0];
 
-                for( int i = 1; i < argv.Length; i++ )
+                for( var i = 1; i < argv.Length; i++ )
                 {
                     argv[i] = sys.ReadString( _VcrReader );
                 }
@@ -665,7 +665,7 @@ namespace SharpQuake
                 parms.argv = argv;
             }
 
-            int n = Common.CheckParm( "-record" );
+            var n = Common.CheckParm( "-record" );
             if( n != 0 )
             {
                 Stream file = sys.FileOpenWrite( "quake.vcr" ); // vcrFile = Sys_FileOpenWrite("quake.vcr");
@@ -673,7 +673,7 @@ namespace SharpQuake
 
                 _VcrWriter.Write( VCR_SIGNATURE ); //  Sys_FileWrite(vcrFile, &i, sizeof(int));
                 _VcrWriter.Write( Common.Argc - 1 );
-                for( int i = 1; i < Common.Argc; i++ )
+                for( var i = 1; i < Common.Argc; i++ )
                 {
                     if( i == n )
                     {
@@ -688,7 +688,7 @@ namespace SharpQuake
         // _Host_Frame
         //
         //Runs all active servers
-        private static void InternalFrame( double time )
+        private static void InternalFrame( Double time )
         {
             // keep the random time dependent
             sys.Random();
@@ -765,10 +765,10 @@ namespace SharpQuake
 
             if( _Speeds.Value != 0 )
             {
-                int pass1 = (int)( ( _Time1 - _Time3 ) * 1000 );
+                var pass1 = ( Int32 ) ( ( _Time1 - _Time3 ) * 1000 );
                 _Time3 = sys.GetFloatTime();
-                int pass2 = (int)( ( _Time2 - _Time1 ) * 1000 );
-                int pass3 = (int)( ( _Time3 - _Time2 ) * 1000 );
+                var pass2 = ( Int32 ) ( ( _Time2 - _Time1 ) * 1000 );
+                var pass3 = ( Int32 ) ( ( _Time3 - _Time2 ) * 1000 );
                 Con.Print( "{0,3} tot {1,3} server {2,3} gfx {3,3} snd\n", pass1 + pass2 + pass3, pass1, pass2, pass3 );
             }
 
@@ -779,7 +779,7 @@ namespace SharpQuake
         /// Host_FilterTime
         /// Returns false if the time is too short to run a frame
         /// </summary>
-        private static bool FilterTime( double time )
+        private static Boolean FilterTime( Double time )
         {
             host.RealTime += time;
 
@@ -809,7 +809,7 @@ namespace SharpQuake
         {
             while( true )
             {
-                string cmd = sys.ConsoleInput();
+                var cmd = sys.ConsoleInput();
                 if( String.IsNullOrEmpty( cmd ) )
                     break;
 

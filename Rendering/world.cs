@@ -29,22 +29,22 @@ namespace SharpQuake
     internal struct plane_t
     {
         public Vector3 normal;
-        public float dist;
+        public System.Single dist;
     } // plane_t;
 
     internal static class Move
     {
-        public const int MOVE_NORMAL = 0;
-        public const int MOVE_NOMONSTERS = 1;
-        public const int MOVE_MISSILE = 2;
+        public const System.Int32 MOVE_NORMAL = 0;
+        public const System.Int32 MOVE_NOMONSTERS = 1;
+        public const System.Int32 MOVE_MISSILE = 2;
     }
 
     internal class trace_t
     {
-        public bool allsolid;	// if true, plane is not valid
-        public bool startsolid;	// if true, the initial point was in a solid area
-        public bool inopen, inwater;
-        public float fraction;		// time completed, 1.0 = didn't hit anything
+        public System.Boolean allsolid;	// if true, plane is not valid
+        public System.Boolean startsolid;	// if true, the initial point was in a solid area
+        public System.Boolean inopen, inwater;
+        public System.Single fraction;		// time completed, 1.0 = didn't hit anything
         public Vector3 endpos;			// final position
         public plane_t plane;			// surface normal at impact
         public edict_t ent;			// entity the surface is on

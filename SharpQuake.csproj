@@ -95,12 +95,16 @@
     <Compile Include="Networking\Client\client_main.cs" />
     <Compile Include="Networking\Client\client_parse.cs" />
     <Compile Include="Networking\Client\client_temp_ent.cs" />
+    <Compile Include="System\BigEndianConverter.cs" />
+    <Compile Include="System\ByteArraySegment.cs" />
     <Compile Include="System\Command.cs" />
     <Compile Include="System\Common.cs" />
     <Compile Include="Rendering\console.cs" />
     <Compile Include="System\Crc.cs" />
     <Compile Include="System\CVar.cs" />
     <Compile Include="Rendering\draw.cs" />
+    <Compile Include="System\DisposableWrapper.cs" />
+    <Compile Include="System\Exceptions.cs" />
     <Compile Include="System\external.cs" />
     <Compile Include="Networking\Host\host.cs" />
     <Compile Include="Networking\Host\host_cmd.cs" />
@@ -108,6 +112,9 @@
     <Compile Include="Desktop\keys.cs" />
     <Compile Include="Desktop\MainWindow.cs" />
     <Compile Include="System\FileSystem.cs" />
+    <Compile Include="System\IByteOrderConverter.cs" />
+    <Compile Include="System\Link.cs" />
+    <Compile Include="System\LittleEndianConverter.cs" />
     <Compile Include="System\MathLib.cs" />
     <Compile Include="Rendering\menu.cs" />
     <Compile Include="Rendering\mesh.cs" />
@@ -118,6 +125,8 @@
     <Compile Include="Networking\net_loop.cs" />
     <Compile Include="Networking\net_tcp_ip.cs" />
     <Compile Include="Networking\net_vcr.cs" />
+    <Compile Include="System\MessageReader.cs" />
+    <Compile Include="System\MessageWriter.cs" />
     <Compile Include="System\progs.cs" />
     <Compile Include="System\pr_builtins.cs" />
     <Compile Include="System\pr_edict.cs" />
@@ -149,9 +158,11 @@
     <Compile Include="Sound\snd_mixer.cs" />
     <Compile Include="Sound\snd_null.cs" />
     <Compile Include="Sound\snd_openal.cs" />
+    <Compile Include="System\SwapHelper.cs" />
     <Compile Include="System\sys.cs" />
     <Compile Include="Rendering\vid.cs" />
     <Compile Include="Rendering\view.cs" />
+    <Compile Include="System\Union4B.cs" />
     <Compile Include="System\Wad.cs" />
     <Compile Include="Rendering\world.cs" />
     <Compile Include="System\zone.cs" />

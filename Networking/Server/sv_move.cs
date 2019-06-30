@@ -29,7 +29,7 @@ namespace SharpQuake
 {
     partial class server
     {
-        private const float DI_NODIR = -1;
+        private const Single DI_NODIR = -1;
 
         /// <summary>
         /// SV_movestep
@@ -38,7 +38,7 @@ namespace SharpQuake
         /// possible, no move is done, false is returned, and
         /// pr_global_struct.trace_normal is set to the normal of the blocking wall
         /// </summary>
-        public static bool MoveStep( edict_t ent, ref v3f move, bool relink )
+        public static Boolean MoveStep( edict_t ent, ref v3f move, Boolean relink )
         {
             trace_t trace;
 
@@ -48,16 +48,16 @@ namespace SharpQuake
             MathLib.VectorAdd( ref ent.v.origin, ref move, out neworg );
 
             // flying monsters don't step up
-            if( ( (int)ent.v.flags & ( EdictFlags.FL_SWIM | EdictFlags.FL_FLY ) ) != 0 )
+            if( ( ( Int32 ) ent.v.flags & ( EdictFlags.FL_SWIM | EdictFlags.FL_FLY ) ) != 0 )
             {
                 // try one move with vertical motion, then one without
-                for( int i = 0; i < 2; i++ )
+                for( var i = 0; i < 2; i++ )
                 {
                     MathLib.VectorAdd( ref ent.v.origin, ref move, out neworg );
                     edict_t enemy = ProgToEdict( ent.v.enemy );
                     if( i == 0 && enemy != sv.edicts[0] )
                     {
-                        float dz = ent.v.origin.z - enemy.v.origin.z;
+                        var dz = ent.v.origin.z - enemy.v.origin.z;
                         if( dz > 40 )
                             neworg.z -= 8;
                         if( dz < 30 )
@@ -67,7 +67,7 @@ namespace SharpQuake
                     trace = Move( ref ent.v.origin, ref ent.v.mins, ref ent.v.maxs, ref neworg, 0, ent );
                     if( trace.fraction == 1 )
                     {
-                        if( ( (int)ent.v.flags & EdictFlags.FL_SWIM ) != 0 &&
+                        if( ( ( Int32 ) ent.v.flags & EdictFlags.FL_SWIM ) != 0 &&
                             PointContents( ref trace.endpos ) == Contents.CONTENTS_EMPTY )
                             return false;	// swim monster left water
 
@@ -104,12 +104,12 @@ namespace SharpQuake
             if( trace.fraction == 1 )
             {
                 // if monster had the ground pulled out, go ahead and fall
-                if( ( (int)ent.v.flags & EdictFlags.FL_PARTIALGROUND ) != 0 )
+                if( ( ( Int32 ) ent.v.flags & EdictFlags.FL_PARTIALGROUND ) != 0 )
                 {
                     MathLib.VectorAdd( ref ent.v.origin, ref move, out ent.v.origin );
                     if( relink )
                         LinkEdict( ent, true );
-                    ent.v.flags = (int)ent.v.flags & ~EdictFlags.FL_ONGROUND;
+                    ent.v.flags = ( Int32 ) ent.v.flags & ~EdictFlags.FL_ONGROUND;
                     return true;
                 }
 
@@ -121,7 +121,7 @@ namespace SharpQuake
 
             if( !CheckBottom( ent ) )
             {
-                if( ( (int)ent.v.flags & EdictFlags.FL_PARTIALGROUND ) != 0 )
+                if( ( ( Int32 ) ent.v.flags & EdictFlags.FL_PARTIALGROUND ) != 0 )
                 {
                     // entity had floor mostly pulled out from underneath it
                     // and is trying to correct
@@ -133,9 +133,9 @@ namespace SharpQuake
                 return false;
             }
 
-            if( ( (int)ent.v.flags & EdictFlags.FL_PARTIALGROUND ) != 0 )
+            if( ( ( Int32 ) ent.v.flags & EdictFlags.FL_PARTIALGROUND ) != 0 )
             {
-                ent.v.flags = (int)ent.v.flags & ~EdictFlags.FL_PARTIALGROUND;
+                ent.v.flags = ( Int32 ) ent.v.flags & ~EdictFlags.FL_PARTIALGROUND;
             }
             ent.v.groundentity = EdictToProg( trace.ent );
 
@@ -148,7 +148,7 @@ namespace SharpQuake
         /// <summary>
         /// SV_CheckBottom
         /// </summary>
-        public static bool CheckBottom( edict_t ent )
+        public static Boolean CheckBottom( edict_t ent )
         {
             v3f mins, maxs;
             MathLib.VectorAdd( ref ent.v.origin, ref ent.v.mins, out mins );
@@ -159,8 +159,8 @@ namespace SharpQuake
             // the corners must be within 16 of the midpoint
             Vector3 start;
             start.Z = mins.z - 1;
-            for( int x = 0; x <= 1; x++ )
-                for( int y = 0; y <= 1; y++ )
+            for( var x = 0; x <= 1; x++ )
+                for( var y = 0; y <= 1; y++ )
                 {
                     start.X = ( x != 0 ? maxs.x : mins.x );
                     start.Y = ( y != 0 ? maxs.y : mins.y );
@@ -187,12 +187,12 @@ RealCheck:
             if( trace.fraction == 1.0 )
                 return false;
 
-            float mid = trace.endpos.Z;
-            float bottom = mid;
+            var mid = trace.endpos.Z;
+            var bottom = mid;
 
             // the corners must be within 16 of the midpoint
-            for( int x = 0; x <= 1; x++ )
-                for( int y = 0; y <= 1; y++ )
+            for( var x = 0; x <= 1; x++ )
+                for( var y = 0; y <= 1; y++ )
                 {
                     start.X = stop.X = ( x != 0 ? maxs.x : mins.x );
                     start.Y = stop.Y = ( y != 0 ? maxs.y : mins.y );
@@ -215,9 +215,9 @@ RealCheck:
         {
             edict_t ent = ProgToEdict( progs.GlobalStruct.self );
             edict_t goal = ProgToEdict( ent.v.goalentity );
-            float dist = QBuiltins.GetFloat( OFS.OFS_PARM0 );
+            var dist = QBuiltins.GetFloat( OFS.OFS_PARM0 );
 
-            if( ( (int)ent.v.flags & ( EdictFlags.FL_ONGROUND | EdictFlags.FL_FLY | EdictFlags.FL_SWIM ) ) == 0 )
+            if( ( ( Int32 ) ent.v.flags & ( EdictFlags.FL_ONGROUND | EdictFlags.FL_FLY | EdictFlags.FL_SWIM ) ) == 0 )
             {
                 QBuiltins.ReturnFloat( 0 );
                 return;
@@ -237,7 +237,7 @@ RealCheck:
         /// <summary>
         /// SV_CloseEnough
         /// </summary>
-        private static bool CloseEnough( edict_t ent, edict_t goal, float dist )
+        private static Boolean CloseEnough( edict_t ent, edict_t goal, Single dist )
         {
             if( goal.v.absmin.x > ent.v.absmax.x + dist )
                 return false;
@@ -260,21 +260,21 @@ RealCheck:
         /// SV_StepDirection
         /// Turns to the movement direction, and walks the current distance if facing it.
         /// </summary>
-        private static bool StepDirection( edict_t ent, float yaw, float dist )
+        private static Boolean StepDirection( edict_t ent, Single yaw, Single dist )
         {
             ent.v.ideal_yaw = yaw;
             QBuiltins.PF_changeyaw();
 
-            yaw = (float)( yaw * Math.PI * 2.0 / 360 );
+            yaw = ( Single ) ( yaw * Math.PI * 2.0 / 360 );
             v3f move;
-            move.x = (float)Math.Cos( yaw ) * dist;
-            move.y = (float)Math.Sin( yaw ) * dist;
+            move.x = ( Single ) Math.Cos( yaw ) * dist;
+            move.y = ( Single ) Math.Sin( yaw ) * dist;
             move.z = 0;
 
             v3f oldorigin = ent.v.origin;
             if( MoveStep( ent, ref move, false ) )
             {
-                float delta = ent.v.angles.y - ent.v.ideal_yaw;
+                var delta = ent.v.angles.y - ent.v.ideal_yaw;
                 if( delta > 45 && delta < 315 )
                 {
                     // not turned far enough, so don't take the step
@@ -291,13 +291,13 @@ RealCheck:
         /// <summary>
         /// SV_NewChaseDir
         /// </summary>
-        private static void NewChaseDir( edict_t actor, edict_t enemy, float dist )
+        private static void NewChaseDir( edict_t actor, edict_t enemy, Single dist )
         {
-            float olddir = MathLib.AngleMod( (int)( actor.v.ideal_yaw / 45 ) * 45 );
-            float turnaround = MathLib.AngleMod( olddir - 180 );
+            var olddir = MathLib.AngleMod( ( Int32 ) ( actor.v.ideal_yaw / 45 ) * 45 );
+            var turnaround = MathLib.AngleMod( olddir - 180 );
 
-            float deltax = enemy.v.origin.x - actor.v.origin.x;
-            float deltay = enemy.v.origin.y - actor.v.origin.y;
+            var deltax = enemy.v.origin.x - actor.v.origin.x;
+            var deltay = enemy.v.origin.y - actor.v.origin.y;
             v3f d;
             if( deltax > 10 )
                 d.y = 0;
@@ -313,7 +313,7 @@ RealCheck:
                 d.z = DI_NODIR;
 
             // try direct route
-            float tdir;
+            Single tdir;
             if( d.y != DI_NODIR && d.z != DI_NODIR )
             {
                 if( d.y == 0 )
@@ -374,7 +374,7 @@ RealCheck:
         /// </summary>
         private static void FixCheckBottom( edict_t ent )
         {
-            ent.v.flags = (int)ent.v.flags | EdictFlags.FL_PARTIALGROUND;
+            ent.v.flags = ( Int32 ) ent.v.flags | EdictFlags.FL_PARTIALGROUND;
         }
     }
 }

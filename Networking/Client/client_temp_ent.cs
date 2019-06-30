@@ -29,7 +29,7 @@ namespace SharpQuake
 {
     partial class client
     {
-        private static int _NumTempEntities; // num_temp_entities
+        private static Int32 _NumTempEntities; // num_temp_entities
         private static entity_t[] _TempEntities = new entity_t[MAX_TEMP_ENTITIES]; // cl_temp_entities[MAX_TEMP_ENTITIES]
         private static beam_t[] _Beams = new beam_t[MAX_BEAMS]; // cl_beams[MAX_BEAMS]
 
@@ -52,10 +52,10 @@ namespace SharpQuake
             _SfxRic3 = snd.PrecacheSound( "weapons/ric3.wav" );
             _SfxRExp3 = snd.PrecacheSound( "weapons/r_exp3.wav" );
 
-            for( int i = 0; i < _TempEntities.Length; i++ )
+            for( var i = 0; i < _TempEntities.Length; i++ )
                 _TempEntities[i] = new entity_t();
 
-            for( int i = 0; i < _Beams.Length; i++ )
+            for( var i = 0; i < _Beams.Length; i++ )
                 _Beams[i] = new beam_t();
         }
 
@@ -65,7 +65,7 @@ namespace SharpQuake
             _NumTempEntities = 0;
 
             // update lightning
-            for( int i = 0; i < MAX_BEAMS; i++ )
+            for( var i = 0; i < MAX_BEAMS; i++ )
             {
                 beam_t b = _Beams[i];
                 if( b.model == null || b.endtime < cl.time )
@@ -79,7 +79,7 @@ namespace SharpQuake
 
                 // calculate pitch and yaw
                 Vector3 dist = b.end - b.start;
-                float yaw, pitch, forward;
+                Single yaw, pitch, forward;
 
                 if( dist.Y == 0 && dist.X == 0 )
                 {
@@ -91,19 +91,19 @@ namespace SharpQuake
                 }
                 else
                 {
-                    yaw = (int)( Math.Atan2( dist.Y, dist.X ) * 180 / Math.PI );
+                    yaw = ( Int32 ) ( Math.Atan2( dist.Y, dist.X ) * 180 / Math.PI );
                     if( yaw < 0 )
                         yaw += 360;
 
-                    forward = (float)Math.Sqrt( dist.X * dist.X + dist.Y * dist.Y );
-                    pitch = (int)( Math.Atan2( dist.Z, forward ) * 180 / Math.PI );
+                    forward = ( Single ) Math.Sqrt( dist.X * dist.X + dist.Y * dist.Y );
+                    pitch = ( Int32 ) ( Math.Atan2( dist.Z, forward ) * 180 / Math.PI );
                     if( pitch < 0 )
                         pitch += 360;
                 }
 
                 // add new entities for the lightning
                 Vector3 org = b.start;
-                float d = MathLib.Normalize( ref dist );
+                var d = MathLib.Normalize( ref dist );
                 while( d > 0 )
                 {
                     entity_t ent = NewTempEntity();
@@ -152,7 +152,7 @@ namespace SharpQuake
         {
             Vector3 pos;
             dlight_t dl;
-            int type = net.Reader.ReadByte();
+            var type = net.Reader.ReadByte();
             switch( type )
             {
                 case protocol.TE_WIZSPIKE:			// spike hitting wall
@@ -178,7 +178,7 @@ namespace SharpQuake
                         snd.StartSound( -1, 0, _SfxTink1, ref pos, 1, 1 );
                     else
                     {
-                        int rnd = sys.Random() & 3;
+                        var rnd = sys.Random() & 3;
                         if( rnd == 1 )
                             snd.StartSound( -1, 0, _SfxRic1, ref pos, 1, 1 );
                         else if( rnd == 2 )
@@ -196,7 +196,7 @@ namespace SharpQuake
                         snd.StartSound( -1, 0, _SfxTink1, ref pos, 1, 1 );
                     else
                     {
-                        int rnd = sys.Random() & 3;
+                        var rnd = sys.Random() & 3;
                         if( rnd == 1 )
                             snd.StartSound( -1, 0, _SfxRic1, ref pos, 1, 1 );
                         else if( rnd == 2 )
@@ -217,7 +217,7 @@ namespace SharpQuake
                     dl = AllocDlight( 0 );
                     dl.origin = pos;
                     dl.radius = 350;
-                    dl.die = (float)client.cl.time + 0.5f;
+                    dl.die = ( Single ) client.cl.time + 0.5f;
                     dl.decay = 300;
                     snd.StartSound( -1, 0, _SfxRExp3, ref pos, 1, 1 );
                     break;
@@ -258,13 +258,13 @@ namespace SharpQuake
 
                 case protocol.TE_EXPLOSION2:				// color mapped explosion
                     pos = net.Reader.ReadCoords();
-                    int colorStart = net.Reader.ReadByte();
-                    int colorLength = net.Reader.ReadByte();
+                    var colorStart = net.Reader.ReadByte();
+                    var colorLength = net.Reader.ReadByte();
                     render.ParticleExplosion( ref pos, colorStart, colorLength );
                     dl = AllocDlight( 0 );
                     dl.origin = pos;
                     dl.radius = 350;
-                    dl.die = (float)cl.time + 0.5f;
+                    dl.die = ( Single ) cl.time + 0.5f;
                     dl.decay = 300;
                     snd.StartSound( -1, 0, _SfxRExp3, ref pos, 1, 1 );
                     break;
@@ -280,20 +280,20 @@ namespace SharpQuake
         /// </summary>
         private static void ParseBeam( model_t m )
         {
-            int ent = net.Reader.ReadShort();
+            var ent = net.Reader.ReadShort();
 
             Vector3 start = net.Reader.ReadCoords();
             Vector3 end = net.Reader.ReadCoords();
 
             // override any beam with the same entity
-            for( int i = 0; i < MAX_BEAMS; i++ )
+            for( var i = 0; i < MAX_BEAMS; i++ )
             {
                 beam_t b = _Beams[i];
                 if( b.entity == ent )
                 {
                     b.entity = ent;
                     b.model = m;
-                    b.endtime = (float)( cl.time + 0.2 );
+                    b.endtime = ( Single ) ( cl.time + 0.2 );
                     b.start = start;
                     b.end = end;
                     return;
@@ -301,14 +301,14 @@ namespace SharpQuake
             }
 
             // find a free beam
-            for( int i = 0; i < MAX_BEAMS; i++ )
+            for( var i = 0; i < MAX_BEAMS; i++ )
             {
                 beam_t b = _Beams[i];
                 if( b.model == null || b.endtime < cl.time )
                 {
                     b.entity = ent;
                     b.model = m;
-                    b.endtime = (float)( cl.time + 0.2 );
+                    b.endtime = ( Single ) ( cl.time + 0.2 );
                     b.start = start;
                     b.end = end;
                     return;

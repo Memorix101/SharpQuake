@@ -30,7 +30,7 @@ namespace SharpQuake
 {
     internal static class QBuiltins
     {
-        public static int Count
+        public static Int32 Count
         {
             get
             {
@@ -41,11 +41,11 @@ namespace SharpQuake
         /// <summary>
         /// WriteDest()
         /// </summary>
-        private static MsgWriter WriteDest
+        private static MessageWriter WriteDest
         {
             get
             {
-                int dest = (int)GetFloat( OFS.OFS_PARM0 );
+                var dest = ( Int32 ) GetFloat( OFS.OFS_PARM0 );
                 switch( dest )
                 {
                     case MSG_BROADCAST:
@@ -53,7 +53,7 @@ namespace SharpQuake
 
                     case MSG_ONE:
                         edict_t ent = server.ProgToEdict( progs.GlobalStruct.msg_entity );
-                        int entnum = server.NumForEdict( ent );
+                        var entnum = server.NumForEdict( ent );
                         if( entnum < 1 || entnum > server.svs.maxclients )
                             progs.RunError( "WriteDest: not a client" );
                         return server.svs.clients[entnum - 1].message;
@@ -73,12 +73,12 @@ namespace SharpQuake
             }
         }
 
-        private const int MAX_CHECK = 16;
+        private const Int32 MAX_CHECK = 16;
 
-        private const int MSG_BROADCAST = 0;	// unreliable to all
-        private const int MSG_ONE = 1;		// reliable to one (msg_entity)
-        private const int MSG_ALL = 2;		// reliable to all
-        private const int MSG_INIT = 3;		// write to the init string
+        private const Int32 MSG_BROADCAST = 0;	// unreliable to all
+        private const Int32 MSG_ONE = 1;		// reliable to one (msg_entity)
+        private const Int32 MSG_ALL = 2;		// reliable to all
+        private const Int32 MSG_INIT = 3;		// write to the init string
 
         private static builtin_t[] _Builtin = new builtin_t[]
         {
@@ -171,14 +171,14 @@ namespace SharpQuake
             PF_setspawnparms
         };
 
-        private static byte[] _CheckPvs = new byte[bsp_file.MAX_MAP_LEAFS / 8]; // checkpvs
+        private static Byte[] _CheckPvs = new Byte[bsp_file.MAX_MAP_LEAFS / 8]; // checkpvs
 
-        private static int _TempString = -1;
+        private static Int32 _TempString = -1;
 
-        private static int _InVisCount; // c_invis
-        private static int _NotVisCount; // c_notvis
+        private static Int32 _InVisCount; // c_invis
+        private static Int32 _NotVisCount; // c_notvis
 
-        public static void Execute( int num )
+        public static void Execute( Int32 num )
         {
             _Builtin[num]();
         }
@@ -196,25 +196,25 @@ namespace SharpQuake
         /// </summary>
         public static unsafe void ReturnEdict( edict_t e )
         {
-            int prog = server.EdictToProg( e );
+            var prog = server.EdictToProg( e );
             ReturnInt( prog );
         }
 
         /// <summary>
         /// G_INT(OFS_RETURN) = value
         /// </summary>
-        public static unsafe void ReturnInt( int value )
+        public static unsafe void ReturnInt( Int32 value )
         {
-            int* ptr = (int*)progs.GlobalStructAddr;
+            Int32* ptr = ( Int32* )progs.GlobalStructAddr;
             ptr[OFS.OFS_RETURN] = value;
         }
 
         /// <summary>
         /// G_FLOAT(OFS_RETURN) = value
         /// </summary>
-        public static unsafe void ReturnFloat( float value )
+        public static unsafe void ReturnFloat( Single value )
         {
-            float* ptr = (float*)progs.GlobalStructAddr;
+            Single* ptr = ( Single* )progs.GlobalStructAddr;
             ptr[OFS.OFS_RETURN] = value;
         }
 
@@ -223,7 +223,7 @@ namespace SharpQuake
         /// </summary>
         public static unsafe void ReturnVector( ref v3f value )
         {
-            float* ptr = (float*)progs.GlobalStructAddr;
+            Single* ptr = ( Single* )progs.GlobalStructAddr;
             ptr[OFS.OFS_RETURN + 0] = value.x;
             ptr[OFS.OFS_RETURN + 1] = value.y;
             ptr[OFS.OFS_RETURN + 2] = value.z;
@@ -234,7 +234,7 @@ namespace SharpQuake
         /// </summary>
         public static unsafe void ReturnVector( ref Vector3 value )
         {
-            float* ptr = (float*)progs.GlobalStructAddr;
+            Single* ptr = ( Single* )progs.GlobalStructAddr;
             ptr[OFS.OFS_RETURN + 0] = value.X;
             ptr[OFS.OFS_RETURN + 1] = value.Y;
             ptr[OFS.OFS_RETURN + 2] = value.Z;
@@ -243,45 +243,45 @@ namespace SharpQuake
         /// <summary>
         /// #define	G_STRING(o) (pr_strings + *(string_t *)&pr_globals[o])
         /// </summary>
-        public static unsafe string GetString( int parm )
+        public static unsafe String GetString( Int32 parm )
         {
-            int* ptr = (int*)progs.GlobalStructAddr;
+            Int32* ptr = ( Int32* )progs.GlobalStructAddr;
             return progs.GetString( ptr[parm] );
         }
 
         /// <summary>
         /// G_INT(o)
         /// </summary>
-        public static unsafe int GetInt( int parm )
+        public static unsafe Int32 GetInt( Int32 parm )
         {
-            int* ptr = (int*)progs.GlobalStructAddr;
+            Int32* ptr = ( Int32* )progs.GlobalStructAddr;
             return ptr[parm];
         }
 
         /// <summary>
         /// G_FLOAT(o)
         /// </summary>
-        public static unsafe float GetFloat( int parm )
+        public static unsafe Single GetFloat( Int32 parm )
         {
-            float* ptr = (float*)progs.GlobalStructAddr;
+            Single* ptr = ( Single* )progs.GlobalStructAddr;
             return ptr[parm];
         }
 
         /// <summary>
         /// G_VECTOR(o)
         /// </summary>
-        public static unsafe float* GetVector( int parm )
+        public static unsafe Single* GetVector( Int32 parm )
         {
-            float* ptr = (float*)progs.GlobalStructAddr;
+            Single* ptr = ( Single* )progs.GlobalStructAddr;
             return &ptr[parm];
         }
 
         /// <summary>
         /// #define	G_EDICT(o) ((edict_t *)((byte *)sv.edicts+ *(int *)&pr_globals[o]))
         /// </summary>
-        public static unsafe edict_t GetEdict( int parm )
+        public static unsafe edict_t GetEdict( Int32 parm )
         {
-            int* ptr = (int*)progs.GlobalStructAddr;
+            Int32* ptr = ( Int32* )progs.GlobalStructAddr;
             edict_t ed = server.ProgToEdict( ptr[parm] );
             return ed;
         }
@@ -289,14 +289,14 @@ namespace SharpQuake
         public static void PF_changeyaw()
         {
             edict_t ent = server.ProgToEdict( progs.GlobalStruct.self );
-            float current = MathLib.AngleMod( ent.v.angles.y );
-            float ideal = ent.v.ideal_yaw;
-            float speed = ent.v.yaw_speed;
+            var current = MathLib.AngleMod( ent.v.angles.y );
+            var ideal = ent.v.ideal_yaw;
+            var speed = ent.v.yaw_speed;
 
             if( current == ideal )
                 return;
 
-            float move = ideal - current;
+            var move = ideal - current;
             if( ideal > current )
             {
                 if( move >= 180 )
@@ -321,7 +321,7 @@ namespace SharpQuake
             ent.v.angles.y = MathLib.AngleMod( current + move );
         }
 
-        private static int SetTempString( string value )
+        private static Int32 SetTempString( String value )
         {
             if( _TempString == -1 )
             {
@@ -334,24 +334,24 @@ namespace SharpQuake
             return _TempString;
         }
 
-        private static string PF_VarString( int first )
+        private static String PF_VarString( Int32 first )
         {
             StringBuilder sb = new StringBuilder( 256 );
-            for( int i = first; i < progs.Argc; i++ )
+            for( var i = first; i < progs.Argc; i++ )
             {
                 sb.Append( GetString( OFS.OFS_PARM0 + i * 3 ) );
             }
             return sb.ToString();
         }
 
-        private static unsafe void Copy( float* src, ref v3f dest )
+        private static unsafe void Copy( Single* src, ref v3f dest )
         {
             dest.x = src[0];
             dest.y = src[1];
             dest.z = src[2];
         }
 
-        private static unsafe void Copy( float* src, out Vector3 dest )
+        private static unsafe void Copy( Single* src, out Vector3 dest )
         {
             dest.X = src[0];
             dest.Y = src[1];
@@ -366,7 +366,7 @@ namespace SharpQuake
         /// </summary>
         private static void PF_error()
         {
-            string s = PF_VarString( 0 );
+            var s = PF_VarString( 0 );
             Con.Print( "======SERVER ERROR in {0}:\n{1}\n",
                 progs.GetString( progs.xFunction.s_name ), s );
             edict_t ed = server.ProgToEdict( progs.GlobalStruct.self );
@@ -387,7 +387,7 @@ namespace SharpQuake
 
         private static void PF_objerror()
         {
-            string s = PF_VarString( 0 );
+            var s = PF_VarString( 0 );
             Con.Print( "======OBJECT ERROR in {0}:\n{1}\n",
                 GetString( progs.xFunction.s_name ), s );
             edict_t ed = server.ProgToEdict( progs.GlobalStruct.self );
@@ -407,7 +407,7 @@ namespace SharpQuake
 
         private static unsafe void PF_makevectors()
         {
-            float* av = GetVector( OFS.OFS_PARM0 );
+            Single* av = GetVector( OFS.OFS_PARM0 );
             Vector3 a = new Vector3( av[0], av[1], av[2] );
             Vector3 fw, right, up;
             MathLib.AngleVectors( ref a, out fw, out right, out up );
@@ -426,13 +426,13 @@ namespace SharpQuake
         private static unsafe void PF_setorigin()
         {
             edict_t e = GetEdict( OFS.OFS_PARM0 );
-            float* org = GetVector( OFS.OFS_PARM1 );
+            Single* org = GetVector( OFS.OFS_PARM1 );
             Copy( org, ref e.v.origin );
 
             server.LinkEdict( e, false );
         }
 
-        private static void SetMinMaxSize( edict_t e, ref Vector3 min, ref Vector3 max, bool rotate )
+        private static void SetMinMaxSize( edict_t e, ref Vector3 min, ref Vector3 max, Boolean rotate )
         {
             if( min.X > max.X || min.Y > max.Y || min.Z > max.Z )
                 progs.RunError( "backwards mins/maxs" );
@@ -512,8 +512,8 @@ namespace SharpQuake
         private static unsafe void PF_setsize()
         {
             edict_t e = GetEdict( OFS.OFS_PARM0 );
-            float* min = GetVector( OFS.OFS_PARM1 );
-            float* max = GetVector( OFS.OFS_PARM2 );
+            Single* min = GetVector( OFS.OFS_PARM1 );
+            Single* max = GetVector( OFS.OFS_PARM2 );
             Vector3 vmin, vmax;
             Copy( min, out vmin );
             Copy( max, out vmax );
@@ -531,13 +531,13 @@ namespace SharpQuake
         private static void PF_setmodel()
         {
             edict_t e = GetEdict( OFS.OFS_PARM0 );
-            int m_idx = GetInt( OFS.OFS_PARM1 );
-            string m = progs.GetString( m_idx );
+            var m_idx = GetInt( OFS.OFS_PARM1 );
+            var m = progs.GetString( m_idx );
 
             // check to see if model was properly precached
-            for( int i = 0; i < server.sv.model_precache.Length; i++ )
+            for( var i = 0; i < server.sv.model_precache.Length; i++ )
             {
-                string check = server.sv.model_precache[i];
+                var check = server.sv.model_precache[i];
 
                 if( check == null )
                     break;
@@ -547,7 +547,7 @@ namespace SharpQuake
                     e.v.model = m_idx; // m - pr_strings;
                     e.v.modelindex = i;
 
-                    model_t mod = server.sv.models[(int)e.v.modelindex];
+                    model_t mod = server.sv.models[( Int32 ) e.v.modelindex];
 
                     if( mod != null )
                         SetMinMaxSize( e, ref mod.mins, ref mod.maxs, true );
@@ -573,7 +573,7 @@ namespace SharpQuake
 
         private static void PF_bprint()
         {
-            string s = PF_VarString( 0 );
+            var s = PF_VarString( 0 );
             server.BroadcastPrint( s );
         }
 
@@ -584,8 +584,8 @@ namespace SharpQuake
         /// </summary>
         private static void PF_sprint()
         {
-            int entnum = server.NumForEdict( GetEdict( OFS.OFS_PARM0 ) );
-            string s = PF_VarString( 1 );
+            var entnum = server.NumForEdict( GetEdict( OFS.OFS_PARM0 ) );
+            var s = PF_VarString( 1 );
 
             if( entnum < 1 || entnum > server.svs.maxclients )
             {
@@ -611,8 +611,8 @@ namespace SharpQuake
 
         private static void PF_centerprint()
         {
-            int entnum = server.NumForEdict( GetEdict( OFS.OFS_PARM0 ) );
-            string s = PF_VarString( 1 );
+            var entnum = server.NumForEdict( GetEdict( OFS.OFS_PARM0 ) );
+            var s = PF_VarString( 1 );
 
             if( entnum < 1 || entnum > server.svs.maxclients )
             {
@@ -636,7 +636,7 @@ namespace SharpQuake
 
         private static unsafe void PF_normalize()
         {
-            float* value1 = GetVector( OFS.OFS_PARM0 );
+            Single* value1 = GetVector( OFS.OFS_PARM0 );
             Vector3 tmp;
             Copy( value1, out tmp );
             MathLib.Normalize( ref tmp );
@@ -654,8 +654,8 @@ namespace SharpQuake
 
         private static unsafe void PF_vlen()
         {
-            float* v = GetVector( OFS.OFS_PARM0 );
-            float result = (float)Math.Sqrt( v[0] * v[0] + v[1] * v[1] + v[2] * v[2] );
+            Single* v = GetVector( OFS.OFS_PARM0 );
+            var result = ( Single ) Math.Sqrt( v[0] * v[0] + v[1] * v[1] + v[2] * v[2] );
 
             ReturnFloat( result );
         }
@@ -666,13 +666,13 @@ namespace SharpQuake
         /// </summary>
         private static unsafe void PF_vectoyaw()
         {
-            float* value1 = GetVector( OFS.OFS_PARM0 );
-            float yaw;
+            Single* value1 = GetVector( OFS.OFS_PARM0 );
+            Single yaw;
             if( value1[1] == 0 && value1[0] == 0 )
                 yaw = 0;
             else
             {
-                yaw = (int)( Math.Atan2( value1[1], value1[0] ) * 180 / Math.PI );
+                yaw = ( Int32 ) ( Math.Atan2( value1[1], value1[0] ) * 180 / Math.PI );
                 if( yaw < 0 )
                     yaw += 360;
             }
@@ -690,8 +690,8 @@ namespace SharpQuake
 
         private static unsafe void PF_vectoangles()
         {
-            float yaw, pitch, forward;
-            float* value1 = GetVector( OFS.OFS_PARM0 );
+            Single yaw, pitch, forward;
+            Single* value1 = GetVector( OFS.OFS_PARM0 );
 
             if( value1[1] == 0 && value1[0] == 0 )
             {
@@ -703,12 +703,12 @@ namespace SharpQuake
             }
             else
             {
-                yaw = (int)( Math.Atan2( value1[1], value1[0] ) * 180 / Math.PI );
+                yaw = ( Int32 ) ( Math.Atan2( value1[1], value1[0] ) * 180 / Math.PI );
                 if( yaw < 0 )
                     yaw += 360;
 
-                forward = (float)Math.Sqrt( value1[0] * value1[0] + value1[1] * value1[1] );
-                pitch = (int)( Math.Atan2( value1[2], forward ) * 180 / Math.PI );
+                forward = ( Single ) Math.Sqrt( value1[0] * value1[0] + value1[1] * value1[1] );
+                pitch = ( Int32 ) ( Math.Atan2( value1[2], forward ) * 180 / Math.PI );
                 if( pitch < 0 )
                     pitch += 360;
             }
@@ -729,7 +729,7 @@ namespace SharpQuake
 
         private static void PF_random()
         {
-            float num = ( sys.Random() & 0x7fff ) / ( (float)0x7fff );
+            var num = ( sys.Random() & 0x7fff ) / ( ( Single ) 0x7fff );
             ReturnFloat( num );
         }
 
@@ -743,14 +743,14 @@ namespace SharpQuake
 
         private static unsafe void PF_particle()
         {
-            float* org = GetVector( OFS.OFS_PARM0 );
-            float* dir = GetVector( OFS.OFS_PARM1 );
-            float color = GetFloat( OFS.OFS_PARM2 );
-            float count = GetFloat( OFS.OFS_PARM3 );
+            Single* org = GetVector( OFS.OFS_PARM0 );
+            Single* dir = GetVector( OFS.OFS_PARM1 );
+            var color = GetFloat( OFS.OFS_PARM2 );
+            var count = GetFloat( OFS.OFS_PARM3 );
             Vector3 vorg, vdir;
             Copy( org, out vorg );
             Copy( dir, out vdir );
-            server.StartParticle( ref vorg, ref vdir, (int)color, (int)count );
+            server.StartParticle( ref vorg, ref vdir, ( Int32 ) color, ( Int32 ) count );
         }
 
         /*
@@ -762,13 +762,13 @@ namespace SharpQuake
 
         private static unsafe void PF_ambientsound()
         {
-            float* pos = GetVector( OFS.OFS_PARM0 );
-            string samp = GetString( OFS.OFS_PARM1 );
-            float vol = GetFloat( OFS.OFS_PARM2 );
-            float attenuation = GetFloat( OFS.OFS_PARM3 );
+            Single* pos = GetVector( OFS.OFS_PARM0 );
+            var samp = GetString( OFS.OFS_PARM1 );
+            var vol = GetFloat( OFS.OFS_PARM2 );
+            var attenuation = GetFloat( OFS.OFS_PARM3 );
 
             // check to see if samp was properly precached
-            for( int i = 0; i < server.sv.sound_precache.Length; i++ )
+            for( var i = 0; i < server.sv.sound_precache.Length; i++ )
             {
                 if( server.sv.sound_precache[i] == null )
                     break;
@@ -776,16 +776,16 @@ namespace SharpQuake
                 if( samp == server.sv.sound_precache[i] )
                 {
                     // add an svc_spawnambient command to the level signon packet
-                    MsgWriter msg = server.sv.signon;
+                    MessageWriter msg = server.sv.signon;
 
                     msg.WriteByte( protocol.svc_spawnstaticsound );
-                    for( int i2 = 0; i2 < 3; i2++ )
+                    for( var i2 = 0; i2 < 3; i2++ )
                         msg.WriteCoord( pos[i2] );
 
                     msg.WriteByte( i );
 
-                    msg.WriteByte( (int)( vol * 255 ) );
-                    msg.WriteByte( (int)( attenuation * 64 ) );
+                    msg.WriteByte( ( Int32 ) ( vol * 255 ) );
+                    msg.WriteByte( ( Int32 ) ( attenuation * 64 ) );
 
                     return;
                 }
@@ -813,10 +813,10 @@ namespace SharpQuake
         private static void PF_sound()
         {
             edict_t entity = GetEdict( OFS.OFS_PARM0 );
-            int channel = (int)GetFloat( OFS.OFS_PARM1 );
-            string sample = GetString( OFS.OFS_PARM2 );
-            int volume = (int)( GetFloat( OFS.OFS_PARM3 ) * 255 );
-            float attenuation = GetFloat( OFS.OFS_PARM4 );
+            var channel = ( Int32 ) GetFloat( OFS.OFS_PARM1 );
+            var sample = GetString( OFS.OFS_PARM2 );
+            var volume = ( Int32 ) ( GetFloat( OFS.OFS_PARM3 ) * 255 );
+            var attenuation = GetFloat( OFS.OFS_PARM4 );
 
             server.StartSound( entity, channel, sample, volume, attenuation );
         }
@@ -849,9 +849,9 @@ namespace SharpQuake
 
         private static unsafe void PF_traceline()
         {
-            float* v1 = GetVector( OFS.OFS_PARM0 );
-            float* v2 = GetVector( OFS.OFS_PARM1 );
-            int nomonsters = (int)GetFloat( OFS.OFS_PARM2 );
+            Single* v1 = GetVector( OFS.OFS_PARM0 );
+            Single* v2 = GetVector( OFS.OFS_PARM1 );
+            var nomonsters = ( Int32 ) GetFloat( OFS.OFS_PARM2 );
             edict_t ent = GetEdict( OFS.OFS_PARM3 );
 
             Vector3 vec1, vec2;
@@ -888,7 +888,7 @@ namespace SharpQuake
         {
         }
 
-        private static int PF_newcheckclient( int check )
+        private static Int32 PF_newcheckclient( Int32 check )
         {
             // cycle to the next one
 
@@ -897,7 +897,7 @@ namespace SharpQuake
             if( check > server.svs.maxclients )
                 check = server.svs.maxclients;
 
-            int i = check + 1;
+            var i = check + 1;
             if( check == server.svs.maxclients )
                 i = 1;
 
@@ -916,7 +916,7 @@ namespace SharpQuake
                     continue;
                 if( ent.v.health <= 0 )
                     continue;
-                if( ( (int)ent.v.flags & EdictFlags.FL_NOTARGET ) != 0 )
+                if( ( ( Int32 ) ent.v.flags & EdictFlags.FL_NOTARGET ) != 0 )
                     continue;
 
                 // anything that is a client, or has a client as an enemy
@@ -926,7 +926,7 @@ namespace SharpQuake
             // get the PVS for the entity
             Vector3 org = Common.ToVector( ref ent.v.origin ) + Common.ToVector( ref ent.v.view_ofs );
             mleaf_t leaf = Mod.PointInLeaf( ref org, server.sv.worldmodel );
-            byte[] pvs = Mod.LeafPVS( leaf, server.sv.worldmodel );
+            Byte[] pvs = Mod.LeafPVS( leaf, server.sv.worldmodel );
             Buffer.BlockCopy( pvs, 0, _CheckPvs, 0, pvs.Length );
 
             return i;
@@ -965,7 +965,7 @@ namespace SharpQuake
             edict_t self = server.ProgToEdict( progs.GlobalStruct.self );
             Vector3 view = Common.ToVector( ref self.v.origin ) + Common.ToVector( ref self.v.view_ofs );
             mleaf_t leaf = Mod.PointInLeaf( ref view, server.sv.worldmodel );
-            int l = Array.IndexOf( server.sv.worldmodel.leafs, leaf ) - 1;
+            var l = Array.IndexOf( server.sv.worldmodel.leafs, leaf ) - 1;
             if( ( l < 0 ) || ( _CheckPvs[l >> 3] & ( 1 << ( l & 7 ) ) ) == 0 )
             {
                 _NotVisCount++;
@@ -987,10 +987,10 @@ namespace SharpQuake
         /// </summary>
         private static void PF_stuffcmd()
         {
-            int entnum = server.NumForEdict( GetEdict( OFS.OFS_PARM0 ) );
+            var entnum = server.NumForEdict( GetEdict( OFS.OFS_PARM0 ) );
             if( entnum < 1 || entnum > server.svs.maxclients )
                 progs.RunError( "Parm 0 not a client" );
-            string str = GetString( OFS.OFS_PARM1 );
+            var str = GetString( OFS.OFS_PARM1 );
 
             client_t old = host.HostClient;
             host.HostClient = server.svs.clients[entnum - 1];
@@ -1005,7 +1005,7 @@ namespace SharpQuake
         /// </summary>
         private static void PF_localcmd()
         {
-            string cmd = GetString( OFS.OFS_PARM0 );
+            var cmd = GetString( OFS.OFS_PARM0 );
             Cbuf.AddText( cmd );
         }
 
@@ -1019,7 +1019,7 @@ namespace SharpQuake
 
         private static void PF_cvar()
         {
-            string str = GetString( OFS.OFS_PARM0 );
+            var str = GetString( OFS.OFS_PARM0 );
             ReturnFloat( CVar.GetValue( str ) );
         }
 
@@ -1050,13 +1050,13 @@ namespace SharpQuake
         {
             edict_t chain = server.sv.edicts[0];
 
-            float* org = GetVector( OFS.OFS_PARM0 );
-            float rad = GetFloat( OFS.OFS_PARM1 );
+            Single* org = GetVector( OFS.OFS_PARM0 );
+            var rad = GetFloat( OFS.OFS_PARM1 );
 
             Vector3 vorg;
             Copy( org, out vorg );
 
-            for( int i = 1; i < server.sv.num_edicts; i++ )
+            for( var i = 1; i < server.sv.num_edicts; i++ )
             {
                 edict_t ent = server.sv.edicts[i];
                 if( ent.free )
@@ -1089,10 +1089,10 @@ namespace SharpQuake
 
         private static void PF_ftos()
         {
-            float v = GetFloat( OFS.OFS_PARM0 );
+            var v = GetFloat( OFS.OFS_PARM0 );
 
-            if( v == (int)v )
-                SetTempString( String.Format( "{0}", (int)v ) );
+            if( v == ( Int32 ) v )
+                SetTempString( String.Format( "{0}", ( Int32 ) v ) );
             else
                 SetTempString( String.Format( "{0:F1}", v ) ); //  sprintf(pr_string_temp, "%5.1f", v);
             ReturnInt( _TempString );
@@ -1100,13 +1100,13 @@ namespace SharpQuake
 
         private static void PF_fabs()
         {
-            float v = GetFloat( OFS.OFS_PARM0 );
+            var v = GetFloat( OFS.OFS_PARM0 );
             ReturnFloat( Math.Abs( v ) );
         }
 
         private static unsafe void PF_vtos()
         {
-            float* v = GetVector( OFS.OFS_PARM0 );
+            Single* v = GetVector( OFS.OFS_PARM0 );
             SetTempString( String.Format( "'{0,5:F1} {1,5:F1} {2,5:F1}'", v[0], v[1], v[2] ) );
             ReturnInt( _TempString );
         }
@@ -1129,9 +1129,9 @@ namespace SharpQuake
         /// </summary>
         private static void PF_Find()
         {
-            int e = GetInt( OFS.OFS_PARM0 );
-            int f = GetInt( OFS.OFS_PARM1 );
-            string s = GetString( OFS.OFS_PARM2 );
+            var e = GetInt( OFS.OFS_PARM0 );
+            var f = GetInt( OFS.OFS_PARM1 );
+            var s = GetString( OFS.OFS_PARM2 );
             if( s == null )
                 progs.RunError( "PF_Find: bad search string" );
 
@@ -1140,7 +1140,7 @@ namespace SharpQuake
                 edict_t ed = server.EdictNum( e );
                 if( ed.free )
                     continue;
-                string t = progs.GetString( ed.GetInt( f ) ); // E_STRING(ed, f);
+                var t = progs.GetString( ed.GetInt( f ) ); // E_STRING(ed, f);
                 if( String.IsNullOrEmpty( t ) )
                     continue;
                 if( t == s )
@@ -1153,7 +1153,7 @@ namespace SharpQuake
             ReturnEdict( server.sv.edicts[0] );
         }
 
-        private static void CheckEmptyString( string s )
+        private static void CheckEmptyString( String s )
         {
             if( s == null || s.Length == 0 || s[0] <= ' ' )
                 progs.RunError( "Bad string" );
@@ -1170,11 +1170,11 @@ namespace SharpQuake
             if( !server.IsLoading )
                 progs.RunError( "PF_Precache_*: Precache can only be done in spawn functions" );
 
-            string s = GetString( OFS.OFS_PARM0 );
+            var s = GetString( OFS.OFS_PARM0 );
             ReturnInt( GetInt( OFS.OFS_PARM0 ) ); //  G_INT(OFS_RETURN) = G_INT(OFS_PARM0);
             CheckEmptyString( s );
 
-            for( int i = 0; i < QDef.MAX_SOUNDS; i++ )
+            for( var i = 0; i < QDef.MAX_SOUNDS; i++ )
             {
                 if( server.sv.sound_precache[i] == null )
                 {
@@ -1192,11 +1192,11 @@ namespace SharpQuake
             if( !server.IsLoading )
                 progs.RunError( "PF_Precache_*: Precache can only be done in spawn functions" );
 
-            string s = GetString( OFS.OFS_PARM0 );
+            var s = GetString( OFS.OFS_PARM0 );
             ReturnInt( GetInt( OFS.OFS_PARM0 ) ); //G_INT(OFS_RETURN) = G_INT(OFS_PARM0);
             CheckEmptyString( s );
 
-            for( int i = 0; i < QDef.MAX_MODELS; i++ )
+            for( var i = 0; i < QDef.MAX_MODELS; i++ )
             {
                 if( server.sv.model_precache[i] == null )
                 {
@@ -1237,25 +1237,25 @@ namespace SharpQuake
         private static void PF_walkmove()
         {
             edict_t ent = server.ProgToEdict( progs.GlobalStruct.self );
-            float yaw = GetFloat( OFS.OFS_PARM0 );
-            float dist = GetFloat( OFS.OFS_PARM1 );
+            var yaw = GetFloat( OFS.OFS_PARM0 );
+            var dist = GetFloat( OFS.OFS_PARM1 );
 
-            if( ( (int)ent.v.flags & ( EdictFlags.FL_ONGROUND | EdictFlags.FL_FLY | EdictFlags.FL_SWIM ) ) == 0 )
+            if( ( ( Int32 ) ent.v.flags & ( EdictFlags.FL_ONGROUND | EdictFlags.FL_FLY | EdictFlags.FL_SWIM ) ) == 0 )
             {
                 ReturnFloat( 0 );
                 return;
             }
 
-            yaw = (float)( yaw * Math.PI * 2.0 / 360.0 );
+            yaw = ( Single ) ( yaw * Math.PI * 2.0 / 360.0 );
 
             v3f move;
-            move.x = (float)Math.Cos( yaw ) * dist;
-            move.y = (float)Math.Sin( yaw ) * dist;
+            move.x = ( Single ) Math.Cos( yaw ) * dist;
+            move.y = ( Single ) Math.Sin( yaw ) * dist;
             move.z = 0;
 
             // save program state, because SV_movestep may call other progs
             dfunction_t oldf = progs.xFunction;
-            int oldself = progs.GlobalStruct.self;
+            var oldself = progs.GlobalStruct.self;
 
             ReturnFloat( server.MoveStep( ent, ref move, true ) ? 1 : 0 );
 
@@ -1291,7 +1291,7 @@ namespace SharpQuake
             {
                 MathLib.Copy( ref trace.endpos, out ent.v.origin );
                 server.LinkEdict( ent, false );
-                ent.v.flags = (int)ent.v.flags | EdictFlags.FL_ONGROUND;
+                ent.v.flags = ( Int32 ) ent.v.flags | EdictFlags.FL_ONGROUND;
                 ent.v.groundentity = server.EdictToProg( trace.ent );
                 ReturnFloat( 1 );
             }
@@ -1307,8 +1307,8 @@ namespace SharpQuake
 
         private static void PF_lightstyle()
         {
-            int style = (int)GetFloat( OFS.OFS_PARM0 ); // Uze: ???
-            string val = GetString( OFS.OFS_PARM1 );
+            var style = ( Int32 ) GetFloat( OFS.OFS_PARM0 ); // Uze: ???
+            var val = GetString( OFS.OFS_PARM1 );
 
             // change the string in sv
             server.sv.lightstyles[style] = val;
@@ -1317,7 +1317,7 @@ namespace SharpQuake
             if( !server.IsActive )
                 return;
 
-            for( int j = 0; j < server.svs.maxclients; j++ )
+            for( var j = 0; j < server.svs.maxclients; j++ )
             {
                 client_t client = server.svs.clients[j];
                 if( client.active || client.spawned )
@@ -1331,21 +1331,21 @@ namespace SharpQuake
 
         private static void PF_rint()
         {
-            float f = GetFloat( OFS.OFS_PARM0 );
+            var f = GetFloat( OFS.OFS_PARM0 );
             if( f > 0 )
-                ReturnFloat( (int)( f + 0.5 ) );
+                ReturnFloat( ( Int32 ) ( f + 0.5 ) );
             else
-                ReturnFloat( (int)( f - 0.5 ) );
+                ReturnFloat( ( Int32 ) ( f - 0.5 ) );
         }
 
         private static void PF_floor()
         {
-            ReturnFloat( (float)Math.Floor( GetFloat( OFS.OFS_PARM0 ) ) );
+            ReturnFloat( ( Single ) Math.Floor( GetFloat( OFS.OFS_PARM0 ) ) );
         }
 
         private static void PF_ceil()
         {
-            ReturnFloat( (float)Math.Ceiling( GetFloat( OFS.OFS_PARM0 ) ) );
+            ReturnFloat( ( Single ) Math.Ceiling( GetFloat( OFS.OFS_PARM0 ) ) );
         }
 
         /// <summary>
@@ -1362,7 +1362,7 @@ namespace SharpQuake
         /// </summary>
         private static unsafe void PF_pointcontents()
         {
-            float* v = GetVector( OFS.OFS_PARM0 );
+            Single* v = GetVector( OFS.OFS_PARM0 );
             Vector3 tmp;
             Copy( v, out tmp );
             ReturnFloat( server.PointContents( ref tmp ) );
@@ -1378,7 +1378,7 @@ namespace SharpQuake
 
         private static void PF_nextent()
         {
-            int i = server.NumForEdict( GetEdict( OFS.OFS_PARM0 ) );
+            var i = server.NumForEdict( GetEdict( OFS.OFS_PARM0 ) );
             while( true )
             {
                 i++;
@@ -1408,7 +1408,7 @@ namespace SharpQuake
         private static void PF_aim()
         {
             edict_t ent = GetEdict( OFS.OFS_PARM0 );
-            float speed = GetFloat( OFS.OFS_PARM1 );
+            var speed = GetFloat( OFS.OFS_PARM1 );
 
             Vector3 start = Common.ToVector( ref ent.v.origin );
             start.Z += 20;
@@ -1427,10 +1427,10 @@ namespace SharpQuake
 
             // try all possible entities
             Vector3 bestdir = dir;
-            float bestdist = server.Aim;
+            var bestdist = server.Aim;
             edict_t bestent = null;
 
-            for( int i = 1; i < server.sv.num_edicts; i++ )
+            for( var i = 1; i < server.sv.num_edicts; i++ )
             {
                 edict_t check = server.sv.edicts[i];
                 if( check.v.takedamage != Damages.DAMAGE_AIM )
@@ -1447,7 +1447,7 @@ namespace SharpQuake
 
                 dir = end - start;
                 MathLib.Normalize( ref dir );
-                float dist = Vector3.Dot( dir, Common.ToVector( ref progs.GlobalStruct.v_forward ) );
+                var dist = Vector3.Dot( dir, Common.ToVector( ref progs.GlobalStruct.v_forward ) );
                 if( dist < bestdist )
                     continue;	// to far to turn
                 tr = server.Move( ref start, ref Common.ZeroVector, ref Common.ZeroVector, ref end, 0, ent );
@@ -1462,7 +1462,7 @@ namespace SharpQuake
             {
                 v3f dir2, end2;
                 MathLib.VectorSubtract( ref bestent.v.origin, ref ent.v.origin, out dir2 );
-                float dist = MathLib.DotProduct( ref dir2, ref progs.GlobalStruct.v_forward );
+                var dist = MathLib.DotProduct( ref dir2, ref progs.GlobalStruct.v_forward );
                 MathLib.VectorScale( ref progs.GlobalStruct.v_forward, dist, out end2 );
                 end2.z = dir2.z;
                 MathLib.Normalize( ref end2 );
@@ -1484,22 +1484,22 @@ namespace SharpQuake
 
         private static void PF_WriteByte()
         {
-            WriteDest.WriteByte( (int)GetFloat( OFS.OFS_PARM1 ) );
+            WriteDest.WriteByte( ( Int32 ) GetFloat( OFS.OFS_PARM1 ) );
         }
 
         private static void PF_WriteChar()
         {
-            WriteDest.WriteChar( (int)GetFloat( OFS.OFS_PARM1 ) );
+            WriteDest.WriteChar( ( Int32 ) GetFloat( OFS.OFS_PARM1 ) );
         }
 
         private static void PF_WriteShort()
         {
-            WriteDest.WriteShort( (int)GetFloat( OFS.OFS_PARM1 ) );
+            WriteDest.WriteShort( ( Int32 ) GetFloat( OFS.OFS_PARM1 ) );
         }
 
         private static void PF_WriteLong()
         {
-            WriteDest.WriteLong( (int)GetFloat( OFS.OFS_PARM1 ) );
+            WriteDest.WriteLong( ( Int32 ) GetFloat( OFS.OFS_PARM1 ) );
         }
 
         private static void PF_WriteAngle()
@@ -1525,14 +1525,14 @@ namespace SharpQuake
         private static void PF_makestatic()
         {
             edict_t ent = GetEdict( OFS.OFS_PARM0 );
-            MsgWriter msg = server.sv.signon;
+            MessageWriter msg = server.sv.signon;
 
             msg.WriteByte( protocol.svc_spawnstatic );
             msg.WriteByte( server.ModelIndex( progs.GetString( ent.v.model ) ) );
-            msg.WriteByte( (int)ent.v.frame );
-            msg.WriteByte( (int)ent.v.colormap );
-            msg.WriteByte( (int)ent.v.skin );
-            for( int i = 0; i < 3; i++ )
+            msg.WriteByte( ( Int32 ) ent.v.frame );
+            msg.WriteByte( ( Int32 ) ent.v.colormap );
+            msg.WriteByte( ( Int32 ) ent.v.skin );
+            for( var i = 0; i < 3; i++ )
             {
                 msg.WriteCoord( MathLib.Comp( ref ent.v.origin, i ) );
                 msg.WriteAngle( MathLib.Comp( ref ent.v.angles, i ) );
@@ -1551,7 +1551,7 @@ namespace SharpQuake
         private static void PF_setspawnparms()
         {
             edict_t ent = GetEdict( OFS.OFS_PARM0 );
-            int i = server.NumForEdict( ent );
+            var i = server.NumForEdict( ent );
             if( i < 1 || i > server.svs.maxclients )
                 progs.RunError( "Entity is not a client" );
 
@@ -1575,7 +1575,7 @@ namespace SharpQuake
 
             server.svs.changelevel_issued = true;
 
-            string s = GetString( OFS.OFS_PARM0 );
+            var s = GetString( OFS.OFS_PARM0 );
             Cbuf.AddText( String.Format( "changelevel {0}\n", s ) );
         }
 

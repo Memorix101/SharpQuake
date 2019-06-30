@@ -48,7 +48,7 @@ namespace SharpQuake
         public static kbutton_t UpBtn;
         public static kbutton_t DownBtn;
 
-        public static int Impulse;
+        public static Int32 Impulse;
 
         public static void Init()
         {
@@ -91,10 +91,10 @@ namespace SharpQuake
 
         private static void KeyDown( ref kbutton_t b )
         {
-            int k;
-            string c = Command.Argv( 1 );
+            Int32 k;
+            var c = Command.Argv( 1 );
             if( !String.IsNullOrEmpty( c ) )
-                k = int.Parse( c );
+                k = Int32.Parse( c );
             else
                 k = -1;	// typed manually at the console for continuous down
 
@@ -118,10 +118,10 @@ namespace SharpQuake
 
         private static void KeyUp( ref kbutton_t b )
         {
-            int k;
-            string c = Command.Argv( 1 );
+            Int32 k;
+            var c = Command.Argv( 1 );
             if( !String.IsNullOrEmpty( c ) )
-                k = int.Parse( c );
+                k = Int32.Parse( c );
             else
             {
                 // typed manually at the console, assume for unsticking, so clear all
@@ -332,27 +332,27 @@ namespace SharpQuake
         {
             cl.cmd = cmd; // cl.cmd = *cmd - struct copying!!!
 
-            MsgWriter msg = new MsgWriter( 128 );
+            MessageWriter msg = new MessageWriter( 128 );
 
             //
             // send the movement message
             //
             msg.WriteByte( protocol.clc_move );
 
-            msg.WriteFloat( (float)cl.mtime[0] );	// so server can get ping times
+            msg.WriteFloat( ( Single ) cl.mtime[0] );	// so server can get ping times
 
             msg.WriteAngle( cl.viewangles.X );
             msg.WriteAngle( cl.viewangles.Y );
             msg.WriteAngle( cl.viewangles.Z );
 
-            msg.WriteShort( (short)cmd.forwardmove );
-            msg.WriteShort( (short)cmd.sidemove );
-            msg.WriteShort( (short)cmd.upmove );
+            msg.WriteShort( ( Int16 ) cmd.forwardmove );
+            msg.WriteShort( ( Int16 ) cmd.sidemove );
+            msg.WriteShort( ( Int16 ) cmd.upmove );
 
             //
             // send button bits
             //
-            int bits = 0;
+            var bits = 0;
 
             if( ( client_input.AttackBtn.state & 3 ) != 0 )
                 bits |= 1;
@@ -440,7 +440,7 @@ namespace SharpQuake
         // Moves the local angle positions
         private static void AdjustAngles()
         {
-            float speed = (float)host.FrameTime;
+            var speed = ( Single ) host.FrameTime;
 
             if( client_input.SpeedBtn.IsDown )
                 speed *= _AngleSpeedKey.Value;
@@ -459,8 +459,8 @@ namespace SharpQuake
                 cl.viewangles.X += speed * _PitchSpeed.Value * KeyState( ref client_input.BackBtn );
             }
 
-            float up = KeyState( ref client_input.LookUpBtn );
-            float down = KeyState( ref client_input.LookDownBtn );
+            var up = KeyState( ref client_input.LookUpBtn );
+            var down = KeyState( ref client_input.LookDownBtn );
 
             cl.viewangles.X -= speed * _PitchSpeed.Value * up;
             cl.viewangles.X += speed * _PitchSpeed.Value * down;
@@ -485,12 +485,12 @@ namespace SharpQuake
         // 0.5 if it was pressed and held
         // 0 if held then released, and
         // 1.0 if held for the entire time
-        private static float KeyState( ref kbutton_t key )
+        private static Single KeyState( ref kbutton_t key )
         {
-            bool impulsedown = ( key.state & 2 ) != 0;
-            bool impulseup = ( key.state & 4 ) != 0;
-            bool down = key.IsDown;// ->state & 1;
-            float val = 0;
+            var impulsedown = ( key.state & 2 ) != 0;
+            var impulseup = ( key.state & 4 ) != 0;
+            var down = key.IsDown;// ->state & 1;
+            Single val = 0;
 
             if( impulsedown && !impulseup )
                 if( down )

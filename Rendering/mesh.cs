@@ -30,32 +30,32 @@ namespace SharpQuake
 {
     internal static class mesh
     {
-        private const int MAX_COMMANDS = 8192;
-        private const int MAX_STRIP = 128;
+        private const Int32 MAX_COMMANDS = 8192;
+        private const Int32 MAX_STRIP = 128;
 
         private static model_t _AliasModel; // aliasmodel
         private static aliashdr_t _AliasHdr; // paliashdr
 
-        private static byte[] _Used = new byte[MAX_COMMANDS]; // qboolean used. changed to vyte because can have values 0, 1, 2...
+        private static Byte[] _Used = new Byte[MAX_COMMANDS]; // qboolean used. changed to vyte because can have values 0, 1, 2...
 
         // the command list holds counts and s/t values that are valid for
         // every frame
-        private static int[] _Commands = new int[MAX_COMMANDS]; // commands
+        private static Int32[] _Commands = new Int32[MAX_COMMANDS]; // commands
 
-        private static int _NumCommands; // numcommands
+        private static Int32 _NumCommands; // numcommands
 
         // all frames will have their vertexes rearranged and expanded
         // so they are in the order expected by the command list
-        private static int[] _VertexOrder = new int[MAX_COMMANDS]; // vertexorder
+        private static Int32[] _VertexOrder = new Int32[MAX_COMMANDS]; // vertexorder
 
-        private static int _NumOrder; // numorder
+        private static Int32 _NumOrder; // numorder
 
-        private static int _AllVerts; // allverts
-        private static int _AllTris; // alltris
+        private static Int32 _AllVerts; // allverts
+        private static Int32 _AllTris; // alltris
 
-        private static int[] _StripVerts = new int[MAX_STRIP]; // stripverts
-        private static int[] _StripTris = new int[MAX_STRIP]; // striptris
-        private static int _StripCount; // stripcount
+        private static Int32[] _StripVerts = new Int32[MAX_STRIP]; // stripverts
+        private static Int32[] _StripTris = new Int32[MAX_STRIP]; // striptris
+        private static Int32 _StripCount; // stripcount
 
         /// <summary>
         /// GL_MakeAliasModelDisplayLists
@@ -68,7 +68,7 @@ namespace SharpQuake
             //
             // look for a cached version
             //
-            string path = Path.ChangeExtension( "glquake/" + Path.GetFileNameWithoutExtension( m.name ), ".ms2" );
+            var path = Path.ChangeExtension( "glquake/" + Path.GetFileNameWithoutExtension( m.name ), ".ms2" );
 
             DisposableWrapper<BinaryReader> file;
             FileSystem.FOpenFile( path, out file );
@@ -79,9 +79,9 @@ namespace SharpQuake
                     BinaryReader reader = file.Object;
                     _NumCommands = reader.ReadInt32();
                     _NumOrder = reader.ReadInt32();
-                    for( int i = 0; i < _NumCommands; i++ )
+                    for( var i = 0; i < _NumCommands; i++ )
                         _Commands[i] = reader.ReadInt32();
-                    for( int i = 0; i < _NumOrder; i++ )
+                    for( var i = 0; i < _NumOrder; i++ )
                         _VertexOrder[i] = reader.ReadInt32();
                 }
             }
@@ -97,16 +97,16 @@ namespace SharpQuake
                 //
                 // save out the cached version
                 //
-                string fullpath = Path.Combine( Common.GameDir, path );
+                var fullpath = Path.Combine( Common.GameDir, path );
                 Stream fs = sys.FileOpenWrite( fullpath, true );
                 if( fs != null )
                     using( BinaryWriter writer = new BinaryWriter( fs, Encoding.ASCII ) )
                     {
                         writer.Write( _NumCommands );
                         writer.Write( _NumOrder );
-                        for( int i = 0; i < _NumCommands; i++ )
+                        for( var i = 0; i < _NumCommands; i++ )
                             writer.Write( _Commands[i] );
-                        for( int i = 0; i < _NumOrder; i++ )
+                        for( var i = 0; i < _NumOrder; i++ )
                             writer.Write( _VertexOrder[i] );
                     }
             }
@@ -116,17 +116,17 @@ namespace SharpQuake
             //
             _AliasHdr.poseverts = _NumOrder;
 
-            int[] cmds = new int[_NumCommands]; //Hunk_Alloc (numcommands * 4);
+            Int32[] cmds = new Int32[_NumCommands]; //Hunk_Alloc (numcommands * 4);
             _AliasHdr.commands = cmds; // in bytes??? // (byte*)cmds - (byte*)paliashdr;
             Buffer.BlockCopy( _Commands, 0, cmds, 0, _NumCommands * 4 ); //memcpy (cmds, commands, numcommands * 4);
 
             trivertx_t[][] poseverts = Mod.PoseVerts;
             trivertx_t[] verts = new trivertx_t[_AliasHdr.numposes * _AliasHdr.poseverts]; // Hunk_Alloc (paliashdr->numposes * paliashdr->poseverts * sizeof(trivertx_t) );
             _AliasHdr.posedata = verts; // (byte*)verts - (byte*)paliashdr;
-            int offset = 0;
+            var offset = 0;
 
-            for (int i = 0; i < _AliasHdr.numposes; i++)
-                for (int j = 0; j < _NumOrder; j++)
+            for ( var i = 0; i < _AliasHdr.numposes; i++)
+                for ( var j = 0; j < _NumOrder; j++)
                     verts[offset++] = poseverts[i][_VertexOrder[j]];  // *verts++ = poseverts[i][vertexorder[j]];
         }
 
@@ -136,8 +136,8 @@ namespace SharpQuake
         /// </summary>
         private static void BuildTris()
         {
-            int[] bestverts = new int[1024];
-            int[] besttris = new int[1024];
+            Int32[] bestverts = new Int32[1024];
+            Int32[] besttris = new Int32[1024];
 
             // Uze
             // All references to pheader from model.c changed to _AliasHdr (former paliashdr)
@@ -150,17 +150,17 @@ namespace SharpQuake
             _NumOrder = 0;
             _NumCommands = 0;
             Array.Clear( _Used, 0, _Used.Length ); // memset (used, 0, sizeof(used));
-            int besttype = 0, len;
-            for( int i = 0; i < _AliasHdr.numtris; i++ )
+            Int32 besttype = 0, len;
+            for( var i = 0; i < _AliasHdr.numtris; i++ )
             {
                 // pick an unused triangle and start the trifan
                 if( _Used[i] != 0 )
                     continue;
 
-                int bestlen = 0;
-                for( int type = 0; type < 2; type++ )
+                var bestlen = 0;
+                for( var type = 0; type < 2; type++ )
                 {
-                    for( int startv = 0; startv < 3; startv++ )
+                    for( var startv = 0; startv < 3; startv++ )
                     {
                         if( type == 1 )
                             len = StripLength( i, startv );
@@ -170,16 +170,16 @@ namespace SharpQuake
                         {
                             besttype = type;
                             bestlen = len;
-                            for( int j = 0; j < bestlen + 2; j++ )
+                            for( var j = 0; j < bestlen + 2; j++ )
                                 bestverts[j] = _StripVerts[j];
-                            for( int j = 0; j < bestlen; j++ )
+                            for( var j = 0; j < bestlen; j++ )
                                 besttris[j] = _StripTris[j];
                         }
                     }
                 }
 
                 // mark the tris on the best strip as used
-                for( int j = 0; j < bestlen; j++ )
+                for( var j = 0; j < bestlen; j++ )
                     _Used[besttris[j]] = 1;
 
                 if( besttype == 1 )
@@ -187,16 +187,16 @@ namespace SharpQuake
                 else
                     _Commands[_NumCommands++] = -( bestlen + 2 );
 
-                Union4b uval = Union4b.Empty;
-                for( int j = 0; j < bestlen + 2; j++ )
+                Union4B uval = Union4B.Empty;
+                for( var j = 0; j < bestlen + 2; j++ )
                 {
                     // emit a vertex into the reorder buffer
-                    int k = bestverts[j];
+                    var k = bestverts[j];
                     _VertexOrder[_NumOrder++] = k;
 
                     // emit s/t coords into the commands stream
-                    float s = stverts[k].s;
-                    float t = stverts[k].t;
+                    Single s = stverts[k].s;
+                    Single t = stverts[k].t;
                     if( triangles[besttris[0]].facesfront == 0 && stverts[k].onseam != 0 )
                         s += _AliasHdr.skinwidth / 2;	// on back side
                     s = ( s + 0.5f ) / _AliasHdr.skinwidth;
@@ -217,13 +217,13 @@ namespace SharpQuake
             _AllTris += _AliasHdr.numtris;
         }
 
-        private static int StripLength( int starttri, int startv )
+        private static Int32 StripLength( Int32 starttri, Int32 startv )
         {
             _Used[starttri] = 2;
 
             dtriangle_t[] triangles = Mod.Triangles;
 
-            int[] vidx = triangles[starttri].vertindex; //last = &triangles[starttri];
+            Int32[] vidx = triangles[starttri].vertindex; //last = &triangles[starttri];
             _StripVerts[0] = vidx[( startv ) % 3];
             _StripVerts[1] = vidx[( startv + 1 ) % 3];
             _StripVerts[2] = vidx[( startv + 2 ) % 3];
@@ -231,20 +231,20 @@ namespace SharpQuake
             _StripTris[0] = starttri;
             _StripCount = 1;
 
-            int m1 = _StripVerts[2]; // last->vertindex[(startv + 2) % 3];
-            int m2 = _StripVerts[1]; // last->vertindex[(startv + 1) % 3];
-            int lastfacesfront = triangles[starttri].facesfront;
+            var m1 = _StripVerts[2]; // last->vertindex[(startv + 2) % 3];
+            var m2 = _StripVerts[1]; // last->vertindex[(startv + 1) % 3];
+            var lastfacesfront = triangles[starttri].facesfront;
 
 // look for a matching triangle
 nexttri:
-            for( int j = starttri + 1; j < _AliasHdr.numtris; j++ )
+            for( var j = starttri + 1; j < _AliasHdr.numtris; j++ )
             {
                 if( triangles[j].facesfront != lastfacesfront )
                     continue;
 
                 vidx = triangles[j].vertindex;
 
-                for( int k = 0; k < 3; k++ )
+                for( var k = 0; k < 3; k++ )
                 {
                     if( vidx[k] != m1 )
                         continue;
@@ -274,21 +274,21 @@ nexttri:
 done:
 
 // clear the temp used flags
-            for( int j = starttri + 1; j < _AliasHdr.numtris; j++ )
+            for( var j = starttri + 1; j < _AliasHdr.numtris; j++ )
                 if( _Used[j] == 2 )
                     _Used[j] = 0;
 
             return _StripCount;
         }
 
-        private static int FanLength( int starttri, int startv )
+        private static Int32 FanLength( Int32 starttri, Int32 startv )
         {
             _Used[starttri] = 2;
 
             dtriangle_t[] triangles = Mod.Triangles;
             //last = &triangles[starttri];
 
-            int[] vidx = triangles[starttri].vertindex;
+            Int32[] vidx = triangles[starttri].vertindex;
 
             _StripVerts[0] = vidx[( startv ) % 3];
             _StripVerts[1] = vidx[( startv + 1 ) % 3];
@@ -297,19 +297,19 @@ done:
             _StripTris[0] = starttri;
             _StripCount = 1;
 
-            int m1 = vidx[( startv + 0 ) % 3];
-            int m2 = vidx[( startv + 2 ) % 3];
-            int lastfacesfront = triangles[starttri].facesfront;
+            var m1 = vidx[( startv + 0 ) % 3];
+            var m2 = vidx[( startv + 2 ) % 3];
+            var lastfacesfront = triangles[starttri].facesfront;
 
 // look for a matching triangle
 nexttri:
-            for( int j = starttri + 1; j < _AliasHdr.numtris; j++ )//, check++)
+            for( var j = starttri + 1; j < _AliasHdr.numtris; j++ )//, check++)
             {
                 vidx = triangles[j].vertindex;
                 if( triangles[j].facesfront != lastfacesfront )
                     continue;
 
-                for( int k = 0; k < 3; k++ )
+                for( var k = 0; k < 3; k++ )
                 {
                     if( vidx[k] != m1 )
                         continue;
@@ -336,7 +336,7 @@ nexttri:
 done:
 
 // clear the temp used flags
-            for( int j = starttri + 1; j < _AliasHdr.numtris; j++ )
+            for( var j = starttri + 1; j < _AliasHdr.numtris; j++ )
                 if( _Used[j] == 2 )
                     _Used[j] = 0;
 

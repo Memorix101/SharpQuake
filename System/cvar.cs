@@ -39,7 +39,7 @@ namespace SharpQuake
             }
         }
 
-        public string Name
+        public String Name
         {
             get
             {
@@ -47,7 +47,7 @@ namespace SharpQuake
             }
         }
 
-        public string String
+        public String String
         {
             get
             {
@@ -55,7 +55,7 @@ namespace SharpQuake
             }
         }
 
-        public float Value
+        public Single Value
         {
             get
             {
@@ -63,7 +63,7 @@ namespace SharpQuake
             }
         }
 
-        public bool IsArchive
+        public Boolean IsArchive
         {
             get
             {
@@ -71,7 +71,7 @@ namespace SharpQuake
             }
         }
 
-        public bool IsServer
+        public Boolean IsServer
         {
             get
             {
@@ -89,23 +89,23 @@ namespace SharpQuake
 
         private static CVar _Vars;
 
-        private string _Name;
+        private String _Name;
 
         // char	*name;
-        private string _String;
+        private String _String;
 
         // char	*string;
         private BitVector32 _Flags;
 
         // qboolean archive;		// set to true to cause it to be saved to vars.rc
         // qboolean server;		// notifies players when changed
-        private float _Value;
+        private Single _Value;
 
         // float	value;
         private CVar _Next;
 
         // Cvar_FindVar()
-        public static CVar Find( string name )
+        public static CVar Find( String name )
         {
             CVar var = _Vars;
             while( var != null )
@@ -119,15 +119,15 @@ namespace SharpQuake
             return null;
         }
 
-        public static bool Exists( string name )
+        public static Boolean Exists( String name )
         {
             return ( Find( name ) != null );
         }
 
         // Cvar_VariableValue()
-        public static float GetValue( string name )
+        public static Single GetValue( String name )
         {
-            float result = 0;
+            Single result = 0;
             CVar var = Find( name );
             if( var != null )
             {
@@ -137,7 +137,7 @@ namespace SharpQuake
         }
 
         // Cvar_VariableString()
-        public static string GetString( string name )
+        public static String GetString( String name )
         {
             CVar var = Find( name );
             if( var != null )
@@ -148,12 +148,12 @@ namespace SharpQuake
         }
 
         // Cvar_CompleteVariable()
-        public static string[] CompleteName( string partial )
+        public static String[] CompleteName( String partial )
         {
             if( String.IsNullOrEmpty( partial ) )
                 return null;
 
-            List<string> result = new List<string>();
+            List<String> result = new List<String>();
             CVar var = _Vars;
             while( var != null )
             {
@@ -166,7 +166,7 @@ namespace SharpQuake
         }
 
         // Cvar_Set()
-        public static void Set( string name, string value )
+        public static void Set( String name, String value )
         {
             CVar var = Find( name );
             if( var == null )
@@ -179,14 +179,14 @@ namespace SharpQuake
         }
 
         // Cvar_SetValue()
-        public static void Set( string name, float value )
+        public static void Set( String name, Single value )
         {
             Set( name, value.ToString( CultureInfo.InvariantCulture.NumberFormat ) );
         }
 
         // Cvar_Command()
         // Handles variable inspection and changing from the console
-        public static bool Command()
+        public static Boolean Command()
         {
             // check variables
             var var = Find( SharpQuake.Command.Argv( 0 ) );
@@ -225,13 +225,13 @@ namespace SharpQuake
                 }
                 var = var._Next;
             }
-            byte[] buf = Encoding.ASCII.GetBytes( sb.ToString() );
+            Byte[] buf = Encoding.ASCII.GetBytes( sb.ToString() );
             dest.Write( buf, 0, buf.Length );
         }
 
-        public void Set( string value )
+        public void Set( String value )
         {
-            bool changed = ( String.Compare( _String, value ) != 0 );
+            var changed = ( String.Compare( _String, value ) != 0 );
             if( !changed )
                 return;
 
@@ -246,21 +246,21 @@ namespace SharpQuake
 
         private class Flags
         {
-            public const int Archive = 1;
-            public const int Server = 2;
+            public const Int32 Archive = 1;
+            public const Int32 Server = 2;
         }
 
-        public CVar( string name, string value )
+        public CVar( String name, String value )
                     : this( name, value, false )
         {
         }
 
-        public CVar( string name, string value, bool archive )
+        public CVar( String name, String value, Boolean archive )
                     : this( name, value, archive, false )
         {
         }
 
-        public CVar( string name, string value, bool archive, bool server )
+        public CVar( String name, String value, Boolean archive, Boolean server )
         {
             if( String.IsNullOrEmpty( name ) )
             {

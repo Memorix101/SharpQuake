@@ -30,7 +30,7 @@ namespace SharpQuake
 {
     partial class render
     {
-        private static int _DlightFrameCount; // r_dlightframecount
+        private static Int32 _DlightFrameCount; // r_dlightframecount
         private static mplane_t _LightPlane; // lightplane
 
         /// <summary>
@@ -43,7 +43,7 @@ namespace SharpQuake
 
             _DlightFrameCount = _FrameCount + 1;	// because the count hasn't advanced yet for this frame
 
-            for( int i = 0; i < client.MAX_DLIGHTS; i++ )
+            for( var i = 0; i < client.MAX_DLIGHTS; i++ )
             {
                 dlight_t l = client.DLights[i];
                 if( l.die < client.cl.time || l.radius == 0 )
@@ -55,14 +55,14 @@ namespace SharpQuake
         /// <summary>
         /// R_MarkLights
         /// </summary>
-        private static void MarkLights( dlight_t light, int bit, mnodebase_t node )
+        private static void MarkLights( dlight_t light, Int32 bit, mnodebase_t node )
         {
             if( node.contents < 0 )
                 return;
 
             mnode_t n = (mnode_t)node;
             mplane_t splitplane = n.plane;
-            float dist = Vector3.Dot( light.origin, splitplane.normal ) - splitplane.dist;
+            var dist = Vector3.Dot( light.origin, splitplane.normal ) - splitplane.dist;
 
             if( dist > light.radius )
             {
@@ -76,7 +76,7 @@ namespace SharpQuake
             }
 
             // mark the polygons
-            for( int i = 0; i < n.numsurfaces; i++ )
+            for( var i = 0; i < n.numsurfaces; i++ )
             {
                 msurface_t surf = client.cl.worldmodel.surfaces[n.firstsurface + i];
                 if( surf.dlightframe != _DlightFrameCount )
@@ -110,7 +110,7 @@ namespace SharpQuake
             GL.Enable( EnableCap.Blend );
             GL.BlendFunc( BlendingFactor.One, BlendingFactor.One );
 
-            for( int i = 0; i < client.MAX_DLIGHTS; i++ )
+            for( var i = 0; i < client.MAX_DLIGHTS; i++ )
             {
                 dlight_t l = client.DLights[i];
                 if( l.die < client.cl.time || l.radius == 0 )
@@ -134,16 +134,16 @@ namespace SharpQuake
             //
             // light animations
             // 'm' is normal light, 'a' is no light, 'z' is double bright
-            int i = (int)( client.cl.time * 10 );
-            for( int j = 0; j < QDef.MAX_LIGHTSTYLES; j++ )
+            var i = ( Int32 ) ( client.cl.time * 10 );
+            for( var j = 0; j < QDef.MAX_LIGHTSTYLES; j++ )
             {
                 if( String.IsNullOrEmpty( client.LightStyle[j].map ) )
                 {
                     _LightStyleValue[j] = 256;
                     continue;
                 }
-                string map = client.LightStyle[j].map;
-                int k = i % map.Length;
+                var map = client.LightStyle[j].map;
+                var k = i % map.Length;
                 k = map[k] - 'a';
                 k = k * 22;
                 _LightStyleValue[j] = k;
@@ -153,7 +153,7 @@ namespace SharpQuake
         /// <summary>
         /// R_LightPoint
         /// </summary>
-        private static int LightPoint( ref Vector3 p )
+        private static Int32 LightPoint( ref Vector3 p )
         {
             if( client.cl.worldmodel.lightdata == null )
                 return 255;
@@ -161,14 +161,14 @@ namespace SharpQuake
             Vector3 end = p;
             end.Z -= 2048;
 
-            int r = RecursiveLightPoint( client.cl.worldmodel.nodes[0], ref p, ref end );
+            var r = RecursiveLightPoint( client.cl.worldmodel.nodes[0], ref p, ref end );
             if( r == -1 )
                 r = 0;
 
             return r;
         }
 
-        private static int RecursiveLightPoint( mnodebase_t node, ref Vector3 start, ref Vector3 end )
+        private static Int32 RecursiveLightPoint( mnodebase_t node, ref Vector3 start, ref Vector3 end )
         {
             if( node.contents < 0 )
                 return -1;		// didn't hit anything
@@ -179,18 +179,18 @@ namespace SharpQuake
 
             // FIXME: optimize for axial
             mplane_t plane = n.plane;
-            float front = Vector3.Dot( start, plane.normal ) - plane.dist;
-            float back = Vector3.Dot( end, plane.normal ) - plane.dist;
-            int side = front < 0 ? 1 : 0;
+            var front = Vector3.Dot( start, plane.normal ) - plane.dist;
+            var back = Vector3.Dot( end, plane.normal ) - plane.dist;
+            var side = front < 0 ? 1 : 0;
 
             if( ( back < 0 ? 1 : 0 ) == side )
                 return RecursiveLightPoint( n.children[side], ref start, ref end );
 
-            float frac = front / ( front - back );
+            var frac = front / ( front - back );
             Vector3 mid = start + ( end - start ) * frac;
 
             // go down front side
-            int r = RecursiveLightPoint( n.children[side], ref start, ref mid );
+            var r = RecursiveLightPoint( n.children[side], ref start, ref mid );
             if( r >= 0 )
                 return r;		// hit something
 
@@ -202,22 +202,22 @@ namespace SharpQuake
             _LightPlane = plane;
 
             msurface_t[] surf = client.cl.worldmodel.surfaces;
-            int offset = n.firstsurface;
-            for( int i = 0; i < n.numsurfaces; i++, offset++ )
+            Int32 offset = n.firstsurface;
+            for( var i = 0; i < n.numsurfaces; i++, offset++ )
             {
                 if( ( surf[offset].flags & Surf.SURF_DRAWTILED ) != 0 )
                     continue;	// no lightmaps
 
                 mtexinfo_t tex = surf[offset].texinfo;
 
-                int s = (int)( Vector3.Dot( mid, tex.vecs[0].Xyz ) + tex.vecs[0].W );
-                int t = (int)( Vector3.Dot( mid, tex.vecs[1].Xyz ) + tex.vecs[1].W );
+                var s = ( Int32 ) ( Vector3.Dot( mid, tex.vecs[0].Xyz ) + tex.vecs[0].W );
+                var t = ( Int32 ) ( Vector3.Dot( mid, tex.vecs[1].Xyz ) + tex.vecs[1].W );
 
                 if( s < surf[offset].texturemins[0] || t < surf[offset].texturemins[1] )
                     continue;
 
-                int ds = s - surf[offset].texturemins[0];
-                int dt = t - surf[offset].texturemins[1];
+                var ds = s - surf[offset].texturemins[0];
+                var dt = t - surf[offset].texturemins[1];
 
                 if( ds > surf[offset].extents[0] || dt > surf[offset].extents[1] )
                     continue;
@@ -228,17 +228,17 @@ namespace SharpQuake
                 ds >>= 4;
                 dt >>= 4;
 
-                byte[] lightmap = surf[offset].sample_base;
-                int lmOffset = surf[offset].sampleofs;
-                short[] extents = surf[offset].extents;
+                Byte[] lightmap = surf[offset].sample_base;
+                var lmOffset = surf[offset].sampleofs;
+                Int16[] extents = surf[offset].extents;
                 r = 0;
                 if( lightmap != null )
                 {
                     lmOffset += dt * ( ( extents[0] >> 4 ) + 1 ) + ds;
 
-                    for( int maps = 0; maps < bsp_file.MAXLIGHTMAPS && surf[offset].styles[maps] != 255; maps++ )
+                    for( var maps = 0; maps < bsp_file.MAXLIGHTMAPS && surf[offset].styles[maps] != 255; maps++ )
                     {
-                        int scale = _LightStyleValue[surf[offset].styles[maps]];
+                        var scale = _LightStyleValue[surf[offset].styles[maps]];
                         r += lightmap[lmOffset] * scale;
                         lmOffset += ( ( extents[0] >> 4 ) + 1 ) * ( ( extents[1] >> 4 ) + 1 );
                     }
@@ -258,7 +258,7 @@ namespace SharpQuake
         /// </summary>
         private static void RenderDlight( dlight_t light )
         {
-            float rad = light.radius * 0.35f;
+            var rad = light.radius * 0.35f;
             Vector3 v = light.origin - render.Origin;
             if( v.Length < rad )
             {	// view is inside the dlight
@@ -271,20 +271,20 @@ namespace SharpQuake
             v = light.origin - render.ViewPn * rad;
             GL.Vertex3( v );
             GL.Color3( 0, 0, 0 );
-            for( int i = 16; i >= 0; i-- )
+            for( var i = 16; i >= 0; i-- )
             {
-                double a = i / 16.0 * Math.PI * 2;
-                v = light.origin + render.ViewRight * (float)Math.Cos( a ) * rad + render.ViewUp * (float)Math.Sin( a ) * rad;
+                var a = i / 16.0 * Math.PI * 2;
+                v = light.origin + render.ViewRight * ( Single ) Math.Cos( a ) * rad + render.ViewUp * ( Single ) Math.Sin( a ) * rad;
                 GL.Vertex3( v );
             }
             GL.End();
         }
 
-        private static void AddLightBlend( float r, float g, float b, float a2 )
+        private static void AddLightBlend( Single r, Single g, Single b, Single a2 )
         {
             view.Blend.A += a2 * ( 1 - view.Blend.A );
 
-            float a = view.Blend.A;
+            var a = view.Blend.A;
 
             a2 = a2 / a;
 

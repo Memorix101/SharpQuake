@@ -34,11 +34,11 @@ namespace SharpQuake
         public static readonly entity_state_t Empty = new entity_state_t();
         public v3f origin;
         public v3f angles;
-        public int modelindex;
-        public int frame;
-        public int colormap;
-        public int skin;
-        public int effects;
+        public Int32 modelindex;
+        public Int32 frame;
+        public Int32 colormap;
+        public Int32 skin;
+        public Int32 effects;
     }
 
     public static class QStats
@@ -46,151 +46,151 @@ namespace SharpQuake
         //
         // stats are integers communicated to the client by the server
         //
-        public static int MAX_CL_STATS = 32;
+        public static Int32 MAX_CL_STATS = 32;
 
-        public static int STAT_HEALTH = 0;
-        public static int STAT_FRAGS = 1;
-        public static int STAT_WEAPON = 2;
-        public static int STAT_AMMO = 3;
-        public static int STAT_ARMOR = 4;
-        public static int STAT_WEAPONFRAME = 5;
-        public static int STAT_SHELLS = 6;
-        public static int STAT_NAILS = 7;
-        public static int STAT_ROCKETS = 8;
-        public static int STAT_CELLS = 9;
-        public static int STAT_ACTIVEWEAPON = 10;
-        public static int STAT_TOTALSECRETS = 11;
-        public static int STAT_TOTALMONSTERS = 12;
-        public static int STAT_SECRETS = 13;		// bumped on client side by svc_foundsecret
-        public static int STAT_MONSTERS = 14;		// bumped by svc_killedmonster
+        public static Int32 STAT_HEALTH = 0;
+        public static Int32 STAT_FRAGS = 1;
+        public static Int32 STAT_WEAPON = 2;
+        public static Int32 STAT_AMMO = 3;
+        public static Int32 STAT_ARMOR = 4;
+        public static Int32 STAT_WEAPONFRAME = 5;
+        public static Int32 STAT_SHELLS = 6;
+        public static Int32 STAT_NAILS = 7;
+        public static Int32 STAT_ROCKETS = 8;
+        public static Int32 STAT_CELLS = 9;
+        public static Int32 STAT_ACTIVEWEAPON = 10;
+        public static Int32 STAT_TOTALSECRETS = 11;
+        public static Int32 STAT_TOTALMONSTERS = 12;
+        public static Int32 STAT_SECRETS = 13;		// bumped on client side by svc_foundsecret
+        public static Int32 STAT_MONSTERS = 14;		// bumped by svc_killedmonster
     }
 
     public static class QItems
     {
         // stock defines
 
-        public static int IT_SHOTGUN = 1;
-        public static int IT_SUPER_SHOTGUN = 2;
-        public static int IT_NAILGUN = 4;
-        public static int IT_SUPER_NAILGUN = 8;
-        public static int IT_GRENADE_LAUNCHER = 16;
-        public static int IT_ROCKET_LAUNCHER = 32;
-        public static int IT_LIGHTNING = 64;
-        public static int IT_SUPER_LIGHTNING = 128;
-        public static int IT_SHELLS = 256;
-        public static int IT_NAILS = 512;
-        public static int IT_ROCKETS = 1024;
-        public static int IT_CELLS = 2048;
-        public static int IT_AXE = 4096;
-        public static int IT_ARMOR1 = 8192;
-        public static int IT_ARMOR2 = 16384;
-        public static int IT_ARMOR3 = 32768;
-        public static int IT_SUPERHEALTH = 65536;
-        public static int IT_KEY1 = 131072;
-        public static int IT_KEY2 = 262144;
-        public static int IT_INVISIBILITY = 524288;
-        public static int IT_INVULNERABILITY = 1048576;
-        public static int IT_SUIT = 2097152;
-        public static int IT_QUAD = 4194304;
-        public static int IT_SIGIL1 = (1 << 28);
-        public static int IT_SIGIL2 = (1 << 29);
-        public static int IT_SIGIL3 = (1 << 30);
-        public static int IT_SIGIL4 = (1 << 31);
+        public static Int32 IT_SHOTGUN = 1;
+        public static Int32 IT_SUPER_SHOTGUN = 2;
+        public static Int32 IT_NAILGUN = 4;
+        public static Int32 IT_SUPER_NAILGUN = 8;
+        public static Int32 IT_GRENADE_LAUNCHER = 16;
+        public static Int32 IT_ROCKET_LAUNCHER = 32;
+        public static Int32 IT_LIGHTNING = 64;
+        public static Int32 IT_SUPER_LIGHTNING = 128;
+        public static Int32 IT_SHELLS = 256;
+        public static Int32 IT_NAILS = 512;
+        public static Int32 IT_ROCKETS = 1024;
+        public static Int32 IT_CELLS = 2048;
+        public static Int32 IT_AXE = 4096;
+        public static Int32 IT_ARMOR1 = 8192;
+        public static Int32 IT_ARMOR2 = 16384;
+        public static Int32 IT_ARMOR3 = 32768;
+        public static Int32 IT_SUPERHEALTH = 65536;
+        public static Int32 IT_KEY1 = 131072;
+        public static Int32 IT_KEY2 = 262144;
+        public static Int32 IT_INVISIBILITY = 524288;
+        public static Int32 IT_INVULNERABILITY = 1048576;
+        public static Int32 IT_SUIT = 2097152;
+        public static Int32 IT_QUAD = 4194304;
+        public static Int32 IT_SIGIL1 = (1 << 28);
+        public static Int32 IT_SIGIL2 = (1 << 29);
+        public static Int32 IT_SIGIL3 = (1 << 30);
+        public static Int32 IT_SIGIL4 = (1 << 31);
 
         //===========================================
         //rogue changed and added defines
 
-        public static int RIT_SHELLS = 128;
-        public static int RIT_NAILS = 256;
-        public static int RIT_ROCKETS = 512;
-        public static int RIT_CELLS = 1024;
-        public static int RIT_AXE = 2048;
-        public static int RIT_LAVA_NAILGUN = 4096;
-        public static int RIT_LAVA_SUPER_NAILGUN = 8192;
-        public static int RIT_MULTI_GRENADE = 16384;
-        public static int RIT_MULTI_ROCKET = 32768;
-        public static int RIT_PLASMA_GUN = 65536;
-        public static int RIT_ARMOR1 = 8388608;
-        public static int RIT_ARMOR2 = 16777216;
-        public static int RIT_ARMOR3 = 33554432;
-        public static int RIT_LAVA_NAILS = 67108864;
-        public static int RIT_PLASMA_AMMO = 134217728;
-        public static int RIT_MULTI_ROCKETS = 268435456;
-        public static int RIT_SHIELD = 536870912;
-        public static int RIT_ANTIGRAV = 1073741824;
-        public static int RIT_SUPERHEALTH = -2147483648;// 2147483648;
+        public static Int32 RIT_SHELLS = 128;
+        public static Int32 RIT_NAILS = 256;
+        public static Int32 RIT_ROCKETS = 512;
+        public static Int32 RIT_CELLS = 1024;
+        public static Int32 RIT_AXE = 2048;
+        public static Int32 RIT_LAVA_NAILGUN = 4096;
+        public static Int32 RIT_LAVA_SUPER_NAILGUN = 8192;
+        public static Int32 RIT_MULTI_GRENADE = 16384;
+        public static Int32 RIT_MULTI_ROCKET = 32768;
+        public static Int32 RIT_PLASMA_GUN = 65536;
+        public static Int32 RIT_ARMOR1 = 8388608;
+        public static Int32 RIT_ARMOR2 = 16777216;
+        public static Int32 RIT_ARMOR3 = 33554432;
+        public static Int32 RIT_LAVA_NAILS = 67108864;
+        public static Int32 RIT_PLASMA_AMMO = 134217728;
+        public static Int32 RIT_MULTI_ROCKETS = 268435456;
+        public static Int32 RIT_SHIELD = 536870912;
+        public static Int32 RIT_ANTIGRAV = 1073741824;
+        public static Int32 RIT_SUPERHEALTH = -2147483648;// 2147483648;
 
         //MED 01/04/97 added hipnotic defines
         //===========================================
         //hipnotic added defines
-        public static int HIT_PROXIMITY_GUN_BIT = 16;
+        public static Int32 HIT_PROXIMITY_GUN_BIT = 16;
 
-        public static int HIT_MJOLNIR_BIT = 7;
-        public static int HIT_LASER_CANNON_BIT = 23;
-        public static int HIT_PROXIMITY_GUN = (1 << HIT_PROXIMITY_GUN_BIT);
-        public static int HIT_MJOLNIR = (1 << HIT_MJOLNIR_BIT);
-        public static int HIT_LASER_CANNON = (1 << HIT_LASER_CANNON_BIT);
-        public static int HIT_WETSUIT = (1 << (23 + 2));
-        public static int HIT_EMPATHY_SHIELDS = (1 << (23 + 3));
+        public static Int32 HIT_MJOLNIR_BIT = 7;
+        public static Int32 HIT_LASER_CANNON_BIT = 23;
+        public static Int32 HIT_PROXIMITY_GUN = (1 << HIT_PROXIMITY_GUN_BIT);
+        public static Int32 HIT_MJOLNIR = (1 << HIT_MJOLNIR_BIT);
+        public static Int32 HIT_LASER_CANNON = (1 << HIT_LASER_CANNON_BIT);
+        public static Int32 HIT_WETSUIT = (1 << (23 + 2));
+        public static Int32 HIT_EMPATHY_SHIELDS = (1 << (23 + 3));
         //===========================================
     }
 
     internal static class QDef
     {
-        public const float VERSION = 1.09f;
-        public const float CSQUAKE_VERSION = 1.20f;
-        public const float GLQUAKE_VERSION = 1.00f;
-        public const float D3DQUAKE_VERSION = 0.01f;
-        public const float WINQUAKE_VERSION = 0.996f;
-        public const float LINUX_VERSION = 1.30f;
-        public const float X11_VERSION = 1.10f;
+        public const Single VERSION = 1.09f;
+        public const Single CSQUAKE_VERSION = 1.20f;
+        public const Single GLQUAKE_VERSION = 1.00f;
+        public const Single D3DQUAKE_VERSION = 0.01f;
+        public const Single WINQUAKE_VERSION = 0.996f;
+        public const Single LINUX_VERSION = 1.30f;
+        public const Single X11_VERSION = 1.10f;
 
-        public const string GAMENAME = "Id1";		// directory to look in by default
+        public const String GAMENAME = "Id1";		// directory to look in by default
 
-        public const int MAX_NUM_ARGVS = 50;
+        public const Int32 MAX_NUM_ARGVS = 50;
 
         // up / down
-        public const int PITCH = 0;
+        public const Int32 PITCH = 0;
 
         // left / right
-        public const int YAW = 1;
+        public const Int32 YAW = 1;
 
         // fall over
-        public const int ROLL = 2;
+        public const Int32 ROLL = 2;
 
-        public const int MAX_QPATH = 64;			// max length of a quake game pathname
-        public const int MAX_OSPATH = 128;			// max length of a filesystem pathname
+        public const Int32 MAX_QPATH = 64;			// max length of a quake game pathname
+        public const Int32 MAX_OSPATH = 128;			// max length of a filesystem pathname
 
-        public const float ON_EPSILON = 0.1f;		// point on plane side epsilon
+        public const Single ON_EPSILON = 0.1f;		// point on plane side epsilon
 
-        public const int MAX_MSGLEN = 8000;		// max length of a reliable message
-        public const int MAX_DATAGRAM = 1024;		// max length of unreliable message
+        public const Int32 MAX_MSGLEN = 8000;		// max length of a reliable message
+        public const Int32 MAX_DATAGRAM = 1024;		// max length of unreliable message
 
         //
         // per-level limits
         //
-        public const int MAX_EDICTS = 600;	//600 	// FIXME: ouch! ouch! ouch!
+        public const Int32 MAX_EDICTS = 600;	//600 	// FIXME: ouch! ouch! ouch!
 
-        public const int MAX_LIGHTSTYLES = 64;
-        public const int MAX_MODELS = 256;	//256		// these are sent over the net as bytes
-        public const int MAX_SOUNDS = 256;			// so they cannot be blindly increased
+        public const Int32 MAX_LIGHTSTYLES = 64;
+        public const Int32 MAX_MODELS = 256;	//256		// these are sent over the net as bytes
+        public const Int32 MAX_SOUNDS = 256;			// so they cannot be blindly increased
 
-        public const int SAVEGAME_COMMENT_LENGTH = 39;
+        public const Int32 SAVEGAME_COMMENT_LENGTH = 39;
 
-        public const int MAX_STYLESTRING = 64;
+        public const Int32 MAX_STYLESTRING = 64;
 
-        public const int MAX_SCOREBOARD = 16;
-        public const int MAX_SCOREBOARDNAME = 32;
+        public const Int32 MAX_SCOREBOARD = 16;
+        public const Int32 MAX_SCOREBOARDNAME = 32;
 
-        public const int SOUND_CHANNELS = 8;
+        public const Int32 SOUND_CHANNELS = 8;
 
-        public const double BACKFACE_EPSILON = 0.01;
+        public const Double BACKFACE_EPSILON = 0.01;
     }
 
     internal static class qparam
     {
-        public static string globalbasedir;
-        public static string globalgameid;
+        public static String globalbasedir;
+        public static String globalgameid;
     }
 
     // entity_state_t;
@@ -200,9 +200,9 @@ namespace SharpQuake
     // available for the program to use
     internal class quakeparms_t
     {
-        public string basedir;
-        public string cachedir;		// for development over ISDN lines
-        public string[] argv;
+        public String basedir;
+        public String cachedir;		// for development over ISDN lines
+        public String[] argv;
 
         public quakeparms_t()
         {

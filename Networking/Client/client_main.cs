@@ -56,16 +56,16 @@ namespace SharpQuake
                 _AngleSpeedKey = new CVar( "cl_anglespeedkey", "1.5" );
             }
 
-            for( int i = 0; i < _EFrags.Length; i++ )
+            for( var i = 0; i < _EFrags.Length; i++ )
                 _EFrags[i] = new efrag_t();
 
-            for( int i = 0; i < _Entities.Length; i++ )
+            for( var i = 0; i < _Entities.Length; i++ )
                 _Entities[i] = new entity_t();
 
-            for( int i = 0; i < _StaticEntities.Length; i++ )
+            for( var i = 0; i < _StaticEntities.Length; i++ )
                 _StaticEntities[i] = new entity_t();
 
-            for( int i = 0; i < _DLights.Length; i++ )
+            for( var i = 0; i < _DLights.Length; i++ )
                 _DLights[i] = new dlight_t();
 
             //
@@ -82,7 +82,7 @@ namespace SharpQuake
         /// <summary>
         /// CL_EstablishConnection
         /// </summary>
-        public static void EstablishConnection( string host )
+        public static void EstablishConnection( String host )
         {
             if( cls.state == cactive_t.ca_dedicated )
                 return;
@@ -133,14 +133,14 @@ namespace SharpQuake
         /// <summary>
         /// CL_AllocDlight
         /// </summary>
-        public static dlight_t AllocDlight( int key )
+        public static dlight_t AllocDlight( Int32 key )
         {
             dlight_t dl;
 
             // first look for an exact key match
             if( key != 0 )
             {
-                for( int i = 0; i < MAX_DLIGHTS; i++ )
+                for( var i = 0; i < MAX_DLIGHTS; i++ )
                 {
                     dl = _DLights[i];
                     if( dl.key == key )
@@ -154,7 +154,7 @@ namespace SharpQuake
 
             // then look for anything else
             //dl = cl_dlights;
-            for( int i = 0; i < MAX_DLIGHTS; i++ )
+            for( var i = 0; i < MAX_DLIGHTS; i++ )
             {
                 dl = _DLights[i];
                 if( dl.die < cl.time )
@@ -176,9 +176,9 @@ namespace SharpQuake
         /// </summary>
         public static void DecayLights()
         {
-            float time = (float)( cl.time - cl.oldtime );
+            var time = ( Single ) ( cl.time - cl.oldtime );
 
-            for( int i = 0; i < MAX_DLIGHTS; i++ )
+            for( var i = 0; i < MAX_DLIGHTS; i++ )
             {
                 dlight_t dl = _DLights[i];
                 if( dl.die < cl.time || dl.radius == 0 )
@@ -243,12 +243,12 @@ namespace SharpQuake
         // CL_ReadFromServer
         //
         // Read all incoming data from the server
-        public static int ReadFromServer()
+        public static Int32 ReadFromServer()
         {
             cl.oldtime = cl.time;
             cl.time += host.FrameTime;
 
-            int ret;
+            Int32 ret;
             do
             {
                 ret = GetMessage();
@@ -257,7 +257,7 @@ namespace SharpQuake
                 if( ret == 0 )
                     break;
 
-                cl.last_received_message = (float)host.RealTime;
+                cl.last_received_message = ( Single ) host.RealTime;
                 ParseServerMessage();
             } while( ret != 0 && cls.state == cactive_t.ca_connected );
 
@@ -314,7 +314,7 @@ namespace SharpQuake
         // CL_PrintEntities_f
         private static void PrintEntities_f()
         {
-            for( int i = 0; i < _State.num_entities; i++ )
+            for( var i = 0; i < _State.num_entities; i++ )
             {
                 entity_t ent = _Entities[i];
                 Con.Print( "{0:d3}:", i );
@@ -333,7 +333,7 @@ namespace SharpQuake
         private static void RelinkEntities()
         {
             // determine partial update time
-            float frac = LerpPoint();
+            var frac = LerpPoint();
 
             NumVisEdicts = 0;
 
@@ -350,10 +350,10 @@ namespace SharpQuake
                 cl.viewangles = cl.mviewangles[1] + frac * angleDelta;
             }
 
-            float bobjrotate = MathLib.AngleMod( 100 * cl.time );
+            var bobjrotate = MathLib.AngleMod( 100 * cl.time );
 
             // start on the entity after the world
-            for( int i = 1; i < cl.num_entities; i++ )
+            for( var i = 1; i < cl.num_entities; i++ )
             {
                 entity_t ent = _Entities[i];
                 if( ent.model == null )
@@ -383,7 +383,7 @@ namespace SharpQuake
                 else
                 {
                     // if the delta is large, assume a teleport and don't lerp
-                    float f = frac;
+                    var f = frac;
                     Vector3 delta = ent.msg_origins[0] - ent.msg_origins[1];
                     if( Math.Abs( delta.X ) > 100 || Math.Abs( delta.Y ) > 100 || Math.Abs( delta.Z ) > 100 )
                         f = 1; // assume a teleportation, not a motion
@@ -412,7 +412,7 @@ namespace SharpQuake
                     dl.origin += fv * 18;
                     dl.radius = 200 + ( sys.Random() & 31 );
                     dl.minlight = 32;
-                    dl.die = (float)cl.time + 0.1f;
+                    dl.die = ( Single ) cl.time + 0.1f;
                 }
                 if( ( ent.effects & EntityEffects.EF_BRIGHTLIGHT ) != 0 )
                 {
@@ -420,14 +420,14 @@ namespace SharpQuake
                     dl.origin = ent.origin;
                     dl.origin.Z += 16;
                     dl.radius = 400 + ( sys.Random() & 31 );
-                    dl.die = (float)cl.time + 0.001f;
+                    dl.die = ( Single ) cl.time + 0.001f;
                 }
                 if( ( ent.effects & EntityEffects.EF_DIMLIGHT ) != 0 )
                 {
                     dlight_t dl = AllocDlight( i );
                     dl.origin = ent.origin;
                     dl.radius = 200 + ( sys.Random() & 31 );
-                    dl.die = (float)cl.time + 0.001f;
+                    dl.die = ( Single ) cl.time + 0.001f;
                 }
 
                 if( ( ent.model.flags & EF.EF_GIB ) != 0 )
@@ -444,7 +444,7 @@ namespace SharpQuake
                     dlight_t dl = AllocDlight( i );
                     dl.origin = ent.origin;
                     dl.radius = 200;
-                    dl.die = (float)cl.time + 0.01f;
+                    dl.die = ( Single ) cl.time + 0.01f;
                 }
                 else if( ( ent.model.flags & EF.EF_GRENADE ) != 0 )
                     render.RocketTrail( ref oldorg, ref ent.origin, 1 );
@@ -485,7 +485,7 @@ namespace SharpQuake
                     cls.message.WriteString( String.Format( "name \"{0}\"\n", _Name.String ) );
 
                     cls.message.WriteByte( protocol.clc_stringcmd );
-                    cls.message.WriteString( String.Format( "color {0} {1}\n", ( (int)_Color.Value ) >> 4, ( (int)_Color.Value ) & 15 ) );
+                    cls.message.WriteString( String.Format( "color {0} {1}\n", ( ( Int32 ) _Color.Value ) >> 4, ( ( Int32 ) _Color.Value ) & 15 ) );
 
                     cls.message.WriteByte( protocol.clc_stringcmd );
                     cls.message.WriteString( "spawn " + cls.spawnparms );
@@ -537,7 +537,7 @@ namespace SharpQuake
             // allocate the efrags and chain together into a free list
             //
             cl.free_efrags = _EFrags[0];// cl_efrags;
-            for( int i = 0; i < MAX_EFRAGS - 1; i++ )
+            for( var i = 0; i < MAX_EFRAGS - 1; i++ )
                 _EFrags[i].entnext = _EFrags[i + 1];
             _EFrags[MAX_EFRAGS - 1].entnext = null;
         }
@@ -547,9 +547,9 @@ namespace SharpQuake
         /// Determines the fraction between the last two messages that the objects
         /// should be put at.
         /// </summary>
-        private static float LerpPoint()
+        private static Single LerpPoint()
         {
-            double f = cl.mtime[0] - cl.mtime[1];
+            var f = cl.mtime[0] - cl.mtime[1];
             if( f == 0 || _NoLerp.Value != 0 || cls.timedemo || server.IsActive )
             {
                 cl.time = cl.mtime[0];
@@ -561,7 +561,7 @@ namespace SharpQuake
                 cl.mtime[1] = cl.mtime[0] - 0.1;
                 f = 0.1;
             }
-            double frac = ( cl.time - cl.mtime[1] ) / f;
+            var frac = ( cl.time - cl.mtime[1] ) / f;
             if( frac < 0 )
             {
                 if( frac < -0.01 )
@@ -578,7 +578,7 @@ namespace SharpQuake
                 }
                 frac = 1;
             }
-            return (float)frac;
+            return ( Single ) frac;
         }
     }
 }

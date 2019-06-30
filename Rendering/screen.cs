@@ -52,7 +52,7 @@ namespace SharpQuake
             }
         }
 
-        public static float ConCurrent
+        public static Single ConCurrent
         {
             get
             {
@@ -60,7 +60,7 @@ namespace SharpQuake
             }
         }
 
-        public static bool CopyEverithing
+        public static System.Boolean CopyEverithing
         {
             get
             {
@@ -72,62 +72,62 @@ namespace SharpQuake
             }
         }
 
-        public static bool IsDisabledForLoading;
-        public static bool BlockDrawing = false;
-        public static bool SkipUpdate;
+        public static System.Boolean IsDisabledForLoading;
+        public static System.Boolean BlockDrawing = false;
+        public static System.Boolean SkipUpdate;
 
         // scr_skipupdate
-        public static bool FullSbarDraw;
+        public static System.Boolean FullSbarDraw;
 
         // fullsbardraw = false
-        public static bool IsPermedia;
+        public static System.Boolean IsPermedia;
 
         // only the refresh window will be updated unless these variables are flagged
-        public static bool CopyTop;
+        public static System.Boolean CopyTop;
 
-        public static int ClearNotify;
-        public static int glX;
-        public static int glY;
-        public static int glWidth;
-        public static int glHeight;
-        public static float CenterTimeOff;
-        public static int FullUpdate;
+        public static Int32 ClearNotify;
+        public static Int32 glX;
+        public static Int32 glY;
+        public static Int32 glWidth;
+        public static Int32 glHeight;
+        public static Single CenterTimeOff;
+        public static Int32 FullUpdate;
         private static viddef_t _VidDef = new viddef_t();	// viddef_t vid (global video state)
         private static vrect_t _VRect; // scr_vrect
 
         // scr_disabled_for_loading
-        private static bool _DrawLoading; // scr_drawloading
+        private static System.Boolean _DrawLoading; // scr_drawloading
 
-        private static double _DisabledTime; // float scr_disabled_time
+        private static Double _DisabledTime; // float scr_disabled_time
 
         // qboolean block_drawing
-        private static bool _DrawDialog; // scr_drawdialog
+        private static System.Boolean _DrawDialog; // scr_drawdialog
 
         // isPermedia
-        private static bool _IsInitialized;
+        private static System.Boolean _IsInitialized;
 
-        private static bool _InUpdate;
+        private static System.Boolean _InUpdate;
         private static glpic_t _Ram;
         private static glpic_t _Net;
         private static glpic_t _Turtle;
-        private static int _TurtleCount; // static count from SCR_DrawTurtle()
-        private static bool _CopyEverything;
+        private static Int32 _TurtleCount; // static count from SCR_DrawTurtle()
+        private static System.Boolean _CopyEverything;
 
-        private static float _ConCurrent; // scr_con_current
-        private static float _ConLines;		// lines of console to display
-        private static int _ClearConsole; // clearconsole
+        private static Single _ConCurrent; // scr_con_current
+        private static Single _ConLines;		// lines of console to display
+        private static Int32 _ClearConsole; // clearconsole
                                           // clearnotify
 
-        private static float _OldScreenSize; // float oldscreensize
-        private static float _OldFov; // float oldfov
-        private static int _CenterLines; // scr_center_lines
-        private static int _EraseLines; // scr_erase_lines
+        private static Single _OldScreenSize; // float oldscreensize
+        private static Single _OldFov; // float oldfov
+        private static Int32 _CenterLines; // scr_center_lines
+        private static Int32 _EraseLines; // scr_erase_lines
 
         //static int _EraseCenter; // scr_erase_center
-        private static float _CenterTimeStart; // scr_centertime_start	// for slow victory printing
+        private static Single _CenterTimeStart; // scr_centertime_start	// for slow victory printing
 
         // scr_centertime_off
-        private static string _CenterString; // char	scr_centerstring[1024]
+        private static String _CenterString; // char	scr_centerstring[1024]
 
         private static CVar _ViewSize; // = { "viewsize", "100", true };
         private static CVar _Fov;// = { "fov", "90" };	// 10 - 170
@@ -139,8 +139,8 @@ namespace SharpQuake
         private static CVar _PrintSpeed;// = { "scr_printspeed", "8" };
         private static CVar _glTripleBuffer;// = { "gl_triplebuffer", "1", true };
 
-        private static string _NotifyString; // scr_notifystring
-        private static bool _IsMouseWindowed; // windowed_mouse (don't confuse with _windowed_mouse cvar)
+        private static String _NotifyString; // scr_notifystring
+        private static System.Boolean _IsMouseWindowed; // windowed_mouse (don't confuse with _windowed_mouse cvar)
                                               // scr_fullupdate    set to 0 to force full redraw
 
         // SCR_Init
@@ -190,13 +190,13 @@ namespace SharpQuake
             _InUpdate = true;
             try
             {
-                if( MainWindow.Instance != null )
+                if( MainWindow.Instance != null && !MainWindow.Instance.IsDisposed)
                 {
                     if( (MainWindow.Instance.VSync == VSyncMode.On ) != SharpQuake.vid.Wait )
                         MainWindow.Instance.VSync = (SharpQuake.vid.Wait ? VSyncMode.On : VSyncMode.Off );
                 }
 
-                _VidDef.numpages = 2 + (int)_glTripleBuffer.Value;
+                _VidDef.numpages = 2 + ( Int32 ) _glTripleBuffer.Value;
 
                 CopyTop = false;
                 _CopyEverything = false;
@@ -299,6 +299,9 @@ namespace SharpQuake
         /// </summary>
         public static void EndRendering()
         {
+            if ( MainWindow.Instance == null || MainWindow.Instance.IsDisposed )
+                return;
+
             MainWindow form = MainWindow.Instance;
             if( form == null )
                 return;
@@ -340,15 +343,15 @@ namespace SharpQuake
         //
         // Called for important messages that should stay in the center of the screen
         // for a few moments
-        public static void CenterPrint( string str )
+        public static void CenterPrint( String str )
         {
             _CenterString = str;
             CenterTimeOff = _CenterTime.Value;
-            _CenterTimeStart = (float)client.cl.time;
+            _CenterTimeStart = ( Single ) client.cl.time;
 
             // count the number of lines for centering
             _CenterLines = 1;
-            foreach( char c in _CenterString )
+            foreach( var c in _CenterString )
             {
                 if( c == '\n' )
                     _CenterLines++;
@@ -397,7 +400,7 @@ namespace SharpQuake
         /// SCR_ModalMessage
         /// Displays a text string in the center of the screen and waits for a Y or N keypress.
         /// </summary>
-        public static bool ModalMessage( string text )
+        public static System.Boolean ModalMessage( String text )
         {
             if( client.cls.state == cactive_t.ca_dedicated )
                 return true;
@@ -448,8 +451,8 @@ namespace SharpQuake
             //
             // find a file name to save it to
             //
-            string path = null;
-            int i;
+            String path = null;
+            Int32 i;
             for( i = 0; i <= 999; i++ )
             {
                 path = Path.Combine( Common.GameDir, String.Format( "quake{0:D3}.tga", i ) );
@@ -471,26 +474,26 @@ namespace SharpQuake
             using( BinaryWriter writer = new BinaryWriter( fs ) )
             {
                 // Write tga header (18 bytes)
-                writer.Write( (ushort)0 );
-                writer.Write( (byte)2 ); //buffer[2] = 2; uncompressed type
-                writer.Write( (byte)0 );
-                writer.Write( (uint)0 );
-                writer.Write( (uint)0 );
-                writer.Write( (byte)( glWidth & 0xff ) );
-                writer.Write( (byte)( glWidth >> 8 ) );
-                writer.Write( (byte)( glHeight & 0xff ) );
-                writer.Write( (byte)( glHeight >> 8 ) );
-                writer.Write( (byte)24 ); // pixel size
-                writer.Write( (ushort)0 );
+                writer.Write( ( UInt16 ) 0 );
+                writer.Write( ( Byte ) 2 ); //buffer[2] = 2; uncompressed type
+                writer.Write( ( Byte ) 0 );
+                writer.Write( ( UInt32 ) 0 );
+                writer.Write( ( UInt32 ) 0 );
+                writer.Write( ( Byte ) ( glWidth & 0xff ) );
+                writer.Write( ( Byte ) ( glWidth >> 8 ) );
+                writer.Write( ( Byte ) ( glHeight & 0xff ) );
+                writer.Write( ( Byte ) ( glHeight >> 8 ) );
+                writer.Write( ( Byte ) 24 ); // pixel size
+                writer.Write( ( UInt16 ) 0 );
 
-                byte[] buffer = new byte[glWidth * glHeight * 3];
+                Byte[] buffer = new Byte[glWidth * glHeight * 3];
                 GL.ReadPixels( glX, glY, glWidth, glHeight, PixelFormat.Rgb, PixelType.UnsignedByte, buffer );
 
                 // swap 012 to 102
-                int c = glWidth * glHeight * 3;
+                var c = glWidth * glHeight * 3;
                 for( i = 0; i < c; i += 3 )
                 {
-                    byte temp = buffer[i + 0];
+                    var temp = buffer[i + 0];
                     buffer[i + 0] = buffer[i + 1];
                     buffer[i + 1] = temp;
                 }
@@ -504,6 +507,9 @@ namespace SharpQuake
         /// </summary>
         private static void BeginRendering()
         {
+            if ( MainWindow.Instance == null || MainWindow.Instance.IsDisposed )
+                return;
+
             glX = 0;
             glY = 0;
             glWidth = 0;
@@ -543,7 +549,7 @@ namespace SharpQuake
                 CVar.Set( "fov", "170" );
 
             // intermission is always full screen
-            float size;
+            Single size;
             if( client.cl.intermission > 0 )
                 size = 120;
             else
@@ -556,7 +562,7 @@ namespace SharpQuake
             else
                 sbar.Lines = 24 + 16 + 8;
 
-            bool full = false;
+            var full = false;
             if( _ViewSize.Value >= 100.0 )
             {
                 full = true;
@@ -573,17 +579,17 @@ namespace SharpQuake
             }
             size /= 100.0f;
 
-            int h = _VidDef.height - sbar.Lines;
+            var h = _VidDef.height - sbar.Lines;
 
             refdef_t rdef = render.RefDef;
-            rdef.vrect.width = (int)( _VidDef.width * size );
+            rdef.vrect.width = ( Int32 ) ( _VidDef.width * size );
             if( rdef.vrect.width < 96 )
             {
                 size = 96.0f / rdef.vrect.width;
                 rdef.vrect.width = 96;  // min for icons
             }
 
-            rdef.vrect.height = (int)( _VidDef.height * size );
+            rdef.vrect.height = ( Int32 ) ( _VidDef.height * size );
             if( rdef.vrect.height > _VidDef.height - sbar.Lines )
                 rdef.vrect.height = _VidDef.height - sbar.Lines;
             if( rdef.vrect.height > _VidDef.height )
@@ -601,15 +607,15 @@ namespace SharpQuake
         }
 
         // CalcFov
-        private static float CalcFov( float fov_x, float width, float height )
+        private static Single CalcFov( Single fov_x, Single width, Single height )
         {
             if( fov_x < 1 || fov_x > 179 )
                 sys.Error( "Bad fov: {0}", fov_x );
 
-            double x = width / Math.Tan( fov_x / 360.0 * Math.PI );
-            double a = Math.Atan( height / x );
+            var x = width / Math.Tan( fov_x / 360.0 * Math.PI );
+            var a = Math.Atan( height / x );
             a = a * 360.0 / Math.PI;
-            return (float)a;
+            return ( Single ) a;
         }
 
         /// <summary>
@@ -637,13 +643,13 @@ namespace SharpQuake
 
             if( _ConLines < _ConCurrent )
             {
-                _ConCurrent -= (int)( _ConSpeed.Value * host.FrameTime );
+                _ConCurrent -= ( Int32 ) ( _ConSpeed.Value * host.FrameTime );
                 if( _ConLines > _ConCurrent )
                     _ConCurrent = _ConLines;
             }
             else if( _ConLines > _ConCurrent )
             {
-                _ConCurrent += (int)( _ConSpeed.Value * host.FrameTime );
+                _ConCurrent += ( Int32 ) ( _ConSpeed.Value * host.FrameTime );
                 if( _ConLines < _ConCurrent )
                     _ConCurrent = _ConLines;
             }
@@ -688,22 +694,22 @@ namespace SharpQuake
         /// </summary>
         private static void DrawNotifyString()
         {
-            int offset = 0;
-            int y = (int)( Scr.vid.height * 0.35 );
+            var offset = 0;
+            var y = ( Int32 ) ( Scr.vid.height * 0.35 );
 
             do
             {
-                int end = _NotifyString.IndexOf( '\n', offset );
+                var end = _NotifyString.IndexOf( '\n', offset );
                 if( end == -1 )
                     end = _NotifyString.Length;
                 if( end - offset > 40 )
                     end = offset + 40;
 
-                int length = end - offset;
+                var length = end - offset;
                 if( length > 0 )
                 {
-                    int x = ( vid.width - length * 8 ) / 2;
-                    for( int j = 0; j < length; j++, x += 8 )
+                    var x = ( vid.width - length * 8 ) / 2;
+                    for( var j = 0; j < length; j++, x += 8 )
                         Drawer.DrawCharacter( x, y, _NotifyString[offset + j] );
 
                     y += 8;
@@ -731,7 +737,7 @@ namespace SharpQuake
             if( _CenterLines > _EraseLines )
                 _EraseLines = _CenterLines;
 
-            CenterTimeOff -= (float)host.FrameTime;
+            CenterTimeOff -= ( Single ) host.FrameTime;
 
             if( CenterTimeOff <= 0 && client.cl.intermission == 0 )
                 return;
@@ -804,7 +810,7 @@ namespace SharpQuake
             if( _ConCurrent > 0 )
             {
                 _CopyEverything = true;
-                Con.Draw( (int)_ConCurrent, true );
+                Con.Draw( ( Int32 ) _ConCurrent, true );
                 _ClearConsole = 0;
             }
             else if( Key.Destination == keydest_t.key_game ||
@@ -817,25 +823,25 @@ namespace SharpQuake
         // SCR_DrawCenterString
         private static void DrawCenterString()
         {
-            int remaining;
+            Int32 remaining;
 
             // the finale prints the characters one at a time
             if( client.cl.intermission > 0 )
-                remaining = (int)( _PrintSpeed.Value * ( client.cl.time - _CenterTimeStart ) );
+                remaining = ( Int32 ) ( _PrintSpeed.Value * ( client.cl.time - _CenterTimeStart ) );
             else
                 remaining = 9999;
 
-            int y = 48;
+            var y = 48;
             if( _CenterLines <= 4 )
-                y = (int)( _VidDef.height * 0.35 );
+                y = ( Int32 ) ( _VidDef.height * 0.35 );
 
-            string[] lines = _CenterString.Split( '\n' );
-            for( int i = 0; i < lines.Length; i++ )
+            String[] lines = _CenterString.Split( '\n' );
+            for( var i = 0; i < lines.Length; i++ )
             {
-                string line = lines[i].TrimEnd( '\r' );
-                int x = ( vid.width - line.Length * 8 ) / 2;
+                var line = lines[i].TrimEnd( '\r' );
+                var x = ( vid.width - line.Length * 8 ) / 2;
 
-                for( int j = 0; j < line.Length; j++, x += 8 )
+                for( var j = 0; j < line.Length; j++, x += 8 )
                 {
                     Drawer.DrawCharacter( x, y, line[j] );
                     if( remaining-- <= 0 )

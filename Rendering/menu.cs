@@ -34,19 +34,19 @@ namespace SharpQuake
     /// </summary>
     internal static class menu
     {
-        public static bool EnterSound;
-        public static bool ReturnOnError;
-        public static string ReturnReason;
+        public static Boolean EnterSound;
+        public static Boolean ReturnOnError;
+        public static String ReturnReason;
         public static MenuBase ReturnMenu;
-        private const int SLIDER_RANGE = 10;
+        private const Int32 SLIDER_RANGE = 10;
 
         //qboolean	m_entersound	// play after drawing a frame, so caching
 
         // won't disrupt the sound
-        private static bool _RecursiveDraw; // qboolean m_recursiveDraw
+        private static Boolean _RecursiveDraw; // qboolean m_recursiveDraw
 
-        private static byte[] _IdentityTable = new byte[256]; // identityTable
-        private static byte[] _TranslationTable = new byte[256]; //translationTable
+        private static Byte[] _IdentityTable = new Byte[256]; // identityTable
+        private static Byte[] _TranslationTable = new Byte[256]; //translationTable
 
         // M_Init (void)
         public static void Init()
@@ -68,7 +68,7 @@ namespace SharpQuake
         /// <summary>
         /// M_Keydown
         /// </summary>
-        public static void KeyDown( int key )
+        public static void KeyDown( Int32 key )
         {
             if( MenuBase.CurrentMenu != null )
                 MenuBase.CurrentMenu.KeyEvent( key );
@@ -140,12 +140,12 @@ namespace SharpQuake
             }
         }
 
-        public static void DrawPic( int x, int y, glpic_t pic )
+        public static void DrawPic( Int32 x, Int32 y, glpic_t pic )
         {
             Drawer.DrawPic( x + ( ( Scr.vid.width - 320 ) >> 1 ), y, pic );
         }
 
-        public static void DrawTransPic( int x, int y, glpic_t pic )
+        public static void DrawTransPic( Int32 x, Int32 y, glpic_t pic )
         {
             Drawer.DrawTransPic( x + ( ( Scr.vid.width - 320 ) >> 1 ), y, pic );
         }
@@ -153,7 +153,7 @@ namespace SharpQuake
         /// <summary>
         /// M_DrawTransPicTranslate
         /// </summary>
-        public static void DrawTransPicTranslate( int x, int y, glpic_t pic )
+        public static void DrawTransPicTranslate( Int32 x, Int32 y, glpic_t pic )
         {
             Drawer.TransPicTranslate( x + ( ( Scr.vid.width - 320 ) >> 1 ), y, pic, _TranslationTable );
         }
@@ -161,9 +161,9 @@ namespace SharpQuake
         /// <summary>
         /// M_Print
         /// </summary>
-        public static void Print( int cx, int cy, string str )
+        public static void Print( Int32 cx, Int32 cy, String str )
         {
-            for( int i = 0; i < str.Length; i++ )
+            for( var i = 0; i < str.Length; i++ )
             {
                 DrawCharacter( cx, cy, str[i] + 128 );
                 cx += 8;
@@ -173,7 +173,7 @@ namespace SharpQuake
         /// <summary>
         /// M_DrawCharacter
         /// </summary>
-        public static void DrawCharacter( int cx, int line, int num )
+        public static void DrawCharacter( Int32 cx, Int32 line, Int32 num )
         {
             Drawer.DrawCharacter( cx + ( ( Scr.vid.width - 320 ) >> 1 ), line, num );
         }
@@ -181,9 +181,9 @@ namespace SharpQuake
         /// <summary>
         /// M_PrintWhite
         /// </summary>
-        public static void PrintWhite( int cx, int cy, string str )
+        public static void PrintWhite( Int32 cx, Int32 cy, String str )
         {
-            for( int i = 0; i < str.Length; i++ )
+            for( var i = 0; i < str.Length; i++ )
             {
                 DrawCharacter( cx, cy, str[i] );
                 cx += 8;
@@ -193,15 +193,15 @@ namespace SharpQuake
         /// <summary>
         /// M_DrawTextBox
         /// </summary>
-        public static void DrawTextBox( int x, int y, int width, int lines )
+        public static void DrawTextBox( Int32 x, Int32 y, Int32 width, Int32 lines )
         {
             // draw left side
-            int cx = x;
-            int cy = y;
+            var cx = x;
+            var cy = y;
             glpic_t p = Drawer.CachePic( "gfx/box_tl.lmp" );
             DrawTransPic( cx, cy, p );
             p = Drawer.CachePic( "gfx/box_ml.lmp" );
-            for( int n = 0; n < lines; n++ )
+            for( var n = 0; n < lines; n++ )
             {
                 cy += 8;
                 DrawTransPic( cx, cy, p );
@@ -217,7 +217,7 @@ namespace SharpQuake
                 p = Drawer.CachePic( "gfx/box_tm.lmp" );
                 DrawTransPic( cx, cy, p );
                 p = Drawer.CachePic( "gfx/box_mm.lmp" );
-                for( int n = 0; n < lines; n++ )
+                for( var n = 0; n < lines; n++ )
                 {
                     cy += 8;
                     if( n == 1 )
@@ -235,7 +235,7 @@ namespace SharpQuake
             p = Drawer.CachePic( "gfx/box_tr.lmp" );
             DrawTransPic( cx, cy, p );
             p = Drawer.CachePic( "gfx/box_mr.lmp" );
-            for( int n = 0; n < lines; n++ )
+            for( var n = 0; n < lines; n++ )
             {
                 cy += 8;
                 DrawTransPic( cx, cy, p );
@@ -247,24 +247,24 @@ namespace SharpQuake
         /// <summary>
         /// M_DrawSlider
         /// </summary>
-        public static void DrawSlider( int x, int y, float range )
+        public static void DrawSlider( Int32 x, Int32 y, Single range )
         {
             if( range < 0 )
                 range = 0;
             if( range > 1 )
                 range = 1;
             DrawCharacter( x - 8, y, 128 );
-            int i;
+            Int32 i;
             for( i = 0; i < SLIDER_RANGE; i++ )
                 DrawCharacter( x + i * 8, y, 129 );
             DrawCharacter( x + i * 8, y, 130 );
-            DrawCharacter( (int)( x + ( SLIDER_RANGE - 1 ) * 8 * range ), y, 131 );
+            DrawCharacter( ( Int32 ) ( x + ( SLIDER_RANGE - 1 ) * 8 * range ), y, 131 );
         }
 
         /// <summary>
         /// M_DrawCheckbox
         /// </summary>
-        public static void DrawCheckbox( int x, int y, bool on )
+        public static void DrawCheckbox( Int32 x, Int32 y, Boolean on )
         {
             if( on )
                 Print( x, y, "on" );
@@ -275,23 +275,23 @@ namespace SharpQuake
         /// <summary>
         /// M_BuildTranslationTable
         /// </summary>
-        public static void BuildTranslationTable( int top, int bottom )
+        public static void BuildTranslationTable( Int32 top, Int32 bottom )
         {
-            for( int j = 0; j < 256; j++ )
-                _IdentityTable[j] = (byte)j;
+            for( var j = 0; j < 256; j++ )
+                _IdentityTable[j] = ( Byte ) j;
 
             _IdentityTable.CopyTo( _TranslationTable, 0 );
 
             if( top < 128 )	// the artists made some backwards ranges.  sigh.
                 Array.Copy( _IdentityTable, top, _TranslationTable, render.TOP_RANGE, 16 ); // memcpy (dest + Render.TOP_RANGE, source + top, 16);
             else
-                for( int j = 0; j < 16; j++ )
+                for( var j = 0; j < 16; j++ )
                     _TranslationTable[render.TOP_RANGE + j] = _IdentityTable[top + 15 - j];
 
             if( bottom < 128 )
                 Array.Copy( _IdentityTable, bottom, _TranslationTable, render.BOTTOM_RANGE, 16 ); // memcpy(dest + Render.BOTTOM_RANGE, source + bottom, 16);
             else
-                for( int j = 0; j < 16; j++ )
+                for( var j = 0; j < 16; j++ )
                     _TranslationTable[render.BOTTOM_RANGE + j] = _IdentityTable[bottom + 15 - j];
         }
 
@@ -384,7 +384,7 @@ namespace SharpQuake
             }
         }
 
-        public int Cursor
+        public Int32 Cursor
         {
             get
             {
@@ -412,7 +412,7 @@ namespace SharpQuake
         public static readonly MenuBase SearchMenu = new SearchMenu();
         public static readonly MenuBase ServerListMenu = new ServerListMenu();
         public static readonly MenuBase VideoMenu = new VideoMenu();
-        protected int _Cursor;
+        protected Int32 _Cursor;
         private static MenuBase _CurrentMenu;
 
         public static void Hide()
@@ -428,7 +428,7 @@ namespace SharpQuake
             _CurrentMenu = this;
         }
 
-        public abstract void KeyEvent( int key );
+        public abstract void KeyEvent( Int32 key );
 
         public abstract void Draw();
     }
@@ -438,8 +438,8 @@ namespace SharpQuake
     /// </summary>
     internal class MainMenu : MenuBase
     {
-        private const int MAIN_ITEMS = 5;
-        private int _SaveDemoNum;
+        private const Int32 MAIN_ITEMS = 5;
+        private Int32 _SaveDemoNum;
 
         public override void Show()
         {
@@ -455,7 +455,7 @@ namespace SharpQuake
         /// <summary>
         /// M_Main_Key
         /// </summary>
-        public override void KeyEvent( int key )
+        public override void KeyEvent( Int32 key )
         {
             switch( key )
             {
@@ -515,7 +515,7 @@ namespace SharpQuake
             menu.DrawPic( ( 320 - p.width ) / 2, 4, p );
             menu.DrawTransPic( 72, 32, Drawer.CachePic( "gfx/mainmenu.lmp" ) );
 
-            int f = (int)( host.Time * 10 ) % 6;
+            var f = ( Int32 ) ( host.Time * 10 ) % 6;
 
             menu.DrawTransPic( 54, 32 + _Cursor * 20, Drawer.CachePic( String.Format( "gfx/menudot{0}.lmp", f + 1 ) ) );
         }
@@ -523,12 +523,12 @@ namespace SharpQuake
 
     internal class SinglePlayerMenu : MenuBase
     {
-        private const int SINGLEPLAYER_ITEMS = 3;
+        private const Int32 SINGLEPLAYER_ITEMS = 3;
 
         /// <summary>
         /// M_SinglePlayer_Key
         /// </summary>
-        public override void KeyEvent( int key )
+        public override void KeyEvent( Int32 key )
         {
             switch( key )
             {
@@ -586,7 +586,7 @@ namespace SharpQuake
             menu.DrawPic( ( 320 - p.width ) / 2, 4, p );
             menu.DrawTransPic( 72, 32, Drawer.CachePic( "gfx/sp_menu.lmp" ) );
 
-            int f = (int)( host.Time * 10 ) % 6;
+            var f = ( Int32 ) ( host.Time * 10 ) % 6;
 
             menu.DrawTransPic( 54, 32 + _Cursor * 20, Drawer.CachePic( String.Format( "gfx/menudot{0}.lmp", f + 1 ) ) );
         }
@@ -594,9 +594,9 @@ namespace SharpQuake
 
     internal class LoadMenu : MenuBase
     {
-        public const int MAX_SAVEGAMES = 12;
-        protected string[] _FileNames; //[MAX_SAVEGAMES]; // filenames
-        protected bool[] _Loadable; //[MAX_SAVEGAMES]; // loadable
+        public const Int32 MAX_SAVEGAMES = 12;
+        protected String[] _FileNames; //[MAX_SAVEGAMES]; // filenames
+        protected Boolean[] _Loadable; //[MAX_SAVEGAMES]; // loadable
 
         public override void Show()
         {
@@ -604,7 +604,7 @@ namespace SharpQuake
             ScanSaves();
         }
 
-        public override void KeyEvent( int key )
+        public override void KeyEvent( Int32 key )
         {
             switch( key )
             {
@@ -649,11 +649,11 @@ namespace SharpQuake
             glpic_t p = Drawer.CachePic( "gfx/p_load.lmp" );
             menu.DrawPic( ( 320 - p.width ) / 2, 4, p );
 
-            for( int i = 0; i < MAX_SAVEGAMES; i++ )
+            for( var i = 0; i < MAX_SAVEGAMES; i++ )
                 menu.Print( 16, 32 + 8 * i, _FileNames[i] );
 
             // line cursor
-            menu.DrawCharacter( 8, 32 + _Cursor * 8, 12 + ( (int)( host.RealTime * 4 ) & 1 ) );
+            menu.DrawCharacter( 8, 32 + _Cursor * 8, 12 + ( ( Int32 ) ( host.RealTime * 4 ) & 1 ) );
         }
 
         /// <summary>
@@ -661,21 +661,21 @@ namespace SharpQuake
         /// </summary>
         protected void ScanSaves()
         {
-            for( int i = 0; i < MAX_SAVEGAMES; i++ )
+            for( var i = 0; i < MAX_SAVEGAMES; i++ )
             {
                 _FileNames[i] = "--- UNUSED SLOT ---";
                 _Loadable[i] = false;
-                string name = String.Format( "{0}/s{1}.sav", Common.GameDir, i );
+                var name = String.Format( "{0}/s{1}.sav", Common.GameDir, i );
                 FileStream fs = sys.FileOpenRead( name );
                 if( fs == null )
                     continue;
 
                 using( StreamReader reader = new StreamReader( fs, Encoding.ASCII ) )
                 {
-                    string version = reader.ReadLine();
+                    var version = reader.ReadLine();
                     if( version == null )
                         continue;
-                    string info = reader.ReadLine();
+                    var info = reader.ReadLine();
                     if( info == null )
                         continue;
                     info = info.TrimEnd( '\0', '_' ).Replace( '_', ' ' );
@@ -690,8 +690,8 @@ namespace SharpQuake
 
         public LoadMenu()
         {
-            _FileNames = new string[MAX_SAVEGAMES];
-            _Loadable = new bool[MAX_SAVEGAMES];
+            _FileNames = new String[MAX_SAVEGAMES];
+            _Loadable = new Boolean[MAX_SAVEGAMES];
         }
     }
 
@@ -709,7 +709,7 @@ namespace SharpQuake
             base.Show();
         }
 
-        public override void KeyEvent( int key )
+        public override void KeyEvent( Int32 key )
         {
             switch( key )
             {
@@ -745,11 +745,11 @@ namespace SharpQuake
             glpic_t p = Drawer.CachePic( "gfx/p_save.lmp" );
             menu.DrawPic( ( 320 - p.width ) / 2, 4, p );
 
-            for( int i = 0; i < MAX_SAVEGAMES; i++ )
+            for( var i = 0; i < MAX_SAVEGAMES; i++ )
                 menu.Print( 16, 32 + 8 * i, _FileNames[i] );
 
             // line cursor
-            menu.DrawCharacter( 8, 32 + _Cursor * 8, 12 + ( (int)( host.RealTime * 4 ) & 1 ) );
+            menu.DrawCharacter( 8, 32 + _Cursor * 8, 12 + ( ( Int32 ) ( host.RealTime * 4 ) & 1 ) );
         }
     }
 
@@ -768,7 +768,7 @@ namespace SharpQuake
             base.Show();
         }
 
-        public override void KeyEvent( int key )
+        public override void KeyEvent( Int32 key )
         {
             switch( key )
             {
@@ -821,9 +821,9 @@ namespace SharpQuake
 
     internal class HelpMenu : MenuBase
     {
-        private const int NUM_HELP_PAGES = 6;
+        private const Int32 NUM_HELP_PAGES = 6;
 
-        private int _Page;
+        private Int32 _Page;
 
         public override void Show()
         {
@@ -831,7 +831,7 @@ namespace SharpQuake
             base.Show();
         }
 
-        public override void KeyEvent( int key )
+        public override void KeyEvent( Int32 key )
         {
             switch( key )
             {
@@ -863,7 +863,7 @@ namespace SharpQuake
 
     internal class OptionsMenu : MenuBase
     {
-        private const int OPTIONS_ITEMS = 13;
+        private const Int32 OPTIONS_ITEMS = 13;
 
         //private float _BgmVolumeCoeff = 0.1f;
 
@@ -883,7 +883,7 @@ namespace SharpQuake
             base.Show();
         }
 
-        public override void KeyEvent( int key )
+        public override void KeyEvent( Int32 key )
         {
             switch( key )
             {
@@ -979,7 +979,7 @@ namespace SharpQuake
             menu.Print( 16, 48, "     Reset to defaults" );
 
             menu.Print( 16, 56, "           Screen size" );
-            float r = ( Scr.ViewSize.Value - 30 ) / ( 120 - 30 );
+            var r = ( Scr.ViewSize.Value - 30 ) / ( 120 - 30 );
             menu.DrawSlider( 220, 56, r );
 
             menu.Print( 16, 64, "            Brightness" );
@@ -1022,16 +1022,16 @@ namespace SharpQuake
 #endif
 
             // cursor
-            menu.DrawCharacter( 200, 32 + _Cursor * 8, 12 + ( (int)( host.RealTime * 4 ) & 1 ) );
+            menu.DrawCharacter( 200, 32 + _Cursor * 8, 12 + ( ( Int32 ) ( host.RealTime * 4 ) & 1 ) );
         }
 
         /// <summary>
         /// M_AdjustSliders
         /// </summary>
-        private void AdjustSliders( int dir )
+        private void AdjustSliders( Int32 dir )
         {
             snd.LocalSound( "misc/menu3.wav" );
-            float value;
+            Single value;
 
             switch( _Cursor )
             {
@@ -1116,38 +1116,38 @@ namespace SharpQuake
 
     internal class KeysMenu : MenuBase
     {
-        private static readonly string[][] _BindNames = new string[][]
+        private static readonly String[][] _BindNames = new String[][]
         {
-            new string[] {"+attack",        "attack"},
-            new string[] {"impulse 10",     "change weapon"},
-            new string[] {"+jump",          "jump / swim up"},
-            new string[] {"+forward",       "walk forward"},
-            new string[] {"+back",          "backpedal"},
-            new string[] {"+left",          "turn left"},
-            new string[] {"+right",         "turn right"},
-            new string[] {"+speed",         "run"},
-            new string[] {"+moveleft",      "step left"},
-            new string[] {"+moveright",     "step right"},
-            new string[] {"+strafe",        "sidestep"},
-            new string[] {"+lookup",        "look up"},
-            new string[] {"+lookdown",      "look down"},
-            new string[] {"centerview",     "center view"},
-            new string[] {"+mlook",         "mouse look"},
-            new string[] {"+klook",         "keyboard look"},
-            new string[] {"+moveup",        "swim up"},
-            new string[] {"+movedown",      "swim down"}
+            new String[] {"+attack",        "attack"},
+            new String[] {"impulse 10",     "change weapon"},
+            new String[] {"+jump",          "jump / swim up"},
+            new String[] {"+forward",       "walk forward"},
+            new String[] {"+back",          "backpedal"},
+            new String[] {"+left",          "turn left"},
+            new String[] {"+right",         "turn right"},
+            new String[] {"+speed",         "run"},
+            new String[] {"+moveleft",      "step left"},
+            new String[] {"+moveright",     "step right"},
+            new String[] {"+strafe",        "sidestep"},
+            new String[] {"+lookup",        "look up"},
+            new String[] {"+lookdown",      "look down"},
+            new String[] {"centerview",     "center view"},
+            new String[] {"+mlook",         "mouse look"},
+            new String[] {"+klook",         "keyboard look"},
+            new String[] {"+moveup",        "swim up"},
+            new String[] {"+movedown",      "swim down"}
         };
 
         //const inte	NUMCOMMANDS	(sizeof(bindnames)/sizeof(bindnames[0]))
 
-        private bool _BindGrab; // bind_grab
+        private Boolean _BindGrab; // bind_grab
 
         public override void Show()
         {
             base.Show();
         }
 
-        public override void KeyEvent( int key )
+        public override void KeyEvent( Int32 key )
         {
             if( _BindGrab )
             {
@@ -1159,7 +1159,7 @@ namespace SharpQuake
                 }
                 else if( key != '`' )
                 {
-                    string cmd = String.Format( "bind \"{0}\" \"{1}\"\n", Key.KeynumToString( key ), _BindNames[_Cursor][0] );
+                    var cmd = String.Format( "bind \"{0}\" \"{1}\"\n", Key.KeynumToString( key ), _BindNames[_Cursor][0] );
                     Cbuf.InsertText( cmd );
                 }
 
@@ -1190,7 +1190,7 @@ namespace SharpQuake
                     break;
 
                 case Key.K_ENTER:		// go into bind mode
-                    int[] keys = new int[2];
+                    Int32[] keys = new Int32[2];
                     FindKeysForCommand( _BindNames[_Cursor][0], keys );
                     snd.LocalSound( "misc/menu2.wav" );
                     if( keys[1] != -1 )
@@ -1217,11 +1217,11 @@ namespace SharpQuake
                 menu.Print( 18, 32, "Enter to change, backspace to clear" );
 
             // search for known bindings
-            int[] keys = new int[2];
+            Int32[] keys = new Int32[2];
 
-            for( int i = 0; i < _BindNames.Length; i++ )
+            for( var i = 0; i < _BindNames.Length; i++ )
             {
-                int y = 48 + 8 * i;
+                var y = 48 + 8 * i;
 
                 menu.Print( 16, y, _BindNames[i][1] );
 
@@ -1233,9 +1233,9 @@ namespace SharpQuake
                 }
                 else
                 {
-                    string name = Key.KeynumToString( keys[0] );
+                    var name = Key.KeynumToString( keys[0] );
                     menu.Print( 140, y, name );
-                    int x = name.Length * 8;
+                    var x = name.Length * 8;
                     if( keys[1] != -1 )
                     {
                         menu.Print( 140 + x + 8, y, "or" );
@@ -1247,21 +1247,21 @@ namespace SharpQuake
             if( _BindGrab )
                 menu.DrawCharacter( 130, 48 + _Cursor * 8, '=' );
             else
-                menu.DrawCharacter( 130, 48 + _Cursor * 8, 12 + ( (int)( host.RealTime * 4 ) & 1 ) );
+                menu.DrawCharacter( 130, 48 + _Cursor * 8, 12 + ( ( Int32 ) ( host.RealTime * 4 ) & 1 ) );
         }
 
         /// <summary>
         /// M_FindKeysForCommand
         /// </summary>
-        private void FindKeysForCommand( string command, int[] twokeys )
+        private void FindKeysForCommand( String command, Int32[] twokeys )
         {
             twokeys[0] = twokeys[1] = -1;
-            int len = command.Length;
-            int count = 0;
+            var len = command.Length;
+            var count = 0;
 
-            for( int j = 0; j < 256; j++ )
+            for( var j = 0; j < 256; j++ )
             {
-                string b = Key.Bindings[j];
+                var b = Key.Bindings[j];
                 if( String.IsNullOrEmpty( b ) )
                     continue;
 
@@ -1278,13 +1278,13 @@ namespace SharpQuake
         /// <summary>
         /// M_UnbindCommand
         /// </summary>
-        private void UnbindCommand( string command )
+        private void UnbindCommand( String command )
         {
-            int len = command.Length;
+            var len = command.Length;
 
-            for( int j = 0; j < 256; j++ )
+            for( var j = 0; j < 256; j++ )
             {
-                string b = Key.Bindings[j];
+                var b = Key.Bindings[j];
                 if( String.IsNullOrEmpty( b ) )
                     continue;
 
@@ -1296,9 +1296,9 @@ namespace SharpQuake
 
     internal class MultiPleerMenu : MenuBase
     {
-        private const int MULTIPLAYER_ITEMS = 3;
+        private const Int32 MULTIPLAYER_ITEMS = 3;
 
-        public override void KeyEvent( int key )
+        public override void KeyEvent( Int32 key )
         {
             switch( key )
             {
@@ -1347,7 +1347,7 @@ namespace SharpQuake
             menu.DrawPic( ( 320 - p.width ) / 2, 4, p );
             menu.DrawTransPic( 72, 32, Drawer.CachePic( "gfx/mp_menu.lmp" ) );
 
-            float f = (int)( host.Time * 10 ) % 6;
+            Single f = ( Int32 ) ( host.Time * 10 ) % 6;
 
             menu.DrawTransPic( 54, 32 + _Cursor * 20, Drawer.CachePic( String.Format( "gfx/menudot{0}.lmp", f + 1 ) ) );
 
@@ -1362,7 +1362,7 @@ namespace SharpQuake
     /// </summary>
     internal class LanConfigMenu : MenuBase
     {
-        public bool JoiningGame
+        public Boolean JoiningGame
         {
             get
             {
@@ -1370,7 +1370,7 @@ namespace SharpQuake
             }
         }
 
-        public bool StartingGame
+        public Boolean StartingGame
         {
             get
             {
@@ -1378,13 +1378,13 @@ namespace SharpQuake
             }
         }
 
-        private const int NUM_LANCONFIG_CMDS = 3;
+        private const Int32 NUM_LANCONFIG_CMDS = 3;
 
-        private static readonly int[] _CursorTable = new int[] { 72, 92, 124 };
+        private static readonly Int32[] _CursorTable = new Int32[] { 72, 92, 124 };
 
-        private int _Port;
-        private string _PortName;
-        private string _JoinName;
+        private Int32 _Port;
+        private String _PortName;
+        private String _JoinName;
 
         public override void Show()
         {
@@ -1406,7 +1406,7 @@ namespace SharpQuake
             menu.ReturnReason = String.Empty;
         }
 
-        public override void KeyEvent( int key )
+        public override void KeyEvent( Int32 key )
         {
             switch( key )
             {
@@ -1479,7 +1479,7 @@ namespace SharpQuake
                     if( _Cursor == 2 )
                     {
                         if( _JoinName.Length < 21 )
-                            _JoinName += (char)key;
+                            _JoinName += ( Char ) key;
                     }
 
                     if( key < '0' || key > '9' )
@@ -1488,7 +1488,7 @@ namespace SharpQuake
                     if( _Cursor == 0 )
                     {
                         if( _PortName.Length < 5 )
-                            _PortName += (char)key;
+                            _PortName += ( Char ) key;
                     }
                     break;
             }
@@ -1499,7 +1499,7 @@ namespace SharpQuake
                 else
                     _Cursor = 0;
 
-            int k = Common.atoi( _PortName );
+            var k = Common.atoi( _PortName );
             if( k > 65535 )
                 k = _Port;
             else
@@ -1511,10 +1511,10 @@ namespace SharpQuake
         {
             menu.DrawTransPic( 16, 4, Drawer.CachePic( "gfx/qplaque.lmp" ) );
             glpic_t p = Drawer.CachePic( "gfx/p_multi.lmp" );
-            int basex = ( 320 - p.width ) / 2;
+            var basex = ( 320 - p.width ) / 2;
             menu.DrawPic( basex, 4, p );
 
-            string startJoin;
+            String startJoin;
             if( StartingGame )
                 startJoin = "New Game - TCP/IP";
             else
@@ -1543,15 +1543,15 @@ namespace SharpQuake
                 menu.Print( basex + 8, _CursorTable[1], "OK" );
             }
 
-            menu.DrawCharacter( basex - 8, _CursorTable[_Cursor], 12 + ( (int)( host.RealTime * 4 ) & 1 ) );
+            menu.DrawCharacter( basex - 8, _CursorTable[_Cursor], 12 + ( ( Int32 ) ( host.RealTime * 4 ) & 1 ) );
 
             if( _Cursor == 0 )
                 menu.DrawCharacter( basex + 9 * 8 + 8 * _PortName.Length,
-                    _CursorTable[0], 10 + ( (int)( host.RealTime * 4 ) & 1 ) );
+                    _CursorTable[0], 10 + ( ( Int32 ) ( host.RealTime * 4 ) & 1 ) );
 
             if( _Cursor == 2 )
                 menu.DrawCharacter( basex + 16 + 8 * _JoinName.Length, _CursorTable[2],
-                    10 + ( (int)( host.RealTime * 4 ) & 1 ) );
+                    10 + ( ( Int32 ) ( host.RealTime * 4 ) & 1 ) );
 
             if( !String.IsNullOrEmpty( menu.ReturnReason ) )
                 menu.PrintWhite( basex, 148, menu.ReturnReason );
@@ -1566,19 +1566,19 @@ namespace SharpQuake
 
     internal class SetupMenu : MenuBase
     {
-        private const int NUM_SETUP_CMDS = 5;
+        private const Int32 NUM_SETUP_CMDS = 5;
 
-        private readonly int[] _CursorTable = new int[]
+        private readonly Int32[] _CursorTable = new Int32[]
         {
             40, 56, 80, 104, 140
         }; // setup_cursor_table
 
-        private string _HostName; // setup_hostname[16]
-        private string _MyName; // setup_myname[16]
-        private int _OldTop; // setup_oldtop
-        private int _OldBottom; // setup_oldbottom
-        private int _Top; // setup_top
-        private int _Bottom; // setup_bottom
+        private String _HostName; // setup_hostname[16]
+        private String _MyName; // setup_myname[16]
+        private Int32 _OldTop; // setup_oldtop
+        private Int32 _OldBottom; // setup_oldbottom
+        private Int32 _Top; // setup_top
+        private Int32 _Bottom; // setup_bottom
 
         /// <summary>
         /// M_Menu_Setup_f
@@ -1587,13 +1587,13 @@ namespace SharpQuake
         {
             _MyName = client.Name;
             _HostName = net.HostName;
-            _Top = _OldTop = ( (int)client.Color ) >> 4;
-            _Bottom = _OldBottom = ( (int)client.Color ) & 15;
+            _Top = _OldTop = ( ( Int32 ) client.Color ) >> 4;
+            _Bottom = _OldBottom = ( ( Int32 ) client.Color ) & 15;
 
             base.Show();
         }
 
-        public override void KeyEvent( int key )
+        public override void KeyEvent( Int32 key )
         {
             switch( key )
             {
@@ -1673,18 +1673,18 @@ forward:
                         break;
                     if( _Cursor == 0 )
                     {
-                        int l = _HostName.Length;
+                        var l = _HostName.Length;
                         if( l < 15 )
                         {
-                            _HostName = _HostName + (char)key;
+                            _HostName = _HostName + ( Char ) key;
                         }
                     }
                     if( _Cursor == 1 )
                     {
-                        int l = _MyName.Length;
+                        var l = _MyName.Length;
                         if( l < 15 )
                         {
-                            _MyName = _MyName + (char)key;
+                            _MyName = _MyName + ( Char ) key;
                         }
                     }
                     break;
@@ -1726,13 +1726,13 @@ forward:
             menu.BuildTranslationTable( _Top * 16, _Bottom * 16 );
             menu.DrawTransPicTranslate( 172, 72, p );
 
-            menu.DrawCharacter( 56, _CursorTable[_Cursor], 12 + ( (int)( host.RealTime * 4 ) & 1 ) );
+            menu.DrawCharacter( 56, _CursorTable[_Cursor], 12 + ( ( Int32 ) ( host.RealTime * 4 ) & 1 ) );
 
             if( _Cursor == 0 )
-                menu.DrawCharacter( 168 + 8 * _HostName.Length, _CursorTable[_Cursor], 10 + ( (int)( host.RealTime * 4 ) & 1 ) );
+                menu.DrawCharacter( 168 + 8 * _HostName.Length, _CursorTable[_Cursor], 10 + ( ( Int32 ) ( host.RealTime * 4 ) & 1 ) );
 
             if( _Cursor == 1 )
-                menu.DrawCharacter( 168 + 8 * _MyName.Length, _CursorTable[_Cursor], 10 + ( (int)( host.RealTime * 4 ) & 1 ) );
+                menu.DrawCharacter( 168 + 8 * _MyName.Length, _CursorTable[_Cursor], 10 + ( ( Int32 ) ( host.RealTime * 4 ) & 1 ) );
         }
     }
 
@@ -1741,7 +1741,7 @@ forward:
     /// </summary>
     internal class GameOptionsMenu : MenuBase
     {
-        private const int NUM_GAMEOPTIONS = 9;
+        private const Int32 NUM_GAMEOPTIONS = 9;
 
         private static readonly level_t[] Levels = new level_t[]
         {
@@ -1874,20 +1874,20 @@ forward:
             new episode_t("Deathmatch Arena", 16, 1)
         };
 
-        private static readonly int[] _CursorTable = new int[]
+        private static readonly Int32[] _CursorTable = new Int32[]
         {
             40, 56, 64, 72, 80, 88, 96, 112, 120
         };
 
-        private int _StartEpisode;
+        private Int32 _StartEpisode;
 
-        private int _StartLevel;
+        private Int32 _StartLevel;
 
-        private int _MaxPlayers;
+        private Int32 _MaxPlayers;
 
-        private bool _ServerInfoMessage;
+        private Boolean _ServerInfoMessage;
 
-        private double _ServerInfoMessageTime;
+        private Double _ServerInfoMessageTime;
 
         public override void Show()
         {
@@ -1899,7 +1899,7 @@ forward:
                 _MaxPlayers = server.svs.maxclientslimit;
         }
 
-        public override void KeyEvent( int key )
+        public override void KeyEvent( Int32 key )
         {
             switch( key )
             {
@@ -1983,8 +1983,8 @@ forward:
             menu.Print( 0, 72, "        Teamplay" );
             if( Common.GameKind == GameKind.Rogue )
             {
-                string msg;
-                switch( (int)host.TeamPlay )
+                String msg;
+                switch( ( Int32 ) host.TeamPlay )
                 {
                     case 1:
                         msg = "No Friendly Fire";
@@ -2018,8 +2018,8 @@ forward:
             }
             else
             {
-                string msg;
-                switch( (int)host.TeamPlay )
+                String msg;
+                switch( ( Int32 ) host.TeamPlay )
                 {
                     case 1:
                         msg = "No Friendly Fire";
@@ -2050,13 +2050,13 @@ forward:
             if( host.FragLimit == 0 )
                 menu.Print( 160, 88, "none" );
             else
-                menu.Print( 160, 88, String.Format( "{0} frags", (int)host.FragLimit ) );
+                menu.Print( 160, 88, String.Format( "{0} frags", ( Int32 ) host.FragLimit ) );
 
             menu.Print( 0, 96, "       Time Limit" );
             if( host.TimeLimit == 0 )
                 menu.Print( 160, 96, "none" );
             else
-                menu.Print( 160, 96, String.Format( "{0} minutes", (int)host.TimeLimit ) );
+                menu.Print( 160, 96, String.Format( "{0} minutes", ( Int32 ) host.TimeLimit ) );
 
             menu.Print( 0, 112, "         Episode" );
             //MED 01/06/97 added hipnotic episodes
@@ -2088,13 +2088,13 @@ forward:
             }
 
             // line cursor
-            menu.DrawCharacter( 144, _CursorTable[_Cursor], 12 + ( (int)( host.RealTime * 4 ) & 1 ) );
+            menu.DrawCharacter( 144, _CursorTable[_Cursor], 12 + ( ( Int32 ) ( host.RealTime * 4 ) & 1 ) );
 
             if( _ServerInfoMessage )
             {
                 if( ( host.RealTime - _ServerInfoMessageTime ) < 5.0 )
                 {
-                    int x = ( 320 - 26 * 8 ) / 2;
+                    var x = ( 320 - 26 * 8 ) / 2;
                     menu.DrawTextBox( x, 138, 24, 4 );
                     x += 8;
                     menu.Print( x, 146, "  More than 4 players   " );
@@ -2111,10 +2111,10 @@ forward:
 
         private class level_t
         {
-            public string name;
-            public string description;
+            public String name;
+            public String description;
 
-            public level_t( string name, string desc )
+            public level_t( String name, String desc )
             {
                 this.name = name;
                 this.description = desc;
@@ -2123,11 +2123,11 @@ forward:
 
         private class episode_t
         {
-            public string description;
-            public int firstLevel;
-            public int levels;
+            public String description;
+            public Int32 firstLevel;
+            public Int32 levels;
 
-            public episode_t( string desc, int firstLevel, int levels )
+            public episode_t( String desc, Int32 firstLevel, Int32 levels )
             {
                 this.description = desc;
                 this.firstLevel = firstLevel;
@@ -2138,9 +2138,9 @@ forward:
         /// <summary>
         /// M_NetStart_Change
         /// </summary>
-        private void Change( int dir )
+        private void Change( Int32 dir )
         {
-            int count;
+            Int32 count;
 
             switch( _Cursor )
             {
@@ -2166,7 +2166,7 @@ forward:
                     else
                         count = 2;
 
-                    float tp = host.TeamPlay + dir;
+                    var tp = host.TeamPlay + dir;
                     if( tp > count )
                         tp = 0;
                     else if( tp < 0 )
@@ -2176,7 +2176,7 @@ forward:
                     break;
 
                 case 4:
-                    float skill = host.Skill + dir;
+                    var skill = host.Skill + dir;
                     if( skill > 3 )
                         skill = 0;
                     if( skill < 0 )
@@ -2185,7 +2185,7 @@ forward:
                     break;
 
                 case 5:
-                    float fraglimit = host.FragLimit + dir * 10;
+                    var fraglimit = host.FragLimit + dir * 10;
                     if( fraglimit > 100 )
                         fraglimit = 0;
                     if( fraglimit < 0 )
@@ -2194,7 +2194,7 @@ forward:
                     break;
 
                 case 6:
-                    float timelimit = host.TimeLimit + dir * 5;
+                    var timelimit = host.TimeLimit + dir * 5;
                     if( timelimit > 60 )
                         timelimit = 0;
                     if( timelimit < 0 )
@@ -2248,8 +2248,8 @@ forward:
 
     internal class SearchMenu : MenuBase
     {
-        private bool _SearchComplete;
-        private double _SearchCompleteTime;
+        private Boolean _SearchComplete;
+        private Double _SearchCompleteTime;
 
         public override void Show()
         {
@@ -2260,7 +2260,7 @@ forward:
             net.Slist_f();
         }
 
-        public override void KeyEvent( int key )
+        public override void KeyEvent( Int32 key )
         {
             // nothing to do
         }
@@ -2269,7 +2269,7 @@ forward:
         {
             glpic_t p = Drawer.CachePic( "gfx/p_multi.lmp" );
             menu.DrawPic( ( 320 - p.width ) / 2, 4, p );
-            int x = ( 320 / 2 ) - ( ( 12 * 8 ) / 2 ) + 4;
+            var x = ( 320 / 2 ) - ( ( 12 * 8 ) / 2 ) + 4;
             menu.DrawTextBox( x - 8, 32, 12, 1 );
             menu.Print( x, 40, "Searching..." );
 
@@ -2301,7 +2301,7 @@ forward:
 
     internal class ServerListMenu : MenuBase
     {
-        private bool _Sorted;
+        private Boolean _Sorted;
 
         public override void Show()
         {
@@ -2312,7 +2312,7 @@ forward:
             _Sorted = false;
         }
 
-        public override void KeyEvent( int key )
+        public override void KeyEvent( Int32 key )
         {
             switch( key )
             {
@@ -2372,17 +2372,17 @@ forward:
 
             glpic_t p = Drawer.CachePic( "gfx/p_multi.lmp" );
             menu.DrawPic( ( 320 - p.width ) / 2, 4, p );
-            for( int n = 0; n < net.HostCacheCount; n++ )
+            for( var n = 0; n < net.HostCacheCount; n++ )
             {
                 hostcache_t hc = net.HostCache[n];
-                string tmp;
+                String tmp;
                 if( hc.maxusers > 0 )
                     tmp = String.Format( "{0,-15} {1,-15} {2:D2}/{3:D2}\n", hc.name, hc.map, hc.users, hc.maxusers );
                 else
                     tmp = String.Format( "{0,-15} {1,-15}\n", hc.name, hc.map );
                 menu.Print( 16, 32 + 8 * n, tmp );
             }
-            menu.DrawCharacter( 0, 32 + _Cursor * 8, 12 + ( (int)( host.RealTime * 4 ) & 1 ) );
+            menu.DrawCharacter( 0, 32 + _Cursor * 8, 12 + ( ( Int32 ) ( host.RealTime * 4 ) & 1 ) );
 
             if( !String.IsNullOrEmpty( menu.ReturnReason ) )
                 menu.PrintWhite( 16, 148, menu.ReturnReason );
@@ -2393,19 +2393,19 @@ forward:
     {
         private struct modedesc_t
         {
-            public int modenum;
-            public string desc;
-            public bool iscur;
+            public Int32 modenum;
+            public String desc;
+            public Boolean iscur;
         } //modedesc_t;
 
-        private const int MAX_COLUMN_SIZE = 9;
-        private const int MODE_AREA_HEIGHT = MAX_COLUMN_SIZE + 2;
-        private const int MAX_MODEDESCS = MAX_COLUMN_SIZE * 3;
+        private const Int32 MAX_COLUMN_SIZE = 9;
+        private const Int32 MODE_AREA_HEIGHT = MAX_COLUMN_SIZE + 2;
+        private const Int32 MAX_MODEDESCS = MAX_COLUMN_SIZE * 3;
 
-        private int _WModes; // vid_wmodes
+        private Int32 _WModes; // vid_wmodes
         private modedesc_t[] _ModeDescs = new modedesc_t[MAX_MODEDESCS]; // modedescs
 
-        public override void KeyEvent( int key )
+        public override void KeyEvent( Int32 key )
         {
             switch( key )
             {
@@ -2425,13 +2425,13 @@ forward:
             menu.DrawPic( ( 320 - p.width ) / 2, 4, p );
 
             _WModes = 0;
-            int lnummodes = vid.Modes.Length;
+            var lnummodes = vid.Modes.Length;
 
-            for( int i = 1; ( i < lnummodes ) && ( _WModes < MAX_MODEDESCS ); i++ )
+            for( var i = 1; ( i < lnummodes ) && ( _WModes < MAX_MODEDESCS ); i++ )
             {
                 mode_t m = vid.Modes[i];
 
-                int k = _WModes;
+                var k = _WModes;
 
                 _ModeDescs[k].modenum = i;
                 _ModeDescs[k].desc = String.Format( "{0}x{1}x{2}", m.width, m.height, m.bpp );
@@ -2447,10 +2447,10 @@ forward:
             {
                 menu.Print( 2 * 8, 36 + 0 * 8, "Fullscreen Modes (WIDTHxHEIGHTxBPP)" );
 
-                int column = 8;
-                int row = 36 + 2 * 8;
+                var column = 8;
+                var row = 36 + 2 * 8;
 
-                for( int i = 0; i < _WModes; i++ )
+                for( var i = 0; i < _WModes; i++ )
                 {
                     if( _ModeDescs[i].iscur )
                         menu.PrintWhite( column, row, _ModeDescs[i].desc );

@@ -59,7 +59,7 @@ namespace SharpQuake
             if( Command.Source != cmd_source_t.src_command )
                 return;
 
-            int c = Command.Argc;
+            var c = Command.Argc;
             if( c != 2 && c != 3 && c != 4 )
             {
                 Con.Print( "record <demoname> [<map> [cd track]]\n" );
@@ -79,7 +79,7 @@ namespace SharpQuake
             }
 
             // write the forced cd track number, or -1
-            int track;
+            Int32 track;
             if( c == 4 )
             {
                 track = Common.atoi( Command.Argv( 3 ) );
@@ -88,7 +88,7 @@ namespace SharpQuake
             else
                 track = -1;
 
-            string name = Path.Combine( Common.GameDir, Command.Argv( 1 ) );
+            var name = Path.Combine( Common.GameDir, Command.Argv( 1 ) );
 
             //
             // start the map up
@@ -111,7 +111,7 @@ namespace SharpQuake
             BinaryWriter writer = new BinaryWriter( fs, Encoding.ASCII );
             cls.demofile = new DisposableWrapper<BinaryWriter>( writer, true );
             cls.forcetrack = track;
-            byte[] tmp = Encoding.ASCII.GetBytes( cls.forcetrack.ToString() );
+            Byte[] tmp = Encoding.ASCII.GetBytes( cls.forcetrack.ToString() );
             writer.Write( tmp );
             writer.Write( '\n' );
             cls.demorecording = true;
@@ -169,7 +169,7 @@ namespace SharpQuake
             //
             // open the demo file
             //
-            string name = Path.ChangeExtension( Command.Argv( 1 ), ".dem" );
+            var name = Path.ChangeExtension( Command.Argv( 1 ), ".dem" );
 
             Con.Print( "Playing demo from {0}.\n", name );
             if( cls.demofile != null )
@@ -191,8 +191,8 @@ namespace SharpQuake
             cls.forcetrack = 0;
 
             BinaryReader s = reader.Object;
-            int c;
-            bool neg = false;
+            Int32 c;
+            var neg = false;
             while( true )
             {
                 c = s.ReadByte();
@@ -240,7 +240,7 @@ namespace SharpQuake
         /// Handles recording and playback of demos, on top of NET_ code
         /// </summary>
         /// <returns></returns>
-        private static int GetMessage()
+        private static Int32 GetMessage()
         {
             if( cls.demoplayback )
             {
@@ -255,7 +255,7 @@ namespace SharpQuake
                         // if this is the second frame, grab the real td_starttime
                         // so the bogus time on the first frame doesn't count
                         if( host.FrameCount == cls.td_startframe + 1 )
-                            cls.td_starttime = (float)host.RealTime;
+                            cls.td_starttime = ( Single ) host.RealTime;
                     }
                     else if( cl.time <= cl.mtime[0] )
                     {
@@ -265,7 +265,7 @@ namespace SharpQuake
 
                 // get the next message
                 BinaryReader reader = ( (DisposableWrapper<BinaryReader>)cls.demofile ).Object;
-                int size = Common.LittleLong( reader.ReadInt32() );
+                var size = Common.LittleLong( reader.ReadInt32() );
                 if( size > QDef.MAX_MSGLEN )
                     sys.Error( "Demo message > MAX_MSGLEN" );
 
@@ -283,7 +283,7 @@ namespace SharpQuake
                 return 1;
             }
 
-            int r;
+            Int32 r;
             while( true )
             {
                 r = net.GetMessage( cls.netcon );
@@ -312,8 +312,8 @@ namespace SharpQuake
             cls.timedemo = false;
 
             // the first frame didn't count
-            int frames = ( host.FrameCount - cls.td_startframe ) - 1;
-            float time = (float)host.RealTime - cls.td_starttime;
+            var frames = ( host.FrameCount - cls.td_startframe ) - 1;
+            var time = ( Single ) host.RealTime - cls.td_starttime;
             if( time == 0 )
                 time = 1;
             Con.Print( "{0} frames {1:F5} seconds {2:F2} fps\n", frames, time, frames / time );
@@ -325,7 +325,7 @@ namespace SharpQuake
         /// </summary>
         private static void WriteDemoMessage()
         {
-            int len = Common.LittleLong( net.Message.Length );
+            var len = Common.LittleLong( net.Message.Length );
             BinaryWriter writer = ( (DisposableWrapper<BinaryWriter>)cls.demofile ).Object;
             writer.Write( len );
             writer.Write( Common.LittleFloat( cl.viewangles.X ) );

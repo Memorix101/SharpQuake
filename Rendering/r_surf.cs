@@ -31,29 +31,29 @@ namespace SharpQuake
 {
     internal struct glRect_t
     {
-        public byte l,t,w,h;
+        public Byte l,t,w,h;
     }
 
     partial class render
     {
-        private const double COLINEAR_EPSILON = 0.001;
+        private const Double COLINEAR_EPSILON = 0.001;
 
-        private static int _LightMapTextures; // lightmap_textures
-        private static int _LightMapBytes; // lightmap_bytes		// 1, 2, or 4
+        private static Int32 _LightMapTextures; // lightmap_textures
+        private static Int32 _LightMapBytes; // lightmap_bytes		// 1, 2, or 4
         private static mvertex_t[] _CurrentVertBase; // r_pcurrentvertbase
         private static model_t _CurrentModel; // currentmodel
-        private static bool[] _LightMapModified = new bool[MAX_LIGHTMAPS]; // lightmap_modified
+        private static System.Boolean[] _LightMapModified = new System.Boolean[MAX_LIGHTMAPS]; // lightmap_modified
         private static glpoly_t[] _LightMapPolys = new glpoly_t[MAX_LIGHTMAPS]; // lightmap_polys
         private static glRect_t[] _LightMapRectChange = new glRect_t[MAX_LIGHTMAPS]; // lightmap_rectchange
-        private static uint[] _BlockLights = new uint[18 * 18]; // blocklights
-        private static int _ColinElim; // nColinElim
+        private static UInt32[] _BlockLights = new UInt32[18 * 18]; // blocklights
+        private static Int32 _ColinElim; // nColinElim
         private static msurface_t _SkyChain; // skychain
         private static msurface_t _WaterChain; // waterchain
         private static entity_t _TempEnt = new entity_t(); // for DrawWorld
 
         // the lightmap texture data needs to be kept in
         // main memory so texsubimage can update properly
-        private static byte[] _LightMaps = new byte[4 * MAX_LIGHTMAPS * BLOCK_WIDTH * BLOCK_HEIGHT]; // lightmaps
+        private static Byte[] _LightMaps = new Byte[4 * MAX_LIGHTMAPS * BLOCK_WIDTH * BLOCK_HEIGHT]; // lightmaps
 
         /// <summary>
         /// GL_BuildLightmaps
@@ -107,7 +107,7 @@ namespace SharpQuake
                     break;
             }
 
-            for( int j = 1; j < QDef.MAX_MODELS; j++ )
+            for( var j = 1; j < QDef.MAX_MODELS; j++ )
             {
                 model_t m = client.cl.model_precache[j];
                 if( m == null )
@@ -118,7 +118,7 @@ namespace SharpQuake
 
                 _CurrentVertBase = m.vertexes;
                 _CurrentModel = m;
-                for( int i = 0; i < m.numsurfaces; i++ )
+                for( var i = 0; i < m.numsurfaces; i++ )
                 {
                     CreateSurfaceLightmap( m.surfaces[i] );
                     if( ( m.surfaces[i].flags & Surf.SURF_DRAWTURB ) != 0 )
@@ -141,9 +141,9 @@ namespace SharpQuake
             try
             {
                 IntPtr ptr = handle.AddrOfPinnedObject();
-                long lmAddr = ptr.ToInt64();
+                var lmAddr = ptr.ToInt64();
 
-                for( int i = 0; i < MAX_LIGHTMAPS; i++ )
+                for( var i = 0; i < MAX_LIGHTMAPS; i++ )
                 {
                     if( _Allocated[i, 0] == 0 )
                         break;		// no more used
@@ -156,7 +156,7 @@ namespace SharpQuake
                     Drawer.Bind( _LightMapTextures + i );
                     Drawer.SetTextureFilters( TextureMinFilter.Linear, TextureMagFilter.Linear );
 
-                    long addr = lmAddr + i * BLOCK_WIDTH * BLOCK_HEIGHT * _LightMapBytes;
+                    var addr = lmAddr + i * BLOCK_WIDTH * BLOCK_HEIGHT * _LightMapBytes;
                     GL.TexImage2D( TextureTarget.Texture2D, 0, (PixelInternalFormat)_LightMapBytes,
                         BLOCK_WIDTH, BLOCK_HEIGHT, 0, Drawer.LightMapFormat, PixelType.UnsignedByte, new IntPtr( addr ) );
                 }
@@ -178,11 +178,11 @@ namespace SharpQuake
             if( ( surf.flags & ( Surf.SURF_DRAWSKY | Surf.SURF_DRAWTURB ) ) != 0 )
                 return;
 
-            int smax = ( surf.extents[0] >> 4 ) + 1;
-            int tmax = ( surf.extents[1] >> 4 ) + 1;
+            var smax = ( surf.extents[0] >> 4 ) + 1;
+            var tmax = ( surf.extents[1] >> 4 ) + 1;
 
             surf.lightmaptexturenum = AllocBlock( smax, tmax, ref surf.light_s, ref surf.light_t );
-            int offset = surf.lightmaptexturenum * _LightMapBytes * BLOCK_WIDTH * BLOCK_HEIGHT;
+            var offset = surf.lightmaptexturenum * _LightMapBytes * BLOCK_WIDTH * BLOCK_HEIGHT;
             offset += ( surf.light_t * BLOCK_WIDTH + surf.light_s ) * _LightMapBytes;
             BuildLightMap( surf, new ByteArraySegment( _LightMaps, offset ), BLOCK_WIDTH * _LightMapBytes );
         }
@@ -194,7 +194,7 @@ namespace SharpQuake
         {
             // reconstruct the polygon
             medge_t[] pedges = _CurrentModel.edges;
-            int lnumverts = fa.numedges;
+            var lnumverts = fa.numedges;
 
             //
             // draw texture
@@ -205,12 +205,12 @@ namespace SharpQuake
             poly.flags = fa.flags;
             fa.polys = poly;
 
-            ushort[] r_pedge_v;
+            UInt16[] r_pedge_v;
             Vector3 vec;
 
-            for( int i = 0; i < lnumverts; i++ )
+            for( var i = 0; i < lnumverts; i++ )
             {
-                int lindex = _CurrentModel.surfedges[fa.firstedge + i];
+                var lindex = _CurrentModel.surfedges[fa.firstedge + i];
                 if( lindex > 0 )
                 {
                     r_pedge_v = pedges[lindex].v;
@@ -221,10 +221,10 @@ namespace SharpQuake
                     r_pedge_v = pedges[-lindex].v;
                     vec = _CurrentVertBase[r_pedge_v[1]].position;
                 }
-                float s = MathLib.DotProduct( ref vec, ref fa.texinfo.vecs[0] ) + fa.texinfo.vecs[0].W;
+                var s = MathLib.DotProduct( ref vec, ref fa.texinfo.vecs[0] ) + fa.texinfo.vecs[0].W;
                 s /= fa.texinfo.texture.width;
 
-                float t = MathLib.DotProduct( ref vec, ref fa.texinfo.vecs[1] ) + fa.texinfo.vecs[1].W;
+                var t = MathLib.DotProduct( ref vec, ref fa.texinfo.vecs[1] ) + fa.texinfo.vecs[1].W;
                 t /= fa.texinfo.texture.height;
 
                 poly.verts[i][0] = vec.X;
@@ -257,17 +257,17 @@ namespace SharpQuake
             //
             if( _glKeepTJunctions.Value == 0 && ( fa.flags & Surf.SURF_UNDERWATER ) == 0 )
             {
-                for( int i = 0; i < lnumverts; ++i )
+                for( var i = 0; i < lnumverts; ++i )
                 {
                     if( IsCollinear( poly.verts[( i + lnumverts - 1 ) % lnumverts],
                         poly.verts[i],
                         poly.verts[( i + 1 ) % lnumverts] ) )
                     {
-                        int j;
+                        Int32 j;
                         for( j = i + 1; j < lnumverts; ++j )
                         {
                             //int k;
-                            for( int k = 0; k < Mod.VERTEXSIZE; ++k )
+                            for( var k = 0; k < Mod.VERTEXSIZE; ++k )
                                 poly.verts[j - 1][k] = poly.verts[j][k];
                         }
                         --lnumverts;
@@ -280,7 +280,7 @@ namespace SharpQuake
             poly.numverts = lnumverts;
         }
 
-        private static bool IsCollinear( float[] prev, float[] cur, float[] next )
+        private static System.Boolean IsCollinear( Single[] prev, Single[] cur, Single[] next )
         {
             Vector3 v1 = new Vector3( cur[0] - prev[0], cur[1] - prev[1], cur[2] - prev[2] );
             MathLib.Normalize( ref v1 );
@@ -293,15 +293,15 @@ namespace SharpQuake
         }
 
         // returns a texture number and the position inside it
-        private static int AllocBlock( int w, int h, ref int x, ref int y )
+        private static Int32 AllocBlock( Int32 w, Int32 h, ref Int32 x, ref Int32 y )
         {
-            for( int texnum = 0; texnum < MAX_LIGHTMAPS; texnum++ )
+            for( var texnum = 0; texnum < MAX_LIGHTMAPS; texnum++ )
             {
-                int best = BLOCK_HEIGHT;
+                var best = BLOCK_HEIGHT;
 
-                for( int i = 0; i < BLOCK_WIDTH - w; i++ )
+                for( var i = 0; i < BLOCK_WIDTH - w; i++ )
                 {
-                    int j, best2 = 0;
+                    Int32 j, best2 = 0;
 
                     for( j = 0; j < w; j++ )
                     {
@@ -321,7 +321,7 @@ namespace SharpQuake
                 if( best + h > BLOCK_HEIGHT )
                     continue;
 
-                for( int i = 0; i < w; i++ )
+                for( var i = 0; i < w; i++ )
                     _Allocated[texnum, x + i] = best + h;
 
                 return texnum;
@@ -335,37 +335,37 @@ namespace SharpQuake
         /// R_BuildLightMap
         /// Combine and scale multiple lightmaps into the 8.8 format in blocklights
         /// </summary>
-        private static void BuildLightMap( msurface_t surf, ByteArraySegment dest, int stride )
+        private static void BuildLightMap( msurface_t surf, ByteArraySegment dest, Int32 stride )
         {
             surf.cached_dlight = ( surf.dlightframe == _FrameCount );
 
-            int smax = ( surf.extents[0] >> 4 ) + 1;
-            int tmax = ( surf.extents[1] >> 4 ) + 1;
-            int size = smax * tmax;
+            var smax = ( surf.extents[0] >> 4 ) + 1;
+            var tmax = ( surf.extents[1] >> 4 ) + 1;
+            var size = smax * tmax;
 
-            int srcOffset = surf.sampleofs;
-            byte[] lightmap = surf.sample_base;// surf.samples;
+            var srcOffset = surf.sampleofs;
+            Byte[] lightmap = surf.sample_base;// surf.samples;
 
             // set to full bright if no light data
             if( _FullBright.Value != 0 || client.cl.worldmodel.lightdata == null )
             {
-                for( int i = 0; i < size; i++ )
+                for( var i = 0; i < size; i++ )
                     _BlockLights[i] = 255 * 256;
             }
             else
             {
                 // clear to no light
-                for( int i = 0; i < size; i++ )
+                for( var i = 0; i < size; i++ )
                     _BlockLights[i] = 0;
 
                 // add all the lightmaps
                 if( lightmap != null )
-                    for( int maps = 0; maps < bsp_file.MAXLIGHTMAPS && surf.styles[maps] != 255; maps++ )
+                    for( var maps = 0; maps < bsp_file.MAXLIGHTMAPS && surf.styles[maps] != 255; maps++ )
                     {
-                        int scale = _LightStyleValue[surf.styles[maps]];
+                        var scale = _LightStyleValue[surf.styles[maps]];
                         surf.cached_light[maps] = scale;	// 8.8 fraction
-                        for( int i = 0; i < size; i++ )
-                            _BlockLights[i] += (uint)( lightmap[srcOffset + i] * scale );
+                        for( var i = 0; i < size; i++ )
+                            _BlockLights[i] += ( UInt32 ) ( lightmap[srcOffset + i] * scale );
                         srcOffset += size; // lightmap += size;	// skip to next lightmap
                     }
 
@@ -375,22 +375,22 @@ namespace SharpQuake
             }
             // bound, invert, and shift
             //store:
-            int blOffset = 0;
-            int destOffset = dest.StartIndex;
-            byte[] data = dest.Data;
+            var blOffset = 0;
+            var destOffset = dest.StartIndex;
+            Byte[] data = dest.Data;
             switch( Drawer.LightMapFormat )
             {
                 case PixelFormat.Rgba:
                     stride -= ( smax << 2 );
-                    for( int i = 0; i < tmax; i++, destOffset += stride ) // dest += stride
+                    for( var i = 0; i < tmax; i++, destOffset += stride ) // dest += stride
                     {
-                        for( int j = 0; j < smax; j++ )
+                        for( var j = 0; j < smax; j++ )
                         {
-                            uint t = _BlockLights[blOffset++];// *bl++;
+                            var t = _BlockLights[blOffset++];// *bl++;
                             t >>= 7;
                             if( t > 255 )
                                 t = 255;
-                            data[destOffset + 3] = (byte)( 255 - t ); //dest[3] = 255 - t;
+                            data[destOffset + 3] = ( Byte ) ( 255 - t ); //dest[3] = 255 - t;
                             destOffset += 4;
                         }
                     }
@@ -399,15 +399,15 @@ namespace SharpQuake
                 case PixelFormat.Alpha:
                 case PixelFormat.Luminance:
                     //case GL_INTENSITY:
-                    for( int i = 0; i < tmax; i++, destOffset += stride )
+                    for( var i = 0; i < tmax; i++, destOffset += stride )
                     {
-                        for( int j = 0; j < smax; j++ )
+                        for( var j = 0; j < smax; j++ )
                         {
-                            uint t = _BlockLights[blOffset++];// *bl++;
+                            var t = _BlockLights[blOffset++];// *bl++;
                             t >>= 7;
                             if( t > 255 )
                                 t = 255;
-                            data[destOffset + j] = (byte)( 255 - t ); // dest[j] = 255 - t;
+                            data[destOffset + j] = ( Byte ) ( 255 - t ); // dest[j] = 255 - t;
                         }
                     }
                     break;
@@ -423,40 +423,40 @@ namespace SharpQuake
         /// </summary>
         private static void AddDynamicLights( msurface_t surf )
         {
-            int smax = ( surf.extents[0] >> 4 ) + 1;
-            int tmax = ( surf.extents[1] >> 4 ) + 1;
+            var smax = ( surf.extents[0] >> 4 ) + 1;
+            var tmax = ( surf.extents[1] >> 4 ) + 1;
             mtexinfo_t tex = surf.texinfo;
             dlight_t[] dlights = client.DLights;
 
-            for( int lnum = 0; lnum < client.MAX_DLIGHTS; lnum++ )
+            for( var lnum = 0; lnum < client.MAX_DLIGHTS; lnum++ )
             {
                 if( ( surf.dlightbits & ( 1 << lnum ) ) == 0 )
                     continue;		// not lit by this light
 
-                float rad = dlights[lnum].radius;
-                float dist = Vector3.Dot( dlights[lnum].origin, surf.plane.normal ) - surf.plane.dist;
+                var rad = dlights[lnum].radius;
+                var dist = Vector3.Dot( dlights[lnum].origin, surf.plane.normal ) - surf.plane.dist;
                 rad -= Math.Abs( dist );
-                float minlight = dlights[lnum].minlight;
+                var minlight = dlights[lnum].minlight;
                 if( rad < minlight )
                     continue;
                 minlight = rad - minlight;
 
                 Vector3 impact = dlights[lnum].origin - surf.plane.normal * dist;
 
-                float local0 = Vector3.Dot( impact, tex.vecs[0].Xyz ) + tex.vecs[0].W;
-                float local1 = Vector3.Dot( impact, tex.vecs[1].Xyz ) + tex.vecs[1].W;
+                var local0 = Vector3.Dot( impact, tex.vecs[0].Xyz ) + tex.vecs[0].W;
+                var local1 = Vector3.Dot( impact, tex.vecs[1].Xyz ) + tex.vecs[1].W;
 
                 local0 -= surf.texturemins[0];
                 local1 -= surf.texturemins[1];
 
-                for( int t = 0; t < tmax; t++ )
+                for( var t = 0; t < tmax; t++ )
                 {
-                    int td = (int)( local1 - t * 16 );
+                    var td = ( Int32 ) ( local1 - t * 16 );
                     if( td < 0 )
                         td = -td;
-                    for( int s = 0; s < smax; s++ )
+                    for( var s = 0; s < smax; s++ )
                     {
-                        int sd = (int)( local0 - s * 16 );
+                        var sd = ( Int32 ) ( local0 - s * 16 );
                         if( sd < 0 )
                             sd = -sd;
                         if( sd > td )
@@ -464,7 +464,7 @@ namespace SharpQuake
                         else
                             dist = td + ( sd >> 1 );
                         if( dist < minlight )
-                            _BlockLights[t * smax + s] += (uint)( ( rad - dist ) * 256 );
+                            _BlockLights[t * smax + s] += ( UInt32 ) ( ( rad - dist ) * 256 );
                     }
                 }
             }
@@ -487,7 +487,7 @@ namespace SharpQuake
             {
                 GL.Enable( EnableCap.Blend );
                 GL.Color4( 1, 1, 1, _WaterAlpha.Value );
-                GL.TexEnv( TextureEnvTarget.TextureEnv, TextureEnvParameter.TextureEnvMode, (int)TextureEnvMode.Modulate );
+                GL.TexEnv( TextureEnvTarget.TextureEnv, TextureEnvParameter.TextureEnvMode, ( Int32 ) TextureEnvMode.Modulate );
             }
 
             if( _glTexSort.Value == 0 )
@@ -504,7 +504,7 @@ namespace SharpQuake
             }
             else
             {
-                for( int i = 0; i < client.cl.worldmodel.numtextures; i++ )
+                for( var i = 0; i < client.cl.worldmodel.numtextures; i++ )
                 {
                     texture_t t = client.cl.worldmodel.textures[i];
                     if( t == null )
@@ -530,7 +530,7 @@ namespace SharpQuake
 
             if( _WaterAlpha.Value < 1.0 )
             {
-                GL.TexEnv( TextureEnvTarget.TextureEnv, TextureEnvParameter.TextureEnvMode, (int)TextureEnvMode.Replace );
+                GL.TexEnv( TextureEnvTarget.TextureEnv, TextureEnvParameter.TextureEnvMode, ( Int32 ) TextureEnvMode.Replace );
                 GL.Color4( 1f, 1, 1, 1 );
                 GL.Disable( EnableCap.Blend );
             }
@@ -550,10 +550,10 @@ namespace SharpQuake
             _VisFrameCount++;
             _OldViewLeaf = _ViewLeaf;
 
-            byte[] vis;
+            Byte[] vis;
             if( _NoVis.Value != 0 )
             {
-                vis = new byte[4096];
+                vis = new Byte[4096];
                 Common.FillArray<Byte>( vis, 0xff ); // todo: add count parameter?
                 //memset(solid, 0xff, (cl.worldmodel->numleafs + 7) >> 3);
             }
@@ -561,7 +561,7 @@ namespace SharpQuake
                 vis = Mod.LeafPVS( _ViewLeaf, client.cl.worldmodel );
 
             model_t world = client.cl.worldmodel;
-            for( int i = 0; i < world.numleafs; i++ )
+            for( var i = 0; i < world.numleafs; i++ )
             {
                 if( vis[i >> 3] != 0 & ( 1 << ( i & 7 ) ) != 0 )
                 {
@@ -626,7 +626,7 @@ namespace SharpQuake
                 GL.Enable( EnableCap.Blend );
             }
 
-            for( int i = 0; i < MAX_LIGHTMAPS; i++ )
+            for( var i = 0; i < MAX_LIGHTMAPS; i++ )
             {
                 glpoly_t p = _LightMapPolys[i];
                 if( p == null )
@@ -643,9 +643,9 @@ namespace SharpQuake
                     else
                     {
                         GL.Begin( PrimitiveType.Polygon );
-                        for( int j = 0; j < p.numverts; j++ )
+                        for( var j = 0; j < p.numverts; j++ )
                         {
-                            float[] v = p.verts[j];
+                            Single[] v = p.verts[j];
                             GL.TexCoord2( v[5], v[6] );
                             GL.Vertex3( v );
                         }
@@ -680,7 +680,7 @@ namespace SharpQuake
                 return;
             }
             model_t world = client.cl.worldmodel;
-            for( int i = 0; i < world.numtextures; i++ )
+            for( var i = 0; i < world.numtextures; i++ )
             {
                 texture_t t = world.textures[i];
                 if( t == null )
@@ -742,8 +742,8 @@ namespace SharpQuake
             _LightMapPolys[fa.lightmaptexturenum] = fa.polys;
 
             // check for lightmap modification
-            bool modified = false;
-            for( int maps = 0; maps < bsp_file.MAXLIGHTMAPS && fa.styles[maps] != 255; maps++ )
+            var modified = false;
+            for( var maps = 0; maps < bsp_file.MAXLIGHTMAPS && fa.styles[maps] != 255; maps++ )
                 if( _LightStyleValue[fa.styles[maps]] != fa.cached_light[maps] )
                 {
                     modified = true;
@@ -758,7 +758,7 @@ namespace SharpQuake
                 {
                     _LightMapModified[fa.lightmaptexturenum] = true;
                     UpdateRect( fa, ref _LightMapRectChange[fa.lightmaptexturenum] );
-                    int offset = fa.lightmaptexturenum * _LightMapBytes * BLOCK_WIDTH * BLOCK_HEIGHT;
+                    var offset = fa.lightmaptexturenum * _LightMapBytes * BLOCK_WIDTH * BLOCK_HEIGHT;
                     offset += fa.light_t * BLOCK_WIDTH * _LightMapBytes + fa.light_s * _LightMapBytes;
                     BuildLightMap( fa, new ByteArraySegment( _LightMaps, offset ), BLOCK_WIDTH * _LightMapBytes );
                 }
@@ -770,29 +770,29 @@ namespace SharpQuake
             if( fa.light_t < theRect.t )
             {
                 if( theRect.h != 0 )
-                    theRect.h += (byte)( theRect.t - fa.light_t );
-                theRect.t = (byte)fa.light_t;
+                    theRect.h += ( Byte ) ( theRect.t - fa.light_t );
+                theRect.t = ( Byte ) fa.light_t;
             }
             if( fa.light_s < theRect.l )
             {
                 if( theRect.w != 0 )
-                    theRect.w += (byte)( theRect.l - fa.light_s );
-                theRect.l = (byte)fa.light_s;
+                    theRect.w += ( Byte ) ( theRect.l - fa.light_s );
+                theRect.l = ( Byte ) fa.light_s;
             }
-            int smax = ( fa.extents[0] >> 4 ) + 1;
-            int tmax = ( fa.extents[1] >> 4 ) + 1;
+            var smax = ( fa.extents[0] >> 4 ) + 1;
+            var tmax = ( fa.extents[1] >> 4 ) + 1;
             if( ( theRect.w + theRect.l ) < ( fa.light_s + smax ) )
-                theRect.w = (byte)( ( fa.light_s - theRect.l ) + smax );
+                theRect.w = ( Byte ) ( ( fa.light_s - theRect.l ) + smax );
             if( ( theRect.h + theRect.t ) < ( fa.light_t + tmax ) )
-                theRect.h = (byte)( ( fa.light_t - theRect.t ) + tmax );
+                theRect.h = ( Byte ) ( ( fa.light_t - theRect.t ) + tmax );
         }
 
-        private static void DrawGLPoly( glpoly_t p, float scaleX = 1f, float scaleY = 1f )
+        private static void DrawGLPoly( glpoly_t p, Single scaleX = 1f, Single scaleY = 1f )
         {
             GL.Begin( PrimitiveType.Polygon );
-            for( int i = 0; i < p.numverts; i++ )
+            for( var i = 0; i < p.numverts; i++ )
             {
-                float[] v = p.verts[i];
+                Single[] v = p.verts[i];
                 GL.TexCoord2( v[3] * scaleX, v[4] * scaleY );
                 GL.Vertex3( v );
             }
@@ -823,14 +823,14 @@ namespace SharpQuake
             if( CullBox( ref node.mins, ref node.maxs ) )
                 return;
 
-            int c;
+            Int32 c;
 
             // if a leaf node, draw stuff
             if( node.contents < 0 )
             {
                 mleaf_t pleaf = (mleaf_t)node;
                 msurface_t[] marks = pleaf.marksurfaces;
-                int mark = pleaf.firstmarksurface;
+                var mark = pleaf.firstmarksurface;
                 c = pleaf.nummarksurfaces;
 
                 if( c != 0 )
@@ -855,7 +855,7 @@ namespace SharpQuake
 
             // find which side of the node we are on
             mplane_t plane = n.plane;
-            double dot;
+            Double dot;
 
             switch( plane.type )
             {
@@ -876,7 +876,7 @@ namespace SharpQuake
                     break;
             }
 
-            int side = ( dot >= 0 ? 0 : 1 );
+            var side = ( dot >= 0 ? 0 : 1 );
 
             // recurse down the children, front side first
             RecursiveWorldNode( n.children[side] );
@@ -887,7 +887,7 @@ namespace SharpQuake
             if( c != 0 )
             {
                 msurface_t[] surf = client.cl.worldmodel.surfaces;
-                int offset = n.firstsurface;
+                Int32 offset = n.firstsurface;
 
                 if( dot < 0 - QDef.BACKFACE_EPSILON )
                     side = Surf.SURF_PLANEBACK;
@@ -951,20 +951,20 @@ namespace SharpQuake
                     // Binds world to texture env 0
                     Drawer.SelectTexture( MTexTarget.TEXTURE0_SGIS );
                     Drawer.Bind( t.gl_texturenum );
-                    GL.TexEnv( TextureEnvTarget.TextureEnv, TextureEnvParameter.TextureEnvMode, (int)TextureEnvMode.Replace );
+                    GL.TexEnv( TextureEnvTarget.TextureEnv, TextureEnvParameter.TextureEnvMode, ( Int32 ) TextureEnvMode.Replace );
 
                     // Binds lightmap to texenv 1
                     EnableMultitexture(); // Same as SelectTexture (TEXTURE1)
                     Drawer.Bind( _LightMapTextures + s.lightmaptexturenum );
-                    int i = s.lightmaptexturenum;
+                    var i = s.lightmaptexturenum;
                     if( _LightMapModified[i] )
                         CommitLightmap( i );
 
-                    GL.TexEnv( TextureEnvTarget.TextureEnv, TextureEnvParameter.TextureEnvMode, (int)TextureEnvMode.Blend );
+                    GL.TexEnv( TextureEnvTarget.TextureEnv, TextureEnvParameter.TextureEnvMode, ( Int32 ) TextureEnvMode.Blend );
                     GL.Begin( PrimitiveType.Polygon );
                     for( i = 0; i < p.numverts; i++ )
                     {
-                        float[] v = p.verts[i];
+                        Single[] v = p.verts[i];
                         GL.MultiTexCoord2( TextureUnit.Texture0, v[3], v[4] );
                         GL.MultiTexCoord2( TextureUnit.Texture1, v[5], v[6] );
                         GL.Vertex3( v );
@@ -976,9 +976,9 @@ namespace SharpQuake
                 {
                     Drawer.Bind( t.gl_texturenum );
                     GL.Begin( PrimitiveType.Polygon );
-                    for( int i = 0; i < p.numverts; i++ )
+                    for( var i = 0; i < p.numverts; i++ )
                     {
-                        float[] v = p.verts[i];
+                        Single[] v = p.verts[i];
                         GL.TexCoord2( v[3], v[4] );
                         GL.Vertex3( v );
                     }
@@ -987,9 +987,9 @@ namespace SharpQuake
                     Drawer.Bind( _LightMapTextures + s.lightmaptexturenum );
                     GL.Enable( EnableCap.Blend );
                     GL.Begin( PrimitiveType.Polygon );
-                    for( int i = 0; i < p.numverts; i++ )
+                    for( var i = 0; i < p.numverts; i++ )
                     {
-                        float[] v = p.verts[i];
+                        Single[] v = p.verts[i];
                         GL.TexCoord2( v[5], v[6] );
                         GL.Vertex3( v );
                     }
@@ -1020,15 +1020,15 @@ namespace SharpQuake
             {
                 DisableMultitexture();
                 Drawer.Bind( _SolidSkyTexture );
-                _SpeedScale = (float)host.RealTime * 8;
-                _SpeedScale -= (int)_SpeedScale & ~127;
+                _SpeedScale = ( Single ) host.RealTime * 8;
+                _SpeedScale -= ( Int32 ) _SpeedScale & ~127;
 
                 EmitSkyPolys( s );
 
                 GL.Enable( EnableCap.Blend );
                 Drawer.Bind( _AlphaSkyTexture );
-                _SpeedScale = (float)host.RealTime * 16;
-                _SpeedScale -= (int)_SpeedScale & ~127;
+                _SpeedScale = ( Single ) host.RealTime * 16;
+                _SpeedScale -= ( Int32 ) _SpeedScale & ~127;
 
                 EmitSkyPolys( s );
 
@@ -1045,25 +1045,25 @@ namespace SharpQuake
                 texture_t t = TextureAnimation( s.texinfo.texture );
                 Drawer.SelectTexture( MTexTarget.TEXTURE0_SGIS );
                 Drawer.Bind( t.gl_texturenum );
-                GL.TexEnv( TextureEnvTarget.TextureEnv, TextureEnvParameter.TextureEnvMode, (int)TextureEnvMode.Replace );
+                GL.TexEnv( TextureEnvTarget.TextureEnv, TextureEnvParameter.TextureEnvMode, ( Int32 ) TextureEnvMode.Replace );
                 EnableMultitexture();
                 Drawer.Bind( _LightMapTextures + s.lightmaptexturenum );
-                int i = s.lightmaptexturenum;
+                var i = s.lightmaptexturenum;
                 if( _LightMapModified[i] )
                     CommitLightmap( i );
 
-                GL.TexEnv( TextureEnvTarget.TextureEnv, TextureEnvParameter.TextureEnvMode, (int)TextureEnvMode.Blend );
+                GL.TexEnv( TextureEnvTarget.TextureEnv, TextureEnvParameter.TextureEnvMode, ( Int32 ) TextureEnvMode.Blend );
                 GL.Begin( PrimitiveType.TriangleFan );
                 glpoly_t p = s.polys;
-                float[] nv = new float[3];
+                Single[] nv = new Single[3];
                 for( i = 0; i < p.numverts; i++ )
                 {
-                    float[] v = p.verts[i];
+                    Single[] v = p.verts[i];
                     GL.MultiTexCoord2( TextureUnit.Texture0, v[3], v[4] );
                     GL.MultiTexCoord2( TextureUnit.Texture1, v[5], v[6] );
 
-                    nv[0] = (float)( v[0] + 8 * Math.Sin( v[1] * 0.05 + host.RealTime ) * Math.Sin( v[2] * 0.05 + host.RealTime ) );
-                    nv[1] = (float)( v[1] + 8 * Math.Sin( v[0] * 0.05 + host.RealTime ) * Math.Sin( v[2] * 0.05 + host.RealTime ) );
+                    nv[0] = ( Single ) ( v[0] + 8 * Math.Sin( v[1] * 0.05 + host.RealTime ) * Math.Sin( v[2] * 0.05 + host.RealTime ) );
+                    nv[1] = ( Single ) ( v[1] + 8 * Math.Sin( v[0] * 0.05 + host.RealTime ) * Math.Sin( v[2] * 0.05 + host.RealTime ) );
                     nv[2] = v[2];
 
                     GL.Vertex3( nv );
@@ -1089,16 +1089,16 @@ namespace SharpQuake
         {
             DisableMultitexture();
 
-            float[] nv = new float[3];
+            Single[] nv = new Single[3];
             GL.Begin( PrimitiveType.TriangleFan );
 
-            for( int i = 0; i < p.numverts; i++ )
+            for( var i = 0; i < p.numverts; i++ )
             {
-                float[] v = p.verts[i];
+                Single[] v = p.verts[i];
                 GL.TexCoord2( v[5], v[6] );
 
-                nv[0] = (float)( v[0] + 8 * Math.Sin( v[1] * 0.05 + host.RealTime ) * Math.Sin( v[2] * 0.05 + host.RealTime ) );
-                nv[1] = (float)( v[1] + 8 * Math.Sin( v[0] * 0.05 + host.RealTime ) * Math.Sin( v[2] * 0.05 + host.RealTime ) );
+                nv[0] = ( Single ) ( v[0] + 8 * Math.Sin( v[1] * 0.05 + host.RealTime ) * Math.Sin( v[2] * 0.05 + host.RealTime ) );
+                nv[1] = ( Single ) ( v[1] + 8 * Math.Sin( v[0] * 0.05 + host.RealTime ) * Math.Sin( v[2] * 0.05 + host.RealTime ) );
                 nv[2] = v[2];
 
                 GL.Vertex3( nv );
@@ -1110,16 +1110,16 @@ namespace SharpQuake
         {
             DisableMultitexture();
 
-            float[] nv = new float[3];
+            Single[] nv = new Single[3];
             GL.Begin( PrimitiveType.TriangleFan );
-            for( int i = 0; i < p.numverts; i++ )
+            for( var i = 0; i < p.numverts; i++ )
             {
-                float[] v = p.verts[i];
+                Single[] v = p.verts[i];
 
                 GL.TexCoord2( v[3], v[4] );
 
-                nv[0] = (float)( v[0] + 8 * Math.Sin( v[1] * 0.05 + host.RealTime ) * Math.Sin( v[2] * 0.05 + host.RealTime ) );
-                nv[1] = (float)( v[1] + 8 * Math.Sin( v[0] * 0.05 + host.RealTime ) * Math.Sin( v[2] * 0.05 + host.RealTime ) );
+                nv[0] = ( Single ) ( v[0] + 8 * Math.Sin( v[1] * 0.05 + host.RealTime ) * Math.Sin( v[2] * 0.05 + host.RealTime ) );
+                nv[1] = ( Single ) ( v[1] + 8 * Math.Sin( v[0] * 0.05 + host.RealTime ) * Math.Sin( v[2] * 0.05 + host.RealTime ) );
                 nv[2] = v[2];
 
                 GL.Vertex3( nv );
@@ -1127,14 +1127,14 @@ namespace SharpQuake
             GL.End();
         }
 
-        private static void CommitLightmap( int i )
+        private static void CommitLightmap( Int32 i )
         {
             _LightMapModified[i] = false;
             glRect_t theRect = _LightMapRectChange[i];
             GCHandle handle = GCHandle.Alloc( _LightMaps, GCHandleType.Pinned );
             try
             {
-                long addr = handle.AddrOfPinnedObject().ToInt64() +
+                var addr = handle.AddrOfPinnedObject().ToInt64() +
                     ( i * BLOCK_HEIGHT + theRect.t ) * BLOCK_WIDTH * _LightMapBytes;
                 GL.TexSubImage2D( TextureTarget.Texture2D, 0, 0, theRect.t,
                     BLOCK_WIDTH, theRect.h, Drawer.LightMapFormat,
@@ -1166,8 +1166,8 @@ namespace SharpQuake
             if( t.anim_total == 0 )
                 return t;
 
-            int reletive = (int)( client.cl.time * 10 ) % t.anim_total;
-            int count = 0;
+            var reletive = ( Int32 ) ( client.cl.time * 10 ) % t.anim_total;
+            var count = 0;
             while( t.anim_min > reletive || t.anim_max <= reletive )
             {
                 t = t.anim_next;
@@ -1195,8 +1195,8 @@ namespace SharpQuake
             _LightMapPolys[fa.lightmaptexturenum] = fa.polys;
 
             // check for lightmap modification
-            bool flag = false;
-            for( int maps = 0; maps < bsp_file.MAXLIGHTMAPS && fa.styles[maps] != 255; maps++ )
+            var flag = false;
+            for( var maps = 0; maps < bsp_file.MAXLIGHTMAPS && fa.styles[maps] != 255; maps++ )
                 if( _LightStyleValue[fa.styles[maps]] != fa.cached_light[maps] )
                 {
                     flag = true;
@@ -1211,7 +1211,7 @@ namespace SharpQuake
                 {
                     _LightMapModified[fa.lightmaptexturenum] = true;
                     UpdateRect( fa, ref _LightMapRectChange[fa.lightmaptexturenum] );
-                    int offset = fa.lightmaptexturenum * _LightMapBytes * BLOCK_WIDTH * BLOCK_HEIGHT +
+                    var offset = fa.lightmaptexturenum * _LightMapBytes * BLOCK_WIDTH * BLOCK_HEIGHT +
                         fa.light_t * BLOCK_WIDTH * _LightMapBytes + fa.light_s * _LightMapBytes;
                     BuildLightMap( fa, new ByteArraySegment( _LightMaps, offset ), BLOCK_WIDTH * _LightMapBytes );
                 }
@@ -1227,7 +1227,7 @@ namespace SharpQuake
             Drawer.CurrentTexture = -1;
 
             model_t clmodel = e.model;
-            bool rotated = false;
+            var rotated = false;
             Vector3 mins, maxs;
             if( e.angles.X != 0 || e.angles.Y != 0 || e.angles.Z != 0 )
             {
@@ -1267,7 +1267,7 @@ namespace SharpQuake
             // instanced model
             if( clmodel.firstmodelsurface != 0 && _glFlashBlend.Value == 0 )
             {
-                for( int k = 0; k < client.MAX_DLIGHTS; k++ )
+                for( var k = 0; k < client.MAX_DLIGHTS; k++ )
                 {
                     if( ( client.DLights[k].die < client.cl.time ) || ( client.DLights[k].radius == 0 ) )
                         continue;
@@ -1281,21 +1281,21 @@ namespace SharpQuake
             RotateForEntity( e );
             e.angles.X = -e.angles.X;	// stupid quake bug
 
-            int surfOffset = clmodel.firstmodelsurface;
+            var surfOffset = clmodel.firstmodelsurface;
             msurface_t[] psurf = clmodel.surfaces; //[clmodel.firstmodelsurface];
 
             //
             // draw texture
             //
-            for( int i = 0; i < clmodel.nummodelsurfaces; i++, surfOffset++ )
+            for( var i = 0; i < clmodel.nummodelsurfaces; i++, surfOffset++ )
             {
                 // find which side of the node we are on
                 mplane_t pplane = psurf[surfOffset].plane;
 
-                float dot = Vector3.Dot( _ModelOrg, pplane.normal ) - pplane.dist;
+                var dot = Vector3.Dot( _ModelOrg, pplane.normal ) - pplane.dist;
 
                 // draw the polygon
-                bool planeBack = ( psurf[surfOffset].flags & Surf.SURF_PLANEBACK ) != 0;
+                var planeBack = ( psurf[surfOffset].flags & Surf.SURF_PLANEBACK ) != 0;
                 if( ( planeBack && ( dot < -QDef.BACKFACE_EPSILON ) ) || ( !planeBack && ( dot > QDef.BACKFACE_EPSILON ) ) )
                 {
                     if( _glTexSort.Value != 0 )
