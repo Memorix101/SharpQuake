@@ -283,7 +283,7 @@ namespace SharpQuake
                     CheckDrawCenterString();
                     sbar.Draw();
                     DrawConsole();
-                    menu.Draw();
+                    Menu.Draw();
                 }
 
                 view.UpdatePalette();

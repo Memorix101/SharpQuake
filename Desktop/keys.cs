@@ -440,12 +440,12 @@ namespace SharpQuake
                         break;
 
                     case keydest_t.key_menu:
-                        menu.KeyDown( key );
+                        Menu.KeyDown( key );
                         break;
 
                     case keydest_t.key_game:
                     case keydest_t.key_console:
-                        menu.ToggleMenu_f();
+                        Menu.ToggleMenu_f();
                         break;
 
                     default:
@@ -483,7 +483,7 @@ namespace SharpQuake
             //
             if( client.cls.demoplayback && down && _ConsoleKeys[key] && _KeyDest == keydest_t.key_game )
             {
-                menu.ToggleMenu_f();
+                Menu.ToggleMenu_f();
                 return;
             }
 
@@ -526,7 +526,7 @@ namespace SharpQuake
                     break;
 
                 case keydest_t.key_menu:
-                    menu.KeyDown( key );
+                    Menu.KeyDown( key );
                     break;
 
                 case keydest_t.key_game:

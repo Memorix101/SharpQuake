@@ -282,7 +282,7 @@ namespace SharpQuake
             Wad.LoadWadFile( "gfx.wad" );
             Key.Init();
             Con.Init();
-            menu.Init();
+            Menu.Init();
             progs.Init();
             Mod.Init();
             net.Init();

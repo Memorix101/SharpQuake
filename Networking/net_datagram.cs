@@ -962,7 +962,7 @@ namespace SharpQuake
             {
                 reason = "No Response";
                 Con.Print( "{0}\n", reason );
-                menu.ReturnReason = reason;
+                Menu.ReturnReason = reason;
                 goto ErrorReturn;
             }
 
@@ -970,7 +970,7 @@ namespace SharpQuake
             {
                 reason = "Network Error";
                 Con.Print( "{0}\n", reason );
-                menu.ReturnReason = reason;
+                Menu.ReturnReason = reason;
                 goto ErrorReturn;
             }
 
@@ -979,7 +979,7 @@ namespace SharpQuake
             {
                 reason = net.Reader.ReadString();
                 Con.Print( reason );
-                menu.ReturnReason = reason;
+                Menu.ReturnReason = reason;
                 goto ErrorReturn;
             }
 
@@ -993,7 +993,7 @@ namespace SharpQuake
             {
                 reason = "Bad Response";
                 Con.Print( "{0}\n", reason );
-                menu.ReturnReason = reason;
+                Menu.ReturnReason = reason;
                 goto ErrorReturn;
             }
 
@@ -1007,21 +1007,21 @@ namespace SharpQuake
             {
                 reason = "Connect to Game failed";
                 Con.Print( "{0}\n", reason );
-                menu.ReturnReason = reason;
+                Menu.ReturnReason = reason;
                 goto ErrorReturn;
             }
 
-            menu.ReturnOnError = false;
+            Menu.ReturnOnError = false;
             return sock;
 
 ErrorReturn:
             net.FreeSocket( sock );
 ErrorReturn2:
             net.LanDriver.CloseSocket( newsock );
-            if( menu.ReturnOnError && menu.ReturnMenu != null )
+            if( Menu.ReturnOnError && Menu.ReturnMenu != null )
             {
-                menu.ReturnMenu.Show();
-                menu.ReturnOnError = false;
+                Menu.ReturnMenu.Show();
+                Menu.ReturnOnError = false;
             }
             return null;
         }
