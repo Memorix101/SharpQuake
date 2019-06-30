@@ -267,9 +267,9 @@ namespace SharpQuake
                 if( !client.active )
                     continue;
                 Single total = 0;
-                for( var j = 0; j < server.NUM_PING_TIMES; j++ )
+                for( var j = 0; j < ServerDef.NUM_PING_TIMES; j++ )
                     total += client.ping_times[j];
-                total /= server.NUM_PING_TIMES;
+                total /= ServerDef.NUM_PING_TIMES;
                 server.ClientPrint( "{0,4} {1}\n", ( Int32 ) ( total * 1000 ), client.name );
             }
         }
@@ -380,7 +380,7 @@ namespace SharpQuake
         private static String SavegameComment()
         {
             var result = String.Format( "{0} kills:{1,3}/{2,3}", client.cl.levelname,
-                client.cl.stats[QStats.STAT_MONSTERS], client.cl.stats[QStats.STAT_TOTALMONSTERS] );
+                client.cl.stats[QStatsDef.STAT_MONSTERS], client.cl.stats[QStatsDef.STAT_TOTALMONSTERS] );
 
             // convert space to _ to make stdio happy
             result = result.Replace( ' ', '_' );
@@ -455,7 +455,7 @@ namespace SharpQuake
                 writer.WriteLine( SAVEGAME_VERSION );
                 writer.WriteLine( SavegameComment() );
 
-                for( var i = 0; i < server.NUM_SPAWN_PARMS; i++ )
+                for( var i = 0; i < ServerDef.NUM_SPAWN_PARMS; i++ )
                     writer.WriteLine( server.svs.clients[0].spawn_parms[i].ToString( "F6",
                         CultureInfo.InvariantCulture.NumberFormat ) );
 
@@ -525,7 +525,7 @@ namespace SharpQuake
                 }
                 line = reader.ReadLine();
 
-                Single[] spawn_parms = new Single[server.NUM_SPAWN_PARMS];
+                Single[] spawn_parms = new Single[ServerDef.NUM_SPAWN_PARMS];
                 for( var i = 0; i < spawn_parms.Length; i++ )
                 {
                     line = reader.ReadLine();
@@ -605,7 +605,7 @@ namespace SharpQuake
                 server.sv.num_edicts = entnum;
                 server.sv.time = time;
 
-                for( var i = 0; i < server.NUM_SPAWN_PARMS; i++ )
+                for( var i = 0; i < ServerDef.NUM_SPAWN_PARMS; i++ )
                     server.svs.clients[0].spawn_parms[i] = spawn_parms[i];
             }
 
@@ -977,19 +977,19 @@ namespace SharpQuake
             // send some stats
             //
             msg.WriteByte( protocol.svc_updatestat );
-            msg.WriteByte( QStats.STAT_TOTALSECRETS );
+            msg.WriteByte( QStatsDef.STAT_TOTALSECRETS );
             msg.WriteLong( ( Int32 ) progs.GlobalStruct.total_secrets );
 
             msg.WriteByte( protocol.svc_updatestat );
-            msg.WriteByte( QStats.STAT_TOTALMONSTERS );
+            msg.WriteByte( QStatsDef.STAT_TOTALMONSTERS );
             msg.WriteLong( ( Int32 ) progs.GlobalStruct.total_monsters );
 
             msg.WriteByte( protocol.svc_updatestat );
-            msg.WriteByte( QStats.STAT_SECRETS );
+            msg.WriteByte( QStatsDef.STAT_SECRETS );
             msg.WriteLong( ( Int32 ) progs.GlobalStruct.found_secrets );
 
             msg.WriteByte( protocol.svc_updatestat );
-            msg.WriteByte( QStats.STAT_MONSTERS );
+            msg.WriteByte( QStatsDef.STAT_MONSTERS );
             msg.WriteLong( ( Int32 ) progs.GlobalStruct.killed_monsters );
 
             //
@@ -1141,21 +1141,21 @@ namespace SharpQuake
                         if( t[0] == '6' )
                         {
                             if( t[1] == 'a' )
-                                server.Player.v.items = ( Int32 ) server.Player.v.items | QItems.HIT_PROXIMITY_GUN;
+                                server.Player.v.items = ( Int32 ) server.Player.v.items | QItemsDef.HIT_PROXIMITY_GUN;
                             else
-                                server.Player.v.items = ( Int32 ) server.Player.v.items | QItems.IT_GRENADE_LAUNCHER;
+                                server.Player.v.items = ( Int32 ) server.Player.v.items | QItemsDef.IT_GRENADE_LAUNCHER;
                         }
                         else if( t[0] == '9' )
-                            server.Player.v.items = ( Int32 ) server.Player.v.items | QItems.HIT_LASER_CANNON;
+                            server.Player.v.items = ( Int32 ) server.Player.v.items | QItemsDef.HIT_LASER_CANNON;
                         else if( t[0] == '0' )
-                            server.Player.v.items = ( Int32 ) server.Player.v.items | QItems.HIT_MJOLNIR;
+                            server.Player.v.items = ( Int32 ) server.Player.v.items | QItemsDef.HIT_MJOLNIR;
                         else if( t[0] >= '2' )
-                            server.Player.v.items = ( Int32 ) server.Player.v.items | ( QItems.IT_SHOTGUN << ( t[0] - '2' ) );
+                            server.Player.v.items = ( Int32 ) server.Player.v.items | ( QItemsDef.IT_SHOTGUN << ( t[0] - '2' ) );
                     }
                     else
                     {
                         if( t[0] >= '2' )
-                            server.Player.v.items = ( Int32 ) server.Player.v.items | ( QItems.IT_SHOTGUN << ( t[0] - '2' ) );
+                            server.Player.v.items = ( Int32 ) server.Player.v.items | ( QItemsDef.IT_SHOTGUN << ( t[0] - '2' ) );
                     }
                     break;
 
@@ -1170,7 +1170,7 @@ namespace SharpQuake
                     if( Common.GameKind == GameKind.Rogue )
                     {
                         if( progs.SetEdictFieldFloat( server.Player, "ammo_nails1", v ) )
-                            if( server.Player.v.weapon <= QItems.IT_LIGHTNING )
+                            if( server.Player.v.weapon <= QItemsDef.IT_LIGHTNING )
                                 server.Player.v.ammo_nails = v;
                     }
                     else
@@ -1181,7 +1181,7 @@ namespace SharpQuake
                     if( Common.GameKind == GameKind.Rogue )
                     {
                         if( progs.SetEdictFieldFloat( server.Player, "ammo_lava_nails", v ) )
-                            if( server.Player.v.weapon > QItems.IT_LIGHTNING )
+                            if( server.Player.v.weapon > QItemsDef.IT_LIGHTNING )
                                 server.Player.v.ammo_nails = v;
                     }
                     break;
@@ -1190,7 +1190,7 @@ namespace SharpQuake
                     if( Common.GameKind == GameKind.Rogue )
                     {
                         if( progs.SetEdictFieldFloat( server.Player, "ammo_rockets1", v ) )
-                            if( server.Player.v.weapon <= QItems.IT_LIGHTNING )
+                            if( server.Player.v.weapon <= QItemsDef.IT_LIGHTNING )
                                 server.Player.v.ammo_rockets = v;
                     }
                     else
@@ -1203,7 +1203,7 @@ namespace SharpQuake
                     if( Common.GameKind == GameKind.Rogue )
                     {
                         if( progs.SetEdictFieldFloat( server.Player, "ammo_multi_rockets", v ) )
-                            if( server.Player.v.weapon > QItems.IT_LIGHTNING )
+                            if( server.Player.v.weapon > QItemsDef.IT_LIGHTNING )
                                 server.Player.v.ammo_rockets = v;
                     }
                     break;
@@ -1216,7 +1216,7 @@ namespace SharpQuake
                     if( Common.GameKind == GameKind.Rogue )
                     {
                         if( progs.SetEdictFieldFloat( server.Player, "ammo_cells1", v ) )
-                            if( server.Player.v.weapon <= QItems.IT_LIGHTNING )
+                            if( server.Player.v.weapon <= QItemsDef.IT_LIGHTNING )
                                 server.Player.v.ammo_cells = v;
                     }
                     else
@@ -1229,7 +1229,7 @@ namespace SharpQuake
                     if( Common.GameKind == GameKind.Rogue )
                     {
                         if( progs.SetEdictFieldFloat( server.Player, "ammo_plasma", v ) )
-                            if( server.Player.v.weapon > QItems.IT_LIGHTNING )
+                            if( server.Player.v.weapon > QItemsDef.IT_LIGHTNING )
                                 server.Player.v.ammo_cells = v;
                     }
                     break;
@@ -1255,7 +1255,7 @@ namespace SharpQuake
             if( e == null )
                 return;
 
-            model_t m = Mod.ForName( Command.Argv( 1 ), false );
+            Model m = Mod.ForName( Command.Argv( 1 ), false );
             if( m == null )
             {
                 Con.Print( "Can't load {0}\n", Command.Argv( 1 ) );
@@ -1275,7 +1275,7 @@ namespace SharpQuake
             if( e == null )
                 return;
 
-            model_t m = client.cl.model_precache[( Int32 ) e.v.modelindex];
+            Model m = client.cl.model_precache[( Int32 ) e.v.modelindex];
 
             var f = MathLib.atoi( Command.Argv( 1 ) );
             if( f >= m.numframes )
@@ -1284,7 +1284,7 @@ namespace SharpQuake
             e.v.frame = f;
         }
 
-        private static void PrintFrameName( model_t m, Int32 frame )
+        private static void PrintFrameName( Model m, Int32 frame )
         {
             aliashdr_t hdr = Mod.GetExtraData( m );
             if( hdr == null )
@@ -1302,7 +1302,7 @@ namespace SharpQuake
             if( e == null )
                 return;
 
-            model_t m = client.cl.model_precache[( Int32 ) e.v.modelindex];
+            Model m = client.cl.model_precache[( Int32 ) e.v.modelindex];
 
             e.v.frame = e.v.frame + 1;
             if( e.v.frame >= m.numframes )
@@ -1320,7 +1320,7 @@ namespace SharpQuake
             if( e == null )
                 return;
 
-            model_t m = client.cl.model_precache[( Int32 ) e.v.modelindex];
+            Model m = client.cl.model_precache[( Int32 ) e.v.modelindex];
 
             e.v.frame = e.v.frame - 1;
             if( e.v.frame < 0 )

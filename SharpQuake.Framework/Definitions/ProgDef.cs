@@ -8,10 +8,12 @@ using string_t = System.Int32;
 
 namespace SharpQuake.Framework
 {
+    public delegate void builtin_t( );
+
     /// <summary>
     /// PR_functions
     /// </summary>
-    public static partial class ProgDefs
+    public static partial class ProgramDef
     {
         public const string_t DEF_SAVEGLOBAL = ( 1 << 15 );
         public const string_t MAX_PARMS = 8;

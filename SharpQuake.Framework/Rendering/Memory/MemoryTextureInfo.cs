@@ -7,14 +7,14 @@ using OpenTK;
 
 namespace SharpQuake.Framework
 {
-    public class mtexinfo_t
+    public class MemoryTextureInfo
     {
         public Vector4[] vecs; //public float[][] vecs; //[2][4];
         public Single mipadjust;
-        public texture_t texture;
+        public Texture texture;
         public Int32 flags;
 
-        public mtexinfo_t( )
+        public MemoryTextureInfo( )
         {
             vecs = new Vector4[2];// float[2][] { new float[4], new float[4] };
         }

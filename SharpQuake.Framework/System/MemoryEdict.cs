@@ -205,8 +205,8 @@ namespace SharpQuake.Framework
         public MemoryEdict( )
         {
             this.area = new Link( this );
-            this.leafnums = new Int16[ProgDefs.MAX_ENT_LEAFS];
-            this.fields = new Single[( ProgDefs.EdictSize - EntVars.SizeInBytes ) >> 2];
+            this.leafnums = new Int16[ProgramDef.MAX_ENT_LEAFS];
+            this.fields = new Single[( ProgramDef.EdictSize - EntVars.SizeInBytes ) >> 2];
         }
     } // edict_t;
 }

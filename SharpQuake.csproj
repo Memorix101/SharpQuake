@@ -132,7 +132,6 @@
     <Compile Include="Networking\net_loop.cs" />
     <Compile Include="Networking\net_tcp_ip.cs" />
     <Compile Include="Networking\net_vcr.cs" />
-    <Compile Include="System\progs.cs" />
     <Compile Include="System\pr_builtins.cs" />
     <Compile Include="System\pr_edict.cs" />
     <Compile Include="System\pr_exec.cs" />

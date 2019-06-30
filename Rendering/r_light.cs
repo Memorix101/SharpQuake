@@ -56,12 +56,12 @@ namespace SharpQuake
         /// <summary>
         /// R_MarkLights
         /// </summary>
-        private static void MarkLights( dlight_t light, Int32 bit, mnodebase_t node )
+        private static void MarkLights( dlight_t light, Int32 bit, MemoryNodeBase node )
         {
             if( node.contents < 0 )
                 return;
 
-            mnode_t n = (mnode_t)node;
+            MemoryNode n = (MemoryNode)node;
             Plane splitplane = n.plane;
             var dist = Vector3.Dot( light.origin, splitplane.normal ) - splitplane.dist;
 
@@ -79,7 +79,7 @@ namespace SharpQuake
             // mark the polygons
             for( var i = 0; i < n.numsurfaces; i++ )
             {
-                msurface_t surf = client.cl.worldmodel.surfaces[n.firstsurface + i];
+                MemorySurface surf = client.cl.worldmodel.surfaces[n.firstsurface + i];
                 if( surf.dlightframe != _DlightFrameCount )
                 {
                     surf.dlightbits = 0;
@@ -169,12 +169,12 @@ namespace SharpQuake
             return r;
         }
 
-        private static Int32 RecursiveLightPoint( mnodebase_t node, ref Vector3 start, ref Vector3 end )
+        private static Int32 RecursiveLightPoint( MemoryNodeBase node, ref Vector3 start, ref Vector3 end )
         {
             if( node.contents < 0 )
                 return -1;		// didn't hit anything
 
-            mnode_t n = (mnode_t)node;
+            MemoryNode n = (MemoryNode)node;
 
             // calculate mid point
 
@@ -202,14 +202,14 @@ namespace SharpQuake
             _LightSpot = mid;
             _LightPlane = plane;
 
-            msurface_t[] surf = client.cl.worldmodel.surfaces;
+            MemorySurface[] surf = client.cl.worldmodel.surfaces;
             Int32 offset = n.firstsurface;
             for( var i = 0; i < n.numsurfaces; i++, offset++ )
             {
-                if( ( surf[offset].flags & Surf.SURF_DRAWTILED ) != 0 )
+                if( ( surf[offset].flags & SurfaceDef.SURF_DRAWTILED ) != 0 )
                     continue;	// no lightmaps
 
-                mtexinfo_t tex = surf[offset].texinfo;
+                MemoryTextureInfo tex = surf[offset].texinfo;
 
                 var s = ( Int32 ) ( Vector3.Dot( mid, tex.vecs[0].Xyz ) + tex.vecs[0].W );
                 var t = ( Int32 ) ( Vector3.Dot( mid, tex.vecs[1].Xyz ) + tex.vecs[1].W );

@@ -34,7 +34,7 @@ namespace SharpQuake
     {
         private struct gefv_cache
         {
-            public ddef_t pcache;
+            public ProgramDefinition pcache;
             public String field;// char	field[MAX_FIELD_LEN];
         }
 
@@ -63,7 +63,7 @@ namespace SharpQuake
             }
         }
 
-        public static globalvars_t GlobalStruct;
+        public static GlobalVariables GlobalStruct;
         private const Int32 MAX_FIELD_LEN = 64;
         private const Int32 GEFV_CACHESIZE = 2;
 
@@ -89,12 +89,12 @@ namespace SharpQuake
         private static CVar _Saved3;// = { "saved3", "0", true };
         private static CVar _Saved4;// = { "saved4", "0", true };
 
-        private static dprograms_t _Progs; // progs
-        private static dfunction_t[] _Functions; // pr_functions
+        private static Program _Progs; // progs
+        private static ProgramFunction[] _Functions; // pr_functions
         private static String _Strings; // pr_strings
-        private static ddef_t[] _FieldDefs; // pr_fielddefs
-        private static ddef_t[] _GlobalDefs; // pr_globaldefs
-        private static dstatement_t[] _Statements; // pr_statements
+        private static ProgramDefinition[] _FieldDefs; // pr_fielddefs
+        private static ProgramDefinition[] _GlobalDefs; // pr_globaldefs
+        private static Statement[] _Statements; // pr_statements
 
         // pr_global_struct
         private static Single[] _Globals; // Added by Uze: all data after globalvars_t (numglobals * 4 - globalvars_t.SizeInBytes)
@@ -106,6 +106,15 @@ namespace SharpQuake
         private static Int64 _GlobalStructAddr;
         private static Int64 _GlobalsAddr;
         private static List<String> _DynamicStrings = new List<String>( 512 );
+
+        static progs()
+        {
+            // Temporary workaround - will fix later
+            ProgramsWrapper.OnGetString += ( strId ) =>
+            {
+                return GetString( strId );
+            };
+        }
 
         // PR_Init
         public static void Init()
@@ -150,7 +159,7 @@ namespace SharpQuake
 
             Byte[] buf = FileSystem.LoadFile( "progs.dat" );
 
-            _Progs = Utilities.BytesToStructure<dprograms_t>( buf, 0 );
+            _Progs = Utilities.BytesToStructure<Program>( buf, 0 );
             if( _Progs == null )
                 Utilities.Error( "PR_LoadProgs: couldn't load progs.dat" );
             Con.DPrint( "Programs occupy {0}K.\n", buf.Length / 1024 );
@@ -161,17 +170,17 @@ namespace SharpQuake
             // byte swap the header
             _Progs.SwapBytes();
 
-            if( _Progs.version != ProgDefs.PROG_VERSION )
-                Utilities.Error( "progs.dat has wrong version number ({0} should be {1})", _Progs.version, ProgDefs.PROG_VERSION );
-            if( _Progs.crc != ProgDefs.PROGHEADER_CRC )
+            if( _Progs.version != ProgramDef.PROG_VERSION )
+                Utilities.Error( "progs.dat has wrong version number ({0} should be {1})", _Progs.version, ProgramDef.PROG_VERSION );
+            if( _Progs.crc != ProgramDef.PROGHEADER_CRC )
                 Utilities.Error( "progs.dat system vars have been modified, progdefs.h is out of date" );
 
             // Functions
-            _Functions = new dfunction_t[_Progs.numfunctions];
+            _Functions = new ProgramFunction[_Progs.numfunctions];
             var offset = _Progs.ofs_functions;
-            for( var i = 0; i < _Functions.Length; i++, offset += dfunction_t.SizeInBytes )
+            for( var i = 0; i < _Functions.Length; i++, offset += ProgramFunction.SizeInBytes )
             {
-                _Functions[i] = Utilities.BytesToStructure<dfunction_t>( buf, offset );
+                _Functions[i] = Utilities.BytesToStructure<ProgramFunction>( buf, offset );
                 _Functions[i].SwapBytes();
             }
 
@@ -188,31 +197,31 @@ namespace SharpQuake
             _Strings = Encoding.ASCII.GetString( buf, str0, length );
 
             // Globaldefs
-            _GlobalDefs = new ddef_t[_Progs.numglobaldefs];
+            _GlobalDefs = new ProgramDefinition[_Progs.numglobaldefs];
             offset = _Progs.ofs_globaldefs;
-            for( var i = 0; i < _GlobalDefs.Length; i++, offset += ddef_t.SizeInBytes )
+            for( var i = 0; i < _GlobalDefs.Length; i++, offset += ProgramDefinition.SizeInBytes )
             {
-                _GlobalDefs[i] = Utilities.BytesToStructure<ddef_t>( buf, offset );
+                _GlobalDefs[i] = Utilities.BytesToStructure<ProgramDefinition>( buf, offset );
                 _GlobalDefs[i].SwapBytes();
             }
 
             // Fielddefs
-            _FieldDefs = new ddef_t[_Progs.numfielddefs];
+            _FieldDefs = new ProgramDefinition[_Progs.numfielddefs];
             offset = _Progs.ofs_fielddefs;
-            for( var i = 0; i < _FieldDefs.Length; i++, offset += ddef_t.SizeInBytes )
+            for( var i = 0; i < _FieldDefs.Length; i++, offset += ProgramDefinition.SizeInBytes )
             {
-                _FieldDefs[i] = Utilities.BytesToStructure<ddef_t>( buf, offset );
+                _FieldDefs[i] = Utilities.BytesToStructure<ProgramDefinition>( buf, offset );
                 _FieldDefs[i].SwapBytes();
-                if( ( _FieldDefs[i].type & ProgDefs.DEF_SAVEGLOBAL ) != 0 )
+                if( ( _FieldDefs[i].type & ProgramDef.DEF_SAVEGLOBAL ) != 0 )
                     Utilities.Error( "PR_LoadProgs: pr_fielddefs[i].type & DEF_SAVEGLOBAL" );
             }
 
             // Statements
-            _Statements = new dstatement_t[_Progs.numstatements];
+            _Statements = new Statement[_Progs.numstatements];
             offset = _Progs.ofs_statements;
-            for( var i = 0; i < _Statements.Length; i++, offset += dstatement_t.SizeInBytes )
+            for( var i = 0; i < _Statements.Length; i++, offset += Statement.SizeInBytes )
             {
-                _Statements[i] = Utilities.BytesToStructure<dstatement_t>( buf, offset );
+                _Statements[i] = Utilities.BytesToStructure<Statement>( buf, offset );
                 _Statements[i].SwapBytes();
             }
 
@@ -225,12 +234,12 @@ namespace SharpQuake
                     SwapHelper.Swap4b( buf, offset );
                 }
             }
-            GlobalStruct = Utilities.BytesToStructure<globalvars_t>( buf, _Progs.ofs_globals );
-            _Globals = new Single[_Progs.numglobals - globalvars_t.SizeInBytes / 4];
-            Buffer.BlockCopy( buf, _Progs.ofs_globals + globalvars_t.SizeInBytes, _Globals, 0, _Globals.Length * 4 );
+            GlobalStruct = Utilities.BytesToStructure<GlobalVariables>( buf, _Progs.ofs_globals );
+            _Globals = new Single[_Progs.numglobals - GlobalVariables.SizeInBytes / 4];
+            Buffer.BlockCopy( buf, _Progs.ofs_globals + GlobalVariables.SizeInBytes, _Globals, 0, _Globals.Length * 4 );
 
             _EdictSize = _Progs.entityfields * 4 + Edict.SizeInBytes - EntVars.SizeInBytes;
-            ProgDefs.EdictSize = _EdictSize;
+            ProgramDef.EdictSize = _EdictSize;
             _HGlobals = GCHandle.Alloc( _Globals, GCHandleType.Pinned );
             _GlobalsAddr = _HGlobals.AddrOfPinnedObject().ToInt64();
 
@@ -408,7 +417,7 @@ namespace SharpQuake
                 if( keyname[0] == '_' )
                     continue;
 
-                ddef_t key = FindField( keyname );
+                ProgramDefinition key = FindField( keyname );
                 if( key == null )
                 {
                     Con.Print( "'{0}' is not a field\n", keyname );
@@ -446,13 +455,13 @@ namespace SharpQuake
             Con.Print( "\nEDICT {0}:\n", server.NumForEdict( ed ) );
             for( var i = 1; i < _Progs.numfielddefs; i++ )
             {
-                ddef_t d = _FieldDefs[i];
+                ProgramDefinition d = _FieldDefs[i];
                 var name = GetString( d.s_name );
 
                 if( name.Length > 2 && name[name.Length - 2] == '_' )
                     continue; // skip _x, _y, _z vars
 
-                var type = d.type & ~ProgDefs.DEF_SAVEGLOBAL;
+                var type = d.type & ~ProgramDef.DEF_SAVEGLOBAL;
                 Int32 offset;
                 if( ed.IsV( d.ofs, out offset ) )
                 {
@@ -463,7 +472,7 @@ namespace SharpQuake
                             continue;
 
                         Con.Print( "{0,15} ", name );
-                        Con.Print( "{0}\n", ValueString( (etype_t)d.type, (void*)v ) );
+                        Con.Print( "{0}\n", ValueString( (EdictType)d.type, (void*)v ) );
                     }
                 }
                 else
@@ -475,7 +484,7 @@ namespace SharpQuake
                             continue;
 
                         Con.Print( "{0,15} ", name );
-                        Con.Print( "{0}\n", ValueString( (etype_t)d.type, (void*)v ) );
+                        Con.Print( "{0}\n", ValueString( (EdictType)d.type, (void*)v ) );
                     }
                 }
             }
@@ -549,7 +558,7 @@ namespace SharpQuake
 
         public static Single GetEdictFieldFloat( MemoryEdict ed, String field, Single defValue = 0 )
         {
-            ddef_t def = CachedSearch( ed, field );
+            ProgramDefinition def = CachedSearch( ed, field );
             if( def == null )
                 return defValue;
 
@@ -558,7 +567,7 @@ namespace SharpQuake
 
         public static Boolean SetEdictFieldFloat( MemoryEdict ed, String field, Single value )
         {
-            ddef_t def = CachedSearch( ed, field );
+            ProgramDefinition def = CachedSearch( ed, field );
             if( def != null )
             {
                 ed.SetFloat( def.ofs, value );
@@ -596,14 +605,14 @@ namespace SharpQuake
             writer.WriteLine( "{" );
             for( var i = 0; i < _Progs.numglobaldefs; i++ )
             {
-                ddef_t def = _GlobalDefs[i];
-                etype_t type = (etype_t)def.type;
-                if( ( def.type & ProgDefs.DEF_SAVEGLOBAL ) == 0 )
+                ProgramDefinition def = _GlobalDefs[i];
+                EdictType type = (EdictType)def.type;
+                if( ( def.type & ProgramDef.DEF_SAVEGLOBAL ) == 0 )
                     continue;
 
-                type &= (etype_t)~ProgDefs.DEF_SAVEGLOBAL;
+                type &= (EdictType)~ProgramDef.DEF_SAVEGLOBAL;
 
-                if( type != etype_t.ev_string && type != etype_t.ev_float && type != etype_t.ev_entity )
+                if( type != EdictType.ev_string && type != EdictType.ev_float && type != EdictType.ev_entity )
                     continue;
 
                 writer.Write( "\"" );
@@ -630,12 +639,12 @@ namespace SharpQuake
 
             for( var i = 1; i < _Progs.numfielddefs; i++ )
             {
-                ddef_t d = _FieldDefs[i];
+                ProgramDefinition d = _FieldDefs[i];
                 var name = GetString( d.s_name );
                 if( name != null && name.Length > 2 && name[name.Length - 2] == '_' )// [strlen(name) - 2] == '_')
                     continue;	// skip _x, _y, _z vars
 
-                var type = d.type & ~ProgDefs.DEF_SAVEGLOBAL;
+                var type = d.type & ~ProgramDef.DEF_SAVEGLOBAL;
                 Int32 offset1;
                 if( ed.IsV( d.ofs, out offset1 ) )
                 {
@@ -645,7 +654,7 @@ namespace SharpQuake
                         if( IsEmptyField( type, v ) )
                             continue;
 
-                        writer.WriteLine( "\"{0}\" \"{1}\"", name, UglyValueString( (etype_t)d.type, (EVal*)v ) );
+                        writer.WriteLine( "\"{0}\" \"{1}\"", name, UglyValueString( (EdictType)d.type, (EVal*)v ) );
                     }
                 }
                 else
@@ -656,7 +665,7 @@ namespace SharpQuake
                         if( IsEmptyField( type, v ) )
                             continue;
 
-                        writer.WriteLine( "\"{0}\" \"{1}\"", name, UglyValueString( (etype_t)d.type, (EVal*)v ) );
+                        writer.WriteLine( "\"{0}\" \"{1}\"", name, UglyValueString( (EdictType)d.type, (EVal*)v ) );
                     }
                 }
             }
@@ -689,7 +698,7 @@ namespace SharpQuake
                 if( Tokeniser.Token.StartsWith( "}" ) )
                     Utilities.Error( "ED_ParseEntity: closing brace without data" );
 
-                ddef_t key = FindGlobal( keyname );
+                ProgramDefinition key = FindGlobal( keyname );
                 if( key == null )
                 {
                     Con.Print( "'{0}' is not a global\n", keyname );
@@ -711,7 +720,7 @@ namespace SharpQuake
 
         private static void Test5_f()
         {
-            entity_t p = client.ViewEntity;
+            Entity p = client.ViewEntity;
             if( p == null )
                 return;
 
@@ -796,7 +805,7 @@ namespace SharpQuake
         /// <summary>
         /// ED_FindFunction
         /// </summary>
-        private static dfunction_t FindFunction( String name )
+        private static ProgramFunction FindFunction( String name )
         {
             var i = IndexOfFunction( name );
             if( i != -1 )
@@ -821,7 +830,7 @@ namespace SharpQuake
         /// to choose between thistwo parts.
         /// Warning: Key offset is in integers not bytes!
         /// </summary>
-        private static unsafe Boolean ParsePair( MemoryEdict ent, ddef_t key, String s )
+        private static unsafe Boolean ParsePair( MemoryEdict ent, ProgramDefinition key, String s )
         {
             Int32 offset1;
             if( ent.IsV( key.ofs, out offset1 ) )
@@ -843,32 +852,32 @@ namespace SharpQuake
         /// Can parse either fields or globals returns false if error
         /// Uze: Warning! value pointer is already with correct offset (value = base + key.ofs)!
         /// </summary>
-        private static unsafe Boolean ParsePair( void* value, ddef_t key, String s )
+        private static unsafe Boolean ParsePair( void* value, ProgramDefinition key, String s )
         {
             void* d = value;// (void *)((int *)base + key->ofs);
 
-            switch( (etype_t)( key.type & ~ProgDefs.DEF_SAVEGLOBAL ) )
+            switch( (EdictType)( key.type & ~ProgramDef.DEF_SAVEGLOBAL ) )
             {
-                case etype_t.ev_string:
+                case EdictType.ev_string:
                     *( Int32* )d = NewString( s );// - pr_strings;
                     break;
 
-                case etype_t.ev_float:
+                case EdictType.ev_float:
                     *( Single* )d = MathLib.atof( s );
                     break;
 
-                case etype_t.ev_vector:
+                case EdictType.ev_vector:
                     String[] vs = s.Split( ' ' );
                     ( ( Single* )d )[0] = MathLib.atof( vs[0] );
                     ( ( Single* )d )[1] = ( vs.Length > 1 ? MathLib.atof( vs[1] ) : 0 );
                     ( ( Single* )d )[2] = ( vs.Length > 2 ? MathLib.atof( vs[2] ) : 0 );
                     break;
 
-                case etype_t.ev_entity:
+                case EdictType.ev_entity:
                     *( Int32* )d = server.EdictToProg( server.EdictNum( MathLib.atoi( s ) ) );
                     break;
 
-                case etype_t.ev_field:
+                case EdictType.ev_field:
                     var f = IndexOfField( s );
                     if( f == -1 )
                     {
@@ -878,7 +887,7 @@ namespace SharpQuake
                     *( Int32* )d = GetInt32( _FieldDefs[f].ofs );
                     break;
 
-                case etype_t.ev_function:
+                case EdictType.ev_function:
                     var func = IndexOfFunction( s );
                     if( func == -1 )
                     {
@@ -910,12 +919,12 @@ namespace SharpQuake
         /// </summary>
         private static Boolean IsGlobalStruct( Int32 ofs, out Int32 offset )
         {
-            if( ofs < globalvars_t.SizeInBytes >> 2 )
+            if( ofs < GlobalVariables.SizeInBytes >> 2 )
             {
                 offset = ofs;
                 return true;
             }
-            offset = ofs - ( globalvars_t.SizeInBytes >> 2 );
+            offset = ofs - ( GlobalVariables.SizeInBytes >> 2 );
             return false;
         }
 
@@ -936,13 +945,13 @@ namespace SharpQuake
 
         private static unsafe void Set( Int32 offset, Int32 value )
         {
-            if( offset < globalvars_t.SizeInBytes >> 2 )
+            if( offset < GlobalVariables.SizeInBytes >> 2 )
             {
                 *( ( Int32* )_GlobalStructAddr + offset ) = value;
             }
             else
             {
-                *( ( Int32* )_GlobalsAddr + offset - ( globalvars_t.SizeInBytes >> 2 ) ) = value;
+                *( ( Int32* )_GlobalsAddr + offset - ( GlobalVariables.SizeInBytes >> 2 ) ) = value;
             }
         }
 
@@ -954,7 +963,7 @@ namespace SharpQuake
         /// <summary>
         /// ED_FindField
         /// </summary>
-        private static ddef_t FindField( String name )
+        private static ProgramDefinition FindField( String name )
         {
             var i = IndexOfField( name );
             if( i != -1 )
@@ -966,45 +975,45 @@ namespace SharpQuake
         /// <summary>
         /// PR_ValueString
         /// </summary>
-        private static unsafe String ValueString( etype_t type, void* val )
+        private static unsafe String ValueString( EdictType type, void* val )
         {
             String result;
-            type &= (etype_t)~ProgDefs.DEF_SAVEGLOBAL;
+            type &= (EdictType)~ProgramDef.DEF_SAVEGLOBAL;
 
             switch( type )
             {
-                case etype_t.ev_string:
+                case EdictType.ev_string:
                     result = GetString( *( Int32* )val );
                     break;
 
-                case etype_t.ev_entity:
+                case EdictType.ev_entity:
                     result = "entity " + server.NumForEdict( server.ProgToEdict( *( Int32* )val ) );
                     break;
 
-                case etype_t.ev_function:
-                    dfunction_t f = _Functions[*( Int32* )val];
+                case EdictType.ev_function:
+                    ProgramFunction f = _Functions[*( Int32* )val];
                     result = GetString( f.s_name ) + "()";
                     break;
 
-                case etype_t.ev_field:
-                    ddef_t def = FindField( *( Int32* )val );
+                case EdictType.ev_field:
+                    ProgramDefinition def = FindField( *( Int32* )val );
                     result = "." + GetString( def.s_name );
                     break;
 
-                case etype_t.ev_void:
+                case EdictType.ev_void:
                     result = "void";
                     break;
 
-                case etype_t.ev_float:
+                case EdictType.ev_float:
                     result = ( *( Single* )val ).ToString( "F1", CultureInfo.InvariantCulture.NumberFormat );
                     break;
 
-                case etype_t.ev_vector:
+                case EdictType.ev_vector:
                     result = String.Format( CultureInfo.InvariantCulture.NumberFormat,
                         "{0,5:F1} {1,5:F1} {2,5:F1}", ( ( Single* )val )[0], ( ( Single* )val )[1], ( ( Single* )val )[2] );
                     break;
 
-                case etype_t.ev_pointer:
+                case EdictType.ev_pointer:
                     result = "pointer";
                     break;
 
@@ -1029,7 +1038,7 @@ namespace SharpQuake
         /// <summary>
         /// ED_FieldAtOfs
         /// </summary>
-        private static ddef_t FindField( Int32 ofs )
+        private static ProgramDefinition FindField( Int32 ofs )
         {
             var i = IndexOfField( ofs );
             if( i != -1 )
@@ -1038,9 +1047,9 @@ namespace SharpQuake
             return null;
         }
 
-        private static ddef_t CachedSearch( MemoryEdict ed, String field )
+        private static ProgramDefinition CachedSearch( MemoryEdict ed, String field )
         {
-            ddef_t def = null;
+            ProgramDefinition def = null;
             for( var i = 0; i < GEFV_CACHESIZE; i++ )
             {
                 if( field == _gefvCache[i].field )
@@ -1075,40 +1084,40 @@ namespace SharpQuake
         /// Returns a string describing *data in a type specific manner
         /// Easier to parse than PR_ValueString
         /// </summary>
-        private static unsafe String UglyValueString( etype_t type, EVal* val )
+        private static unsafe String UglyValueString( EdictType type, EVal* val )
         {
-            type &= (etype_t)~ProgDefs.DEF_SAVEGLOBAL;
+            type &= (EdictType)~ProgramDef.DEF_SAVEGLOBAL;
             String result;
 
             switch( type )
             {
-                case etype_t.ev_string:
+                case EdictType.ev_string:
                     result = GetString( val->_string );
                     break;
 
-                case etype_t.ev_entity:
+                case EdictType.ev_entity:
                     result = server.NumForEdict( server.ProgToEdict( val->edict ) ).ToString();
                     break;
 
-                case etype_t.ev_function:
-                    dfunction_t f = _Functions[val->function];
+                case EdictType.ev_function:
+                    ProgramFunction f = _Functions[val->function];
                     result = GetString( f.s_name );
                     break;
 
-                case etype_t.ev_field:
-                    ddef_t def = FindField( val->_int );
+                case EdictType.ev_field:
+                    ProgramDefinition def = FindField( val->_int );
                     result = GetString( def.s_name );
                     break;
 
-                case etype_t.ev_void:
+                case EdictType.ev_void:
                     result = "void";
                     break;
 
-                case etype_t.ev_float:
+                case EdictType.ev_float:
                     result = val->_float.ToString( "F6", CultureInfo.InvariantCulture.NumberFormat );
                     break;
 
-                case etype_t.ev_vector:
+                case EdictType.ev_vector:
                     result = String.Format( CultureInfo.InvariantCulture.NumberFormat,
                         "{0:F6} {1:F6} {2:F6}", val->vector[0], val->vector[1], val->vector[2] );
                     break;
@@ -1133,18 +1142,18 @@ namespace SharpQuake
         /// <summary>
         /// ED_FindGlobal
         /// </summary>
-        private static ddef_t FindGlobal( String name )
+        private static ProgramDefinition FindGlobal( String name )
         {
             for( var i = 0; i < _GlobalDefs.Length; i++ )
             {
-                ddef_t def = _GlobalDefs[i];
+                ProgramDefinition def = _GlobalDefs[i];
                 if( name == GetString( def.s_name ) )
                     return def;
             }
             return null;
         }
 
-        private static unsafe Boolean ParseGlobalPair( ddef_t key, String value )
+        private static unsafe Boolean ParseGlobalPair( ProgramDefinition key, String value )
         {
             Int32 offset;
             if( IsGlobalStruct( key.ofs, out offset ) )
@@ -1163,12 +1172,12 @@ namespace SharpQuake
         {
             var line = String.Empty;
             void* val = Get( ofs );// (void*)&pr_globals[ofs];
-            ddef_t def = GlobalAtOfs( ofs );
+            ProgramDefinition def = GlobalAtOfs( ofs );
             if( def == null )
                 line = String.Format( "{0}(???)", ofs );
             else
             {
-                var s = ValueString( (etype_t)def.type, val );
+                var s = ValueString( (EdictType)def.type, val );
                 line = String.Format( "{0}({1}){2} ", ofs, GetString( def.s_name ), s );
             }
 
@@ -1183,7 +1192,7 @@ namespace SharpQuake
         private static String GlobalStringNoContents( Int32 ofs )
         {
             var line = String.Empty;
-            ddef_t def = GlobalAtOfs( ofs );
+            ProgramDefinition def = GlobalAtOfs( ofs );
             if( def == null )
                 line = String.Format( "{0}(???)", ofs );
             else
@@ -1197,11 +1206,11 @@ namespace SharpQuake
         /// <summary>
         /// ED_GlobalAtOfs
         /// </summary>
-        private static ddef_t GlobalAtOfs( Int32 ofs )
+        private static ProgramDefinition GlobalAtOfs( Int32 ofs )
         {
             for( var i = 0; i < _GlobalDefs.Length; i++ )
             {
-                ddef_t def = _GlobalDefs[i];
+                ProgramDefinition def = _GlobalDefs[i];
                 if( def.ofs == ofs )
                     return def;
             }

@@ -95,7 +95,7 @@ namespace SharpQuake
             }
         }
 
-        public static entity_t[] Entities
+        public static Entity[] Entities
         {
             get
             {
@@ -107,7 +107,7 @@ namespace SharpQuake
         /// cl_entities[cl.viewentity]
         /// Player model (visible when out of body)
         /// </summary>
-        public static entity_t ViewEntity
+        public static Entity ViewEntity
         {
             get
             {
@@ -119,7 +119,7 @@ namespace SharpQuake
         /// cl.viewent
         /// Weapon model (only visible from inside body)
         /// </summary>
-        public static entity_t ViewEnt
+        public static Entity ViewEnt
         {
             get
             {
@@ -167,7 +167,7 @@ namespace SharpQuake
             }
         }
 
-        public static entity_t[] VisEdicts
+        public static Entity[] VisEdicts
         {
             get
             {
@@ -247,9 +247,9 @@ namespace SharpQuake
         private static client_static_t _Static = new client_static_t();
         private static client_state_t _State = new client_state_t();
 
-        private static efrag_t[] _EFrags = new efrag_t[MAX_EFRAGS]; // cl_efrags
-        private static entity_t[] _Entities = new entity_t[QDef.MAX_EDICTS]; // cl_entities
-        private static entity_t[] _StaticEntities = new entity_t[MAX_STATIC_ENTITIES]; // cl_static_entities
+        private static EFrag[] _EFrags = new EFrag[MAX_EFRAGS]; // cl_efrags
+        private static Entity[] _Entities = new Entity[QDef.MAX_EDICTS]; // cl_entities
+        private static Entity[] _StaticEntities = new Entity[MAX_STATIC_ENTITIES]; // cl_static_entities
         private static lightstyle_t[] _LightStyle = new lightstyle_t[QDef.MAX_LIGHTSTYLES]; // cl_lightstyle
         private static dlight_t[] _DLights = new dlight_t[MAX_DLIGHTS]; // cl_dlights
 
@@ -274,7 +274,7 @@ namespace SharpQuake
         private static CVar _AngleSpeedKey;// = { "cl_anglespeedkey", "1.5" };
 
         // cl_numvisedicts
-        private static entity_t[] _VisEdicts = new entity_t[MAX_VISEDICTS]; // cl_visedicts[MAX_VISEDICTS]
+        private static Entity[] _VisEdicts = new Entity[MAX_VISEDICTS]; // cl_visedicts[MAX_VISEDICTS]
     }
 
     // lightstyle_t;
@@ -356,7 +356,7 @@ namespace SharpQuake
     internal class beam_t
     {
         public Int32 entity;
-        public model_t model;
+        public Model model;
         public Single endtime;
         public Vector3 start, end;
 
@@ -486,7 +486,7 @@ namespace SharpQuake
         //
         // information that is static for the entire time connected to a server
         //
-        public model_t[] model_precache; // [MAX_MODELS];
+        public Model[] model_precache; // [MAX_MODELS];
 
         public sfx_t[] sound_precache; // [MAX_SOUNDS];
 
@@ -496,12 +496,12 @@ namespace SharpQuake
         public Int32 gametype;
 
         // refresh related state
-        public model_t worldmodel;	// cl_entitites[0].model
+        public Model worldmodel;	// cl_entitites[0].model
 
-        public efrag_t free_efrags; // first free efrag in list
+        public EFrag free_efrags; // first free efrag in list
         public Int32 num_entities;	// held in cl_entities array
         public Int32 num_statics;	// held in cl_staticentities array
-        public entity_t viewent;			// the gun model
+        public Entity viewent;			// the gun model
 
         public Int32 cdtrack, looptrack;	// cd audio
 
@@ -579,7 +579,7 @@ namespace SharpQuake
 
         public client_state_t()
         {
-            this.stats = new Int32[QStats.MAX_CL_STATS];
+            this.stats = new Int32[QStatsDef.MAX_CL_STATS];
             this.item_gettime = new Single[32]; // ???????????
 
             this.cshifts = new cshift_t[ColorShift.NUM_CSHIFTS];
@@ -593,9 +593,9 @@ namespace SharpQuake
             this.mviewangles = new Vector3[2]; //??????
             this.mvelocity = new Vector3[2];
             this.mtime = new Double[2];
-            this.model_precache = new model_t[QDef.MAX_MODELS];
+            this.model_precache = new Model[QDef.MAX_MODELS];
             this.sound_precache = new sfx_t[QDef.MAX_SOUNDS];
-            this.viewent = new entity_t();
+            this.viewent = new Entity();
         }
     } //client_state_t;
 

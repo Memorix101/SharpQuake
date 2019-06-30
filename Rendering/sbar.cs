@@ -83,7 +83,7 @@ namespace SharpQuake
         //MED 01/04/97 added array to simplify weapon parsing
         private static Int32[] _HipWeapons = new Int32[]
         {
-            QItems.HIT_LASER_CANNON_BIT, QItems.HIT_MJOLNIR_BIT, 4, QItems.HIT_PROXIMITY_GUN_BIT
+            QItemsDef.HIT_LASER_CANNON_BIT, QItemsDef.HIT_MJOLNIR_BIT, 4, QItemsDef.HIT_PROXIMITY_GUN_BIT
         };
 
         //MED 01/04/97 added hipnotic items array
@@ -272,7 +272,7 @@ namespace SharpQuake
             }
 
             client_state_t cl = client.cl;
-            if( _ShowScores || cl.stats[QStats.STAT_HEALTH] <= 0 )
+            if( _ShowScores || cl.stats[QStatsDef.STAT_HEALTH] <= 0 )
             {
                 DrawPic( 0, 0, _ScoreBar );
                 DrawScoreboard();
@@ -286,13 +286,13 @@ namespace SharpQuake
                 //MED 01/04/97 moved keys here so they would not be overwritten
                 if( Common.GameKind == GameKind.Hipnotic )
                 {
-                    if( cl.HasItems( QItems.IT_KEY1 ) )
+                    if( cl.HasItems( QItemsDef.IT_KEY1 ) )
                         DrawPic( 209, 3, _Items[0] );
-                    if( cl.HasItems( QItems.IT_KEY2 ) )
+                    if( cl.HasItems( QItemsDef.IT_KEY2 ) )
                         DrawPic( 209, 12, _Items[1] );
                 }
                 // armor
-                if( cl.HasItems( QItems.IT_INVULNERABILITY ) )
+                if( cl.HasItems( QItemsDef.IT_INVULNERABILITY ) )
                 {
                     DrawNum( 24, 0, 666, 3, 1 );
                     DrawPic( 0, 0, Drawer.Disc );
@@ -301,22 +301,22 @@ namespace SharpQuake
                 {
                     if( Common.GameKind == GameKind.Rogue )
                     {
-                        DrawNum( 24, 0, cl.stats[QStats.STAT_ARMOR], 3, cl.stats[QStats.STAT_ARMOR] <= 25 ? 1 : 0 ); // uze: corrected color param
-                        if( cl.HasItems( QItems.RIT_ARMOR3 ) )
+                        DrawNum( 24, 0, cl.stats[QStatsDef.STAT_ARMOR], 3, cl.stats[QStatsDef.STAT_ARMOR] <= 25 ? 1 : 0 ); // uze: corrected color param
+                        if( cl.HasItems( QItemsDef.RIT_ARMOR3 ) )
                             DrawPic( 0, 0, _Armor[2] );
-                        else if( cl.HasItems( QItems.RIT_ARMOR2 ) )
+                        else if( cl.HasItems( QItemsDef.RIT_ARMOR2 ) )
                             DrawPic( 0, 0, _Armor[1] );
-                        else if( cl.HasItems( QItems.RIT_ARMOR1 ) )
+                        else if( cl.HasItems( QItemsDef.RIT_ARMOR1 ) )
                             DrawPic( 0, 0, _Armor[0] );
                     }
                     else
                     {
-                        DrawNum( 24, 0, cl.stats[QStats.STAT_ARMOR], 3, cl.stats[QStats.STAT_ARMOR] <= 25 ? 1 : 0 );
-                        if( cl.HasItems( QItems.IT_ARMOR3 ) )
+                        DrawNum( 24, 0, cl.stats[QStatsDef.STAT_ARMOR], 3, cl.stats[QStatsDef.STAT_ARMOR] <= 25 ? 1 : 0 );
+                        if( cl.HasItems( QItemsDef.IT_ARMOR3 ) )
                             DrawPic( 0, 0, _Armor[2] );
-                        else if( cl.HasItems( QItems.IT_ARMOR2 ) )
+                        else if( cl.HasItems( QItemsDef.IT_ARMOR2 ) )
                             DrawPic( 0, 0, _Armor[1] );
-                        else if( cl.HasItems( QItems.IT_ARMOR1 ) )
+                        else if( cl.HasItems( QItemsDef.IT_ARMOR1 ) )
                             DrawPic( 0, 0, _Armor[0] );
                     }
                 }
@@ -325,39 +325,39 @@ namespace SharpQuake
                 DrawFace();
 
                 // health
-                DrawNum( 136, 0, cl.stats[QStats.STAT_HEALTH], 3, cl.stats[QStats.STAT_HEALTH] <= 25 ? 1 : 0 );
+                DrawNum( 136, 0, cl.stats[QStatsDef.STAT_HEALTH], 3, cl.stats[QStatsDef.STAT_HEALTH] <= 25 ? 1 : 0 );
 
                 // ammo icon
                 if( Common.GameKind == GameKind.Rogue )
                 {
-                    if( cl.HasItems( QItems.RIT_SHELLS ) )
+                    if( cl.HasItems( QItemsDef.RIT_SHELLS ) )
                         DrawPic( 224, 0, _Ammo[0] );
-                    else if( cl.HasItems( QItems.RIT_NAILS ) )
+                    else if( cl.HasItems( QItemsDef.RIT_NAILS ) )
                         DrawPic( 224, 0, _Ammo[1] );
-                    else if( cl.HasItems( QItems.RIT_ROCKETS ) )
+                    else if( cl.HasItems( QItemsDef.RIT_ROCKETS ) )
                         DrawPic( 224, 0, _Ammo[2] );
-                    else if( cl.HasItems( QItems.RIT_CELLS ) )
+                    else if( cl.HasItems( QItemsDef.RIT_CELLS ) )
                         DrawPic( 224, 0, _Ammo[3] );
-                    else if( cl.HasItems( QItems.RIT_LAVA_NAILS ) )
+                    else if( cl.HasItems( QItemsDef.RIT_LAVA_NAILS ) )
                         DrawPic( 224, 0, _RAmmo[0] );
-                    else if( cl.HasItems( QItems.RIT_PLASMA_AMMO ) )
+                    else if( cl.HasItems( QItemsDef.RIT_PLASMA_AMMO ) )
                         DrawPic( 224, 0, _RAmmo[1] );
-                    else if( cl.HasItems( QItems.RIT_MULTI_ROCKETS ) )
+                    else if( cl.HasItems( QItemsDef.RIT_MULTI_ROCKETS ) )
                         DrawPic( 224, 0, _RAmmo[2] );
                 }
                 else
                 {
-                    if( cl.HasItems( QItems.IT_SHELLS ) )
+                    if( cl.HasItems( QItemsDef.IT_SHELLS ) )
                         DrawPic( 224, 0, _Ammo[0] );
-                    else if( cl.HasItems( QItems.IT_NAILS ) )
+                    else if( cl.HasItems( QItemsDef.IT_NAILS ) )
                         DrawPic( 224, 0, _Ammo[1] );
-                    else if( cl.HasItems( QItems.IT_ROCKETS ) )
+                    else if( cl.HasItems( QItemsDef.IT_ROCKETS ) )
                         DrawPic( 224, 0, _Ammo[2] );
-                    else if( cl.HasItems( QItems.IT_CELLS ) )
+                    else if( cl.HasItems( QItemsDef.IT_CELLS ) )
                         DrawPic( 224, 0, _Ammo[3] );
                 }
 
-                DrawNum( 248, 0, cl.stats[QStats.STAT_AMMO], 3, cl.stats[QStats.STAT_AMMO] <= 10 ? 1 : 0 );
+                DrawNum( 248, 0, cl.stats[QStatsDef.STAT_AMMO], 3, cl.stats[QStatsDef.STAT_AMMO] <= 10 ? 1 : 0 );
             }
 
             if( vid.width > 320 )
@@ -396,13 +396,13 @@ namespace SharpQuake
             Drawer.DrawTransPic( 246, 64, _Nums[0, num / 10] );
             Drawer.DrawTransPic( 266, 64, _Nums[0, num % 10] );
 
-            IntermissionNumber( 160, 104, client.cl.stats[QStats.STAT_SECRETS], 3, 0 );
+            IntermissionNumber( 160, 104, client.cl.stats[QStatsDef.STAT_SECRETS], 3, 0 );
             Drawer.DrawTransPic( 232, 104, _Slash );
-            IntermissionNumber( 240, 104, client.cl.stats[QStats.STAT_TOTALSECRETS], 3, 0 );
+            IntermissionNumber( 240, 104, client.cl.stats[QStatsDef.STAT_TOTALSECRETS], 3, 0 );
 
-            IntermissionNumber( 160, 144, client.cl.stats[QStats.STAT_MONSTERS], 3, 0 );
+            IntermissionNumber( 160, 144, client.cl.stats[QStatsDef.STAT_MONSTERS], 3, 0 );
             Drawer.DrawTransPic( 232, 144, _Slash );
-            IntermissionNumber( 240, 144, client.cl.stats[QStats.STAT_TOTALMONSTERS], 3, 0 );
+            IntermissionNumber( 240, 144, client.cl.stats[QStatsDef.STAT_TOTALMONSTERS], 3, 0 );
         }
 
         /// <summary>
@@ -446,7 +446,7 @@ namespace SharpQuake
             client_state_t cl = client.cl;
             if( Common.GameKind == GameKind.Rogue )
             {
-                if( cl.stats[QStats.STAT_ACTIVEWEAPON] >= QItems.RIT_LAVA_NAILGUN )
+                if( cl.stats[QStatsDef.STAT_ACTIVEWEAPON] >= QItemsDef.RIT_LAVA_NAILGUN )
                     DrawPic( 0, -24, _RInvBar[0] );
                 else
                     DrawPic( 0, -24, _RInvBar[1] );
@@ -457,13 +457,13 @@ namespace SharpQuake
             // weapons
             for( var i = 0; i < 7; i++ )
             {
-                if( cl.HasItems( QItems.IT_SHOTGUN << i ) )
+                if( cl.HasItems( QItemsDef.IT_SHOTGUN << i ) )
                 {
                     var time = cl.item_gettime[i];
                     flashon = ( Int32 ) ( ( cl.time - time ) * 10 );
                     if( flashon >= 10 )
                     {
-                        if( cl.stats[QStats.STAT_ACTIVEWEAPON] == ( QItems.IT_SHOTGUN << i ) )
+                        if( cl.stats[QStatsDef.STAT_ACTIVEWEAPON] == ( QItemsDef.IT_SHOTGUN << i ) )
                             flashon = 1;
                         else
                             flashon = 0;
@@ -491,7 +491,7 @@ namespace SharpQuake
                         flashon = ( Int32 ) ( ( cl.time - time ) * 10 );
                         if( flashon >= 10 )
                         {
-                            if( cl.stats[QStats.STAT_ACTIVEWEAPON] == ( 1 << _HipWeapons[i] ) )
+                            if( cl.stats[QStatsDef.STAT_ACTIVEWEAPON] == ( 1 << _HipWeapons[i] ) )
                                 flashon = 1;
                             else
                                 flashon = 0;
@@ -502,7 +502,7 @@ namespace SharpQuake
                         // check grenade launcher
                         if( i == 2 )
                         {
-                            if( cl.HasItems( QItems.HIT_PROXIMITY_GUN ) )
+                            if( cl.HasItems( QItemsDef.HIT_PROXIMITY_GUN ) )
                             {
                                 if( flashon > 0 )
                                 {
@@ -513,7 +513,7 @@ namespace SharpQuake
                         }
                         else if( i == 3 )
                         {
-                            if( cl.HasItems( QItems.IT_SHOTGUN << 4 ) )
+                            if( cl.HasItems( QItemsDef.IT_SHOTGUN << 4 ) )
                             {
                                 if( flashon > 0 && grenadeflashing == 0 )
                                 {
@@ -538,16 +538,16 @@ namespace SharpQuake
             if( Common.GameKind == GameKind.Rogue )
             {
                 // check for powered up weapon.
-                if( cl.stats[QStats.STAT_ACTIVEWEAPON] >= QItems.RIT_LAVA_NAILGUN )
+                if( cl.stats[QStatsDef.STAT_ACTIVEWEAPON] >= QItemsDef.RIT_LAVA_NAILGUN )
                     for( var i = 0; i < 5; i++ )
-                        if( cl.stats[QStats.STAT_ACTIVEWEAPON] == ( QItems.RIT_LAVA_NAILGUN << i ) )
+                        if( cl.stats[QStatsDef.STAT_ACTIVEWEAPON] == ( QItemsDef.RIT_LAVA_NAILGUN << i ) )
                             DrawPic( ( i + 2 ) * 24, -16, _RWeapons[i] );
             }
 
             // ammo counts
             for( var i = 0; i < 4; i++ )
             {
-                var num = cl.stats[QStats.STAT_SHELLS + i].ToString().PadLeft( 3 );
+                var num = cl.stats[QStatsDef.STAT_SHELLS + i].ToString().PadLeft( 3 );
                 //sprintf(num, "%3i", cl.stats[QStats.STAT_SHELLS + i]);
                 if( num[0] != ' ' )
                     DrawCharacter( ( 6 * i + 1 ) * 8 - 2, -24, 18 + num[0] - '0' );
@@ -792,31 +792,31 @@ namespace SharpQuake
 
             Int32 f, anim;
 
-            if( cl.HasItems( QItems.IT_INVISIBILITY | QItems.IT_INVULNERABILITY ) )
+            if( cl.HasItems( QItemsDef.IT_INVISIBILITY | QItemsDef.IT_INVULNERABILITY ) )
             {
                 DrawPic( 112, 0, _FaceInvisInvuln );
                 return;
             }
-            if( cl.HasItems( QItems.IT_QUAD ) )
+            if( cl.HasItems( QItemsDef.IT_QUAD ) )
             {
                 DrawPic( 112, 0, _FaceQuad );
                 return;
             }
-            if( cl.HasItems( QItems.IT_INVISIBILITY ) )
+            if( cl.HasItems( QItemsDef.IT_INVISIBILITY ) )
             {
                 DrawPic( 112, 0, _FaceInvis );
                 return;
             }
-            if( cl.HasItems( QItems.IT_INVULNERABILITY ) )
+            if( cl.HasItems( QItemsDef.IT_INVULNERABILITY ) )
             {
                 DrawPic( 112, 0, _FaceInvuln );
                 return;
             }
 
-            if( cl.stats[QStats.STAT_HEALTH] >= 100 )
+            if( cl.stats[QStatsDef.STAT_HEALTH] >= 100 )
                 f = 4;
             else
-                f = cl.stats[QStats.STAT_HEALTH] / 20;
+                f = cl.stats[QStatsDef.STAT_HEALTH] / 20;
 
             if( cl.time <= cl.faceanimtime )
             {
@@ -951,11 +951,11 @@ namespace SharpQuake
             StringBuilder sb = new StringBuilder( 80 );
             client_state_t cl = client.cl;
 
-            sb.AppendFormat( "Monsters:{0,3:d} /{1,3:d}", cl.stats[QStats.STAT_MONSTERS], client.cl.stats[QStats.STAT_TOTALMONSTERS] );
+            sb.AppendFormat( "Monsters:{0,3:d} /{1,3:d}", cl.stats[QStatsDef.STAT_MONSTERS], client.cl.stats[QStatsDef.STAT_TOTALMONSTERS] );
             DrawString( 8, 4, sb.ToString() );
 
             sb.Length = 0;
-            sb.AppendFormat( "Secrets :{0,3:d} /{1,3:d}", cl.stats[QStats.STAT_SECRETS], cl.stats[QStats.STAT_TOTALSECRETS] );
+            sb.AppendFormat( "Secrets :{0,3:d} /{1,3:d}", cl.stats[QStatsDef.STAT_SECRETS], cl.stats[QStatsDef.STAT_TOTALSECRETS] );
             DrawString( 8, 12, sb.ToString() );
 
             // time

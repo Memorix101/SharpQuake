@@ -268,16 +268,16 @@ namespace SharpQuake
                         break;
 
                     case protocol.svc_killedmonster:
-                        cl.stats[QStats.STAT_MONSTERS]++;
+                        cl.stats[QStatsDef.STAT_MONSTERS]++;
                         break;
 
                     case protocol.svc_foundsecret:
-                        cl.stats[QStats.STAT_SECRETS]++;
+                        cl.stats[QStatsDef.STAT_SECRETS]++;
                         break;
 
                     case protocol.svc_updatestat:
                         i = net.Reader.ReadByte();
-                        if( i < 0 || i >= QStats.MAX_CL_STATS )
+                        if( i < 0 || i >= QStatsDef.MAX_CL_STATS )
                             Utilities.Error( "svc_updatestat: {0} is invalid", i );
                         cl.stats[i] = net.Reader.ReadLong();
                         break;
@@ -359,7 +359,7 @@ namespace SharpQuake
             else
                 num = net.Reader.ReadByte();
 
-            entity_t ent = EntityNum( num );
+            Entity ent = EntityNum( num );
             for( i = 0; i < 16; i++ )
                 if( ( bits & ( 1 << i ) ) != 0 )
                     _BitCounts[i]++;
@@ -379,7 +379,7 @@ namespace SharpQuake
             else
                 modnum = ent.baseline.modelindex;
 
-            model_t model = cl.model_precache[modnum];
+            Model model = cl.model_precache[modnum];
             if( model != ent.model )
             {
                 ent.model = model;
@@ -387,7 +387,7 @@ namespace SharpQuake
                 // or randomized
                 if( model != null )
                 {
-                    if( model.synctype == synctype_t.ST_RAND )
+                    if( model.synctype == SyncType.ST_RAND )
                         ent.syncbase = ( Single ) ( MathLib.Random() & 0x7fff ) / 0x7fff;
                     else
                         ent.syncbase = 0;
@@ -523,17 +523,17 @@ namespace SharpQuake
             cl.inwater = ( bits & protocol.SU_INWATER ) != 0;
 
             if( ( bits & protocol.SU_WEAPONFRAME ) != 0 )
-                cl.stats[QStats.STAT_WEAPONFRAME] = net.Reader.ReadByte();
+                cl.stats[QStatsDef.STAT_WEAPONFRAME] = net.Reader.ReadByte();
             else
-                cl.stats[QStats.STAT_WEAPONFRAME] = 0;
+                cl.stats[QStatsDef.STAT_WEAPONFRAME] = 0;
 
             if( ( bits & protocol.SU_ARMOR ) != 0 )
                 i2 = net.Reader.ReadByte();
             else
                 i2 = 0;
-            if( cl.stats[QStats.STAT_ARMOR] != i2 )
+            if( cl.stats[QStatsDef.STAT_ARMOR] != i2 )
             {
-                cl.stats[QStats.STAT_ARMOR] = i2;
+                cl.stats[QStatsDef.STAT_ARMOR] = i2;
                 sbar.Changed();
             }
 
@@ -541,32 +541,32 @@ namespace SharpQuake
                 i2 = net.Reader.ReadByte();
             else
                 i2 = 0;
-            if( cl.stats[QStats.STAT_WEAPON] != i2 )
+            if( cl.stats[QStatsDef.STAT_WEAPON] != i2 )
             {
-                cl.stats[QStats.STAT_WEAPON] = i2;
+                cl.stats[QStatsDef.STAT_WEAPON] = i2;
                 sbar.Changed();
             }
 
             i2 = net.Reader.ReadShort();
-            if( cl.stats[QStats.STAT_HEALTH] != i2 )
+            if( cl.stats[QStatsDef.STAT_HEALTH] != i2 )
             {
-                cl.stats[QStats.STAT_HEALTH] = i2;
+                cl.stats[QStatsDef.STAT_HEALTH] = i2;
                 sbar.Changed();
             }
 
             i2 = net.Reader.ReadByte();
-            if( cl.stats[QStats.STAT_AMMO] != i2 )
+            if( cl.stats[QStatsDef.STAT_AMMO] != i2 )
             {
-                cl.stats[QStats.STAT_AMMO] = i2;
+                cl.stats[QStatsDef.STAT_AMMO] = i2;
                 sbar.Changed();
             }
 
             for( i2 = 0; i2 < 4; i2++ )
             {
                 var j = net.Reader.ReadByte();
-                if( cl.stats[QStats.STAT_SHELLS + i2] != j )
+                if( cl.stats[QStatsDef.STAT_SHELLS + i2] != j )
                 {
-                    cl.stats[QStats.STAT_SHELLS + i2] = j;
+                    cl.stats[QStatsDef.STAT_SHELLS + i2] = j;
                     sbar.Changed();
                 }
             }
@@ -575,17 +575,17 @@ namespace SharpQuake
 
             if( Common.GameKind == GameKind.StandardQuake )
             {
-                if( cl.stats[QStats.STAT_ACTIVEWEAPON] != i2 )
+                if( cl.stats[QStatsDef.STAT_ACTIVEWEAPON] != i2 )
                 {
-                    cl.stats[QStats.STAT_ACTIVEWEAPON] = i2;
+                    cl.stats[QStatsDef.STAT_ACTIVEWEAPON] = i2;
                     sbar.Changed();
                 }
             }
             else
             {
-                if( cl.stats[QStats.STAT_ACTIVEWEAPON] != ( 1 << i2 ) )
+                if( cl.stats[QStatsDef.STAT_ACTIVEWEAPON] != ( 1 << i2 ) )
                 {
-                    cl.stats[QStats.STAT_ACTIVEWEAPON] = ( 1 << i2 );
+                    cl.stats[QStatsDef.STAT_ACTIVEWEAPON] = ( 1 << i2 );
                     sbar.Changed();
                 }
             }
@@ -778,7 +778,7 @@ namespace SharpQuake
         /// </summary>
         /// <param name="num"></param>
         /// <returns></returns>
-        private static entity_t EntityNum( Int32 num )
+        private static Entity EntityNum( Int32 num )
         {
             if( num >= cl.num_entities )
             {
@@ -798,7 +798,7 @@ namespace SharpQuake
         /// CL_ParseBaseline
         /// </summary>
         /// <param name="ent"></param>
-        private static void ParseBaseline( entity_t ent )
+        private static void ParseBaseline( Entity ent )
         {
             ent.baseline.modelindex = net.Reader.ReadByte();
             ent.baseline.frame = net.Reader.ReadByte();
@@ -821,7 +821,7 @@ namespace SharpQuake
             if( i >= MAX_STATIC_ENTITIES )
                 host.Error( "Too many static entities" );
 
-            entity_t ent = _StaticEntities[i];
+            Entity ent = _StaticEntities[i];
             cl.num_statics++;
             ParseBaseline( ent );
 

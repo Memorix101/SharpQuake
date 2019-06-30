@@ -762,7 +762,7 @@ namespace SharpQuake
             if( client.cl.worldmodel == null )
                 return;
 
-            mleaf_t l = Mod.PointInLeaf( ref _ListenerOrigin, client.cl.worldmodel );
+            MemoryLeaf l = Mod.PointInLeaf( ref _ListenerOrigin, client.cl.worldmodel );
             if( l == null || _AmbientLevel.Value == 0 )
             {
                 for( var i = 0; i < AmbientDef.NUM_AMBIENTS; i++ )

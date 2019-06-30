@@ -58,13 +58,13 @@ namespace SharpQuake
             }
 
             for( var i = 0; i < _EFrags.Length; i++ )
-                _EFrags[i] = new efrag_t();
+                _EFrags[i] = new EFrag();
 
             for( var i = 0; i < _Entities.Length; i++ )
-                _Entities[i] = new entity_t();
+                _Entities[i] = new Entity();
 
             for( var i = 0; i < _StaticEntities.Length; i++ )
-                _StaticEntities[i] = new entity_t();
+                _StaticEntities[i] = new Entity();
 
             for( var i = 0; i < _DLights.Length; i++ )
                 _DLights[i] = new dlight_t();
@@ -317,7 +317,7 @@ namespace SharpQuake
         {
             for( var i = 0; i < _State.num_entities; i++ )
             {
-                entity_t ent = _Entities[i];
+                Entity ent = _Entities[i];
                 Con.Print( "{0:d3}:", i );
                 if( ent.model == null )
                 {
@@ -356,7 +356,7 @@ namespace SharpQuake
             // start on the entity after the world
             for( var i = 1; i < cl.num_entities; i++ )
             {
-                entity_t ent = _Entities[i];
+                Entity ent = _Entities[i];
                 if( ent.model == null )
                 {
                     // empty slot
@@ -518,9 +518,9 @@ namespace SharpQuake
             cls.message.Clear();
 
             // clear other arrays
-            foreach( efrag_t ef in _EFrags )
+            foreach( EFrag ef in _EFrags )
                 ef.Clear();
-            foreach( entity_t et in _Entities )
+            foreach( Entity et in _Entities )
                 et.Clear();
 
             foreach( dlight_t dl in _DLights )
@@ -528,7 +528,7 @@ namespace SharpQuake
 
             Array.Clear( _LightStyle, 0, _LightStyle.Length );
 
-            foreach( entity_t et in _TempEntities )
+            foreach( Entity et in _TempEntities )
                 et.Clear();
 
             foreach( beam_t b in _Beams )

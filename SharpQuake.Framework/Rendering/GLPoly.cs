@@ -6,10 +6,10 @@ using System.Threading.Tasks;
 
 namespace SharpQuake.Framework
 {
-    public class glpoly_t
+    public class GLPoly
     {
-        public glpoly_t next;
-        public glpoly_t chain;
+        public GLPoly next;
+        public GLPoly chain;
         public Int32 numverts;
         public Int32 flags;			// for SURF_UNDERWATER
         /// <summary>

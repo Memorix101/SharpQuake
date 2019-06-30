@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace SharpQuake.Framework
 {
-    public class msurface_t
+    public class MemorySurface
     {
         public Int32 visframe;		// should be drawn when node is crossed
 
@@ -21,10 +21,10 @@ namespace SharpQuake.Framework
 
         public Int32 light_s, light_t;	// gl lightmap coordinates
 
-        public glpoly_t polys;			// multiple if warped
-        public msurface_t texturechain;
+        public GLPoly polys;			// multiple if warped
+        public MemorySurface texturechain;
 
-        public mtexinfo_t texinfo;
+        public MemoryTextureInfo texinfo;
 
         // lighting info
         public Int32 dlightframe;
@@ -41,7 +41,7 @@ namespace SharpQuake.Framework
         public Int32 sampleofs; // added by Uze. In original Quake samples = loadmodel->lightdata + offset;
         // now samples = loadmodel->lightdata;
 
-        public msurface_t( )
+        public MemorySurface( )
         {
             texturemins = new Int16[2];
             extents = new Int16[2];

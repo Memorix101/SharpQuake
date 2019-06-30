@@ -267,7 +267,7 @@ namespace SharpQuake
             client_t client = host.HostClient;
 
             // read ping time
-            client.ping_times[client.num_pings % NUM_PING_TIMES] = ( Single ) ( sv.time - net.Reader.ReadFloat() );
+            client.ping_times[client.num_pings % ServerDef.NUM_PING_TIMES] = ( Single ) ( sv.time - net.Reader.ReadFloat() );
             client.num_pings++;
 
             // read current angles

@@ -71,7 +71,7 @@ namespace SharpQuake
             }
         }
 
-        public static model_t Model
+        public static Model Model
         {
             get
             {
@@ -92,10 +92,10 @@ namespace SharpQuake
         private static CVar _glSubDivideSize; // = { "gl_subdivide_size", "128", true };
         private static Byte[] _Novis = new Byte[BspDef.MAX_MAP_LEAFS / 8]; // byte mod_novis[MAX_MAP_LEAFS/8]
 
-        private static model_t[] _Known = new model_t[ModelDef.MAX_MOD_KNOWN]; // mod_known
+        private static Model[] _Known = new Model[ModelDef.MAX_MOD_KNOWN]; // mod_known
         private static Int32 _NumKnown; // mod_numknown
 
-        private static model_t _LoadModel; // loadmodel
+        private static Model _LoadModel; // loadmodel
         private static aliashdr_t _Header; // pheader
 
         private static stvert_t[] _STVerts = new stvert_t[ModelDef.MAXALIASVERTS]; // stverts
@@ -116,7 +116,7 @@ namespace SharpQuake
             }
 
             for( var i = 0; i < _Known.Length; i++ )
-                _Known[i] = new model_t();
+                _Known[i] = new Model();
 
             Utilities.FillArray( _Novis, ( Byte ) 0xff );
         }
@@ -128,9 +128,9 @@ namespace SharpQuake
         {
             for( var i = 0; i < _NumKnown; i++ )
             {
-                model_t mod = _Known[i];
+                Model mod = _Known[i];
 
-                if( mod.type != modtype_t.mod_alias )
+                if( mod.type != ModelType.mod_alias )
                     mod.needload = true;
             }
         }
@@ -139,9 +139,9 @@ namespace SharpQuake
         /// Mod_ForName
         /// Loads in a model for the given name
         /// </summary>
-        public static model_t ForName( String name, Boolean crash )
+        public static Model ForName( String name, Boolean crash )
         {
-            model_t mod = FindName( name );
+            Model mod = FindName( name );
 
             return LoadModel( mod, crash );
         }
@@ -150,7 +150,7 @@ namespace SharpQuake
         /// Mod_Extradata
         /// handles caching
         /// </summary>
-        public static aliashdr_t GetExtraData( model_t mod )
+        public static aliashdr_t GetExtraData( Model mod )
         {
             var r = Cache.Check( mod.cache );
             if( r != null )
@@ -168,11 +168,11 @@ namespace SharpQuake
         /// </summary>
         public static void TouchModel( String name )
         {
-            model_t mod = FindName( name );
+            Model mod = FindName( name );
 
             if( !mod.needload )
             {
-                if( mod.type == modtype_t.mod_alias )
+                if( mod.type == ModelType.mod_alias )
                     Cache.Check( mod.cache );
             }
         }
@@ -180,22 +180,22 @@ namespace SharpQuake
         /// <summary>
         /// Mod_PointInLeaf
         /// </summary>
-        public static mleaf_t PointInLeaf( ref Vector3 p, model_t model )
+        public static MemoryLeaf PointInLeaf( ref Vector3 p, Model model )
         {
             if( model == null || model.nodes == null )
                 Utilities.Error( "Mod_PointInLeaf: bad model" );
 
-            mleaf_t result = null;
-            mnodebase_t node = model.nodes[0];
+            MemoryLeaf result = null;
+            MemoryNodeBase node = model.nodes[0];
             while( true )
             {
                 if( node.contents < 0 )
                 {
-                    result = (mleaf_t)node;
+                    result = (MemoryLeaf)node;
                     break;
                 }
 
-                mnode_t n = (mnode_t)node;
+                MemoryNode n = (MemoryNode)node;
                 Plane plane = n.plane;
                 var d = Vector3.Dot( p, plane.normal ) - plane.dist;
                 if( d > 0 )
@@ -210,7 +210,7 @@ namespace SharpQuake
         /// <summary>
         /// Mod_LeafPVS
         /// </summary>
-        public static Byte[] LeafPVS( mleaf_t leaf, model_t model )
+        public static Byte[] LeafPVS( MemoryLeaf leaf, Model model )
         {
             if( leaf == model.leafs[0] )
                 return _Novis;
@@ -224,7 +224,7 @@ namespace SharpQuake
             Con.Print( "Cached models:\n" );
             for( var i = 0; i < _NumKnown; i++ )
             {
-                model_t mod = _Known[i];
+                Model mod = _Known[i];
                 Con.Print( "{0}\n", mod.name );
             }
         }
@@ -232,7 +232,7 @@ namespace SharpQuake
         /// <summary>
         /// Mod_FindName
         /// </summary>
-        public static model_t FindName( String name )
+        public static Model FindName( String name )
         {
             if( String.IsNullOrEmpty( name ) )
                 Utilities.Error( "Mod_ForName: NULL name" );
@@ -241,7 +241,7 @@ namespace SharpQuake
             // search the currently loaded models
             //
             var i = 0;
-            model_t mod;
+            Model mod;
             for( i = 0, mod = _Known[0]; i < _NumKnown; i++, mod = _Known[i] )
             {
                 //mod = _Known[i];
@@ -265,11 +265,11 @@ namespace SharpQuake
         /// Mod_LoadModel
         /// Loads a model into the cache
         /// </summary>
-        public static model_t LoadModel( model_t mod, Boolean crash )
+        public static Model LoadModel( Model mod, Boolean crash )
         {
             if( !mod.needload )
             {
-                if( mod.type == modtype_t.mod_alias )
+                if( mod.type == ModelType.mod_alias )
                 {
                     if( Cache.Check( mod.cache ) != null )
                         return mod;
@@ -322,7 +322,7 @@ namespace SharpQuake
         /// <summary>
         /// Mod_LoadAliasModel
         /// </summary>
-        public static void LoadAliasModel( model_t mod, Byte[] buffer )
+        public static void LoadAliasModel( Model mod, Byte[] buffer )
         {
             mdl_t pinmodel = Utilities.BytesToStructure<mdl_t>( buffer, 0 );
 
@@ -369,7 +369,7 @@ namespace SharpQuake
                 Utilities.Error( "Mod_LoadAliasModel: Invalid # of frames: {0}\n", numframes );
 
             _Header.size = EndianHelper.LittleFloat( pinmodel.size ) * ModelDef.ALIAS_BASE_SIZE_RATIO;
-            mod.synctype = (synctype_t) EndianHelper.LittleLong( ( Int32 ) pinmodel.synctype );
+            mod.synctype = (SyncType) EndianHelper.LittleLong( ( Int32 ) pinmodel.synctype );
             mod.numframes = _Header.numframes;
 
             _Header.scale = EndianHelper.LittleVector( Utilities.ToVector( ref pinmodel.scale ) );
@@ -433,7 +433,7 @@ namespace SharpQuake
 
             _Header.numposes = _PoseNum;
 
-            mod.type = modtype_t.mod_alias;
+            mod.type = ModelType.mod_alias;
 
             // FIXME: do this right
             mod.mins = -Vector3.One * 16.0f;
@@ -456,7 +456,7 @@ namespace SharpQuake
         /// <summary>
         /// Mod_LoadSpriteModel
         /// </summary>
-        public static void LoadSpriteModel( model_t mod, Byte[] buffer )
+        public static void LoadSpriteModel( Model mod, Byte[] buffer )
         {
             dsprite_t pin = Utilities.BytesToStructure<dsprite_t>( buffer, 0 );
 
@@ -477,7 +477,7 @@ namespace SharpQuake
             psprite.maxwidth = EndianHelper.LittleLong( pin.width );
             psprite.maxheight = EndianHelper.LittleLong( pin.height );
             psprite.beamlength = EndianHelper.LittleFloat( pin.beamlength );
-            mod.synctype = (synctype_t)EndianHelper.LittleLong( ( Int32 ) pin.synctype );
+            mod.synctype = (SyncType)EndianHelper.LittleLong( ( Int32 ) pin.synctype );
             psprite.numframes = numframes;
 
             mod.mins.X = mod.mins.Y = -psprite.maxwidth / 2;
@@ -514,15 +514,15 @@ namespace SharpQuake
                 }
             }
 
-            mod.type = modtype_t.mod_sprite;
+            mod.type = ModelType.mod_sprite;
         }
 
         /// <summary>
         /// Mod_LoadBrushModel
         /// </summary>
-        public static void LoadBrushModel( model_t mod, Byte[] buffer )
+        public static void LoadBrushModel( Model mod, Byte[] buffer )
         {
-            mod.type = modtype_t.mod_brush;
+            mod.type = ModelType.mod_brush;
 
             BspHeader header = Utilities.BytesToStructure<BspHeader>( buffer, 0 );
 
@@ -585,7 +585,7 @@ namespace SharpQuake
         /// <summary>
         /// Mod_DecompressVis
         /// </summary>
-        private static Byte[] DecompressVis( Byte[] p, Int32 startIndex, model_t model )
+        private static Byte[] DecompressVis( Byte[] p, Int32 startIndex, Model model )
         {
             var row = ( model.numleafs + 7 ) >> 3;
             var offset = 0;
@@ -621,7 +621,7 @@ namespace SharpQuake
             return _Decompressed;
         }
 
-        private static void SetupSubModel( model_t mod, ref BspModel submodel )
+        private static void SetupSubModel( Model mod, ref BspModel submodel )
         {
             mod.hulls[0].firstclipnode = submodel.headnode[0];
             for( var j = 1; j < BspDef.MAX_MAP_HULLS; j++ )
@@ -874,7 +874,7 @@ namespace SharpQuake
                 Utilities.Error( "MOD_LoadBmodel: funny lump size in {0}", _LoadModel.name );
 
             var count = l.filelen / BspVertex.SizeInBytes;
-            mvertex_t[] verts = new mvertex_t[count];
+            MemoryVertex[] verts = new MemoryVertex[count];
 
             _LoadModel.vertexes = verts;
             _LoadModel.numvertexes = count;
@@ -897,7 +897,7 @@ namespace SharpQuake
             var count = l.filelen / BspEdge.SizeInBytes;
 
             // Uze: Why count + 1 ?????
-            medge_t[] edges = new medge_t[count]; // out = Hunk_AllocName ( (count + 1) * sizeof(*out), loadname);
+            MemoryEdge[] edges = new MemoryEdge[count]; // out = Hunk_AllocName ( (count + 1) * sizeof(*out), loadname);
             _LoadModel.edges = edges;
             _LoadModel.numedges = count;
 
@@ -952,7 +952,7 @@ namespace SharpQuake
             Buffer.BlockCopy( _ModBase, l.fileofs + BspMipTexLump.SizeInBytes, dataofs, 0, dataofs.Length * sizeof( Int32 ) );
 
             _LoadModel.numtextures = m.nummiptex;
-            _LoadModel.textures = new texture_t[m.nummiptex]; // Hunk_AllocName (m->nummiptex * sizeof(*loadmodel->textures) , loadname);
+            _LoadModel.textures = new Texture[m.nummiptex]; // Hunk_AllocName (m->nummiptex * sizeof(*loadmodel->textures) , loadname);
 
             for( var i = 0; i < m.nummiptex; i++ )
             {
@@ -971,7 +971,7 @@ namespace SharpQuake
                     Utilities.Error( "Texture {0} is not 16 aligned", mt.name );
 
                 var pixels = ( Int32 ) ( mt.width * mt.height / 64 * 85 );
-                texture_t tx = new texture_t();// Hunk_AllocName(sizeof(texture_t) + pixels, loadname);
+                Texture tx = new Texture();// Hunk_AllocName(sizeof(texture_t) + pixels, loadname);
                 _LoadModel.textures[i] = tx;
 
                 tx.name = Utilities.GetString( mt.name );//   memcpy (tx->name, mt->name, sizeof(tx.name));
@@ -1055,12 +1055,12 @@ namespace SharpQuake
             //
             // sequence the animations
             //
-            texture_t[] anims = new texture_t[10];
-            texture_t[] altanims = new texture_t[10];
+            Texture[] anims = new Texture[10];
+            Texture[] altanims = new Texture[10];
 
             for( var i = 0; i < m.nummiptex; i++ )
             {
-                texture_t tx = _LoadModel.textures[i];
+                Texture tx = _LoadModel.textures[i];
                 if( tx == null || !tx.name.StartsWith( "+" ) )// [0] != '+')
                     continue;
                 if( tx.anim_next != null )
@@ -1093,7 +1093,7 @@ namespace SharpQuake
 
                 for( var j = i + 1; j < m.nummiptex; j++ )
                 {
-                    texture_t tx2 = _LoadModel.textures[j];
+                    Texture tx2 = _LoadModel.textures[j];
                     if( tx2 == null || !tx2.name.StartsWith( "+" ) )// tx2->name[0] != '+')
                         continue;
                     if( String.Compare( tx2.name, 2, tx.name, 2, Math.Min( tx.name.Length, tx2.name.Length ) ) != 0 )// strcmp (tx2->name+2, tx->name+2))
@@ -1123,7 +1123,7 @@ namespace SharpQuake
                 // link them all together
                 for( var j = 0; j < max; j++ )
                 {
-                    texture_t tx2 = anims[j];
+                    Texture tx2 = anims[j];
                     if( tx2 == null )
                         Utilities.Error( "Missing frame {0} of {1}", j, tx.name );
                     tx2.anim_total = max * ModelDef.ANIM_CYCLE;
@@ -1135,7 +1135,7 @@ namespace SharpQuake
                 }
                 for( var j = 0; j < altmax; j++ )
                 {
-                    texture_t tx2 = altanims[j];
+                    Texture tx2 = altanims[j];
                     if( tx2 == null )
                         Utilities.Error( "Missing frame {0} of {1}", j, tx2.name );
                     tx2.anim_total = altmax * ModelDef.ANIM_CYCLE;
@@ -1207,10 +1207,10 @@ namespace SharpQuake
                 Utilities.Error( "MOD_LoadBmodel: funny lump size in {0}", _LoadModel.name );
 
             var count = l.filelen / BspTextureInfo.SizeInBytes;
-            mtexinfo_t[] infos = new mtexinfo_t[count]; // out = Hunk_AllocName ( count*sizeof(*out), loadname);
+            MemoryTextureInfo[] infos = new MemoryTextureInfo[count]; // out = Hunk_AllocName ( count*sizeof(*out), loadname);
 
             for( var i = 0; i < infos.Length; i++ )
-                infos[i] = new mtexinfo_t();
+                infos[i] = new MemoryTextureInfo();
 
             _LoadModel.texinfo = infos;
             _LoadModel.numtexinfo = count;
@@ -1265,10 +1265,10 @@ namespace SharpQuake
                 Utilities.Error( "MOD_LoadBmodel: funny lump size in {0}", _LoadModel.name );
 
             var count = l.filelen / BspFace.SizeInBytes;
-            msurface_t[] dest = new msurface_t[count];
+            MemorySurface[] dest = new MemorySurface[count];
 
             for( var i = 0; i < dest.Length; i++ )
-                dest[i] = new msurface_t();
+                dest[i] = new MemorySurface();
 
             _LoadModel.surfaces = dest;
             _LoadModel.numsurfaces = count;
@@ -1284,7 +1284,7 @@ namespace SharpQuake
                 Int32 planenum = EndianHelper.LittleShort( src.planenum );
                 Int32 side = EndianHelper.LittleShort( src.side );
                 if( side != 0 )
-                    dest[surfnum].flags |= Surf.SURF_PLANEBACK;
+                    dest[surfnum].flags |= SurfaceDef.SURF_PLANEBACK;
 
                 dest[surfnum].plane = _LoadModel.planes[planenum];
                 dest[surfnum].texinfo = _LoadModel.texinfo[EndianHelper.LittleShort( src.texinfo )];
@@ -1310,14 +1310,14 @@ namespace SharpQuake
                 {
                     if( dest[surfnum].texinfo.texture.name.StartsWith( "sky" ) )	// sky
                     {
-                        dest[surfnum].flags |= ( Surf.SURF_DRAWSKY | Surf.SURF_DRAWTILED );
+                        dest[surfnum].flags |= ( SurfaceDef.SURF_DRAWSKY | SurfaceDef.SURF_DRAWTILED );
                         render.SubdivideSurface( dest[surfnum] );	// cut up polygon for warps
                         continue;
                     }
 
                     if( dest[surfnum].texinfo.texture.name.StartsWith( "*" ) )		// turbulent
                     {
-                        dest[surfnum].flags |= ( Surf.SURF_DRAWTURB | Surf.SURF_DRAWTILED );
+                        dest[surfnum].flags |= ( SurfaceDef.SURF_DRAWTURB | SurfaceDef.SURF_DRAWTILED );
                         for( var i = 0; i < 2; i++ )
                         {
                             dest[surfnum].extents[i] = 16384;
@@ -1339,7 +1339,7 @@ namespace SharpQuake
                 Utilities.Error( "MOD_LoadBmodel: funny lump size in {0}", _LoadModel.name );
 
             var count = l.filelen / sizeof( Int16 );
-            msurface_t[] dest = new msurface_t[count];
+            MemorySurface[] dest = new MemorySurface[count];
 
             _LoadModel.marksurfaces = dest;
             _LoadModel.nummarksurfaces = count;
@@ -1376,10 +1376,10 @@ namespace SharpQuake
                 Utilities.Error( "MOD_LoadBmodel: funny lump size in {0}", _LoadModel.name );
 
             var count = l.filelen / BspLeaf.SizeInBytes;
-            mleaf_t[] dest = new mleaf_t[count];
+            MemoryLeaf[] dest = new MemoryLeaf[count];
 
             for( var i = 0; i < dest.Length; i++ )
-                dest[i] = new mleaf_t();
+                dest[i] = new MemoryLeaf();
 
             _LoadModel.leafs = dest;
             _LoadModel.numleafs = count;
@@ -1435,10 +1435,10 @@ namespace SharpQuake
                 Utilities.Error( "MOD_LoadBmodel: funny lump size in {0}", _LoadModel.name );
 
             var count = l.filelen / BspNode.SizeInBytes;
-            mnode_t[] dest = new mnode_t[count];
+            MemoryNode[] dest = new MemoryNode[count];
 
             for( var i = 0; i < dest.Length; i++ )
-                dest[i] = new mnode_t();
+                dest[i] = new MemoryNode();
 
             _LoadModel.nodes = dest;
             _LoadModel.numnodes = count;
@@ -1488,7 +1488,7 @@ namespace SharpQuake
             _LoadModel.clipnodes = dest;
             _LoadModel.numclipnodes = count;
 
-            hull_t hull = _LoadModel.hulls[1];
+            BspHull hull = _LoadModel.hulls[1];
             hull.clipnodes = dest;
             hull.firstclipnode = 0;
             hull.lastclipnode = count - 1;
@@ -1582,8 +1582,8 @@ namespace SharpQuake
         /// </summary>
         private static void MakeHull0()
         {
-            hull_t hull = _LoadModel.hulls[0];
-            mnode_t[] src = _LoadModel.nodes;
+            BspHull hull = _LoadModel.hulls[0];
+            MemoryNode[] src = _LoadModel.nodes;
             var count = _LoadModel.numnodes;
             BspClipNode[] dest = new BspClipNode[count];
 
@@ -1598,11 +1598,11 @@ namespace SharpQuake
                 dest[i].children = new Int16[2];
                 for( var j = 0; j < 2; j++ )
                 {
-                    mnodebase_t child = src[i].children[j];
+                    MemoryNodeBase child = src[i].children[j];
                     if( child.contents < 0 )
                         dest[i].children[j] = ( Int16 ) child.contents;
                     else
-                        dest[i].children[j] = ( Int16 ) Array.IndexOf( _LoadModel.nodes, (mnode_t)child ); // todo: optimize this
+                        dest[i].children[j] = ( Int16 ) Array.IndexOf( _LoadModel.nodes, (MemoryNode)child ); // todo: optimize this
                 }
             }
         }
@@ -1622,13 +1622,13 @@ namespace SharpQuake
         /// CalcSurfaceExtents
         /// Fills in s->texturemins[] and s->extents[]
         /// </summary>
-        private static void CalcSurfaceExtents( msurface_t s )
+        private static void CalcSurfaceExtents( MemorySurface s )
         {
             Single[] mins = new Single[] { 999999, 999999 };
             Single[] maxs = new Single[] { -99999, -99999 };
 
-            mtexinfo_t tex = s.texinfo;
-            mvertex_t[] v = _LoadModel.vertexes;
+            MemoryTextureInfo tex = s.texinfo;
+            MemoryVertex[] v = _LoadModel.vertexes;
 
             for( var i = 0; i < s.numedges; i++ )
             {
@@ -1669,13 +1669,13 @@ namespace SharpQuake
         /// <summary>
         /// Mod_SetParent
         /// </summary>
-        private static void SetParent( mnodebase_t node, mnode_t parent )
+        private static void SetParent( MemoryNodeBase node, MemoryNode parent )
         {
             node.parent = parent;
             if( node.contents < 0 )
                 return;
 
-            mnode_t n = (mnode_t)node;
+            MemoryNode n = (MemoryNode)node;
             SetParent( n.children[0], n );
             SetParent( n.children[1], n );
         }

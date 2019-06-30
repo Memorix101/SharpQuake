@@ -34,7 +34,7 @@ namespace SharpQuake
         private const Int32 MAX_COMMANDS = 8192;
         private const Int32 MAX_STRIP = 128;
 
-        private static model_t _AliasModel; // aliasmodel
+        private static Model _AliasModel; // aliasmodel
         private static aliashdr_t _AliasHdr; // paliashdr
 
         private static Byte[] _Used = new Byte[MAX_COMMANDS]; // qboolean used. changed to vyte because can have values 0, 1, 2...
@@ -61,7 +61,7 @@ namespace SharpQuake
         /// <summary>
         /// GL_MakeAliasModelDisplayLists
         /// </summary>
-        public static void MakeAliasModelDisplayLists( model_t m, aliashdr_t hdr )
+        public static void MakeAliasModelDisplayLists( Model m, aliashdr_t hdr )
         {
             _AliasModel = m;
             _AliasHdr = hdr;

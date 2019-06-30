@@ -369,7 +369,7 @@ namespace SharpQuake
         /// <summary>
         /// R_EntityParticles
         /// </summary>
-        public static void EntityParticles( entity_t ent )
+        public static void EntityParticles( Entity ent )
         {
             Single dist = 64;
 

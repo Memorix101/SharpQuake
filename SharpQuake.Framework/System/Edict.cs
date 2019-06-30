@@ -20,7 +20,7 @@ namespace SharpQuake.Framework
 
         public string_t num_leafs;
 
-        [MarshalAs( UnmanagedType.ByValArray, SizeConst = ProgDefs.MAX_ENT_LEAFS )]
+        [MarshalAs( UnmanagedType.ByValArray, SizeConst = ProgramDef.MAX_ENT_LEAFS )]
         public Int16[] leafnums; // [MAX_ENT_LEAFS];
 
         public EntityState baseline;

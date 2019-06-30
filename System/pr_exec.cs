@@ -30,7 +30,7 @@ namespace SharpQuake
         private struct prstack_t
         {
             public Int32 s;
-            public dfunction_t f;
+            public ProgramFunction f;
         } // prstack_t;
 
         public static Int32 Argc
@@ -43,7 +43,7 @@ namespace SharpQuake
 
         public static Boolean Trace;
 
-        public static dfunction_t xFunction;
+        public static ProgramFunction xFunction;
 
         private const Int32 MAX_STACK_DEPTH = 32;
 
@@ -163,7 +163,7 @@ namespace SharpQuake
                 host.Error( "PR_ExecuteProgram: NULL function" );
             }
 
-            dfunction_t f = _Functions[fnum];
+            ProgramFunction f = _Functions[fnum];
 
             var runaway = 100000;
             Trace = false;
@@ -192,226 +192,226 @@ namespace SharpQuake
                 if( Trace )
                     PrintStatement( ref _Statements[s] );
 
-                switch( (OP)_Statements[s].op )
+                switch( (ProgramOperator)_Statements[s].op )
                 {
-                    case OP.OP_ADD_F:
+                    case ProgramOperator.OP_ADD_F:
                         c->_float = a->_float + b->_float;
                         break;
 
-                    case OP.OP_ADD_V:
+                    case ProgramOperator.OP_ADD_V:
                         c->vector[0] = a->vector[0] + b->vector[0];
                         c->vector[1] = a->vector[1] + b->vector[1];
                         c->vector[2] = a->vector[2] + b->vector[2];
                         break;
 
-                    case OP.OP_SUB_F:
+                    case ProgramOperator.OP_SUB_F:
                         c->_float = a->_float - b->_float;
                         break;
 
-                    case OP.OP_SUB_V:
+                    case ProgramOperator.OP_SUB_V:
                         c->vector[0] = a->vector[0] - b->vector[0];
                         c->vector[1] = a->vector[1] - b->vector[1];
                         c->vector[2] = a->vector[2] - b->vector[2];
                         break;
 
-                    case OP.OP_MUL_F:
+                    case ProgramOperator.OP_MUL_F:
                         c->_float = a->_float * b->_float;
                         break;
 
-                    case OP.OP_MUL_V:
+                    case ProgramOperator.OP_MUL_V:
                         c->_float = a->vector[0] * b->vector[0]
                                 + a->vector[1] * b->vector[1]
                                 + a->vector[2] * b->vector[2];
                         break;
 
-                    case OP.OP_MUL_FV:
+                    case ProgramOperator.OP_MUL_FV:
                         c->vector[0] = a->_float * b->vector[0];
                         c->vector[1] = a->_float * b->vector[1];
                         c->vector[2] = a->_float * b->vector[2];
                         break;
 
-                    case OP.OP_MUL_VF:
+                    case ProgramOperator.OP_MUL_VF:
                         c->vector[0] = b->_float * a->vector[0];
                         c->vector[1] = b->_float * a->vector[1];
                         c->vector[2] = b->_float * a->vector[2];
                         break;
 
-                    case OP.OP_DIV_F:
+                    case ProgramOperator.OP_DIV_F:
                         c->_float = a->_float / b->_float;
                         break;
 
-                    case OP.OP_BITAND:
+                    case ProgramOperator.OP_BITAND:
                         c->_float = ( Int32 ) a->_float & ( Int32 ) b->_float;
                         break;
 
-                    case OP.OP_BITOR:
+                    case ProgramOperator.OP_BITOR:
                         c->_float = ( Int32 ) a->_float | ( Int32 ) b->_float;
                         break;
 
-                    case OP.OP_GE:
+                    case ProgramOperator.OP_GE:
                         c->_float = ( a->_float >= b->_float ) ? 1 : 0;
                         break;
 
-                    case OP.OP_LE:
+                    case ProgramOperator.OP_LE:
                         c->_float = ( a->_float <= b->_float ) ? 1 : 0;
                         break;
 
-                    case OP.OP_GT:
+                    case ProgramOperator.OP_GT:
                         c->_float = ( a->_float > b->_float ) ? 1 : 0;
                         break;
 
-                    case OP.OP_LT:
+                    case ProgramOperator.OP_LT:
                         c->_float = ( a->_float < b->_float ) ? 1 : 0;
                         break;
 
-                    case OP.OP_AND:
+                    case ProgramOperator.OP_AND:
                         c->_float = ( a->_float != 0 && b->_float != 0 ) ? 1 : 0;
                         break;
 
-                    case OP.OP_OR:
+                    case ProgramOperator.OP_OR:
                         c->_float = ( a->_float != 0 || b->_float != 0 ) ? 1 : 0;
                         break;
 
-                    case OP.OP_NOT_F:
+                    case ProgramOperator.OP_NOT_F:
                         c->_float = ( a->_float != 0 ) ? 0 : 1;
                         break;
 
-                    case OP.OP_NOT_V:
+                    case ProgramOperator.OP_NOT_V:
                         c->_float = ( a->vector[0] == 0 && a->vector[1] == 0 && a->vector[2] == 0 ) ? 1 : 0;
                         break;
 
-                    case OP.OP_NOT_S:
+                    case ProgramOperator.OP_NOT_S:
                         c->_float = ( a->_string == 0 || String.IsNullOrEmpty( GetString( a->_string ) ) ) ? 1 : 0;
                         break;
 
-                    case OP.OP_NOT_FNC:
+                    case ProgramOperator.OP_NOT_FNC:
                         c->_float = ( a->function == 0 ) ? 1 : 0;
                         break;
 
-                    case OP.OP_NOT_ENT:
+                    case ProgramOperator.OP_NOT_ENT:
                         c->_float = ( server.ProgToEdict( a->edict ) == server.sv.edicts[0] ) ? 1 : 0;
                         break;
 
-                    case OP.OP_EQ_F:
+                    case ProgramOperator.OP_EQ_F:
                         c->_float = ( a->_float == b->_float ) ? 1 : 0;
                         break;
 
-                    case OP.OP_EQ_V:
+                    case ProgramOperator.OP_EQ_V:
                         c->_float = ( ( a->vector[0] == b->vector[0] ) &&
                             ( a->vector[1] == b->vector[1] ) &&
                             ( a->vector[2] == b->vector[2] ) ) ? 1 : 0;
                         break;
 
-                    case OP.OP_EQ_S:
+                    case ProgramOperator.OP_EQ_S:
                         c->_float = ( GetString( a->_string ) == GetString( b->_string ) ) ? 1 : 0; //!strcmp(pr_strings + a->_string, pr_strings + b->_string);
                         break;
 
-                    case OP.OP_EQ_E:
+                    case ProgramOperator.OP_EQ_E:
                         c->_float = ( a->_int == b->_int ) ? 1 : 0;
                         break;
 
-                    case OP.OP_EQ_FNC:
+                    case ProgramOperator.OP_EQ_FNC:
                         c->_float = ( a->function == b->function ) ? 1 : 0;
                         break;
 
-                    case OP.OP_NE_F:
+                    case ProgramOperator.OP_NE_F:
                         c->_float = ( a->_float != b->_float ) ? 1 : 0;
                         break;
 
-                    case OP.OP_NE_V:
+                    case ProgramOperator.OP_NE_V:
                         c->_float = ( ( a->vector[0] != b->vector[0] ) ||
                             ( a->vector[1] != b->vector[1] ) || ( a->vector[2] != b->vector[2] ) ) ? 1 : 0;
                         break;
 
-                    case OP.OP_NE_S:
+                    case ProgramOperator.OP_NE_S:
                         c->_float = ( GetString( a->_string ) != GetString( b->_string ) ) ? 1 : 0; //strcmp(pr_strings + a->_string, pr_strings + b->_string);
                         break;
 
-                    case OP.OP_NE_E:
+                    case ProgramOperator.OP_NE_E:
                         c->_float = ( a->_int != b->_int ) ? 1 : 0;
                         break;
 
-                    case OP.OP_NE_FNC:
+                    case ProgramOperator.OP_NE_FNC:
                         c->_float = ( a->function != b->function ) ? 1 : 0;
                         break;
 
-                    case OP.OP_STORE_F:
-                    case OP.OP_STORE_ENT:
-                    case OP.OP_STORE_FLD:		// integers
-                    case OP.OP_STORE_S:
-                    case OP.OP_STORE_FNC:		// pointers
+                    case ProgramOperator.OP_STORE_F:
+                    case ProgramOperator.OP_STORE_ENT:
+                    case ProgramOperator.OP_STORE_FLD:		// integers
+                    case ProgramOperator.OP_STORE_S:
+                    case ProgramOperator.OP_STORE_FNC:		// pointers
                         b->_int = a->_int;
                         break;
 
-                    case OP.OP_STORE_V:
+                    case ProgramOperator.OP_STORE_V:
                         b->vector[0] = a->vector[0];
                         b->vector[1] = a->vector[1];
                         b->vector[2] = a->vector[2];
                         break;
 
-                    case OP.OP_STOREP_F:
-                    case OP.OP_STOREP_ENT:
-                    case OP.OP_STOREP_FLD:		// integers
-                    case OP.OP_STOREP_S:
-                    case OP.OP_STOREP_FNC:		// pointers
+                    case ProgramOperator.OP_STOREP_F:
+                    case ProgramOperator.OP_STOREP_ENT:
+                    case ProgramOperator.OP_STOREP_FLD:		// integers
+                    case ProgramOperator.OP_STOREP_S:
+                    case ProgramOperator.OP_STOREP_FNC:		// pointers
                         ed = EdictFromAddr( b->_int, out ofs );
                         ed.StoreInt( ofs, a );
                         break;
 
-                    case OP.OP_STOREP_V:
+                    case ProgramOperator.OP_STOREP_V:
                         ed = EdictFromAddr( b->_int, out ofs );
                         ed.StoreVector( ofs, a );
                         break;
 
-                    case OP.OP_ADDRESS:
+                    case ProgramOperator.OP_ADDRESS:
                         ed = server.ProgToEdict( a->edict );
                         if( ed == server.sv.edicts[0] && server.IsActive )
                             RunError( "assignment to world entity" );
                         c->_int = MakeAddr( a->edict, b->_int );
                         break;
 
-                    case OP.OP_LOAD_F:
-                    case OP.OP_LOAD_FLD:
-                    case OP.OP_LOAD_ENT:
-                    case OP.OP_LOAD_S:
-                    case OP.OP_LOAD_FNC:
+                    case ProgramOperator.OP_LOAD_F:
+                    case ProgramOperator.OP_LOAD_FLD:
+                    case ProgramOperator.OP_LOAD_ENT:
+                    case ProgramOperator.OP_LOAD_S:
+                    case ProgramOperator.OP_LOAD_FNC:
                         ed = server.ProgToEdict( a->edict );
                         ed.LoadInt( b->_int, c );
                         break;
 
-                    case OP.OP_LOAD_V:
+                    case ProgramOperator.OP_LOAD_V:
                         ed = server.ProgToEdict( a->edict );
                         ed.LoadVector( b->_int, c );
                         break;
 
-                    case OP.OP_IFNOT:
+                    case ProgramOperator.OP_IFNOT:
                         if( a->_int == 0 )
                             s += _Statements[s].b - 1;	// offset the s++
                         break;
 
-                    case OP.OP_IF:
+                    case ProgramOperator.OP_IF:
                         if( a->_int != 0 )
                             s += _Statements[s].b - 1;	// offset the s++
                         break;
 
-                    case OP.OP_GOTO:
+                    case ProgramOperator.OP_GOTO:
                         s += _Statements[s].a - 1;	// offset the s++
                         break;
 
-                    case OP.OP_CALL0:
-                    case OP.OP_CALL1:
-                    case OP.OP_CALL2:
-                    case OP.OP_CALL3:
-                    case OP.OP_CALL4:
-                    case OP.OP_CALL5:
-                    case OP.OP_CALL6:
-                    case OP.OP_CALL7:
-                    case OP.OP_CALL8:
-                        _Argc = _Statements[s].op - ( Int32 ) OP.OP_CALL0;
+                    case ProgramOperator.OP_CALL0:
+                    case ProgramOperator.OP_CALL1:
+                    case ProgramOperator.OP_CALL2:
+                    case ProgramOperator.OP_CALL3:
+                    case ProgramOperator.OP_CALL4:
+                    case ProgramOperator.OP_CALL5:
+                    case ProgramOperator.OP_CALL6:
+                    case ProgramOperator.OP_CALL7:
+                    case ProgramOperator.OP_CALL8:
+                        _Argc = _Statements[s].op - ( Int32 ) ProgramOperator.OP_CALL0;
                         if( a->function == 0 )
                             RunError( "NULL function" );
 
-                        dfunction_t newf = _Functions[a->function];
+                        ProgramFunction newf = _Functions[a->function];
 
                         if( newf.first_statement < 0 )
                         {
@@ -426,20 +426,20 @@ namespace SharpQuake
                         s = EnterFunction( newf );
                         break;
 
-                    case OP.OP_DONE:
-                    case OP.OP_RETURN:
+                    case ProgramOperator.OP_DONE:
+                    case ProgramOperator.OP_RETURN:
                         Single* ptr = ( Single* )_GlobalStructAddr;
                         Int32 sta = _Statements[s].a;
-                        ptr[OFS.OFS_RETURN + 0] = *( Single* )Get( sta );
-                        ptr[OFS.OFS_RETURN + 1] = *( Single* )Get( sta + 1 );
-                        ptr[OFS.OFS_RETURN + 2] = *( Single* )Get( sta + 2 );
+                        ptr[ProgramOperatorDef.OFS_RETURN + 0] = *( Single* )Get( sta );
+                        ptr[ProgramOperatorDef.OFS_RETURN + 1] = *( Single* )Get( sta + 1 );
+                        ptr[ProgramOperatorDef.OFS_RETURN + 2] = *( Single* )Get( sta + 2 );
 
                         s = LeaveFunction();
                         if( _Depth == exitdepth )
                             return;		// all done
                         break;
 
-                    case OP.OP_STATE:
+                    case ProgramOperator.OP_STATE:
                         ed = server.ProgToEdict( progs.GlobalStruct.self );
 #if FPS_20
                         ed->v.nextthink = pr_global_struct->time + 0.05;
@@ -488,7 +488,7 @@ namespace SharpQuake
             if( _Functions == null )
                 return;
 
-            dfunction_t best;
+            ProgramFunction best;
             var num = 0;
             do
             {
@@ -496,7 +496,7 @@ namespace SharpQuake
                 best = null;
                 for( var i = 0; i < _Functions.Length; i++ )
                 {
-                    dfunction_t f = _Functions[i];
+                    ProgramFunction f = _Functions[i];
                     if( f.profile > max )
                     {
                         max = f.profile;
@@ -517,7 +517,7 @@ namespace SharpQuake
         /// PR_EnterFunction
         /// Returns the new program statement counter
         /// </summary>
-        private static unsafe Int32 EnterFunction( dfunction_t f )
+        private static unsafe Int32 EnterFunction( ProgramFunction f )
         {
             _Stack[_Depth].s = _xStatement;
             _Stack[_Depth].f = xFunction;
@@ -540,7 +540,7 @@ namespace SharpQuake
             {
                 for( var j = 0; j < f.parm_size[i]; j++ )
                 {
-                    Set( o, *( Int32* )Get( OFS.OFS_PARM0 + i * 3 + j ) );
+                    Set( o, *( Int32* )Get( ProgramOperatorDef.OFS_PARM0 + i * 3 + j ) );
                     o++;
                 }
             }
@@ -563,7 +563,7 @@ namespace SharpQuake
             _Stack[_Depth].f = progs.xFunction;
             for( var i = _Depth; i >= 0; i-- )
             {
-                dfunction_t f = _Stack[i].f;
+                ProgramFunction f = _Stack[i].f;
 
                 if( f == null )
                 {
@@ -577,21 +577,21 @@ namespace SharpQuake
         /// <summary>
         /// PR_PrintStatement
         /// </summary>
-        private static void PrintStatement( ref dstatement_t s )
+        private static void PrintStatement( ref Statement s )
         {
             if( s.op < OpNames.Length )
             {
                 Con.Print( "{0,10} ", OpNames[s.op] );
             }
 
-            OP op = (OP)s.op;
-            if( op == OP.OP_IF || op == OP.OP_IFNOT )
+            ProgramOperator op = (ProgramOperator)s.op;
+            if( op == ProgramOperator.OP_IF || op == ProgramOperator.OP_IFNOT )
                 Con.Print( "{0}branch {1}", GlobalString( s.a ), s.b );
-            else if( op == OP.OP_GOTO )
+            else if( op == ProgramOperator.OP_GOTO )
             {
                 Con.Print( "branch {0}", s.a );
             }
-            else if( ( UInt32 ) ( s.op - OP.OP_STORE_F ) < 6 )
+            else if( ( UInt32 ) ( s.op - ProgramOperator.OP_STORE_F ) < 6 )
             {
                 Con.Print( GlobalString( s.a ) );
                 Con.Print( GlobalStringNoContents( s.b ) );

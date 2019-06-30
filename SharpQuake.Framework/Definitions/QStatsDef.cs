@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace SharpQuake.Framework
 {
-    public static class QStats
+    public static class QStatsDef
     {
         //
         // stats are integers communicated to the client by the server

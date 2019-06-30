@@ -29,8 +29,8 @@ namespace SharpQuake
 {
     partial class render
     {
-        private static entity_t _AddEnt; // r_addent
-        private static mnode_t _EfragTopNode; // r_pefragtopnode
+        private static Entity _AddEnt; // r_addent
+        private static MemoryNode _EfragTopNode; // r_pefragtopnode
         private static Vector3 _EMins; // r_emins
         private static Vector3 _EMaxs; // r_emaxs
 
@@ -44,7 +44,7 @@ namespace SharpQuake
         /// <summary>
         /// R_AddEfrags
         /// </summary>
-        public static void AddEfrags( entity_t ent )
+        public static void AddEfrags( Entity ent )
         {
             if( ent.model == null )
                 return;
@@ -53,7 +53,7 @@ namespace SharpQuake
             _LastObj = ent; //  lastlink = &ent->efrag;
             _EfragTopNode = null;
 
-            model_t entmodel = ent.model;
+            Model entmodel = ent.model;
             _EMins = ent.origin + entmodel.mins;
             _EMaxs = ent.origin + entmodel.maxs;
 
@@ -64,7 +64,7 @@ namespace SharpQuake
         /// <summary>
         /// R_SplitEntityOnNode
         /// </summary>
-        private static void SplitEntityOnNode( mnodebase_t node )
+        private static void SplitEntityOnNode( MemoryNodeBase node )
         {
             if( node.contents == ContentsDef.CONTENTS_SOLID )
                 return;
@@ -73,12 +73,12 @@ namespace SharpQuake
             if( node.contents < 0 )
             {
                 if( _EfragTopNode == null )
-                    _EfragTopNode = node as mnode_t;
+                    _EfragTopNode = node as MemoryNode;
 
-                mleaf_t leaf = (mleaf_t)( System.Object ) node;
+                MemoryLeaf leaf = (MemoryLeaf)( System.Object ) node;
 
                 // grab an efrag off the free list
-                efrag_t ef = client.cl.free_efrags;
+                EFrag ef = client.cl.free_efrags;
                 if( ef == null )
                 {
                     Con.Print( "Too many efrags!\n" );
@@ -90,13 +90,13 @@ namespace SharpQuake
 
                 // add the entity link
                 // *lastlink = ef;
-                if( _LastObj is entity_t )
+                if( _LastObj is Entity )
                 {
-                    ( (entity_t)_LastObj ).efrag = ef;
+                    ( (Entity)_LastObj ).efrag = ef;
                 }
                 else
                 {
-                    ( (efrag_t)_LastObj ).entnext = ef;
+                    ( (EFrag)_LastObj ).entnext = ef;
                 }
                 _LastObj = ef; // lastlink = &ef->entnext;
                 ef.entnext = null;
@@ -110,7 +110,7 @@ namespace SharpQuake
             }
 
             // NODE_MIXED
-            mnode_t n = node as mnode_t;
+            MemoryNode n = node as MemoryNode;
             if( n == null )
                 return;
 
@@ -137,18 +137,18 @@ namespace SharpQuake
         /// R_StoreEfrags
         /// FIXME: a lot of this goes away with edge-based
         /// </summary>
-        private static void StoreEfrags( efrag_t ef )
+        private static void StoreEfrags( EFrag ef )
         {
             while( ef != null )
             {
-                entity_t pent = ef.entity;
-                model_t clmodel = pent.model;
+                Entity pent = ef.entity;
+                Model clmodel = pent.model;
 
                 switch( clmodel.type )
                 {
-                    case modtype_t.mod_alias:
-                    case modtype_t.mod_brush:
-                    case modtype_t.mod_sprite:
+                    case ModelType.mod_alias:
+                    case ModelType.mod_brush:
+                    case ModelType.mod_sprite:
                         if( ( pent.visframe != _FrameCount ) && ( client.NumVisEdicts < client.MAX_VISEDICTS ) )
                         {
                             client.VisEdicts[client.NumVisEdicts++] = pent;

@@ -31,7 +31,7 @@ namespace SharpQuake
     partial class client
     {
         private static Int32 _NumTempEntities; // num_temp_entities
-        private static entity_t[] _TempEntities = new entity_t[MAX_TEMP_ENTITIES]; // cl_temp_entities[MAX_TEMP_ENTITIES]
+        private static Entity[] _TempEntities = new Entity[MAX_TEMP_ENTITIES]; // cl_temp_entities[MAX_TEMP_ENTITIES]
         private static beam_t[] _Beams = new beam_t[MAX_BEAMS]; // cl_beams[MAX_BEAMS]
 
         private static sfx_t _SfxWizHit; // cl_sfx_wizhit
@@ -54,7 +54,7 @@ namespace SharpQuake
             _SfxRExp3 = snd.PrecacheSound( "weapons/r_exp3.wav" );
 
             for( var i = 0; i < _TempEntities.Length; i++ )
-                _TempEntities[i] = new entity_t();
+                _TempEntities[i] = new Entity();
 
             for( var i = 0; i < _Beams.Length; i++ )
                 _Beams[i] = new beam_t();
@@ -107,7 +107,7 @@ namespace SharpQuake
                 var d = MathLib.Normalize( ref dist );
                 while( d > 0 )
                 {
-                    entity_t ent = NewTempEntity();
+                    Entity ent = NewTempEntity();
                     if( ent == null )
                         return;
 
@@ -129,14 +129,14 @@ namespace SharpQuake
         /// <summary>
         /// CL_NewTempEntity
         /// </summary>
-        private static entity_t NewTempEntity()
+        private static Entity NewTempEntity()
         {
             if( NumVisEdicts == MAX_VISEDICTS )
                 return null;
             if( _NumTempEntities == MAX_TEMP_ENTITIES )
                 return null;
 
-            entity_t ent = _TempEntities[_NumTempEntities];
+            Entity ent = _TempEntities[_NumTempEntities];
             _NumTempEntities++;
             _VisEdicts[NumVisEdicts] = ent;
             NumVisEdicts++;
@@ -279,7 +279,7 @@ namespace SharpQuake
         /// <summary>
         /// CL_ParseBeam
         /// </summary>
-        private static void ParseBeam( model_t m )
+        private static void ParseBeam( Model m )
         {
             var ent = net.Reader.ReadShort();
 

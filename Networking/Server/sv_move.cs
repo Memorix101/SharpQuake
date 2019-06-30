@@ -216,7 +216,7 @@ RealCheck:
         {
             MemoryEdict ent = ProgToEdict( progs.GlobalStruct.self );
             MemoryEdict goal = ProgToEdict( ent.v.goalentity );
-            var dist = QBuiltins.GetFloat( OFS.OFS_PARM0 );
+            var dist = QBuiltins.GetFloat( ProgramOperatorDef.OFS_PARM0 );
 
             if( ( ( Int32 ) ent.v.flags & ( EdictFlags.FL_ONGROUND | EdictFlags.FL_FLY | EdictFlags.FL_SWIM ) ) == 0 )
             {

@@ -81,9 +81,6 @@ namespace SharpQuake
             }
         }
 
-        public const Int32 NUM_PING_TIMES = 16;
-        public const Int32 NUM_SPAWN_PARMS = 16;
-
         private static CVar _Friction;// = { "sv_friction", "4", false, true };
         private static CVar _EdgeFriction;// = { "edgefriction", "2" };
         private static CVar _StopSpeed;// = { "sv_stopspeed", "100" };
@@ -334,9 +331,9 @@ namespace SharpQuake
         public Double lastchecktime;
         public String name;// char		name[64];			// map name
         public String modelname;// char		modelname[64];		// maps/<name>.bsp, for model_precache[0]
-        public model_t worldmodel;
+        public Model worldmodel;
         public String[] model_precache; //[MAX_MODELS];	// NULL terminated
-        public model_t[] models; //[MAX_MODELS];
+        public Model[] models; //[MAX_MODELS];
         public String[] sound_precache; //[MAX_SOUNDS];	// NULL terminated
         public String[] lightstyles; // [MAX_LIGHTSTYLES];
         public Int32 num_edicts;
@@ -379,7 +376,7 @@ namespace SharpQuake
         public server_t()
         {
             this.model_precache = new String[QDef.MAX_MODELS];
-            this.models = new model_t[QDef.MAX_MODELS];
+            this.models = new Model[QDef.MAX_MODELS];
             this.sound_precache = new String[QDef.MAX_SOUNDS];
             this.lightstyles = new String[QDef.MAX_LIGHTSTYLES];
             this.datagram = new MessageWriter( QDef.MAX_DATAGRAM );
@@ -445,8 +442,8 @@ namespace SharpQuake
 
         public client_t()
         {
-            this.ping_times = new Single[server.NUM_PING_TIMES];
-            this.spawn_parms = new Single[server.NUM_SPAWN_PARMS];
+            this.ping_times = new Single[ServerDef.NUM_PING_TIMES];
+            this.spawn_parms = new Single[ServerDef.NUM_SPAWN_PARMS];
             this.message = new MessageWriter( QDef.MAX_MSGLEN );
         }
     }// client_t;

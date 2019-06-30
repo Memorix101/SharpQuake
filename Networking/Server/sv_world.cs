@@ -51,7 +51,7 @@ namespace SharpQuake
         private static Int32 _NumAreaNodes;
 
         // sv_numareanodes
-        private static hull_t _BoxHull = new hull_t();
+        private static BspHull _BoxHull = new BspHull();
 
         // box_hull
         private static BspClipNode[] _BoxClipNodes = new BspClipNode[6];
@@ -224,7 +224,7 @@ namespace SharpQuake
         /// <summary>
         /// SV_RecursiveHullCheck
         /// </summary>
-        public static Boolean RecursiveHullCheck( hull_t hull, Int32 num, Single p1f, Single p2f, ref Vector3 p1, ref Vector3 p2, trace_t trace )
+        public static Boolean RecursiveHullCheck( BspHull hull, Int32 num, Single p1f, Single p2f, ref Vector3 p1, ref Vector3 p2, trace_t trace )
         {
             // check for empty
             if( num < 0 )
@@ -434,7 +434,7 @@ namespace SharpQuake
         //
         // To keep everything totally uniform, bounding boxes are turned into small
         // BSP trees instead of being compared directly.
-        private static hull_t HullForBox( ref Vector3 mins, ref Vector3 maxs )
+        private static BspHull HullForBox( ref Vector3 mins, ref Vector3 maxs )
         {
             _BoxPlanes[0].dist = maxs.X;
             _BoxPlanes[1].dist = mins.X;
@@ -452,9 +452,9 @@ namespace SharpQuake
         /// Offset is filled in to contain the adjustment that must be added to the
         /// testing object's origin to get a point to use with the returned hull.
         /// </summary>
-        private static hull_t HullForEntity( MemoryEdict ent, ref Vector3 mins, ref Vector3 maxs, out Vector3 offset )
+        private static BspHull HullForEntity( MemoryEdict ent, ref Vector3 mins, ref Vector3 maxs, out Vector3 offset )
         {
-            hull_t hull = null;
+            BspHull hull = null;
 
             // decide which clipping hull to use, based on the size
             if( ent.v.solid == Solids.SOLID_BSP )
@@ -462,9 +462,9 @@ namespace SharpQuake
                 if( ent.v.movetype != Movetypes.MOVETYPE_PUSH )
                     Utilities.Error( "SOLID_BSP without MOVETYPE_PUSH" );
 
-                model_t model = sv.models[( Int32 ) ent.v.modelindex];
+                Model model = sv.models[( Int32 ) ent.v.modelindex];
 
-                if( model == null || model.type != modtype_t.mod_brush )
+                if( model == null || model.type != ModelType.mod_brush )
                     Utilities.Error( "MOVETYPE_PUSH with a non bsp model" );
 
                 Vector3 size = maxs - mins;
@@ -495,7 +495,7 @@ namespace SharpQuake
         /// <summary>
         /// SV_FindTouchedLeafs
         /// </summary>
-        private static void FindTouchedLeafs( MemoryEdict ent, mnodebase_t node )
+        private static void FindTouchedLeafs( MemoryEdict ent, MemoryNodeBase node )
         {
             if( node.contents == ContentsDef.CONTENTS_SOLID )
                 return;
@@ -504,10 +504,10 @@ namespace SharpQuake
 
             if( node.contents < 0 )
             {
-                if( ent.num_leafs == ProgDefs.MAX_ENT_LEAFS )
+                if( ent.num_leafs == ProgramDef.MAX_ENT_LEAFS )
                     return;
 
-                mleaf_t leaf = (mleaf_t)node;
+                MemoryLeaf leaf = (MemoryLeaf)node;
                 var leafnum = Array.IndexOf( sv.worldmodel.leafs, leaf ) - 1;
 
                 ent.leafnums[ent.num_leafs] = ( Int16 ) leafnum;
@@ -516,7 +516,7 @@ namespace SharpQuake
             }
 
             // NODE_MIXED
-            mnode_t n = (mnode_t)node;
+            MemoryNode n = (MemoryNode)node;
             Plane splitplane = n.plane;
             var sides = MathLib.BoxOnPlaneSide( ref ent.v.absmin, ref ent.v.absmax, splitplane );
 
@@ -585,7 +585,7 @@ namespace SharpQuake
 
             // get the clipping hull
             Vector3 offset;
-            hull_t hull = HullForEntity( ent, ref mins, ref maxs, out offset );
+            BspHull hull = HullForEntity( ent, ref mins, ref maxs, out offset );
 
             Vector3 start_l = start - offset;
             Vector3 end_l = end - offset;
@@ -689,7 +689,7 @@ namespace SharpQuake
         /// <summary>
         /// SV_HullPointContents
         /// </summary>
-        private static Int32 HullPointContents( hull_t hull, Int32 num, ref Vector3 p )
+        private static Int32 HullPointContents( BspHull hull, Int32 num, ref Vector3 p )
         {
             while( num >= 0 )
             {

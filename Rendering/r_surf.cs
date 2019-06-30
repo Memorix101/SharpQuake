@@ -41,16 +41,16 @@ namespace SharpQuake
 
         private static Int32 _LightMapTextures; // lightmap_textures
         private static Int32 _LightMapBytes; // lightmap_bytes		// 1, 2, or 4
-        private static mvertex_t[] _CurrentVertBase; // r_pcurrentvertbase
-        private static model_t _CurrentModel; // currentmodel
+        private static MemoryVertex[] _CurrentVertBase; // r_pcurrentvertbase
+        private static Model _CurrentModel; // currentmodel
         private static System.Boolean[] _LightMapModified = new System.Boolean[MAX_LIGHTMAPS]; // lightmap_modified
-        private static glpoly_t[] _LightMapPolys = new glpoly_t[MAX_LIGHTMAPS]; // lightmap_polys
+        private static GLPoly[] _LightMapPolys = new GLPoly[MAX_LIGHTMAPS]; // lightmap_polys
         private static glRect_t[] _LightMapRectChange = new glRect_t[MAX_LIGHTMAPS]; // lightmap_rectchange
         private static UInt32[] _BlockLights = new UInt32[18 * 18]; // blocklights
         private static Int32 _ColinElim; // nColinElim
-        private static msurface_t _SkyChain; // skychain
-        private static msurface_t _WaterChain; // waterchain
-        private static entity_t _TempEnt = new entity_t(); // for DrawWorld
+        private static MemorySurface _SkyChain; // skychain
+        private static MemorySurface _WaterChain; // waterchain
+        private static Entity _TempEnt = new Entity(); // for DrawWorld
 
         // the lightmap texture data needs to be kept in
         // main memory so texsubimage can update properly
@@ -110,7 +110,7 @@ namespace SharpQuake
 
             for( var j = 1; j < QDef.MAX_MODELS; j++ )
             {
-                model_t m = client.cl.model_precache[j];
+                Model m = client.cl.model_precache[j];
                 if( m == null )
                     break;
 
@@ -122,10 +122,10 @@ namespace SharpQuake
                 for( var i = 0; i < m.numsurfaces; i++ )
                 {
                     CreateSurfaceLightmap( m.surfaces[i] );
-                    if( ( m.surfaces[i].flags & Surf.SURF_DRAWTURB ) != 0 )
+                    if( ( m.surfaces[i].flags & SurfaceDef.SURF_DRAWTURB ) != 0 )
                         continue;
 
-                    if( ( m.surfaces[i].flags & Surf.SURF_DRAWSKY ) != 0 )
+                    if( ( m.surfaces[i].flags & SurfaceDef.SURF_DRAWSKY ) != 0 )
                         continue;
 
                     BuildSurfaceDisplayList( m.surfaces[i] );
@@ -174,9 +174,9 @@ namespace SharpQuake
         /// <summary>
         /// GL_CreateSurfaceLightmap
         /// </summary>
-        private static void CreateSurfaceLightmap( msurface_t surf )
+        private static void CreateSurfaceLightmap( MemorySurface surf )
         {
-            if( ( surf.flags & ( Surf.SURF_DRAWSKY | Surf.SURF_DRAWTURB ) ) != 0 )
+            if( ( surf.flags & ( SurfaceDef.SURF_DRAWSKY | SurfaceDef.SURF_DRAWTURB ) ) != 0 )
                 return;
 
             var smax = ( surf.extents[0] >> 4 ) + 1;
@@ -191,16 +191,16 @@ namespace SharpQuake
         /// <summary>
         /// BuildSurfaceDisplayList
         /// </summary>
-        private static void BuildSurfaceDisplayList( msurface_t fa )
+        private static void BuildSurfaceDisplayList( MemorySurface fa )
         {
             // reconstruct the polygon
-            medge_t[] pedges = _CurrentModel.edges;
+            MemoryEdge[] pedges = _CurrentModel.edges;
             var lnumverts = fa.numedges;
 
             //
             // draw texture
             //
-            glpoly_t poly = new glpoly_t();
+            GLPoly poly = new GLPoly();
             poly.AllocVerts( lnumverts );
             poly.next = fa.polys;
             poly.flags = fa.flags;
@@ -256,7 +256,7 @@ namespace SharpQuake
             //
             // remove co-linear points - Ed
             //
-            if( _glKeepTJunctions.Value == 0 && ( fa.flags & Surf.SURF_UNDERWATER ) == 0 )
+            if( _glKeepTJunctions.Value == 0 && ( fa.flags & SurfaceDef.SURF_UNDERWATER ) == 0 )
             {
                 for( var i = 0; i < lnumverts; ++i )
                 {
@@ -336,7 +336,7 @@ namespace SharpQuake
         /// R_BuildLightMap
         /// Combine and scale multiple lightmaps into the 8.8 format in blocklights
         /// </summary>
-        private static void BuildLightMap( msurface_t surf, ByteArraySegment dest, Int32 stride )
+        private static void BuildLightMap( MemorySurface surf, ByteArraySegment dest, Int32 stride )
         {
             surf.cached_dlight = ( surf.dlightframe == _FrameCount );
 
@@ -422,11 +422,11 @@ namespace SharpQuake
         /// <summary>
         /// R_AddDynamicLights
         /// </summary>
-        private static void AddDynamicLights( msurface_t surf )
+        private static void AddDynamicLights( MemorySurface surf )
         {
             var smax = ( surf.extents[0] >> 4 ) + 1;
             var tmax = ( surf.extents[1] >> 4 ) + 1;
-            mtexinfo_t tex = surf.texinfo;
+            MemoryTextureInfo tex = surf.texinfo;
             dlight_t[] dlights = client.DLights;
 
             for( var lnum = 0; lnum < client.MAX_DLIGHTS; lnum++ )
@@ -496,7 +496,7 @@ namespace SharpQuake
                 if( _WaterChain == null )
                     return;
 
-                for( msurface_t s = _WaterChain; s != null; s = s.texturechain )
+                for( MemorySurface s = _WaterChain; s != null; s = s.texturechain )
                 {
                     Drawer.Bind( s.texinfo.texture.gl_texturenum );
                     EmitWaterPolys( s );
@@ -507,15 +507,15 @@ namespace SharpQuake
             {
                 for( var i = 0; i < client.cl.worldmodel.numtextures; i++ )
                 {
-                    texture_t t = client.cl.worldmodel.textures[i];
+                    Texture t = client.cl.worldmodel.textures[i];
                     if( t == null )
                         continue;
 
-                    msurface_t s = t.texturechain;
+                    MemorySurface s = t.texturechain;
                     if( s == null )
                         continue;
 
-                    if( ( s.flags & Surf.SURF_DRAWTURB ) == 0 )
+                    if( ( s.flags & SurfaceDef.SURF_DRAWTURB ) == 0 )
                         continue;
 
                     // set modulate mode explicitly
@@ -561,12 +561,12 @@ namespace SharpQuake
             else
                 vis = Mod.LeafPVS( _ViewLeaf, client.cl.worldmodel );
 
-            model_t world = client.cl.worldmodel;
+            Model world = client.cl.worldmodel;
             for( var i = 0; i < world.numleafs; i++ )
             {
                 if( vis[i >> 3] != 0 & ( 1 << ( i & 7 ) ) != 0 )
                 {
-                    mnodebase_t node = world.leafs[i + 1];
+                    MemoryNodeBase node = world.leafs[i + 1];
                     do
                     {
                         if( node.visframe == _VisFrameCount )
@@ -629,7 +629,7 @@ namespace SharpQuake
 
             for( var i = 0; i < MAX_LIGHTMAPS; i++ )
             {
-                glpoly_t p = _LightMapPolys[i];
+                GLPoly p = _LightMapPolys[i];
                 if( p == null )
                     continue;
 
@@ -639,7 +639,7 @@ namespace SharpQuake
 
                 for( ; p != null; p = p.chain )
                 {
-                    if( ( p.flags & Surf.SURF_UNDERWATER ) != 0 )
+                    if( ( p.flags & SurfaceDef.SURF_UNDERWATER ) != 0 )
                         DrawGLWaterPolyLightmap( p );
                     else
                     {
@@ -680,14 +680,14 @@ namespace SharpQuake
                 }
                 return;
             }
-            model_t world = client.cl.worldmodel;
+            Model world = client.cl.worldmodel;
             for( var i = 0; i < world.numtextures; i++ )
             {
-                texture_t t = world.textures[i];
+                Texture t = world.textures[i];
                 if( t == null )
                     continue;
 
-                msurface_t s = t.texturechain;
+                MemorySurface s = t.texturechain;
                 if( s == null )
                     continue;
 
@@ -700,7 +700,7 @@ namespace SharpQuake
                 }
                 else
                 {
-                    if( ( s.flags & Surf.SURF_DRAWTURB ) != 0 && _WaterAlpha.Value != 1.0f )
+                    if( ( s.flags & SurfaceDef.SURF_DRAWTURB ) != 0 && _WaterAlpha.Value != 1.0f )
                         continue;	// draw translucent water later
                     for( ; s != null; s = s.texturechain )
                         RenderBrushPoly( s );
@@ -713,26 +713,26 @@ namespace SharpQuake
         /// <summary>
         /// R_RenderBrushPoly
         /// </summary>
-        private static void RenderBrushPoly( msurface_t fa )
+        private static void RenderBrushPoly( MemorySurface fa )
         {
             _BrushPolys++;
 
-            if( ( fa.flags & Surf.SURF_DRAWSKY ) != 0 )
+            if( ( fa.flags & SurfaceDef.SURF_DRAWSKY ) != 0 )
             {	// warp texture, no lightmaps
                 EmitBothSkyLayers( fa );
                 return;
             }
 
-            texture_t t = TextureAnimation( fa.texinfo.texture );
+            Texture t = TextureAnimation( fa.texinfo.texture );
             Drawer.Bind( t.gl_texturenum );
 
-            if( ( fa.flags & Surf.SURF_DRAWTURB ) != 0 )
+            if( ( fa.flags & SurfaceDef.SURF_DRAWTURB ) != 0 )
             {	// warp texture, no lightmaps
                 EmitWaterPolys( fa );
                 return;
             }
 
-            if( ( fa.flags & Surf.SURF_UNDERWATER ) != 0 )
+            if( ( fa.flags & SurfaceDef.SURF_UNDERWATER ) != 0 )
                 DrawGLWaterPoly( fa.polys );
             else
                 DrawGLPoly( fa.polys, t.scaleX, t.scaleY );
@@ -766,7 +766,7 @@ namespace SharpQuake
             }
         }
 
-        private static void UpdateRect( msurface_t fa, ref glRect_t theRect )
+        private static void UpdateRect( MemorySurface fa, ref glRect_t theRect )
         {
             if( fa.light_t < theRect.t )
             {
@@ -788,7 +788,7 @@ namespace SharpQuake
                 theRect.h = ( Byte ) ( ( fa.light_t - theRect.t ) + tmax );
         }
 
-        private static void DrawGLPoly( glpoly_t p, Single scaleX = 1f, Single scaleY = 1f )
+        private static void DrawGLPoly( GLPoly p, Single scaleX = 1f, Single scaleY = 1f )
         {
             GL.Begin( PrimitiveType.Polygon );
             for( var i = 0; i < p.numverts; i++ )
@@ -803,7 +803,7 @@ namespace SharpQuake
         /// <summary>
         /// R_MirrorChain
         /// </summary>
-        private static void MirrorChain( msurface_t s )
+        private static void MirrorChain( MemorySurface s )
         {
             if( _IsMirror )
                 return;
@@ -814,7 +814,7 @@ namespace SharpQuake
         /// <summary>
         /// R_RecursiveWorldNode
         /// </summary>
-        private static void RecursiveWorldNode( mnodebase_t node )
+        private static void RecursiveWorldNode( MemoryNodeBase node )
         {
             if( node.contents == ContentsDef.CONTENTS_SOLID )
                 return;		// solid
@@ -829,8 +829,8 @@ namespace SharpQuake
             // if a leaf node, draw stuff
             if( node.contents < 0 )
             {
-                mleaf_t pleaf = (mleaf_t)node;
-                msurface_t[] marks = pleaf.marksurfaces;
+                MemoryLeaf pleaf = (MemoryLeaf)node;
+                MemorySurface[] marks = pleaf.marksurfaces;
                 var mark = pleaf.firstmarksurface;
                 c = pleaf.nummarksurfaces;
 
@@ -852,7 +852,7 @@ namespace SharpQuake
 
             // node is just a decision point, so go down the apropriate sides
 
-            mnode_t n = (mnode_t)node;
+            MemoryNode n = (MemoryNode)node;
 
             // find which side of the node we are on
             Plane plane = n.plane;
@@ -887,11 +887,11 @@ namespace SharpQuake
 
             if( c != 0 )
             {
-                msurface_t[] surf = client.cl.worldmodel.surfaces;
+                MemorySurface[] surf = client.cl.worldmodel.surfaces;
                 Int32 offset = n.firstsurface;
 
                 if( dot < 0 - QDef.BACKFACE_EPSILON )
-                    side = Surf.SURF_PLANEBACK;
+                    side = SurfaceDef.SURF_PLANEBACK;
                 else if( dot > QDef.BACKFACE_EPSILON )
                     side = 0;
 
@@ -901,7 +901,7 @@ namespace SharpQuake
                         continue;
 
                     // don't backface underwater surfaces, because they warp
-                    if( ( surf[offset].flags & Surf.SURF_UNDERWATER ) == 0 && ( ( dot < 0 ) ^ ( ( surf[offset].flags & Surf.SURF_PLANEBACK ) != 0 ) ) )
+                    if( ( surf[offset].flags & SurfaceDef.SURF_UNDERWATER ) == 0 && ( ( dot < 0 ) ^ ( ( surf[offset].flags & SurfaceDef.SURF_PLANEBACK ) != 0 ) ) )
                         continue;		// wrong side
 
                     // if sorting by texture, just store it out
@@ -913,12 +913,12 @@ namespace SharpQuake
                             surf[offset].texinfo.texture.texturechain = surf[offset];
                         }
                     }
-                    else if( ( surf[offset].flags & Surf.SURF_DRAWSKY ) != 0 )
+                    else if( ( surf[offset].flags & SurfaceDef.SURF_DRAWSKY ) != 0 )
                     {
                         surf[offset].texturechain = _SkyChain;
                         _SkyChain = surf[offset];
                     }
-                    else if( ( surf[offset].flags & Surf.SURF_DRAWTURB ) != 0 )
+                    else if( ( surf[offset].flags & SurfaceDef.SURF_DRAWTURB ) != 0 )
                     {
                         surf[offset].texturechain = _WaterChain;
                         _WaterChain = surf[offset];
@@ -937,16 +937,16 @@ namespace SharpQuake
         /// Systems that have fast state and texture changes can
         /// just do everything as it passes with no need to sort
         /// </summary>
-        private static void DrawSequentialPoly( msurface_t s )
+        private static void DrawSequentialPoly( MemorySurface s )
         {
             //
             // normal lightmaped poly
             //
-            if( ( s.flags & ( Surf.SURF_DRAWSKY | Surf.SURF_DRAWTURB | Surf.SURF_UNDERWATER ) ) == 0 )
+            if( ( s.flags & ( SurfaceDef.SURF_DRAWSKY | SurfaceDef.SURF_DRAWTURB | SurfaceDef.SURF_UNDERWATER ) ) == 0 )
             {
                 RenderDynamicLightmaps( s );
-                glpoly_t p = s.polys;
-                texture_t t = TextureAnimation( s.texinfo.texture );
+                GLPoly p = s.polys;
+                Texture t = TextureAnimation( s.texinfo.texture );
                 if( vid.glMTexable )
                 {
                     // Binds world to texture env 0
@@ -1006,7 +1006,7 @@ namespace SharpQuake
             // subdivided water surface warp
             //
 
-            if( ( s.flags & Surf.SURF_DRAWTURB ) != 0 )
+            if( ( s.flags & SurfaceDef.SURF_DRAWTURB ) != 0 )
             {
                 DisableMultitexture();
                 Drawer.Bind( s.texinfo.texture.gl_texturenum );
@@ -1017,7 +1017,7 @@ namespace SharpQuake
             //
             // subdivided sky warp
             //
-            if( ( s.flags & Surf.SURF_DRAWSKY ) != 0 )
+            if( ( s.flags & SurfaceDef.SURF_DRAWSKY ) != 0 )
             {
                 DisableMultitexture();
                 Drawer.Bind( _SolidSkyTexture );
@@ -1043,7 +1043,7 @@ namespace SharpQuake
             RenderDynamicLightmaps( s );
             if( vid.glMTexable )
             {
-                texture_t t = TextureAnimation( s.texinfo.texture );
+                Texture t = TextureAnimation( s.texinfo.texture );
                 Drawer.SelectTexture( MTexTarget.TEXTURE0_SGIS );
                 Drawer.Bind( t.gl_texturenum );
                 GL.TexEnv( TextureEnvTarget.TextureEnv, TextureEnvParameter.TextureEnvMode, ( Int32 ) TextureEnvMode.Replace );
@@ -1055,7 +1055,7 @@ namespace SharpQuake
 
                 GL.TexEnv( TextureEnvTarget.TextureEnv, TextureEnvParameter.TextureEnvMode, ( Int32 ) TextureEnvMode.Blend );
                 GL.Begin( PrimitiveType.TriangleFan );
-                glpoly_t p = s.polys;
+                GLPoly p = s.polys;
                 Single[] nv = new Single[3];
                 for( i = 0; i < p.numverts; i++ )
                 {
@@ -1073,9 +1073,9 @@ namespace SharpQuake
             }
             else
             {
-                glpoly_t p = s.polys;
+                GLPoly p = s.polys;
 
-                texture_t t = TextureAnimation( s.texinfo.texture );
+                Texture t = TextureAnimation( s.texinfo.texture );
                 Drawer.Bind( t.gl_texturenum );
                 DrawGLWaterPoly( p );
 
@@ -1086,7 +1086,7 @@ namespace SharpQuake
             }
         }
 
-        private static void DrawGLWaterPolyLightmap( glpoly_t p )
+        private static void DrawGLWaterPolyLightmap( GLPoly p )
         {
             DisableMultitexture();
 
@@ -1107,7 +1107,7 @@ namespace SharpQuake
             GL.End();
         }
 
-        private static void DrawGLWaterPoly( glpoly_t p )
+        private static void DrawGLWaterPoly( GLPoly p )
         {
             DisableMultitexture();
 
@@ -1156,7 +1156,7 @@ namespace SharpQuake
         /// R_TextureAnimation
         /// Returns the proper texture for a given time and base texture
         /// </summary>
-        private static texture_t TextureAnimation( texture_t t )
+        private static Texture TextureAnimation( Texture t )
         {
             if( _CurrentEntity.frame != 0 )
             {
@@ -1185,11 +1185,11 @@ namespace SharpQuake
         /// R_RenderDynamicLightmaps
         /// Multitexture
         /// </summary>
-        private static void RenderDynamicLightmaps( msurface_t fa )
+        private static void RenderDynamicLightmaps( MemorySurface fa )
         {
             _BrushPolys++;
 
-            if( ( fa.flags & ( Surf.SURF_DRAWSKY | Surf.SURF_DRAWTURB ) ) != 0 )
+            if( ( fa.flags & ( SurfaceDef.SURF_DRAWSKY | SurfaceDef.SURF_DRAWTURB ) ) != 0 )
                 return;
 
             fa.polys.chain = _LightMapPolys[fa.lightmaptexturenum];
@@ -1222,12 +1222,12 @@ namespace SharpQuake
         /// <summary>
         /// R_DrawBrushModel
         /// </summary>
-        private static void DrawBrushModel( entity_t e )
+        private static void DrawBrushModel( Entity e )
         {
             _CurrentEntity = e;
             Drawer.CurrentTexture = -1;
 
-            model_t clmodel = e.model;
+            Model clmodel = e.model;
             var rotated = false;
             Vector3 mins, maxs;
             if( e.angles.X != 0 || e.angles.Y != 0 || e.angles.Z != 0 )
@@ -1283,7 +1283,7 @@ namespace SharpQuake
             e.angles.X = -e.angles.X;	// stupid quake bug
 
             var surfOffset = clmodel.firstmodelsurface;
-            msurface_t[] psurf = clmodel.surfaces; //[clmodel.firstmodelsurface];
+            MemorySurface[] psurf = clmodel.surfaces; //[clmodel.firstmodelsurface];
 
             //
             // draw texture
@@ -1296,7 +1296,7 @@ namespace SharpQuake
                 var dot = Vector3.Dot( _ModelOrg, pplane.normal ) - pplane.dist;
 
                 // draw the polygon
-                var planeBack = ( psurf[surfOffset].flags & Surf.SURF_PLANEBACK ) != 0;
+                var planeBack = ( psurf[surfOffset].flags & SurfaceDef.SURF_PLANEBACK ) != 0;
                 if( ( planeBack && ( dot < -QDef.BACKFACE_EPSILON ) ) || ( !planeBack && ( dot > QDef.BACKFACE_EPSILON ) ) )
                 {
                     if( _glTexSort.Value != 0 )

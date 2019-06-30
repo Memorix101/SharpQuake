@@ -443,7 +443,7 @@ namespace SharpQuake
             //
             // calculate view angle kicks
             //
-            entity_t ent = client.Entities[cl.viewentity];
+            Entity ent = client.Entities[cl.viewentity];
 
             from -= ent.origin; //  VectorSubtract (from, ent->origin, from);
             MathLib.Normalize( ref from );
@@ -537,10 +537,10 @@ namespace SharpQuake
         private static void CalcIntermissionRefDef()
         {
             // ent is the player model (visible when out of body)
-            entity_t ent = client.ViewEntity;
+            Entity ent = client.ViewEntity;
 
             // view is the weapon model (only visible from inside body)
-            entity_t view = client.ViewEnt;
+            Entity view = client.ViewEnt;
 
             refdef_t rdef = render.RefDef;
             rdef.vieworg = ent.origin;
@@ -557,9 +557,9 @@ namespace SharpQuake
             DriftPitch();
 
             // ent is the player model (visible when out of body)
-            entity_t ent = client.ViewEntity;
+            Entity ent = client.ViewEntity;
             // view is the weapon model (only visible from inside body)
-            entity_t view = client.ViewEnt;
+            Entity view = client.ViewEnt;
 
             // transform the view offset by the model's matrix to get the offset from
             // model origin for the view
@@ -618,8 +618,8 @@ namespace SharpQuake
             else if( viewSize == 80 )
                 view.origin.Z += 0.5f;
 
-            view.model = cl.model_precache[cl.stats[QStats.STAT_WEAPON]];
-            view.frame = cl.stats[QStats.STAT_WEAPONFRAME];
+            view.model = cl.model_precache[cl.stats[QStatsDef.STAT_WEAPON]];
+            view.frame = cl.stats[QStatsDef.STAT_WEAPONFRAME];
             view.colormap = Scr.vid.colormap;
 
             // set up the refresh position
@@ -766,7 +766,7 @@ namespace SharpQuake
                 _DmgTime -= ( Single ) host.FrameTime;
             }
 
-            if( cl.stats[QStats.STAT_HEALTH] <= 0 )
+            if( cl.stats[QStatsDef.STAT_HEALTH] <= 0 )
             {
                 rdef.viewangles.Z = 80;	// dead view angle
                 return;
@@ -776,7 +776,7 @@ namespace SharpQuake
         // V_BoundOffsets
         private static void BoundOffsets()
         {
-            entity_t ent = client.ViewEntity;
+            Entity ent = client.ViewEntity;
 
             // absolutely bound refresh reletive to entity clipping hull
             // so the view can never be inside a solid wall
@@ -865,28 +865,28 @@ namespace SharpQuake
         private static void CalcPowerupCshift()
         {
             client_state_t cl = client.cl;
-            if( cl.HasItems( QItems.IT_QUAD ) )
+            if( cl.HasItems( QItemsDef.IT_QUAD ) )
             {
                 cl.cshifts[ColorShift.CSHIFT_POWERUP].destcolor[0] = 0;
                 cl.cshifts[ColorShift.CSHIFT_POWERUP].destcolor[1] = 0;
                 cl.cshifts[ColorShift.CSHIFT_POWERUP].destcolor[2] = 255;
                 cl.cshifts[ColorShift.CSHIFT_POWERUP].percent = 30;
             }
-            else if( cl.HasItems( QItems.IT_SUIT ) )
+            else if( cl.HasItems( QItemsDef.IT_SUIT ) )
             {
                 cl.cshifts[ColorShift.CSHIFT_POWERUP].destcolor[0] = 0;
                 cl.cshifts[ColorShift.CSHIFT_POWERUP].destcolor[1] = 255;
                 cl.cshifts[ColorShift.CSHIFT_POWERUP].destcolor[2] = 0;
                 cl.cshifts[ColorShift.CSHIFT_POWERUP].percent = 20;
             }
-            else if( cl.HasItems( QItems.IT_INVISIBILITY ) )
+            else if( cl.HasItems( QItemsDef.IT_INVISIBILITY ) )
             {
                 cl.cshifts[ColorShift.CSHIFT_POWERUP].destcolor[0] = 100;
                 cl.cshifts[ColorShift.CSHIFT_POWERUP].destcolor[1] = 100;
                 cl.cshifts[ColorShift.CSHIFT_POWERUP].destcolor[2] = 100;
                 cl.cshifts[ColorShift.CSHIFT_POWERUP].percent = 100;
             }
-            else if( cl.HasItems( QItems.IT_INVULNERABILITY ) )
+            else if( cl.HasItems( QItemsDef.IT_INVULNERABILITY ) )
             {
                 cl.cshifts[ColorShift.CSHIFT_POWERUP].destcolor[0] = 255;
                 cl.cshifts[ColorShift.CSHIFT_POWERUP].destcolor[1] = 255;

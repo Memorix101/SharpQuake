@@ -872,7 +872,7 @@ namespace SharpQuake
         /// entity that should be visible to not show up, especially when the bob
         /// crosses a waterline.
         /// </summary>
-        private static void AddToFatPVS( ref Vector3 org, mnodebase_t node )
+        private static void AddToFatPVS( ref Vector3 org, MemoryNodeBase node )
         {
             while( true )
             {
@@ -881,14 +881,14 @@ namespace SharpQuake
                 {
                     if( node.contents != ContentsDef.CONTENTS_SOLID )
                     {
-                        Byte[] pvs = Mod.LeafPVS( (mleaf_t)node, sv.worldmodel );
+                        Byte[] pvs = Mod.LeafPVS( (MemoryLeaf)node, sv.worldmodel );
                         for( var i = 0; i < _FatBytes; i++ )
                             _FatPvs[i] |= pvs[i];
                     }
                     return;
                 }
 
-                mnode_t n = (mnode_t)node;
+                MemoryNode n = (MemoryNode)node;
                 Plane plane = n.plane;
                 var d = Vector3.Dot( org, plane.normal ) - plane.dist;
                 if( d > 8 )
@@ -957,7 +957,7 @@ namespace SharpQuake
             // set up the client_t
             qsocket_t netconnection = client.netconnection;
 
-            Single[] spawn_parms = new Single[NUM_SPAWN_PARMS];
+            Single[] spawn_parms = new Single[ServerDef.NUM_SPAWN_PARMS];
             if( sv.loadgame )
             {
                 Array.Copy( client.spawn_parms, spawn_parms, spawn_parms.Length );

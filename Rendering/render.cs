@@ -53,7 +53,7 @@ namespace SharpQuake
             }
         }
 
-        public static texture_t NoTextureMip
+        public static Texture NoTextureMip
         {
             get
             {
@@ -87,7 +87,7 @@ namespace SharpQuake
         private const Int32 BLOCK_HEIGHT = 128;
 
         private static refdef_t _RefDef = new refdef_t(); // refdef_t	r_refdef;
-        private static texture_t _NoTextureMip; // r_notexture_mip
+        private static Texture _NoTextureMip; // r_notexture_mip
 
         private static CVar _NoRefresh;// = { "r_norefresh", "0" };
         private static CVar _DrawEntities;// = { "r_drawentities", "1" };
@@ -121,11 +121,11 @@ namespace SharpQuake
         // r_origin
 
         private static Int32[] _LightStyleValue = new Int32[256]; // d_lightstylevalue  // 8.8 fraction of base light value
-        private static entity_t _WorldEntity = new entity_t(); // r_worldentity
-        private static entity_t _CurrentEntity; // currententity
+        private static Entity _WorldEntity = new Entity(); // r_worldentity
+        private static Entity _CurrentEntity; // currententity
 
-        private static mleaf_t _ViewLeaf; // r_viewleaf
-        private static mleaf_t _OldViewLeaf; // r_oldviewleaf
+        private static MemoryLeaf _ViewLeaf; // r_viewleaf
+        private static MemoryLeaf _OldViewLeaf; // r_oldviewleaf
 
         private static Int32 _SkyTextureNum; // skytexturenum
         private static Int32 _MirrorTextureNum; // mirrortexturenum	// quake texturenum, not gltexturenum
@@ -211,7 +211,7 @@ namespace SharpQuake
         public static void InitTextures()
         {
             // create a simple checkerboard texture for the default
-            _NoTextureMip = new texture_t();
+            _NoTextureMip = new Texture();
             _NoTextureMip.pixels = new Byte[16 * 16 + 8 * 8 + 4 * 4 + 2 * 2];
             _NoTextureMip.width = _NoTextureMip.height = 16;
             var offset = 0;
@@ -290,16 +290,16 @@ namespace SharpQuake
         /// R_RemoveEfrags
         /// Call when removing an object from the world or moving it to another position
         /// </summary>
-        public static void RemoveEfrags( entity_t ent )
+        public static void RemoveEfrags( Entity ent )
         {
-            efrag_t ef = ent.efrag;
+            EFrag ef = ent.efrag;
 
             while( ef != null )
             {
-                mleaf_t leaf = ef.leaf;
+                MemoryLeaf leaf = ef.leaf;
                 while( true )
                 {
-                    efrag_t walk = leaf.efrags;
+                    EFrag walk = leaf.efrags;
                     if( walk == null )
                         break;
                     if( walk == ef )
@@ -309,10 +309,10 @@ namespace SharpQuake
                         break;
                     }
                     else
-                        leaf = (mleaf_t)( Object ) walk.leafnext;
+                        leaf = (MemoryLeaf)( Object ) walk.leafnext;
                 }
 
-                efrag_t old = ef;
+                EFrag old = ef;
                 ef = ef.entnext;
 
                 // put it on the free list
@@ -355,10 +355,10 @@ namespace SharpQuake
             // locate the original skin pixels
             //
             _CurrentEntity = client.Entities[1 + playernum];
-            model_t model = _CurrentEntity.model;
+            Model model = _CurrentEntity.model;
             if( model == null )
                 return;		// player doesn't have a model yet
-            if( model.type != modtype_t.mod_alias )
+            if( model.type != ModelType.mod_alias )
                 return; // only translate skins on alias models
 
             aliashdr_t paliashdr = Mod.GetExtraData( model );
@@ -479,7 +479,7 @@ namespace SharpQuake
             // identify sky texture
             _SkyTextureNum = -1;
             _MirrorTextureNum = -1;
-            model_t world = client.cl.worldmodel;
+            Model world = client.cl.worldmodel;
             for( var i = 0; i < world.numtextures; i++ )
             {
                 if( world.textures[i] == null )
@@ -551,7 +551,7 @@ namespace SharpQuake
                 ( Single ) ( Math.Atan2( render.ViewPn.Y, render.ViewPn.X ) / Math.PI * 180.0 ),
                 -_RefDef.viewangles.Z );
 
-            entity_t ent = client.ViewEntity;
+            Entity ent = client.ViewEntity;
             if( client.NumVisEdicts < client.MAX_VISEDICTS )
             {
                 client.VisEdicts[client.NumVisEdicts] = ent;
@@ -584,7 +584,7 @@ namespace SharpQuake
             GL.LoadMatrix( ref _BaseWorldMatrix );
 
             GL.Color4( 1, 1, 1, _MirrorAlpha.Value );
-            msurface_t s = client.cl.worldmodel.textures[_MirrorTextureNum].texturechain;
+            MemorySurface s = client.cl.worldmodel.textures[_MirrorTextureNum].texturechain;
             for( ; s != null; s = s.texturechain )
                 RenderBrushPoly( s );
             client.cl.worldmodel.textures[_MirrorTextureNum].texturechain = null;
@@ -609,10 +609,10 @@ namespace SharpQuake
             if( _DrawEntities.Value == 0 )
                 return;
 
-            if( client.cl.HasItems( QItems.IT_INVISIBILITY ) )
+            if( client.cl.HasItems( QItemsDef.IT_INVISIBILITY ) )
                 return;
 
-            if( client.cl.stats[QStats.STAT_HEALTH] <= 0 )
+            if( client.cl.stats[QStatsDef.STAT_HEALTH] <= 0 )
                 return;
 
             _CurrentEntity = client.ViewEnt;
@@ -693,11 +693,11 @@ namespace SharpQuake
 
                 switch( _CurrentEntity.model.type )
                 {
-                    case modtype_t.mod_alias:
+                    case ModelType.mod_alias:
                         DrawAliasModel( _CurrentEntity );
                         break;
 
-                    case modtype_t.mod_brush:
+                    case ModelType.mod_brush:
                         DrawBrushModel( _CurrentEntity );
                         break;
 
@@ -712,7 +712,7 @@ namespace SharpQuake
 
                 switch( _CurrentEntity.model.type )
                 {
-                    case modtype_t.mod_sprite:
+                    case ModelType.mod_sprite:
                         DrawSpriteModel( _CurrentEntity );
                         break;
                 }
@@ -722,7 +722,7 @@ namespace SharpQuake
         /// <summary>
         /// R_DrawSpriteModel
         /// </summary>
-        private static void DrawSpriteModel( entity_t e )
+        private static void DrawSpriteModel( Entity e )
         {
             // don't even bother culling, because it's just a single
             // polygon without a surface cache
@@ -773,7 +773,7 @@ namespace SharpQuake
         /// <summary>
         /// R_GetSpriteFrame
         /// </summary>
-        private static mspriteframe_t GetSpriteFrame( entity_t currententity )
+        private static mspriteframe_t GetSpriteFrame( Entity currententity )
         {
             msprite_t psprite = (msprite_t)currententity.model.cache.data;
             var frame = currententity.frame;
@@ -815,9 +815,9 @@ namespace SharpQuake
         /// <summary>
         /// R_DrawAliasModel
         /// </summary>
-        private static void DrawAliasModel( entity_t e )
+        private static void DrawAliasModel( Entity e )
         {
-            model_t clmodel = _CurrentEntity.model;
+            Model clmodel = _CurrentEntity.model;
             Vector3 mins = _CurrentEntity.origin + clmodel.mins;
             Vector3 maxs = _CurrentEntity.origin + clmodel.maxs;
 
@@ -1076,7 +1076,7 @@ namespace SharpQuake
         /// <summary>
         /// R_RotateForEntity
         /// </summary>
-        private static void RotateForEntity( entity_t e )
+        private static void RotateForEntity( Entity e )
         {
             GL.Translate( e.origin );
 
@@ -1341,89 +1341,9 @@ namespace SharpQuake
         }
     }
 
-    internal class efrag_t
-    {
-        public mleaf_t leaf;
-        public efrag_t leafnext;
-        public entity_t entity;
-        public efrag_t entnext;
+    
 
-        public void Clear()
-        {
-            this.leaf = null;
-            this.leafnext = null;
-            this.entity = null;
-            this.entnext = null;
-        }
-    } // efrag_t;
-
-    internal class entity_t
-    {
-        public System.Boolean forcelink;		// model changed
-        public Int32 update_type;
-        public EntityState baseline;		// to fill in defaults in updates
-        public Double msgtime;		// time of last update
-        public Vector3[] msg_origins; //[2];	// last two updates (0 is newest)
-        public Vector3 origin;
-        public Vector3[] msg_angles; //[2];	// last two updates (0 is newest)
-        public Vector3 angles;
-        public model_t model;			// NULL = no model
-        public efrag_t efrag;			// linked list of efrags
-        public Int32 frame;
-        public Single syncbase;		// for client-side animations
-        public Byte[] colormap;
-        public Int32 effects;		// light, particals, etc
-        public Int32 skinnum;		// for Alias models
-        public Int32 visframe;		// last frame this entity was
-        //  found in an active leaf
-
-        public Int32 dlightframe;	// dynamic lighting
-        public Int32 dlightbits;
-
-        // FIXME: could turn these into a union
-        public Int32 trivial_accept;
-
-        public mnode_t topnode;		// for bmodels, first world node
-        //  that splits bmodel, or NULL if
-        //  not split
-
-        public void Clear()
-        {
-            this.forcelink = false;
-            this.update_type = 0;
-
-            this.baseline = EntityState.Empty;
-
-            this.msgtime = 0;
-            this.msg_origins[0] = Vector3.Zero;
-            this.msg_origins[1] = Vector3.Zero;
-
-            this.origin = Vector3.Zero;
-            this.msg_angles[0] = Vector3.Zero;
-            this.msg_angles[1] = Vector3.Zero;
-            this.angles = Vector3.Zero;
-            this.model = null;
-            this.efrag = null;
-            this.frame = 0;
-            this.syncbase = 0;
-            this.colormap = null;
-            this.effects = 0;
-            this.skinnum = 0;
-            this.visframe = 0;
-
-            this.dlightframe = 0;
-            this.dlightbits = 0;
-
-            this.trivial_accept = 0;
-            this.topnode = null;
-        }
-
-        public entity_t()
-        {
-            msg_origins = new Vector3[2];
-            msg_angles = new Vector3[2];
-        }
-    } // entity_t;
+    
 
     // !!! if this is changed, it must be changed in asm_draw.h too !!!
     internal class refdef_t

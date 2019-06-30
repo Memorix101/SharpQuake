@@ -34,21 +34,6 @@ namespace SharpQuake
     // d*_t structures are on-disk representations
     // m*_t structures are in-memory
 
-    // entity effects
-    static class EntityEffects
-    {
-        public static Int32 EF_BRIGHTFIELD = 1;
-        public static Int32 EF_MUZZLEFLASH = 2;
-        public static Int32 EF_BRIGHTLIGHT = 4;
-        public static Int32 EF_DIMLIGHT = 8;
-#if QUAKE2
-        public static int EF_DARKLIGHT = 16;
-        public static int EF_DARKFIELD = 32;
-        public static int EF_LIGHT = 64;
-        public static int EF_NODRAW = 128;
-#endif
-    }
-
 
     /*
     ==============================================================================
@@ -59,21 +44,7 @@ namespace SharpQuake
     */
 
 
-    //
-    // in memory representation
-    //
-    // !!! if this is changed, it must be changed in asm_draw.h too !!!
-    struct mvertex_t
-    {
-        public Vector3 position;
-    } // mvertex_t;
-
-    static class Side
-    {
-        public const Int32 SIDE_FRONT = 0;
-        public const Int32 SIDE_BACK = 1;
-        public const Int32 SIDE_ON = 2;
-    }
+   
 
 
     // plane_t structure
@@ -83,23 +54,7 @@ namespace SharpQuake
 
     
 
-    static class Surf
-    {
-        public const Int32 SURF_PLANEBACK = 2;
-        public const Int32 SURF_DRAWSKY = 4;
-        public const Int32 SURF_DRAWSPRITE = 8;
-        public const Int32 SURF_DRAWTURB = 0x10;
-        public const Int32 SURF_DRAWTILED = 0x20;
-        public const Int32 SURF_DRAWBACKGROUND = 0x40;
-        public const Int32 SURF_UNDERWATER = 0x80;
-    }
-
-    // !!! if this is changed, it must be changed in asm_draw.h too !!!
-    struct medge_t
-    {
-        public UInt16[] v; // [2];
-        //public uint cachededgeoffset;
-    } //medge_t;
+   
 
     
 
@@ -107,94 +62,13 @@ namespace SharpQuake
 
     
 
-    // commmon part of mnode_t and mleaf_t
-    class mnodebase_t
-    {
-        public Int32 contents;		// 0 for mnode_t and negative for mleaf_t
-        public Int32 visframe;		// node needs to be traversed if current
-        public Vector3 mins;
-        public Vector3 maxs;
-        //public float[] minmaxs; //[6];		// for bounding box culling
-        public mnode_t parent;
+    
 
-        //public mnodebase_t()
-        //{
-        //    this.minmaxs = new float[6];
-        //}
-    }
-
-    class mnode_t : mnodebase_t
-    {
-        // node specific
-        public Plane plane;
-        public mnodebase_t[] children; //[2];	
-
-        public UInt16 firstsurface;
-        public UInt16 numsurfaces;
-
-        public mnode_t()
-        {
-            this.children = new mnodebase_t[2];
-        }
-    } //mnode_t;
+    
 
 
-    class mleaf_t : mnodebase_t
-    {
-        // leaf specific
-        /// <summary>
-        /// loadmodel->visdata
-        /// Use in pair with visofs!
-        /// </summary>
-        public Byte[] compressed_vis; // byte*
-        public Int32 visofs; // added by Uze
-        public efrag_t efrags;
-
-        /// <summary>
-        /// loadmodel->marksurfaces
-        /// </summary>
-        public msurface_t[] marksurfaces;
-        public Int32 firstmarksurface; // msurface_t	**firstmarksurface;
-        public Int32 nummarksurfaces;
-        //public int key;			// BSP sequence number for leaf's contents
-        public Byte[] ambient_sound_level; // [NUM_AMBIENTS];
-
-        public mleaf_t()
-        {
-            this.ambient_sound_level = new Byte[AmbientDef.NUM_AMBIENTS];
-        }
-    } //mleaf_t;
-
-    // !!! if this is changed, it must be changed in asm_i386.h too !!!
-    class hull_t
-    {
-        public BspClipNode[] clipnodes;
-        public Plane[] planes;
-        public Int32 firstclipnode;
-        public Int32 lastclipnode;
-        public Vector3 clip_mins;
-        public Vector3 clip_maxs;
-
-        public void Clear()
-        {
-            this.clipnodes = null;
-            this.planes = null;
-            this.firstclipnode = 0;
-            this.lastclipnode = 0;
-            this.clip_mins = Vector3.Zero;
-            this.clip_maxs = Vector3.Zero;
-        }
-
-        public void CopyFrom(hull_t src)
-        {
-            this.clipnodes = src.clipnodes;
-            this.planes = src.planes;
-            this.firstclipnode = src.firstclipnode;
-            this.lastclipnode = src.lastclipnode;
-            this.clip_mins = src.clip_mins;
-            this.clip_maxs = src.clip_maxs;
-        }
-    } // hull_t;
+    
+    
 
     // FIXME: shorten these?
     class mspriteframe_t
@@ -264,7 +138,7 @@ namespace SharpQuake
         public Int32 numverts;
         public Int32 numtris;
         public Int32 numframes;
-        public synctype_t synctype;
+        public SyncType synctype;
         public Int32 flags;
         public Single size;
 
@@ -304,10 +178,6 @@ namespace SharpQuake
     // Whole model
     //
 
-    enum modtype_t
-    {
-        mod_brush, mod_sprite, mod_alias
-    } // modtype_t;
 
     static class EF
     {
@@ -321,216 +191,7 @@ namespace SharpQuake
         public const Int32 EF_TRACER3 = 128;			// purple trail
     }
 
-    class model_t
-    {
-        public String name; // char		name[MAX_QPATH];
-        public Boolean needload;		// bmodels and sprites don't cache normally
-
-        public modtype_t type;
-        public Int32 numframes;
-        public synctype_t synctype;
-
-        public Int32 flags;
-
-        //
-        // volume occupied by the model graphics
-        //		
-        public Vector3 mins, maxs;
-        public Single radius;
-
-        //
-        // solid volume for clipping 
-        //
-        public Boolean clipbox;
-        public Vector3 clipmins, clipmaxs;
-
-        //
-        // brush model
-        //
-        public Int32 firstmodelsurface, nummodelsurfaces;
-
-        public Int32 numsubmodels;
-        public BspModel[] submodels;
-
-        public Int32 numplanes;
-        public Plane[] planes; // mplane_t*
-
-        public Int32 numleafs;		// number of visible leafs, not counting 0
-        public mleaf_t[] leafs; // mleaf_t*
-
-        public Int32 numvertexes;
-        public mvertex_t[] vertexes; // mvertex_t*
-
-        public Int32 numedges;
-        public medge_t[] edges; // medge_t*
-
-        public Int32 numnodes;
-        public mnode_t[] nodes; // mnode_t *nodes;
-
-        public Int32 numtexinfo;
-        public mtexinfo_t[] texinfo;
-
-        public Int32 numsurfaces;
-        public msurface_t[] surfaces;
-
-        public Int32 numsurfedges;
-        public Int32[] surfedges; // int *surfedges;
-
-        public Int32 numclipnodes;
-        public BspClipNode[] clipnodes; // public dclipnode_t* clipnodes;
-
-        public Int32 nummarksurfaces;
-        public msurface_t[] marksurfaces; // msurface_t **marksurfaces;
-
-        public hull_t[] hulls; // [MAX_MAP_HULLS];
-
-        public Int32 numtextures;
-        public texture_t[] textures; // texture_t	**textures;
-
-        public Byte[] visdata; // byte *visdata;
-        public Byte[] lightdata; // byte		*lightdata;
-        public String entities; // char		*entities
-
-        //
-        // additional model data
-        //
-        public CacheUser cache; // cache_user_t	cache		// only access through Mod_Extradata
-
-        public model_t()
-        {
-            this.hulls = new hull_t[BspDef.MAX_MAP_HULLS];
-            for ( var i = 0; i < this.hulls.Length; i++)
-                this.hulls[i] = new hull_t();
-        }
-
-        public void Clear()
-        {
-            this.name = null;
-            this.needload = false;
-            this.type = 0;
-            this.numframes = 0;
-            this.synctype = 0;
-            this.flags = 0;
-            this.mins = Vector3.Zero;
-            this.maxs = Vector3.Zero;
-            this.radius = 0;
-            this.clipbox = false;
-            this.clipmins = Vector3.Zero;
-            this.clipmaxs = Vector3.Zero;
-            this.firstmodelsurface = 0;
-            this.nummodelsurfaces = 0;
-
-            this.numsubmodels = 0;
-            this.submodels = null;
-
-            this.numplanes = 0;
-            this.planes = null;
-
-            this.numleafs = 0;
-            this.leafs = null;
-
-            this.numvertexes = 0;
-            this.vertexes = null;
-
-            this.numedges = 0;
-            this.edges = null;
-
-            this.numnodes = 0;
-            this.nodes = null;
-
-            this.numtexinfo = 0;
-            this.texinfo = null;
-
-            this.numsurfaces = 0;
-            this.surfaces = null;
-
-            this.numsurfedges = 0;
-            this.surfedges = null;
-
-            this.numclipnodes = 0;
-            this.clipnodes = null;
-
-            this.nummarksurfaces = 0;
-            this.marksurfaces = null;
-
-            foreach (hull_t h in this.hulls)
-                h.Clear();
-
-            this.numtextures = 0;
-            this.textures = null;
-
-            this.visdata = null;
-            this.lightdata = null;
-            this.entities = null;
-
-            this.cache = null;
-        }
-
-        public void CopyFrom(model_t src)
-        {
-            this.name = src.name;
-            this.needload = src.needload;
-            this.type = src.type;
-            this.numframes = src.numframes;
-            this.synctype = src.synctype;
-            this.flags = src.flags;
-            this.mins = src.mins;
-            this.maxs = src.maxs;
-            this.radius = src.radius;
-            this.clipbox = src.clipbox;
-            this.clipmins = src.clipmins;
-            this.clipmaxs = src.clipmaxs;
-            this.firstmodelsurface = src.firstmodelsurface;
-            this.nummodelsurfaces = src.nummodelsurfaces;
-
-            this.numsubmodels = src.numsubmodels;
-            this.submodels = src.submodels;
-
-            this.numplanes = src.numplanes;
-            this.planes = src.planes;
-
-            this.numleafs = src.numleafs;
-            this.leafs = src.leafs;
-
-            this.numvertexes = src.numvertexes;
-            this.vertexes = src.vertexes;
-
-            this.numedges = src.numedges;
-            this.edges = src.edges;
-
-            this.numnodes = src.numnodes;
-            this.nodes = src.nodes;
-
-            this.numtexinfo = src.numtexinfo;
-            this.texinfo = src.texinfo;
-
-            this.numsurfaces = src.numsurfaces;
-            this.surfaces = src.surfaces;
-
-            this.numsurfedges = src.numsurfedges;
-            this.surfedges = src.surfedges;
-
-            this.numclipnodes = src.numclipnodes;
-            this.clipnodes = src.clipnodes;
-
-            this.nummarksurfaces = src.nummarksurfaces;
-            this.marksurfaces = src.marksurfaces;
-
-            for ( var i = 0; i < src.hulls.Length; i++)
-            {
-                this.hulls[i].CopyFrom(src.hulls[i]);
-            }
-
-            this.numtextures = src.numtextures;
-            this.textures = src.textures;
-
-            this.visdata = src.visdata;
-            this.lightdata = src.lightdata;
-            this.entities = src.entities;
-
-            this.cache = src.cache;
-        }
-    } //model_t;
+    
 
     //
     // modelgen.h: header file for model generation program
@@ -545,11 +206,7 @@ namespace SharpQuake
     //#define ALIAS_ONSEAM				0x0020
 
     // must match definition in spritegn.h
-    enum synctype_t
-    {
-        ST_SYNC = 0, ST_RAND
-    } // synctype_t;
-
+   
 
     enum aliasframetype_t
     {
@@ -576,7 +233,7 @@ namespace SharpQuake
         public Int32 numverts;
         public Int32 numtris;
         public Int32 numframes;
-        public synctype_t synctype;
+        public SyncType synctype;
         public Int32 flags;
         public Single size;
 
@@ -707,7 +364,7 @@ namespace SharpQuake
         public Int32 height;
         public Int32 numframes;
         public Single beamlength;
-        public synctype_t synctype;
+        public SyncType synctype;
 
         public static Int32 SizeInBytes = Marshal.SizeOf(typeof(dsprite_t));
     } // dsprite_t;

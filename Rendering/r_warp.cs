@@ -73,14 +73,14 @@ namespace SharpQuake
         private static Int32 _SolidSkyTexture; // solidskytexture
         private static Int32 _AlphaSkyTexture; // alphaskytexture
 
-        private static msurface_t _WarpFace; // used by SubdivideSurface()
+        private static MemorySurface _WarpFace; // used by SubdivideSurface()
 
         /// <summary>
         /// R_InitSky
         /// called at level load
         /// A sky texture is 256*128, with the right side being a masked overlay
         /// </summary>
-        public static void InitSky( texture_t mt )
+        public static void InitSky( Texture mt )
         {
             Byte[] src = mt.pixels;
             var offset = mt.offsets[0];
@@ -140,7 +140,7 @@ namespace SharpQuake
         /// Breaks a polygon up along axial 64 unit boundaries
         /// so that turbulent and sky warps can be done reasonably.
         /// </summary>
-        public static void SubdivideSurface( msurface_t fa )
+        public static void SubdivideSurface( MemorySurface fa )
         {
             _WarpFace = fa;
 
@@ -149,7 +149,7 @@ namespace SharpQuake
             //
             var numverts = 0;
             Vector3[] verts = new Vector3[fa.numedges + 1]; // + 1 for wrap case
-            model_t loadmodel = Mod.Model;
+            Model loadmodel = Mod.Model;
             for( var i = 0; i < fa.numedges; i++ )
             {
                 var lindex = loadmodel.surfedges[fa.firstedge + i];
@@ -229,7 +229,7 @@ namespace SharpQuake
                 return;
             }
 
-            glpoly_t poly = new glpoly_t();
+            GLPoly poly = new GLPoly();
             poly.next = _WarpFace.polys;
             _WarpFace.polys = poly;
             poly.AllocVerts( numverts );
@@ -261,9 +261,9 @@ namespace SharpQuake
         /// EmitWaterPolys
         /// Does a water warp on the pre-fragmented glpoly_t chain
         /// </summary>
-        private static void EmitWaterPolys( msurface_t fa )
+        private static void EmitWaterPolys( MemorySurface fa )
         {
-            for( glpoly_t p = fa.polys; p != null; p = p.next )
+            for( GLPoly p = fa.polys; p != null; p = p.next )
             {
                 GL.Begin( PrimitiveType.Polygon );
                 for( var i = 0; i < p.numverts; i++ )
@@ -288,9 +288,9 @@ namespace SharpQuake
         /// <summary>
         /// EmitSkyPolys
         /// </summary>
-        private static void EmitSkyPolys( msurface_t fa )
+        private static void EmitSkyPolys( MemorySurface fa )
         {
-            for( glpoly_t p = fa.polys; p != null; p = p.next )
+            for( GLPoly p = fa.polys; p != null; p = p.next )
             {
                 GL.Begin( PrimitiveType.Polygon );
                 for( var i = 0; i < p.numverts; i++ )
@@ -315,7 +315,7 @@ namespace SharpQuake
         /// <summary>
         /// R_DrawSkyChain
         /// </summary>
-        private static void DrawSkyChain( msurface_t s )
+        private static void DrawSkyChain( MemorySurface s )
         {
             DisableMultitexture();
 
@@ -324,7 +324,7 @@ namespace SharpQuake
             _SpeedScale = ( Single ) host.RealTime * 8;
             _SpeedScale -= ( Int32 ) _SpeedScale & ~127;
 
-            for( msurface_t fa = s; fa != null; fa = fa.texturechain )
+            for( MemorySurface fa = s; fa != null; fa = fa.texturechain )
                 EmitSkyPolys( fa );
 
             GL.Enable( EnableCap.Blend );
@@ -332,7 +332,7 @@ namespace SharpQuake
             _SpeedScale = ( Single ) host.RealTime * 16;
             _SpeedScale -= ( Int32 ) _SpeedScale & ~127;
 
-            for( msurface_t fa = s; fa != null; fa = fa.texturechain )
+            for( MemorySurface fa = s; fa != null; fa = fa.texturechain )
                 EmitSkyPolys( fa );
 
             GL.Disable( EnableCap.Blend );
@@ -344,7 +344,7 @@ namespace SharpQuake
         /// This will be called for brushmodels, the world
         /// will have them chained together.
         /// </summary>
-        private static void EmitBothSkyLayers( msurface_t fa )
+        private static void EmitBothSkyLayers( MemorySurface fa )
         {
             DisableMultitexture();
 
