@@ -315,24 +315,24 @@ namespace SharpQuake
             {
                 if(_IsMouseWindowed)
                 {
-                    input.DeactivateMouse();
-                    input.ShowMouse();
+                    Input.DeactivateMouse();
+                    Input.ShowMouse();
                     _IsMouseWindowed = false;
                 }
             }
             else
             {
                 _IsMouseWindowed = true;
-                if(Key.Destination == keydest_t.key_game && !input.IsMouseActive &&
+                if(Key.Destination == keydest_t.key_game && !Input.IsMouseActive &&
                     client.cls.state != cactive_t.ca_disconnected )// && ActiveApp)
                 {
-                    input.ActivateMouse();
-                    input.HideMouse();
+                    Input.ActivateMouse();
+                    Input.HideMouse();
                 }
-                else if(input.IsMouseActive && Key.Destination != keydest_t.key_game )
+                else if(Input.IsMouseActive && Key.Destination != keydest_t.key_game )
                 {
-                    input.DeactivateMouse();
-                    input.ShowMouse();
+                    Input.DeactivateMouse();
+                    Input.ShowMouse();
                 }
             }
 

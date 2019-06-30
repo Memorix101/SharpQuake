@@ -595,7 +595,7 @@ namespace SharpQuake
             }
 
             Key.ClearStates();
-            input.ClearStates();
+            Input.ClearStates();
         }
 
         /// <summary>

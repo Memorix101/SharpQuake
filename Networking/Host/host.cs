@@ -303,7 +303,7 @@ namespace SharpQuake
                     Utilities.Error( "Couldn't load gfx/colormap.lmp" );
 
                 // on non win32, mouse comes before video for security reasons
-                input.Init();
+                Input.Init();
                 vid.Init( _BasePal );
                 Drawer.Init();
                 Scr.Init();
@@ -340,7 +340,7 @@ namespace SharpQuake
                 cd_audio.Shutdown();
                 net.Shutdown();
                 snd.Shutdown();
-                input.Shutdown();
+                Input.Shutdown();
 
                 if( _VcrWriter != null )
                 {
@@ -702,7 +702,7 @@ namespace SharpQuake
             sys.SendKeyEvents();
 
             // allow mice or other external controllers to add commands
-            input.Commands();
+            Input.Commands();
 
             // process console commands
             CommandBuffer.Execute();

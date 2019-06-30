@@ -120,7 +120,7 @@
     <Compile Include="System\external.cs" />
     <Compile Include="Networking\Host\host.cs" />
     <Compile Include="Networking\Host\host_cmd.cs" />
-    <Compile Include="Desktop\input.cs" />
+    <Compile Include="Desktop\Input.cs" />
     <Compile Include="Desktop\keys.cs" />
     <Compile Include="Desktop\MainWindow.cs" />
     <Compile Include="Rendering\UI\Menu.cs" />

@@ -31,7 +31,7 @@ namespace SharpQuake
     /// <summary>
     /// In_functions
     /// </summary>
-    internal static class input
+    internal static class Input
     {
         public static System.Boolean IsMouseActive
         {
@@ -106,7 +106,7 @@ namespace SharpQuake
                 //    restore_spi = SystemParametersInfo (SPI_SETMOUSE, 0, newmouseparms, 0);
 
                 //Cursor.Position = Input.WindowCenter;
-                Mouse.SetPosition(input.WindowCenter.X, input.WindowCenter.Y);
+                Mouse.SetPosition(Input.WindowCenter.X, Input.WindowCenter.Y);
 
 
                 //SetCapture(mainwindow);
@@ -214,7 +214,7 @@ namespace SharpQuake
                 return;
            
             Point current_pos = new Point(Mouse.GetCursorState().X, Mouse.GetCursorState().Y); //Cursor.Position;
-            Point window_center = input.WindowCenter;
+            Point window_center = Input.WindowCenter;
 
             var mx = ( System.Int32 ) ( current_pos.X - window_center.X + _MouseAccum.X );
             var my = ( System.Int32 ) ( current_pos.Y - window_center.Y + _MouseAccum.Y );

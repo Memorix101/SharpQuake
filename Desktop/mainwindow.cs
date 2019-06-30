@@ -328,12 +328,12 @@ namespace SharpQuake
             if (e.Button == MouseButton.Middle && e.IsPressed)
                 _MouseBtnState |= 4;
 
-            input.MouseEvent(_MouseBtnState);
+            Input.MouseEvent(_MouseBtnState);
         }
 
         private void Mouse_Move( Object sender, OpenTK.Input.MouseMoveEventArgs e)
         {
-            input.MouseEvent(_MouseBtnState);
+            Input.MouseEvent(_MouseBtnState);
         }
 
         private Int32 MapKey(OpenTK.Input.Key srcKey)

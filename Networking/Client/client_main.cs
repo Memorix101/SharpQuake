@@ -213,7 +213,7 @@ namespace SharpQuake
                 BaseMove( ref cmd );
 
                 // allow mice or other external controllers to add to the move
-                input.Move( cmd );
+                Input.Move( cmd );
 
                 // send the unreliable message
                 client.SendMove( ref cmd );
