@@ -45,7 +45,7 @@ namespace SharpQuake
         src_command		// from the command buffer
     }
 
-    internal static class cmd
+    internal static class Command
     {
         public static cmd_source_t Source
         {
@@ -118,7 +118,7 @@ namespace SharpQuake
                 sys.Error( "Cmd.Add after host initialized!" );
 
             // fail if the command is a variable name
-            if( cvar.Exists( name ) )
+            if( CVar.Exists( name ) )
             {
                 Con.Print( "Cmd.Add: {0} already defined as a var!\n", name );
                 return;
@@ -185,14 +185,14 @@ namespace SharpQuake
                 if( _Argc == 1 )
                     _Args = text;
 
-                text = common.Parse( text );
+                text = Common.Parse( text );
 
-                if( String.IsNullOrEmpty( common.Token ) )
+                if( String.IsNullOrEmpty( Common.Token ) )
                     break;
 
                 if( _Argc < MAX_ARGS )
                 {
-                    argv.Add( common.Token );
+                    argv.Add( Common.Token );
                     _Argc++;
                 }
             }
@@ -232,7 +232,7 @@ namespace SharpQuake
                 else
                 {
                     // check cvars
-                    if( !cvar.Command() )
+                    if( !CVar.Command() )
                         Con.Print( "Unknown command \"{0}\"\n", _Argv[0] );
                 }
             }
@@ -248,7 +248,7 @@ namespace SharpQuake
         {
             if( client.cls.state != cactive_t.ca_connected )
             {
-                Con.Print( "Can't \"{0}\", not connected\n", cmd.Argv( 0 ) );
+                Con.Print( "Can't \"{0}\", not connected\n", Command.Argv( 0 ) );
                 return;
             }
 
@@ -257,13 +257,13 @@ namespace SharpQuake
 
             MsgWriter writer = client.cls.message;
             writer.WriteByte( protocol.clc_stringcmd );
-            if( !cmd.Argv( 0 ).Equals( "cmd" ) )
+            if( !Command.Argv( 0 ).Equals( "cmd" ) )
             {
-                writer.Print( cmd.Argv( 0 ) + " " );
+                writer.Print( Command.Argv( 0 ) + " " );
             }
-            if( cmd.Argc > 1 )
+            if( Command.Argc > 1 )
             {
-                writer.Print( cmd.Args );
+                writer.Print( Command.Args );
             }
             else
             {
@@ -409,7 +409,7 @@ namespace SharpQuake
             _Aliases[name] = sb.ToString();
         }
 
-        static cmd()
+        static Command()
         {
             _Aliases = new Dictionary<string, string>();
             _Functions = new Dictionary<string, xcommand_t>();
@@ -512,7 +512,7 @@ namespace SharpQuake
                 // execute the command line
                 if( !String.IsNullOrEmpty( line ) )
                 {
-                    cmd.ExecuteString( line, cmd_source_t.src_command );
+                    Command.ExecuteString( line, cmd_source_t.src_command );
 
                     if( _Wait )
                     {

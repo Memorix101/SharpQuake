@@ -178,16 +178,16 @@ namespace SharpQuake
             float[] dist = new float[64];
             for( int i = 0; i < 3; i++ )
             {
-                double m = ( mathlib.Comp( ref mins, i ) + mathlib.Comp( ref maxs, i ) ) * 0.5;
+                double m = ( MathLib.Comp( ref mins, i ) + MathLib.Comp( ref maxs, i ) ) * 0.5;
                 m = Mod.SubdivideSize * Math.Floor( m / Mod.SubdivideSize + 0.5 );
-                if( mathlib.Comp( ref maxs, i ) - m < 8 )
+                if( MathLib.Comp( ref maxs, i ) - m < 8 )
                     continue;
 
-                if( m - mathlib.Comp( ref mins, i ) < 8 )
+                if( m - MathLib.Comp( ref mins, i ) < 8 )
                     continue;
 
                 for( int j = 0; j < numverts; j++ )
-                    dist[j] = (float)( mathlib.Comp( ref verts[j], i ) - m );
+                    dist[j] = (float)( MathLib.Comp( ref verts[j], i ) - m );
 
                 Vector3[] front = new Vector3[64];
                 Vector3[] back = new Vector3[64];
@@ -234,7 +234,7 @@ namespace SharpQuake
             poly.AllocVerts( numverts );
             for( int i = 0; i < numverts; i++ )
             {
-                common.Copy( ref verts[i], poly.verts[i] );
+                Common.Copy( ref verts[i], poly.verts[i] );
                 float s = Vector3.Dot( verts[i], _WarpFace.texinfo.vecs[0].Xyz );
                 float t = Vector3.Dot( verts[i], _WarpFace.texinfo.vecs[1].Xyz );
                 poly.verts[i][3] = s;

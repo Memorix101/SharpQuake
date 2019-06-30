@@ -88,17 +88,17 @@ namespace SharpQuake
 
         private const int MAX_SFX = 512;
 
-        private static cvar _BgmVolume = new cvar( "bgmvolume", "1", true );// = { "bgmvolume", "1", true };
-        private static cvar _Volume = new cvar( "volume", "0.7", true );// = { "volume", "0.7", true };
-        private static cvar _NoSound = new cvar( "nosound", "0" );// = { "nosound", "0" };
-        private static cvar _Precache = new cvar( "precache", "1" );// = { "precache", "1" };
-        private static cvar _LoadAs8bit = new cvar( "loadas8bit", "0" );// = { "loadas8bit", "0" };
-        private static cvar _BgmBuffer = new cvar( "bgmbuffer", "4096" );// = { "bgmbuffer", "4096" };
-        private static cvar _AmbientLevel = new cvar( "ambient_level", "0.3" );// = { "ambient_level", "0.3" };
-        private static cvar _AmbientFade = new cvar( "ambient_fade", "100" );// = { "ambient_fade", "100" };
-        private static cvar _NoExtraUpdate = new cvar( "snd_noextraupdate", "0" );// = { "snd_noextraupdate", "0" };
-        private static cvar _Show = new cvar( "snd_show", "0" );// = { "snd_show", "0" };
-        private static cvar _MixAhead = new cvar( "_snd_mixahead", "0.1", true );// = { "_snd_mixahead", "0.1", true };
+        private static CVar _BgmVolume = new CVar( "bgmvolume", "1", true );// = { "bgmvolume", "1", true };
+        private static CVar _Volume = new CVar( "volume", "0.7", true );// = { "volume", "0.7", true };
+        private static CVar _NoSound = new CVar( "nosound", "0" );// = { "nosound", "0" };
+        private static CVar _Precache = new CVar( "precache", "1" );// = { "precache", "1" };
+        private static CVar _LoadAs8bit = new CVar( "loadas8bit", "0" );// = { "loadas8bit", "0" };
+        private static CVar _BgmBuffer = new CVar( "bgmbuffer", "4096" );// = { "bgmbuffer", "4096" };
+        private static CVar _AmbientLevel = new CVar( "ambient_level", "0.3" );// = { "ambient_level", "0.3" };
+        private static CVar _AmbientFade = new CVar( "ambient_fade", "100" );// = { "ambient_fade", "100" };
+        private static CVar _NoExtraUpdate = new CVar( "snd_noextraupdate", "0" );// = { "snd_noextraupdate", "0" };
+        private static CVar _Show = new CVar( "snd_show", "0" );// = { "snd_show", "0" };
+        private static CVar _MixAhead = new CVar( "_snd_mixahead", "0.1", true );// = { "_snd_mixahead", "0.1", true };
 
         private static ISoundController _Controller = new OpenALController();// NullSoundController();
         private static bool _IsInitialized; // snd_initialized
@@ -136,17 +136,17 @@ namespace SharpQuake
         {
             Con.Print( "\nSound Initialization\n" );
 
-            if( common.HasParam( "-nosound" ) )
+            if( Common.HasParam( "-nosound" ) )
                 return;
 
             for( int i = 0; i < _Channels.Length; i++ )
                 _Channels[i] = new channel_t();
 
-            cmd.Add( "play", Play );
-            cmd.Add( "playvol", PlayVol );
-            cmd.Add( "stopsound", StopAllSoundsCmd );
-            cmd.Add( "soundlist", SoundList );
-            cmd.Add( "soundinfo", SoundInfo_f );
+            Command.Add( "play", Play );
+            Command.Add( "playvol", PlayVol );
+            Command.Add( "stopsound", StopAllSoundsCmd );
+            Command.Add( "soundlist", SoundList );
+            Command.Add( "soundinfo", SoundInfo_f );
 
             _IsInitialized = true;
 
@@ -487,7 +487,7 @@ namespace SharpQuake
                 Con.Print( "S_LocalSound: can't cache {0}\n", sound );
                 return;
             }
-            StartSound( client.cl.viewentity, -1, sfx, ref common.ZeroVector, 1, 1 );
+            StartSound( client.cl.viewentity, -1, sfx, ref Common.ZeroVector, 1, 1 );
         }
 
         // S_Startup
@@ -524,9 +524,9 @@ namespace SharpQuake
         // S_Play
         private static void Play()
         {
-            for( int i = 1; i < cmd.Argc; i++ )
+            for( int i = 1; i < Command.Argc; i++ )
             {
-                string name = cmd.Argv( i );
+                string name = Command.Argv( i );
                 int k = name.IndexOf( '.' );
                 if( k == -1 )
                     name += ".wav";
@@ -539,15 +539,15 @@ namespace SharpQuake
         // S_PlayVol
         private static void PlayVol()
         {
-            for( int i = 1; i < cmd.Argc; i += 2 )
+            for( int i = 1; i < Command.Argc; i += 2 )
             {
-                string name = cmd.Argv( i );
+                string name = Command.Argv( i );
                 int k = name.IndexOf( '.' );
                 if( k == -1 )
                     name += ".wav";
 
                 sfx_t sfx = PrecacheSound( name );
-                float vol = float.Parse( cmd.Argv( i + 1 ) );
+                float vol = float.Parse( Command.Argv( i + 1 ) );
                 StartSound( _PlayVolHash++, 0, sfx, ref _ListenerOrigin, vol, 1.0f );
             }
         }
@@ -640,7 +640,7 @@ namespace SharpQuake
             sfx_t snd = ch.sfx;
             Vector3 source_vec = ch.origin - _ListenerOrigin;
 
-            float dist = mathlib.Normalize( ref source_vec ) * ch.dist_mult;
+            float dist = MathLib.Normalize( ref source_vec ) * ch.dist_mult;
             float dot = Vector3.Dot( _ListenerRight, source_vec );
 
             float rscale, lscale;

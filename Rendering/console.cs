@@ -95,7 +95,7 @@ namespace SharpQuake
         private static bool _IsInitialized; // qboolean con_initialized;
         private static bool _ForcedUp; // qboolean con_forcedup		// because no entities to refresh
         private static int _NotifyLines; // con_notifylines	// scan lines to clear for notify lines
-        private static cvar _NotifyTime; // con_notifytime = { "con_notifytime", "3" };		//seconds
+        private static CVar _NotifyTime; // con_notifytime = { "con_notifytime", "3" };		//seconds
         private static float _CursorSpeed = 4; // con_cursorspeed
         private static FileStream _Log;
 
@@ -111,7 +111,7 @@ namespace SharpQuake
                 width = 38;
                 _LineWidth = width; // con_linewidth = width;
                 _TotalLines = CON_TEXTSIZE / _LineWidth;
-                common.FillArray( _Text, ' ' ); // Q_memset (con_text, ' ', CON_TEXTSIZE);
+                Common.FillArray( _Text, ' ' ); // Q_memset (con_text, ' ', CON_TEXTSIZE);
             }
             else
             {
@@ -131,7 +131,7 @@ namespace SharpQuake
 
                 char[] tmp = _Text;
                 _Text = new char[CON_TEXTSIZE];
-                common.FillArray( _Text, ' ' );
+                Common.FillArray( _Text, ' ' );
 
                 for( int i = 0; i < numlines; i++ )
                 {
@@ -152,10 +152,10 @@ namespace SharpQuake
         // Con_Init (void)
         public static void Init()
         {
-            _DebugLog = ( common.CheckParm( "-condebug" ) > 0 );
+            _DebugLog = ( Common.CheckParm( "-condebug" ) > 0 );
             if( _DebugLog )
             {
-                string path = Path.Combine( common.GameDir, LOG_FILE_NAME );
+                string path = Path.Combine( Common.GameDir, LOG_FILE_NAME );
                 if( File.Exists( path ) )
                     File.Delete( path );
 
@@ -172,13 +172,13 @@ namespace SharpQuake
             //
             if( _NotifyTime == null )
             {
-                _NotifyTime = new cvar( "con_notifytime", "3" );
+                _NotifyTime = new CVar( "con_notifytime", "3" );
             }
 
-            cmd.Add( "toggleconsole", ToggleConsole_f );
-            cmd.Add( "messagemode", MessageMode_f );
-            cmd.Add( "messagemode2", MessageMode2_f );
-            cmd.Add( "clear", Clear_f );
+            Command.Add( "toggleconsole", ToggleConsole_f );
+            Command.Add( "messagemode", MessageMode_f );
+            Command.Add( "messagemode2", MessageMode2_f );
+            Command.Add( "clear", Clear_f );
 
             _IsInitialized = true;
         }
@@ -457,7 +457,7 @@ namespace SharpQuake
         /// </summary>
         private static void Clear_f()
         {
-            common.FillArray( _Text, ' ' );
+            Common.FillArray( _Text, ' ' );
         }
 
         // Con_MessageMode_f

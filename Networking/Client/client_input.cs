@@ -52,47 +52,47 @@ namespace SharpQuake
 
         public static void Init()
         {
-            cmd.Add( "+moveup", UpDown );
-            cmd.Add( "-moveup", UpUp );
-            cmd.Add( "+movedown", DownDown );
-            cmd.Add( "-movedown", DownUp );
-            cmd.Add( "+left", LeftDown );
-            cmd.Add( "-left", LeftUp );
-            cmd.Add( "+right", RightDown );
-            cmd.Add( "-right", RightUp );
-            cmd.Add( "+forward", ForwardDown );
-            cmd.Add( "-forward", ForwardUp );
-            cmd.Add( "+back", BackDown );
-            cmd.Add( "-back", BackUp );
-            cmd.Add( "+lookup", LookupDown );
-            cmd.Add( "-lookup", LookupUp );
-            cmd.Add( "+lookdown", LookdownDown );
-            cmd.Add( "-lookdown", LookdownUp );
-            cmd.Add( "+strafe", StrafeDown );
-            cmd.Add( "-strafe", StrafeUp );
-            cmd.Add( "+moveleft", MoveleftDown );
-            cmd.Add( "-moveleft", MoveleftUp );
-            cmd.Add( "+moveright", MoverightDown );
-            cmd.Add( "-moveright", MoverightUp );
-            cmd.Add( "+speed", SpeedDown );
-            cmd.Add( "-speed", SpeedUp );
-            cmd.Add( "+attack", AttackDown );
-            cmd.Add( "-attack", AttackUp );
-            cmd.Add( "+use", UseDown );
-            cmd.Add( "-use", UseUp );
-            cmd.Add( "+jump", JumpDown );
-            cmd.Add( "-jump", JumpUp );
-            cmd.Add( "impulse", ImpulseCmd );
-            cmd.Add( "+klook", KLookDown );
-            cmd.Add( "-klook", KLookUp );
-            cmd.Add( "+mlook", MLookDown );
-            cmd.Add( "-mlook", MLookUp );
+            Command.Add( "+moveup", UpDown );
+            Command.Add( "-moveup", UpUp );
+            Command.Add( "+movedown", DownDown );
+            Command.Add( "-movedown", DownUp );
+            Command.Add( "+left", LeftDown );
+            Command.Add( "-left", LeftUp );
+            Command.Add( "+right", RightDown );
+            Command.Add( "-right", RightUp );
+            Command.Add( "+forward", ForwardDown );
+            Command.Add( "-forward", ForwardUp );
+            Command.Add( "+back", BackDown );
+            Command.Add( "-back", BackUp );
+            Command.Add( "+lookup", LookupDown );
+            Command.Add( "-lookup", LookupUp );
+            Command.Add( "+lookdown", LookdownDown );
+            Command.Add( "-lookdown", LookdownUp );
+            Command.Add( "+strafe", StrafeDown );
+            Command.Add( "-strafe", StrafeUp );
+            Command.Add( "+moveleft", MoveleftDown );
+            Command.Add( "-moveleft", MoveleftUp );
+            Command.Add( "+moveright", MoverightDown );
+            Command.Add( "-moveright", MoverightUp );
+            Command.Add( "+speed", SpeedDown );
+            Command.Add( "-speed", SpeedUp );
+            Command.Add( "+attack", AttackDown );
+            Command.Add( "-attack", AttackUp );
+            Command.Add( "+use", UseDown );
+            Command.Add( "-use", UseUp );
+            Command.Add( "+jump", JumpDown );
+            Command.Add( "-jump", JumpUp );
+            Command.Add( "impulse", ImpulseCmd );
+            Command.Add( "+klook", KLookDown );
+            Command.Add( "-klook", KLookUp );
+            Command.Add( "+mlook", MLookDown );
+            Command.Add( "-mlook", MLookUp );
         }
 
         private static void KeyDown( ref kbutton_t b )
         {
             int k;
-            string c = cmd.Argv( 1 );
+            string c = Command.Argv( 1 );
             if( !String.IsNullOrEmpty( c ) )
                 k = int.Parse( c );
             else
@@ -119,7 +119,7 @@ namespace SharpQuake
         private static void KeyUp( ref kbutton_t b )
         {
             int k;
-            string c = cmd.Argv( 1 );
+            string c = Command.Argv( 1 );
             if( !String.IsNullOrEmpty( c ) )
                 k = int.Parse( c );
             else
@@ -321,7 +321,7 @@ namespace SharpQuake
 
         private static void ImpulseCmd()
         {
-            Impulse = common.atoi( cmd.Argv( 1 ) );
+            Impulse = Common.atoi( Command.Argv( 1 ) );
         }
     }
 
@@ -449,7 +449,7 @@ namespace SharpQuake
             {
                 cl.viewangles.Y -= speed * _YawSpeed.Value * KeyState( ref client_input.RightBtn );
                 cl.viewangles.Y += speed * _YawSpeed.Value * KeyState( ref client_input.LeftBtn );
-                cl.viewangles.Y = mathlib.AngleMod( cl.viewangles.Y );
+                cl.viewangles.Y = MathLib.AngleMod( cl.viewangles.Y );
             }
 
             if( client_input.KLookBtn.IsDown )

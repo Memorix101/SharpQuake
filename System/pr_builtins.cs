@@ -289,7 +289,7 @@ namespace SharpQuake
         public static void PF_changeyaw()
         {
             edict_t ent = server.ProgToEdict( progs.GlobalStruct.self );
-            float current = mathlib.AngleMod( ent.v.angles.y );
+            float current = MathLib.AngleMod( ent.v.angles.y );
             float ideal = ent.v.ideal_yaw;
             float speed = ent.v.yaw_speed;
 
@@ -318,7 +318,7 @@ namespace SharpQuake
                     move = -speed;
             }
 
-            ent.v.angles.y = mathlib.AngleMod( current + move );
+            ent.v.angles.y = MathLib.AngleMod( current + move );
         }
 
         private static int SetTempString( string value )
@@ -410,10 +410,10 @@ namespace SharpQuake
             float* av = GetVector( OFS.OFS_PARM0 );
             Vector3 a = new Vector3( av[0], av[1], av[2] );
             Vector3 fw, right, up;
-            mathlib.AngleVectors( ref a, out fw, out right, out up );
-            mathlib.Copy( ref fw, out progs.GlobalStruct.v_forward );
-            mathlib.Copy( ref right, out progs.GlobalStruct.v_right );
-            mathlib.Copy( ref up, out progs.GlobalStruct.v_up );
+            MathLib.AngleVectors( ref a, out fw, out right, out up );
+            MathLib.Copy( ref fw, out progs.GlobalStruct.v_forward );
+            MathLib.Copy( ref right, out progs.GlobalStruct.v_right );
+            MathLib.Copy( ref up, out progs.GlobalStruct.v_up );
         }
 
         /// <summary>
@@ -491,10 +491,10 @@ namespace SharpQuake
             }
 
             // set derived values
-            mathlib.Copy( ref rmin, out e.v.mins );
-            mathlib.Copy( ref rmax, out e.v.maxs );
+            MathLib.Copy( ref rmin, out e.v.mins );
+            MathLib.Copy( ref rmax, out e.v.maxs );
             Vector3 s = max - min;
-            mathlib.Copy( ref s, out e.v.size );
+            MathLib.Copy( ref s, out e.v.size );
 
             server.LinkEdict( e, false );
         }
@@ -552,7 +552,7 @@ namespace SharpQuake
                     if( mod != null )
                         SetMinMaxSize( e, ref mod.mins, ref mod.maxs, true );
                     else
-                        SetMinMaxSize( e, ref common.ZeroVector, ref common.ZeroVector, true );
+                        SetMinMaxSize( e, ref Common.ZeroVector, ref Common.ZeroVector, true );
 
                     return;
                 }
@@ -639,7 +639,7 @@ namespace SharpQuake
             float* value1 = GetVector( OFS.OFS_PARM0 );
             Vector3 tmp;
             Copy( value1, out tmp );
-            mathlib.Normalize( ref tmp );
+            MathLib.Normalize( ref tmp );
 
             ReturnVector( ref tmp );
         }
@@ -857,15 +857,15 @@ namespace SharpQuake
             Vector3 vec1, vec2;
             Copy( v1, out vec1 );
             Copy( v2, out vec2 );
-            trace_t trace = server.Move( ref vec1, ref common.ZeroVector, ref common.ZeroVector, ref vec2, nomonsters, ent );
+            trace_t trace = server.Move( ref vec1, ref Common.ZeroVector, ref Common.ZeroVector, ref vec2, nomonsters, ent );
 
             progs.GlobalStruct.trace_allsolid = trace.allsolid ? 1 : 0;
             progs.GlobalStruct.trace_startsolid = trace.startsolid ? 1 : 0;
             progs.GlobalStruct.trace_fraction = trace.fraction;
             progs.GlobalStruct.trace_inwater = trace.inwater ? 1 : 0;
             progs.GlobalStruct.trace_inopen = trace.inopen ? 1 : 0;
-            mathlib.Copy( ref trace.endpos, out progs.GlobalStruct.trace_endpos );
-            mathlib.Copy( ref trace.plane.normal, out progs.GlobalStruct.trace_plane_normal );
+            MathLib.Copy( ref trace.endpos, out progs.GlobalStruct.trace_endpos );
+            MathLib.Copy( ref trace.plane.normal, out progs.GlobalStruct.trace_plane_normal );
             progs.GlobalStruct.trace_plane_dist = trace.plane.dist;
             if( trace.ent != null )
                 progs.GlobalStruct.trace_ent = server.EdictToProg( trace.ent );
@@ -924,7 +924,7 @@ namespace SharpQuake
             }
 
             // get the PVS for the entity
-            Vector3 org = common.ToVector( ref ent.v.origin ) + common.ToVector( ref ent.v.view_ofs );
+            Vector3 org = Common.ToVector( ref ent.v.origin ) + Common.ToVector( ref ent.v.view_ofs );
             mleaf_t leaf = Mod.PointInLeaf( ref org, server.sv.worldmodel );
             byte[] pvs = Mod.LeafPVS( leaf, server.sv.worldmodel );
             Buffer.BlockCopy( pvs, 0, _CheckPvs, 0, pvs.Length );
@@ -963,7 +963,7 @@ namespace SharpQuake
 
             // if current entity can't possibly see the check entity, return 0
             edict_t self = server.ProgToEdict( progs.GlobalStruct.self );
-            Vector3 view = common.ToVector( ref self.v.origin ) + common.ToVector( ref self.v.view_ofs );
+            Vector3 view = Common.ToVector( ref self.v.origin ) + Common.ToVector( ref self.v.view_ofs );
             mleaf_t leaf = Mod.PointInLeaf( ref view, server.sv.worldmodel );
             int l = Array.IndexOf( server.sv.worldmodel.leafs, leaf ) - 1;
             if( ( l < 0 ) || ( _CheckPvs[l >> 3] & ( 1 << ( l & 7 ) ) ) == 0 )
@@ -1020,7 +1020,7 @@ namespace SharpQuake
         private static void PF_cvar()
         {
             string str = GetString( OFS.OFS_PARM0 );
-            ReturnFloat( cvar.GetValue( str ) );
+            ReturnFloat( CVar.GetValue( str ) );
         }
 
         /*
@@ -1033,7 +1033,7 @@ namespace SharpQuake
 
         private static void PF_cvar_set()
         {
-            cvar.Set( GetString( OFS.OFS_PARM0 ), GetString( OFS.OFS_PARM1 ) );
+            CVar.Set( GetString( OFS.OFS_PARM0 ), GetString( OFS.OFS_PARM1 ) );
         }
 
         /*
@@ -1064,8 +1064,8 @@ namespace SharpQuake
                 if( ent.v.solid == Solids.SOLID_NOT )
                     continue;
 
-                Vector3 v = vorg - ( common.ToVector( ref ent.v.origin ) +
-                    ( common.ToVector( ref ent.v.mins ) + common.ToVector( ref ent.v.maxs ) ) * 0.5f );
+                Vector3 v = vorg - ( Common.ToVector( ref ent.v.origin ) +
+                    ( Common.ToVector( ref ent.v.mins ) + Common.ToVector( ref ent.v.maxs ) ) * 0.5f );
                 if( v.Length > rad )
                     continue;
 
@@ -1277,9 +1277,9 @@ namespace SharpQuake
             edict_t ent = server.ProgToEdict( progs.GlobalStruct.self );
 
             Vector3 org, mins, maxs;
-            mathlib.Copy( ref ent.v.origin, out org );
-            mathlib.Copy( ref ent.v.mins, out mins );
-            mathlib.Copy( ref ent.v.maxs, out maxs );
+            MathLib.Copy( ref ent.v.origin, out org );
+            MathLib.Copy( ref ent.v.mins, out mins );
+            MathLib.Copy( ref ent.v.maxs, out maxs );
             Vector3 end = org;
             end.Z -= 256;
 
@@ -1289,7 +1289,7 @@ namespace SharpQuake
                 ReturnFloat( 0 );
             else
             {
-                mathlib.Copy( ref trace.endpos, out ent.v.origin );
+                MathLib.Copy( ref trace.endpos, out ent.v.origin );
                 server.LinkEdict( ent, false );
                 ent.v.flags = (int)ent.v.flags | EdictFlags.FL_ONGROUND;
                 ent.v.groundentity = server.EdictToProg( trace.ent );
@@ -1410,14 +1410,14 @@ namespace SharpQuake
             edict_t ent = GetEdict( OFS.OFS_PARM0 );
             float speed = GetFloat( OFS.OFS_PARM1 );
 
-            Vector3 start = common.ToVector( ref ent.v.origin );
+            Vector3 start = Common.ToVector( ref ent.v.origin );
             start.Z += 20;
 
             // try sending a trace straight
             Vector3 dir;
-            mathlib.Copy( ref progs.GlobalStruct.v_forward, out dir );
+            MathLib.Copy( ref progs.GlobalStruct.v_forward, out dir );
             Vector3 end = start + dir * 2048;
-            trace_t tr = server.Move( ref start, ref common.ZeroVector, ref common.ZeroVector, ref end, 0, ent );
+            trace_t tr = server.Move( ref start, ref Common.ZeroVector, ref Common.ZeroVector, ref end, 0, ent );
             if( tr.ent != null && tr.ent.v.takedamage == Damages.DAMAGE_AIM &&
                 ( host.TeamPlay == 0 || ent.v.team <= 0 || ent.v.team != tr.ent.v.team ) )
             {
@@ -1441,16 +1441,16 @@ namespace SharpQuake
                     continue;	// don't aim at teammate
 
                 v3f tmp;
-                mathlib.VectorAdd( ref check.v.mins, ref check.v.maxs, out tmp );
-                mathlib.VectorMA( ref check.v.origin, 0.5f, ref tmp, out tmp );
-                mathlib.Copy( ref tmp, out end );
+                MathLib.VectorAdd( ref check.v.mins, ref check.v.maxs, out tmp );
+                MathLib.VectorMA( ref check.v.origin, 0.5f, ref tmp, out tmp );
+                MathLib.Copy( ref tmp, out end );
 
                 dir = end - start;
-                mathlib.Normalize( ref dir );
-                float dist = Vector3.Dot( dir, common.ToVector( ref progs.GlobalStruct.v_forward ) );
+                MathLib.Normalize( ref dir );
+                float dist = Vector3.Dot( dir, Common.ToVector( ref progs.GlobalStruct.v_forward ) );
                 if( dist < bestdist )
                     continue;	// to far to turn
-                tr = server.Move( ref start, ref common.ZeroVector, ref common.ZeroVector, ref end, 0, ent );
+                tr = server.Move( ref start, ref Common.ZeroVector, ref Common.ZeroVector, ref end, 0, ent );
                 if( tr.ent == check )
                 {	// can shoot at this one
                     bestdist = dist;
@@ -1461,11 +1461,11 @@ namespace SharpQuake
             if( bestent != null )
             {
                 v3f dir2, end2;
-                mathlib.VectorSubtract( ref bestent.v.origin, ref ent.v.origin, out dir2 );
-                float dist = mathlib.DotProduct( ref dir2, ref progs.GlobalStruct.v_forward );
-                mathlib.VectorScale( ref progs.GlobalStruct.v_forward, dist, out end2 );
+                MathLib.VectorSubtract( ref bestent.v.origin, ref ent.v.origin, out dir2 );
+                float dist = MathLib.DotProduct( ref dir2, ref progs.GlobalStruct.v_forward );
+                MathLib.VectorScale( ref progs.GlobalStruct.v_forward, dist, out end2 );
                 end2.z = dir2.z;
-                mathlib.Normalize( ref end2 );
+                MathLib.Normalize( ref end2 );
                 ReturnVector( ref end2 );
             }
             else
@@ -1534,8 +1534,8 @@ namespace SharpQuake
             msg.WriteByte( (int)ent.v.skin );
             for( int i = 0; i < 3; i++ )
             {
-                msg.WriteCoord( mathlib.Comp( ref ent.v.origin, i ) );
-                msg.WriteAngle( mathlib.Comp( ref ent.v.angles, i ) );
+                msg.WriteCoord( MathLib.Comp( ref ent.v.origin, i ) );
+                msg.WriteAngle( MathLib.Comp( ref ent.v.angles, i ) );
             }
 
             // throw the entity away now

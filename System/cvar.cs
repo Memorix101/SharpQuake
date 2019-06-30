@@ -29,9 +29,9 @@ using System.Text;
 
 namespace SharpQuake
 {
-    internal class cvar
+    internal class CVar
     {
-        public static cvar First
+        public static CVar First
         {
             get
             {
@@ -79,7 +79,7 @@ namespace SharpQuake
             }
         }
 
-        public cvar Next
+        public CVar Next
         {
             get
             {
@@ -87,7 +87,7 @@ namespace SharpQuake
             }
         }
 
-        private static cvar _Vars;
+        private static CVar _Vars;
 
         private string _Name;
 
@@ -102,12 +102,12 @@ namespace SharpQuake
         private float _Value;
 
         // float	value;
-        private cvar _Next;
+        private CVar _Next;
 
         // Cvar_FindVar()
-        public static cvar Find( string name )
+        public static CVar Find( string name )
         {
-            cvar var = _Vars;
+            CVar var = _Vars;
             while( var != null )
             {
                 if( var._Name.Equals( name ) )
@@ -128,10 +128,10 @@ namespace SharpQuake
         public static float GetValue( string name )
         {
             float result = 0;
-            cvar var = Find( name );
+            CVar var = Find( name );
             if( var != null )
             {
-                result = common.atof( var._String );
+                result = Common.atof( var._String );
             }
             return result;
         }
@@ -139,7 +139,7 @@ namespace SharpQuake
         // Cvar_VariableString()
         public static string GetString( string name )
         {
-            cvar var = Find( name );
+            CVar var = Find( name );
             if( var != null )
             {
                 return var._String;
@@ -154,7 +154,7 @@ namespace SharpQuake
                 return null;
 
             List<string> result = new List<string>();
-            cvar var = _Vars;
+            CVar var = _Vars;
             while( var != null )
             {
                 if( var._Name.StartsWith( partial ) )
@@ -168,7 +168,7 @@ namespace SharpQuake
         // Cvar_Set()
         public static void Set( string name, string value )
         {
-            cvar var = Find( name );
+            CVar var = Find( name );
             if( var == null )
             {
                 // there is an error in C code if this happens
@@ -189,18 +189,18 @@ namespace SharpQuake
         public static bool Command()
         {
             // check variables
-            cvar var = Find( cmd.Argv( 0 ) );
+            var var = Find( SharpQuake.Command.Argv( 0 ) );
             if( var == null )
                 return false;
 
             // perform a variable print or set
-            if( cmd.Argc == 1 )
+            if( SharpQuake.Command.Argc == 1 )
             {
                 Con.Print( "\"{0}\" is \"{1}\"\n", var._Name, var._String );
             }
             else
             {
-                var.Set( cmd.Argv( 1 ) );
+                var.Set( SharpQuake.Command.Argv( 1 ) );
             }
             return true;
         }
@@ -213,7 +213,7 @@ namespace SharpQuake
         public static void WriteVariables( Stream dest )
         {
             StringBuilder sb = new StringBuilder( 4096 );
-            cvar var = _Vars;
+            CVar var = _Vars;
             while( var != null )
             {
                 if( var.IsArchive )
@@ -236,7 +236,7 @@ namespace SharpQuake
                 return;
 
             _String = value;
-            _Value = common.atof( _String );
+            _Value = Common.atof( _String );
 
             if( IsServer && server.sv.active )
             {
@@ -250,30 +250,30 @@ namespace SharpQuake
             public const int Server = 2;
         }
 
-        public cvar( string name, string value )
+        public CVar( string name, string value )
                     : this( name, value, false )
         {
         }
 
-        public cvar( string name, string value, bool archive )
+        public CVar( string name, string value, bool archive )
                     : this( name, value, archive, false )
         {
         }
 
-        public cvar( string name, string value, bool archive, bool server )
+        public CVar( string name, string value, bool archive, bool server )
         {
             if( String.IsNullOrEmpty( name ) )
             {
                 throw new ArgumentNullException( "name" );
             }
-            cvar var = Find( name );
+            CVar var = Find( name );
             if( var != null )
             {
                 throw new ArgumentException( String.Format( "Can't register variable {0}, already defined!\n", name ) );
                 //Con_Printf("Can't register variable %s, allready defined\n", variable->name);
                 //return;
             }
-            if( cmd.Exists( name ) )
+            if( SharpQuake.Command.Exists( name ) )
             {
                 throw new ArgumentException( String.Format( "Can't register variable: {0} is a command!\n", name ) );
             }
@@ -284,11 +284,11 @@ namespace SharpQuake
             _String = value;
             _Flags[Flags.Archive] = archive;
             _Flags[Flags.Server] = server;
-            _Value = common.atof( _String );
+            _Value = Common.atof( _String );
         }
 
         //struct cvar_s *next;
-        protected cvar()
+        protected CVar()
         {
         }
     }

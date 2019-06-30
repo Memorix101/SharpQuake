@@ -88,7 +88,7 @@ namespace SharpQuake
         public static void RocketTrail( ref Vector3 start, ref Vector3 end, int type )
         {
             Vector3 vec = end - start;
-            float len = mathlib.Normalize( ref vec );
+            float len = MathLib.Normalize( ref vec );
             int dec;
             if( type < 128 )
                 dec = 3;
@@ -276,7 +276,7 @@ namespace SharpQuake
 
                         p.org = org + new Vector3( i + ( sys.Random() & 3 ), j + ( sys.Random() & 3 ), k + ( sys.Random() & 3 ) );
 
-                        mathlib.Normalize( ref dir );
+                        MathLib.Normalize( ref dir );
                         float vel = 50 + ( sys.Random() & 63 );
                         p.vel = dir * vel;
                     }
@@ -308,7 +308,7 @@ namespace SharpQuake
                         p.org = org + dir;
                         p.org.Z += sys.Random() & 63;
 
-                        mathlib.Normalize( ref dir );
+                        MathLib.Normalize( ref dir );
                         float vel = 50 + ( sys.Random() & 63 );
                         p.vel = dir * vel;
                     }
@@ -410,10 +410,10 @@ namespace SharpQuake
         // R_InitParticles
         private static void InitParticles()
         {
-            int i = common.CheckParm( "-particles" );
-            if( i > 0 && i < common.Argc - 1 )
+            int i = Common.CheckParm( "-particles" );
+            if( i > 0 && i < Common.Argc - 1 )
             {
-                _NumParticles = int.Parse( common.Argv( i + 1 ) );
+                _NumParticles = int.Parse( Common.Argv( i + 1 ) );
                 if( _NumParticles < ABSOLUTE_MIN_PARTICLES )
                     _NumParticles = ABSOLUTE_MIN_PARTICLES;
             }

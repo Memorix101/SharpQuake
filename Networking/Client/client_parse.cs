@@ -315,7 +315,7 @@ namespace SharpQuake
                         break;
 
                     case protocol.svc_sellscreen:
-                        SharpQuake.cmd.ExecuteString( "help", cmd_source_t.src_command );
+                        SharpQuake.Command.ExecuteString( "help", cmd_source_t.src_command );
                         break;
                 }
             }
@@ -497,13 +497,13 @@ namespace SharpQuake
             for( int i = 0; i < 3; i++ )
             {
                 if( ( bits & ( protocol.SU_PUNCH1 << i ) ) != 0 )
-                    mathlib.SetComp( ref cl.punchangle, i, net.Reader.ReadChar() );
+                    MathLib.SetComp( ref cl.punchangle, i, net.Reader.ReadChar() );
                 else
-                    mathlib.SetComp( ref cl.punchangle, i, 0 );
+                    MathLib.SetComp( ref cl.punchangle, i, 0 );
                 if( ( bits & ( protocol.SU_VELOCITY1 << i ) ) != 0 )
-                    mathlib.SetComp( ref cl.mvelocity[0], i, net.Reader.ReadChar() * 16 );
+                    MathLib.SetComp( ref cl.mvelocity[0], i, net.Reader.ReadChar() * 16 );
                 else
-                    mathlib.SetComp( ref cl.mvelocity[0], i, 0 );
+                    MathLib.SetComp( ref cl.mvelocity[0], i, 0 );
             }
 
             // [always sent]	if (bits & SU_ITEMS)
@@ -572,7 +572,7 @@ namespace SharpQuake
 
             i2 = net.Reader.ReadByte();
 
-            if( common.GameKind == GameKind.StandardQuake )
+            if( Common.GameKind == GameKind.StandardQuake )
             {
                 if( cl.stats[QStats.STAT_ACTIVEWEAPON] != i2 )
                 {
@@ -626,7 +626,7 @@ namespace SharpQuake
 
             // parse signon message
             string str = net.Reader.ReadString();
-            cl.levelname = common.Copy( str, 40 );
+            cl.levelname = Common.Copy( str, 40 );
 
             // seperate the printfs so the server message can have a color
             Con.Print( ConsoleBar );
@@ -830,8 +830,8 @@ namespace SharpQuake
             ent.colormap = Scr.vid.colormap;
             ent.skinnum = ent.baseline.skin;
             ent.effects = ent.baseline.effects;
-            ent.origin = common.ToVector( ref ent.baseline.origin );
-            ent.angles = common.ToVector( ref ent.baseline.angles );
+            ent.origin = Common.ToVector( ref ent.baseline.origin );
+            ent.angles = Common.ToVector( ref ent.baseline.angles );
             render.AddEfrags( ent );
         }
 

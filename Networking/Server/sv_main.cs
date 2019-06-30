@@ -48,16 +48,16 @@ namespace SharpQuake
 
             if( _Friction == null )
             {
-                _Friction = new cvar( "sv_friction", "4", false, true );
-                _EdgeFriction = new cvar( "edgefriction", "2" );
-                _StopSpeed = new cvar( "sv_stopspeed", "100" );
-                _Gravity = new cvar( "sv_gravity", "800", false, true );
-                _MaxVelocity = new cvar( "sv_maxvelocity", "2000" );
-                _NoStep = new cvar( "sv_nostep", "0" );
-                _MaxSpeed = new cvar( "sv_maxspeed", "320", false, true );
-                _Accelerate = new cvar( "sv_accelerate", "10" );
-                _Aim = new cvar( "sv_aim", "0.93" );
-                _IdealPitchScale = new cvar( "sv_idealpitchscale", "0.8" );
+                _Friction = new CVar( "sv_friction", "4", false, true );
+                _EdgeFriction = new CVar( "edgefriction", "2" );
+                _StopSpeed = new CVar( "sv_stopspeed", "100" );
+                _Gravity = new CVar( "sv_gravity", "800", false, true );
+                _MaxVelocity = new CVar( "sv_maxvelocity", "2000" );
+                _NoStep = new CVar( "sv_nostep", "0" );
+                _MaxSpeed = new CVar( "sv_maxspeed", "320", false, true );
+                _Accelerate = new CVar( "sv_accelerate", "10" );
+                _Aim = new CVar( "sv_aim", "0.93" );
+                _IdealPitchScale = new CVar( "sv_idealpitchscale", "0.8" );
             }
 
             for( int i = 0; i < QDef.MAX_MODELS; i++ )
@@ -145,8 +145,8 @@ namespace SharpQuake
             sv.datagram.WriteShort( channel );
             sv.datagram.WriteByte( sound_num );
             v3f v;
-            mathlib.VectorAdd( ref entity.v.mins, ref entity.v.maxs, out v );
-            mathlib.VectorMA( ref entity.v.origin, 0.5f, ref v, out v );
+            MathLib.VectorAdd( ref entity.v.mins, ref entity.v.maxs, out v );
+            MathLib.VectorMA( ref entity.v.origin, 0.5f, ref v, out v );
             sv.datagram.WriteCoord( v.x );
             sv.datagram.WriteCoord( v.y );
             sv.datagram.WriteCoord( v.z );
@@ -462,7 +462,7 @@ namespace SharpQuake
             msg.WriteByte( (int)ent.v.ammo_rockets );
             msg.WriteByte( (int)ent.v.ammo_cells );
 
-            if( common.GameKind == GameKind.StandardQuake )
+            if( Common.GameKind == GameKind.StandardQuake )
             {
                 msg.WriteByte( (int)ent.v.weapon );
             }
@@ -539,7 +539,7 @@ namespace SharpQuake
         {
             // let's not have any servers with no name
             if( String.IsNullOrEmpty( net.HostName ) )
-                cvar.Set( "hostname", "UNNAMED" );
+                CVar.Set( "hostname", "UNNAMED" );
 
             Scr.CenterTimeOff = 0;
 
@@ -558,7 +558,7 @@ namespace SharpQuake
             // make cvars consistant
             //
             if( host.IsCoop )
-                cvar.Set( "deathmatch", 0 );
+                CVar.Set( "deathmatch", 0 );
 
             host.CurrentSkill = (int)( host.Skill + 0.5 );
             if( host.CurrentSkill < 0 )
@@ -566,7 +566,7 @@ namespace SharpQuake
             if( host.CurrentSkill > 3 )
                 host.CurrentSkill = 3;
 
-            cvar.Set( "skill", (float)host.CurrentSkill );
+            CVar.Set( "skill", (float)host.CurrentSkill );
 
             //
             // set up the new server
@@ -740,7 +740,7 @@ namespace SharpQuake
         private static void WriteEntitiesToClient( edict_t clent, MsgWriter msg )
         {
             // find the client's PVS
-            Vector3 org = common.ToVector( ref clent.v.origin ) + common.ToVector( ref clent.v.view_ofs );
+            Vector3 org = Common.ToVector( ref clent.v.origin ) + Common.ToVector( ref clent.v.view_ofs );
             byte[] pvs = FatPVS( ref org );
 
             // send over all entities (except the client) that touch the pvs
@@ -773,7 +773,7 @@ namespace SharpQuake
                 // send an update
                 int bits = 0;
                 v3f miss;
-                mathlib.VectorSubtract( ref ent.v.origin, ref ent.baseline.origin, out miss );
+                MathLib.VectorSubtract( ref ent.v.origin, ref ent.baseline.origin, out miss );
                 if( miss.x < -0.1f || miss.x > 0.1f )
                     bits |= protocol.U_ORIGIN1;
                 if( miss.y < -0.1f || miss.y > 0.1f )
@@ -1081,7 +1081,7 @@ namespace SharpQuake
             net.SendToAll( msg, 5 );
 
             if( client.cls.state != cactive_t.ca_dedicated )
-                cmd.ExecuteString( "reconnect\n", cmd_source_t.src_command );
+                Command.ExecuteString( "reconnect\n", cmd_source_t.src_command );
         }
 
         /// <summary>

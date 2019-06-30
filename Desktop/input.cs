@@ -45,14 +45,14 @@ namespace SharpQuake
         {
             get
             {
-                Rectangle bounds = mainwindow.Instance.Bounds;
+                Rectangle bounds = MainWindow.Instance.Bounds;
                 Point p = bounds.Location;
                 p.Offset( bounds.Width / 2, bounds.Height / 2 );
                 return p;
             }
         }
 
-        private static cvar _MouseFilter;// = { "m_filter", "0" };
+        private static CVar _MouseFilter;// = { "m_filter", "0" };
         private static Vector2 _OldMouse; // old_mouse_x, old_mouse_y
         private static Vector2 _Mouse; // mouse_x, mouse_y
         private static Vector2 _MouseAccum; // mx_accum, my_accum
@@ -67,7 +67,7 @@ namespace SharpQuake
         {
             if( _MouseFilter == null )
             {
-                _MouseFilter = new cvar( "m_filter", "0" );
+                _MouseFilter = new CVar( "m_filter", "0" );
             }
 
             _IsMouseActive = ( Mouse.GetState( 0 ).IsConnected != false );
@@ -148,7 +148,7 @@ namespace SharpQuake
         {
             if( !_MouseShowToggle )
             {
-                if( !mainwindow.IsFullscreen )
+                if( !MainWindow.IsFullscreen )
                 {
                     //Cursor.Show();
                 }
@@ -160,10 +160,10 @@ namespace SharpQuake
         // add additional movement on top of the keyboard move cmd
         public static void Move( usercmd_t cmd )
         {
-            if( !mainwindow.Instance.Focused )
+            if( !MainWindow.Instance.Focused )
                 return;
 
-            if( mainwindow.Instance.WindowState == WindowState.Minimized )
+            if( MainWindow.Instance.WindowState == WindowState.Minimized )
                 return;
 
             MouseMove( cmd );

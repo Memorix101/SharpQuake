@@ -35,25 +35,25 @@ namespace SharpQuake
 
             if( _Name == null )
             {
-                _Name = new cvar( "_cl_name", "player", true );
-                _Color = new cvar( "_cl_color", "0", true );
-                _ShowNet = new cvar( "cl_shownet", "0" );	// can be 0, 1, or 2
-                _NoLerp = new cvar( "cl_nolerp", "0" );
-                _LookSpring = new cvar( "lookspring", "0", true );
-                _LookStrafe = new cvar( "lookstrafe", "0", true );
-                _Sensitivity = new cvar( "sensitivity", "3", true );
-                _MPitch = new cvar( "m_pitch", "0.022", true );
-                _MYaw = new cvar( "m_yaw", "0.022", true );
-                _MForward = new cvar( "m_forward", "1", true );
-                _MSide = new cvar( "m_side", "0.8", true );
-                _UpSpeed = new cvar( "cl_upspeed", "200" );
-                _ForwardSpeed = new cvar( "cl_forwardspeed", "200", true );
-                _BackSpeed = new cvar( "cl_backspeed", "200", true );
-                _SideSpeed = new cvar( "cl_sidespeed", "350" );
-                _MoveSpeedKey = new cvar( "cl_movespeedkey", "2.0" );
-                _YawSpeed = new cvar( "cl_yawspeed", "140" );
-                _PitchSpeed = new cvar( "cl_pitchspeed", "150" );
-                _AngleSpeedKey = new cvar( "cl_anglespeedkey", "1.5" );
+                _Name = new CVar( "_cl_name", "player", true );
+                _Color = new CVar( "_cl_color", "0", true );
+                _ShowNet = new CVar( "cl_shownet", "0" );	// can be 0, 1, or 2
+                _NoLerp = new CVar( "cl_nolerp", "0" );
+                _LookSpring = new CVar( "lookspring", "0", true );
+                _LookStrafe = new CVar( "lookstrafe", "0", true );
+                _Sensitivity = new CVar( "sensitivity", "3", true );
+                _MPitch = new CVar( "m_pitch", "0.022", true );
+                _MYaw = new CVar( "m_yaw", "0.022", true );
+                _MForward = new CVar( "m_forward", "1", true );
+                _MSide = new CVar( "m_side", "0.8", true );
+                _UpSpeed = new CVar( "cl_upspeed", "200" );
+                _ForwardSpeed = new CVar( "cl_forwardspeed", "200", true );
+                _BackSpeed = new CVar( "cl_backspeed", "200", true );
+                _SideSpeed = new CVar( "cl_sidespeed", "350" );
+                _MoveSpeedKey = new CVar( "cl_movespeedkey", "2.0" );
+                _YawSpeed = new CVar( "cl_yawspeed", "140" );
+                _PitchSpeed = new CVar( "cl_pitchspeed", "150" );
+                _AngleSpeedKey = new CVar( "cl_anglespeedkey", "1.5" );
             }
 
             for( int i = 0; i < _EFrags.Length; i++ )
@@ -71,12 +71,12 @@ namespace SharpQuake
             //
             // register our commands
             //
-            cmd.Add( "entities", PrintEntities_f );
-            cmd.Add( "disconnect", Disconnect_f );
-            cmd.Add( "record", Record_f );
-            cmd.Add( "stop", Stop_f );
-            cmd.Add( "playdemo", PlayDemo_f );
-            cmd.Add( "timedemo", TimeDemo_f );
+            Command.Add( "entities", PrintEntities_f );
+            Command.Add( "disconnect", Disconnect_f );
+            Command.Add( "record", Record_f );
+            Command.Add( "stop", Stop_f );
+            Command.Add( "playdemo", PlayDemo_f );
+            Command.Add( "timedemo", TimeDemo_f );
         }
 
         /// <summary>
@@ -346,11 +346,11 @@ namespace SharpQuake
             {
                 // interpolate the angles
                 Vector3 angleDelta = cl.mviewangles[0] - cl.mviewangles[1];
-                mathlib.CorrectAngles180( ref angleDelta );
+                MathLib.CorrectAngles180( ref angleDelta );
                 cl.viewangles = cl.mviewangles[1] + frac * angleDelta;
             }
 
-            float bobjrotate = mathlib.AngleMod( 100 * cl.time );
+            float bobjrotate = MathLib.AngleMod( 100 * cl.time );
 
             // start on the entity after the world
             for( int i = 1; i < cl.num_entities; i++ )
@@ -391,7 +391,7 @@ namespace SharpQuake
                     // interpolate the origin and angles
                     ent.origin = ent.msg_origins[1] + f * delta;
                     Vector3 angleDelta = ent.msg_angles[0] - ent.msg_angles[1];
-                    mathlib.CorrectAngles180( ref angleDelta );
+                    MathLib.CorrectAngles180( ref angleDelta );
                     ent.angles = ent.msg_angles[1] + f * angleDelta;
                 }
 
@@ -408,7 +408,7 @@ namespace SharpQuake
                     dl.origin = ent.origin;
                     dl.origin.Z += 16;
                     Vector3 fv, rv, uv;
-                    mathlib.AngleVectors( ref ent.angles, out fv, out rv, out uv );
+                    MathLib.AngleVectors( ref ent.angles, out fv, out rv, out uv );
                     dl.origin += fv * 18;
                     dl.radius = 200 + ( sys.Random() & 31 );
                     dl.minlight = 32;

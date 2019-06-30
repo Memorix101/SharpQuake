@@ -75,10 +75,10 @@ namespace SharpQuake
             if( Scr.IsPermedia )
                 Drawer.LightMapFormat = PixelFormat.Rgba;
 
-            if( common.HasParam( "-lm_1" ) )
+            if( Common.HasParam( "-lm_1" ) )
                 Drawer.LightMapFormat = PixelFormat.Luminance;
 
-            if( common.HasParam( "-lm_a" ) )
+            if( Common.HasParam( "-lm_a" ) )
                 Drawer.LightMapFormat = PixelFormat.Alpha;
 
             //if (Common.HasParam("-lm_i"))
@@ -87,7 +87,7 @@ namespace SharpQuake
             //if (Common.HasParam("-lm_2"))
             //    Drawer.LightMapFormat = PixelFormat.Rgba4;
 
-            if( common.HasParam( "-lm_4" ) )
+            if( Common.HasParam( "-lm_4" ) )
                 Drawer.LightMapFormat = PixelFormat.Rgba;
 
             switch( Drawer.LightMapFormat )
@@ -221,10 +221,10 @@ namespace SharpQuake
                     r_pedge_v = pedges[-lindex].v;
                     vec = _CurrentVertBase[r_pedge_v[1]].position;
                 }
-                float s = mathlib.DotProduct( ref vec, ref fa.texinfo.vecs[0] ) + fa.texinfo.vecs[0].W;
+                float s = MathLib.DotProduct( ref vec, ref fa.texinfo.vecs[0] ) + fa.texinfo.vecs[0].W;
                 s /= fa.texinfo.texture.width;
 
-                float t = mathlib.DotProduct( ref vec, ref fa.texinfo.vecs[1] ) + fa.texinfo.vecs[1].W;
+                float t = MathLib.DotProduct( ref vec, ref fa.texinfo.vecs[1] ) + fa.texinfo.vecs[1].W;
                 t /= fa.texinfo.texture.height;
 
                 poly.verts[i][0] = vec.X;
@@ -236,13 +236,13 @@ namespace SharpQuake
                 //
                 // lightmap texture coordinates
                 //
-                s = mathlib.DotProduct( ref vec, ref fa.texinfo.vecs[0] ) + fa.texinfo.vecs[0].W;
+                s = MathLib.DotProduct( ref vec, ref fa.texinfo.vecs[0] ) + fa.texinfo.vecs[0].W;
                 s -= fa.texturemins[0];
                 s += fa.light_s * 16;
                 s += 8;
                 s /= BLOCK_WIDTH * 16;
 
-                t = mathlib.DotProduct( ref vec, ref fa.texinfo.vecs[1] ) + fa.texinfo.vecs[1].W;
+                t = MathLib.DotProduct( ref vec, ref fa.texinfo.vecs[1] ) + fa.texinfo.vecs[1].W;
                 t -= fa.texturemins[1];
                 t += fa.light_t * 16;
                 t += 8;
@@ -283,9 +283,9 @@ namespace SharpQuake
         private static bool IsCollinear( float[] prev, float[] cur, float[] next )
         {
             Vector3 v1 = new Vector3( cur[0] - prev[0], cur[1] - prev[1], cur[2] - prev[2] );
-            mathlib.Normalize( ref v1 );
+            MathLib.Normalize( ref v1 );
             Vector3 v2 = new Vector3( next[0] - prev[0], next[1] - prev[1], next[2] - prev[2] );
-            mathlib.Normalize( ref v2 );
+            MathLib.Normalize( ref v2 );
             v1 -= v2;
             return ( ( Math.Abs( v1.X ) <= COLINEAR_EPSILON ) &&
                 ( Math.Abs( v1.Y ) <= COLINEAR_EPSILON ) &&
@@ -554,7 +554,7 @@ namespace SharpQuake
             if( _NoVis.Value != 0 )
             {
                 vis = new byte[4096];
-                common.FillArray<Byte>( vis, 0xff ); // todo: add count parameter?
+                Common.FillArray<Byte>( vis, 0xff ); // todo: add count parameter?
                 //memset(solid, 0xff, (cl.worldmodel->numleafs + 7) >> 3);
             }
             else
@@ -1257,7 +1257,7 @@ namespace SharpQuake
             {
                 Vector3 temp = _ModelOrg;
                 Vector3 forward, right, up;
-                mathlib.AngleVectors( ref e.angles, out forward, out right, out up );
+                MathLib.AngleVectors( ref e.angles, out forward, out right, out up );
                 _ModelOrg.X = Vector3.Dot( temp, forward );
                 _ModelOrg.Y = -Vector3.Dot( temp, right );
                 _ModelOrg.Z = Vector3.Dot( temp, up );

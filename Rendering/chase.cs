@@ -43,10 +43,10 @@ namespace SharpQuake
             }
         }
 
-        private static cvar _Back;// = { "chase_back", "100" };
-        private static cvar _Up;// = { "chase_up", "16" };
-        private static cvar _Right;// = { "chase_right", "0" };
-        private static cvar _Active;// = { "chase_active", "0" };
+        private static CVar _Back;// = { "chase_back", "100" };
+        private static CVar _Up;// = { "chase_up", "16" };
+        private static CVar _Right;// = { "chase_right", "0" };
+        private static CVar _Active;// = { "chase_active", "0" };
         private static Vector3 _Dest;
 
         // Chase_Init
@@ -54,10 +54,10 @@ namespace SharpQuake
         {
             if( _Back == null )
             {
-                _Back = new cvar( "chase_back", "100" );
-                _Up = new cvar( "chase_up", "16" );
-                _Right = new cvar( "chase_right", "0" );
-                _Active = new cvar( "chase_active", "0" );
+                _Back = new CVar( "chase_back", "100" );
+                _Up = new CVar( "chase_up", "16" );
+                _Right = new CVar( "chase_right", "0" );
+                _Active = new CVar( "chase_active", "0" );
             }
         }
 
@@ -73,7 +73,7 @@ namespace SharpQuake
         {
             // if can't see player, reset
             Vector3 forward, up, right;
-            mathlib.AngleVectors( ref client.cl.viewangles, out forward, out right, out up );
+            MathLib.AngleVectors( ref client.cl.viewangles, out forward, out right, out up );
 
             // calc exact destination
             _Dest = render.RefDef.vieworg - forward * _Back.Value - right * _Right.Value;

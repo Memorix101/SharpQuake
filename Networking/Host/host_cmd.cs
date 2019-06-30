@@ -49,44 +49,44 @@ namespace SharpQuake
         // Host_InitCommands
         private static void InitCommands()
         {
-            cmd.Add( "status", Status_f );
-            cmd.Add( "quit", Quit_f );
-            cmd.Add( "god", God_f );
-            cmd.Add( "notarget", Notarget_f );
-            cmd.Add( "fly", Fly_f );
-            cmd.Add( "map", Map_f );
-            cmd.Add( "restart", Restart_f );
-            cmd.Add( "changelevel", Changelevel_f );
-            cmd.Add( "connect", Connect_f );
-            cmd.Add( "reconnect", Reconnect_f );
-            cmd.Add( "name", Name_f );
-            cmd.Add( "noclip", Noclip_f );
-            cmd.Add( "version", Version_f );
-            cmd.Add( "say", Say_f );
-            cmd.Add( "say_team", Say_Team_f );
-            cmd.Add( "tell", Tell_f );
-            cmd.Add( "color", Color_f );
-            cmd.Add( "kill", Kill_f );
-            cmd.Add( "pause", Pause_f );
-            cmd.Add( "spawn", Spawn_f );
-            cmd.Add( "begin", Begin_f );
-            cmd.Add( "prespawn", PreSpawn_f );
-            cmd.Add( "kick", Kick_f );
-            cmd.Add( "ping", Ping_f );
-            cmd.Add( "load", Loadgame_f );
-            cmd.Add( "save", Savegame_f );
-            cmd.Add( "give", Give_f );
+            Command.Add( "status", Status_f );
+            Command.Add( "quit", Quit_f );
+            Command.Add( "god", God_f );
+            Command.Add( "notarget", Notarget_f );
+            Command.Add( "fly", Fly_f );
+            Command.Add( "map", Map_f );
+            Command.Add( "restart", Restart_f );
+            Command.Add( "changelevel", Changelevel_f );
+            Command.Add( "connect", Connect_f );
+            Command.Add( "reconnect", Reconnect_f );
+            Command.Add( "name", Name_f );
+            Command.Add( "noclip", Noclip_f );
+            Command.Add( "version", Version_f );
+            Command.Add( "say", Say_f );
+            Command.Add( "say_team", Say_Team_f );
+            Command.Add( "tell", Tell_f );
+            Command.Add( "color", Color_f );
+            Command.Add( "kill", Kill_f );
+            Command.Add( "pause", Pause_f );
+            Command.Add( "spawn", Spawn_f );
+            Command.Add( "begin", Begin_f );
+            Command.Add( "prespawn", PreSpawn_f );
+            Command.Add( "kick", Kick_f );
+            Command.Add( "ping", Ping_f );
+            Command.Add( "load", Loadgame_f );
+            Command.Add( "save", Savegame_f );
+            Command.Add( "give", Give_f );
 
-            cmd.Add( "startdemos", Startdemos_f );
-            cmd.Add( "demos", Demos_f );
-            cmd.Add( "stopdemo", Stopdemo_f );
+            Command.Add( "startdemos", Startdemos_f );
+            Command.Add( "demos", Demos_f );
+            Command.Add( "stopdemo", Stopdemo_f );
 
-            cmd.Add( "viewmodel", Viewmodel_f );
-            cmd.Add( "viewframe", Viewframe_f );
-            cmd.Add( "viewnext", Viewnext_f );
-            cmd.Add( "viewprev", Viewprev_f );
+            Command.Add( "viewmodel", Viewmodel_f );
+            Command.Add( "viewframe", Viewframe_f );
+            Command.Add( "viewnext", Viewnext_f );
+            Command.Add( "viewprev", Viewprev_f );
 
-            cmd.Add( "mcache", Mod.Print );
+            Command.Add( "mcache", Mod.Print );
         }
 
         /// <summary>
@@ -95,11 +95,11 @@ namespace SharpQuake
         private static void Status_f()
         {
             bool flag = true;
-            if( cmd.Source == cmd_source_t.src_command )
+            if( Command.Source == cmd_source_t.src_command )
             {
                 if( !server.sv.active )
                 {
-                    cmd.ForwardToServer();
+                    Command.ForwardToServer();
                     return;
                 }
             }
@@ -107,7 +107,7 @@ namespace SharpQuake
                 flag = false;
 
             StringBuilder sb = new StringBuilder( 256 );
-            sb.Append( String.Format( "host:    {0}\n", cvar.GetString( "hostname" ) ) );
+            sb.Append( String.Format( "host:    {0}\n", CVar.GetString( "hostname" ) ) );
             sb.Append( String.Format( "version: {0:F2}\n", QDef.VERSION ) );
             if( net.TcpIpAvailable )
             {
@@ -156,9 +156,9 @@ namespace SharpQuake
         /// </summary>
         private static void God_f()
         {
-            if( cmd.Source == cmd_source_t.src_command )
+            if( Command.Source == cmd_source_t.src_command )
             {
-                cmd.ForwardToServer();
+                Command.ForwardToServer();
                 return;
             }
 
@@ -177,9 +177,9 @@ namespace SharpQuake
         /// </summary>
         private static void Notarget_f()
         {
-            if( cmd.Source == cmd_source_t.src_command )
+            if( Command.Source == cmd_source_t.src_command )
             {
-                cmd.ForwardToServer();
+                Command.ForwardToServer();
                 return;
             }
 
@@ -198,9 +198,9 @@ namespace SharpQuake
         /// </summary>
         private static void Noclip_f()
         {
-            if( cmd.Source == cmd_source_t.src_command )
+            if( Command.Source == cmd_source_t.src_command )
             {
-                cmd.ForwardToServer();
+                Command.ForwardToServer();
                 return;
             }
 
@@ -227,9 +227,9 @@ namespace SharpQuake
         /// </summary>
         private static void Fly_f()
         {
-            if( cmd.Source == cmd_source_t.src_command )
+            if( Command.Source == cmd_source_t.src_command )
             {
-                cmd.ForwardToServer();
+                Command.ForwardToServer();
                 return;
             }
 
@@ -253,9 +253,9 @@ namespace SharpQuake
         /// </summary>
         private static void Ping_f()
         {
-            if( cmd.Source == cmd_source_t.src_command )
+            if( Command.Source == cmd_source_t.src_command )
             {
-                cmd.ForwardToServer();
+                Command.ForwardToServer();
                 return;
             }
 
@@ -280,7 +280,7 @@ namespace SharpQuake
         // command from the console.  Active clients are kicked off.
         private static void Map_f()
         {
-            if( cmd.Source != cmd_source_t.src_command )
+            if( Command.Source != cmd_source_t.src_command )
                 return;
 
             client.cls.demonum = -1;		// stop demo loop in case this fails
@@ -291,10 +291,10 @@ namespace SharpQuake
             Key.Destination = keydest_t.key_game;			// remove console or menu
             Scr.BeginLoadingPlaque();
 
-            client.cls.mapstring = cmd.JoinArgv() + "\n";
+            client.cls.mapstring = Command.JoinArgv() + "\n";
 
             server.svs.serverflags = 0;			// haven't completed an episode yet
-            string name = cmd.Argv( 1 );
+            string name = Command.Argv( 1 );
             server.SpawnServer( name );
 
             if( !server.IsActive )
@@ -302,8 +302,8 @@ namespace SharpQuake
 
             if( client.cls.state != cactive_t.ca_dedicated )
             {
-                client.cls.spawnparms = cmd.JoinArgv();
-                cmd.ExecuteString( "connect local", cmd_source_t.src_command );
+                client.cls.spawnparms = Command.JoinArgv();
+                Command.ExecuteString( "connect local", cmd_source_t.src_command );
             }
         }
 
@@ -313,7 +313,7 @@ namespace SharpQuake
         /// </summary>
         private static void Changelevel_f()
         {
-            if( cmd.Argc != 2 )
+            if( Command.Argc != 2 )
             {
                 Con.Print( "changelevel <levelname> : continue game on a new level\n" );
                 return;
@@ -324,7 +324,7 @@ namespace SharpQuake
                 return;
             }
             server.SaveSpawnparms();
-            string level = cmd.Argv( 1 );
+            string level = Command.Argv( 1 );
             server.SpawnServer( level );
         }
 
@@ -336,7 +336,7 @@ namespace SharpQuake
             if( client.cls.demoplayback || !server.IsActive )
                 return;
 
-            if( cmd.Source != cmd_source_t.src_command )
+            if( Command.Source != cmd_source_t.src_command )
                 return;
 
             string mapname = server.sv.name; // must copy out, because it gets cleared
@@ -367,7 +367,7 @@ namespace SharpQuake
                 client.StopPlayback();
                 client.Disconnect();
             }
-            string name = cmd.Argv( 1 );
+            string name = Command.Argv( 1 );
             client.EstablishConnection( name );
             Reconnect_f();
         }
@@ -398,7 +398,7 @@ namespace SharpQuake
         /// </summary>
         private static void Savegame_f()
         {
-            if( cmd.Source != cmd_source_t.src_command )
+            if( Command.Source != cmd_source_t.src_command )
                 return;
 
             if( !server.sv.active )
@@ -419,13 +419,13 @@ namespace SharpQuake
                 return;
             }
 
-            if( cmd.Argc != 2 )
+            if( Command.Argc != 2 )
             {
                 Con.Print( "save <savename> : save a game\n" );
                 return;
             }
 
-            if( cmd.Argv( 1 ).Contains( ".." ) )
+            if( Command.Argv( 1 ).Contains( ".." ) )
             {
                 Con.Print( "Relative pathnames are not allowed.\n" );
                 return;
@@ -440,7 +440,7 @@ namespace SharpQuake
                 }
             }
 
-            string name = Path.ChangeExtension( Path.Combine( common.GameDir, cmd.Argv( 1 ) ), ".sav" );
+            string name = Path.ChangeExtension( Path.Combine( Common.GameDir, Command.Argv( 1 ) ), ".sav" );
 
             Con.Print( "Saving game to {0}...\n", name );
             FileStream fs = sys.FileOpenWrite( name, true );
@@ -488,10 +488,10 @@ namespace SharpQuake
         /// </summary>
         private static void Loadgame_f()
         {
-            if( cmd.Source != cmd_source_t.src_command )
+            if( Command.Source != cmd_source_t.src_command )
                 return;
 
-            if( cmd.Argc != 2 )
+            if( Command.Argc != 2 )
             {
                 Con.Print( "load <savename> : load a game\n" );
                 return;
@@ -499,7 +499,7 @@ namespace SharpQuake
 
             client.cls.demonum = -1;		// stop demo loop in case this fails
 
-            string name = Path.ChangeExtension( Path.Combine( common.GameDir, cmd.Argv( 1 ) ), ".sav" );
+            string name = Path.ChangeExtension( Path.Combine( Common.GameDir, Command.Argv( 1 ) ), ".sav" );
 
             // we can't call SCR_BeginLoadingPlaque, because too much stack space has
             // been used.  The menu calls it before stuffing loadgame command
@@ -516,7 +516,7 @@ namespace SharpQuake
             using( StreamReader reader = new StreamReader( fs, Encoding.ASCII ) )
             {
                 string line = reader.ReadLine();
-                int version = common.atoi( line );
+                int version = Common.atoi( line );
                 if( version != SAVEGAME_VERSION )
                 {
                     Con.Print( "Savegame is version {0}, not {1}\n", version, SAVEGAME_VERSION );
@@ -528,17 +528,17 @@ namespace SharpQuake
                 for( int i = 0; i < spawn_parms.Length; i++ )
                 {
                     line = reader.ReadLine();
-                    spawn_parms[i] = common.atof( line );
+                    spawn_parms[i] = Common.atof( line );
                 }
                 // this silliness is so we can load 1.06 save files, which have float skill values
                 line = reader.ReadLine();
-                float tfloat = common.atof( line );
+                float tfloat = Common.atof( line );
                 host.CurrentSkill = (int)( tfloat + 0.1 );
-                cvar.Set( "skill", (float)host.CurrentSkill );
+                CVar.Set( "skill", (float)host.CurrentSkill );
 
                 string mapname = reader.ReadLine();
                 line = reader.ReadLine();
-                float time = common.atof( line );
+                float time = Common.atof( line );
 
                 client.Disconnect_f();
                 server.SpawnServer( mapname );
@@ -573,10 +573,10 @@ namespace SharpQuake
                     if( idx != -1 )
                     {
                         int length = 1 + sb.Length - ( line.Length - idx );
-                        string data = common.Parse( sb.ToString( 0, length ) );
-                        if( String.IsNullOrEmpty( common.Token ) )
+                        string data = Common.Parse( sb.ToString( 0, length ) );
+                        if( String.IsNullOrEmpty( Common.Token ) )
                             break; // end of file
-                        if( common.Token != "{" )
+                        if( Common.Token != "{" )
                             sys.Error( "First token isn't a brace" );
 
                         if( entnum == -1 )
@@ -618,28 +618,28 @@ namespace SharpQuake
         // Host_Name_f
         private static void Name_f()
         {
-            if( cmd.Argc == 1 )
+            if( Command.Argc == 1 )
             {
                 Con.Print( "\"name\" is \"{0}\"\n", client.Name );
                 return;
             }
 
             string newName;
-            if( cmd.Argc == 2 )
-                newName = cmd.Argv( 1 );
+            if( Command.Argc == 2 )
+                newName = Command.Argv( 1 );
             else
-                newName = cmd.Args;
+                newName = Command.Args;
 
             if( newName.Length > 16 )
                 newName = newName.Remove( 15 );
 
-            if( cmd.Source == cmd_source_t.src_command )
+            if( Command.Source == cmd_source_t.src_command )
             {
                 if( client.Name == newName )
                     return;
-                cvar.Set( "_cl_name", newName );
+                CVar.Set( "_cl_name", newName );
                 if( client.cls.state == cactive_t.ca_connected )
-                    cmd.ForwardToServer();
+                    Command.ForwardToServer();
                 return;
             }
 
@@ -670,7 +670,7 @@ namespace SharpQuake
         private static void Say( bool teamonly )
         {
             bool fromServer = false;
-            if( cmd.Source == cmd_source_t.src_command )
+            if( Command.Source == cmd_source_t.src_command )
             {
                 if( client.cls.state == cactive_t.ca_dedicated )
                 {
@@ -679,17 +679,17 @@ namespace SharpQuake
                 }
                 else
                 {
-                    cmd.ForwardToServer();
+                    Command.ForwardToServer();
                     return;
                 }
             }
 
-            if( cmd.Argc < 2 )
+            if( Command.Argc < 2 )
                 return;
 
             client_t save = host.HostClient;
 
-            string p = cmd.Args;
+            string p = Command.Args;
             // remove quotes if present
             if( p.StartsWith( "\"" ) )
             {
@@ -733,17 +733,17 @@ namespace SharpQuake
         // Host_Tell_f
         private static void Tell_f()
         {
-            if( cmd.Source == cmd_source_t.src_command )
+            if( Command.Source == cmd_source_t.src_command )
             {
-                cmd.ForwardToServer();
+                Command.ForwardToServer();
                 return;
             }
 
-            if( cmd.Argc < 3 )
+            if( Command.Argc < 3 )
                 return;
 
             string text = host.HostClient.name + ": ";
-            string p = cmd.Args;
+            string p = Command.Args;
 
             // remove quotes if present
             if( p.StartsWith( "\"" ) )
@@ -759,7 +759,7 @@ namespace SharpQuake
                 client_t client = server.svs.clients[j];
                 if( !client.active || !client.spawned )
                     continue;
-                if( client.name == cmd.Argv( 1 ) )
+                if( client.name == Command.Argv( 1 ) )
                     continue;
                 host.HostClient = client;
                 server.ClientPrint( text );
@@ -771,7 +771,7 @@ namespace SharpQuake
         // Host_Color_f
         private static void Color_f()
         {
-            if( cmd.Argc == 1 )
+            if( Command.Argc == 1 )
             {
                 Con.Print( "\"color\" is \"{0} {1}\"\n", ( (int)client.Color ) >> 4, ( (int)client.Color ) & 0x0f );
                 Con.Print( "color <0-13> [0-13]\n" );
@@ -779,12 +779,12 @@ namespace SharpQuake
             }
 
             int top, bottom;
-            if( cmd.Argc == 2 )
-                top = bottom = common.atoi( cmd.Argv( 1 ) );
+            if( Command.Argc == 2 )
+                top = bottom = Common.atoi( Command.Argv( 1 ) );
             else
             {
-                top = common.atoi( cmd.Argv( 1 ) );
-                bottom = common.atoi( cmd.Argv( 2 ) );
+                top = Common.atoi( Command.Argv( 1 ) );
+                bottom = Common.atoi( Command.Argv( 2 ) );
             }
 
             top &= 15;
@@ -796,11 +796,11 @@ namespace SharpQuake
 
             int playercolor = top * 16 + bottom;
 
-            if( cmd.Source == cmd_source_t.src_command )
+            if( Command.Source == cmd_source_t.src_command )
             {
-                cvar.Set( "_cl_color", playercolor );
+                CVar.Set( "_cl_color", playercolor );
                 if( client.cls.state == cactive_t.ca_connected )
-                    cmd.ForwardToServer();
+                    Command.ForwardToServer();
                 return;
             }
 
@@ -819,9 +819,9 @@ namespace SharpQuake
         /// </summary>
         private static void Kill_f()
         {
-            if( cmd.Source == cmd_source_t.src_command )
+            if( Command.Source == cmd_source_t.src_command )
             {
-                cmd.ForwardToServer();
+                Command.ForwardToServer();
                 return;
             }
 
@@ -841,9 +841,9 @@ namespace SharpQuake
         /// </summary>
         private static void Pause_f()
         {
-            if( cmd.Source == cmd_source_t.src_command )
+            if( Command.Source == cmd_source_t.src_command )
             {
-                cmd.ForwardToServer();
+                Command.ForwardToServer();
                 return;
             }
             if( _Pausable.Value == 0 )
@@ -872,7 +872,7 @@ namespace SharpQuake
         /// </summary>
         private static void PreSpawn_f()
         {
-            if( cmd.Source == cmd_source_t.src_command )
+            if( Command.Source == cmd_source_t.src_command )
             {
                 Con.Print( "prespawn is not valid from the console\n" );
                 return;
@@ -896,7 +896,7 @@ namespace SharpQuake
         /// </summary>
         private static void Spawn_f()
         {
-            if( cmd.Source == cmd_source_t.src_command )
+            if( Command.Source == cmd_source_t.src_command )
             {
                 Con.Print( "spawn is not valid from the console\n" );
                 return;
@@ -1013,7 +1013,7 @@ namespace SharpQuake
         // Host_Begin_f
         private static void Begin_f()
         {
-            if( cmd.Source == cmd_source_t.src_command )
+            if( Command.Source == cmd_source_t.src_command )
             {
                 Con.Print( "begin is not valid from the console\n" );
                 return;
@@ -1028,11 +1028,11 @@ namespace SharpQuake
         /// </summary>
         private static void Kick_f()
         {
-            if( cmd.Source == cmd_source_t.src_command )
+            if( Command.Source == cmd_source_t.src_command )
             {
                 if( !server.sv.active )
                 {
-                    cmd.ForwardToServer();
+                    Command.ForwardToServer();
                     return;
                 }
             }
@@ -1042,9 +1042,9 @@ namespace SharpQuake
             client_t save = host.HostClient;
             bool byNumber = false;
             int i;
-            if( cmd.Argc > 2 && cmd.Argv( 1 ) == "#" )
+            if( Command.Argc > 2 && Command.Argv( 1 ) == "#" )
             {
-                i = (int)common.atof( cmd.Argv( 2 ) ) - 1;
+                i = (int)Common.atof( Command.Argv( 2 ) ) - 1;
                 if( i < 0 || i >= server.svs.maxclients )
                     return;
                 if( !server.svs.clients[i].active )
@@ -1060,7 +1060,7 @@ namespace SharpQuake
                     host.HostClient = server.svs.clients[i];
                     if( !host.HostClient.active )
                         continue;
-                    if( common.SameText( host.HostClient.name, cmd.Argv( 1 ) ) )
+                    if( Common.SameText( host.HostClient.name, Command.Argv( 1 ) ) )
                         break;
                 }
             }
@@ -1068,7 +1068,7 @@ namespace SharpQuake
             if( i < server.svs.maxclients )
             {
                 string who;
-                if( cmd.Source == cmd_source_t.src_command )
+                if( Command.Source == cmd_source_t.src_command )
                     if( client.cls.state == cactive_t.ca_dedicated )
                         who = "Console";
                     else
@@ -1081,14 +1081,14 @@ namespace SharpQuake
                     return;
 
                 string message = null;
-                if( cmd.Argc > 2 )
+                if( Command.Argc > 2 )
                 {
-                    message = common.Parse( cmd.Args );
+                    message = Common.Parse( Command.Args );
                     if( byNumber )
                     {
                         message = message.Substring( 1 ); // skip the #
                         message = message.Trim(); // skip white space
-                        message = message.Substring( cmd.Argv( 2 ).Length );	// skip the number
+                        message = message.Substring( Command.Argv( 2 ).Length );	// skip the number
                     }
                     message = message.Trim();
                 }
@@ -1107,17 +1107,17 @@ namespace SharpQuake
         /// </summary>
         private static void Give_f()
         {
-            if( cmd.Source == cmd_source_t.src_command )
+            if( Command.Source == cmd_source_t.src_command )
             {
-                cmd.ForwardToServer();
+                Command.ForwardToServer();
                 return;
             }
 
             if( progs.GlobalStruct.deathmatch != 0 && !host.HostClient.privileged )
                 return;
 
-            string t = cmd.Argv( 1 );
-            int v = common.atoi( cmd.Argv( 2 ) );
+            string t = Command.Argv( 1 );
+            int v = Common.atoi( Command.Argv( 2 ) );
 
             if( String.IsNullOrEmpty( t ) )
                 return;
@@ -1135,7 +1135,7 @@ namespace SharpQuake
                 case '8':
                 case '9':
                     // MED 01/04/97 added hipnotic give stuff
-                    if( common.GameKind == GameKind.Hipnotic )
+                    if( Common.GameKind == GameKind.Hipnotic )
                     {
                         if( t[0] == '6' )
                         {
@@ -1159,14 +1159,14 @@ namespace SharpQuake
                     break;
 
                 case 's':
-                    if( common.GameKind == GameKind.Rogue )
+                    if( Common.GameKind == GameKind.Rogue )
                         progs.SetEdictFieldFloat( server.Player, "ammo_shells1", v );
 
                     server.Player.v.ammo_shells = v;
                     break;
 
                 case 'n':
-                    if( common.GameKind == GameKind.Rogue )
+                    if( Common.GameKind == GameKind.Rogue )
                     {
                         if( progs.SetEdictFieldFloat( server.Player, "ammo_nails1", v ) )
                             if( server.Player.v.weapon <= QItems.IT_LIGHTNING )
@@ -1177,7 +1177,7 @@ namespace SharpQuake
                     break;
 
                 case 'l':
-                    if( common.GameKind == GameKind.Rogue )
+                    if( Common.GameKind == GameKind.Rogue )
                     {
                         if( progs.SetEdictFieldFloat( server.Player, "ammo_lava_nails", v ) )
                             if( server.Player.v.weapon > QItems.IT_LIGHTNING )
@@ -1186,7 +1186,7 @@ namespace SharpQuake
                     break;
 
                 case 'r':
-                    if( common.GameKind == GameKind.Rogue )
+                    if( Common.GameKind == GameKind.Rogue )
                     {
                         if( progs.SetEdictFieldFloat( server.Player, "ammo_rockets1", v ) )
                             if( server.Player.v.weapon <= QItems.IT_LIGHTNING )
@@ -1199,7 +1199,7 @@ namespace SharpQuake
                     break;
 
                 case 'm':
-                    if( common.GameKind == GameKind.Rogue )
+                    if( Common.GameKind == GameKind.Rogue )
                     {
                         if( progs.SetEdictFieldFloat( server.Player, "ammo_multi_rockets", v ) )
                             if( server.Player.v.weapon > QItems.IT_LIGHTNING )
@@ -1212,7 +1212,7 @@ namespace SharpQuake
                     break;
 
                 case 'c':
-                    if( common.GameKind == GameKind.Rogue )
+                    if( Common.GameKind == GameKind.Rogue )
                     {
                         if( progs.SetEdictFieldFloat( server.Player, "ammo_cells1", v ) )
                             if( server.Player.v.weapon <= QItems.IT_LIGHTNING )
@@ -1225,7 +1225,7 @@ namespace SharpQuake
                     break;
 
                 case 'p':
-                    if( common.GameKind == GameKind.Rogue )
+                    if( Common.GameKind == GameKind.Rogue )
                     {
                         if( progs.SetEdictFieldFloat( server.Player, "ammo_plasma", v ) )
                             if( server.Player.v.weapon > QItems.IT_LIGHTNING )
@@ -1254,10 +1254,10 @@ namespace SharpQuake
             if( e == null )
                 return;
 
-            model_t m = Mod.ForName( cmd.Argv( 1 ), false );
+            model_t m = Mod.ForName( Command.Argv( 1 ), false );
             if( m == null )
             {
-                Con.Print( "Can't load {0}\n", cmd.Argv( 1 ) );
+                Con.Print( "Can't load {0}\n", Command.Argv( 1 ) );
                 return;
             }
 
@@ -1276,7 +1276,7 @@ namespace SharpQuake
 
             model_t m = client.cl.model_precache[(int)e.v.modelindex];
 
-            int f = common.atoi( cmd.Argv( 1 ) );
+            int f = Common.atoi( Command.Argv( 1 ) );
             if( f >= m.numframes )
                 f = m.numframes - 1;
 
@@ -1338,7 +1338,7 @@ namespace SharpQuake
                 return;
             }
 
-            int c = cmd.Argc - 1;
+            int c = Command.Argc - 1;
             if( c > client.MAX_DEMOS )
             {
                 Con.Print( "Max {0} demos in demoloop\n", client.MAX_DEMOS );
@@ -1347,7 +1347,7 @@ namespace SharpQuake
             Con.Print( "{0} demo(s) in loop\n", c );
 
             for( int i = 1; i < c + 1; i++ )
-                client.cls.demos[i - 1] = common.Copy( cmd.Argv( i ), client.MAX_DEMONAME );
+                client.cls.demos[i - 1] = Common.Copy( Command.Argv( i ), client.MAX_DEMONAME );
 
             if( !server.sv.active && client.cls.demonum != -1 && !client.cls.demoplayback )
             {

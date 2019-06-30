@@ -125,22 +125,22 @@ namespace SharpQuake
         private static mode_t[] _Modes;
         private static int _ModeNum; // vid_modenum
 
-        private static cvar _glZTrick;// = { "gl_ztrick", "1" };
-        private static cvar _Mode;// = { "vid_mode", "0", false };
+        private static CVar _glZTrick;// = { "gl_ztrick", "1" };
+        private static CVar _Mode;// = { "vid_mode", "0", false };
 
         // Note that 0 is MODE_WINDOWED
-        private static cvar _DefaultMode;// = { "_vid_default_mode", "0", true };
+        private static CVar _DefaultMode;// = { "_vid_default_mode", "0", true };
 
         // Note that 3 is MODE_FULLSCREEN_DEFAULT
-        private static cvar _DefaultModeWin;// = { "_vid_default_mode_win", "3", true };
+        private static CVar _DefaultModeWin;// = { "_vid_default_mode_win", "3", true };
 
-        private static cvar _Wait;// = { "vid_wait", "0" };
-        private static cvar _NoPageFlip;// = { "vid_nopageflip", "0", true };
-        private static cvar _WaitOverride;// = { "_vid_wait_override", "0", true };
-        private static cvar _ConfigX;// = { "vid_config_x", "800", true };
-        private static cvar _ConfigY;// = { "vid_config_y", "600", true };
-        private static cvar _StretchBy2;// = { "vid_stretch_by_2", "1", true };
-        private static cvar _WindowedMouse;// = { "_windowed_mouse", "1", true };
+        private static CVar _Wait;// = { "vid_wait", "0" };
+        private static CVar _NoPageFlip;// = { "vid_nopageflip", "0", true };
+        private static CVar _WaitOverride;// = { "_vid_wait_override", "0", true };
+        private static CVar _ConfigX;// = { "vid_config_x", "800", true };
+        private static CVar _ConfigY;// = { "vid_config_y", "600", true };
+        private static CVar _StretchBy2;// = { "vid_stretch_by_2", "1", true };
+        private static CVar _WindowedMouse;// = { "_windowed_mouse", "1", true };
 
         private static bool _Windowed; // windowed
 
@@ -163,25 +163,25 @@ namespace SharpQuake
         {
             if( _glZTrick == null )
             {
-                _glZTrick = new cvar( "gl_ztrick", "1" );
-                _Mode = new cvar( "vid_mode", "0", false );
-                _DefaultMode = new cvar( "_vid_default_mode", "0", true );
-                _DefaultModeWin = new cvar( "_vid_default_mode_win", "3", true );
-                _Wait = new cvar( "vid_wait", "0" );
-                _NoPageFlip = new cvar( "vid_nopageflip", "0", true );
-                _WaitOverride = new cvar( "_vid_wait_override", "0", true );
-                _ConfigX = new cvar( "vid_config_x", "800", true );
-                _ConfigY = new cvar( "vid_config_y", "600", true );
-                _StretchBy2 = new cvar( "vid_stretch_by_2", "1", true );
-                _WindowedMouse = new cvar( "_windowed_mouse", "1", true );
+                _glZTrick = new CVar( "gl_ztrick", "1" );
+                _Mode = new CVar( "vid_mode", "0", false );
+                _DefaultMode = new CVar( "_vid_default_mode", "0", true );
+                _DefaultModeWin = new CVar( "_vid_default_mode_win", "3", true );
+                _Wait = new CVar( "vid_wait", "0" );
+                _NoPageFlip = new CVar( "vid_nopageflip", "0", true );
+                _WaitOverride = new CVar( "_vid_wait_override", "0", true );
+                _ConfigX = new CVar( "vid_config_x", "800", true );
+                _ConfigY = new CVar( "vid_config_y", "600", true );
+                _StretchBy2 = new CVar( "vid_stretch_by_2", "1", true );
+                _WindowedMouse = new CVar( "_windowed_mouse", "1", true );
             }
 
-            cmd.Add( "vid_nummodes", NumModes_f );
-            cmd.Add( "vid_describecurrentmode", DescribeCurrentMode_f );
-            cmd.Add( "vid_describemode", DescribeMode_f );
-            cmd.Add( "vid_describemodes", DescribeModes_f );
+            Command.Add( "vid_nummodes", NumModes_f );
+            Command.Add( "vid_describecurrentmode", DescribeCurrentMode_f );
+            Command.Add( "vid_describemode", DescribeMode_f );
+            Command.Add( "vid_describemodes", DescribeModes_f );
 
-            DisplayDevice dev = mainwindow.DisplayDevice;
+            DisplayDevice dev = MainWindow.DisplayDevice;
 
             // Enumerate available modes, skip 8 bpp modes, and group by refresh rates
             List<mode_t> tmp = new List<mode_t>( dev.AvailableResolutions.Count );
@@ -214,10 +214,10 @@ namespace SharpQuake
             mode1.fullScreen = true;
 
             int width = dev.Width, height = dev.Height;
-            int i = common.CheckParm( "-width" );
-            if( i > 0 && i < common.Argc - 1 )
+            int i = Common.CheckParm( "-width" );
+            if( i > 0 && i < Common.Argc - 1 )
             {
-                width = common.atoi( common.Argv( i + 1 ) );
+                width = Common.atoi( Common.Argv( i + 1 ) );
 
                 foreach( DisplayResolution res in dev.AvailableResolutions )
                 {
@@ -229,14 +229,14 @@ namespace SharpQuake
                 }
             }
 
-            i = common.CheckParm( "-height" );
-            if( i > 0 && i < common.Argc - 1 )
-                height = common.atoi( common.Argv( i + 1 ) );
+            i = Common.CheckParm( "-height" );
+            if( i > 0 && i < Common.Argc - 1 )
+                height = Common.atoi( Common.Argv( i + 1 ) );
 
             mode1.width = width;
             mode1.height = height;
 
-            if( common.HasParam( "-window" ) )
+            if( Common.HasParam( "-window" ) )
             {
                 _Windowed = true;
             }
@@ -244,7 +244,7 @@ namespace SharpQuake
             {
                 _Windowed = false;
 
-                if( common.HasParam( "-current" ) )
+                if( Common.HasParam( "-current" ) )
                 {
                     mode1.width = dev.Width;
                     mode1.height = dev.Height;
@@ -252,10 +252,10 @@ namespace SharpQuake
                 else
                 {
                     int bpp = mode1.bpp;
-                    i = common.CheckParm( "-bpp" );
-                    if( i > 0 && i < common.Argc - 1 )
+                    i = Common.CheckParm( "-bpp" );
+                    if( i > 0 && i < Common.Argc - 1 )
                     {
-                        bpp = common.atoi( common.Argv( i + 1 ) );
+                        bpp = Common.atoi( Common.Argv( i + 1 ) );
                     }
                     mode1.bpp = bpp;
                 }
@@ -263,9 +263,9 @@ namespace SharpQuake
 
             //_IsInitialized = true;
 
-            int i2 = common.CheckParm( "-conwidth" );
+            int i2 = Common.CheckParm( "-conwidth" );
             if( i2 > 0 )
-                Scr.vid.conwidth = common.atoi( common.Argv( i2 + 1 ) );
+                Scr.vid.conwidth = Common.atoi( Common.Argv( i2 + 1 ) );
             else
                 Scr.vid.conwidth = 640;
 
@@ -277,9 +277,9 @@ namespace SharpQuake
             // pick a conheight that matches with correct aspect
             Scr.vid.conheight = Scr.vid.conwidth * 3 / 4;
 
-            i2 = common.CheckParm( "-conheight" );
+            i2 = Common.CheckParm( "-conheight" );
             if( i2 > 0 )
-                Scr.vid.conheight = common.atoi( common.Argv( i2 + 1 ) );
+                Scr.vid.conheight = Common.atoi( Common.Argv( i2 + 1 ) );
             if( Scr.vid.conheight < 200 )
                 Scr.vid.conheight = 200;
 
@@ -287,7 +287,7 @@ namespace SharpQuake
             Scr.vid.maxwarpheight = WARP_HEIGHT;
             Scr.vid.colormap = host.ColorMap;
             int v = BitConverter.ToInt32( host.ColorMap, 2048 );
-            Scr.vid.fullbright = 256 - common.LittleLong( v );
+            Scr.vid.fullbright = 256 - Common.LittleLong( v );
 
             CheckGamma( palette );
             SetPalette( palette );
@@ -313,7 +313,7 @@ namespace SharpQuake
 
             InitOpenGL();
 
-            Directory.CreateDirectory( Path.Combine( common.GameDir, "glquake" ) );
+            Directory.CreateDirectory( Path.Combine( Common.GameDir, "glquake" ) );
         }
 
         /// <summary>
@@ -344,8 +344,8 @@ namespace SharpQuake
             cd_audio.Pause();
 
             // Set either the fullscreen or windowed mode
-            DisplayDevice dev = mainwindow.DisplayDevice;
-            mainwindow form = mainwindow.Instance;
+            DisplayDevice dev = MainWindow.DisplayDevice;
+            MainWindow form = MainWindow.Instance;
             if( _Windowed )
             {
                 try
@@ -402,7 +402,7 @@ namespace SharpQuake
             Scr.IsDisabledForLoading = temp;
 
             _ModeNum = modenum;
-            cvar.Set( "vid_mode", (float)_ModeNum );
+            CVar.Set( "vid_mode", (float)_ModeNum );
 
             // fix the leftover Alt from any Alt-Tab or the like that switched us away
             ClearAllStates();
@@ -542,7 +542,7 @@ namespace SharpQuake
         // VID_DescribeMode_f
         private static void DescribeMode_f()
         {
-            int modenum = common.atoi( cmd.Argv( 1 ) );
+            int modenum = Common.atoi( Command.Argv( 1 ) );
 
             Con.Print( "{0}\n", GetExtModeDescription( modenum ) );
         }
@@ -564,7 +564,7 @@ namespace SharpQuake
         // Check_Gamma
         private static void CheckGamma( byte[] pal )
         {
-            int i = common.CheckParm( "-gamma" );
+            int i = Common.CheckParm( "-gamma" );
             if( i == 0 )
             {
                 string renderer = GL.GetString( StringName.Renderer );
@@ -575,7 +575,7 @@ namespace SharpQuake
                     _Gamma = 0.7f; // default to 0.7 on non-3dfx hardware
             }
             else
-                _Gamma = float.Parse( common.Argv( i + 1 ) );
+                _Gamma = float.Parse( Common.Argv( i + 1 ) );
 
             for( i = 0; i < pal.Length; i++ )
             {
@@ -618,7 +618,7 @@ namespace SharpQuake
         /// </summary>
         private static void CheckMultiTextureExtensions()
         {
-            if( _glExtensions.Contains( "GL_SGIS_multitexture " ) && !common.HasParam( "-nomtex" ) )
+            if( _glExtensions.Contains( "GL_SGIS_multitexture " ) && !Common.HasParam( "-nomtex" ) )
             {
                 Con.Print( "Multitexture extensions found.\n" );
                 _glMTexable = true;

@@ -44,7 +44,7 @@ namespace SharpQuake
             }
         }
 
-        public static cvar ViewSize
+        public static CVar ViewSize
         {
             get
             {
@@ -129,15 +129,15 @@ namespace SharpQuake
         // scr_centertime_off
         private static string _CenterString; // char	scr_centerstring[1024]
 
-        private static cvar _ViewSize; // = { "viewsize", "100", true };
-        private static cvar _Fov;// = { "fov", "90" };	// 10 - 170
-        private static cvar _ConSpeed;// = { "scr_conspeed", "300" };
-        private static cvar _CenterTime;// = { "scr_centertime", "2" };
-        private static cvar _ShowRam;// = { "showram", "1" };
-        private static cvar _ShowTurtle;// = { "showturtle", "0" };
-        private static cvar _ShowPause;// = { "showpause", "1" };
-        private static cvar _PrintSpeed;// = { "scr_printspeed", "8" };
-        private static cvar _glTripleBuffer;// = { "gl_triplebuffer", "1", true };
+        private static CVar _ViewSize; // = { "viewsize", "100", true };
+        private static CVar _Fov;// = { "fov", "90" };	// 10 - 170
+        private static CVar _ConSpeed;// = { "scr_conspeed", "300" };
+        private static CVar _CenterTime;// = { "scr_centertime", "2" };
+        private static CVar _ShowRam;// = { "showram", "1" };
+        private static CVar _ShowTurtle;// = { "showturtle", "0" };
+        private static CVar _ShowPause;// = { "showpause", "1" };
+        private static CVar _PrintSpeed;// = { "scr_printspeed", "8" };
+        private static CVar _glTripleBuffer;// = { "gl_triplebuffer", "1", true };
 
         private static string _NotifyString; // scr_notifystring
         private static bool _IsMouseWindowed; // windowed_mouse (don't confuse with _windowed_mouse cvar)
@@ -148,29 +148,29 @@ namespace SharpQuake
         {
             if( _ViewSize == null )
             {
-                _ViewSize = new cvar( "viewsize", "100", true );
-                _Fov = new cvar( "fov", "90" );	// 10 - 170
-                _ConSpeed = new cvar( "scr_conspeed", "3000" );
-                _CenterTime = new cvar( "scr_centertime", "2" );
-                _ShowRam = new cvar( "showram", "1" );
-                _ShowTurtle = new cvar( "showturtle", "0" );
-                _ShowPause = new cvar( "showpause", "1" );
-                _PrintSpeed = new cvar( "scr_printspeed", "8" );
-                _glTripleBuffer = new cvar( "gl_triplebuffer", "1", true );
+                _ViewSize = new CVar( "viewsize", "100", true );
+                _Fov = new CVar( "fov", "90" );	// 10 - 170
+                _ConSpeed = new CVar( "scr_conspeed", "3000" );
+                _CenterTime = new CVar( "scr_centertime", "2" );
+                _ShowRam = new CVar( "showram", "1" );
+                _ShowTurtle = new CVar( "showturtle", "0" );
+                _ShowPause = new CVar( "showpause", "1" );
+                _PrintSpeed = new CVar( "scr_printspeed", "8" );
+                _glTripleBuffer = new CVar( "gl_triplebuffer", "1", true );
             }
 
             //
             // register our commands
             //
-            cmd.Add( "screenshot", ScreenShot_f );
-            cmd.Add( "sizeup", SizeUp_f );
-            cmd.Add( "sizedown", SizeDown_f );
+            Command.Add( "screenshot", ScreenShot_f );
+            Command.Add( "sizeup", SizeUp_f );
+            Command.Add( "sizedown", SizeDown_f );
 
             _Ram = Drawer.PicFromWad( "ram" );
             _Net = Drawer.PicFromWad( "net" );
             _Turtle = Drawer.PicFromWad( "turtle" );
 
-            if( common.HasParam( "-fullsbar" ) )
+            if( Common.HasParam( "-fullsbar" ) )
                 FullSbarDraw = true;
 
             _IsInitialized = true;
@@ -190,10 +190,10 @@ namespace SharpQuake
             _InUpdate = true;
             try
             {
-                if( mainwindow.Instance != null )
+                if( MainWindow.Instance != null )
                 {
-                    if( (mainwindow.Instance.VSync == VSyncMode.On ) != SharpQuake.vid.Wait )
-                        mainwindow.Instance.VSync = (SharpQuake.vid.Wait ? VSyncMode.On : VSyncMode.Off );
+                    if( (MainWindow.Instance.VSync == VSyncMode.On ) != SharpQuake.vid.Wait )
+                        MainWindow.Instance.VSync = (SharpQuake.vid.Wait ? VSyncMode.On : VSyncMode.Off );
                 }
 
                 _VidDef.numpages = 2 + (int)_glTripleBuffer.Value;
@@ -299,7 +299,7 @@ namespace SharpQuake
         /// </summary>
         public static void EndRendering()
         {
-            mainwindow form = mainwindow.Instance;
+            MainWindow form = MainWindow.Instance;
             if( form == null )
                 return;
 
@@ -429,7 +429,7 @@ namespace SharpQuake
         // Keybinding command
         private static void SizeUp_f()
         {
-            cvar.Set( "viewsize", _ViewSize.Value + 10 );
+            CVar.Set( "viewsize", _ViewSize.Value + 10 );
             _VidDef.recalc_refdef = true;
         }
 
@@ -438,7 +438,7 @@ namespace SharpQuake
         // Keybinding command
         private static void SizeDown_f()
         {
-            cvar.Set( "viewsize", _ViewSize.Value - 10 );
+            CVar.Set( "viewsize", _ViewSize.Value - 10 );
             _VidDef.recalc_refdef = true;
         }
 
@@ -452,7 +452,7 @@ namespace SharpQuake
             int i;
             for( i = 0; i <= 999; i++ )
             {
-                path = Path.Combine( common.GameDir, String.Format( "quake{0:D3}.tga", i ) );
+                path = Path.Combine( Common.GameDir, String.Format( "quake{0:D3}.tga", i ) );
                 if( sys.GetFileTime( path ) == DateTime.MinValue )
                     break;	// file doesn't exist
             }
@@ -509,7 +509,7 @@ namespace SharpQuake
             glWidth = 0;
             glHeight = 0;
 
-            INativeWindow window = mainwindow.Instance;
+            INativeWindow window = MainWindow.Instance;
             if( window != null )
             {
                 Size size = window.ClientSize;
@@ -532,15 +532,15 @@ namespace SharpQuake
 
             // bound viewsize
             if( _ViewSize.Value < 30 )
-                cvar.Set( "viewsize", "30" );
+                CVar.Set( "viewsize", "30" );
             if( _ViewSize.Value > 120 )
-                cvar.Set( "viewsize", "120" );
+                CVar.Set( "viewsize", "120" );
 
             // bound field of view
             if( _Fov.Value < 10 )
-                cvar.Set( "fov", "10" );
+                CVar.Set( "fov", "10" );
             if( _Fov.Value > 170 )
-                cvar.Set( "fov", "170" );
+                CVar.Set( "fov", "170" );
 
             // intermission is always full screen
             float size;

@@ -40,7 +40,7 @@ namespace SharpQuake
     /// <summary>
     /// W_functions
     /// </summary>
-    internal static class wad
+    internal static class Wad
     {
         public static byte[] Data
         {
@@ -96,8 +96,8 @@ namespace SharpQuake
                 header.identification[2] != 'D' || header.identification[3] != '2' )
                 sys.Error( "Wad file {0} doesn't have WAD2 id\n", filename );
 
-            int numlumps = common.LittleLong( header.numlumps );
-            int infotableofs = common.LittleLong( header.infotableofs );
+            int numlumps = Common.LittleLong( header.numlumps );
+            int infotableofs = Common.LittleLong( header.infotableofs );
             int lumpInfoSize = Marshal.SizeOf( typeof( lumpinfo_t ) );
 
             _Lumps = new Dictionary<string, lumpinfo_t>( numlumps );
@@ -106,8 +106,8 @@ namespace SharpQuake
             {
                 IntPtr ptr = new IntPtr( _DataPtr.ToInt64() + infotableofs + i * lumpInfoSize );
                 lumpinfo_t lump = (lumpinfo_t)Marshal.PtrToStructure( ptr, typeof( lumpinfo_t ) );
-                lump.filepos = common.LittleLong( lump.filepos );
-                lump.size = common.LittleLong( lump.size );
+                lump.filepos = Common.LittleLong( lump.filepos );
+                lump.size = Common.LittleLong( lump.size );
                 if( lump.type == TYP_QPIC )
                 {
                     ptr = new IntPtr( _DataPtr.ToInt64() + lump.filepos );
@@ -145,8 +145,8 @@ namespace SharpQuake
         // SwapPic (qpic_t *pic)
         public static void SwapPic( dqpicheader_t pic )
         {
-            pic.width = common.LittleLong( pic.width );
-            pic.height = common.LittleLong( pic.height );
+            pic.width = Common.LittleLong( pic.width );
+            pic.height = Common.LittleLong( pic.height );
         }
     }
 

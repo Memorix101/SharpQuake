@@ -178,15 +178,15 @@ namespace SharpQuake
             _FaceInvisInvuln = Drawer.PicFromWad( "face_inv2" );
             _FaceQuad = Drawer.PicFromWad( "face_quad" );
 
-            cmd.Add( "+showscores", ShowScores );
-            cmd.Add( "-showscores", DontShowScores );
+            Command.Add( "+showscores", ShowScores );
+            Command.Add( "-showscores", DontShowScores );
 
             _SBar = Drawer.PicFromWad( "sbar" );
             _IBar = Drawer.PicFromWad( "ibar" );
             _ScoreBar = Drawer.PicFromWad( "scorebar" );
 
             //MED 01/04/97 added new hipnotic weapons
-            if( common.GameKind == GameKind.Hipnotic )
+            if( Common.GameKind == GameKind.Hipnotic )
             {
                 _HWeapons[0, 0] = Drawer.PicFromWad( "inv_laser" );
                 _HWeapons[0, 1] = Drawer.PicFromWad( "inv_mjolnir" );
@@ -214,7 +214,7 @@ namespace SharpQuake
                 _HItems[1] = Drawer.PicFromWad( "sb_eshld" );
             }
 
-            if( common.GameKind == GameKind.Rogue )
+            if( Common.GameKind == GameKind.Rogue )
             {
                 _RInvBar[0] = Drawer.PicFromWad( "r_invbar1" );
                 _RInvBar[1] = Drawer.PicFromWad( "r_invbar2" );
@@ -283,7 +283,7 @@ namespace SharpQuake
 
                 // keys (hipnotic only)
                 //MED 01/04/97 moved keys here so they would not be overwritten
-                if( common.GameKind == GameKind.Hipnotic )
+                if( Common.GameKind == GameKind.Hipnotic )
                 {
                     if( cl.HasItems( QItems.IT_KEY1 ) )
                         DrawPic( 209, 3, _Items[0] );
@@ -298,7 +298,7 @@ namespace SharpQuake
                 }
                 else
                 {
-                    if( common.GameKind == GameKind.Rogue )
+                    if( Common.GameKind == GameKind.Rogue )
                     {
                         DrawNum( 24, 0, cl.stats[QStats.STAT_ARMOR], 3, cl.stats[QStats.STAT_ARMOR] <= 25 ? 1 : 0 ); // uze: corrected color param
                         if( cl.HasItems( QItems.RIT_ARMOR3 ) )
@@ -327,7 +327,7 @@ namespace SharpQuake
                 DrawNum( 136, 0, cl.stats[QStats.STAT_HEALTH], 3, cl.stats[QStats.STAT_HEALTH] <= 25 ? 1 : 0 );
 
                 // ammo icon
-                if( common.GameKind == GameKind.Rogue )
+                if( Common.GameKind == GameKind.Rogue )
                 {
                     if( cl.HasItems( QItems.RIT_SHELLS ) )
                         DrawPic( 224, 0, _Ammo[0] );
@@ -443,7 +443,7 @@ namespace SharpQuake
             int flashon;
 
             client_state_t cl = client.cl;
-            if( common.GameKind == GameKind.Rogue )
+            if( Common.GameKind == GameKind.Rogue )
             {
                 if( cl.stats[QStats.STAT_ACTIVEWEAPON] >= QItems.RIT_LAVA_NAILGUN )
                     DrawPic( 0, -24, _RInvBar[0] );
@@ -479,7 +479,7 @@ namespace SharpQuake
 
             // MED 01/04/97
             // hipnotic weapons
-            if( common.GameKind == GameKind.Hipnotic )
+            if( Common.GameKind == GameKind.Hipnotic )
             {
                 int grenadeflashing = 0;
                 for( int i = 0; i < 4; i++ )
@@ -534,7 +534,7 @@ namespace SharpQuake
                 }
             }
 
-            if( common.GameKind == GameKind.Rogue )
+            if( Common.GameKind == GameKind.Rogue )
             {
                 // check for powered up weapon.
                 if( cl.stats[QStats.STAT_ACTIVEWEAPON] >= QItems.RIT_LAVA_NAILGUN )
@@ -570,7 +570,7 @@ namespace SharpQuake
                     else
                     {
                         //MED 01/04/97 changed keys
-                        if( common.GameKind != GameKind.Hipnotic || ( i > 1 ) )
+                        if( Common.GameKind != GameKind.Hipnotic || ( i > 1 ) )
                         {
                             DrawPic( 192 + i * 16, -16, _Items[i] );
                         }
@@ -582,7 +582,7 @@ namespace SharpQuake
 
             //MED 01/04/97 added hipnotic items
             // hipnotic items
-            if( common.GameKind == GameKind.Hipnotic )
+            if( Common.GameKind == GameKind.Hipnotic )
             {
                 for( int i = 0; i < 2; i++ )
                 {
@@ -603,7 +603,7 @@ namespace SharpQuake
                 }
             }
 
-            if( common.GameKind == GameKind.Rogue )
+            if( Common.GameKind == GameKind.Rogue )
             {
                 // new rogue items
                 for( int i = 0; i < 2; i++ )
@@ -744,7 +744,7 @@ namespace SharpQuake
 
             // PGM 01/19/97 - team color drawing
             // PGM 03/02/97 - fixed so color swatch only appears in CTF modes
-            if( common.GameKind == GameKind.Rogue &&
+            if( Common.GameKind == GameKind.Rogue &&
                 ( client.cl.maxclients != 1 ) &&
                 ( host.TeamPlay > 3 ) &&
                 ( host.TeamPlay < 7 ) )

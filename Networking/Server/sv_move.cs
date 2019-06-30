@@ -45,7 +45,7 @@ namespace SharpQuake
             // try the move
             v3f oldorg = ent.v.origin;
             v3f neworg;
-            mathlib.VectorAdd( ref ent.v.origin, ref move, out neworg );
+            MathLib.VectorAdd( ref ent.v.origin, ref move, out neworg );
 
             // flying monsters don't step up
             if( ( (int)ent.v.flags & ( EdictFlags.FL_SWIM | EdictFlags.FL_FLY ) ) != 0 )
@@ -53,7 +53,7 @@ namespace SharpQuake
                 // try one move with vertical motion, then one without
                 for( int i = 0; i < 2; i++ )
                 {
-                    mathlib.VectorAdd( ref ent.v.origin, ref move, out neworg );
+                    MathLib.VectorAdd( ref ent.v.origin, ref move, out neworg );
                     edict_t enemy = ProgToEdict( ent.v.enemy );
                     if( i == 0 && enemy != sv.edicts[0] )
                     {
@@ -71,7 +71,7 @@ namespace SharpQuake
                             PointContents( ref trace.endpos ) == Contents.CONTENTS_EMPTY )
                             return false;	// swim monster left water
 
-                        mathlib.Copy( ref trace.endpos, out ent.v.origin );
+                        MathLib.Copy( ref trace.endpos, out ent.v.origin );
                         if( relink )
                             LinkEdict( ent, true );
                         return true;
@@ -106,7 +106,7 @@ namespace SharpQuake
                 // if monster had the ground pulled out, go ahead and fall
                 if( ( (int)ent.v.flags & EdictFlags.FL_PARTIALGROUND ) != 0 )
                 {
-                    mathlib.VectorAdd( ref ent.v.origin, ref move, out ent.v.origin );
+                    MathLib.VectorAdd( ref ent.v.origin, ref move, out ent.v.origin );
                     if( relink )
                         LinkEdict( ent, true );
                     ent.v.flags = (int)ent.v.flags & ~EdictFlags.FL_ONGROUND;
@@ -117,7 +117,7 @@ namespace SharpQuake
             }
 
             // check point traces down for dangling corners
-            mathlib.Copy( ref trace.endpos, out ent.v.origin );
+            MathLib.Copy( ref trace.endpos, out ent.v.origin );
 
             if( !CheckBottom( ent ) )
             {
@@ -151,8 +151,8 @@ namespace SharpQuake
         public static bool CheckBottom( edict_t ent )
         {
             v3f mins, maxs;
-            mathlib.VectorAdd( ref ent.v.origin, ref ent.v.mins, out mins );
-            mathlib.VectorAdd( ref ent.v.origin, ref ent.v.maxs, out maxs );
+            MathLib.VectorAdd( ref ent.v.origin, ref ent.v.mins, out mins );
+            MathLib.VectorAdd( ref ent.v.origin, ref ent.v.maxs, out maxs );
 
             // if all of the points under the corners are solid world, don't bother
             // with the tougher checks
@@ -182,7 +182,7 @@ RealCheck:
             start.Y = ( mins.y + maxs.y ) * 0.5f;
             Vector3 stop = start;
             stop.Z -= 2 * STEPSIZE;
-            trace_t trace = Move( ref start, ref common.ZeroVector, ref common.ZeroVector, ref stop, 1, ent );
+            trace_t trace = Move( ref start, ref Common.ZeroVector, ref Common.ZeroVector, ref stop, 1, ent );
 
             if( trace.fraction == 1.0 )
                 return false;
@@ -197,7 +197,7 @@ RealCheck:
                     start.X = stop.X = ( x != 0 ? maxs.x : mins.x );
                     start.Y = stop.Y = ( y != 0 ? maxs.y : mins.y );
 
-                    trace = Move( ref start, ref common.ZeroVector, ref common.ZeroVector, ref stop, 1, ent );
+                    trace = Move( ref start, ref Common.ZeroVector, ref Common.ZeroVector, ref stop, 1, ent );
 
                     if( trace.fraction != 1.0 && trace.endpos.Z > bottom )
                         bottom = trace.endpos.Z;
@@ -293,8 +293,8 @@ RealCheck:
         /// </summary>
         private static void NewChaseDir( edict_t actor, edict_t enemy, float dist )
         {
-            float olddir = mathlib.AngleMod( (int)( actor.v.ideal_yaw / 45 ) * 45 );
-            float turnaround = mathlib.AngleMod( olddir - 180 );
+            float olddir = MathLib.AngleMod( (int)( actor.v.ideal_yaw / 45 ) * 45 );
+            float turnaround = MathLib.AngleMod( olddir - 180 );
 
             float deltax = enemy.v.origin.x - actor.v.origin.x;
             float deltay = enemy.v.origin.y - actor.v.origin.y;

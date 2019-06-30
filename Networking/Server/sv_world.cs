@@ -107,8 +107,8 @@ namespace SharpQuake
                 return;
 
             // set the abs box
-            mathlib.VectorAdd( ref ent.v.origin, ref ent.v.mins, out ent.v.absmin );
-            mathlib.VectorAdd( ref ent.v.origin, ref ent.v.maxs, out ent.v.absmax );
+            MathLib.VectorAdd( ref ent.v.origin, ref ent.v.mins, out ent.v.absmin );
+            MathLib.VectorAdd( ref ent.v.origin, ref ent.v.maxs, out ent.v.absmax );
 
             //
             // to make items easier to pick up and allow them to be grabbed off
@@ -146,9 +146,9 @@ namespace SharpQuake
             {
                 if( node.axis == -1 )
                     break;
-                if( mathlib.Comp( ref ent.v.absmin, node.axis ) > node.dist )
+                if( MathLib.Comp( ref ent.v.absmin, node.axis ) > node.dist )
                     node = node.children[0];
-                else if( mathlib.Comp( ref ent.v.absmax, node.axis ) < node.dist )
+                else if( MathLib.Comp( ref ent.v.absmax, node.axis ) < node.dist )
                     node = node.children[1];
                 else
                     break;		// crosses the node
@@ -253,8 +253,8 @@ namespace SharpQuake
 
             if( plane.type < 3 )
             {
-                t1 = mathlib.Comp( ref p1, plane.type ) - plane.dist;
-                t2 = mathlib.Comp( ref p2, plane.type ) - plane.dist;
+                t1 = MathLib.Comp( ref p1, plane.type ) - plane.dist;
+                t2 = MathLib.Comp( ref p2, plane.type ) - plane.dist;
             }
             else
             {
@@ -476,16 +476,16 @@ namespace SharpQuake
 
                 // calculate an offset value to center the origin
                 offset = hull.clip_mins - mins;
-                offset += common.ToVector( ref ent.v.origin );
+                offset += Common.ToVector( ref ent.v.origin );
             }
             else
             {
                 // create a temp hull from bounding box sizes
-                Vector3 hullmins = common.ToVector( ref ent.v.mins ) - maxs;
-                Vector3 hullmaxs = common.ToVector( ref ent.v.maxs ) - mins;
+                Vector3 hullmins = Common.ToVector( ref ent.v.mins ) - maxs;
+                Vector3 hullmaxs = Common.ToVector( ref ent.v.maxs ) - mins;
                 hull = HullForBox( ref hullmins, ref hullmaxs );
 
-                offset = common.ToVector( ref ent.v.origin );
+                offset = Common.ToVector( ref ent.v.origin );
             }
 
             return hull;
@@ -517,7 +517,7 @@ namespace SharpQuake
             // NODE_MIXED
             mnode_t n = (mnode_t)node;
             mplane_t splitplane = n.plane;
-            int sides = mathlib.BoxOnPlaneSide( ref ent.v.absmin, ref ent.v.absmax, splitplane );
+            int sides = MathLib.BoxOnPlaneSide( ref ent.v.absmin, ref ent.v.absmax, splitplane );
 
             // recurse down the contacted sides
             if( ( sides & 1 ) != 0 )
@@ -563,9 +563,9 @@ namespace SharpQuake
             if( node.axis == -1 )
                 return;
 
-            if( mathlib.Comp( ref ent.v.absmax, node.axis ) > node.dist )
+            if( MathLib.Comp( ref ent.v.absmax, node.axis ) > node.dist )
                 TouchLinks( ent, node.children[0] );
-            if( mathlib.Comp( ref ent.v.absmin, node.axis ) < node.dist )
+            if( MathLib.Comp( ref ent.v.absmin, node.axis ) < node.dist )
                 TouchLinks( ent, node.children[1] );
         }
 
@@ -679,9 +679,9 @@ namespace SharpQuake
             if( node.axis == -1 )
                 return;
 
-            if( mathlib.Comp( ref clip.boxmaxs, node.axis ) > node.dist )
+            if( MathLib.Comp( ref clip.boxmaxs, node.axis ) > node.dist )
                 ClipToLinks( node.children[0], clip );
-            if( mathlib.Comp( ref clip.boxmins, node.axis ) < node.dist )
+            if( MathLib.Comp( ref clip.boxmins, node.axis ) < node.dist )
                 ClipToLinks( node.children[1], clip );
         }
 
@@ -699,7 +699,7 @@ namespace SharpQuake
                 mplane_t plane = hull.planes[hull.clipnodes[num].planenum];
                 float d;
                 if( plane.type < 3 )
-                    d = mathlib.Comp( ref p, plane.type ) - plane.dist;
+                    d = MathLib.Comp( ref p, plane.type ) - plane.dist;
                 else
                     d = Vector3.Dot( plane.normal, p ) - plane.dist;
                 if( d < 0 )

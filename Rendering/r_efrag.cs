@@ -114,7 +114,7 @@ namespace SharpQuake
                 return;
 
             mplane_t splitplane = n.plane;
-            int sides = mathlib.BoxOnPlaneSide( ref _EMins, ref _EMaxs, splitplane );
+            int sides = MathLib.BoxOnPlaneSide( ref _EMins, ref _EMaxs, splitplane );
 
             if( sides == 3 )
             {

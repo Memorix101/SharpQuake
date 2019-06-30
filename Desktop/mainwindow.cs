@@ -28,13 +28,13 @@ using SDL2;
 
 namespace SharpQuake
 {
-    public class mainwindow : GameWindow
+    public class MainWindow : GameWindow
     {
-        public static mainwindow Instance
+        public static MainWindow Instance
         {
             get
             {
-                return (mainwindow)_Instance.Target;
+                return (MainWindow)_Instance.Target;
             }
         }
 
@@ -165,13 +165,13 @@ namespace SharpQuake
             }
         }
 
-        private static mainwindow CreateInstance(Size size, GraphicsMode mode, bool fullScreen)
+        private static MainWindow CreateInstance(Size size, GraphicsMode mode, bool fullScreen)
         {
             if (_Instance != null)
             {
                 throw new Exception("Game instance is already created!");
             }
-            return new mainwindow(size, mode, fullScreen);
+            return new MainWindow(size, mode, fullScreen);
         }
 
         private static void DumpError(Exception ex)
@@ -255,17 +255,17 @@ namespace SharpQuake
             args2[0] = String.Empty;
             args.CopyTo(args2, 1);
 
-            common.InitArgv(args2);
+            Common.InitArgv(args2);
 
-            parms.argv = new string[common.Argc];
-            common.Args.CopyTo(parms.argv, 0);
+            parms.argv = new string[Common.Argc];
+            Common.Args.CopyTo(parms.argv, 0);
 
-            if (common.HasParam("-dedicated"))
+            if (Common.HasParam("-dedicated"))
                 throw new QuakeException("Dedicated server mode not supported!");
 
             Size size = new Size(1280, 720);
             GraphicsMode mode = new GraphicsMode();
-            using (mainwindow form = mainwindow.CreateInstance(size, mode, false))
+            using (MainWindow form = MainWindow.CreateInstance(size, mode, false))
             {
                 Con.DPrint("Host.Init\n");
                 host.Init(parms);
@@ -346,7 +346,7 @@ namespace SharpQuake
             Key.Event(MapKey(e.Key), true);
         }
 
-        private mainwindow(Size size, GraphicsMode mode, bool fullScreen)
+        private MainWindow(Size size, GraphicsMode mode, bool fullScreen)
         : base(size.Width, size.Height, mode, "SharpQuake", fullScreen ? GameWindowFlags.Fullscreen : GameWindowFlags.Default)
         {
             _Instance = new WeakReference(this);

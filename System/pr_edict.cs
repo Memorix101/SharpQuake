@@ -76,17 +76,17 @@ namespace SharpQuake
             1, sizeof(int)/4, 1, 3, 1, 1, sizeof(int)/4, IntPtr.Size/4
         };
 
-        private static cvar _NoMonsters;// = { "nomonsters", "0" };
-        private static cvar _GameCfg;// = { "gamecfg", "0" };
-        private static cvar _Scratch1;// = { "scratch1", "0" };
-        private static cvar _Scratch2;// = { "scratch2", "0" };
-        private static cvar _Scratch3;// = { "scratch3", "0" };
-        private static cvar _Scratch4;// = { "scratch4", "0" };
-        private static cvar _SavedGameCfg;// = { "savedgamecfg", "0", true };
-        private static cvar _Saved1;// = { "saved1", "0", true };
-        private static cvar _Saved2;// = { "saved2", "0", true };
-        private static cvar _Saved3;// = { "saved3", "0", true };
-        private static cvar _Saved4;// = { "saved4", "0", true };
+        private static CVar _NoMonsters;// = { "nomonsters", "0" };
+        private static CVar _GameCfg;// = { "gamecfg", "0" };
+        private static CVar _Scratch1;// = { "scratch1", "0" };
+        private static CVar _Scratch2;// = { "scratch2", "0" };
+        private static CVar _Scratch3;// = { "scratch3", "0" };
+        private static CVar _Scratch4;// = { "scratch4", "0" };
+        private static CVar _SavedGameCfg;// = { "savedgamecfg", "0", true };
+        private static CVar _Saved1;// = { "saved1", "0", true };
+        private static CVar _Saved2;// = { "saved2", "0", true };
+        private static CVar _Saved3;// = { "saved3", "0", true };
+        private static CVar _Saved4;// = { "saved4", "0", true };
 
         private static dprograms_t _Progs; // progs
         private static dfunction_t[] _Functions; // pr_functions
@@ -109,25 +109,25 @@ namespace SharpQuake
         // PR_Init
         public static void Init()
         {
-            cmd.Add( "edict", PrintEdict_f );
-            cmd.Add( "edicts", PrintEdicts );
-            cmd.Add( "edictcount", EdictCount );
-            cmd.Add( "profile", Profile_f );
-            cmd.Add( "test5", Test5_f );
+            Command.Add( "edict", PrintEdict_f );
+            Command.Add( "edicts", PrintEdicts );
+            Command.Add( "edictcount", EdictCount );
+            Command.Add( "profile", Profile_f );
+            Command.Add( "test5", Test5_f );
 
             if( _NoMonsters == null )
             {
-                _NoMonsters = new cvar( "nomonsters", "0" );
-                _GameCfg = new cvar( "gamecfg", "0" );
-                _Scratch1 = new cvar( "scratch1", "0" );
-                _Scratch2 = new cvar( "scratch2", "0" );
-                _Scratch3 = new cvar( "scratch3", "0" );
-                _Scratch4 = new cvar( "scratch4", "0" );
-                _SavedGameCfg = new cvar( "savedgamecfg", "0", true );
-                _Saved1 = new cvar( "saved1", "0", true );
-                _Saved2 = new cvar( "saved2", "0", true );
-                _Saved3 = new cvar( "saved3", "0", true );
-                _Saved4 = new cvar( "saved4", "0", true );
+                _NoMonsters = new CVar( "nomonsters", "0" );
+                _GameCfg = new CVar( "gamecfg", "0" );
+                _Scratch1 = new CVar( "scratch1", "0" );
+                _Scratch2 = new CVar( "scratch2", "0" );
+                _Scratch3 = new CVar( "scratch3", "0" );
+                _Scratch4 = new CVar( "scratch4", "0" );
+                _SavedGameCfg = new CVar( "savedgamecfg", "0", true );
+                _Saved1 = new CVar( "saved1", "0", true );
+                _Saved2 = new CVar( "saved2", "0", true );
+                _Saved3 = new CVar( "saved3", "0", true );
+                _Saved4 = new CVar( "saved4", "0", true );
             }
         }
 
@@ -145,7 +145,7 @@ namespace SharpQuake
             for( int i = 0; i < GEFV_CACHESIZE; i++ )
                 _gefvCache[i].field = null;
 
-            crc.Init( out _Crc );
+            SharpQuake.Crc.Init( out _Crc );
 
             byte[] buf = FileSystem.LoadFile( "progs.dat" );
 
@@ -155,7 +155,7 @@ namespace SharpQuake
             Con.DPrint( "Programs occupy {0}K.\n", buf.Length / 1024 );
 
             for( int i = 0; i < buf.Length; i++ )
-                crc.ProcessByte( ref _Crc, buf[i] );
+                SharpQuake.Crc.ProcessByte( ref _Crc, buf[i] );
 
             // byte swap the header
             _Progs.SwapBytes();
@@ -288,12 +288,12 @@ namespace SharpQuake
             while( true )
             {
                 // parse the opening brace
-                data = common.Parse( data );
+                data = Common.Parse( data );
                 if( data == null )
                     break;
 
-                if( common.Token != "{" )
-                    sys.Error( "ED_LoadFromFile: found {0} when expecting {", common.Token );
+                if( Common.Token != "{" )
+                    sys.Error( "ED_LoadFromFile: found {0} when expecting {", Common.Token );
 
                 if( ent == null )
                     ent = server.EdictNum( 0 );
@@ -367,14 +367,14 @@ namespace SharpQuake
             while( true )
             {
                 // parse key
-                data = common.Parse( data );
-                if( common.Token.StartsWith( "}" ) )
+                data = Common.Parse( data );
+                if( Common.Token.StartsWith( "}" ) )
                     break;
 
                 if( data == null )
                     sys.Error( "ED_ParseEntity: EOF without closing brace" );
 
-                string token = common.Token;
+                string token = Common.Token;
 
                 // anglehack is to allow QuakeEd to write single scalar angles
                 // and allow them to be turned into vectors. (FIXME...)
@@ -393,11 +393,11 @@ namespace SharpQuake
                 string keyname = token.TrimEnd();
 
                 // parse value
-                data = common.Parse( data );
+                data = Common.Parse( data );
                 if( data == null )
                     sys.Error( "ED_ParseEntity: EOF without closing brace" );
 
-                if( common.Token.StartsWith( "}" ) )
+                if( Common.Token.StartsWith( "}" ) )
                     sys.Error( "ED_ParseEntity: closing brace without data" );
 
                 init = true;
@@ -414,7 +414,7 @@ namespace SharpQuake
                     continue;
                 }
 
-                token = common.Token;
+                token = Common.Token;
                 if( anglehack )
                 {
                     token = "0 " + token + " 0";
@@ -671,21 +671,21 @@ namespace SharpQuake
             while( true )
             {
                 // parse key
-                data = common.Parse( data );
-                if( common.Token.StartsWith( "}" ) )
+                data = Common.Parse( data );
+                if( Common.Token.StartsWith( "}" ) )
                     break;
 
                 if( String.IsNullOrEmpty( data ) )
                     sys.Error( "ED_ParseEntity: EOF without closing brace" );
 
-                string keyname = common.Token;
+                string keyname = Common.Token;
 
                 // parse value
-                data = common.Parse( data );
+                data = Common.Parse( data );
                 if( String.IsNullOrEmpty( data ) )
                     sys.Error( "ED_ParseEntity: EOF without closing brace" );
 
-                if( common.Token.StartsWith( "}" ) )
+                if( Common.Token.StartsWith( "}" ) )
                     sys.Error( "ED_ParseEntity: closing brace without data" );
 
                 ddef_t key = FindGlobal( keyname );
@@ -695,7 +695,7 @@ namespace SharpQuake
                     continue;
                 }
 
-                if( !ParseGlobalPair( key, common.Token ) )
+                if( !ParseGlobalPair( key, Common.Token ) )
                     host.Error( "ED_ParseGlobals: parse error" );
             }
         }
@@ -724,8 +724,8 @@ namespace SharpQuake
                     continue;
 
                 OpenTK.Vector3 vmin, vmax;
-                mathlib.Copy( ref ed.v.absmax, out vmax );
-                mathlib.Copy( ref ed.v.absmin, out vmin );
+                MathLib.Copy( ref ed.v.absmax, out vmax );
+                MathLib.Copy( ref ed.v.absmin, out vmin );
 
                 if( org.X >= vmin.X && org.Y >= vmin.Y && org.Z >= vmin.Z &&
                     org.X <= vmax.X && org.Y <= vmax.Y && org.Z <= vmax.Z )
@@ -755,7 +755,7 @@ namespace SharpQuake
         /// </summary>
         private static void PrintEdict_f()
         {
-            int i = common.atoi( cmd.Argv( 1 ) );
+            int i = Common.atoi( Command.Argv( 1 ) );
             if( i >= server.sv.num_edicts )
             {
                 Con.Print( "Bad edict number\n" );
@@ -853,18 +853,18 @@ namespace SharpQuake
                     break;
 
                 case etype_t.ev_float:
-                    *(float*)d = common.atof( s );
+                    *(float*)d = Common.atof( s );
                     break;
 
                 case etype_t.ev_vector:
                     string[] vs = s.Split( ' ' );
-                    ( (float*)d )[0] = common.atof( vs[0] );
-                    ( (float*)d )[1] = ( vs.Length > 1 ? common.atof( vs[1] ) : 0 );
-                    ( (float*)d )[2] = ( vs.Length > 2 ? common.atof( vs[2] ) : 0 );
+                    ( (float*)d )[0] = Common.atof( vs[0] );
+                    ( (float*)d )[1] = ( vs.Length > 1 ? Common.atof( vs[1] ) : 0 );
+                    ( (float*)d )[2] = ( vs.Length > 2 ? Common.atof( vs[2] ) : 0 );
                     break;
 
                 case etype_t.ev_entity:
-                    *(int*)d = server.EdictToProg( server.EdictNum( common.atoi( s ) ) );
+                    *(int*)d = server.EdictToProg( server.EdictNum( Common.atoi( s ) ) );
                     break;
 
                 case etype_t.ev_field:

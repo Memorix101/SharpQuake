@@ -11,6 +11,8 @@ namespace SharpQuake
 {
     public static class FileSystem
     {
+        public const int MAX_FILES_IN_PACK = 2048;
+
         private static string _CacheDir; // com_cachedir[MAX_OSPATH];
         private static string _GameDir; // com_gamedir[MAX_OSPATH];
         private static List<searchpath_t> _SearchPaths; // searchpath_t    *com_searchpaths;
@@ -39,10 +41,10 @@ namespace SharpQuake
             // Overrides the system supplied base directory (under GAMENAME)
             //
             string basedir = String.Empty;
-            int i = common.CheckParm( "-basedir" );
-            if ( ( i > 0 ) && ( i < common._Argv.Length - 1 ) )
+            int i = Common.CheckParm( "-basedir" );
+            if ( ( i > 0 ) && ( i < Common._Argv.Length - 1 ) )
             {
-                basedir = common._Argv[i + 1];
+                basedir = Common._Argv[i + 1];
             }
             else
             {
@@ -60,13 +62,13 @@ namespace SharpQuake
             // Overrides the system supplied cache directory (NULL or /qcache)
             // -cachedir - will disable caching.
             //
-            i = common.CheckParm( "-cachedir" );
-            if ( ( i > 0 ) && ( i < common._Argv.Length - 1 ) )
+            i = Common.CheckParm( "-cachedir" );
+            if ( ( i > 0 ) && ( i < Common._Argv.Length - 1 ) )
             {
-                if ( common._Argv[i + 1][0] == '-' )
+                if ( Common._Argv[i + 1][0] == '-' )
                     _CacheDir = String.Empty;
                 else
-                    _CacheDir = common._Argv[i + 1];
+                    _CacheDir = Common._Argv[i + 1];
             }
             else if ( !String.IsNullOrEmpty( host.Params.cachedir ) )
             {
@@ -83,13 +85,13 @@ namespace SharpQuake
             AddGameDirectory( basedir + "/" + QDef.GAMENAME );
             qparam.globalgameid = QDef.GAMENAME;
 
-            if ( common.HasParam( "-rogue" ) )
+            if ( Common.HasParam( "-rogue" ) )
             {
                 AddGameDirectory( basedir + "/rogue" );
                 qparam.globalgameid = "rogue";
             }
 
-            if ( common.HasParam( "-hipnotic" ) )
+            if ( Common.HasParam( "-hipnotic" ) )
             {
                 AddGameDirectory( basedir + "/hipnotic" );
                 qparam.globalgameid = "hipnotic";
@@ -98,28 +100,28 @@ namespace SharpQuake
             // -game <gamedir>
             // Adds basedir/gamedir as an override game
             //
-            i = common.CheckParm( "-game" );
-            if ( ( i > 0 ) && ( i < common._Argv.Length - 1 ) )
+            i = Common.CheckParm( "-game" );
+            if ( ( i > 0 ) && ( i < Common._Argv.Length - 1 ) )
             {
                 _IsModified = true;
-                AddGameDirectory( basedir + "/" + common._Argv[i + 1] );
+                AddGameDirectory( basedir + "/" + Common._Argv[i + 1] );
             }
 
             //
             // -path <dir or packfile> [<dir or packfile>] ...
             // Fully specifies the exact serach path, overriding the generated one
             //
-            i = common.CheckParm( "-path" );
+            i = Common.CheckParm( "-path" );
             if ( i > 0 )
             {
                 _IsModified = true;
                 _SearchPaths.Clear( );
-                while ( ++i < common._Argv.Length )
+                while ( ++i < Common._Argv.Length )
                 {
-                    if ( String.IsNullOrEmpty( common._Argv[i] ) || common._Argv[i][0] == '+' || common._Argv[i][0] == '-' )
+                    if ( String.IsNullOrEmpty( Common._Argv[i] ) || Common._Argv[i][0] == '+' || Common._Argv[i][0] == '-' )
                         break;
 
-                    _SearchPaths.Insert( 0, new searchpath_t( common._Argv[i] ) );
+                    _SearchPaths.Insert( 0, new searchpath_t( Common._Argv[i] ) );
                 }
             }
         }
@@ -396,12 +398,12 @@ namespace SharpQuake
             if ( id != "PACK" )
                 sys.Error( "{0} is not a packfile", packfile );
 
-            header.dirofs = common.LittleLong( header.dirofs );
-            header.dirlen = common.LittleLong( header.dirlen );
+            header.dirofs = Common.LittleLong( header.dirofs );
+            header.dirlen = Common.LittleLong( header.dirlen );
 
             int numpackfiles = header.dirlen / Marshal.SizeOf( typeof( dpackfile_t ) );
 
-            if ( numpackfiles > common.MAX_FILES_IN_PACK )
+            if ( numpackfiles > MAX_FILES_IN_PACK )
                 sys.Error( "{0} has {1} files", packfile, numpackfiles );
 
             //if (numpackfiles != PAK0_COUNT)
@@ -413,7 +415,7 @@ namespace SharpQuake
             {
                 sys.Error( "{0} buffering failed!", packfile );
             }
-            List<dpackfile_t> info = new List<dpackfile_t>( common.MAX_FILES_IN_PACK );
+            List<dpackfile_t> info = new List<dpackfile_t>( MAX_FILES_IN_PACK );
             GCHandle handle = GCHandle.Alloc( buf, GCHandleType.Pinned );
             try
             {
@@ -451,9 +453,9 @@ namespace SharpQuake
             for ( int i = 0; i < numpackfiles; i++ )
             {
                 packfile_t pf = new packfile_t( );
-                pf.name = common.GetString( info[i].name );
-                pf.filepos = common.LittleLong( info[i].filepos );
-                pf.filelen = common.LittleLong( info[i].filelen );
+                pf.name = Common.GetString( info[i].name );
+                pf.filepos = Common.LittleLong( info[i].filepos );
+                pf.filelen = Common.LittleLong( info[i].filelen );
                 newfiles[i] = pf;
             }
 
@@ -469,5 +471,103 @@ namespace SharpQuake
         {
             return FindFile( filename, out file, true );
         }
+    }
+
+    //
+    // in memory
+    //
+
+    public class packfile_t
+    {
+        public string name; // [MAX_QPATH];
+        public int filepos, filelen;
+
+        public override string ToString( )
+        {
+            return String.Format( "{0}, at {1}, {2} bytes}", this.name, this.filepos, this.filelen );
+        }
+    } // packfile_t;
+
+    public class pack_t
+    {
+        public string filename; // [MAX_OSPATH];
+        public BinaryReader stream; //int handle;
+
+        //int numfiles;
+        public packfile_t[] files;
+
+        public pack_t( string filename, BinaryReader reader, packfile_t[] files )
+        {
+            this.filename = filename;
+            this.stream = reader;
+            this.files = files;
+        }
+    } // pack_t;
+
+    // dpackfile_t;
+
+    // dpackheader_t;
+
+    internal class searchpath_t
+    {
+        public string filename; // char[MAX_OSPATH];
+        public pack_t pack; // only one of filename / pack will be used
+        public ZipArchive pk3;
+        public string pk3filename;
+
+        public searchpath_t( string path )
+        {
+            if ( path.EndsWith( ".PAK" ) )
+            {
+                this.pack = FileSystem.LoadPackFile( path );
+                if ( this.pack == null )
+                    sys.Error( "Couldn't load packfile: {0}", path );
+            }
+            else if ( path.EndsWith( ".PK3" ) )
+            {
+                this.pk3 = ZipFile.OpenRead( path );
+                this.pk3filename = path;
+                if ( this.pk3 == null )
+                    sys.Error( "Couldn't load pk3file: {0}", path );
+            }
+            else
+                this.filename = path;
+        }
+
+        public searchpath_t( pack_t pak )
+        {
+            this.pack = pak;
+        }
+
+        public searchpath_t( ZipArchive archive )
+        {
+            this.pk3 = archive;
+        }
+    } // searchpath_t;
+
+
+    //
+    // on disk
+    //
+    [StructLayout( LayoutKind.Sequential, Pack = 1, CharSet = CharSet.Ansi )]
+    internal struct dpackfile_t
+    {
+        [MarshalAs( UnmanagedType.ByValArray, SizeConst = 56 )]
+        public byte[] name; // [56];
+
+        public int filepos, filelen;
+    }
+
+    [StructLayout( LayoutKind.Sequential, Pack = 1, CharSet = CharSet.Ansi )]
+    internal struct dpackheader_t
+    {
+        [MarshalAs( UnmanagedType.ByValArray, SizeConst = 4 )]
+        public byte[] id; // [4];
+
+        [MarshalAs( UnmanagedType.I4, SizeConst = 4 )]
+        public int dirofs;
+
+        [MarshalAs( UnmanagedType.I4, SizeConst = 4 )]
+        public int dirlen;
     }
 }

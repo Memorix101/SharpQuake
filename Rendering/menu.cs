@@ -51,18 +51,18 @@ namespace SharpQuake
         // M_Init (void)
         public static void Init()
         {
-            cmd.Add( "togglemenu", ToggleMenu_f );
-            cmd.Add( "menu_main", Menu_Main_f );
-            cmd.Add( "menu_singleplayer", Menu_SinglePlayer_f );
-            cmd.Add( "menu_load", Menu_Load_f );
-            cmd.Add( "menu_save", Menu_Save_f );
-            cmd.Add( "menu_multiplayer", Menu_MultiPlayer_f );
-            cmd.Add( "menu_setup", Menu_Setup_f );
-            cmd.Add( "menu_options", Menu_Options_f );
-            cmd.Add( "menu_keys", Menu_Keys_f );
-            cmd.Add( "menu_video", Menu_Video_f );
-            cmd.Add( "help", Menu_Help_f );
-            cmd.Add( "menu_quit", Menu_Quit_f );
+            Command.Add( "togglemenu", ToggleMenu_f );
+            Command.Add( "menu_main", Menu_Main_f );
+            Command.Add( "menu_singleplayer", Menu_SinglePlayer_f );
+            Command.Add( "menu_load", Menu_Load_f );
+            Command.Add( "menu_save", Menu_Save_f );
+            Command.Add( "menu_multiplayer", Menu_MultiPlayer_f );
+            Command.Add( "menu_setup", Menu_Setup_f );
+            Command.Add( "menu_options", Menu_Options_f );
+            Command.Add( "menu_keys", Menu_Keys_f );
+            Command.Add( "menu_video", Menu_Video_f );
+            Command.Add( "help", Menu_Help_f );
+            Command.Add( "menu_quit", Menu_Quit_f );
         }
 
         /// <summary>
@@ -665,7 +665,7 @@ namespace SharpQuake
             {
                 _FileNames[i] = "--- UNUSED SLOT ---";
                 _Loadable[i] = false;
-                string name = String.Format( "{0}/s{1}.sav", common.GameDir, i );
+                string name = String.Format( "{0}/s{1}.sav", Common.GameDir, i );
                 FileStream fs = sys.FileOpenRead( name );
                 if( fs == null )
                     continue;
@@ -1041,7 +1041,7 @@ namespace SharpQuake
                         value = 30;
                     if( value > 120 )
                         value = 120;
-                    cvar.Set( "viewsize", value );
+                    CVar.Set( "viewsize", value );
                     break;
 
                 case 4:	// gamma
@@ -1050,7 +1050,7 @@ namespace SharpQuake
                         value = 0.5f;
                     if( value > 1 )
                         value = 1;
-                    cvar.Set( "gamma", value );
+                    CVar.Set( "gamma", value );
                     break;
 
                 case 5:	// mouse speed
@@ -1059,7 +1059,7 @@ namespace SharpQuake
                         value = 1;
                     if( value > 11 )
                         value = 11;
-                    cvar.Set( "sensitivity", value );
+                    CVar.Set( "sensitivity", value );
                     break;
 
                 case 6:	// music volume
@@ -1068,7 +1068,7 @@ namespace SharpQuake
                         value = 0;
                     if( value > 1 )
                         value = 1;
-                    cvar.Set( "bgmvolume", value );
+                    CVar.Set( "bgmvolume", value );
                     break;
 
                 case 7:	// sfx volume
@@ -1077,32 +1077,32 @@ namespace SharpQuake
                         value = 0;
                     if( value > 1 )
                         value = 1;
-                    cvar.Set( "volume", value );
+                    CVar.Set( "volume", value );
                     break;
 
                 case 8:	// allways run
                     if( client.ForwardSpeed > 200 )
                     {
-                        cvar.Set( "cl_forwardspeed", 200f );
-                        cvar.Set( "cl_backspeed", 200f );
+                        CVar.Set( "cl_forwardspeed", 200f );
+                        CVar.Set( "cl_backspeed", 200f );
                     }
                     else
                     {
-                        cvar.Set( "cl_forwardspeed", 400f );
-                        cvar.Set( "cl_backspeed", 400f );
+                        CVar.Set( "cl_forwardspeed", 400f );
+                        CVar.Set( "cl_backspeed", 400f );
                     }
                     break;
 
                 case 9:	// invert mouse
-                    cvar.Set( "m_pitch", -client.MPitch );
+                    CVar.Set( "m_pitch", -client.MPitch );
                     break;
 
                 case 10:	// lookspring
-                    cvar.Set( "lookspring", !client.LookSpring ? 1f : 0f );
+                    CVar.Set( "lookspring", !client.LookSpring ? 1f : 0f );
                     break;
 
                 case 11:	// lookstrafe
-                    cvar.Set( "lookstrafe", !client.LookStrafe ? 1f : 0f );
+                    CVar.Set( "lookstrafe", !client.LookStrafe ? 1f : 0f );
                     break;
 
 #if _WIN32
@@ -1499,7 +1499,7 @@ namespace SharpQuake
                 else
                     _Cursor = 0;
 
-            int k = common.atoi( _PortName );
+            int k = Common.atoi( _PortName );
             if( k > 65535 )
                 k = _Port;
             else
@@ -1647,7 +1647,7 @@ forward:
                     if( _MyName != client.Name )
                         Cbuf.AddText( String.Format( "name \"{0}\"\n", _MyName ) );
                     if( net.HostName != _HostName )
-                        cvar.Set( "hostname", _HostName );
+                        CVar.Set( "hostname", _HostName );
                     if( _Top != _OldTop || _Bottom != _OldBottom )
                         Cbuf.AddText( String.Format( "color {0} {1}\n", _Top, _Bottom ) );
                     menu.EnterSound = true;
@@ -1945,10 +1945,10 @@ forward:
                         Cbuf.AddText( String.Format( "maxplayers {0}\n", _MaxPlayers ) );
                         Scr.BeginLoadingPlaque();
 
-                        if( common.GameKind == GameKind.Hipnotic )
+                        if( Common.GameKind == GameKind.Hipnotic )
                             Cbuf.AddText( String.Format( "map {0}\n",
                                 HipnoticLevels[HipnoticEpisodes[_StartEpisode].firstLevel + _StartLevel].name ) );
-                        else if( common.GameKind == GameKind.Rogue )
+                        else if( Common.GameKind == GameKind.Rogue )
                             Cbuf.AddText( String.Format( "map {0}\n",
                                 RogueLevels[RogueEpisodes[_StartEpisode].firstLevel + _StartLevel].name ) );
                         else
@@ -1981,7 +1981,7 @@ forward:
                 menu.Print( 160, 64, "Deathmatch" );
 
             menu.Print( 0, 72, "        Teamplay" );
-            if( common.GameKind == GameKind.Rogue )
+            if( Common.GameKind == GameKind.Rogue )
             {
                 string msg;
                 switch( (int)host.TeamPlay )
@@ -2060,23 +2060,23 @@ forward:
 
             menu.Print( 0, 112, "         Episode" );
             //MED 01/06/97 added hipnotic episodes
-            if( common.GameKind == GameKind.Hipnotic )
+            if( Common.GameKind == GameKind.Hipnotic )
                 menu.Print( 160, 112, HipnoticEpisodes[_StartEpisode].description );
             //PGM 01/07/97 added rogue episodes
-            else if( common.GameKind == GameKind.Rogue )
+            else if( Common.GameKind == GameKind.Rogue )
                 menu.Print( 160, 112, RogueEpisodes[_StartEpisode].description );
             else
                 menu.Print( 160, 112, Episodes[_StartEpisode].description );
 
             menu.Print( 0, 120, "           Level" );
             //MED 01/06/97 added hipnotic episodes
-            if( common.GameKind == GameKind.Hipnotic )
+            if( Common.GameKind == GameKind.Hipnotic )
             {
                 menu.Print( 160, 120, HipnoticLevels[HipnoticEpisodes[_StartEpisode].firstLevel + _StartLevel].description );
                 menu.Print( 160, 128, HipnoticLevels[HipnoticEpisodes[_StartEpisode].firstLevel + _StartLevel].name );
             }
             //PGM 01/07/97 added rogue episodes
-            else if( common.GameKind == GameKind.Rogue )
+            else if( Common.GameKind == GameKind.Rogue )
             {
                 menu.Print( 160, 120, RogueLevels[RogueEpisodes[_StartEpisode].firstLevel + _StartLevel].description );
                 menu.Print( 160, 128, RogueLevels[RogueEpisodes[_StartEpisode].firstLevel + _StartLevel].name );
@@ -2157,11 +2157,11 @@ forward:
                     break;
 
                 case 2:
-                    cvar.Set( "coop", host.IsCoop ? 0 : 1 );
+                    CVar.Set( "coop", host.IsCoop ? 0 : 1 );
                     break;
 
                 case 3:
-                    if( common.GameKind == GameKind.Rogue )
+                    if( Common.GameKind == GameKind.Rogue )
                         count = 6;
                     else
                         count = 2;
@@ -2172,7 +2172,7 @@ forward:
                     else if( tp < 0 )
                         tp = count;
 
-                    cvar.Set( "teamplay", tp );
+                    CVar.Set( "teamplay", tp );
                     break;
 
                 case 4:
@@ -2181,7 +2181,7 @@ forward:
                         skill = 0;
                     if( skill < 0 )
                         skill = 3;
-                    cvar.Set( "skill", skill );
+                    CVar.Set( "skill", skill );
                     break;
 
                 case 5:
@@ -2190,7 +2190,7 @@ forward:
                         fraglimit = 0;
                     if( fraglimit < 0 )
                         fraglimit = 100;
-                    cvar.Set( "fraglimit", fraglimit );
+                    CVar.Set( "fraglimit", fraglimit );
                     break;
 
                 case 6:
@@ -2199,19 +2199,19 @@ forward:
                         timelimit = 0;
                     if( timelimit < 0 )
                         timelimit = 60;
-                    cvar.Set( "timelimit", timelimit );
+                    CVar.Set( "timelimit", timelimit );
                     break;
 
                 case 7:
                     _StartEpisode += dir;
                     //MED 01/06/97 added hipnotic count
-                    if( common.GameKind == GameKind.Hipnotic )
+                    if( Common.GameKind == GameKind.Hipnotic )
                         count = 6;
                     //PGM 01/07/97 added rogue count
                     //PGM 03/02/97 added 1 for dmatch episode
-                    else if( common.GameKind == GameKind.Rogue )
+                    else if( Common.GameKind == GameKind.Rogue )
                         count = 4;
-                    else if( common.IsRegistered )
+                    else if( Common.IsRegistered )
                         count = 7;
                     else
                         count = 2;
@@ -2228,10 +2228,10 @@ forward:
                 case 8:
                     _StartLevel += dir;
                     //MED 01/06/97 added hipnotic episodes
-                    if( common.GameKind == GameKind.Hipnotic )
+                    if( Common.GameKind == GameKind.Hipnotic )
                         count = HipnoticEpisodes[_StartEpisode].levels;
                     //PGM 01/06/97 added hipnotic episodes
-                    else if( common.GameKind == GameKind.Rogue )
+                    else if( Common.GameKind == GameKind.Rogue )
                         count = RogueEpisodes[_StartEpisode].levels;
                     else
                         count = Episodes[_StartEpisode].levels;

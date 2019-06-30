@@ -117,11 +117,11 @@ namespace SharpQuake
                 AddGravity( ent );
 
             // move angles
-            mathlib.VectorMA( ref ent.v.angles, (float)host.FrameTime, ref ent.v.avelocity, out ent.v.angles );
+            MathLib.VectorMA( ref ent.v.angles, (float)host.FrameTime, ref ent.v.avelocity, out ent.v.angles );
 
             // move origin
             v3f move;
-            mathlib.VectorScale( ref ent.v.velocity, (float)host.FrameTime, out move );
+            MathLib.VectorScale( ref ent.v.velocity, (float)host.FrameTime, out move );
             trace_t trace = PushEntity( ent, ref move );
 
             if( trace.fraction == 1 )
@@ -189,7 +189,7 @@ namespace SharpQuake
         private static trace_t PushEntity( edict_t ent, ref v3f push )
         {
             v3f end;
-            mathlib.VectorAdd( ref ent.v.origin, ref push, out end );
+            MathLib.VectorAdd( ref ent.v.origin, ref push, out end );
 
             trace_t trace;
             if( ent.v.movetype == Movetypes.MOVETYPE_FLYMISSILE )
@@ -200,7 +200,7 @@ namespace SharpQuake
             else
                 trace = Move( ref ent.v.origin, ref ent.v.mins, ref ent.v.maxs, ref end, MOVE_NORMAL, ent );
 
-            mathlib.Copy( ref trace.endpos, out ent.v.origin );
+            MathLib.Copy( ref trace.endpos, out ent.v.origin );
             LinkEdict( ent, true );
 
             if( trace.ent != null )
@@ -214,7 +214,7 @@ namespace SharpQuake
         /// </summary>
         private static void CheckWaterTransition( edict_t ent )
         {
-            Vector3 org = common.ToVector( ref ent.v.origin );
+            Vector3 org = Common.ToVector( ref ent.v.origin );
             int cont = PointContents( ref org );
 
             if( ent.v.watertype == 0 )
@@ -301,8 +301,8 @@ namespace SharpQuake
             if( !RunThink( ent ) )
                 return;
 
-            mathlib.VectorMA( ref ent.v.angles, (float)host.FrameTime, ref ent.v.avelocity, out ent.v.angles );
-            mathlib.VectorMA( ref ent.v.origin, (float)host.FrameTime, ref ent.v.velocity, out ent.v.origin );
+            MathLib.VectorMA( ref ent.v.angles, (float)host.FrameTime, ref ent.v.avelocity, out ent.v.angles );
+            MathLib.VectorMA( ref ent.v.origin, (float)host.FrameTime, ref ent.v.velocity, out ent.v.origin );
             LinkEdict( ent, false );
         }
 
@@ -405,7 +405,7 @@ namespace SharpQuake
                 case Movetypes.MOVETYPE_NOCLIP:
                     if( !RunThink( ent ) )
                         return;
-                    mathlib.VectorMA( ref ent.v.origin, (float)host.FrameTime, ref ent.v.velocity, out ent.v.origin );
+                    MathLib.VectorMA( ref ent.v.origin, (float)host.FrameTime, ref ent.v.velocity, out ent.v.origin );
                     break;
 
                 default:
@@ -463,7 +463,7 @@ namespace SharpQuake
             //
             ent.v.origin = oldorg;	// back to start pos
 
-            v3f upmove = common.ZeroVector3f;
+            v3f upmove = Common.ZeroVector3f;
             v3f downmove = upmove;
             upmove.z = STEPSIZE;
             downmove.z = (float)( -STEPSIZE + oldvel.z * host.FrameTime );
@@ -525,7 +525,7 @@ namespace SharpQuake
         private static int TryUnstick( edict_t ent, ref v3f oldvel )
         {
             v3f oldorg = ent.v.origin;
-            v3f dir = common.ZeroVector3f;
+            v3f dir = Common.ZeroVector3f;
 
             trace_t steptrace = new trace_t();
             for( int i = 0; i < 8; i++ )
@@ -591,7 +591,7 @@ namespace SharpQuake
                 ent.v.origin = oldorg;
             }
 
-            ent.v.velocity = common.ZeroVector3f;
+            ent.v.velocity = Common.ZeroVector3f;
             return 7;		// still not moving
         }
 
@@ -600,8 +600,8 @@ namespace SharpQuake
         /// </summary>
         private static void WallFriction( edict_t ent, trace_t trace )
         {
-            Vector3 forward, right, up, vangle = common.ToVector( ref ent.v.v_angle );
-            mathlib.AngleVectors( ref vangle, out forward, out right, out up );
+            Vector3 forward, right, up, vangle = Common.ToVector( ref ent.v.v_angle );
+            MathLib.AngleVectors( ref vangle, out forward, out right, out up );
             float d = Vector3.Dot( trace.plane.normal, forward );
 
             d += 0.5f;
@@ -609,7 +609,7 @@ namespace SharpQuake
                 return;
 
             // cut the tangential velocity
-            Vector3 vel = common.ToVector( ref ent.v.velocity );
+            Vector3 vel = Common.ToVector( ref ent.v.velocity );
             float i = Vector3.Dot( trace.plane.normal, vel );
             Vector3 into = trace.plane.normal * i;
             Vector3 side = vel - into;
@@ -728,19 +728,19 @@ namespace SharpQuake
             //
             // bound velocity
             //
-            if( mathlib.CheckNaN( ref ent.v.velocity, 0 ) )
+            if( MathLib.CheckNaN( ref ent.v.velocity, 0 ) )
             {
                 Con.Print( "Got a NaN velocity on {0}\n", progs.GetString( ent.v.classname ) );
             }
 
-            if( mathlib.CheckNaN( ref ent.v.origin, 0 ) )
+            if( MathLib.CheckNaN( ref ent.v.origin, 0 ) )
             {
                 Con.Print( "Got a NaN origin on {0}\n", progs.GetString( ent.v.classname ) );
             }
 
             Vector3 max = Vector3.One * _MaxVelocity.Value;
             Vector3 min = -Vector3.One * _MaxVelocity.Value;
-            mathlib.Clamp( ref ent.v.velocity, ref min, ref max, out ent.v.velocity );
+            MathLib.Clamp( ref ent.v.velocity, ref min, ref max, out ent.v.velocity );
         }
 
         /// <summary>
@@ -769,7 +769,7 @@ namespace SharpQuake
                     break;
 
                 v3f end;
-                mathlib.VectorMA( ref ent.v.origin, time_left, ref ent.v.velocity, out end );
+                MathLib.VectorMA( ref ent.v.origin, time_left, ref ent.v.velocity, out end );
 
                 trace_t trace = Move( ref ent.v.origin, ref ent.v.mins, ref ent.v.maxs, ref end, 0, ent );
 
@@ -781,7 +781,7 @@ namespace SharpQuake
 
                 if( trace.fraction > 0 )
                 {	// actually covered some distance
-                    mathlib.Copy( ref trace.endpos, out ent.v.origin );
+                    MathLib.Copy( ref trace.endpos, out ent.v.origin );
                     original_velocity = ent.v.velocity;
                     numplanes = 0;
                 }
@@ -863,15 +863,15 @@ namespace SharpQuake
                     }
                     Vector3 dir = Vector3.Cross( planes[0], planes[1] );
                     float d = dir.X * ent.v.velocity.x + dir.Y * ent.v.velocity.y + dir.Z * ent.v.velocity.z;
-                    mathlib.Copy( ref dir, out ent.v.velocity );
-                    mathlib.VectorScale( ref ent.v.velocity, d, out ent.v.velocity );
+                    MathLib.Copy( ref dir, out ent.v.velocity );
+                    MathLib.VectorScale( ref ent.v.velocity, d, out ent.v.velocity );
                 }
 
                 //
                 // if original velocity is against the original velocity, stop dead
                 // to avoid tiny occilations in sloping corners
                 //
-                if( mathlib.DotProduct( ref ent.v.velocity, ref primal_velocity ) <= 0 )
+                if( MathLib.DotProduct( ref ent.v.velocity, ref primal_velocity ) <= 0 )
                 {
                     ent.v.velocity = default( v3f );
                     return blocked;
@@ -884,10 +884,10 @@ namespace SharpQuake
         private static trace_t Move( ref v3f start, ref v3f mins, ref v3f maxs, ref v3f end, int type, edict_t passedict )
         {
             Vector3 vstart, vmins, vmaxs, vend;
-            mathlib.Copy( ref start, out vstart );
-            mathlib.Copy( ref mins, out vmins );
-            mathlib.Copy( ref maxs, out vmaxs );
-            mathlib.Copy( ref end, out vend );
+            MathLib.Copy( ref start, out vstart );
+            MathLib.Copy( ref mins, out vmins );
+            MathLib.Copy( ref maxs, out vmaxs );
+            MathLib.Copy( ref end, out vend );
             return Move( ref vstart, ref vmins, ref vmaxs, ref vend, type, passedict );
         }
 
@@ -931,9 +931,9 @@ namespace SharpQuake
             }
 
             v3f move, mins, maxs;
-            mathlib.VectorScale( ref pusher.v.velocity, movetime, out move );
-            mathlib.VectorAdd( ref pusher.v.absmin, ref move, out mins );
-            mathlib.VectorAdd( ref pusher.v.absmax, ref move, out maxs );
+            MathLib.VectorScale( ref pusher.v.velocity, movetime, out move );
+            MathLib.VectorAdd( ref pusher.v.absmin, ref move, out mins );
+            MathLib.VectorAdd( ref pusher.v.absmax, ref move, out maxs );
 
             v3f pushorig = pusher.v.origin;
 
@@ -942,7 +942,7 @@ namespace SharpQuake
 
             // move the pusher to it's final position
 
-            mathlib.VectorAdd( ref pusher.v.origin, ref move, out pusher.v.origin );
+            MathLib.VectorAdd( ref pusher.v.origin, ref move, out pusher.v.origin );
             pusher.v.ltime += movetime;
             LinkEdict( pusher, false );
 

@@ -253,10 +253,10 @@ namespace SharpQuake
 
         private static int _UnreliableMessagesReceived = 0;
 
-        private static cvar _MessageTimeout;
+        private static CVar _MessageTimeout;
 
         // = { "net_messagetimeout", "300" };
-        private static cvar _HostName;
+        private static CVar _HostName;
 
         private static PollProcedure _PollProcedureList;
 
@@ -290,7 +290,7 @@ namespace SharpQuake
 
             if( _Drivers == null )
             {
-                if( common.HasParam( "-playback" ) )
+                if( Common.HasParam( "-playback" ) )
                 {
                     _Drivers = new INetDriver[]
                     {
@@ -315,25 +315,25 @@ namespace SharpQuake
                 };
             }
 
-            if( common.HasParam( "-record" ) )
+            if( Common.HasParam( "-record" ) )
                 _IsRecording = true;
 
-            int i = common.CheckParm( "-port" );
+            int i = Common.CheckParm( "-port" );
             if( i == 0 )
-                i = common.CheckParm( "-udpport" );
+                i = Common.CheckParm( "-udpport" );
             if( i == 0 )
-                i = common.CheckParm( "-ipxport" );
+                i = Common.CheckParm( "-ipxport" );
 
             if( i > 0 )
             {
-                if( i < common.Argc - 1 )
-                    _DefHostPort = common.atoi( common.Argv( i + 1 ) );
+                if( i < Common.Argc - 1 )
+                    _DefHostPort = Common.atoi( Common.Argv( i + 1 ) );
                 else
                     sys.Error( "Net.Init: you must specify a number after -port!" );
             }
             HostPort = _DefHostPort;
 
-            if( common.HasParam( "-listen" ) || client.cls.state == cactive_t.ca_dedicated )
+            if( Common.HasParam( "-listen" ) || client.cls.state == cactive_t.ca_dedicated )
                 _IsListening = true;
             int numsockets = server.svs.maxclientslimit;
             if( client.cls.state != cactive_t.ca_dedicated )
@@ -353,14 +353,14 @@ namespace SharpQuake
 
             if( _MessageTimeout == null )
             {
-                _MessageTimeout = new cvar( "net_messagetimeout", "300" );
-                _HostName = new cvar( "hostname", "UNNAMED" );
+                _MessageTimeout = new CVar( "net_messagetimeout", "300" );
+                _HostName = new CVar( "hostname", "UNNAMED" );
             }
 
-            cmd.Add( "slist", Slist_f );
-            cmd.Add( "listen", Listen_f );
-            cmd.Add( "maxplayers", MaxPlayers_f );
-            cmd.Add( "port", Port_f );
+            Command.Add( "slist", Slist_f );
+            Command.Add( "listen", Listen_f );
+            Command.Add( "maxplayers", MaxPlayers_f );
+            Command.Add( "port", Port_f );
 
             // initialize all the drivers
             _DriverLevel = 0;
@@ -476,7 +476,7 @@ namespace SharpQuake
 
             if( host != null )
             {
-                if( common.SameText( host, "local" ) )
+                if( Common.SameText( host, "local" ) )
                 {
                     numdrivers = 1;
                     goto JustDoIt;
@@ -486,7 +486,7 @@ namespace SharpQuake
                 {
                     foreach( hostcache_t hc in _HostCache )
                     {
-                        if( common.SameText( hc.name, host ) )
+                        if( Common.SameText( hc.name, host ) )
                         {
                             host = hc.cname;
                             goto JustDoIt;
@@ -512,7 +512,7 @@ namespace SharpQuake
             _DriverLevel = 0;
             foreach( hostcache_t hc in _HostCache )
             {
-                if( common.SameText( host, hc.name ) )
+                if( Common.SameText( host, hc.name ) )
                 {
                     host = hc.cname;
                     break;
@@ -937,9 +937,9 @@ JustDoIt:
             {
                 hostcache_t hc = _HostCache[i];
                 if( hc.maxusers != 0 )
-                    Con.Print( "{0,-15} {1,-15}\n {2,2}/{3,2}\n", common.Copy( hc.name, 15 ), common.Copy( hc.map, 15 ), hc.users, hc.maxusers );
+                    Con.Print( "{0,-15} {1,-15}\n {2,2}/{3,2}\n", Common.Copy( hc.name, 15 ), Common.Copy( hc.map, 15 ), hc.users, hc.maxusers );
                 else
-                    Con.Print( "{0,-15} {1,-15}\n", common.Copy( hc.name, 15 ), common.Copy( hc.map, 15 ) );
+                    Con.Print( "{0,-15} {1,-15}\n", Common.Copy( hc.name, 15 ), Common.Copy( hc.map, 15 ) );
             }
             _SlistLastShown = i;
         }
@@ -980,13 +980,13 @@ JustDoIt:
         // NET_Listen_f
         private static void Listen_f()
         {
-            if( cmd.Argc != 2 )
+            if( Command.Argc != 2 )
             {
                 Con.Print( "\"listen\" is \"{0}\"\n", _IsListening ? 1 : 0 );
                 return;
             }
 
-            _IsListening = ( common.atoi( cmd.Argv( 1 ) ) != 0 );
+            _IsListening = ( Common.atoi( Command.Argv( 1 ) ) != 0 );
 
             foreach( INetDriver driver in _Drivers )
             {
@@ -1000,7 +1000,7 @@ JustDoIt:
         // MaxPlayers_f
         private static void MaxPlayers_f()
         {
-            if( cmd.Argc != 2 )
+            if( Command.Argc != 2 )
             {
                 Con.Print( "\"maxplayers\" is \"%u\"\n", server.svs.maxclients );
                 return;
@@ -1012,7 +1012,7 @@ JustDoIt:
                 return;
             }
 
-            int n = common.atoi( cmd.Argv( 1 ) );
+            int n = Common.atoi( Command.Argv( 1 ) );
             if( n < 1 )
                 n = 1;
             if( n > server.svs.maxclientslimit )
@@ -1029,21 +1029,21 @@ JustDoIt:
 
             server.svs.maxclients = n;
             if( n == 1 )
-                cvar.Set( "deathmatch", "0" );
+                CVar.Set( "deathmatch", "0" );
             else
-                cvar.Set( "deathmatch", "1" );
+                CVar.Set( "deathmatch", "1" );
         }
 
         // NET_Port_f
         private static void Port_f()
         {
-            if( cmd.Argc != 2 )
+            if( Command.Argc != 2 )
             {
                 Con.Print( "\"port\" is \"{0}\"\n", HostPort );
                 return;
             }
 
-            int n = common.atoi( cmd.Argv( 1 ) );
+            int n = Common.atoi( Command.Argv( 1 ) );
             if( n < 1 || n > 65534 )
             {
                 Con.Print( "Bad value, must be between 1 and 65534\n" );

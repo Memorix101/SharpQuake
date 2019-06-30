@@ -56,17 +56,17 @@ namespace SharpQuake
         /// </summary>
         private static void Record_f()
         {
-            if( cmd.Source != cmd_source_t.src_command )
+            if( Command.Source != cmd_source_t.src_command )
                 return;
 
-            int c = cmd.Argc;
+            int c = Command.Argc;
             if( c != 2 && c != 3 && c != 4 )
             {
                 Con.Print( "record <demoname> [<map> [cd track]]\n" );
                 return;
             }
 
-            if( cmd.Argv( 1 ).Contains( ".." ) )
+            if( Command.Argv( 1 ).Contains( ".." ) )
             {
                 Con.Print( "Relative pathnames are not allowed.\n" );
                 return;
@@ -82,19 +82,19 @@ namespace SharpQuake
             int track;
             if( c == 4 )
             {
-                track = common.atoi( cmd.Argv( 3 ) );
+                track = Common.atoi( Command.Argv( 3 ) );
                 Con.Print( "Forcing CD track to {0}\n", track );
             }
             else
                 track = -1;
 
-            string name = Path.Combine( common.GameDir, cmd.Argv( 1 ) );
+            string name = Path.Combine( Common.GameDir, Command.Argv( 1 ) );
 
             //
             // start the map up
             //
             if( c > 2 )
-                cmd.ExecuteString( String.Format( "map {0}", cmd.Argv( 2 ) ), cmd_source_t.src_command );
+                Command.ExecuteString( String.Format( "map {0}", Command.Argv( 2 ) ), cmd_source_t.src_command );
 
             //
             // open the demo file
@@ -123,7 +123,7 @@ namespace SharpQuake
         /// </summary>
         private static void Stop_f()
         {
-            if( cmd.Source != cmd_source_t.src_command )
+            if( Command.Source != cmd_source_t.src_command )
                 return;
 
             if( !cls.demorecording )
@@ -152,10 +152,10 @@ namespace SharpQuake
         // play [demoname]
         private static void PlayDemo_f()
         {
-            if( cmd.Source != cmd_source_t.src_command )
+            if( Command.Source != cmd_source_t.src_command )
                 return;
 
-            if( cmd.Argc != 2 )
+            if( Command.Argc != 2 )
             {
                 Con.Print( "play <demoname> : plays a demo\n" );
                 return;
@@ -169,7 +169,7 @@ namespace SharpQuake
             //
             // open the demo file
             //
-            string name = Path.ChangeExtension( cmd.Argv( 1 ), ".dem" );
+            string name = Path.ChangeExtension( Command.Argv( 1 ), ".dem" );
 
             Con.Print( "Playing demo from {0}.\n", name );
             if( cls.demofile != null )
@@ -217,10 +217,10 @@ namespace SharpQuake
         /// </summary>
         private static void TimeDemo_f()
         {
-            if( cmd.Source != cmd_source_t.src_command )
+            if( Command.Source != cmd_source_t.src_command )
                 return;
 
-            if( cmd.Argc != 2 )
+            if( Command.Argc != 2 )
             {
                 Con.Print( "timedemo <demoname> : gets demo speeds\n" );
                 return;
@@ -265,14 +265,14 @@ namespace SharpQuake
 
                 // get the next message
                 BinaryReader reader = ( (DisposableWrapper<BinaryReader>)cls.demofile ).Object;
-                int size = common.LittleLong( reader.ReadInt32() );
+                int size = Common.LittleLong( reader.ReadInt32() );
                 if( size > QDef.MAX_MSGLEN )
                     sys.Error( "Demo message > MAX_MSGLEN" );
 
                 cl.mviewangles[1] = cl.mviewangles[0];
-                cl.mviewangles[0].X = common.LittleFloat( reader.ReadSingle() );
-                cl.mviewangles[0].Y = common.LittleFloat( reader.ReadSingle() );
-                cl.mviewangles[0].Z = common.LittleFloat( reader.ReadSingle() );
+                cl.mviewangles[0].X = Common.LittleFloat( reader.ReadSingle() );
+                cl.mviewangles[0].Y = Common.LittleFloat( reader.ReadSingle() );
+                cl.mviewangles[0].Z = Common.LittleFloat( reader.ReadSingle() );
 
                 net.Message.FillFrom( reader.BaseStream, size );
                 if( net.Message.Length < size )
@@ -325,12 +325,12 @@ namespace SharpQuake
         /// </summary>
         private static void WriteDemoMessage()
         {
-            int len = common.LittleLong( net.Message.Length );
+            int len = Common.LittleLong( net.Message.Length );
             BinaryWriter writer = ( (DisposableWrapper<BinaryWriter>)cls.demofile ).Object;
             writer.Write( len );
-            writer.Write( common.LittleFloat( cl.viewangles.X ) );
-            writer.Write( common.LittleFloat( cl.viewangles.Y ) );
-            writer.Write( common.LittleFloat( cl.viewangles.Z ) );
+            writer.Write( Common.LittleFloat( cl.viewangles.X ) );
+            writer.Write( Common.LittleFloat( cl.viewangles.Y ) );
+            writer.Write( Common.LittleFloat( cl.viewangles.Z ) );
             writer.Write( net.Message.Data, 0, net.Message.Length );
             writer.Flush();
         }

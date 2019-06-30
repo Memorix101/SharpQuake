@@ -59,31 +59,6 @@ namespace SharpQuake
         StandardQuake, Rogue, Hipnotic
     }
 
-    //
-    // on disk
-    //
-    [StructLayout(LayoutKind.Sequential, Pack = 1, CharSet = CharSet.Ansi)]
-    internal struct dpackfile_t
-    {
-        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 56)]
-        public byte[] name; // [56];
-
-        public int filepos, filelen;
-    }
-
-    [StructLayout(LayoutKind.Sequential, Pack = 1, CharSet = CharSet.Ansi)]
-    internal struct dpackheader_t
-    {
-        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 4)]
-        public byte[] id; // [4];
-
-        [MarshalAs(UnmanagedType.I4, SizeConst = 4)]
-        public int dirofs;
-
-        [MarshalAs(UnmanagedType.I4, SizeConst = 4)]
-        public int dirlen;
-    }
-
     [StructLayout(LayoutKind.Explicit)]
     internal struct Union4b
     {
@@ -139,7 +114,7 @@ namespace SharpQuake
         }
     }
 
-    internal static class common
+    internal static class Common
     {
         public static bool IsBigEndian
         {
@@ -203,7 +178,6 @@ namespace SharpQuake
             }
         }
 
-        public const int MAX_FILES_IN_PACK = 2048;
 
         // if a packfile directory differs from this, it is assumed to be hacked
         public const int PAK0_COUNT = 339;
@@ -245,8 +219,8 @@ namespace SharpQuake
         };
 
         private static IByteOrderConverter _Converter;
-        private static cvar _Registered;
-        private static cvar _CmdLine;
+        private static CVar _Registered;
+        private static CVar _CmdLine;
         public static string[] _Argv;
         public static string _Args; // com_cmdline
         private static GameKind _GameKind; // qboolean		standard_quake = true, rogue, hipnotic;
@@ -281,10 +255,10 @@ namespace SharpQuake
         {
             _Argv = argv;
 
-            _Registered = new cvar("registered", "0");
-            _CmdLine = new cvar("cmdline", "0", false, true);
+            _Registered = new CVar("registered", "0");
+            _CmdLine = new CVar("cmdline", "0", false, true);
 
-            cmd.Add("path", FileSystem.Path_f );
+            Command.Add("path", FileSystem.Path_f );
 
             FileSystem.InitFileSystem();
             CheckRegistered();
@@ -643,13 +617,13 @@ namespace SharpQuake
                     sys.Error("Corrupted data file.");
             }
 
-            cvar.Set("cmdline", _Args);
-            cvar.Set("registered", "1");
+            CVar.Set("cmdline", _Args);
+            CVar.Set("registered", "1");
             FileSystem._StaticRegistered = true;
             Con.Print("Playing registered version.\n");
         }
 
-        static common()
+        static Common()
         {
             // set the byte swapping variables in a portable manner
             if (BitConverter.IsLittleEndian)
@@ -867,7 +841,7 @@ namespace SharpQuake
         {
             NeedRoom(4);
             _Val.f0 = f;
-            _Val.i0 = common.LittleLong(_Val.i0);
+            _Val.i0 = Common.LittleLong(_Val.i0);
 
             _Buffer[_Count++] = _Val.b0;
             _Buffer[_Count++] = _Val.b1;
@@ -1122,7 +1096,7 @@ namespace SharpQuake
 
             _Count += 4;
 
-            _Val.i0 = common.LittleLong(_Val.i0);
+            _Val.i0 = Common.LittleLong(_Val.i0);
             return _Val.f0;
         }
 
@@ -1336,77 +1310,6 @@ namespace SharpQuake
 
     #endregion Byte order converters
 
-    //
-    // in memory
-    //
-
-    public class packfile_t
-    {
-        public string name; // [MAX_QPATH];
-        public int filepos, filelen;
-
-        public override string ToString()
-        {
-            return String.Format("{0}, at {1}, {2} bytes}", this.name, this.filepos, this.filelen);
-        }
-    } // packfile_t;
-
-    public class pack_t
-    {
-        public string filename; // [MAX_OSPATH];
-        public BinaryReader stream; //int handle;
-
-        //int numfiles;
-        public packfile_t[] files;
-
-        public pack_t(string filename, BinaryReader reader, packfile_t[] files)
-        {
-            this.filename = filename;
-            this.stream = reader;
-            this.files = files;
-        }
-    } // pack_t;
-
-    // dpackfile_t;
-
-    // dpackheader_t;
-
-    internal class searchpath_t
-    {
-        public string filename; // char[MAX_OSPATH];
-        public pack_t pack; // only one of filename / pack will be used
-        public ZipArchive pk3;
-        public string pk3filename;
-
-        public searchpath_t(string path)
-        {
-            if (path.EndsWith(".PAK"))
-            {
-                this.pack = FileSystem.LoadPackFile(path);
-                if (this.pack == null)
-                    sys.Error("Couldn't load packfile: {0}", path);
-            }
-            else if ( path.EndsWith( ".PK3" ) )
-            {
-                this.pk3 = ZipFile.OpenRead(path);
-                this.pk3filename = path;
-                if ( this.pk3 == null )
-                    sys.Error( "Couldn't load pk3file: {0}", path );
-            }
-            else
-                this.filename = path;
-        }
-
-        public searchpath_t(pack_t pak)
-        {
-            this.pack = pak;
-        }
-
-        public searchpath_t(ZipArchive archive)
-        {
-            this.pk3 = archive;
-        }
-    } // searchpath_t;
 
     public class DisposableWrapper<T> : IDisposable where T : class, IDisposable
     {

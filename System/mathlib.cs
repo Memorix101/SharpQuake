@@ -31,7 +31,7 @@ namespace SharpQuake
     /// <summary>
     /// Quake math functions
     /// </summary>
-    internal static class mathlib
+    internal static class MathLib
     {
         /// <summary>
         /// AngleVectors

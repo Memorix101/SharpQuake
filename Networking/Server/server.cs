@@ -83,16 +83,16 @@ namespace SharpQuake
         public const int NUM_PING_TIMES = 16;
         public const int NUM_SPAWN_PARMS = 16;
 
-        private static cvar _Friction;// = { "sv_friction", "4", false, true };
-        private static cvar _EdgeFriction;// = { "edgefriction", "2" };
-        private static cvar _StopSpeed;// = { "sv_stopspeed", "100" };
-        private static cvar _Gravity;// = { "sv_gravity", "800", false, true };
-        private static cvar _MaxVelocity;// = { "sv_maxvelocity", "2000" };
-        private static cvar _NoStep;// = { "sv_nostep", "0" };
-        private static cvar _MaxSpeed;// = { "sv_maxspeed", "320", false, true };
-        private static cvar _Accelerate;// = { "sv_accelerate", "10" };
-        private static cvar _Aim;// = { "sv_aim", "0.93" };
-        private static cvar _IdealPitchScale;// = { "sv_idealpitchscale", "0.8" };
+        private static CVar _Friction;// = { "sv_friction", "4", false, true };
+        private static CVar _EdgeFriction;// = { "edgefriction", "2" };
+        private static CVar _StopSpeed;// = { "sv_stopspeed", "100" };
+        private static CVar _Gravity;// = { "sv_gravity", "800", false, true };
+        private static CVar _MaxVelocity;// = { "sv_maxvelocity", "2000" };
+        private static CVar _NoStep;// = { "sv_nostep", "0" };
+        private static CVar _MaxSpeed;// = { "sv_maxspeed", "320", false, true };
+        private static CVar _Accelerate;// = { "sv_accelerate", "10" };
+        private static CVar _Aim;// = { "sv_aim", "0.93" };
+        private static CVar _IdealPitchScale;// = { "sv_idealpitchscale", "0.8" };
 
         private static server_t _Server;
         private static server_static_t _ServerStatic;

@@ -31,7 +31,7 @@
     <BootstrapperEnabled>true</BootstrapperEnabled>
   </PropertyGroup>
   <PropertyGroup>
-    <StartupObject>SharpQuake.mainwindow</StartupObject>
+    <StartupObject>SharpQuake.MainWindow</StartupObject>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|AnyCPU'">
     <DebugSymbols>true</DebugSymbols>
@@ -86,7 +86,6 @@
     <Compile Include="Rendering\anorm_dots.cs" />
     <Compile Include="Rendering\anorms.cs" />
     <Compile Include="Rendering\bsp_file.cs" />
-    <Compile Include="Rendering\Texture.cs" />
     <Compile Include="Sound\cd_audio.cs" />
     <Compile Include="Sound\cd_audio_win.cs" />
     <Compile Include="Rendering\chase.cs" />
@@ -96,20 +95,20 @@
     <Compile Include="Networking\Client\client_main.cs" />
     <Compile Include="Networking\Client\client_parse.cs" />
     <Compile Include="Networking\Client\client_temp_ent.cs" />
-    <Compile Include="System\cmd.cs" />
-    <Compile Include="System\common.cs" />
+    <Compile Include="System\Command.cs" />
+    <Compile Include="System\Common.cs" />
     <Compile Include="Rendering\console.cs" />
-    <Compile Include="System\crc.cs" />
-    <Compile Include="System\cvar.cs" />
+    <Compile Include="System\Crc.cs" />
+    <Compile Include="System\CVar.cs" />
     <Compile Include="Rendering\draw.cs" />
     <Compile Include="System\external.cs" />
     <Compile Include="Networking\Host\host.cs" />
     <Compile Include="Networking\Host\host_cmd.cs" />
     <Compile Include="Desktop\input.cs" />
     <Compile Include="Desktop\keys.cs" />
-    <Compile Include="Desktop\mainwindow.cs" />
+    <Compile Include="Desktop\MainWindow.cs" />
     <Compile Include="System\FileSystem.cs" />
-    <Compile Include="System\mathlib.cs" />
+    <Compile Include="System\MathLib.cs" />
     <Compile Include="Rendering\menu.cs" />
     <Compile Include="Rendering\mesh.cs" />
     <Compile Include="Rendering\model.cs" />
@@ -153,7 +152,7 @@
     <Compile Include="System\sys.cs" />
     <Compile Include="Rendering\vid.cs" />
     <Compile Include="Rendering\view.cs" />
-    <Compile Include="System\wad.cs" />
+    <Compile Include="System\Wad.cs" />
     <Compile Include="Rendering\world.cs" />
     <Compile Include="System\zone.cs" />
     <EmbeddedResource Include="Properties\Resources.resx">

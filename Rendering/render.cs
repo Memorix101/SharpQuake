@@ -88,31 +88,31 @@ namespace SharpQuake
         private static refdef_t _RefDef = new refdef_t(); // refdef_t	r_refdef;
         private static texture_t _NoTextureMip; // r_notexture_mip
 
-        private static cvar _NoRefresh;// = { "r_norefresh", "0" };
-        private static cvar _DrawEntities;// = { "r_drawentities", "1" };
-        private static cvar _DrawViewModel;// = { "r_drawviewmodel", "1" };
-        private static cvar _Speeds;// = { "r_speeds", "0" };
-        private static cvar _FullBright;// = { "r_fullbright", "0" };
-        private static cvar _LightMap;// = { "r_lightmap", "0" };
-        private static cvar _Shadows;// = { "r_shadows", "0" };
-        private static cvar _MirrorAlpha;// = { "r_mirroralpha", "1" };
-        private static cvar _WaterAlpha;// = { "r_wateralpha", "1" };
-        private static cvar _Dynamic;// = { "r_dynamic", "1" };
-        private static cvar _NoVis;// = { "r_novis", "0" };
+        private static CVar _NoRefresh;// = { "r_norefresh", "0" };
+        private static CVar _DrawEntities;// = { "r_drawentities", "1" };
+        private static CVar _DrawViewModel;// = { "r_drawviewmodel", "1" };
+        private static CVar _Speeds;// = { "r_speeds", "0" };
+        private static CVar _FullBright;// = { "r_fullbright", "0" };
+        private static CVar _LightMap;// = { "r_lightmap", "0" };
+        private static CVar _Shadows;// = { "r_shadows", "0" };
+        private static CVar _MirrorAlpha;// = { "r_mirroralpha", "1" };
+        private static CVar _WaterAlpha;// = { "r_wateralpha", "1" };
+        private static CVar _Dynamic;// = { "r_dynamic", "1" };
+        private static CVar _NoVis;// = { "r_novis", "0" };
 
-        private static cvar _glFinish;// = { "gl_finish", "0" };
-        private static cvar _glClear;// = { "gl_clear", "0" };
-        private static cvar _glCull;// = { "gl_cull", "1" };
-        private static cvar _glTexSort;// = { "gl_texsort", "1" };
-        private static cvar _glSmoothModels;// = { "gl_smoothmodels", "1" };
-        private static cvar _glAffineModels;// = { "gl_affinemodels", "0" };
-        private static cvar _glPolyBlend;// = { "gl_polyblend", "1" };
-        private static cvar _glFlashBlend;// = { "gl_flashblend", "1" };
-        private static cvar _glPlayerMip;// = { "gl_playermip", "0" };
-        private static cvar _glNoColors;// = { "gl_nocolors", "0" };
-        private static cvar _glKeepTJunctions;// = { "gl_keeptjunctions", "0" };
-        private static cvar _glReportTJunctions;// = { "gl_reporttjunctions", "0" };
-        private static cvar _glDoubleEyes;// = { "gl_doubleeys", "1" };
+        private static CVar _glFinish;// = { "gl_finish", "0" };
+        private static CVar _glClear;// = { "gl_clear", "0" };
+        private static CVar _glCull;// = { "gl_cull", "1" };
+        private static CVar _glTexSort;// = { "gl_texsort", "1" };
+        private static CVar _glSmoothModels;// = { "gl_smoothmodels", "1" };
+        private static CVar _glAffineModels;// = { "gl_affinemodels", "0" };
+        private static CVar _glPolyBlend;// = { "gl_polyblend", "1" };
+        private static CVar _glFlashBlend;// = { "gl_flashblend", "1" };
+        private static CVar _glPlayerMip;// = { "gl_playermip", "0" };
+        private static CVar _glNoColors;// = { "gl_nocolors", "0" };
+        private static CVar _glKeepTJunctions;// = { "gl_keeptjunctions", "0" };
+        private static CVar _glReportTJunctions;// = { "gl_reporttjunctions", "0" };
+        private static CVar _glDoubleEyes;// = { "gl_doubleeys", "1" };
 
         private static int _PlayerTextures; // playertextures	// up to 16 color translated skins
         private static bool _CacheThrash; // r_cache_thrash	// compatability
@@ -163,41 +163,41 @@ namespace SharpQuake
             for( int i = 0; i < _Frustum.Length; i++ )
                 _Frustum[i] = new mplane_t();
 
-            cmd.Add( "timerefresh", TimeRefresh_f );
+            Command.Add( "timerefresh", TimeRefresh_f );
             //Cmd.Add("envmap", Envmap_f);
             //Cmd.Add("pointfile", ReadPointFile_f);
 
             if( _NoRefresh == null )
             {
-                _NoRefresh = new cvar( "r_norefresh", "0" );
-                _DrawEntities = new cvar( "r_drawentities", "1" );
-                _DrawViewModel = new cvar( "r_drawviewmodel", "1" );
-                _Speeds = new cvar( "r_speeds", "0" );
-                _FullBright = new cvar( "r_fullbright", "0" );
-                _LightMap = new cvar( "r_lightmap", "0" );
-                _Shadows = new cvar( "r_shadows", "0" );
-                _MirrorAlpha = new cvar( "r_mirroralpha", "1" );
-                _WaterAlpha = new cvar( "r_wateralpha", "1" );
-                _Dynamic = new cvar( "r_dynamic", "1" );
-                _NoVis = new cvar( "r_novis", "0" );
+                _NoRefresh = new CVar( "r_norefresh", "0" );
+                _DrawEntities = new CVar( "r_drawentities", "1" );
+                _DrawViewModel = new CVar( "r_drawviewmodel", "1" );
+                _Speeds = new CVar( "r_speeds", "0" );
+                _FullBright = new CVar( "r_fullbright", "0" );
+                _LightMap = new CVar( "r_lightmap", "0" );
+                _Shadows = new CVar( "r_shadows", "0" );
+                _MirrorAlpha = new CVar( "r_mirroralpha", "1" );
+                _WaterAlpha = new CVar( "r_wateralpha", "1" );
+                _Dynamic = new CVar( "r_dynamic", "1" );
+                _NoVis = new CVar( "r_novis", "0" );
 
-                _glFinish = new cvar( "gl_finish", "0" );
-                _glClear = new cvar( "gl_clear", "0" );
-                _glCull = new cvar( "gl_cull", "1" );
-                _glTexSort = new cvar( "gl_texsort", "1" );
-                _glSmoothModels = new cvar( "gl_smoothmodels", "1" );
-                _glAffineModels = new cvar( "gl_affinemodels", "0" );
-                _glPolyBlend = new cvar( "gl_polyblend", "1" );
-                _glFlashBlend = new cvar( "gl_flashblend", "1" );
-                _glPlayerMip = new cvar( "gl_playermip", "0" );
-                _glNoColors = new cvar( "gl_nocolors", "0" );
-                _glKeepTJunctions = new cvar( "gl_keeptjunctions", "0" );
-                _glReportTJunctions = new cvar( "gl_reporttjunctions", "0" );
-                _glDoubleEyes = new cvar( "gl_doubleeys", "1" );
+                _glFinish = new CVar( "gl_finish", "0" );
+                _glClear = new CVar( "gl_clear", "0" );
+                _glCull = new CVar( "gl_cull", "1" );
+                _glTexSort = new CVar( "gl_texsort", "1" );
+                _glSmoothModels = new CVar( "gl_smoothmodels", "1" );
+                _glAffineModels = new CVar( "gl_affinemodels", "0" );
+                _glPolyBlend = new CVar( "gl_polyblend", "1" );
+                _glFlashBlend = new CVar( "gl_flashblend", "1" );
+                _glPlayerMip = new CVar( "gl_playermip", "0" );
+                _glNoColors = new CVar( "gl_nocolors", "0" );
+                _glKeepTJunctions = new CVar( "gl_keeptjunctions", "0" );
+                _glReportTJunctions = new CVar( "gl_reporttjunctions", "0" );
+                _glDoubleEyes = new CVar( "gl_doubleeys", "1" );
             }
 
             if( vid.glMTexable )
-                cvar.Set( "gl_texsort", 0.0f );
+                CVar.Set( "gl_texsort", 0.0f );
 
             InitParticles();
             InitParticleTexture();
@@ -732,7 +732,7 @@ namespace SharpQuake
             if( psprite.type == SPR.SPR_ORIENTED )
             {
                 // bullet marks on walls
-                mathlib.AngleVectors( ref e.angles, out v_forward, out right, out up ); // Uze: changed from _CurrentEntity to e
+                MathLib.AngleVectors( ref e.angles, out v_forward, out right, out up ); // Uze: changed from _CurrentEntity to e
             }
             else
             {	// normal sprite
@@ -874,7 +874,7 @@ namespace SharpQuake
             _ShadeVector.X = (float)Math.Cos( -an );
             _ShadeVector.Y = (float)Math.Sin( -an );
             _ShadeVector.Z = 1;
-            mathlib.Normalize( ref _ShadeVector );
+            MathLib.Normalize( ref _ShadeVector );
 
             //
             // locate the proper data
@@ -1186,13 +1186,13 @@ namespace SharpQuake
             else
             {
                 // rotate VPN right by FOV_X/2 degrees
-                mathlib.RotatePointAroundVector( out _Frustum[0].normal, ref render.ViewUp, ref render.ViewPn, -( 90 - _RefDef.fov_x / 2 ) );
+                MathLib.RotatePointAroundVector( out _Frustum[0].normal, ref render.ViewUp, ref render.ViewPn, -( 90 - _RefDef.fov_x / 2 ) );
                 // rotate VPN left by FOV_X/2 degrees
-                mathlib.RotatePointAroundVector( out _Frustum[1].normal, ref render.ViewUp, ref render.ViewPn, 90 - _RefDef.fov_x / 2 );
+                MathLib.RotatePointAroundVector( out _Frustum[1].normal, ref render.ViewUp, ref render.ViewPn, 90 - _RefDef.fov_x / 2 );
                 // rotate VPN up by FOV_X/2 degrees
-                mathlib.RotatePointAroundVector( out _Frustum[2].normal, ref render.ViewRight, ref render.ViewPn, 90 - _RefDef.fov_y / 2 );
+                MathLib.RotatePointAroundVector( out _Frustum[2].normal, ref render.ViewRight, ref render.ViewPn, 90 - _RefDef.fov_y / 2 );
                 // rotate VPN down by FOV_X/2 degrees
-                mathlib.RotatePointAroundVector( out _Frustum[3].normal, ref render.ViewRight, ref render.ViewPn, -( 90 - _RefDef.fov_y / 2 ) );
+                MathLib.RotatePointAroundVector( out _Frustum[3].normal, ref render.ViewRight, ref render.ViewPn, -( 90 - _RefDef.fov_y / 2 ) );
             }
 
             for( int i = 0; i < 4; i++ )
@@ -1223,7 +1223,7 @@ namespace SharpQuake
         {
             // don't allow cheats in multiplayer
             if( client.cl.maxclients > 1 )
-                cvar.Set( "r_fullbright", "0" );
+                CVar.Set( "r_fullbright", "0" );
 
             AnimateLight();
 
@@ -1232,7 +1232,7 @@ namespace SharpQuake
             // build the transformation matrix for the given view angles
             render.Origin = _RefDef.vieworg;
 
-            mathlib.AngleVectors( ref _RefDef.viewangles, out ViewPn, out ViewRight, out ViewUp );
+            MathLib.AngleVectors( ref _RefDef.viewangles, out ViewPn, out ViewRight, out ViewUp );
 
             // current viewleaf
             _OldViewLeaf = _ViewLeaf;
@@ -1313,7 +1313,7 @@ namespace SharpQuake
             {
                 _RefDef.viewangles.Y = (float)( i / 128.0 * 360.0 );
                 RenderView();
-                mainwindow.Instance.SwapBuffers();
+                MainWindow.Instance.SwapBuffers();
             }
 
             GL.Finish();
@@ -1333,7 +1333,7 @@ namespace SharpQuake
         {
             for( int i = 0; i < 4; i++ )
             {
-                if( mathlib.BoxOnPlaneSide( ref mins, ref maxs, _Frustum[i] ) == 2 )
+                if( MathLib.BoxOnPlaneSide( ref mins, ref maxs, _Frustum[i] ) == 2 )
                     return true;
             }
             return false;

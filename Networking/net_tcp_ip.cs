@@ -85,7 +85,7 @@ namespace SharpQuake
         {
             _IsInitialized = false;
 
-            if( common.HasParam( "-noudp" ) )
+            if( Common.HasParam( "-noudp" ) )
                 return false;
 
             // determine my name
@@ -112,15 +112,15 @@ namespace SharpQuake
                         hostName = hostName.Substring( 0, i );
                     }
                 }
-                cvar.Set( "hostname", hostName );
+                CVar.Set( "hostname", hostName );
             }
 
-            int i2 = common.CheckParm( "-ip" );
+            int i2 = Common.CheckParm( "-ip" );
             if( i2 > 0 )
             {
-                if( i2 < common.Argc - 1 )
+                if( i2 < Common.Argc - 1 )
                 {
-                    string ipaddr = common.Argv( i2 + 1 );
+                    string ipaddr = Common.Argv( i2 + 1 );
                     if( !IPAddress.TryParse( ipaddr, out _MyAddress ) )
                         sys.Error( "{0} is not a valid IP address!", ipaddr );
                     net.MyTcpIpAddress = ipaddr;

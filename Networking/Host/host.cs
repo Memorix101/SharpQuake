@@ -179,21 +179,21 @@ namespace SharpQuake
 
         private static quakeparms_t _Params; // quakeparms_t host_parms;
 
-        private static cvar _Sys_TickRate; // = {"sys_ticrate","0.05"};
-        private static cvar _Developer; // {"developer","0"};
-        private static cvar _FrameRate;// = {"host_framerate","0"};	// set for slow motion
-        private static cvar _Speeds;// = {"host_speeds","0"};			// set for running times
-        private static cvar _ServerProfile;// = {"serverprofile","0"};
-        private static cvar _FragLimit;// = {"fraglimit","0",false,true};
-        private static cvar _TimeLimit;// = {"timelimit","0",false,true};
-        private static cvar _Teamplay;// = {"teamplay","0",false,true};
-        private static cvar _SameLevel;// = {"samelevel","0"};
-        private static cvar _NoExit; // = {"noexit","0",false,true};
-        private static cvar _Skill;// = {"skill","1"};						// 0 - 3
-        private static cvar _Deathmatch;// = {"deathmatch","0"};			// 0, 1, or 2
-        private static cvar _Coop;// = {"coop","0"};			// 0 or 1
-        private static cvar _Pausable;// = {"pausable","1"};
-        private static cvar _Temp1;// = {"temp1","0"};
+        private static CVar _Sys_TickRate; // = {"sys_ticrate","0.05"};
+        private static CVar _Developer; // {"developer","0"};
+        private static CVar _FrameRate;// = {"host_framerate","0"};	// set for slow motion
+        private static CVar _Speeds;// = {"host_speeds","0"};			// set for running times
+        private static CVar _ServerProfile;// = {"serverprofile","0"};
+        private static CVar _FragLimit;// = {"fraglimit","0",false,true};
+        private static CVar _TimeLimit;// = {"timelimit","0",false,true};
+        private static CVar _Teamplay;// = {"teamplay","0",false,true};
+        private static CVar _SameLevel;// = {"samelevel","0"};
+        private static CVar _NoExit; // = {"noexit","0",false,true};
+        private static CVar _Skill;// = {"skill","1"};						// 0 - 3
+        private static CVar _Deathmatch;// = {"deathmatch","0"};			// 0, 1, or 2
+        private static CVar _Coop;// = {"coop","0"};			// 0 or 1
+        private static CVar _Pausable;// = {"pausable","1"};
+        private static CVar _Temp1;// = {"temp1","0"};
 
         private static bool _IsInitialized; //extern	qboolean	host_initialized;		// true if into command execution
         private static int _FrameCount; //extern	int			host_framecount;	// incremented every frame, never reset
@@ -272,13 +272,13 @@ namespace SharpQuake
 
             Cache.Init( 1024 * 1024 * 512 ); // debug
             Cbuf.Init();
-            cmd.Init();
+            Command.Init();
             view.Init();
             chase.Init();
             InitVCR( parms );
-            common.Init( parms.basedir, parms.argv );
+            Common.Init( parms.basedir, parms.argv );
             InitLocal();
-            wad.LoadWadFile( "gfx.wad" );
+            Wad.LoadWadFile( "gfx.wad" );
             Key.Init();
             Con.Init();
             menu.Init();
@@ -544,13 +544,13 @@ namespace SharpQuake
             // config.cfg cvars
             if( _IsInitialized & !host.IsDedicated )
             {
-                string path = Path.Combine( common.GameDir, "config.cfg" );
+                string path = Path.Combine( Common.GameDir, "config.cfg" );
                 using( FileStream fs = sys.FileOpenWrite( path, true ) )
                 {
                     if( fs != null )
                     {
                         Key.WriteBindings( fs );
-                        cvar.WriteVariables( fs );
+                        CVar.WriteVariables( fs );
                     }
                 }
             }
@@ -563,21 +563,21 @@ namespace SharpQuake
 
             if( _Sys_TickRate == null )
             {
-                _Sys_TickRate = new cvar( "sys_ticrate", "0.05" );
-                _Developer = new cvar( "developer", "0" );
-                _FrameRate = new cvar( "host_framerate", "0" ); // set for slow motion
-                _Speeds = new cvar( "host_speeds", "0" );	// set for running times
-                _ServerProfile = new cvar( "serverprofile", "0" );
-                _FragLimit = new cvar( "fraglimit", "0", false, true );
-                _TimeLimit = new cvar( "timelimit", "0", false, true );
-                _Teamplay = new cvar( "teamplay", "0", false, true );
-                _SameLevel = new cvar( "samelevel", "0" );
-                _NoExit = new cvar( "noexit", "0", false, true );
-                _Skill = new cvar( "skill", "1" ); // 0 - 3
-                _Deathmatch = new cvar( "deathmatch", "0" ); // 0, 1, or 2
-                _Coop = new cvar( "coop", "0" ); // 0 or 1
-                _Pausable = new cvar( "pausable", "1" );
-                _Temp1 = new cvar( "temp1", "0" );
+                _Sys_TickRate = new CVar( "sys_ticrate", "0.05" );
+                _Developer = new CVar( "developer", "0" );
+                _FrameRate = new CVar( "host_framerate", "0" ); // set for slow motion
+                _Speeds = new CVar( "host_speeds", "0" );	// set for running times
+                _ServerProfile = new CVar( "serverprofile", "0" );
+                _FragLimit = new CVar( "fraglimit", "0", false, true );
+                _TimeLimit = new CVar( "timelimit", "0", false, true );
+                _Teamplay = new CVar( "teamplay", "0", false, true );
+                _SameLevel = new CVar( "samelevel", "0" );
+                _NoExit = new CVar( "noexit", "0", false, true );
+                _Skill = new CVar( "skill", "1" ); // 0 - 3
+                _Deathmatch = new CVar( "deathmatch", "0" ); // 0, 1, or 2
+                _Coop = new CVar( "coop", "0" ); // 0 or 1
+                _Pausable = new CVar( "pausable", "1" );
+                _Temp1 = new CVar( "temp1", "0" );
             }
 
             FindMaxClients();
@@ -595,13 +595,13 @@ namespace SharpQuake
 
             svs.maxclients = 1;
 
-            int i = common.CheckParm( "-dedicated" );
+            int i = Common.CheckParm( "-dedicated" );
             if( i > 0 )
             {
                 cls.state = cactive_t.ca_dedicated;
-                if( i != ( common.Argc - 1 ) )
+                if( i != ( Common.Argc - 1 ) )
                 {
-                    svs.maxclients = common.atoi( common.Argv( i + 1 ) );
+                    svs.maxclients = Common.atoi( Common.Argv( i + 1 ) );
                 }
                 else
                     svs.maxclients = 8;
@@ -609,13 +609,13 @@ namespace SharpQuake
             else
                 cls.state = cactive_t.ca_disconnected;
 
-            i = common.CheckParm( "-listen" );
+            i = Common.CheckParm( "-listen" );
             if( i > 0 )
             {
                 if( cls.state == cactive_t.ca_dedicated )
                     sys.Error( "Only one of -dedicated or -listen can be specified" );
-                if( i != ( common.Argc - 1 ) )
-                    svs.maxclients = common.atoi( common.Argv( i + 1 ) );
+                if( i != ( Common.Argc - 1 ) )
+                    svs.maxclients = Common.atoi( Common.Argv( i + 1 ) );
                 else
                     svs.maxclients = 8;
             }
@@ -632,16 +632,16 @@ namespace SharpQuake
                 svs.clients[i] = new client_t();
 
             if( svs.maxclients > 1 )
-                cvar.Set( "deathmatch", 1.0f );
+                CVar.Set( "deathmatch", 1.0f );
             else
-                cvar.Set( "deathmatch", 0.0f );
+                CVar.Set( "deathmatch", 0.0f );
         }
 
         private static void InitVCR( quakeparms_t parms )
         {
-            if( common.HasParam( "-playback" ) )
+            if( Common.HasParam( "-playback" ) )
             {
-                if( common.Argc != 2 )
+                if( Common.Argc != 2 )
                     sys.Error( "No other parameters allowed with -playback\n" );
 
                 Stream file = sys.FileOpenRead( "quake.vcr" );
@@ -661,26 +661,26 @@ namespace SharpQuake
                 {
                     argv[i] = sys.ReadString( _VcrReader );
                 }
-                common.Args = argv;
+                Common.Args = argv;
                 parms.argv = argv;
             }
 
-            int n = common.CheckParm( "-record" );
+            int n = Common.CheckParm( "-record" );
             if( n != 0 )
             {
                 Stream file = sys.FileOpenWrite( "quake.vcr" ); // vcrFile = Sys_FileOpenWrite("quake.vcr");
                 _VcrWriter = new BinaryWriter( file, Encoding.ASCII );
 
                 _VcrWriter.Write( VCR_SIGNATURE ); //  Sys_FileWrite(vcrFile, &i, sizeof(int));
-                _VcrWriter.Write( common.Argc - 1 );
-                for( int i = 1; i < common.Argc; i++ )
+                _VcrWriter.Write( Common.Argc - 1 );
+                for( int i = 1; i < Common.Argc; i++ )
                 {
                     if( i == n )
                     {
                         sys.WriteString( _VcrWriter, "-playback" );
                         continue;
                     }
-                    sys.WriteString( _VcrWriter, common.Argv( i ) );
+                    sys.WriteString( _VcrWriter, Common.Argv( i ) );
                 }
             }
         }
@@ -759,7 +759,7 @@ namespace SharpQuake
                 client.DecayLights();
             }
             else
-                snd.Update( ref common.ZeroVector, ref common.ZeroVector, ref common.ZeroVector, ref common.ZeroVector );
+                snd.Update( ref Common.ZeroVector, ref Common.ZeroVector, ref Common.ZeroVector, ref Common.ZeroVector );
 
             cd_audio.Update();
 

@@ -45,7 +45,7 @@ namespace SharpQuake
             _BytesAllocated = 0;
             _Head = new CacheEntry( true );
 
-            cmd.Add( "flush", Flush );
+            Command.Add( "flush", Flush );
         }
 
         // Cache_Check
