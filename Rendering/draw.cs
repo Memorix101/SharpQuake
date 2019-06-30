@@ -453,6 +453,49 @@ namespace SharpQuake
             return tex.texnum;
         }
 
+
+        /// <summary>
+        /// GL_LoadTexture32
+        /// </summary>
+        public static int LoadTexture( string identifier, int width, int height, System.Drawing.Bitmap bitmap, bool mipmap, bool alpha, string owner = "" )
+        {
+            // see if the texture is allready present
+            if ( !String.IsNullOrEmpty( identifier ) )
+            {
+                for ( int i = 0; i < _NumTextures; i++ )
+                {
+                    gltexture_t glt = _glTextures[i];
+                    if ( glt.identifier == identifier && glt.owner == owner )
+                    {
+                        if ( width != glt.width || height != glt.height )
+                            sys.Error( "GL_LoadTexture: cache mismatch!" );
+                        return glt.texnum;
+                    }
+                }
+            }
+            if ( _NumTextures == _glTextures.Length )
+                sys.Error( "GL_LoadTexture: no more texture slots available!" );
+
+            gltexture_t tex = new gltexture_t( );
+            _glTextures[_NumTextures] = tex;
+            _NumTextures++;
+
+            tex.identifier = identifier;
+            tex.owner = owner;
+            tex.texnum = _TextureExtensionNumber;
+            tex.width = width;
+            tex.height = height;
+            tex.mipmap = mipmap;
+
+            Bind( tex.texnum );
+
+            UploadBitmap( bitmap, width, height, mipmap, alpha );
+
+            _TextureExtensionNumber++;
+
+            return tex.texnum;
+        }
+
         // Draw_Character
         //
         // Draws one 8*8 graphics character with 0 being transparent.
@@ -912,6 +955,103 @@ Done:
                 SetTextureFilters( _MinFilter, _MagFilter );
             else
                 SetTextureFilters( (TextureMinFilter)_MagFilter, _MagFilter );
+        }
+
+        // GL_UploadBitmap
+        private static void UploadBitmap( System.Drawing.Bitmap bitmap, int width, int height, bool mipmap, bool alpha )
+        {
+            //bitmap.Save( "F:\\Test.png" );
+
+            //bitmap.Save( ms, System.Drawing.Imaging.ImageFormat.MemoryBmp );
+
+            var data = bitmap.LockBits( new System.Drawing.Rectangle( 0, 0, bitmap.Width, bitmap.Height ),
+       System.Drawing.Imaging.ImageLockMode.ReadOnly, System.Drawing.Imaging.PixelFormat.Format32bppArgb );
+
+            GL.TexImage2D( TextureTarget.Texture2D, 0, PixelInternalFormat.Rgba, data.Width, data.Height, 0,
+                PixelFormat.Bgra, PixelType.UnsignedByte, data.Scan0 );
+
+            bitmap.UnlockBits( data );
+
+            GL.GenerateMipmap( GenerateMipmapTarget.Texture2D );
+        //int scaled_width, scaled_height;
+
+        //for ( scaled_width = 1; scaled_width < width; scaled_width <<= 1 )
+        //    ;
+        //for ( scaled_height = 1; scaled_height < height; scaled_height <<= 1 )
+        //    ;
+
+        //scaled_width >>= ( int ) _glPicMip.Value;
+        //scaled_height >>= ( int ) _glPicMip.Value;
+
+        //if ( scaled_width > _glMaxSize.Value )
+        //    scaled_width = ( int ) _glMaxSize.Value;
+        //if ( scaled_height > _glMaxSize.Value )
+        //    scaled_height = ( int ) _glMaxSize.Value;
+
+        //PixelInternalFormat samples = alpha ? _AlphaFormat : _SolidFormat;
+        //uint[] scaled;
+
+        //_Texels += scaled_width * scaled_height;
+
+        //if ( scaled_width == width && scaled_height == height )
+        //{
+        //    if ( !mipmap )
+        //    {
+        //        GCHandle h2 = GCHandle.Alloc( data, GCHandleType.Pinned );
+        //        try
+        //        {
+        //            GL.TexImage2D( TextureTarget.Texture2D, 0, samples, scaled_width, scaled_height, 0,
+        //                PixelFormat.Rgba, PixelType.UnsignedByte, h2.AddrOfPinnedObject( ) );
+        //        }
+        //        finally
+        //        {
+        //            h2.Free( );
+        //        }
+        //        goto Done;
+        //    }
+        //    scaled = new uint[scaled_width * scaled_height]; // uint[1024 * 512];
+        //    data.CopyTo( scaled, 0 );
+        //}
+        //else
+        //    ResampleTexture( data, width, height, out scaled, scaled_width, scaled_height );
+
+        //GCHandle h = GCHandle.Alloc( scaled, GCHandleType.Pinned );
+        //try
+        //{
+        //    IntPtr ptr = h.AddrOfPinnedObject( );
+        //    GL.TexImage2D( TextureTarget.Texture2D, 0, samples, scaled_width, scaled_height, 0,
+        //        PixelFormat.Rgba, PixelType.UnsignedByte, ptr );
+        //    ErrorCode err = GL.GetError( ); // debug
+        //    if ( mipmap )
+        //    {
+        //        int miplevel = 0;
+        //        while ( scaled_width > 1 || scaled_height > 1 )
+        //        {
+        //            MipMap( scaled, scaled_width, scaled_height );
+        //            scaled_width >>= 1;
+        //            scaled_height >>= 1;
+        //            if ( scaled_width < 1 )
+        //                scaled_width = 1;
+        //            if ( scaled_height < 1 )
+        //                scaled_height = 1;
+        //            miplevel++;
+        //            GL.TexImage2D( TextureTarget.Texture2D, miplevel, samples, scaled_width, scaled_height, 0,
+        //                PixelFormat.Rgba, PixelType.UnsignedByte, ptr );
+        //        }
+        //    }
+        //}
+        //finally
+        //{
+        //    h.Free( );
+        //}
+
+        Done:
+            ;
+
+            if ( mipmap )
+                SetTextureFilters( _MinFilter, _MagFilter );
+            else
+                SetTextureFilters( ( TextureMinFilter ) _MagFilter, _MagFilter );
         }
 
         // GL_ResampleTexture

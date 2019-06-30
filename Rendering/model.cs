@@ -21,6 +21,8 @@
 /// </copyright>
 
 using System;
+using System.IO;
+using System.Runtime.InteropServices;
 using System.Text;
 using OpenTK;
 
@@ -993,27 +995,78 @@ namespace SharpQuake
                 _LoadModel.textures[i] = tx;
 
                 tx.name = common.GetString( mt.name );//   memcpy (tx->name, mt->name, sizeof(tx.name));
-                tx.width = mt.width;
-                tx.height = mt.height;
-                for( int j = 0; j < bsp_file.MIPLEVELS; j++ )
-                    tx.offsets[j] = (int)mt.offsets[j] - miptex_t.SizeInBytes;
-                // the pixels immediately follow the structures
-                tx.pixels = new byte[pixels];
-#warning BlockCopy tries to copy data over the bounds of _ModBase if certain mods are loaded. Needs proof fix!
-                if (mtOffset + miptex_t.SizeInBytes + pixels <= _ModBase.Length)
-                    Buffer.BlockCopy(_ModBase, mtOffset + miptex_t.SizeInBytes, tx.pixels, 0, pixels);
+
+                var tgaName = $"textures/{tx.name}.tga";
+
+                var file = common.LoadFile( tgaName );
+
+                if ( file != null )
+                {
+                    byte[] tgapixels = null;
+
+                    using ( var reader = new System.IO.BinaryReader( new MemoryStream( file ) ) )
+                    {
+                        var tga = new TgaLib.TgaImage( reader );
+                        System.Windows.Media.Imaging.BitmapSource source = tga.GetBitmap( );
+
+                        var bmp = new System.Drawing.Bitmap( source.PixelWidth, source.PixelHeight, System.Drawing.Imaging.PixelFormat.Format32bppPArgb );
+                        System.Drawing.Imaging.BitmapData data = bmp.LockBits(
+                          new System.Drawing.Rectangle( System.Drawing.Point.Empty, bmp.Size ),
+                          System.Drawing.Imaging.ImageLockMode.WriteOnly,
+                          System.Drawing.Imaging.PixelFormat.Format24bppRgb );
+                        source.CopyPixels(
+                          System.Windows.Int32Rect.Empty,
+                          data.Scan0,
+                          data.Height * data.Stride,
+                          data.Stride );
+                        bmp.UnlockBits( data );
+
+                        tx.width = ( UInt32 ) tga.Header.Width;
+                        tx.height = ( UInt32 ) tga.Header.Height;
+
+                        tx.scaleX = ( ( Single ) tx.width / ( Single ) mt.width );
+                        tx.scaleY = ( ( Single ) tx.height / ( Single ) mt.height );
+
+                        mt.width = tx.width;
+                        mt.height = tx.height;
+
+                        tx.rawBitmap = bmp;
+                    }
+                }
                 else
                 {
-                    Buffer.BlockCopy(_ModBase, mtOffset, tx.pixels, 0, pixels);
-                    Con.Print("Texture info of {0} truncated to fit in bounds of _ModBase\n", _LoadModel.name);
+                    tx.width = mt.width;
+                    tx.height = mt.height;
+                    tx.scaleX = 1f;
+                    tx.scaleX = 1f;
+                    for ( int j = 0; j < bsp_file.MIPLEVELS; j++ )
+                        tx.offsets[j] = (int)mt.offsets[j] - miptex_t.SizeInBytes;
+                    // the pixels immediately follow the structures
+                    tx.pixels = new byte[pixels];
+    #warning BlockCopy tries to copy data over the bounds of _ModBase if certain mods are loaded. Needs proof fix!
+                    if (mtOffset + miptex_t.SizeInBytes + pixels <= _ModBase.Length)
+                        Buffer.BlockCopy(_ModBase, mtOffset + miptex_t.SizeInBytes, tx.pixels, 0, pixels);
+                    else
+                    {
+                        Buffer.BlockCopy(_ModBase, mtOffset, tx.pixels, 0, pixels);
+                        Con.Print("Texture info of {0} truncated to fit in bounds of _ModBase\n", _LoadModel.name);
+                    }
                 }
 
-                if( tx.name != null && tx.name.StartsWith( "sky" ) )// !Q_strncmp(mt->name,"sky",3))
+                if ( tx.name != null && tx.name.StartsWith( "sky" ) )// !Q_strncmp(mt->name,"sky",3))
                     render.InitSky( tx );
                 else
                 {
-                    tx.gl_texturenum = Drawer.LoadTexture( tx.name, (int)tx.width, (int)tx.height,
-                        new ByteArraySegment( tx.pixels ), true, false, _LoadModel.name );
+                    if ( tx.rawBitmap == null )
+                    {
+                        tx.gl_texturenum = Drawer.LoadTexture( tx.name, ( int ) tx.width, ( int ) tx.height,
+                            new ByteArraySegment( tx.pixels ), true, false, _LoadModel.name );
+                    }
+                    else
+                    {
+                        tx.gl_texturenum = Drawer.LoadTexture( tx.name, ( int ) tx.width, ( int ) tx.height,
+                            tx.rawBitmap, true, false, _LoadModel.name );
+                    }
                 }
             }
 

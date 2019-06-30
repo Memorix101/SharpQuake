@@ -25,6 +25,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.IO.Compression;
+using System.Linq;
 using System.Net;
 using System.Net.Sockets;
 using System.Runtime.InteropServices;
@@ -1067,10 +1068,8 @@ namespace SharpQuake
             //
             // add any pk3 files in the format pak0.pk3 pak1.pk3, ...
             //
-            for ( int i = 0; i < 10; i++ )
+            foreach ( var pk3file in Directory.GetFiles( dir, "*.pk3" ).OrderByDescending( f => f ) )
             {
-                string pk3file = String.Format( "{0}/PAK{1}.PK3", dir, i );
-
                 FileStream file = sys.FileOpenRead( pk3file );
 
                 if ( file != null )

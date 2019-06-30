@@ -734,7 +734,7 @@ namespace SharpQuake
             if( ( fa.flags & Surf.SURF_UNDERWATER ) != 0 )
                 DrawGLWaterPoly( fa.polys );
             else
-                DrawGLPoly( fa.polys );
+                DrawGLPoly( fa.polys, t.scaleX, t.scaleY );
 
             // add the poly to the proper lightmap chain
 
@@ -787,13 +787,13 @@ namespace SharpQuake
                 theRect.h = (byte)( ( fa.light_t - theRect.t ) + tmax );
         }
 
-        private static void DrawGLPoly( glpoly_t p )
+        private static void DrawGLPoly( glpoly_t p, float scaleX = 1f, float scaleY = 1f )
         {
             GL.Begin( PrimitiveType.Polygon );
             for( int i = 0; i < p.numverts; i++ )
             {
                 float[] v = p.verts[i];
-                GL.TexCoord2( v[3], v[4] );
+                GL.TexCoord2( v[3] * scaleX, v[4] * scaleY );
                 GL.Vertex3( v );
             }
             GL.End();

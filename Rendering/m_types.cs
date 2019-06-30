@@ -105,6 +105,9 @@ namespace SharpQuake
         public texture_t alternate_anims;	// bmodels in frmae 1 use these
         public int[] offsets; //[MIPLEVELS];		// four mip maps stored
         public byte[] pixels; // added by Uze
+        public System.Drawing.Bitmap rawBitmap;
+        public float scaleX;
+        public float scaleY;
 
         public texture_t()
         {
