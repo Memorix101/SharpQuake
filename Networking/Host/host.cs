@@ -545,7 +545,7 @@ namespace SharpQuake
             // config.cfg cvars
             if( _IsInitialized & !host.IsDedicated )
             {
-                var path = Path.Combine( Common.GameDir, "config.cfg" );
+                var path = Path.Combine( FileSystem.GameDir, "config.cfg" );
                 using( FileStream fs = FileSystem.OpenWrite( path, true ) )
                 {
                     if( fs != null )
@@ -596,13 +596,13 @@ namespace SharpQuake
 
             svs.maxclients = 1;
 
-            var i = Common.CheckParm( "-dedicated" );
+            var i = CommandLine.CheckParm( "-dedicated" );
             if( i > 0 )
             {
                 cls.state = cactive_t.ca_dedicated;
-                if( i != ( Common.Argc - 1 ) )
+                if( i != ( CommandLine.Argc - 1 ) )
                 {
-                    svs.maxclients = Common.atoi( Common.Argv( i + 1 ) );
+                    svs.maxclients = MathLib.atoi( CommandLine.Argv( i + 1 ) );
                 }
                 else
                     svs.maxclients = 8;
@@ -610,13 +610,13 @@ namespace SharpQuake
             else
                 cls.state = cactive_t.ca_disconnected;
 
-            i = Common.CheckParm( "-listen" );
+            i = CommandLine.CheckParm( "-listen" );
             if( i > 0 )
             {
                 if( cls.state == cactive_t.ca_dedicated )
                     Utilities.Error( "Only one of -dedicated or -listen can be specified" );
-                if( i != ( Common.Argc - 1 ) )
-                    svs.maxclients = Common.atoi( Common.Argv( i + 1 ) );
+                if( i != ( CommandLine.Argc - 1 ) )
+                    svs.maxclients = MathLib.atoi( CommandLine.Argv( i + 1 ) );
                 else
                     svs.maxclients = 8;
             }
@@ -640,9 +640,9 @@ namespace SharpQuake
 
         private static void InitVCR( quakeparms_t parms )
         {
-            if( Common.HasParam( "-playback" ) )
+            if( CommandLine.HasParam( "-playback" ) )
             {
-                if( Common.Argc != 2 )
+                if( CommandLine.Argc != 2 )
                     Utilities.Error( "No other parameters allowed with -playback\n" );
 
                 Stream file = FileSystem.OpenRead( "quake.vcr" );
@@ -662,26 +662,26 @@ namespace SharpQuake
                 {
                     argv[i] = Utilities.ReadString( _VcrReader );
                 }
-                Common.Args = argv;
+                CommandLine.Args = argv;
                 parms.argv = argv;
             }
 
-            var n = Common.CheckParm( "-record" );
+            var n = CommandLine.CheckParm( "-record" );
             if( n != 0 )
             {
                 Stream file = FileSystem.OpenWrite( "quake.vcr" ); // vcrFile = Sys_FileOpenWrite("quake.vcr");
                 _VcrWriter = new BinaryWriter( file, Encoding.ASCII );
 
                 _VcrWriter.Write( VCR_SIGNATURE ); //  Sys_FileWrite(vcrFile, &i, sizeof(int));
-                _VcrWriter.Write( Common.Argc - 1 );
-                for( var i = 1; i < Common.Argc; i++ )
+                _VcrWriter.Write( CommandLine.Argc - 1 );
+                for( var i = 1; i < CommandLine.Argc; i++ )
                 {
                     if( i == n )
                     {
                         Utilities.WriteString( _VcrWriter, "-playback" );
                         continue;
                     }
-                    Utilities.WriteString( _VcrWriter, Common.Argv( i ) );
+                    Utilities.WriteString( _VcrWriter, CommandLine.Argv( i ) );
                 }
             }
         }
@@ -760,7 +760,7 @@ namespace SharpQuake
                 client.DecayLights();
             }
             else
-                snd.Update( ref Common.ZeroVector, ref Common.ZeroVector, ref Common.ZeroVector, ref Common.ZeroVector );
+                snd.Update( ref Utilities.ZeroVector, ref Utilities.ZeroVector, ref Utilities.ZeroVector, ref Utilities.ZeroVector );
 
             cd_audio.Update();
 

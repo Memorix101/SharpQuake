@@ -98,7 +98,7 @@ namespace SharpQuake
                 var cmdAddr = Command.Argv( 1 );
 
                 foreach( qsocket_t s in net.ActiveSockets )
-                    if( Common.SameText( s.address, cmdAddr ) )
+                    if( Utilities.SameText( s.address, cmdAddr ) )
                     {
                         sock = s;
                         break;
@@ -106,7 +106,7 @@ namespace SharpQuake
 
                 if( sock == null )
                     foreach( qsocket_t s in net.FreeSockets )
-                        if( Common.SameText( s.address, cmdAddr ) )
+                        if( Utilities.SameText( s.address, cmdAddr ) )
                         {
                             sock = s;
                             break;
@@ -154,7 +154,7 @@ namespace SharpQuake
             _DriverLevel = Array.IndexOf( net.Drivers, this );
             Command.Add( "net_stats", Stats_f );
 
-            if( Common.HasParam( "-nolan" ) )
+            if( CommandLine.HasParam( "-nolan" ) )
                 return;
 
             foreach( INetLanDriver driver in net.LanDrivers )
@@ -274,7 +274,7 @@ namespace SharpQuake
                 net.Message.WriteByte( net.ActiveConnections );
                 net.Message.WriteByte( server.svs.maxclients );
                 net.Message.WriteByte( net.NET_PROTOCOL_VERSION );
-                Common.WriteInt( net.Message.Data, 0, EndianHelper.BigLong( NetFlags.NETFLAG_CTL |
+                Utilities.WriteInt( net.Message.Data, 0, EndianHelper.BigLong( NetFlags.NETFLAG_CTL |
                     ( net.Message.Length & NetFlags.NETFLAG_LENGTH_MASK ) ) );
                 net.LanDriver.Write( acceptsock, net.Message.Data, net.Message.Length, clientaddr );
                 net.Message.Clear();
@@ -309,7 +309,7 @@ namespace SharpQuake
                 net.Message.WriteLong( ( Int32 ) client.edict.v.frags );
                 net.Message.WriteLong( ( Int32 ) ( net.Time - client.netconnection.connecttime ) );
                 net.Message.WriteString( client.netconnection.address );
-                Common.WriteInt( net.Message.Data, 0, EndianHelper.BigLong( NetFlags.NETFLAG_CTL |
+                Utilities.WriteInt( net.Message.Data, 0, EndianHelper.BigLong( NetFlags.NETFLAG_CTL |
                     ( net.Message.Length & NetFlags.NETFLAG_LENGTH_MASK ) ) );
                 net.LanDriver.Write( acceptsock, net.Message.Data, net.Message.Length, clientaddr );
                 net.Message.Clear();
@@ -351,7 +351,7 @@ namespace SharpQuake
                     net.Message.WriteString( var.Name );
                     net.Message.WriteString( var.String );
                 }
-                Common.WriteInt( net.Message.Data, 0, EndianHelper.BigLong( NetFlags.NETFLAG_CTL |
+                Utilities.WriteInt( net.Message.Data, 0, EndianHelper.BigLong( NetFlags.NETFLAG_CTL |
                     ( net.Message.Length & NetFlags.NETFLAG_LENGTH_MASK ) ) );
                 net.LanDriver.Write( acceptsock, net.Message.Data, net.Message.Length, clientaddr );
                 net.Message.Clear();
@@ -372,7 +372,7 @@ namespace SharpQuake
                 net.Message.WriteLong( 0 );
                 net.Message.WriteByte( CCRep.CCREP_REJECT );
                 net.Message.WriteString( "Incompatible version.\n" );
-                Common.WriteInt( net.Message.Data, 0, EndianHelper.BigLong( NetFlags.NETFLAG_CTL |
+                Utilities.WriteInt( net.Message.Data, 0, EndianHelper.BigLong( NetFlags.NETFLAG_CTL |
                     ( net.Message.Length & NetFlags.NETFLAG_LENGTH_MASK ) ) );
                 net.LanDriver.Write( acceptsock, net.Message.Data, net.Message.Length, clientaddr );
                 net.Message.Clear();
@@ -419,7 +419,7 @@ namespace SharpQuake
                         net.Message.WriteByte( CCRep.CCREP_ACCEPT );
                         EndPoint newaddr = s.socket.LocalEndPoint; //dfunc.GetSocketAddr(s.socket, &newaddr);
                         net.Message.WriteLong( net.LanDriver.GetSocketPort( newaddr ) );
-                        Common.WriteInt( net.Message.Data, 0, EndianHelper.BigLong( NetFlags.NETFLAG_CTL |
+                        Utilities.WriteInt( net.Message.Data, 0, EndianHelper.BigLong( NetFlags.NETFLAG_CTL |
                             ( net.Message.Length & NetFlags.NETFLAG_LENGTH_MASK ) ) );
                         net.LanDriver.Write( acceptsock, net.Message.Data, net.Message.Length, clientaddr );
                         net.Message.Clear();
@@ -442,7 +442,7 @@ namespace SharpQuake
                 net.Message.WriteLong( 0 );
                 net.Message.WriteByte( CCRep.CCREP_REJECT );
                 net.Message.WriteString( "Server is full.\n" );
-                Common.WriteInt( net.Message.Data, 0, EndianHelper.BigLong( NetFlags.NETFLAG_CTL |
+                Utilities.WriteInt( net.Message.Data, 0, EndianHelper.BigLong( NetFlags.NETFLAG_CTL |
                     ( net.Message.Length & NetFlags.NETFLAG_LENGTH_MASK ) ) );
                 net.LanDriver.Write( acceptsock, net.Message.Data, net.Message.Length, clientaddr );
                 net.Message.Clear();
@@ -478,7 +478,7 @@ namespace SharpQuake
             net.Message.WriteByte( CCRep.CCREP_ACCEPT );
             EndPoint newaddr2 = newsock.LocalEndPoint;// dfunc.GetSocketAddr(newsock, &newaddr);
             net.Message.WriteLong( net.LanDriver.GetSocketPort( newaddr2 ) );
-            Common.WriteInt( net.Message.Data, 0, EndianHelper.BigLong( NetFlags.NETFLAG_CTL |
+            Utilities.WriteInt( net.Message.Data, 0, EndianHelper.BigLong( NetFlags.NETFLAG_CTL |
                 ( net.Message.Length & NetFlags.NETFLAG_LENGTH_MASK ) ) );
             net.LanDriver.Write( acceptsock, net.Message.Data, net.Message.Length, clientaddr );
             net.Message.Clear();
@@ -765,7 +765,7 @@ namespace SharpQuake
                 net.Message.WriteByte( CCReq.CCREQ_SERVER_INFO );
                 net.Message.WriteString( "QUAKE" );
                 net.Message.WriteByte( net.NET_PROTOCOL_VERSION );
-                Common.WriteInt( net.Message.Data, 0, EndianHelper.BigLong( NetFlags.NETFLAG_CTL |
+                Utilities.WriteInt( net.Message.Data, 0, EndianHelper.BigLong( NetFlags.NETFLAG_CTL |
                     ( net.Message.Length & NetFlags.NETFLAG_LENGTH_MASK ) ) );
                 net.LanDriver.Broadcast( net.LanDriver.ControlSocket, net.Message.Data, net.Message.Length );
                 net.Message.Clear();
@@ -897,7 +897,7 @@ namespace SharpQuake
                 net.Message.WriteByte( CCReq.CCREQ_CONNECT );
                 net.Message.WriteString( "QUAKE" );
                 net.Message.WriteByte( net.NET_PROTOCOL_VERSION );
-                Common.WriteInt( net.Message.Data, 0, EndianHelper.BigLong( NetFlags.NETFLAG_CTL |
+                Utilities.WriteInt( net.Message.Data, 0, EndianHelper.BigLong( NetFlags.NETFLAG_CTL |
                     ( net.Message.Length & NetFlags.NETFLAG_LENGTH_MASK ) ) );
                 //*((int *)net_message.data) = BigLong(NETFLAG_CTL | (net_message.cursize & NETFLAG_LENGTH_MASK));
                 net.LanDriver.Write( newsock, net.Message.Data, net.Message.Length, sendaddr );

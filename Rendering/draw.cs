@@ -762,7 +762,7 @@ namespace SharpQuake
 
             for( i = 0; i < _Modes.Length; i++ )
             {
-                if( Common.SameText( _Modes[i].name, Command.Argv( 1 ) ) )
+                if( Utilities.SameText( _Modes[i].name, Command.Argv( 1 ) ) )
                     break;
             }
             if( i == _Modes.Length )

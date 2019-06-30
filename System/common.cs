@@ -62,57 +62,11 @@ namespace SharpQuake
 
     internal static class Common
     {
-        public static Boolean IsBigEndian
-        {
-            get
-            {
-                return !BitConverter.IsLittleEndian;
-            }
-        }
-
-        public static String GameDir
-        {
-            get
-            {
-                return FileSystem.GameDir;
-            }
-        }
-
         public static GameKind GameKind
         {
             get
             {
                 return _GameKind;
-            }
-        }
-
-        public static Int32 Argc
-        {
-            get
-            {
-                return _Argv.Length;
-            }
-        }
-
-        public static String[] Args
-        {
-            get
-            {
-                return _Argv;
-            }
-            set
-            {
-                _Argv = new String[value.Length];
-                value.CopyTo(_Argv, 0);
-                _Args = String.Join(" ", value);
-            }
-        }
-
-        public static String Token
-        {
-            get
-            {
-                return _Token;
             }
         }
 
@@ -124,18 +78,10 @@ namespace SharpQuake
             }
         }
 
-
         // if a packfile directory differs from this, it is assumed to be hacked
         public const Int32 PAK0_COUNT = 339;
 
         public const Int32 PAK0_CRC = 32981;
-
-        public static Vector3 ZeroVector = Vector3.Zero;
-
-        // for passing as reference
-        public static Vector3f ZeroVector3f = default(Vector3f);
-
-        private static readonly Byte[] ZeroBytes = new Byte[4096];
 
         // this graphic needs to be in the pak file to use registered features
         private static UInt16[] _Pop = new UInt16[]
@@ -157,55 +103,22 @@ namespace SharpQuake
             ,0x0000,0x0000,0x0000,0x0000,0x6500,0x0000,0x0000,0x0000
             ,0x0000,0x0000,0x0000,0x0000,0x6400,0x0000,0x0000,0x0000
         };
-
-        // for passing as reference
-        private static String[] safeargvs = new String[]
-        {
-            "-stdvid", "-nolan", "-nosound", "-nocdaudio", "-nojoy", "-nomouse", "-dibonly"
-        };
-
+        
         private static CVar _Registered;
         private static CVar _CmdLine;
-        public static String[] _Argv;
-        public static String _Args; // com_cmdline
         private static GameKind _GameKind; // qboolean		standard_quake = true, rogue, hipnotic;
-        private static Char[] _Slashes = new Char[] { '/', '\\' };
-        private static String _Token; // com_token
-
-        public static String Argv( Int32 index )
-        {
-            return _Argv[index];
-        }
-
-        // int COM_CheckParm (char *parm)
-        // Returns the position (1 to argc-1) in the program's argument list
-        // where the given parameter apears, or 0 if not present
-        public static Int32 CheckParm( String parm )
-        {
-            for ( var i = 1; i < _Argv.Length; i++)
-            {
-                if (_Argv[i].Equals(parm))
-                    return i;
-            }
-            return 0;
-        }
-
-        public static Boolean HasParam( String parm )
-        {
-            return (CheckParm(parm) > 0);
-        }
 
         // void COM_Init (char *path)
         public static void Init( String path, String[] argv)
         {
-            _Argv = argv;
+            CommandLine.Args = argv;
 
             _Registered = new CVar("registered", "0");
             _CmdLine = new CVar("cmdline", "0", false, true);
 
             Command.Add("path", FileSystem.Path_f );
 
-            Utilities.Init( path, argv );
+            CommandLine.Init( path, argv );
             FileSystem.InitFileSystem( host.Params );
 
             CheckRegistered();
@@ -214,280 +127,16 @@ namespace SharpQuake
         // void COM_InitArgv (int argc, char **argv)
         public static void InitArgv( String[] argv )
         {
-            // reconstitute the command line for the cmdline externally visible cvar
-            _Args = String.Join(" ", argv);
-            _Argv = new String[argv.Length];
-            argv.CopyTo(_Argv, 0);
-
-            var safe = false;
-            foreach ( var arg in _Argv)
-            {
-                if (arg == "-safe")
-                {
-                    safe = true;
-                    break;
-                }
-            }
-
-            if (safe)
-            {
-                // force all the safe-mode switches. Note that we reserved extra space in
-                // case we need to add these, so we don't need an overflow check
-                String[] largv = new String[_Argv.Length + safeargvs.Length];
-                _Argv.CopyTo(largv, 0);
-                safeargvs.CopyTo(largv, _Argv.Length);
-                _Argv = largv;
-            }
+            CommandLine.InitArgv( argv );
 
             _GameKind = GameKind.StandardQuake;
 
-            if (HasParam("-rogue"))
+            if ( CommandLine.HasParam( "-rogue" ) )
                 _GameKind = GameKind.Rogue;
 
-            if (HasParam("-hipnotic"))
+            if ( CommandLine.HasParam( "-hipnotic" ) )
                 _GameKind = GameKind.Hipnotic;
-
-            Utilities.InitArgv( argv );
         }
-
-        /// <summary>
-        /// COM_Parse
-        /// Parse a token out of a string
-        /// </summary>
-        public static String Parse( String data )
-        {
-            _Token = String.Empty;
-
-            if (String.IsNullOrEmpty(data))
-                return null;
-
-            // skip whitespace
-            var i = 0;
-            while (i < data.Length)
-            {
-                while (i < data.Length)
-                {
-                    if (data[i] > ' ')
-                        break;
-
-                    i++;
-                }
-
-                if (i >= data.Length)
-                    return null;
-
-                // skip // comments
-                if ((data[i] == '/') && (i + 1 < data.Length) && (data[i + 1] == '/'))
-                {
-                    while (i < data.Length && data[i] != '\n')
-                        i++;
-                }
-                else
-                    break;
-            }
-
-            if (i >= data.Length)
-                return null;
-
-            var i0 = i;
-
-            // handle quoted strings specially
-            if (data[i] == '\"')
-            {
-                i++;
-                i0 = i;
-                while (i < data.Length && data[i] != '\"')
-                    i++;
-
-                if (i == data.Length)
-                {
-                    _Token = data.Substring(i0, i - i0);
-                    return null;
-                }
-                else
-                {
-                    _Token = data.Substring(i0, i - i0);
-                    return (i + 1 < data.Length ? data.Substring(i + 1) : null);
-                }
-            }
-
-            // parse single characters
-            var c = data[i];
-            if (c == '{' || c == '}' || c == ')' || c == '(' || c == '\'' || c == ':')
-            {
-                _Token = data.Substring(i, 1);
-                return (i + 1 < data.Length ? data.Substring(i + 1) : null);
-            }
-
-            // parse a regular word
-            while (i < data.Length)
-            {
-                c = data[i];
-                if (c <= 32 || c == '{' || c == '}' || c == ')' || c == '(' || c == '\'' || c == ':')
-                {
-                    i--;
-                    break;
-                }
-                i++;
-            }
-
-            if (i == data.Length)
-            {
-                _Token = data.Substring(i0, i - i0);
-                return null;
-            }
-
-            _Token = data.Substring(i0, i - i0 + 1);
-            return (i + 1 < data.Length ? data.Substring(i + 1) : null);
-        }
-
-        public static Int32 atoi( String s )
-        {
-            if (String.IsNullOrEmpty(s))
-                return 0;
-
-            var sign = 1;
-            var result = 0;
-            var offset = 0;
-            if (s.StartsWith("-"))
-            {
-                sign = -1;
-                offset++;
-            }
-
-            var i = -1;
-
-            if (s.Length > 2)
-            {
-                i = s.IndexOf("0x", offset, 2);
-                if (i == -1)
-                {
-                    i = s.IndexOf("0X", offset, 2);
-                }
-            }
-
-            if (i == offset)
-            {
-                Int32.TryParse(s.Substring(offset + 2), System.Globalization.NumberStyles.HexNumber, null, out result);
-            }
-            else
-            {
-                i = s.IndexOf('\'', offset, 1);
-                if (i != -1)
-                {
-                    result = ( Byte ) s[i + 1];
-                }
-                else
-                    Int32.TryParse(s.Substring(offset), out result);
-            }
-            return sign * result;
-        }
-
-        public static Single atof( String s )
-        {
-            Single v;
-            Single.TryParse(s, NumberStyles.Float, CultureInfo.InvariantCulture.NumberFormat, out v);
-            return v;
-        }
-
-        public static Boolean SameText( String a, String b )
-        {
-            return (String.Compare(a, b, true) == 0);
-        }
-
-        public static Boolean SameText( String a, String b, Int32 count )
-        {
-            return (String.Compare(a, 0, b, 0, count, true) == 0);
-        }
-
-        public static void FillArray<T>(T[] dest, T value)
-        {
-            var elementSizeInBytes = Marshal.SizeOf(typeof(T));
-            var blockSize = Math.Min(dest.Length, 4096 / elementSizeInBytes);
-            for ( var i = 0; i < blockSize; i++)
-                dest[i] = value;
-
-            var blockSizeInBytes = blockSize * elementSizeInBytes;
-            var offset = blockSizeInBytes;
-            var lengthInBytes = Buffer.ByteLength(dest);
-            while (true)// offset + blockSize <= lengthInBytes)
-            {
-                var left = lengthInBytes - offset;
-                if (left < blockSizeInBytes)
-                    blockSizeInBytes = left;
-
-                if (blockSizeInBytes <= 0)
-                    break;
-
-                Buffer.BlockCopy(dest, 0, dest, offset, blockSizeInBytes);
-                offset += blockSizeInBytes;
-            }
-        }
-
-        public static void ZeroArray<T>(T[] dest, Int32 startIndex, Int32 length )
-        {
-            var elementBytes = Marshal.SizeOf(typeof(T));
-            var offset = startIndex * elementBytes;
-            var sizeInBytes = dest.Length * elementBytes - offset;
-            while (true)
-            {
-                var blockSize = sizeInBytes - offset;
-                if (blockSize > ZeroBytes.Length)
-                    blockSize = ZeroBytes.Length;
-
-                if (blockSize <= 0)
-                    break;
-
-                Buffer.BlockCopy(ZeroBytes, 0, dest, offset, blockSize);
-                offset += blockSize;
-            }
-        }
-
-        public static String Copy( String src, Int32 maxLength )
-        {
-            if (src == null)
-                return null;
-
-            return (src.Length > maxLength ? src.Substring(1, maxLength) : src);
-        }
-
-        public static void Copy( Single[] src, out Vector3 dest)
-        {
-            dest.X = src[0];
-            dest.Y = src[1];
-            dest.Z = src[2];
-        }
-
-        public static void Copy(ref Vector3 src, Single[] dest)
-        {
-            dest[0] = src.X;
-            dest[1] = src.Y;
-            dest[2] = src.Z;
-        }
-
-        public static String GetString( Byte[] src)
-        {
-            var count = 0;
-            while (count < src.Length && src[count] != 0)
-                count++;
-
-            return (count > 0 ? Encoding.ASCII.GetString(src, 0, count) : String.Empty);
-        }
-
-        public static Vector3 ToVector(ref Vector3f v)
-        {
-            return new Vector3(v.x, v.y, v.z);
-        }
-
-        public static void WriteInt( Byte[] dest, Int32 offset, Int32 value )
-        {
-            Union4b u = Union4b.Empty;
-            u.i0 = value;
-            dest[offset + 0] = u.b0;
-            dest[offset + 1] = u.b1;
-            dest[offset + 2] = u.b2;
-            dest[offset + 3] = u.b3;
-        }    
 
         // COM_CheckRegistered
         //
@@ -516,7 +165,7 @@ namespace SharpQuake
                     Utilities.Error("Corrupted data file.");
             }
 
-            CVar.Set("cmdline", _Args);
+            CVar.Set("cmdline", CommandLine._Args);
             CVar.Set("registered", "1");
             FileSystem._StaticRegistered = true;
             Con.Print("Playing registered version.\n");

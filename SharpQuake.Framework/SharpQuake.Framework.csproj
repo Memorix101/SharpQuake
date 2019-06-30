@@ -58,6 +58,7 @@
     <Compile Include="Rendering\GLMode.cs" />
     <Compile Include="Rendering\GLPic.cs" />
     <Compile Include="Rendering\GLTexture.cs" />
+    <Compile Include="System\CommandLine.cs" />
     <Compile Include="System\ConsoleWrapper.cs" />
     <Compile Include="System\DisposableWrapper.cs" />
     <Compile Include="System\Edict.cs" />
@@ -82,6 +83,7 @@
     <Compile Include="Definitions\QDef.cs" />
     <Compile Include="Data\SwapHelper.cs" />
     <Compile Include="Math\Union4B.cs" />
+    <Compile Include="System\Tokeniser.cs" />
     <Compile Include="System\Utilities.cs" />
   </ItemGroup>
   <ItemGroup>

@@ -109,7 +109,7 @@ namespace SharpQuake
                 Vector3f bottom = top;
                 bottom.z -= 160;
 
-                trace_t tr = Move( ref top, ref Common.ZeroVector3f, ref Common.ZeroVector3f, ref bottom, 1, _Player );
+                trace_t tr = Move( ref top, ref Utilities.ZeroVector3f, ref Utilities.ZeroVector3f, ref bottom, 1, _Player );
                 if( tr.allsolid )
                     return;	// looking at a wall, leave ideal the way is was
 
@@ -193,43 +193,43 @@ namespace SharpQuake
                                 ret = 2;
                             else
                                 ret = 0;
-                            if( Common.SameText( s, "status", 6 ) )
+                            if( Utilities.SameText( s, "status", 6 ) )
                                 ret = 1;
-                            else if( Common.SameText( s, "god", 3 ) )
+                            else if( Utilities.SameText( s, "god", 3 ) )
                                 ret = 1;
-                            else if( Common.SameText( s, "notarget", 8 ) )
+                            else if( Utilities.SameText( s, "notarget", 8 ) )
                                 ret = 1;
-                            else if( Common.SameText( s, "fly", 3 ) )
+                            else if( Utilities.SameText( s, "fly", 3 ) )
                                 ret = 1;
-                            else if( Common.SameText( s, "name", 4 ) )
+                            else if( Utilities.SameText( s, "name", 4 ) )
                                 ret = 1;
-                            else if( Common.SameText( s, "noclip", 6 ) )
+                            else if( Utilities.SameText( s, "noclip", 6 ) )
                                 ret = 1;
-                            else if( Common.SameText( s, "say", 3 ) )
+                            else if( Utilities.SameText( s, "say", 3 ) )
                                 ret = 1;
-                            else if( Common.SameText( s, "say_team", 8 ) )
+                            else if( Utilities.SameText( s, "say_team", 8 ) )
                                 ret = 1;
-                            else if( Common.SameText( s, "tell", 4 ) )
+                            else if( Utilities.SameText( s, "tell", 4 ) )
                                 ret = 1;
-                            else if( Common.SameText( s, "color", 5 ) )
+                            else if( Utilities.SameText( s, "color", 5 ) )
                                 ret = 1;
-                            else if( Common.SameText( s, "kill", 4 ) )
+                            else if( Utilities.SameText( s, "kill", 4 ) )
                                 ret = 1;
-                            else if( Common.SameText( s, "pause", 5 ) )
+                            else if( Utilities.SameText( s, "pause", 5 ) )
                                 ret = 1;
-                            else if( Common.SameText( s, "spawn", 5 ) )
+                            else if( Utilities.SameText( s, "spawn", 5 ) )
                                 ret = 1;
-                            else if( Common.SameText( s, "begin", 5 ) )
+                            else if( Utilities.SameText( s, "begin", 5 ) )
                                 ret = 1;
-                            else if( Common.SameText( s, "prespawn", 8 ) )
+                            else if( Utilities.SameText( s, "prespawn", 8 ) )
                                 ret = 1;
-                            else if( Common.SameText( s, "kick", 4 ) )
+                            else if( Utilities.SameText( s, "kick", 4 ) )
                                 ret = 1;
-                            else if( Common.SameText( s, "ping", 4 ) )
+                            else if( Utilities.SameText( s, "ping", 4 ) )
                                 ret = 1;
-                            else if( Common.SameText( s, "give", 4 ) )
+                            else if( Utilities.SameText( s, "give", 4 ) )
                                 ret = 1;
-                            else if( Common.SameText( s, "ban", 3 ) )
+                            else if( Utilities.SameText( s, "ban", 3 ) )
                                 ret = 1;
                             if( ret == 2 )
                                 Cbuf.InsertText( s );
@@ -316,8 +316,8 @@ namespace SharpQuake
 
             Vector3f v_angle;
             MathLib.VectorAdd( ref _Player.v.v_angle, ref _Player.v.punchangle, out v_angle );
-            Vector3 pang = Common.ToVector( ref _Player.v.angles );
-            Vector3 pvel = Common.ToVector( ref _Player.v.velocity );
+            Vector3 pang = Utilities.ToVector( ref _Player.v.angles );
+            Vector3 pvel = Utilities.ToVector( ref _Player.v.velocity );
             _Player.v.angles.z = view.CalcRoll( ref pang, ref pvel ) * 4;
             if( _Player.v.fixangle == 0 )
             {
@@ -344,7 +344,7 @@ namespace SharpQuake
 
         private static void DropPunchAngle()
         {
-            Vector3 v = Common.ToVector( ref _Player.v.punchangle );
+            Vector3 v = Utilities.ToVector( ref _Player.v.punchangle );
             var len = MathLib.Normalize( ref v ) - 10 * host.FrameTime;
             if( len < 0 )
                 len = 0;
@@ -374,7 +374,7 @@ namespace SharpQuake
             //
             // user intentions
             //
-            Vector3 pangle = Common.ToVector( ref _Player.v.v_angle );
+            Vector3 pangle = Utilities.ToVector( ref _Player.v.v_angle );
             MathLib.AngleVectors( ref pangle, out _Forward, out _Right, out _Up );
             Vector3 wishvel = _Forward * _Cmd.forwardmove + _Right * _Cmd.sidemove;
 
@@ -431,7 +431,7 @@ namespace SharpQuake
         /// </summary>
         private static void AirMove()
         {
-            Vector3 pangles = Common.ToVector( ref _Player.v.angles );
+            Vector3 pangles = Utilities.ToVector( ref _Player.v.angles );
             MathLib.AngleVectors( ref pangles, out _Forward, out _Right, out _Up );
 
             var fmove = _Cmd.forwardmove;
@@ -488,7 +488,7 @@ namespace SharpQuake
             start.Z = _Player.v.origin.z + _Player.v.mins.z;
             stop.Z = start.Z - 34;
 
-            trace_t trace = Move( ref start, ref Common.ZeroVector, ref Common.ZeroVector, ref stop, 1, _Player );
+            trace_t trace = Move( ref start, ref Utilities.ZeroVector, ref Utilities.ZeroVector, ref stop, 1, _Player );
             var friction = _Friction.Value;
             if( trace.fraction == 1.0 )
                 friction *= _EdgeFriction.Value;
@@ -509,7 +509,7 @@ namespace SharpQuake
         /// </summary>
         private static void Accelerate()
         {
-            var currentspeed = Vector3.Dot( Common.ToVector( ref _Player.v.velocity ), _WishDir );
+            var currentspeed = Vector3.Dot( Utilities.ToVector( ref _Player.v.velocity ), _WishDir );
             var addspeed = _WishSpeed - currentspeed;
             if( addspeed <= 0 )
                 return;
@@ -531,7 +531,7 @@ namespace SharpQuake
             var wishspd = MathLib.Normalize( ref wishveloc );
             if( wishspd > 30 )
                 wishspd = 30;
-            var currentspeed = Vector3.Dot( Common.ToVector( ref _Player.v.velocity ), wishveloc );
+            var currentspeed = Vector3.Dot( Utilities.ToVector( ref _Player.v.velocity ), wishveloc );
             var addspeed = wishspd - currentspeed;
             if( addspeed <= 0 )
                 return;

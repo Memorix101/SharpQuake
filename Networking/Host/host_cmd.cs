@@ -441,7 +441,7 @@ namespace SharpQuake
                 }
             }
 
-            var name = Path.ChangeExtension( Path.Combine( Common.GameDir, Command.Argv( 1 ) ), ".sav" );
+            var name = Path.ChangeExtension( Path.Combine( FileSystem.GameDir, Command.Argv( 1 ) ), ".sav" );
 
             Con.Print( "Saving game to {0}...\n", name );
             FileStream fs = FileSystem.OpenWrite( name, true );
@@ -500,7 +500,7 @@ namespace SharpQuake
 
             client.cls.demonum = -1;		// stop demo loop in case this fails
 
-            var name = Path.ChangeExtension( Path.Combine( Common.GameDir, Command.Argv( 1 ) ), ".sav" );
+            var name = Path.ChangeExtension( Path.Combine( FileSystem.GameDir, Command.Argv( 1 ) ), ".sav" );
 
             // we can't call SCR_BeginLoadingPlaque, because too much stack space has
             // been used.  The menu calls it before stuffing loadgame command
@@ -517,7 +517,7 @@ namespace SharpQuake
             using( StreamReader reader = new StreamReader( fs, Encoding.ASCII ) )
             {
                 var line = reader.ReadLine();
-                var version = Common.atoi( line );
+                var version = MathLib.atoi( line );
                 if( version != SAVEGAME_VERSION )
                 {
                     Con.Print( "Savegame is version {0}, not {1}\n", version, SAVEGAME_VERSION );
@@ -529,17 +529,17 @@ namespace SharpQuake
                 for( var i = 0; i < spawn_parms.Length; i++ )
                 {
                     line = reader.ReadLine();
-                    spawn_parms[i] = Common.atof( line );
+                    spawn_parms[i] = MathLib.atof( line );
                 }
                 // this silliness is so we can load 1.06 save files, which have float skill values
                 line = reader.ReadLine();
-                var tfloat = Common.atof( line );
+                var tfloat = MathLib.atof( line );
                 host.CurrentSkill = ( Int32 ) ( tfloat + 0.1 );
                 CVar.Set( "skill", ( Single ) host.CurrentSkill );
 
                 var mapname = reader.ReadLine();
                 line = reader.ReadLine();
-                var time = Common.atof( line );
+                var time = MathLib.atof( line );
 
                 client.Disconnect_f();
                 server.SpawnServer( mapname );
@@ -574,10 +574,10 @@ namespace SharpQuake
                     if( idx != -1 )
                     {
                         var length = 1 + sb.Length - ( line.Length - idx );
-                        var data = Common.Parse( sb.ToString( 0, length ) );
-                        if( String.IsNullOrEmpty( Common.Token ) )
+                        var data = Tokeniser.Parse( sb.ToString( 0, length ) );
+                        if( String.IsNullOrEmpty( Tokeniser.Token ) )
                             break; // end of file
-                        if( Common.Token != "{" )
+                        if( Tokeniser.Token != "{" )
                             Utilities.Error( "First token isn't a brace" );
 
                         if( entnum == -1 )
@@ -781,11 +781,11 @@ namespace SharpQuake
 
             Int32 top, bottom;
             if( Command.Argc == 2 )
-                top = bottom = Common.atoi( Command.Argv( 1 ) );
+                top = bottom = MathLib.atoi( Command.Argv( 1 ) );
             else
             {
-                top = Common.atoi( Command.Argv( 1 ) );
-                bottom = Common.atoi( Command.Argv( 2 ) );
+                top = MathLib.atoi( Command.Argv( 1 ) );
+                bottom = MathLib.atoi( Command.Argv( 2 ) );
             }
 
             top &= 15;
@@ -1045,7 +1045,7 @@ namespace SharpQuake
             Int32 i;
             if( Command.Argc > 2 && Command.Argv( 1 ) == "#" )
             {
-                i = ( Int32 ) Common.atof( Command.Argv( 2 ) ) - 1;
+                i = ( Int32 ) MathLib.atof( Command.Argv( 2 ) ) - 1;
                 if( i < 0 || i >= server.svs.maxclients )
                     return;
                 if( !server.svs.clients[i].active )
@@ -1061,7 +1061,7 @@ namespace SharpQuake
                     host.HostClient = server.svs.clients[i];
                     if( !host.HostClient.active )
                         continue;
-                    if( Common.SameText( host.HostClient.name, Command.Argv( 1 ) ) )
+                    if( Utilities.SameText( host.HostClient.name, Command.Argv( 1 ) ) )
                         break;
                 }
             }
@@ -1084,7 +1084,7 @@ namespace SharpQuake
                 String message = null;
                 if( Command.Argc > 2 )
                 {
-                    message = Common.Parse( Command.Args );
+                    message = Tokeniser.Parse( Command.Args );
                     if( byNumber )
                     {
                         message = message.Substring( 1 ); // skip the #
@@ -1118,7 +1118,7 @@ namespace SharpQuake
                 return;
 
             var t = Command.Argv( 1 );
-            var v = Common.atoi( Command.Argv( 2 ) );
+            var v = MathLib.atoi( Command.Argv( 2 ) );
 
             if( String.IsNullOrEmpty( t ) )
                 return;
@@ -1277,7 +1277,7 @@ namespace SharpQuake
 
             model_t m = client.cl.model_precache[( Int32 ) e.v.modelindex];
 
-            var f = Common.atoi( Command.Argv( 1 ) );
+            var f = MathLib.atoi( Command.Argv( 1 ) );
             if( f >= m.numframes )
                 f = m.numframes - 1;
 
@@ -1348,7 +1348,7 @@ namespace SharpQuake
             Con.Print( "{0} demo(s) in loop\n", c );
 
             for( var i = 1; i < c + 1; i++ )
-                client.cls.demos[i - 1] = Common.Copy( Command.Argv( i ), client.MAX_DEMONAME );
+                client.cls.demos[i - 1] = Utilities.Copy( Command.Argv( i ), client.MAX_DEMONAME );
 
             if( !server.sv.active && client.cls.demonum != -1 && !client.cls.demoplayback )
             {

@@ -86,7 +86,7 @@ namespace SharpQuake
         {
             _IsInitialized = false;
 
-            if( Common.HasParam( "-noudp" ) )
+            if( CommandLine.HasParam( "-noudp" ) )
                 return false;
 
             // determine my name
@@ -116,12 +116,12 @@ namespace SharpQuake
                 CVar.Set( "hostname", hostName );
             }
 
-            var i2 = Common.CheckParm( "-ip" );
+            var i2 = CommandLine.CheckParm( "-ip" );
             if( i2 > 0 )
             {
-                if( i2 < Common.Argc - 1 )
+                if( i2 < CommandLine.Argc - 1 )
                 {
-                    var ipaddr = Common.Argv( i2 + 1 );
+                    var ipaddr = CommandLine.Argv( i2 + 1 );
                     if( !IPAddress.TryParse( ipaddr, out _MyAddress ) )
                         Utilities.Error( "{0} is not a valid IP address!", ipaddr );
                     net.MyTcpIpAddress = ipaddr;

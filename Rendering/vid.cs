@@ -215,10 +215,10 @@ namespace SharpQuake
             mode1.fullScreen = true;
 
             Int32 width = dev.Width, height = dev.Height;
-            var i = Common.CheckParm( "-width" );
-            if( i > 0 && i < Common.Argc - 1 )
+            var i = CommandLine.CheckParm( "-width" );
+            if( i > 0 && i < CommandLine.Argc - 1 )
             {
-                width = Common.atoi( Common.Argv( i + 1 ) );
+                width = MathLib.atoi( CommandLine.Argv( i + 1 ) );
 
                 foreach( DisplayResolution res in dev.AvailableResolutions )
                 {
@@ -230,14 +230,14 @@ namespace SharpQuake
                 }
             }
 
-            i = Common.CheckParm( "-height" );
-            if( i > 0 && i < Common.Argc - 1 )
-                height = Common.atoi( Common.Argv( i + 1 ) );
+            i = CommandLine.CheckParm( "-height" );
+            if( i > 0 && i < CommandLine.Argc - 1 )
+                height = MathLib.atoi( CommandLine.Argv( i + 1 ) );
 
             mode1.width = width;
             mode1.height = height;
 
-            if( Common.HasParam( "-window" ) )
+            if( CommandLine.HasParam( "-window" ) )
             {
                 _Windowed = true;
             }
@@ -245,7 +245,7 @@ namespace SharpQuake
             {
                 _Windowed = false;
 
-                if( Common.HasParam( "-current" ) )
+                if( CommandLine.HasParam( "-current" ) )
                 {
                     mode1.width = dev.Width;
                     mode1.height = dev.Height;
@@ -253,10 +253,10 @@ namespace SharpQuake
                 else
                 {
                     var bpp = mode1.bpp;
-                    i = Common.CheckParm( "-bpp" );
-                    if( i > 0 && i < Common.Argc - 1 )
+                    i = CommandLine.CheckParm( "-bpp" );
+                    if( i > 0 && i < CommandLine.Argc - 1 )
                     {
-                        bpp = Common.atoi( Common.Argv( i + 1 ) );
+                        bpp = MathLib.atoi( CommandLine.Argv( i + 1 ) );
                     }
                     mode1.bpp = bpp;
                 }
@@ -264,9 +264,9 @@ namespace SharpQuake
 
             //_IsInitialized = true;
 
-            var i2 = Common.CheckParm( "-conwidth" );
+            var i2 = CommandLine.CheckParm( "-conwidth" );
             if( i2 > 0 )
-                Scr.vid.conwidth = Common.atoi( Common.Argv( i2 + 1 ) );
+                Scr.vid.conwidth = MathLib.atoi( CommandLine.Argv( i2 + 1 ) );
             else
                 Scr.vid.conwidth = 640;
 
@@ -278,9 +278,9 @@ namespace SharpQuake
             // pick a conheight that matches with correct aspect
             Scr.vid.conheight = Scr.vid.conwidth * 3 / 4;
 
-            i2 = Common.CheckParm( "-conheight" );
+            i2 = CommandLine.CheckParm( "-conheight" );
             if( i2 > 0 )
-                Scr.vid.conheight = Common.atoi( Common.Argv( i2 + 1 ) );
+                Scr.vid.conheight = MathLib.atoi( CommandLine.Argv( i2 + 1 ) );
             if( Scr.vid.conheight < 200 )
                 Scr.vid.conheight = 200;
 
@@ -314,7 +314,7 @@ namespace SharpQuake
 
             InitOpenGL();
 
-            Directory.CreateDirectory( Path.Combine( Common.GameDir, "glquake" ) );
+            Directory.CreateDirectory( Path.Combine( FileSystem.GameDir, "glquake" ) );
         }
 
         /// <summary>
@@ -543,7 +543,7 @@ namespace SharpQuake
         // VID_DescribeMode_f
         private static void DescribeMode_f()
         {
-            var modenum = Common.atoi( Command.Argv( 1 ) );
+            var modenum = MathLib.atoi( Command.Argv( 1 ) );
 
             Con.Print( "{0}\n", GetExtModeDescription( modenum ) );
         }
@@ -565,7 +565,7 @@ namespace SharpQuake
         // Check_Gamma
         private static void CheckGamma( Byte[] pal )
         {
-            var i = Common.CheckParm( "-gamma" );
+            var i = CommandLine.CheckParm( "-gamma" );
             if( i == 0 )
             {
                 var renderer = GL.GetString( StringName.Renderer );
@@ -576,7 +576,7 @@ namespace SharpQuake
                     _Gamma = 0.7f; // default to 0.7 on non-3dfx hardware
             }
             else
-                _Gamma = Single.Parse( Common.Argv( i + 1 ) );
+                _Gamma = Single.Parse( CommandLine.Argv( i + 1 ) );
 
             for( i = 0; i < pal.Length; i++ )
             {
@@ -619,7 +619,7 @@ namespace SharpQuake
         /// </summary>
         private static void CheckMultiTextureExtensions()
         {
-            if( _glExtensions.Contains( "GL_SGIS_multitexture " ) && !Common.HasParam( "-nomtex" ) )
+            if( _glExtensions.Contains( "GL_SGIS_multitexture " ) && !CommandLine.HasParam( "-nomtex" ) )
             {
                 Con.Print( "Multitexture extensions found.\n" );
                 _glMTexable = true;

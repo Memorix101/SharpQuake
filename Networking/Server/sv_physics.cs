@@ -215,7 +215,7 @@ namespace SharpQuake
         /// </summary>
         private static void CheckWaterTransition( MemoryEdict ent )
         {
-            Vector3 org = Common.ToVector( ref ent.v.origin );
+            Vector3 org = Utilities.ToVector( ref ent.v.origin );
             var cont = PointContents( ref org );
 
             if( ent.v.watertype == 0 )
@@ -464,7 +464,7 @@ namespace SharpQuake
             //
             ent.v.origin = oldorg;	// back to start pos
 
-            Vector3f upmove = Common.ZeroVector3f;
+            Vector3f upmove = Utilities.ZeroVector3f;
             Vector3f downmove = upmove;
             upmove.z = STEPSIZE;
             downmove.z = ( Single ) ( -STEPSIZE + oldvel.z * host.FrameTime );
@@ -526,7 +526,7 @@ namespace SharpQuake
         private static Int32 TryUnstick( MemoryEdict ent, ref Vector3f oldvel )
         {
             Vector3f oldorg = ent.v.origin;
-            Vector3f dir = Common.ZeroVector3f;
+            Vector3f dir = Utilities.ZeroVector3f;
 
             trace_t steptrace = new trace_t();
             for( var i = 0; i < 8; i++ )
@@ -592,7 +592,7 @@ namespace SharpQuake
                 ent.v.origin = oldorg;
             }
 
-            ent.v.velocity = Common.ZeroVector3f;
+            ent.v.velocity = Utilities.ZeroVector3f;
             return 7;		// still not moving
         }
 
@@ -601,7 +601,7 @@ namespace SharpQuake
         /// </summary>
         private static void WallFriction( MemoryEdict ent, trace_t trace )
         {
-            Vector3 forward, right, up, vangle = Common.ToVector( ref ent.v.v_angle );
+            Vector3 forward, right, up, vangle = Utilities.ToVector( ref ent.v.v_angle );
             MathLib.AngleVectors( ref vangle, out forward, out right, out up );
             var d = Vector3.Dot( trace.plane.normal, forward );
 
@@ -610,7 +610,7 @@ namespace SharpQuake
                 return;
 
             // cut the tangential velocity
-            Vector3 vel = Common.ToVector( ref ent.v.velocity );
+            Vector3 vel = Utilities.ToVector( ref ent.v.velocity );
             var i = Vector3.Dot( trace.plane.normal, vel );
             Vector3 into = trace.plane.normal * i;
             Vector3 side = vel - into;

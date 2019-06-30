@@ -235,7 +235,7 @@ namespace SharpQuake
             poly.AllocVerts( numverts );
             for( var i = 0; i < numverts; i++ )
             {
-                Common.Copy( ref verts[i], poly.verts[i] );
+                Utilities.Copy( ref verts[i], poly.verts[i] );
                 var s = Vector3.Dot( verts[i], _WarpFace.texinfo.vecs[0].Xyz );
                 var t = Vector3.Dot( verts[i], _WarpFace.texinfo.vecs[1].Xyz );
                 poly.verts[i][3] = s;

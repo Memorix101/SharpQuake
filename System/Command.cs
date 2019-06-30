@@ -186,14 +186,14 @@ namespace SharpQuake
                 if( _Argc == 1 )
                     _Args = text;
 
-                text = Common.Parse( text );
+                text = Tokeniser.Parse( text );
 
-                if( String.IsNullOrEmpty( Common.Token ) )
+                if( String.IsNullOrEmpty( Tokeniser.Token ) )
                     break;
 
                 if( _Argc < MAX_ARGS )
                 {
-                    argv.Add( Common.Token );
+                    argv.Add( Tokeniser.Token );
                     _Argc++;
                 }
             }

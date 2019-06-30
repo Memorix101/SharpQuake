@@ -171,7 +171,7 @@ namespace SharpQuake
             _Net = Drawer.PicFromWad( "net" );
             _Turtle = Drawer.PicFromWad( "turtle" );
 
-            if( Common.HasParam( "-fullsbar" ) )
+            if( CommandLine.HasParam( "-fullsbar" ) )
                 FullSbarDraw = true;
 
             _IsInitialized = true;
@@ -456,7 +456,7 @@ namespace SharpQuake
             Int32 i;
             for( i = 0; i <= 999; i++ )
             {
-                path = Path.Combine( Common.GameDir, String.Format( "quake{0:D3}.tga", i ) );
+                path = Path.Combine( FileSystem.GameDir, String.Format( "quake{0:D3}.tga", i ) );
                 if( FileSystem.GetFileTime( path ) == DateTime.MinValue )
                     break;	// file doesn't exist
             }

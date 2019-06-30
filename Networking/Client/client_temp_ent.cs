@@ -158,13 +158,13 @@ namespace SharpQuake
             {
                 case protocol.TE_WIZSPIKE:			// spike hitting wall
                     pos = net.Reader.ReadCoords();
-                    render.RunParticleEffect( ref pos, ref Common.ZeroVector, 20, 30 );
+                    render.RunParticleEffect( ref pos, ref Utilities.ZeroVector, 20, 30 );
                     snd.StartSound( -1, 0, _SfxWizHit, ref pos, 1, 1 );
                     break;
 
                 case protocol.TE_KNIGHTSPIKE:			// spike hitting wall
                     pos = net.Reader.ReadCoords();
-                    render.RunParticleEffect( ref pos, ref Common.ZeroVector, 226, 20 );
+                    render.RunParticleEffect( ref pos, ref Utilities.ZeroVector, 226, 20 );
                     snd.StartSound( -1, 0, _SfxKnigtHit, ref pos, 1, 1 );
                     break;
 
@@ -173,7 +173,7 @@ namespace SharpQuake
 #if GLTEST
                     Test_Spawn (pos);
 #else
-                    render.RunParticleEffect( ref pos, ref Common.ZeroVector, 0, 10 );
+                    render.RunParticleEffect( ref pos, ref Utilities.ZeroVector, 0, 10 );
 #endif
                     if( ( sys.Random() % 5 ) != 0 )
                         snd.StartSound( -1, 0, _SfxTink1, ref pos, 1, 1 );
@@ -191,7 +191,7 @@ namespace SharpQuake
 
                 case protocol.TE_SUPERSPIKE:			// super spike hitting wall
                     pos = net.Reader.ReadCoords();
-                    render.RunParticleEffect( ref pos, ref Common.ZeroVector, 0, 20 );
+                    render.RunParticleEffect( ref pos, ref Utilities.ZeroVector, 0, 20 );
 
                     if( ( sys.Random() % 5 ) != 0 )
                         snd.StartSound( -1, 0, _SfxTink1, ref pos, 1, 1 );
@@ -209,7 +209,7 @@ namespace SharpQuake
 
                 case protocol.TE_GUNSHOT:			// bullet hitting wall
                     pos = net.Reader.ReadCoords();
-                    render.RunParticleEffect( ref pos, ref Common.ZeroVector, 0, 20 );
+                    render.RunParticleEffect( ref pos, ref Utilities.ZeroVector, 0, 20 );
                     break;
 
                 case protocol.TE_EXPLOSION:			// rocket explosion

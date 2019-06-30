@@ -50,7 +50,7 @@ namespace SharpQuake
             if (client.cls.state == cactive_t.ca_dedicated)
                 return false;
 
-            if (Common.HasParam("-nocdaudio"))
+            if (CommandLine.HasParam("-nocdaudio"))
                 return false;
 
             _Controller.Init();
@@ -110,13 +110,13 @@ namespace SharpQuake
 
             var command = Command.Argv(1);
 
-            if (Common.SameText(command, "on"))
+            if (Utilities.SameText(command, "on"))
             {
                 _Controller.IsEnabled = true;
                 return;
             }
 
-            if (Common.SameText(command, "off"))
+            if (Utilities.SameText(command, "off"))
             {
                 if (_Controller.IsPlaying)
                     _Controller.Stop();
@@ -124,7 +124,7 @@ namespace SharpQuake
                 return;
             }
 
-            if (Common.SameText(command, "reset"))
+            if (Utilities.SameText(command, "reset"))
             {
                 _Controller.IsEnabled = true;
                 if (_Controller.IsPlaying)
@@ -134,7 +134,7 @@ namespace SharpQuake
                 return;
             }
 
-            if (Common.SameText(command, "remap"))
+            if (Utilities.SameText(command, "remap"))
             {
                 var ret = Command.Argc - 2;
                 Byte[] remap = _Controller.Remap;
@@ -146,11 +146,11 @@ namespace SharpQuake
                     return;
                 }
                 for ( var n = 1; n <= ret; n++)
-                    remap[n] = ( Byte ) Common.atoi(Command.Argv(n + 1));
+                    remap[n] = ( Byte ) MathLib.atoi(Command.Argv(n + 1));
                 return;
             }
 
-            if (Common.SameText(command, "close"))
+            if (Utilities.SameText(command, "close"))
             {
                 _Controller.CloseDoor();
                 return;
@@ -166,37 +166,37 @@ namespace SharpQuake
                 }
             }
 
-            if (Common.SameText(command, "play"))
+            if (Utilities.SameText(command, "play"))
             {
-                _Controller.Play(( Byte ) Common.atoi(Command.Argv(2)), false);
+                _Controller.Play(( Byte ) MathLib.atoi(Command.Argv(2)), false);
                 return;
             }
 
-            if (Common.SameText(command, "loop"))
+            if (Utilities.SameText(command, "loop"))
             {
-                _Controller.Play(( Byte ) Common.atoi(Command.Argv(2)), true);
+                _Controller.Play(( Byte ) MathLib.atoi(Command.Argv(2)), true);
                 return;
             }
 
-            if (Common.SameText(command, "stop"))
+            if (Utilities.SameText(command, "stop"))
             {
                 _Controller.Stop();
                 return;
             }
 
-            if (Common.SameText(command, "pause"))
+            if (Utilities.SameText(command, "pause"))
             {
                 _Controller.Pause();
                 return;
             }
 
-            if (Common.SameText(command, "resume"))
+            if (Utilities.SameText(command, "resume"))
             {
                 _Controller.Resume();
                 return;
             }
 
-            if (Common.SameText(command, "eject"))
+            if (Utilities.SameText(command, "eject"))
             {
                 if (_Controller.IsPlaying)
                     _Controller.Stop();
@@ -204,7 +204,7 @@ namespace SharpQuake
                 return;
             }
 
-            if (Common.SameText(command, "info"))
+            if (Utilities.SameText(command, "info"))
             {
                 Con.Print("%u tracks\n", _Controller.MaxTrack);
                 if (_Controller.IsPlaying)

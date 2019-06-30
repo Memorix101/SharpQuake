@@ -411,10 +411,10 @@ namespace SharpQuake
         // R_InitParticles
         private static void InitParticles()
         {
-            var i = Common.CheckParm( "-particles" );
-            if( i > 0 && i < Common.Argc - 1 )
+            var i = CommandLine.CheckParm( "-particles" );
+            if( i > 0 && i < CommandLine.Argc - 1 )
             {
-                _NumParticles = Int32.Parse( Common.Argv( i + 1 ) );
+                _NumParticles = Int32.Parse( CommandLine.Argv( i + 1 ) );
                 if( _NumParticles < ABSOLUTE_MIN_PARTICLES )
                     _NumParticles = ABSOLUTE_MIN_PARTICLES;
             }

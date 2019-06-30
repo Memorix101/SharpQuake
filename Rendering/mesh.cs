@@ -98,7 +98,7 @@ namespace SharpQuake
                 //
                 // save out the cached version
                 //
-                var fullpath = Path.Combine( Common.GameDir, path );
+                var fullpath = Path.Combine( FileSystem.GameDir, path );
                 Stream fs = FileSystem.OpenWrite( fullpath, true );
                 if( fs != null )
                     using( BinaryWriter writer = new BinaryWriter( fs, Encoding.ASCII ) )

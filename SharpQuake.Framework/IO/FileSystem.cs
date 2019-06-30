@@ -42,10 +42,10 @@ namespace SharpQuake
             // Overrides the system supplied base directory (under GAMENAME)
             //
             var basedir = String.Empty;
-            var i = Utilities.CheckParm( "-basedir" );
-            if ( ( i > 0 ) && ( i < Utilities._Argv.Length - 1 ) )
+            var i = CommandLine.CheckParm( "-basedir" );
+            if ( ( i > 0 ) && ( i < CommandLine._Argv.Length - 1 ) )
             {
-                basedir = Utilities._Argv[i + 1];
+                basedir = CommandLine._Argv[i + 1];
             }
             else
             {
@@ -63,13 +63,13 @@ namespace SharpQuake
             // Overrides the system supplied cache directory (NULL or /qcache)
             // -cachedir - will disable caching.
             //
-            i = Utilities.CheckParm( "-cachedir" );
-            if ( ( i > 0 ) && ( i < Utilities._Argv.Length - 1 ) )
+            i = CommandLine.CheckParm( "-cachedir" );
+            if ( ( i > 0 ) && ( i < CommandLine._Argv.Length - 1 ) )
             {
-                if ( Utilities._Argv[i + 1][0] == '-' )
+                if ( CommandLine._Argv[i + 1][0] == '-' )
                     _CacheDir = String.Empty;
                 else
-                    _CacheDir = Utilities._Argv[i + 1];
+                    _CacheDir = CommandLine._Argv[i + 1];
             }
             else if ( !String.IsNullOrEmpty( hostParams.cachedir ) )
             {
@@ -86,13 +86,13 @@ namespace SharpQuake
             AddGameDirectory( basedir + "/" + QDef.GAMENAME );
             qparam.globalgameid = QDef.GAMENAME;
 
-            if ( Utilities.HasParam( "-rogue" ) )
+            if ( CommandLine.HasParam( "-rogue" ) )
             {
                 AddGameDirectory( basedir + "/rogue" );
                 qparam.globalgameid = "rogue";
             }
 
-            if ( Utilities.HasParam( "-hipnotic" ) )
+            if ( CommandLine.HasParam( "-hipnotic" ) )
             {
                 AddGameDirectory( basedir + "/hipnotic" );
                 qparam.globalgameid = "hipnotic";
@@ -101,28 +101,28 @@ namespace SharpQuake
             // -game <gamedir>
             // Adds basedir/gamedir as an override game
             //
-            i = Utilities.CheckParm( "-game" );
-            if ( ( i > 0 ) && ( i < Utilities._Argv.Length - 1 ) )
+            i = CommandLine.CheckParm( "-game" );
+            if ( ( i > 0 ) && ( i < CommandLine._Argv.Length - 1 ) )
             {
                 _IsModified = true;
-                AddGameDirectory( basedir + "/" + Utilities._Argv[i + 1] );
+                AddGameDirectory( basedir + "/" + CommandLine._Argv[i + 1] );
             }
 
             //
             // -path <dir or packfile> [<dir or packfile>] ...
             // Fully specifies the exact serach path, overriding the generated one
             //
-            i = Utilities.CheckParm( "-path" );
+            i = CommandLine.CheckParm( "-path" );
             if ( i > 0 )
             {
                 _IsModified = true;
                 _SearchPaths.Clear( );
-                while ( ++i < Utilities._Argv.Length )
+                while ( ++i < CommandLine._Argv.Length )
                 {
-                    if ( String.IsNullOrEmpty( Utilities._Argv[i] ) || Utilities._Argv[i][0] == '+' || Utilities._Argv[i][0] == '-' )
+                    if ( String.IsNullOrEmpty( CommandLine._Argv[i] ) || CommandLine._Argv[i][0] == '+' || CommandLine._Argv[i][0] == '-' )
                         break;
 
-                    _SearchPaths.Insert( 0, new searchpath_t( Utilities._Argv[i] ) );
+                    _SearchPaths.Insert( 0, new searchpath_t( CommandLine._Argv[i] ) );
                 }
             }
         }

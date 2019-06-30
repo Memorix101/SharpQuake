@@ -83,13 +83,13 @@ namespace SharpQuake
             Int32 track;
             if( c == 4 )
             {
-                track = Common.atoi( Command.Argv( 3 ) );
+                track = MathLib.atoi( Command.Argv( 3 ) );
                 Con.Print( "Forcing CD track to {0}\n", track );
             }
             else
                 track = -1;
 
-            var name = Path.Combine( Common.GameDir, Command.Argv( 1 ) );
+            var name = Path.Combine( FileSystem.GameDir, Command.Argv( 1 ) );
 
             //
             // start the map up

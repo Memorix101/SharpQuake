@@ -553,7 +553,7 @@ namespace SharpQuake
                     if( mod != null )
                         SetMinMaxSize( e, ref mod.mins, ref mod.maxs, true );
                     else
-                        SetMinMaxSize( e, ref Common.ZeroVector, ref Common.ZeroVector, true );
+                        SetMinMaxSize( e, ref Utilities.ZeroVector, ref Utilities.ZeroVector, true );
 
                     return;
                 }
@@ -858,7 +858,7 @@ namespace SharpQuake
             Vector3 vec1, vec2;
             Copy( v1, out vec1 );
             Copy( v2, out vec2 );
-            trace_t trace = server.Move( ref vec1, ref Common.ZeroVector, ref Common.ZeroVector, ref vec2, nomonsters, ent );
+            trace_t trace = server.Move( ref vec1, ref Utilities.ZeroVector, ref Utilities.ZeroVector, ref vec2, nomonsters, ent );
 
             progs.GlobalStruct.trace_allsolid = trace.allsolid ? 1 : 0;
             progs.GlobalStruct.trace_startsolid = trace.startsolid ? 1 : 0;
@@ -925,7 +925,7 @@ namespace SharpQuake
             }
 
             // get the PVS for the entity
-            Vector3 org = Common.ToVector( ref ent.v.origin ) + Common.ToVector( ref ent.v.view_ofs );
+            Vector3 org = Utilities.ToVector( ref ent.v.origin ) + Utilities.ToVector( ref ent.v.view_ofs );
             mleaf_t leaf = Mod.PointInLeaf( ref org, server.sv.worldmodel );
             Byte[] pvs = Mod.LeafPVS( leaf, server.sv.worldmodel );
             Buffer.BlockCopy( pvs, 0, _CheckPvs, 0, pvs.Length );
@@ -964,7 +964,7 @@ namespace SharpQuake
 
             // if current entity can't possibly see the check entity, return 0
             MemoryEdict self = server.ProgToEdict( progs.GlobalStruct.self );
-            Vector3 view = Common.ToVector( ref self.v.origin ) + Common.ToVector( ref self.v.view_ofs );
+            Vector3 view = Utilities.ToVector( ref self.v.origin ) + Utilities.ToVector( ref self.v.view_ofs );
             mleaf_t leaf = Mod.PointInLeaf( ref view, server.sv.worldmodel );
             var l = Array.IndexOf( server.sv.worldmodel.leafs, leaf ) - 1;
             if( ( l < 0 ) || ( _CheckPvs[l >> 3] & ( 1 << ( l & 7 ) ) ) == 0 )
@@ -1065,8 +1065,8 @@ namespace SharpQuake
                 if( ent.v.solid == Solids.SOLID_NOT )
                     continue;
 
-                Vector3 v = vorg - ( Common.ToVector( ref ent.v.origin ) +
-                    ( Common.ToVector( ref ent.v.mins ) + Common.ToVector( ref ent.v.maxs ) ) * 0.5f );
+                Vector3 v = vorg - ( Utilities.ToVector( ref ent.v.origin ) +
+                    ( Utilities.ToVector( ref ent.v.mins ) + Utilities.ToVector( ref ent.v.maxs ) ) * 0.5f );
                 if( v.Length > rad )
                     continue;
 
@@ -1411,14 +1411,14 @@ namespace SharpQuake
             MemoryEdict ent = GetEdict( OFS.OFS_PARM0 );
             var speed = GetFloat( OFS.OFS_PARM1 );
 
-            Vector3 start = Common.ToVector( ref ent.v.origin );
+            Vector3 start = Utilities.ToVector( ref ent.v.origin );
             start.Z += 20;
 
             // try sending a trace straight
             Vector3 dir;
             MathLib.Copy( ref progs.GlobalStruct.v_forward, out dir );
             Vector3 end = start + dir * 2048;
-            trace_t tr = server.Move( ref start, ref Common.ZeroVector, ref Common.ZeroVector, ref end, 0, ent );
+            trace_t tr = server.Move( ref start, ref Utilities.ZeroVector, ref Utilities.ZeroVector, ref end, 0, ent );
             if( tr.ent != null && tr.ent.v.takedamage == Damages.DAMAGE_AIM &&
                 ( host.TeamPlay == 0 || ent.v.team <= 0 || ent.v.team != tr.ent.v.team ) )
             {
@@ -1448,10 +1448,10 @@ namespace SharpQuake
 
                 dir = end - start;
                 MathLib.Normalize( ref dir );
-                var dist = Vector3.Dot( dir, Common.ToVector( ref progs.GlobalStruct.v_forward ) );
+                var dist = Vector3.Dot( dir, Utilities.ToVector( ref progs.GlobalStruct.v_forward ) );
                 if( dist < bestdist )
                     continue;	// to far to turn
-                tr = server.Move( ref start, ref Common.ZeroVector, ref Common.ZeroVector, ref end, 0, ent );
+                tr = server.Move( ref start, ref Utilities.ZeroVector, ref Utilities.ZeroVector, ref end, 0, ent );
                 if( tr.ent == check )
                 {	// can shoot at this one
                     bestdist = dist;

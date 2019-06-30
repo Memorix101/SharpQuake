@@ -688,7 +688,7 @@ namespace SharpQuake
 
             foreach( keyname_t keyname in _KeyNames )
             {
-                if( Common.SameText( keyname.name, str ) )
+                if( Utilities.SameText( keyname.name, str ) )
                     return keyname.keynum;
             }
             return -1;

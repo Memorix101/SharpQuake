@@ -291,7 +291,7 @@ namespace SharpQuake
 
             if( _Drivers == null )
             {
-                if( Common.HasParam( "-playback" ) )
+                if( CommandLine.HasParam( "-playback" ) )
                 {
                     _Drivers = new INetDriver[]
                     {
@@ -316,25 +316,25 @@ namespace SharpQuake
                 };
             }
 
-            if( Common.HasParam( "-record" ) )
+            if( CommandLine.HasParam( "-record" ) )
                 _IsRecording = true;
 
-            var i = Common.CheckParm( "-port" );
+            var i = CommandLine.CheckParm( "-port" );
             if( i == 0 )
-                i = Common.CheckParm( "-udpport" );
+                i = CommandLine.CheckParm( "-udpport" );
             if( i == 0 )
-                i = Common.CheckParm( "-ipxport" );
+                i = CommandLine.CheckParm( "-ipxport" );
 
             if( i > 0 )
             {
-                if( i < Common.Argc - 1 )
-                    _DefHostPort = Common.atoi( Common.Argv( i + 1 ) );
+                if( i < CommandLine.Argc - 1 )
+                    _DefHostPort = MathLib.atoi( CommandLine.Argv( i + 1 ) );
                 else
                     Utilities.Error( "Net.Init: you must specify a number after -port!" );
             }
             HostPort = _DefHostPort;
 
-            if( Common.HasParam( "-listen" ) || client.cls.state == cactive_t.ca_dedicated )
+            if( CommandLine.HasParam( "-listen" ) || client.cls.state == cactive_t.ca_dedicated )
                 _IsListening = true;
             var numsockets = server.svs.maxclientslimit;
             if( client.cls.state != cactive_t.ca_dedicated )
@@ -477,7 +477,7 @@ namespace SharpQuake
 
             if( host != null )
             {
-                if( Common.SameText( host, "local" ) )
+                if( Utilities.SameText( host, "local" ) )
                 {
                     numdrivers = 1;
                     goto JustDoIt;
@@ -487,7 +487,7 @@ namespace SharpQuake
                 {
                     foreach( hostcache_t hc in _HostCache )
                     {
-                        if( Common.SameText( hc.name, host ) )
+                        if( Utilities.SameText( hc.name, host ) )
                         {
                             host = hc.cname;
                             goto JustDoIt;
@@ -513,7 +513,7 @@ namespace SharpQuake
             _DriverLevel = 0;
             foreach( hostcache_t hc in _HostCache )
             {
-                if( Common.SameText( host, hc.name ) )
+                if( Utilities.SameText( host, hc.name ) )
                 {
                     host = hc.cname;
                     break;
@@ -938,9 +938,9 @@ JustDoIt:
             {
                 hostcache_t hc = _HostCache[i];
                 if( hc.maxusers != 0 )
-                    Con.Print( "{0,-15} {1,-15}\n {2,2}/{3,2}\n", Common.Copy( hc.name, 15 ), Common.Copy( hc.map, 15 ), hc.users, hc.maxusers );
+                    Con.Print( "{0,-15} {1,-15}\n {2,2}/{3,2}\n", Utilities.Copy( hc.name, 15 ), Utilities.Copy( hc.map, 15 ), hc.users, hc.maxusers );
                 else
-                    Con.Print( "{0,-15} {1,-15}\n", Common.Copy( hc.name, 15 ), Common.Copy( hc.map, 15 ) );
+                    Con.Print( "{0,-15} {1,-15}\n", Utilities.Copy( hc.name, 15 ), Utilities.Copy( hc.map, 15 ) );
             }
             _SlistLastShown = i;
         }
@@ -987,7 +987,7 @@ JustDoIt:
                 return;
             }
 
-            _IsListening = ( Common.atoi( Command.Argv( 1 ) ) != 0 );
+            _IsListening = ( MathLib.atoi( Command.Argv( 1 ) ) != 0 );
 
             foreach( INetDriver driver in _Drivers )
             {
@@ -1013,7 +1013,7 @@ JustDoIt:
                 return;
             }
 
-            var n = Common.atoi( Command.Argv( 1 ) );
+            var n = MathLib.atoi( Command.Argv( 1 ) );
             if( n < 1 )
                 n = 1;
             if( n > server.svs.maxclientslimit )
@@ -1044,7 +1044,7 @@ JustDoIt:
                 return;
             }
 
-            var n = Common.atoi( Command.Argv( 1 ) );
+            var n = MathLib.atoi( Command.Argv( 1 ) );
             if( n < 1 || n > 65534 )
             {
                 Con.Print( "Bad value, must be between 1 and 65534\n" );

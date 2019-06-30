@@ -477,16 +477,16 @@ namespace SharpQuake
 
                 // calculate an offset value to center the origin
                 offset = hull.clip_mins - mins;
-                offset += Common.ToVector( ref ent.v.origin );
+                offset += Utilities.ToVector( ref ent.v.origin );
             }
             else
             {
                 // create a temp hull from bounding box sizes
-                Vector3 hullmins = Common.ToVector( ref ent.v.mins ) - maxs;
-                Vector3 hullmaxs = Common.ToVector( ref ent.v.maxs ) - mins;
+                Vector3 hullmins = Utilities.ToVector( ref ent.v.mins ) - maxs;
+                Vector3 hullmaxs = Utilities.ToVector( ref ent.v.maxs ) - mins;
                 hull = HullForBox( ref hullmins, ref hullmaxs );
 
-                offset = Common.ToVector( ref ent.v.origin );
+                offset = Utilities.ToVector( ref ent.v.origin );
             }
 
             return hull;

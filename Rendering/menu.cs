@@ -666,7 +666,7 @@ namespace SharpQuake
             {
                 _FileNames[i] = "--- UNUSED SLOT ---";
                 _Loadable[i] = false;
-                var name = String.Format( "{0}/s{1}.sav", Common.GameDir, i );
+                var name = String.Format( "{0}/s{1}.sav", FileSystem.GameDir, i );
                 FileStream fs = FileSystem.OpenRead( name );
                 if( fs == null )
                     continue;
@@ -1500,7 +1500,7 @@ namespace SharpQuake
                 else
                     _Cursor = 0;
 
-            var k = Common.atoi( _PortName );
+            var k = MathLib.atoi( _PortName );
             if( k > 65535 )
                 k = _Port;
             else

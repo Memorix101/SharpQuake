@@ -139,7 +139,7 @@ namespace SharpQuake
             for( var i = 0; i < _Known.Length; i++ )
                 _Known[i] = new model_t();
 
-            Common.FillArray( _Novis, ( Byte ) 0xff );
+            Utilities.FillArray( _Novis, ( Byte ) 0xff );
         }
 
         /// <summary>
@@ -393,9 +393,9 @@ namespace SharpQuake
             mod.synctype = (synctype_t) EndianHelper.LittleLong( ( Int32 ) pinmodel.synctype );
             mod.numframes = _Header.numframes;
 
-            _Header.scale = EndianHelper.LittleVector( Common.ToVector( ref pinmodel.scale ) );
-            _Header.scale_origin = EndianHelper.LittleVector( Common.ToVector( ref pinmodel.scale_origin ) );
-            _Header.eyeposition = EndianHelper.LittleVector( Common.ToVector( ref pinmodel.eyeposition ) );
+            _Header.scale = EndianHelper.LittleVector( Utilities.ToVector( ref pinmodel.scale ) );
+            _Header.scale_origin = EndianHelper.LittleVector( Utilities.ToVector( ref pinmodel.scale_origin ) );
+            _Header.eyeposition = EndianHelper.LittleVector( Utilities.ToVector( ref pinmodel.eyeposition ) );
 
             //
             // load the skins
@@ -652,8 +652,8 @@ namespace SharpQuake
             }
             mod.firstmodelsurface = submodel.firstface;
             mod.nummodelsurfaces = submodel.numfaces;
-            Common.Copy( submodel.maxs, out mod.maxs ); // mod.maxs = submodel.maxs;
-            Common.Copy( submodel.mins, out mod.mins ); // mod.mins = submodel.mins;
+            Utilities.Copy( submodel.maxs, out mod.maxs ); // mod.maxs = submodel.maxs;
+            Utilities.Copy( submodel.mins, out mod.mins ); // mod.mins = submodel.mins;
             mod.radius = RadiusFromBounds( ref mod.mins, ref mod.maxs );
             mod.numleafs = submodel.visleafs;
         }
@@ -748,7 +748,7 @@ namespace SharpQuake
         {
             daliasframe_t pdaliasframe = Utilities.BytesToStructure<daliasframe_t>( pin.Data, pin.StartIndex );
 
-            frame.name = Common.GetString( pdaliasframe.name );
+            frame.name = Utilities.GetString( pdaliasframe.name );
             frame.firstpose = _PoseNum;
             frame.numposes = 1;
             frame.bboxmin.Init();
@@ -995,7 +995,7 @@ namespace SharpQuake
                 texture_t tx = new texture_t();// Hunk_AllocName(sizeof(texture_t) + pixels, loadname);
                 _LoadModel.textures[i] = tx;
 
-                tx.name = Common.GetString( mt.name );//   memcpy (tx->name, mt->name, sizeof(tx.name));
+                tx.name = Utilities.GetString( mt.name );//   memcpy (tx->name, mt->name, sizeof(tx.name));
 
                 var tgaName = $"textures/{tx.name}.tga";
 

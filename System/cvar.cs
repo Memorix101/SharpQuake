@@ -26,6 +26,7 @@ using System.Collections.Specialized;
 using System.Globalization;
 using System.IO;
 using System.Text;
+using SharpQuake.Framework;
 
 namespace SharpQuake
 {
@@ -131,7 +132,7 @@ namespace SharpQuake
             CVar var = Find( name );
             if( var != null )
             {
-                result = Common.atof( var._String );
+                result = MathLib.atof( var._String );
             }
             return result;
         }
@@ -236,7 +237,7 @@ namespace SharpQuake
                 return;
 
             _String = value;
-            _Value = Common.atof( _String );
+            _Value = MathLib.atof( _String );
 
             if( IsServer && server.sv.active )
             {
@@ -284,7 +285,7 @@ namespace SharpQuake
             _String = value;
             _Flags[Flags.Archive] = archive;
             _Flags[Flags.Server] = server;
-            _Value = Common.atof( _String );
+            _Value = MathLib.atof( _String );
         }
 
         //struct cvar_s *next;

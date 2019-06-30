@@ -137,7 +137,7 @@ namespace SharpQuake
         {
             Con.Print( "\nSound Initialization\n" );
 
-            if( Common.HasParam( "-nosound" ) )
+            if( CommandLine.HasParam( "-nosound" ) )
                 return;
 
             for( var i = 0; i < _Channels.Length; i++ )
@@ -488,7 +488,7 @@ namespace SharpQuake
                 Con.Print( "S_LocalSound: can't cache {0}\n", sound );
                 return;
             }
-            StartSound( client.cl.viewentity, -1, sfx, ref Common.ZeroVector, 1, 1 );
+            StartSound( client.cl.viewentity, -1, sfx, ref Utilities.ZeroVector, 1, 1 );
         }
 
         // S_Startup

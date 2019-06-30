@@ -289,12 +289,12 @@ namespace SharpQuake
             while( true )
             {
                 // parse the opening brace
-                data = Common.Parse( data );
+                data = Tokeniser.Parse( data );
                 if( data == null )
                     break;
 
-                if( Common.Token != "{" )
-                    Utilities.Error( "ED_LoadFromFile: found {0} when expecting {", Common.Token );
+                if( Tokeniser.Token != "{" )
+                    Utilities.Error( "ED_LoadFromFile: found {0} when expecting {", Tokeniser.Token );
 
                 if( ent == null )
                     ent = server.EdictNum( 0 );
@@ -368,14 +368,14 @@ namespace SharpQuake
             while( true )
             {
                 // parse key
-                data = Common.Parse( data );
-                if( Common.Token.StartsWith( "}" ) )
+                data = Tokeniser.Parse( data );
+                if( Tokeniser.Token.StartsWith( "}" ) )
                     break;
 
                 if( data == null )
                     Utilities.Error( "ED_ParseEntity: EOF without closing brace" );
 
-                var token = Common.Token;
+                var token = Tokeniser.Token;
 
                 // anglehack is to allow QuakeEd to write single scalar angles
                 // and allow them to be turned into vectors. (FIXME...)
@@ -394,11 +394,11 @@ namespace SharpQuake
                 var keyname = token.TrimEnd();
 
                 // parse value
-                data = Common.Parse( data );
+                data = Tokeniser.Parse( data );
                 if( data == null )
                     Utilities.Error( "ED_ParseEntity: EOF without closing brace" );
 
-                if( Common.Token.StartsWith( "}" ) )
+                if( Tokeniser.Token.StartsWith( "}" ) )
                     Utilities.Error( "ED_ParseEntity: closing brace without data" );
 
                 init = true;
@@ -415,7 +415,7 @@ namespace SharpQuake
                     continue;
                 }
 
-                token = Common.Token;
+                token = Tokeniser.Token;
                 if( anglehack )
                 {
                     token = "0 " + token + " 0";
@@ -672,21 +672,21 @@ namespace SharpQuake
             while( true )
             {
                 // parse key
-                data = Common.Parse( data );
-                if( Common.Token.StartsWith( "}" ) )
+                data = Tokeniser.Parse( data );
+                if( Tokeniser.Token.StartsWith( "}" ) )
                     break;
 
                 if( String.IsNullOrEmpty( data ) )
                     Utilities.Error( "ED_ParseEntity: EOF without closing brace" );
 
-                var keyname = Common.Token;
+                var keyname = Tokeniser.Token;
 
                 // parse value
-                data = Common.Parse( data );
+                data = Tokeniser.Parse( data );
                 if( String.IsNullOrEmpty( data ) )
                     Utilities.Error( "ED_ParseEntity: EOF without closing brace" );
 
-                if( Common.Token.StartsWith( "}" ) )
+                if( Tokeniser.Token.StartsWith( "}" ) )
                     Utilities.Error( "ED_ParseEntity: closing brace without data" );
 
                 ddef_t key = FindGlobal( keyname );
@@ -696,7 +696,7 @@ namespace SharpQuake
                     continue;
                 }
 
-                if( !ParseGlobalPair( key, Common.Token ) )
+                if( !ParseGlobalPair( key, Tokeniser.Token ) )
                     host.Error( "ED_ParseGlobals: parse error" );
             }
         }
@@ -756,7 +756,7 @@ namespace SharpQuake
         /// </summary>
         private static void PrintEdict_f()
         {
-            var i = Common.atoi( Command.Argv( 1 ) );
+            var i = MathLib.atoi( Command.Argv( 1 ) );
             if( i >= server.sv.num_edicts )
             {
                 Con.Print( "Bad edict number\n" );
@@ -854,18 +854,18 @@ namespace SharpQuake
                     break;
 
                 case etype_t.ev_float:
-                    *( Single* )d = Common.atof( s );
+                    *( Single* )d = MathLib.atof( s );
                     break;
 
                 case etype_t.ev_vector:
                     String[] vs = s.Split( ' ' );
-                    ( ( Single* )d )[0] = Common.atof( vs[0] );
-                    ( ( Single* )d )[1] = ( vs.Length > 1 ? Common.atof( vs[1] ) : 0 );
-                    ( ( Single* )d )[2] = ( vs.Length > 2 ? Common.atof( vs[2] ) : 0 );
+                    ( ( Single* )d )[0] = MathLib.atof( vs[0] );
+                    ( ( Single* )d )[1] = ( vs.Length > 1 ? MathLib.atof( vs[1] ) : 0 );
+                    ( ( Single* )d )[2] = ( vs.Length > 2 ? MathLib.atof( vs[2] ) : 0 );
                     break;
 
                 case etype_t.ev_entity:
-                    *( Int32* )d = server.EdictToProg( server.EdictNum( Common.atoi( s ) ) );
+                    *( Int32* )d = server.EdictToProg( server.EdictNum( MathLib.atoi( s ) ) );
                     break;
 
                 case etype_t.ev_field:

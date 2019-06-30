@@ -271,10 +271,10 @@ namespace SharpQuake
 
             Common.InitArgv(args2);
 
-            parms.argv = new String[Common.Argc];
-            Common.Args.CopyTo(parms.argv, 0);
+            parms.argv = new String[CommandLine.Argc];
+            CommandLine.Args.CopyTo(parms.argv, 0);
 
-            if (Common.HasParam("-dedicated"))
+            if (CommandLine.HasParam("-dedicated"))
                 throw new QuakeException("Dedicated server mode not supported!");
 
             Size size = new Size(1280, 720);

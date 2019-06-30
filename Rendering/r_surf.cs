@@ -76,19 +76,19 @@ namespace SharpQuake
             if( Scr.IsPermedia )
                 Drawer.LightMapFormat = PixelFormat.Rgba;
 
-            if( Common.HasParam( "-lm_1" ) )
+            if( CommandLine.HasParam( "-lm_1" ) )
                 Drawer.LightMapFormat = PixelFormat.Luminance;
 
-            if( Common.HasParam( "-lm_a" ) )
+            if( CommandLine.HasParam( "-lm_a" ) )
                 Drawer.LightMapFormat = PixelFormat.Alpha;
 
-            //if (Common.HasParam("-lm_i"))
+            //if (CommandLine.HasParam("-lm_i"))
             //    Drawer.LightMapFormat = PixelFormat.Intensity;
 
-            //if (Common.HasParam("-lm_2"))
+            //if (CommandLine.HasParam("-lm_2"))
             //    Drawer.LightMapFormat = PixelFormat.Rgba4;
 
-            if( Common.HasParam( "-lm_4" ) )
+            if( CommandLine.HasParam( "-lm_4" ) )
                 Drawer.LightMapFormat = PixelFormat.Rgba;
 
             switch( Drawer.LightMapFormat )
@@ -555,7 +555,7 @@ namespace SharpQuake
             if( _NoVis.Value != 0 )
             {
                 vis = new Byte[4096];
-                Common.FillArray<Byte>( vis, 0xff ); // todo: add count parameter?
+                Utilities.FillArray<Byte>( vis, 0xff ); // todo: add count parameter?
                 //memset(solid, 0xff, (cl.worldmodel->numleafs + 7) >> 3);
             }
             else

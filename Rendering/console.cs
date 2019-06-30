@@ -112,7 +112,7 @@ namespace SharpQuake
                 width = 38;
                 _LineWidth = width; // con_linewidth = width;
                 _TotalLines = CON_TEXTSIZE / _LineWidth;
-                Common.FillArray( _Text, ' ' ); // Q_memset (con_text, ' ', CON_TEXTSIZE);
+                Utilities.FillArray( _Text, ' ' ); // Q_memset (con_text, ' ', CON_TEXTSIZE);
             }
             else
             {
@@ -132,7 +132,7 @@ namespace SharpQuake
 
                 Char[] tmp = _Text;
                 _Text = new Char[CON_TEXTSIZE];
-                Common.FillArray( _Text, ' ' );
+                Utilities.FillArray( _Text, ' ' );
 
                 for( var i = 0; i < numlines; i++ )
                 {
@@ -153,10 +153,10 @@ namespace SharpQuake
         // Con_Init (void)
         public static void Init()
         {
-            _DebugLog = ( Common.CheckParm( "-condebug" ) > 0 );
+            _DebugLog = ( CommandLine.CheckParm( "-condebug" ) > 0 );
             if( _DebugLog )
             {
-                var path = Path.Combine( Common.GameDir, LOG_FILE_NAME );
+                var path = Path.Combine( FileSystem.GameDir, LOG_FILE_NAME );
                 if( File.Exists( path ) )
                     File.Delete( path );
 
@@ -473,7 +473,7 @@ namespace SharpQuake
         /// </summary>
         private static void Clear_f()
         {
-            Common.FillArray( _Text, ' ' );
+            Utilities.FillArray( _Text, ' ' );
         }
 
         // Con_MessageMode_f

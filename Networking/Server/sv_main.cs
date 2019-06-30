@@ -741,7 +741,7 @@ namespace SharpQuake
         private static void WriteEntitiesToClient( MemoryEdict clent, MessageWriter msg )
         {
             // find the client's PVS
-            Vector3 org = Common.ToVector( ref clent.v.origin ) + Common.ToVector( ref clent.v.view_ofs );
+            Vector3 org = Utilities.ToVector( ref clent.v.origin ) + Utilities.ToVector( ref clent.v.view_ofs );
             Byte[] pvs = FatPVS( ref org );
 
             // send over all entities (except the client) that touch the pvs

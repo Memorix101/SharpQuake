@@ -627,7 +627,7 @@ namespace SharpQuake
 
             // parse signon message
             var str = net.Reader.ReadString();
-            cl.levelname = Common.Copy( str, 40 );
+            cl.levelname = Utilities.Copy( str, 40 );
 
             // seperate the printfs so the server message can have a color
             Con.Print( ConsoleBar );
@@ -831,8 +831,8 @@ namespace SharpQuake
             ent.colormap = Scr.vid.colormap;
             ent.skinnum = ent.baseline.skin;
             ent.effects = ent.baseline.effects;
-            ent.origin = Common.ToVector( ref ent.baseline.origin );
-            ent.angles = Common.ToVector( ref ent.baseline.angles );
+            ent.origin = Utilities.ToVector( ref ent.baseline.origin );
+            ent.angles = Utilities.ToVector( ref ent.baseline.angles );
             render.AddEfrags( ent );
         }
 

@@ -322,7 +322,7 @@ namespace SharpQuake
 
         private static void ImpulseCmd()
         {
-            Impulse = Common.atoi( Command.Argv( 1 ) );
+            Impulse = MathLib.atoi( Command.Argv( 1 ) );
         }
     }
 
