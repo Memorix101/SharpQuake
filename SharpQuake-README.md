@@ -1,8 +1,8 @@
-# SharpQuakeEvolved
+# SharpQuake
 
 ### Description 
 
-SharpQuakeEvolved is based on **[SharpQuake](https://memorix101.itch.io/sharpquake)** a **[GLQuake](https://github.com/dpteam/GLQuake3D)** reimplementation in C# using the **[OpenTK](https://github.com/opentk/opentk)** library.
+SharpQuake is a **[GLQuake](https://github.com/dpteam/GLQuake3D)** reimplementation in C# using the **[OpenTK](https://github.com/opentk/opentk)** library.
 
 ### Dependencies
 * OpenTK 3.0.1
@@ -53,7 +53,7 @@ Enjoy! 🙂
 ### Credits
 * Made by **[yurykiselev](https://sourceforge.net/u/yurykiselev/profile/)** and **Uze** and brought to Github by **[Memorix101](https://github.com/Memorix101)**
 
-* QuakeSharpEvolved enhancements by **[optimus-code](https://github.com/optimus-code)**
+* Refactored and expanded by **[optimus-code](https://github.com/optimus-code)**
 
 * Updated to .NET 4.7.1 and OpenTK 3.0.1 by **[Daniel Cornelius (Kerfuffles/NukeAndBeans)](https://github.com/Kerfuffles)**
 
