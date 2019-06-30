@@ -35,7 +35,7 @@ namespace SharpQuake
         }
 
         // COM_InitFilesystem
-        public static void InitFileSystem( quakeparms_t hostParams )
+        public static void InitFileSystem( QuakeParameters hostParams )
         {
             //
             // -basedir <path>
@@ -50,7 +50,7 @@ namespace SharpQuake
             else
             {
                 basedir = hostParams.basedir;
-                qparam.globalbasedir = basedir;
+                QuakeParameter.globalbasedir = basedir;
             }
 
             if ( !String.IsNullOrEmpty( basedir ) )
@@ -84,18 +84,18 @@ namespace SharpQuake
             // start up with GAMENAME by default (id1)
             //
             AddGameDirectory( basedir + "/" + QDef.GAMENAME );
-            qparam.globalgameid = QDef.GAMENAME;
+            QuakeParameter.globalgameid = QDef.GAMENAME;
 
             if ( CommandLine.HasParam( "-rogue" ) )
             {
                 AddGameDirectory( basedir + "/rogue" );
-                qparam.globalgameid = "rogue";
+                QuakeParameter.globalgameid = "rogue";
             }
 
             if ( CommandLine.HasParam( "-hipnotic" ) )
             {
                 AddGameDirectory( basedir + "/hipnotic" );
-                qparam.globalgameid = "hipnotic";
+                QuakeParameter.globalgameid = "hipnotic";
             }
             //
             // -game <gamedir>

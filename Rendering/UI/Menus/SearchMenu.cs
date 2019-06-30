@@ -12,9 +12,9 @@ namespace SharpQuake
         private Boolean _SearchComplete;
         private Double _SearchCompleteTime;
 
-        public override void Show( )
+        public override void Show( Host host )
         {
-            base.Show( );
+            base.Show( host );
             net.SlistSilent = true;
             net.SlistLocal = false;
             _SearchComplete = false;
@@ -43,20 +43,20 @@ namespace SharpQuake
             if ( !_SearchComplete )
             {
                 _SearchComplete = true;
-                _SearchCompleteTime = host.RealTime;
+                _SearchCompleteTime = Host.RealTime;
             }
 
             if ( net.HostCacheCount > 0 )
             {
-                MenuBase.ServerListMenu.Show( );
+                MenuBase.ServerListMenu.Show( Host );
                 return;
             }
 
             Menu.PrintWhite( ( 320 / 2 ) - ( ( 22 * 8 ) / 2 ), 64, "No Quake servers found" );
-            if ( ( host.RealTime - _SearchCompleteTime ) < 3.0 )
+            if ( ( Host.RealTime - _SearchCompleteTime ) < 3.0 )
                 return;
 
-            MenuBase.LanConfigMenu.Show( );
+            MenuBase.LanConfigMenu.Show( Host );
         }
     }
 }

@@ -41,24 +41,7 @@ namespace SharpQuake
         ca_connected		// valid netcon, talking to a server
     }
 
-    internal struct usercmd_t
-    {
-        public Vector3 viewangles;
-
-        // intended velocities
-        public Single forwardmove;
-
-        public Single sidemove;
-        public Single upmove;
-
-        public void Clear()
-        {
-            this.viewangles = Vector3.Zero;
-            this.forwardmove = 0;
-            this.sidemove = 0;
-            this.upmove = 0;
-        }
-    }
+    
 
     //
     // cl_input

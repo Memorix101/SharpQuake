@@ -10,7 +10,7 @@ namespace SharpQuake
     {
         private MenuBase _PrevMenu; // m_quit_prevstate;
 
-        public override void Show( )
+        public override void Show( Host host )
         {
             if ( CurrentMenu == this )
                 return;
@@ -18,7 +18,7 @@ namespace SharpQuake
             Key.Destination = keydest_t.key_menu;
             _PrevMenu = CurrentMenu;
 
-            base.Show( );
+            base.Show( host );
         }
 
         public override void KeyEvent( Int32 key )
@@ -29,7 +29,7 @@ namespace SharpQuake
                 case 'n':
                 case 'N':
                     if ( _PrevMenu != null )
-                        _PrevMenu.Show( );
+                        _PrevMenu.Show( Host );
                     else
                         MenuBase.Hide( );
                     break;
@@ -37,7 +37,7 @@ namespace SharpQuake
                 case 'Y':
                 case 'y':
                     Key.Destination = keydest_t.key_console;
-                    host.Quit_f( );
+                    Host.Quit_f( );
                     break;
 
                 default:

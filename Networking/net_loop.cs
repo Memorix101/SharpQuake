@@ -50,8 +50,17 @@ namespace SharpQuake
             }
         }
 
-        public void Init()
+        // CHANGE
+        private Host Host
         {
+            get;
+            set;
+        }
+
+        public void Init( Host host )
+        {
+            Host = host;
+
             if( client.cls.state == cactive_t.ca_dedicated )
                 return;// -1;
 
@@ -164,7 +173,7 @@ namespace SharpQuake
 
             qsocket_t sock2 = (qsocket_t)sock.driverdata;
 
-            if( ( sock2.receiveMessageLength + data.Length + 4 ) > net.NET_MAXMESSAGE )
+            if( ( sock2.receiveMessageLength + data.Length + 4 ) > NetworkDef.NET_MAXMESSAGE )
                 Utilities.Error( "Loop_SendMessage: overflow\n" );
 
             // message type
@@ -193,7 +202,7 @@ namespace SharpQuake
 
             qsocket_t sock2 = (qsocket_t)sock.driverdata;
 
-            if( ( sock2.receiveMessageLength + data.Length + sizeof( Byte ) + sizeof( Int16 ) ) > net.NET_MAXMESSAGE )
+            if( ( sock2.receiveMessageLength + data.Length + sizeof( Byte ) + sizeof( Int16 ) ) > NetworkDef.NET_MAXMESSAGE )
                 return 0;
 
             var offset = sock2.receiveMessageLength;

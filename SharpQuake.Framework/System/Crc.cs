@@ -27,9 +27,9 @@
 // and the initial and final xor values shown below...  in other words, the
 // CCITT standard CRC used by XMODEM
 
-namespace SharpQuake
+namespace SharpQuake.Framework
 {
-    internal static class Crc
+    public static class Crc
     {
         private const System.UInt16 CRC_INIT_VALUE = 0xffff;
         private const System.UInt16 CRC_XOR_VALUE = 0x0000;

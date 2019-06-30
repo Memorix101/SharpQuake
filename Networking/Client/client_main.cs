@@ -28,9 +28,18 @@ namespace SharpQuake
 {
     partial class client
     {
-        // CL_Init
-        public static void Init()
+        // CHANGE
+        private static Host Host
         {
+            get;
+            set;
+        }
+
+        // CL_Init
+        public static void Init( Host host )
+        {
+            Host = host;
+
             InitInput();
             InitTempEntities();
 
@@ -95,7 +104,7 @@ namespace SharpQuake
 
             cls.netcon = net.Connect( host );
             if( cls.netcon == null )
-                SharpQuake.host.Error( "CL_Connect: connect failed\n" );
+                Host.Error( "CL_Connect: connect failed\n" );
 
             Con.DPrint( "CL_EstablishConnection: connected to {0}\n", host );
 
@@ -196,7 +205,7 @@ namespace SharpQuake
         {
             Disconnect();
             if( server.IsActive )
-                host.ShutdownServer( false );
+                Host.ShutdownServer( false );
         }
 
         // CL_SendCmd
@@ -236,7 +245,7 @@ namespace SharpQuake
             }
 
             if( net.SendMessage( cls.netcon, cls.message ) == -1 )
-                host.Error( "CL_WriteToServer: lost server connection" );
+                Host.Error( "CL_WriteToServer: lost server connection" );
 
             cls.message.Clear();
         }
@@ -247,18 +256,18 @@ namespace SharpQuake
         public static Int32 ReadFromServer()
         {
             cl.oldtime = cl.time;
-            cl.time += host.FrameTime;
+            cl.time += Host.FrameTime;
 
             Int32 ret;
             do
             {
                 ret = GetMessage();
                 if( ret == -1 )
-                    host.Error( "CL_ReadFromServer: lost server connection" );
+                    Host.Error( "CL_ReadFromServer: lost server connection" );
                 if( ret == 0 )
                     break;
 
-                cl.last_received_message = ( Single ) host.RealTime;
+                cl.last_received_message = ( Single ) Host.RealTime;
                 ParseServerMessage();
             } while( ret != 0 && cls.state == cactive_t.ca_connected );
 
@@ -305,7 +314,7 @@ namespace SharpQuake
 
                 cls.state = cactive_t.ca_disconnected;
                 if( server.sv.active )
-                    host.ShutdownServer( false );
+                    Host.ShutdownServer( false );
             }
 
             cls.demoplayback = cls.timedemo = false;
@@ -510,7 +519,7 @@ namespace SharpQuake
         private static void ClearState()
         {
             if( !server.sv.active )
-                host.ClearMemory();
+                Host.ClearMemory();
 
             // wipe the entire cl structure
             _State.Clear();

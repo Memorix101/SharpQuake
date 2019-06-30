@@ -12,10 +12,10 @@ namespace SharpQuake
 
         private Int32 _Page;
 
-        public override void Show( )
+        public override void Show( Host host )
         {
             _Page = 0;
-            base.Show( );
+            base.Show( host );
         }
 
         public override void KeyEvent( Int32 key )
@@ -23,7 +23,7 @@ namespace SharpQuake
             switch ( key )
             {
                 case Key.K_ESCAPE:
-                    MenuBase.MainMenu.Show( );
+                    MenuBase.MainMenu.Show( Host );
                     break;
 
                 case Key.K_UPARROW:

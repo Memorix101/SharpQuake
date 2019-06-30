@@ -31,9 +31,18 @@ namespace SharpQuake
         private static Int32 _FatBytes; // fatbytes
         private static Byte[] _FatPvs = new Byte[BspDef.MAX_MAP_LEAFS / 8]; // fatpvs
 
-        // SV_Init
-        public static void Init()
+        // CHANGE
+        private static Host Host
         {
+            get;
+            set;
+        }
+
+        // SV_Init
+        public static void Init( Host host )
+        {
+            Host = host;
+
             for( var i = 0; i < _BoxClipNodes.Length; i++ )
             {
                 _BoxClipNodes[i].children = new Int16[2];
@@ -160,7 +169,7 @@ namespace SharpQuake
         /// </summary>
         public static void DropClient( Boolean crash )
         {
-            client_t client = host.HostClient;
+            client_t client = Host.HostClient;
 
             if( !crash )
             {
@@ -203,13 +212,13 @@ namespace SharpQuake
                     continue;
 
                 cl.message.WriteByte(protocol.svc_updatename );
-                cl.message.WriteByte(host.ClientNum );
+                cl.message.WriteByte( Host.ClientNum );
                 cl.message.WriteString( "" );
                 cl.message.WriteByte(protocol.svc_updatefrags );
-                cl.message.WriteByte(host.ClientNum );
+                cl.message.WriteByte( Host.ClientNum );
                 cl.message.WriteShort( 0 );
                 cl.message.WriteByte(protocol.svc_updatecolors );
-                cl.message.WriteByte(host.ClientNum );
+                cl.message.WriteByte( Host.ClientNum );
                 cl.message.WriteByte( 0 );
             }
         }
@@ -225,14 +234,14 @@ namespace SharpQuake
             // build individual updates
             for( var i = 0; i < svs.maxclients; i++ )
             {
-                host.HostClient = svs.clients[i];
+                Host.HostClient = svs.clients[i];
 
-                if( !host.HostClient.active )
+                if( !Host.HostClient.active )
                     continue;
 
-                if( host.HostClient.spawned )
+                if( Host.HostClient.spawned )
                 {
-                    if( !SendClientDatagram( host.HostClient ) )
+                    if( !SendClientDatagram( Host.HostClient ) )
                         continue;
                 }
                 else
@@ -242,10 +251,10 @@ namespace SharpQuake
                     // send a full message when the next signon stage has been requested
                     // some other message data (name changes, etc) may accumulate
                     // between signon stages
-                    if( !host.HostClient.sendsignon )
+                    if( !Host.HostClient.sendsignon )
                     {
-                        if( host.RealTime - host.HostClient.last_message > 5 )
-                            SendNop( host.HostClient );
+                        if( Host.RealTime - Host.HostClient.last_message > 5 )
+                            SendNop( Host.HostClient );
                         continue;	// don't send out non-signon messages
                     }
                 }
@@ -253,27 +262,27 @@ namespace SharpQuake
                 // check for an overflowed message.  Should only happen
                 // on a very fucked up connection that backs up a lot, then
                 // changes level
-                if( host.HostClient.message.IsOveflowed )
+                if( Host.HostClient.message.IsOveflowed )
                 {
                     DropClient( true );
-                    host.HostClient.message.IsOveflowed = false;
+                    Host.HostClient.message.IsOveflowed = false;
                     continue;
                 }
 
-                if( host.HostClient.message.Length > 0 || host.HostClient.dropasap )
+                if( Host.HostClient.message.Length > 0 || Host.HostClient.dropasap )
                 {
-                    if( !net.CanSendMessage( host.HostClient.netconnection ) )
+                    if( !net.CanSendMessage( Host.HostClient.netconnection ) )
                         continue;
 
-                    if( host.HostClient.dropasap )
+                    if( Host.HostClient.dropasap )
                         DropClient( false );	// went to another level
                     else
                     {
-                        if( net.SendMessage( host.HostClient.netconnection, host.HostClient.message ) == -1 )
+                        if( net.SendMessage( Host.HostClient.netconnection, Host.HostClient.message ) == -1 )
                             DropClient( true );	// if the message couldn't send, kick off
-                        host.HostClient.message.Clear();
-                        host.HostClient.last_message = host.RealTime;
-                        host.HostClient.sendsignon = false;
+                        Host.HostClient.message.Clear();
+                        Host.HostClient.last_message = Host.RealTime;
+                        Host.HostClient.sendsignon = false;
                     }
                 }
             }
@@ -316,8 +325,8 @@ namespace SharpQuake
         public static void ClientPrint( String fmt, params Object[] args )
         {
             var tmp = String.Format( fmt, args );
-            host.HostClient.message.WriteByte( protocol.svc_print );
-            host.HostClient.message.WriteString( tmp );
+            Host.HostClient.message.WriteByte( protocol.svc_print );
+            Host.HostClient.message.WriteString( tmp );
         }
 
         /// <summary>
@@ -522,14 +531,14 @@ namespace SharpQuake
 
             for( var i = 0; i < svs.maxclients; i++ )
             {
-                host.HostClient = SharpQuake.server.svs.clients[i];
-                if( !host.HostClient.active )
+                Host.HostClient = SharpQuake.server.svs.clients[i];
+                if( !Host.HostClient.active )
                     continue;
 
                 // call the progs to get default spawn parms for the new client
-                progs.GlobalStruct.self = EdictToProg( host.HostClient.edict );
+                progs.GlobalStruct.self = EdictToProg( Host.HostClient.edict );
                 progs.Execute( progs.GlobalStruct.SetChangeParms );
-                AssignGlobalSpawnparams( host.HostClient );
+                AssignGlobalSpawnparams( Host.HostClient );
             }
         }
 
@@ -558,21 +567,21 @@ namespace SharpQuake
             //
             // make cvars consistant
             //
-            if( host.IsCoop )
+            if( Host.IsCoop )
                 CVar.Set( "deathmatch", 0 );
 
-            host.CurrentSkill = ( Int32 ) ( host.Skill + 0.5 );
-            if( host.CurrentSkill < 0 )
-                host.CurrentSkill = 0;
-            if( host.CurrentSkill > 3 )
-                host.CurrentSkill = 3;
+            Host.CurrentSkill = ( Int32 ) ( Host.Skill + 0.5 );
+            if( Host.CurrentSkill < 0 )
+                Host.CurrentSkill = 0;
+            if( Host.CurrentSkill > 3 )
+                Host.CurrentSkill = 3;
 
-            CVar.Set( "skill", ( Single ) host.CurrentSkill );
+            CVar.Set( "skill", ( Single ) Host.CurrentSkill );
 
             //
             // set up the new server
             //
-            host.ClearMemory();
+            Host.ClearMemory();
 
             sv.Clear();
 
@@ -641,10 +650,10 @@ namespace SharpQuake
             ent.v.solid = Solids.SOLID_BSP;
             ent.v.movetype = Movetypes.MOVETYPE_PUSH;
 
-            if( host.IsCoop )
+            if( Host.IsCoop )
                 progs.GlobalStruct.coop = 1; //coop.value;
             else
-                progs.GlobalStruct.deathmatch = host.Deathmatch;
+                progs.GlobalStruct.deathmatch = Host.Deathmatch;
 
             var offset = progs.NewString( sv.name );
             progs.GlobalStruct.mapname = offset;
@@ -660,7 +669,7 @@ namespace SharpQuake
             sv.state = server_state_t.Active;
 
             // run two frames to allow everything to settle
-            host.FrameTime = 0.1;
+            Host.FrameTime = 0.1;
             Physics();
             Physics();
 
@@ -670,9 +679,9 @@ namespace SharpQuake
             // send serverinfo to all connected clients
             for( var i = 0; i < svs.maxclients; i++ )
             {
-                host.HostClient = svs.clients[i];
-                if( host.HostClient.active )
-                    SendServerInfo( host.HostClient );
+                Host.HostClient = svs.clients[i];
+                if( Host.HostClient.active )
+                    SendServerInfo( Host.HostClient );
             }
 
             GC.Collect();
@@ -703,7 +712,7 @@ namespace SharpQuake
 
             if( net.SendUnreliableMessage( client.netconnection, msg ) == -1 )
                 DropClient( true );	// if the message couldn't send, kick off
-            client.last_message = host.RealTime;
+            client.last_message = Host.RealTime;
         }
 
         /// <summary>
@@ -911,8 +920,8 @@ namespace SharpQuake
             // check for changes to be sent over the reliable streams
             for( var i = 0; i < svs.maxclients; i++ )
             {
-                host.HostClient = svs.clients[i];
-                if( host.HostClient.old_frags != host.HostClient.edict.v.frags )
+                Host.HostClient = svs.clients[i];
+                if( Host.HostClient.old_frags != Host.HostClient.edict.v.frags )
                 {
                     for( var j = 0; j < svs.maxclients; j++ )
                     {
@@ -922,10 +931,10 @@ namespace SharpQuake
 
                         client.message.WriteByte( protocol.svc_updatefrags );
                         client.message.WriteByte( i );
-                        client.message.WriteShort( ( Int32 ) host.HostClient.edict.v.frags );
+                        client.message.WriteShort( ( Int32 ) Host.HostClient.edict.v.frags );
                     }
 
-                    host.HostClient.old_frags = ( Int32 ) host.HostClient.edict.v.frags;
+                    Host.HostClient.old_frags = ( Int32 ) Host.HostClient.edict.v.frags;
                 }
             }
 
@@ -1026,7 +1035,7 @@ namespace SharpQuake
             writer.WriteLong( protocol.PROTOCOL_VERSION );
             writer.WriteByte( svs.maxclients );
 
-            if( !host.IsCoop && host.Deathmatch != 0 )
+            if( !Host.IsCoop && Host.Deathmatch != 0 )
                 writer.WriteByte( protocol.GAME_DEATHMATCH );
             else
                 writer.WriteByte( protocol.GAME_COOP );

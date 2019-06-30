@@ -181,10 +181,19 @@ namespace SharpQuake
         // menu_cachepics
         private static Int32 _MenuNumCachePics;
 
-        // Draw_Init
-        public static void Init()
+        // CHANGE
+        private static Host Host
         {
-            for( var i = 0; i < _MenuCachePics.Length; i++ )
+            get;
+            set;
+        }
+
+        // Draw_Init
+        public static void Init( Host host )
+        {
+            Host = host;
+
+            for ( var i = 0; i < _MenuCachePics.Length; i++ )
                 _MenuCachePics[i] = new CachePic();
 
             if( _glNoBind == null )
@@ -601,7 +610,7 @@ namespace SharpQuake
         {
             GL.Disable( EnableCap.Texture2D );
 
-            Byte[] pal = host.BasePal;
+            Byte[] pal = Host.BasePal;
 
             GL.Color3( pal[c * 3] / 255.0f, pal[c * 3 + 1] / 255.0f, pal[c * 3 + 2] / 255.0f );
             GL.Begin( PrimitiveType.Quads );

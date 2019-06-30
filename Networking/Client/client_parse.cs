@@ -105,7 +105,7 @@ namespace SharpQuake
             while( true )
             {
                 if( net.Reader.IsBadRead )
-                    host.Error( "CL_ParseServerMessage: Bad server message" );
+                    Host.Error( "CL_ParseServerMessage: Bad server message" );
 
                 var cmd = net.Reader.ReadByte();
                 if( cmd == -1 )
@@ -128,7 +128,7 @@ namespace SharpQuake
                 switch( cmd )
                 {
                     default:
-                        host.Error( "CL_ParseServerMessage: Illegible server message\n" );
+                        Host.Error( "CL_ParseServerMessage: Illegible server message\n" );
                         break;
 
                     case protocol.svc_nop:
@@ -147,11 +147,11 @@ namespace SharpQuake
                     case protocol.svc_version:
                         i = net.Reader.ReadLong();
                         if( i != protocol.PROTOCOL_VERSION )
-                            host.Error( "CL_ParseServerMessage: Server is protocol {0} instead of {1}\n", i, protocol.PROTOCOL_VERSION );
+                            Host.Error( "CL_ParseServerMessage: Server is protocol {0} instead of {1}\n", i, protocol.PROTOCOL_VERSION );
                         break;
 
                     case protocol.svc_disconnect:
-                        host.EndGame( "Server disconnected\n" );
+                        Host.EndGame( "Server disconnected\n" );
                         break;
 
                     case protocol.svc_print:
@@ -205,7 +205,7 @@ namespace SharpQuake
                         sbar.Changed();
                         i = net.Reader.ReadByte();
                         if( i >= cl.maxclients )
-                            host.Error( "CL_ParseServerMessage: svc_updatename > MAX_SCOREBOARD" );
+                            Host.Error( "CL_ParseServerMessage: svc_updatename > MAX_SCOREBOARD" );
                         cl.scores[i].name = net.Reader.ReadString();
                         break;
 
@@ -213,7 +213,7 @@ namespace SharpQuake
                         sbar.Changed();
                         i = net.Reader.ReadByte();
                         if( i >= cl.maxclients )
-                            host.Error( "CL_ParseServerMessage: svc_updatefrags > MAX_SCOREBOARD" );
+                            Host.Error( "CL_ParseServerMessage: svc_updatefrags > MAX_SCOREBOARD" );
                         cl.scores[i].frags = net.Reader.ReadShort();
                         break;
 
@@ -221,7 +221,7 @@ namespace SharpQuake
                         sbar.Changed();
                         i = net.Reader.ReadByte();
                         if( i >= cl.maxclients )
-                            host.Error( "CL_ParseServerMessage: svc_updatecolors > MAX_SCOREBOARD" );
+                            Host.Error( "CL_ParseServerMessage: svc_updatecolors > MAX_SCOREBOARD" );
                         cl.scores[i].colors = net.Reader.ReadByte();
                         NewTranslation( i );
                         break;
@@ -262,7 +262,7 @@ namespace SharpQuake
                     case protocol.svc_signonnum:
                         i = net.Reader.ReadByte();
                         if( i <= cls.signon )
-                            host.Error( "Received signon {0} when at {1}", i, cls.signon );
+                            Host.Error( "Received signon {0} when at {1}", i, cls.signon );
                         cls.signon = i;
                         SignonReply();
                         break;
@@ -374,7 +374,7 @@ namespace SharpQuake
             {
                 modnum = net.Reader.ReadByte();
                 if( modnum >= QDef.MAX_MODELS )
-                    host.Error( "CL_ParseModel: bad modnum" );
+                    Host.Error( "CL_ParseModel: bad modnum" );
             }
             else
                 modnum = ent.baseline.modelindex;
@@ -703,7 +703,7 @@ namespace SharpQuake
 
             render.NewMap();
 
-            host.NoClipAngleHack = false; // noclip is turned off at start
+            Host.NoClipAngleHack = false; // noclip is turned off at start
 
             GC.Collect();
         }
@@ -732,7 +732,7 @@ namespace SharpQuake
             channel &= 7;
 
             if( ent > QDef.MAX_EDICTS )
-                host.Error( "CL_ParseStartSoundPacket: ent = {0}", ent );
+                Host.Error( "CL_ParseStartSoundPacket: ent = {0}", ent );
 
             Vector3 pos = net.Reader.ReadCoords();
             snd.StartSound( ent, channel, cl.sound_precache[sound_num], ref pos, volume / 255.0f, attenuation );
@@ -783,7 +783,7 @@ namespace SharpQuake
             if( num >= cl.num_entities )
             {
                 if( num >= QDef.MAX_EDICTS )
-                    host.Error( "CL_EntityNum: %i is an invalid number", num );
+                    Host.Error( "CL_EntityNum: %i is an invalid number", num );
                 while( cl.num_entities <= num )
                 {
                     _Entities[cl.num_entities].colormap = Scr.vid.colormap;
@@ -819,7 +819,7 @@ namespace SharpQuake
         {
             var i = cl.num_statics;
             if( i >= MAX_STATIC_ENTITIES )
-                host.Error( "Too many static entities" );
+                Host.Error( "Too many static entities" );
 
             Entity ent = _StaticEntities[i];
             cl.num_statics++;
@@ -871,19 +871,19 @@ namespace SharpQuake
                 switch( ret )
                 {
                     default:
-                        host.Error( "CL_KeepaliveMessage: CL_GetMessage failed" );
+                        Host.Error( "CL_KeepaliveMessage: CL_GetMessage failed" );
                         break;
 
                     case 0:
                         break;  // nothing waiting
 
                     case 1:
-                        host.Error( "CL_KeepaliveMessage: received a message" );
+                        Host.Error( "CL_KeepaliveMessage: received a message" );
                         break;
 
                     case 2:
                         if( net.Reader.ReadByte() != protocol.svc_nop )
-                            host.Error( "CL_KeepaliveMessage: datagram wasn't a nop" );
+                            Host.Error( "CL_KeepaliveMessage: datagram wasn't a nop" );
                         break;
                 }
             } while( ret != 0 );

@@ -47,14 +47,23 @@ namespace SharpQuake
         protected Int32 _Cursor;
         private static MenuBase _CurrentMenu;
 
+        // CHANGE 
+        protected Host Host
+        {
+            get;
+            set;
+        }
+
         public static void Hide( )
         {
             Key.Destination = keydest_t.key_game;
             _CurrentMenu = null;
         }
 
-        public virtual void Show( )
+        public virtual void Show( Host host )
         {
+            Host = host;
+
             Menu.EnterSound = true;
             Key.Destination = keydest_t.key_menu;
             _CurrentMenu = this;

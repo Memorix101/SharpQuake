@@ -150,9 +150,18 @@ namespace SharpQuake
             _Current = _TotalLines - 1;
         }
 
-        // Con_Init (void)
-        public static void Init()
+        // CHANGE
+        private static Host Host
         {
+            get;
+            set;
+        }
+
+        // Con_Init (void)
+        public static void Init( Host host )
+        {
+            Host = host;
+
             _DebugLog = ( CommandLine.CheckParm( "-condebug" ) > 0 );
             if( _DebugLog )
             {
@@ -278,7 +287,7 @@ namespace SharpQuake
         public static void DPrint( String fmt, params Object[] args )
         {
             // don't confuse non-developers with techie stuff...
-            if( host.IsDeveloper )
+            if( Host != null && Host.IsDeveloper )
                 Print( fmt, args );
         }
 
@@ -306,7 +315,7 @@ namespace SharpQuake
                 var time = _Times[i % NUM_CON_TIMES];
                 if( time == 0 )
                     continue;
-                time = host.RealTime - time;
+                time = Host.RealTime - time;
                 if( time > _NotifyTime.Value )
                     continue;
 
@@ -334,7 +343,7 @@ namespace SharpQuake
                 {
                     Drawer.DrawCharacter( ( x + 5 ) << 3, v, chat[x] );
                 }
-                Drawer.DrawCharacter( ( x + 5 ) << 3, v, 10 + ( ( Int32 ) ( host.RealTime * _CursorSpeed ) & 1 ) );
+                Drawer.DrawCharacter( ( x + 5 ) << 3, v, 10 + ( ( Int32 ) ( Host.RealTime * _CursorSpeed ) & 1 ) );
                 v += 8;
             }
 
@@ -364,7 +373,7 @@ namespace SharpQuake
                 }
                 else
                 {
-                    MenuBase.MainMenu.Show();
+                    MenuBase.MainMenu.Show( Host );
                 }
             }
             else
@@ -443,7 +452,7 @@ namespace SharpQuake
                     LineFeed();
                     // mark time for transparent overlay
                     if( _Current >= 0 )
-                        _Times[_Current % NUM_CON_TIMES] = host.RealTime; // realtime
+                        _Times[_Current % NUM_CON_TIMES] = Host.RealTime; // realtime
                 }
 
                 switch( c )
@@ -511,7 +520,7 @@ namespace SharpQuake
                 return;		// don't draw anything
 
             // add the cursor frame
-            Key.Lines[Key.EditLine][Key.LinePos] = ( Char ) ( 10 + ( ( Int32 ) ( host.RealTime * _CursorSpeed ) & 1 ) );
+            Key.Lines[Key.EditLine][Key.LinePos] = ( Char ) ( 10 + ( ( Int32 ) ( Host.RealTime * _CursorSpeed ) & 1 ) );
 
             // fill out remainder with spaces
             for( var i = Key.LinePos + 1; i < _LineWidth; i++ )

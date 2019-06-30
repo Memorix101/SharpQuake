@@ -118,9 +118,18 @@ namespace SharpQuake
         private static Single _OldPitch = 0; // static oldpitch from CalcGunAngle
         private static Single _OldGammaValue; // static float oldgammavalue from CheckGamma
 
-        // V_Init
-        public static void Init()
+        // CHANGE
+        private static Host Host
         {
+            get;
+            set;
+        }
+
+        // V_Init
+        public static void Init( Host host )
+        {
+            Host = host;
+
             Command.Add( "v_cshift", CShift_f );
             Command.Add( "bf", BonusFlash_f );
             Command.Add( "centerview", StartPitchDrift );
@@ -278,12 +287,12 @@ namespace SharpQuake
             }
 
             // drop the damage value
-            cl.cshifts[ColorShift.CSHIFT_DAMAGE].percent -= ( Int32 ) ( host.FrameTime * 150 );
+            cl.cshifts[ColorShift.CSHIFT_DAMAGE].percent -= ( Int32 ) ( Host.FrameTime * 150 );
             if( cl.cshifts[ColorShift.CSHIFT_DAMAGE].percent < 0 )
                 cl.cshifts[ColorShift.CSHIFT_DAMAGE].percent = 0;
 
             // drop the bonus value
-            cl.cshifts[ColorShift.CSHIFT_BONUS].percent -= ( Int32 ) ( host.FrameTime * 100 );
+            cl.cshifts[ColorShift.CSHIFT_BONUS].percent -= ( Int32 ) ( Host.FrameTime * 100 );
             if( cl.cshifts[ColorShift.CSHIFT_BONUS].percent < 0 )
                 cl.cshifts[ColorShift.CSHIFT_BONUS].percent = 0;
 
@@ -316,7 +325,7 @@ namespace SharpQuake
                 _Ramps[2, i] = _GammaTable[ib];
             }
 
-            Byte[] basepal = host.BasePal;
+            Byte[] basepal = Host.BasePal;
             var offset = 0;
             Byte[] newpal = new Byte[768];
 
@@ -672,7 +681,7 @@ namespace SharpQuake
         private static void DriftPitch()
         {
             client_state_t cl = client.cl;
-            if( host.NoClipAngleHack || !cl.onground || client.cls.demoplayback )
+            if( Host.NoClipAngleHack || !cl.onground || client.cls.demoplayback )
             {
                 cl.driftmove = 0;
                 cl.pitchvel = 0;
@@ -685,7 +694,7 @@ namespace SharpQuake
                 if( Math.Abs( cl.cmd.forwardmove ) < client.ForwardSpeed )
                     cl.driftmove = 0;
                 else
-                    cl.driftmove += ( Single ) host.FrameTime;
+                    cl.driftmove += ( Single ) Host.FrameTime;
 
                 if( cl.driftmove > _CenterMove.Value )
                 {
@@ -701,8 +710,8 @@ namespace SharpQuake
                 return;
             }
 
-            var move = ( Single ) host.FrameTime * cl.pitchvel;
-            cl.pitchvel += ( Single ) host.FrameTime * _CenterSpeed.Value;
+            var move = ( Single ) Host.FrameTime * cl.pitchvel;
+            cl.pitchvel += ( Single ) Host.FrameTime * _CenterSpeed.Value;
 
             if( delta > 0 )
             {
@@ -763,7 +772,7 @@ namespace SharpQuake
             {
                 rdef.viewangles.Z += _DmgTime / _KickTime.Value * _DmgRoll;
                 rdef.viewangles.X += _DmgTime / _KickTime.Value * _DmgPitch;
-                _DmgTime -= ( Single ) host.FrameTime;
+                _DmgTime -= ( Single ) Host.FrameTime;
             }
 
             if( cl.stats[QStatsDef.STAT_HEALTH] <= 0 )
@@ -816,7 +825,7 @@ namespace SharpQuake
                 pitch = 10;
             if( pitch < -10 )
                 pitch = -10;
-            var move = ( Single ) host.FrameTime * 20;
+            var move = ( Single ) Host.FrameTime * 20;
             if( yaw > _OldYaw )
             {
                 if( _OldYaw + move < yaw )

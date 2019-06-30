@@ -90,23 +90,23 @@ namespace SharpQuake
             (Byte)'/', (Byte)'\\' // 128 - 129
         };
 
+        // This is where we start porting stuff over to proper instanced classes - TODO
+        public Host Host
+        {
+            get;
+            private set;
+        }
+
         private static WeakReference _Instance;
         private static DisplayDevice _DisplayDevice;
 
         private Int32 _MouseBtnState;
         private Stopwatch _Swatch;
 
-        public Boolean IsDisposed
+        public new Boolean IsDisposed
         {
             get;
             private set;
-        }
-
-        public override void Dispose( )
-        {
-            IsDisposed = true;
-
-            base.Dispose( );
         }
 
         protected override void OnFocusedChanged(EventArgs e)
@@ -171,7 +171,8 @@ namespace SharpQuake
                 var ts = _Swatch.Elapsed.TotalSeconds;
                 _Swatch.Reset();
                 _Swatch.Start();
-                host.Frame(ts);
+                //host.Frame(ts);
+                Host.Frame( ts );
             }
             catch (EndGameException)
             {
@@ -220,7 +221,7 @@ namespace SharpQuake
         {
             try
             {
-                host.Shutdown();
+                Instance.Host.Shutdown();
             }
             catch (Exception ex)
             {
@@ -261,7 +262,7 @@ namespace SharpQuake
             if (File.Exists(DumpFilePath))
                 File.Delete(DumpFilePath);
 
-            quakeparms_t parms = new quakeparms_t();
+            QuakeParameters parms = new QuakeParameters();
 
             parms.basedir = AppDomain.CurrentDomain.BaseDirectory; //Application.StartupPath;
 
@@ -277,16 +278,22 @@ namespace SharpQuake
             if (CommandLine.HasParam("-dedicated"))
                 throw new QuakeException("Dedicated server mode not supported!");
 
-            Size size = new Size(1280, 720);
-            GraphicsMode mode = new GraphicsMode();
-            using (MainWindow form = MainWindow.CreateInstance(size, mode, false))
+            var size = new Size(1280, 720);
+            var mode = new GraphicsMode();
+
+            using (var form = MainWindow.CreateInstance(size, mode, false))
             {
                 Con.DPrint("Host.Init\n");
-                host.Init(parms);
+
+                form.Host.Initialise( parms );
+
+                //host.Init(parms);
                 Instance.CursorVisible = false; //Hides mouse cursor during main menu on start up
                 form.Run();
+
+                form.Host.Shutdown( );
             }
-            host.Shutdown();
+           // host.Shutdown();
 #if !DEBUG
             }
             catch (QuakeSystemError se)
@@ -375,6 +382,17 @@ namespace SharpQuake
             this.MouseDown += new EventHandler<OpenTK.Input.MouseButtonEventArgs>(Mouse_ButtonEvent);
             this.MouseUp += new EventHandler<OpenTK.Input.MouseButtonEventArgs>(Mouse_ButtonEvent);
             this.MouseWheel += new EventHandler<OpenTK.Input.MouseWheelEventArgs>(Mouse_WheelChanged);
+
+            Host = new Host( this );
+        }
+
+        public override void Dispose( )
+        {
+            IsDisposed = true;
+
+            Host.Dispose( );
+
+            base.Dispose( );
         }
     }
 }

@@ -58,6 +58,8 @@
     <Compile Include="Definitions\Bsp\ModelDef.cs" />
     <Compile Include="Definitions\Bsp\PlaneDef.cs" />
     <Compile Include="Definitions\Bsp\SideDef.cs" />
+    <Compile Include="Definitions\HostDef.cs" />
+    <Compile Include="Definitions\NetworkDef.cs" />
     <Compile Include="Definitions\ProgDef.cs" />
     <Compile Include="Definitions\ProgramOperatorDef.cs" />
     <Compile Include="Definitions\QItemsDef.cs" />
@@ -87,6 +89,10 @@
     <Compile Include="IO\Wad\WadInfo.cs" />
     <Compile Include="IO\Wad\WadLumpInfo.cs" />
     <Compile Include="IO\Wad\WadPicHeader.cs" />
+    <Compile Include="Networking\Client\UserCommand.cs" />
+    <Compile Include="Networking\INetLanDriver.cs" />
+    <Compile Include="Networking\NetworkWrapper.cs" />
+    <Compile Include="Networking\QuakeSocket.cs" />
     <Compile Include="Rendering\EFrag.cs" />
     <Compile Include="Rendering\Entity.cs" />
     <Compile Include="Rendering\EntityEffects.cs" />
@@ -110,6 +116,7 @@
     <Compile Include="Rendering\VidDef.cs" />
     <Compile Include="Rendering\VidMode.cs" />
     <Compile Include="Rendering\VRect.cs" />
+    <Compile Include="Networking\Client.cs" />
     <Compile Include="System\Cache.cs" />
     <Compile Include="System\CacheEntry.cs" />
     <Compile Include="System\CacheUser.cs" />
@@ -117,6 +124,7 @@
     <Compile Include="System\CommandSource.cs" />
     <Compile Include="System\CommandWrapper.cs" />
     <Compile Include="System\ConsoleWrapper.cs" />
+    <Compile Include="System\Crc.cs" />
     <Compile Include="System\DisposableWrapper.cs" />
     <Compile Include="System\Edict.cs" />
     <Compile Include="System\EdictType.cs" />
@@ -142,7 +150,7 @@
     <Compile Include="System\MessageReader.cs" />
     <Compile Include="System\MessageWriter.cs" />
     <Compile Include="System\PadInt28.cs" />
-    <Compile Include="System\QParam.cs" />
+    <Compile Include="System\QuakeParameter.cs" />
     <Compile Include="Definitions\QDef.cs" />
     <Compile Include="Data\SwapHelper.cs" />
     <Compile Include="Math\Union4B.cs" />

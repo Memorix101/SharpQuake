@@ -62,11 +62,11 @@ namespace SharpQuake
         {
             for( var i = 0; i < svs.maxclients; i++ )
             {
-                host.HostClient = svs.clients[i];
-                if( !host.HostClient.active )
+                Host.HostClient = svs.clients[i];
+                if( !Host.HostClient.active )
                     continue;
 
-                _Player = host.HostClient.edict;
+                _Player = Host.HostClient.edict;
 
                 if( !ReadClientMessage() )
                 {
@@ -74,10 +74,10 @@ namespace SharpQuake
                     continue;
                 }
 
-                if( !host.HostClient.spawned )
+                if( !Host.HostClient.spawned )
                 {
                     // clear client movement until a new packet is received
-                    host.HostClient.cmd.Clear();
+                    Host.HostClient.cmd.Clear();
                     continue;
                 }
 
@@ -153,7 +153,7 @@ namespace SharpQuake
         {
             while( true )
             {
-                var ret = net.GetMessage( host.HostClient.netconnection );
+                var ret = net.GetMessage( Host.HostClient.netconnection );
                 if( ret == -1 )
                 {
                     Con.DPrint( "SV_ReadClientMessage: NET_GetMessage failed\n" );
@@ -167,7 +167,7 @@ namespace SharpQuake
                 var flag = true;
                 while( flag )
                 {
-                    if( !host.HostClient.active )
+                    if( !Host.HostClient.active )
                         return false;	// a command caused an error
 
                     if( net.Reader.IsBadRead )
@@ -189,7 +189,7 @@ namespace SharpQuake
 
                         case protocol.clc_stringcmd:
                             var s = net.Reader.ReadString();
-                            if( host.HostClient.privileged )
+                            if( Host.HostClient.privileged )
                                 ret = 2;
                             else
                                 ret = 0;
@@ -236,14 +236,14 @@ namespace SharpQuake
                             else if( ret == 1 )
                                 SharpQuake.Command.ExecuteString( s, CommandSource.src_client );
                             else
-                                Con.DPrint( "{0} tried to {1}\n", host.HostClient.name, s );
+                                Con.DPrint( "{0} tried to {1}\n", Host.HostClient.name, s );
                             break;
 
                         case protocol.clc_disconnect:
                             return false;
 
                         case protocol.clc_move:
-                            ReadClientMove( ref host.HostClient.cmd );
+                            ReadClientMove( ref Host.HostClient.cmd );
                             break;
 
                         default:
@@ -264,7 +264,7 @@ namespace SharpQuake
         /// </summary>
         private static void ReadClientMove( ref usercmd_t move )
         {
-            client_t client = host.HostClient;
+            client_t client = Host.HostClient;
 
             // read ping time
             client.ping_times[client.num_pings % ServerDef.NUM_PING_TIMES] = ( Single ) ( sv.time - net.Reader.ReadFloat() );
@@ -312,7 +312,7 @@ namespace SharpQuake
             //
             // angles
             // show 1/3 the pitch angle and all the roll angle
-            _Cmd = host.HostClient.cmd;
+            _Cmd = Host.HostClient.cmd;
 
             Vector3f v_angle;
             MathLib.VectorAdd( ref _Player.v.v_angle, ref _Player.v.punchangle, out v_angle );
@@ -345,7 +345,7 @@ namespace SharpQuake
         private static void DropPunchAngle()
         {
             Vector3 v = Utilities.ToVector( ref _Player.v.punchangle );
-            var len = MathLib.Normalize( ref v ) - 10 * host.FrameTime;
+            var len = MathLib.Normalize( ref v ) - 10 * Host.FrameTime;
             if( len < 0 )
                 len = 0;
             v *= ( Single ) len;
@@ -397,7 +397,7 @@ namespace SharpQuake
             Single newspeed, speed = MathLib.Length( ref _Player.v.velocity );
             if( speed != 0 )
             {
-                newspeed = ( Single ) ( speed - host.FrameTime * speed * _Friction.Value );
+                newspeed = ( Single ) ( speed - Host.FrameTime * speed * _Friction.Value );
                 if( newspeed < 0 )
                     newspeed = 0;
                 MathLib.VectorScale( ref _Player.v.velocity, newspeed / speed, out _Player.v.velocity );
@@ -416,7 +416,7 @@ namespace SharpQuake
                 return;
 
             MathLib.Normalize( ref wishvel );
-            var accelspeed = ( Single ) ( _Accelerate.Value * wishspeed * host.FrameTime );
+            var accelspeed = ( Single ) ( _Accelerate.Value * wishspeed * Host.FrameTime );
             if( accelspeed > addspeed )
                 accelspeed = addspeed;
 
@@ -495,7 +495,7 @@ namespace SharpQuake
 
             // apply friction
             var control = speed < _StopSpeed.Value ? _StopSpeed.Value : speed;
-            var newspeed = ( Single ) ( speed - host.FrameTime * control * friction );
+            var newspeed = ( Single ) ( speed - Host.FrameTime * control * friction );
 
             if( newspeed < 0 )
                 newspeed = 0;
@@ -514,7 +514,7 @@ namespace SharpQuake
             if( addspeed <= 0 )
                 return;
 
-            var accelspeed = ( Single ) ( _Accelerate.Value * host.FrameTime * _WishSpeed );
+            var accelspeed = ( Single ) ( _Accelerate.Value * Host.FrameTime * _WishSpeed );
             if( accelspeed > addspeed )
                 accelspeed = addspeed;
 
@@ -535,7 +535,7 @@ namespace SharpQuake
             var addspeed = wishspd - currentspeed;
             if( addspeed <= 0 )
                 return;
-            var accelspeed = ( Single ) ( _Accelerate.Value * _WishSpeed * host.FrameTime );
+            var accelspeed = ( Single ) ( _Accelerate.Value * _WishSpeed * Host.FrameTime );
             if( accelspeed > addspeed )
                 accelspeed = addspeed;
 

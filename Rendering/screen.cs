@@ -143,10 +143,18 @@ namespace SharpQuake
         private static String _NotifyString; // scr_notifystring
         private static System.Boolean _IsMouseWindowed; // windowed_mouse (don't confuse with _windowed_mouse cvar)
                                               // scr_fullupdate    set to 0 to force full redraw
+        // CHANGE
+        private static Host Host
+        {
+            get;
+            set;
+        }
 
         // SCR_Init
-        public static void Init()
+        public static void Init( Host host )
         {
+            Host = host;
+
             if( _ViewSize == null )
             {
                 _ViewSize = new CVar( "viewsize", "100", true );
@@ -204,7 +212,7 @@ namespace SharpQuake
 
                 if( IsDisabledForLoading )
                 {
-                    if( ( host.RealTime - _DisabledTime ) > 60 )
+                    if( ( Host.RealTime - _DisabledTime ) > 60 )
                     {
                         IsDisabledForLoading = false;
                         Con.Print( "Load failed.\n" );
@@ -393,7 +401,7 @@ namespace SharpQuake
             _DrawLoading = false;
 
             Scr.IsDisabledForLoading = true;
-            _DisabledTime = host.RealTime;
+            _DisabledTime = Host.RealTime;
             Scr.FullUpdate = 0;
         }
 
@@ -644,13 +652,13 @@ namespace SharpQuake
 
             if( _ConLines < _ConCurrent )
             {
-                _ConCurrent -= ( Int32 ) ( _ConSpeed.Value * host.FrameTime );
+                _ConCurrent -= ( Int32 ) ( _ConSpeed.Value * Host.FrameTime );
                 if( _ConLines > _ConCurrent )
                     _ConCurrent = _ConLines;
             }
             else if( _ConLines > _ConCurrent )
             {
-                _ConCurrent += ( Int32 ) ( _ConSpeed.Value * host.FrameTime );
+                _ConCurrent += ( Int32 ) ( _ConSpeed.Value * Host.FrameTime );
                 if( _ConLines < _ConCurrent )
                     _ConCurrent = _ConLines;
             }
@@ -738,7 +746,7 @@ namespace SharpQuake
             if( _CenterLines > _EraseLines )
                 _EraseLines = _CenterLines;
 
-            CenterTimeOff -= ( Single ) host.FrameTime;
+            CenterTimeOff -= ( Single ) Host.FrameTime;
 
             if( CenterTimeOff <= 0 && client.cl.intermission == 0 )
                 return;
@@ -768,7 +776,7 @@ namespace SharpQuake
             if( _ShowTurtle.Value == 0 )
                 return;
 
-            if( host.FrameTime < 0.1 )
+            if( Host.FrameTime < 0.1 )
             {
                 _TurtleCount = 0;
                 return;
@@ -784,7 +792,7 @@ namespace SharpQuake
         // SCR_DrawNet
         private static void DrawNet()
         {
-            if( host.RealTime - client.cl.last_received_message < 0.3 )
+            if( Host.RealTime - client.cl.last_received_message < 0.3 )
                 return;
             if( client.cls.demoplayback )
                 return;

@@ -15,7 +15,7 @@ namespace SharpQuake
         private const Int32 MAIN_ITEMS = 5;
         private Int32 _SaveDemoNum;
 
-        public override void Show( )
+        public override void Show( Host host )
         {
             if ( Key.Destination != keydest_t.key_menu )
             {
@@ -23,7 +23,7 @@ namespace SharpQuake
                 client.cls.demonum = -1;
             }
 
-            base.Show( );
+            base.Show( host );
         }
 
         /// <summary>
@@ -59,23 +59,23 @@ namespace SharpQuake
                     switch ( _Cursor )
                     {
                         case 0:
-                            MenuBase.SinglePlayerMenu.Show( );
+                            MenuBase.SinglePlayerMenu.Show( Host );
                             break;
 
                         case 1:
-                            MenuBase.MultiPlayerMenu.Show( );
+                            MenuBase.MultiPlayerMenu.Show( Host );
                             break;
 
                         case 2:
-                            MenuBase.OptionsMenu.Show( );
+                            MenuBase.OptionsMenu.Show( Host );
                             break;
 
                         case 3:
-                            MenuBase.HelpMenu.Show( );
+                            MenuBase.HelpMenu.Show( Host );
                             break;
 
                         case 4:
-                            MenuBase.QuitMenu.Show( );
+                            MenuBase.QuitMenu.Show( Host );
                             break;
                     }
                     break;
@@ -89,7 +89,7 @@ namespace SharpQuake
             Menu.DrawPic( ( 320 - p.width ) / 2, 4, p );
             Menu.DrawTransPic( 72, 32, Drawer.CachePic( "gfx/mainmenu.lmp" ) );
 
-            var f = ( Int32 ) ( host.Time * 10 ) % 6;
+            var f = ( Int32 ) ( Host.Time * 10 ) % 6;
 
             Menu.DrawTransPic( 54, 32 + _Cursor * 20, Drawer.CachePic( String.Format( "gfx/menudot{0}.lmp", f + 1 ) ) );
         }

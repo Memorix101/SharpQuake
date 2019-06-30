@@ -1021,14 +1021,14 @@ namespace SharpQuake
             {
                 DisableMultitexture();
                 Drawer.Bind( _SolidSkyTexture );
-                _SpeedScale = ( Single ) host.RealTime * 8;
+                _SpeedScale = ( Single ) Host.RealTime * 8;
                 _SpeedScale -= ( Int32 ) _SpeedScale & ~127;
 
                 EmitSkyPolys( s );
 
                 GL.Enable( EnableCap.Blend );
                 Drawer.Bind( _AlphaSkyTexture );
-                _SpeedScale = ( Single ) host.RealTime * 16;
+                _SpeedScale = ( Single ) Host.RealTime * 16;
                 _SpeedScale -= ( Int32 ) _SpeedScale & ~127;
 
                 EmitSkyPolys( s );
@@ -1063,8 +1063,8 @@ namespace SharpQuake
                     GL.MultiTexCoord2( TextureUnit.Texture0, v[3], v[4] );
                     GL.MultiTexCoord2( TextureUnit.Texture1, v[5], v[6] );
 
-                    nv[0] = ( Single ) ( v[0] + 8 * Math.Sin( v[1] * 0.05 + host.RealTime ) * Math.Sin( v[2] * 0.05 + host.RealTime ) );
-                    nv[1] = ( Single ) ( v[1] + 8 * Math.Sin( v[0] * 0.05 + host.RealTime ) * Math.Sin( v[2] * 0.05 + host.RealTime ) );
+                    nv[0] = ( Single ) ( v[0] + 8 * Math.Sin( v[1] * 0.05 + Host.RealTime ) * Math.Sin( v[2] * 0.05 + Host.RealTime ) );
+                    nv[1] = ( Single ) ( v[1] + 8 * Math.Sin( v[0] * 0.05 + Host.RealTime ) * Math.Sin( v[2] * 0.05 + Host.RealTime ) );
                     nv[2] = v[2];
 
                     GL.Vertex3( nv );
@@ -1098,8 +1098,8 @@ namespace SharpQuake
                 Single[] v = p.verts[i];
                 GL.TexCoord2( v[5], v[6] );
 
-                nv[0] = ( Single ) ( v[0] + 8 * Math.Sin( v[1] * 0.05 + host.RealTime ) * Math.Sin( v[2] * 0.05 + host.RealTime ) );
-                nv[1] = ( Single ) ( v[1] + 8 * Math.Sin( v[0] * 0.05 + host.RealTime ) * Math.Sin( v[2] * 0.05 + host.RealTime ) );
+                nv[0] = ( Single ) ( v[0] + 8 * Math.Sin( v[1] * 0.05 + Host.RealTime ) * Math.Sin( v[2] * 0.05 + Host.RealTime ) );
+                nv[1] = ( Single ) ( v[1] + 8 * Math.Sin( v[0] * 0.05 + Host.RealTime ) * Math.Sin( v[2] * 0.05 + Host.RealTime ) );
                 nv[2] = v[2];
 
                 GL.Vertex3( nv );
@@ -1119,8 +1119,8 @@ namespace SharpQuake
 
                 GL.TexCoord2( v[3], v[4] );
 
-                nv[0] = ( Single ) ( v[0] + 8 * Math.Sin( v[1] * 0.05 + host.RealTime ) * Math.Sin( v[2] * 0.05 + host.RealTime ) );
-                nv[1] = ( Single ) ( v[1] + 8 * Math.Sin( v[0] * 0.05 + host.RealTime ) * Math.Sin( v[2] * 0.05 + host.RealTime ) );
+                nv[0] = ( Single ) ( v[0] + 8 * Math.Sin( v[1] * 0.05 + Host.RealTime ) * Math.Sin( v[2] * 0.05 + Host.RealTime ) );
+                nv[1] = ( Single ) ( v[1] + 8 * Math.Sin( v[0] * 0.05 + Host.RealTime ) * Math.Sin( v[2] * 0.05 + Host.RealTime ) );
                 nv[2] = v[2];
 
                 GL.Vertex3( nv );

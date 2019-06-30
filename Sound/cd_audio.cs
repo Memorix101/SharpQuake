@@ -338,7 +338,7 @@ namespace SharpQuake
             streamer = new OggStreamer(441000);
             _Volume = snd.BgmVolume;
 
-            if (Directory.Exists( String.Format("{0}/{1}/music/", qparam.globalbasedir, qparam.globalgameid)) == false)
+            if (Directory.Exists( String.Format("{0}/{1}/music/", QuakeParameter.globalbasedir, QuakeParameter.globalgameid)) == false)
             {
                 _noAudio = true;
             }
@@ -349,7 +349,7 @@ namespace SharpQuake
             if (_noAudio == false)
             {
                 trackid = track.ToString("00");
-                trackpath = String.Format("{0}/{1}/music/track{2}.ogg", qparam.globalbasedir, qparam.globalgameid, trackid);
+                trackpath = String.Format("{0}/{1}/music/track{2}.ogg", QuakeParameter.globalbasedir, QuakeParameter.globalgameid, trackid);
 #if DEBUG
                 Console.WriteLine("DEBUG: track path:{0} ", trackpath);
 #endif

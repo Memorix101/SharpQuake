@@ -35,9 +35,9 @@ namespace SharpQuake
 
         private Boolean _BindGrab; // bind_grab
 
-        public override void Show( )
+        public override void Show( Host host )
         {
-            base.Show( );
+            base.Show( host );
         }
 
         public override void KeyEvent( Int32 key )
@@ -63,7 +63,7 @@ namespace SharpQuake
             switch ( key )
             {
                 case Key.K_ESCAPE:
-                    MenuBase.OptionsMenu.Show( );
+                    MenuBase.OptionsMenu.Show( Host );
                     break;
 
                 case Key.K_LEFTARROW:
@@ -140,7 +140,7 @@ namespace SharpQuake
             if ( _BindGrab )
                 Menu.DrawCharacter( 130, 48 + _Cursor * 8, '=' );
             else
-                Menu.DrawCharacter( 130, 48 + _Cursor * 8, 12 + ( ( Int32 ) ( host.RealTime * 4 ) & 1 ) );
+                Menu.DrawCharacter( 130, 48 + _Cursor * 8, 12 + ( ( Int32 ) ( Host.RealTime * 4 ) & 1 ) );
         }
 
         /// <summary>

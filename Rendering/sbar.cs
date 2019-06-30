@@ -96,11 +96,19 @@ namespace SharpQuake
         private static Int32[] _ScoreBoardCount = new Int32[QDef.MAX_SCOREBOARD];
         private static Int32 _ScoreBoardLines;
 
+        // CHANGE
+        private static Host Host
+        {
+            get;
+            set;
+        }
         // sb_lines scan lines to draw
 
         // Sbar_Init
-        public static void Init()
+        public static void Init( Host host )
         {
+            Host = host;
+
             for( var i = 0; i < 10; i++ )
             {
                 var str = i.ToString();
@@ -747,8 +755,8 @@ namespace SharpQuake
             // PGM 03/02/97 - fixed so color swatch only appears in CTF modes
             if( Common.GameKind == GameKind.Rogue &&
                 ( client.cl.maxclients != 1 ) &&
-                ( host.TeamPlay > 3 ) &&
-                ( host.TeamPlay < 7 ) )
+                ( Host.TeamPlay > 3 ) &&
+                ( Host.TeamPlay < 7 ) )
             {
                 scoreboard_t s = cl.scores[cl.viewentity - 1];
 

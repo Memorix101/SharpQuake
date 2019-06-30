@@ -11,9 +11,9 @@ namespace SharpQuake
     {
         private Boolean _Sorted;
 
-        public override void Show( )
+        public override void Show( Host host )
         {
-            base.Show( );
+            base.Show( host );
             _Cursor = 0;
             Menu.ReturnOnError = false;
             Menu.ReturnReason = String.Empty;
@@ -25,11 +25,11 @@ namespace SharpQuake
             switch ( key )
             {
                 case Key.K_ESCAPE:
-                    MenuBase.LanConfigMenu.Show( );
+                    MenuBase.LanConfigMenu.Show( Host );
                     break;
 
                 case Key.K_SPACE:
-                    MenuBase.SearchMenu.Show( );
+                    MenuBase.SearchMenu.Show( Host );
                     break;
 
                 case Key.K_UPARROW:
@@ -90,7 +90,7 @@ namespace SharpQuake
                     tmp = String.Format( "{0,-15} {1,-15}\n", hc.name, hc.map );
                 Menu.Print( 16, 32 + 8 * n, tmp );
             }
-            Menu.DrawCharacter( 0, 32 + _Cursor * 8, 12 + ( ( Int32 ) ( host.RealTime * 4 ) & 1 ) );
+            Menu.DrawCharacter( 0, 32 + _Cursor * 8, 12 + ( ( Int32 ) ( Host.RealTime * 4 ) & 1 ) );
 
             if ( !String.IsNullOrEmpty( Menu.ReturnReason ) )
                 Menu.PrintWhite( 16, 148, Menu.ReturnReason );

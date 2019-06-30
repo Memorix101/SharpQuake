@@ -9,7 +9,7 @@ namespace SharpQuake
 {
     public class SaveMenu : LoadMenu
     {
-        public override void Show( )
+        public override void Show( Host host )
         {
             if ( !server.sv.active )
                 return;
@@ -18,7 +18,7 @@ namespace SharpQuake
             if ( server.svs.maxclients != 1 )
                 return;
 
-            base.Show( );
+            base.Show( host );
         }
 
         public override void KeyEvent( Int32 key )
@@ -26,7 +26,7 @@ namespace SharpQuake
             switch ( key )
             {
                 case Key.K_ESCAPE:
-                    MenuBase.SinglePlayerMenu.Show( );
+                    MenuBase.SinglePlayerMenu.Show( Host );
                     break;
 
                 case Key.K_ENTER:
@@ -61,7 +61,7 @@ namespace SharpQuake
                 Menu.Print( 16, 32 + 8 * i, _FileNames[i] );
 
             // line cursor
-            Menu.DrawCharacter( 8, 32 + _Cursor * 8, 12 + ( ( Int32 ) ( host.RealTime * 4 ) & 1 ) );
+            Menu.DrawCharacter( 8, 32 + _Cursor * 8, 12 + ( ( Int32 ) ( Host.RealTime * 4 ) & 1 ) );
         }
     }
 }

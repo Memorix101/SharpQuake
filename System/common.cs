@@ -104,7 +104,7 @@ namespace SharpQuake
         private static GameKind _GameKind; // qboolean		standard_quake = true, rogue, hipnotic;
 
         // void COM_Init (char *path)
-        public static void Init( String path, String[] argv)
+        public static void Init( Host host, String path, String[] argv)
         {
             CommandLine.Args = argv;
 
@@ -114,7 +114,7 @@ namespace SharpQuake
             Command.Add("path", FileSystem.Path_f );
 
             CommandLine.Init( path, argv );
-            FileSystem.InitFileSystem( host.Params );
+            FileSystem.InitFileSystem( host.Parameters );
 
             CheckRegistered();
         }

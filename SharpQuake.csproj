@@ -83,6 +83,8 @@
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Networking\Host\Host.cs" />
+    <Compile Include="Networking\Host\HostCommands.cs" />
     <Compile Include="Rendering\anorm_dots.cs" />
     <Compile Include="Rendering\anorms.cs" />
     <Compile Include="Rendering\UI\Menus\GameOptionsMenu.cs" />
@@ -113,13 +115,10 @@
     <Compile Include="System\Command.cs" />
     <Compile Include="System\CommandBuffer.cs" />
     <Compile Include="System\Common.cs" />
-    <Compile Include="Rendering\console.cs" />
-    <Compile Include="System\Crc.cs" />
+    <Compile Include="Rendering\UI\Console.cs" />
     <Compile Include="System\CVar.cs" />
     <Compile Include="Rendering\draw.cs" />
-    <Compile Include="System\external.cs" />
-    <Compile Include="Networking\Host\host.cs" />
-    <Compile Include="Networking\Host\host_cmd.cs" />
+    <Compile Include="System\External.cs" />
     <Compile Include="Desktop\Input.cs" />
     <Compile Include="Desktop\keys.cs" />
     <Compile Include="Desktop\MainWindow.cs" />
@@ -132,9 +131,9 @@
     <Compile Include="Networking\net_loop.cs" />
     <Compile Include="Networking\net_tcp_ip.cs" />
     <Compile Include="Networking\net_vcr.cs" />
-    <Compile Include="System\pr_builtins.cs" />
-    <Compile Include="System\pr_edict.cs" />
-    <Compile Include="System\pr_exec.cs" />
+    <Compile Include="System\Programs\pr_builtins.cs" />
+    <Compile Include="System\Programs\pr_edict.cs" />
+    <Compile Include="System\Programs\pr_exec.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Networking\protocol.cs" />
     <Compile Include="Rendering\render.cs" />

@@ -132,9 +132,18 @@ namespace SharpQuake
         private static Int32 _PlayHash = 345; // hash from S_Play()
         private static Int32 _PlayVolHash = 543; // hash S_PlayVol
 
-        // S_Init (void)
-        public static void Init()
+        // CHANGE
+        private static Host Host
         {
+            get;
+            set;
+        }
+
+        // S_Init (void)
+        public static void Init( Host host )
+        {
+            Host = host;
+
             Con.Print( "\nSound Initialization\n" );
 
             if( CommandLine.HasParam( "-nosound" ) )
@@ -782,13 +791,13 @@ namespace SharpQuake
                 // don't adjust volume too fast
                 if( chan.master_vol < vol )
                 {
-                    chan.master_vol += ( Int32 ) ( host.FrameTime * _AmbientFade.Value );
+                    chan.master_vol += ( Int32 ) ( Host.FrameTime * _AmbientFade.Value );
                     if( chan.master_vol > vol )
                         chan.master_vol = ( Int32 ) vol;
                 }
                 else if( chan.master_vol > vol )
                 {
-                    chan.master_vol -= ( Int32 ) ( host.FrameTime * _AmbientFade.Value );
+                    chan.master_vol -= ( Int32 ) ( Host.FrameTime * _AmbientFade.Value );
                     if( chan.master_vol < vol )
                         chan.master_vol = ( Int32 ) vol;
                 }

@@ -179,8 +179,17 @@ namespace SharpQuake
         private static Int32 _InVisCount; // c_invis
         private static Int32 _NotVisCount; // c_notvis
 
-        public static void Execute( Int32 num )
+        // CHANGE
+        private static Host Host
         {
+            get;
+            set;
+        }
+
+        public static void Execute( Host host, Int32 num )
+        {
+            Host = host;
+
             _Builtin[num]();
         }
 
@@ -372,7 +381,7 @@ namespace SharpQuake
                 progs.GetString( progs.xFunction.s_name ), s );
             MemoryEdict ed = server.ProgToEdict( progs.GlobalStruct.self );
             progs.Print( ed );
-            host.Error( "Program error" );
+            Host.Error( "Program error" );
         }
 
         /*
@@ -394,7 +403,7 @@ namespace SharpQuake
             MemoryEdict ed = server.ProgToEdict( progs.GlobalStruct.self );
             progs.Print( ed );
             server.FreeEdict( ed );
-            host.Error( "Program error" );
+            Host.Error( "Program error" );
         }
 
         /*
@@ -993,10 +1002,10 @@ namespace SharpQuake
                 progs.RunError( "Parm 0 not a client" );
             var str = GetString( ProgramOperatorDef.OFS_PARM1 );
 
-            client_t old = host.HostClient;
-            host.HostClient = server.svs.clients[entnum - 1];
-            host.ClientCommands( "{0}", str );
-            host.HostClient = old;
+            client_t old = Host.HostClient;
+            Host.HostClient = server.svs.clients[entnum - 1];
+            Host.ClientCommands( "{0}", str );
+            Host.HostClient = old;
         }
 
         /// <summary>
@@ -1420,7 +1429,7 @@ namespace SharpQuake
             Vector3 end = start + dir * 2048;
             trace_t tr = server.Move( ref start, ref Utilities.ZeroVector, ref Utilities.ZeroVector, ref end, 0, ent );
             if( tr.ent != null && tr.ent.v.takedamage == Damages.DAMAGE_AIM &&
-                ( host.TeamPlay == 0 || ent.v.team <= 0 || ent.v.team != tr.ent.v.team ) )
+                ( Host.TeamPlay == 0 || ent.v.team <= 0 || ent.v.team != tr.ent.v.team ) )
             {
                 ReturnVector( ref progs.GlobalStruct.v_forward );
                 return;
@@ -1438,7 +1447,7 @@ namespace SharpQuake
                     continue;
                 if( check == ent )
                     continue;
-                if( host.TeamPlay != 0 && ent.v.team > 0 && ent.v.team == check.v.team )
+                if( Host.TeamPlay != 0 && ent.v.team > 0 && ent.v.team == check.v.team )
                     continue;	// don't aim at teammate
 
                 Vector3f tmp;

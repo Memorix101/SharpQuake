@@ -14,9 +14,9 @@ namespace SharpQuake
         protected String[] _FileNames; //[MAX_SAVEGAMES]; // filenames
         protected Boolean[] _Loadable; //[MAX_SAVEGAMES]; // loadable
 
-        public override void Show( )
+        public override void Show( Host host )
         {
-            base.Show( );
+            base.Show( host );
             ScanSaves( );
         }
 
@@ -25,7 +25,7 @@ namespace SharpQuake
             switch ( key )
             {
                 case Key.K_ESCAPE:
-                    MenuBase.SinglePlayerMenu.Show( );
+                    MenuBase.SinglePlayerMenu.Show( Host );
                     break;
 
                 case Key.K_ENTER:
@@ -69,7 +69,7 @@ namespace SharpQuake
                 Menu.Print( 16, 32 + 8 * i, _FileNames[i] );
 
             // line cursor
-            Menu.DrawCharacter( 8, 32 + _Cursor * 8, 12 + ( ( Int32 ) ( host.RealTime * 4 ) & 1 ) );
+            Menu.DrawCharacter( 8, 32 + _Cursor * 8, 12 + ( ( Int32 ) ( Host.RealTime * 4 ) & 1 ) );
         }
 
         /// <summary>

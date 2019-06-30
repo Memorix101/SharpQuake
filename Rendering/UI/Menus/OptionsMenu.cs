@@ -13,7 +13,7 @@ namespace SharpQuake
 
         //private float _BgmVolumeCoeff = 0.1f;
 
-        public override void Show( )
+        public override void Show( Host host )
         {
             /*if( sys.IsWindows )  fix cd audio first
              {
@@ -26,7 +26,7 @@ namespace SharpQuake
             if ( _Cursor == OPTIONS_ITEMS - 1 && MenuBase.VideoMenu == null )
                 _Cursor = 0;
 
-            base.Show( );
+            base.Show( host );
         }
 
         public override void KeyEvent( Int32 key )
@@ -34,7 +34,7 @@ namespace SharpQuake
             switch ( key )
             {
                 case Key.K_ESCAPE:
-                    MenuBase.MainMenu.Show( );
+                    MenuBase.MainMenu.Show( Host );
                     break;
 
                 case Key.K_ENTER:
@@ -42,7 +42,7 @@ namespace SharpQuake
                     switch ( _Cursor )
                     {
                         case 0:
-                            MenuBase.KeysMenu.Show( );
+                            MenuBase.KeysMenu.Show( Host );
                             break;
 
                         case 1:
@@ -55,7 +55,7 @@ namespace SharpQuake
                             break;
 
                         case 12:
-                            MenuBase.VideoMenu.Show( );
+                            MenuBase.VideoMenu.Show( Host );
                             break;
 
                         default:
@@ -168,7 +168,7 @@ namespace SharpQuake
 #endif
 
             // cursor
-            Menu.DrawCharacter( 200, 32 + _Cursor * 8, 12 + ( ( Int32 ) ( host.RealTime * 4 ) & 1 ) );
+            Menu.DrawCharacter( 200, 32 + _Cursor * 8, 12 + ( ( Int32 ) ( Host.RealTime * 4 ) & 1 ) );
         }
 
         /// <summary>

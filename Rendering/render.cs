@@ -156,11 +156,19 @@ namespace SharpQuake
         private static Int32 _LastPoseNum; // lastposenum
         private static Vector3 _LightSpot; // lightspot
 
+        // CHANGE
+        private static Host Host
+        {
+            get;
+            set;
+        }
         /// <summary>
         /// R_Init
         /// </summary>
-        public static void Init()
+        public static void Init( Host host )
         {
+            Host = host;
+
             for( var i = 0; i < _Frustum.Length; i++ )
                 _Frustum[i] = new Plane();
 

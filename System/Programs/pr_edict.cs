@@ -116,9 +116,18 @@ namespace SharpQuake
             };
         }
 
-        // PR_Init
-        public static void Init()
+        // CHANGE
+        private static Host Host
         {
+            get;
+            set;
+        }
+
+        // PR_Init
+        public static void Init( Host host )
+        {
+            Host = host;
+
             Command.Add( "edict", PrintEdict_f );
             Command.Add( "edicts", PrintEdicts );
             Command.Add( "edictcount", EdictCount );
@@ -155,7 +164,7 @@ namespace SharpQuake
             for( var i = 0; i < GEFV_CACHESIZE; i++ )
                 _gefvCache[i].field = null;
 
-            SharpQuake.Crc.Init( out _Crc );
+            SharpQuake.Framework.Crc.Init( out _Crc );
 
             Byte[] buf = FileSystem.LoadFile( "progs.dat" );
 
@@ -165,7 +174,7 @@ namespace SharpQuake
             Con.DPrint( "Programs occupy {0}K.\n", buf.Length / 1024 );
 
             for( var i = 0; i < buf.Length; i++ )
-                SharpQuake.Crc.ProcessByte( ref _Crc, buf[i] );
+                SharpQuake.Framework.Crc.ProcessByte( ref _Crc, buf[i] );
 
             // byte swap the header
             _Progs.SwapBytes();
@@ -312,7 +321,7 @@ namespace SharpQuake
                 data = ParseEdict( data, ent );
 
                 // remove things from different skill levels or deathmatch
-                if( host.Deathmatch != 0 )
+                if( Host.Deathmatch != 0 )
                 {
                     if( ( ( Int32 ) ent.v.spawnflags & SpawnFlags.SPAWNFLAG_NOT_DEATHMATCH ) != 0 )
                     {
@@ -321,9 +330,9 @@ namespace SharpQuake
                         continue;
                     }
                 }
-                else if( ( host.CurrentSkill == 0 && ( ( Int32 ) ent.v.spawnflags & SpawnFlags.SPAWNFLAG_NOT_EASY ) != 0 ) ||
-                    ( host.CurrentSkill == 1 && ( ( Int32 ) ent.v.spawnflags & SpawnFlags.SPAWNFLAG_NOT_MEDIUM ) != 0 ) ||
-                    ( host.CurrentSkill >= 2 && ( ( Int32 ) ent.v.spawnflags & SpawnFlags.SPAWNFLAG_NOT_HARD ) != 0 ) )
+                else if( ( Host.CurrentSkill == 0 && ( ( Int32 ) ent.v.spawnflags & SpawnFlags.SPAWNFLAG_NOT_EASY ) != 0 ) ||
+                    ( Host.CurrentSkill == 1 && ( ( Int32 ) ent.v.spawnflags & SpawnFlags.SPAWNFLAG_NOT_MEDIUM ) != 0 ) ||
+                    ( Host.CurrentSkill >= 2 && ( ( Int32 ) ent.v.spawnflags & SpawnFlags.SPAWNFLAG_NOT_HARD ) != 0 ) )
                 {
                     server.FreeEdict( ent );
                     inhibit++;
@@ -431,7 +440,7 @@ namespace SharpQuake
                 }
 
                 if( !ParsePair( ent, key, token ) )
-                    host.Error( "ED_ParseEdict: parse error" );
+                    Host.Error( "ED_ParseEdict: parse error" );
             }
 
             if( !init )
@@ -706,7 +715,7 @@ namespace SharpQuake
                 }
 
                 if( !ParseGlobalPair( key, Tokeniser.Token ) )
-                    host.Error( "ED_ParseGlobals: parse error" );
+                    Host.Error( "ED_ParseGlobals: parse error" );
             }
         }
 

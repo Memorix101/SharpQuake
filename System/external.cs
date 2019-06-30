@@ -28,7 +28,7 @@ namespace SharpQuake
 
 #endif
 
-    internal class external
+    internal class External
     {
 #if _WINDOWS
 

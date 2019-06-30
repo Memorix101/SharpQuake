@@ -151,13 +151,22 @@ namespace SharpQuake
         private static String _glVersion; // gl_version
         private static String _glExtensions; // gl_extensions
 
+        // CHANGE
+        private static Host Host
+        {
+            get;
+            set;
+        }
+
         // VID_Init (unsigned char *palette)
         // Called at startup to set up translation tables, takes 256 8 bit RGB values
         // the palette data will go away after the call, so it must be copied off if
         // the video driver will need it again
-        public static void Init( Byte[] palette )
+        public static void Init( Host host, Byte[] palette )
         {
-            if( _glZTrick == null )
+            Host = host;
+
+            if ( _glZTrick == null )
             {
                 _glZTrick = new CVar( "gl_ztrick", "1" );
                 _Mode = new CVar( "vid_mode", "0", false );
@@ -281,8 +290,8 @@ namespace SharpQuake
 
             Scr.vid.maxwarpwidth = WARP_WIDTH;
             Scr.vid.maxwarpheight = WARP_HEIGHT;
-            Scr.vid.colormap = host.ColorMap;
-            var v = BitConverter.ToInt32( host.ColorMap, 2048 );
+            Scr.vid.colormap = Host.ColorMap;
+            var v = BitConverter.ToInt32( Host.ColorMap, 2048 );
             Scr.vid.fullbright = 256 - EndianHelper.LittleLong( v );
 
             CheckGamma( palette );

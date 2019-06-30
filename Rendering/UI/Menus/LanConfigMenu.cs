@@ -36,9 +36,9 @@ namespace SharpQuake
         private String _PortName;
         private String _JoinName;
 
-        public override void Show( )
+        public override void Show( Host host )
         {
-            base.Show( );
+            base.Show( host );
 
             if ( _Cursor == -1 )
             {
@@ -61,7 +61,7 @@ namespace SharpQuake
             switch ( key )
             {
                 case Key.K_ESCAPE:
-                    MenuBase.MultiPlayerMenu.Show( );
+                    MenuBase.MultiPlayerMenu.Show( Host );
                     break;
 
                 case Key.K_UPARROW:
@@ -89,11 +89,11 @@ namespace SharpQuake
                     {
                         if ( StartingGame )
                         {
-                            MenuBase.GameOptionsMenu.Show( );
+                            MenuBase.GameOptionsMenu.Show( Host );
                         }
                         else
                         {
-                            MenuBase.SearchMenu.Show( );
+                            MenuBase.SearchMenu.Show( Host );
                         }
                         break;
                     }
@@ -193,15 +193,15 @@ namespace SharpQuake
                 Menu.Print( basex + 8, _CursorTable[1], "OK" );
             }
 
-            Menu.DrawCharacter( basex - 8, _CursorTable[_Cursor], 12 + ( ( Int32 ) ( host.RealTime * 4 ) & 1 ) );
+            Menu.DrawCharacter( basex - 8, _CursorTable[_Cursor], 12 + ( ( Int32 ) ( Host.RealTime * 4 ) & 1 ) );
 
             if ( _Cursor == 0 )
                 Menu.DrawCharacter( basex + 9 * 8 + 8 * _PortName.Length,
-                    _CursorTable[0], 10 + ( ( Int32 ) ( host.RealTime * 4 ) & 1 ) );
+                    _CursorTable[0], 10 + ( ( Int32 ) ( Host.RealTime * 4 ) & 1 ) );
 
             if ( _Cursor == 2 )
                 Menu.DrawCharacter( basex + 16 + 8 * _JoinName.Length, _CursorTable[2],
-                    10 + ( ( Int32 ) ( host.RealTime * 4 ) & 1 ) );
+                    10 + ( ( Int32 ) ( Host.RealTime * 4 ) & 1 ) );
 
             if ( !String.IsNullOrEmpty( Menu.ReturnReason ) )
                 Menu.PrintWhite( basex, 148, Menu.ReturnReason );

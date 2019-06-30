@@ -232,7 +232,7 @@ namespace SharpQuake
             // cls.td_starttime will be grabbed at the second frame of the demo, so
             // all the loading time doesn't get counted
             _Static.timedemo = true;
-            _Static.td_startframe = host.FrameCount;
+            _Static.td_startframe = Host.FrameCount;
             _Static.td_lastframe = -1;		// get a new message this frame
         }
 
@@ -250,13 +250,13 @@ namespace SharpQuake
                 {
                     if( cls.timedemo )
                     {
-                        if( host.FrameCount == cls.td_lastframe )
+                        if( Host.FrameCount == cls.td_lastframe )
                             return 0;		// allready read this frame's message
-                        cls.td_lastframe = host.FrameCount;
+                        cls.td_lastframe = Host.FrameCount;
                         // if this is the second frame, grab the real td_starttime
                         // so the bogus time on the first frame doesn't count
-                        if( host.FrameCount == cls.td_startframe + 1 )
-                            cls.td_starttime = ( Single ) host.RealTime;
+                        if( Host.FrameCount == cls.td_startframe + 1 )
+                            cls.td_starttime = ( Single ) Host.RealTime;
                     }
                     else if( cl.time <= cl.mtime[0] )
                     {
@@ -313,8 +313,8 @@ namespace SharpQuake
             cls.timedemo = false;
 
             // the first frame didn't count
-            var frames = ( host.FrameCount - cls.td_startframe ) - 1;
-            var time = ( Single ) host.RealTime - cls.td_starttime;
+            var frames = ( Host.FrameCount - cls.td_startframe ) - 1;
+            var time = ( Single ) Host.RealTime - cls.td_starttime;
             if( time == 0 )
                 time = 1;
             Con.Print( "{0} frames {1:F5} seconds {2:F2} fps\n", frames, time, frames / time );

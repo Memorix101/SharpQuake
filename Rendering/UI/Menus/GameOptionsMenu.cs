@@ -160,9 +160,10 @@ namespace SharpQuake
 
         private Double _ServerInfoMessageTime;
 
-        public override void Show( )
+
+        public override void Show( Host host )
         {
-            base.Show( );
+            base.Show( host );
 
             if ( _MaxPlayers == 0 )
                 _MaxPlayers = server.svs.maxclients;
@@ -175,7 +176,7 @@ namespace SharpQuake
             switch ( key )
             {
                 case Key.K_ESCAPE:
-                    MenuBase.LanConfigMenu.Show( );
+                    MenuBase.LanConfigMenu.Show( Host );
                     break;
 
                 case Key.K_UPARROW:
@@ -246,7 +247,7 @@ namespace SharpQuake
             Menu.Print( 160, 56, _MaxPlayers.ToString( ) );
 
             Menu.Print( 0, 64, "        Game Type" );
-            if ( host.IsCoop )
+            if ( Host.IsCoop )
                 Menu.Print( 160, 64, "Cooperative" );
             else
                 Menu.Print( 160, 64, "Deathmatch" );
@@ -255,7 +256,7 @@ namespace SharpQuake
             if ( Common.GameKind == GameKind.Rogue )
             {
                 String msg;
-                switch ( ( Int32 ) host.TeamPlay )
+                switch ( ( Int32 ) Host.TeamPlay )
                 {
                     case 1:
                         msg = "No Friendly Fire";
@@ -290,7 +291,7 @@ namespace SharpQuake
             else
             {
                 String msg;
-                switch ( ( Int32 ) host.TeamPlay )
+                switch ( ( Int32 ) Host.TeamPlay )
                 {
                     case 1:
                         msg = "No Friendly Fire";
@@ -308,26 +309,26 @@ namespace SharpQuake
             }
 
             Menu.Print( 0, 80, "            Skill" );
-            if ( host.Skill == 0 )
+            if ( Host.Skill == 0 )
                 Menu.Print( 160, 80, "Easy difficulty" );
-            else if ( host.Skill == 1 )
+            else if ( Host.Skill == 1 )
                 Menu.Print( 160, 80, "Normal difficulty" );
-            else if ( host.Skill == 2 )
+            else if ( Host.Skill == 2 )
                 Menu.Print( 160, 80, "Hard difficulty" );
             else
                 Menu.Print( 160, 80, "Nightmare difficulty" );
 
             Menu.Print( 0, 88, "       Frag Limit" );
-            if ( host.FragLimit == 0 )
+            if ( Host.FragLimit == 0 )
                 Menu.Print( 160, 88, "none" );
             else
-                Menu.Print( 160, 88, String.Format( "{0} frags", ( Int32 ) host.FragLimit ) );
+                Menu.Print( 160, 88, String.Format( "{0} frags", ( Int32 ) Host.FragLimit ) );
 
             Menu.Print( 0, 96, "       Time Limit" );
-            if ( host.TimeLimit == 0 )
+            if ( Host.TimeLimit == 0 )
                 Menu.Print( 160, 96, "none" );
             else
-                Menu.Print( 160, 96, String.Format( "{0} minutes", ( Int32 ) host.TimeLimit ) );
+                Menu.Print( 160, 96, String.Format( "{0} minutes", ( Int32 ) Host.TimeLimit ) );
 
             Menu.Print( 0, 112, "         Episode" );
             //MED 01/06/97 added hipnotic episodes
@@ -359,11 +360,11 @@ namespace SharpQuake
             }
 
             // line cursor
-            Menu.DrawCharacter( 144, _CursorTable[_Cursor], 12 + ( ( Int32 ) ( host.RealTime * 4 ) & 1 ) );
+            Menu.DrawCharacter( 144, _CursorTable[_Cursor], 12 + ( ( Int32 ) ( Host.RealTime * 4 ) & 1 ) );
 
             if ( _ServerInfoMessage )
             {
-                if ( ( host.RealTime - _ServerInfoMessageTime ) < 5.0 )
+                if ( ( Host.RealTime - _ServerInfoMessageTime ) < 5.0 )
                 {
                     var x = ( 320 - 26 * 8 ) / 2;
                     Menu.DrawTextBox( x, 138, 24, 4 );
@@ -421,14 +422,14 @@ namespace SharpQuake
                     {
                         _MaxPlayers = server.svs.maxclientslimit;
                         _ServerInfoMessage = true;
-                        _ServerInfoMessageTime = host.RealTime;
+                        _ServerInfoMessageTime = Host.RealTime;
                     }
                     if ( _MaxPlayers < 2 )
                         _MaxPlayers = 2;
                     break;
 
                 case 2:
-                    CVar.Set( "coop", host.IsCoop ? 0 : 1 );
+                    CVar.Set( "coop", Host.IsCoop ? 0 : 1 );
                     break;
 
                 case 3:
@@ -437,7 +438,7 @@ namespace SharpQuake
                     else
                         count = 2;
 
-                    var tp = host.TeamPlay + dir;
+                    var tp = Host.TeamPlay + dir;
                     if ( tp > count )
                         tp = 0;
                     else if ( tp < 0 )
@@ -447,7 +448,7 @@ namespace SharpQuake
                     break;
 
                 case 4:
-                    var skill = host.Skill + dir;
+                    var skill = Host.Skill + dir;
                     if ( skill > 3 )
                         skill = 0;
                     if ( skill < 0 )
@@ -456,7 +457,7 @@ namespace SharpQuake
                     break;
 
                 case 5:
-                    var fraglimit = host.FragLimit + dir * 10;
+                    var fraglimit = Host.FragLimit + dir * 10;
                     if ( fraglimit > 100 )
                         fraglimit = 0;
                     if ( fraglimit < 0 )
@@ -465,7 +466,7 @@ namespace SharpQuake
                     break;
 
                 case 6:
-                    var timelimit = host.TimeLimit + dir * 5;
+                    var timelimit = Host.TimeLimit + dir * 5;
                     if ( timelimit > 60 )
                         timelimit = 0;
                     if ( timelimit < 0 )

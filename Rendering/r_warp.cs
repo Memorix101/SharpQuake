@@ -272,10 +272,10 @@ namespace SharpQuake
                     var os = v[3];
                     var ot = v[4];
 
-                    var s = os + _TurbSin[( Int32 ) ( ( ot * 0.125 + host.RealTime ) * TURBSCALE ) & 255];
+                    var s = os + _TurbSin[( Int32 ) ( ( ot * 0.125 + Host.RealTime ) * TURBSCALE ) & 255];
                     s *= ( 1.0f / 64 );
 
-                    var t = ot + _TurbSin[( Int32 ) ( ( os * 0.125 + host.RealTime ) * TURBSCALE ) & 255];
+                    var t = ot + _TurbSin[( Int32 ) ( ( os * 0.125 + Host.RealTime ) * TURBSCALE ) & 255];
                     t *= ( 1.0f / 64 );
 
                     GL.TexCoord2( s, t );
@@ -321,7 +321,7 @@ namespace SharpQuake
 
             // used when gl_texsort is on
             Drawer.Bind( _SolidSkyTexture );
-            _SpeedScale = ( Single ) host.RealTime * 8;
+            _SpeedScale = ( Single ) Host.RealTime * 8;
             _SpeedScale -= ( Int32 ) _SpeedScale & ~127;
 
             for( MemorySurface fa = s; fa != null; fa = fa.texturechain )
@@ -329,7 +329,7 @@ namespace SharpQuake
 
             GL.Enable( EnableCap.Blend );
             Drawer.Bind( _AlphaSkyTexture );
-            _SpeedScale = ( Single ) host.RealTime * 16;
+            _SpeedScale = ( Single ) Host.RealTime * 16;
             _SpeedScale -= ( Int32 ) _SpeedScale & ~127;
 
             for( MemorySurface fa = s; fa != null; fa = fa.texturechain )
@@ -349,14 +349,14 @@ namespace SharpQuake
             DisableMultitexture();
 
             Drawer.Bind( _SolidSkyTexture );
-            _SpeedScale = ( Single ) host.RealTime * 8;
+            _SpeedScale = ( Single ) Host.RealTime * 8;
             _SpeedScale -= ( Int32 ) _SpeedScale & ~127;
 
             EmitSkyPolys( fa );
 
             GL.Enable( EnableCap.Blend );
             Drawer.Bind( _AlphaSkyTexture );
-            _SpeedScale = ( Single ) host.RealTime * 16;
+            _SpeedScale = ( Single ) Host.RealTime * 16;
             _SpeedScale -= ( Int32 ) _SpeedScale & ~127;
 
             EmitSkyPolys( fa );

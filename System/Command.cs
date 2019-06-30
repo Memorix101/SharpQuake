@@ -87,8 +87,16 @@ namespace SharpQuake
         private static String _Args;// char* cmd_args = NULL;
         private static Boolean _Wait; // qboolean cmd_wait;
 
-        public static void Init()
+        // CHANGE
+        private static Host Host
         {
+            get;
+            set;
+        }
+
+        public static void Init( Host host )
+        {
+            Host = host;
             //
             // register our commands
             //
@@ -106,7 +114,7 @@ namespace SharpQuake
         public static void Add( String name, XCommand function )
         {
             // ??? because hunk allocation would get stomped
-            if( host.IsInitialized )
+            if( Host != null && Host.IsInitialised )
                 Utilities.Error( "Cmd.Add after host initialized!" );
 
             // fail if the command is a variable name

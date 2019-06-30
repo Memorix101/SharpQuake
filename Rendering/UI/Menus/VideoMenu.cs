@@ -29,7 +29,7 @@ namespace SharpQuake
             {
                 case Key.K_ESCAPE:
                     snd.LocalSound( "misc/menu1.wav" );
-                    MenuBase.OptionsMenu.Show( );
+                    MenuBase.OptionsMenu.Show( Host );
                     break;
 
                 default:

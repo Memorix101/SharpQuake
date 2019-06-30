@@ -16,7 +16,7 @@ namespace SharpQuake
             switch ( key )
             {
                 case Key.K_ESCAPE:
-                    MenuBase.MainMenu.Show( );
+                    MenuBase.MainMenu.Show( Host );
                     break;
 
                 case Key.K_DOWNARROW:
@@ -37,16 +37,16 @@ namespace SharpQuake
                     {
                         case 0:
                             if ( net.TcpIpAvailable )
-                                MenuBase.LanConfigMenu.Show( );
+                                MenuBase.LanConfigMenu.Show( Host );
                             break;
 
                         case 1:
                             if ( net.TcpIpAvailable )
-                                MenuBase.LanConfigMenu.Show( );
+                                MenuBase.LanConfigMenu.Show( Host );
                             break;
 
                         case 2:
-                            MenuBase.SetupMenu.Show( );
+                            MenuBase.SetupMenu.Show( Host );
                             break;
                     }
                     break;
@@ -60,7 +60,7 @@ namespace SharpQuake
             Menu.DrawPic( ( 320 - p.width ) / 2, 4, p );
             Menu.DrawTransPic( 72, 32, Drawer.CachePic( "gfx/mp_menu.lmp" ) );
 
-            Single f = ( Int32 ) ( host.Time * 10 ) % 6;
+            Single f = ( Int32 ) ( Host.Time * 10 ) % 6;
 
             Menu.DrawTransPic( 54, 32 + _Cursor * 20, Drawer.CachePic( String.Format( "gfx/menudot{0}.lmp", f + 1 ) ) );
 

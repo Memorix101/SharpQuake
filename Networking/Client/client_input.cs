@@ -441,7 +441,7 @@ namespace SharpQuake
         // Moves the local angle positions
         private static void AdjustAngles()
         {
-            var speed = ( Single ) host.FrameTime;
+            var speed = ( Single ) Host.FrameTime;
 
             if( client_input.SpeedBtn.IsDown )
                 speed *= _AngleSpeedKey.Value;

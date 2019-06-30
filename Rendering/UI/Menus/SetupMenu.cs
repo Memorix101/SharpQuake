@@ -26,14 +26,14 @@ namespace SharpQuake
         /// <summary>
         /// M_Menu_Setup_f
         /// </summary>
-        public override void Show( )
+        public override void Show( Host host )
         {
             _MyName = client.Name;
             _HostName = net.HostName;
             _Top = _OldTop = ( ( Int32 ) client.Color ) >> 4;
             _Bottom = _OldBottom = ( ( Int32 ) client.Color ) & 15;
 
-            base.Show( );
+            base.Show( host );
         }
 
         public override void KeyEvent( Int32 key )
@@ -41,7 +41,7 @@ namespace SharpQuake
             switch ( key )
             {
                 case Key.K_ESCAPE:
-                    MenuBase.MultiPlayerMenu.Show( );
+                    MenuBase.MultiPlayerMenu.Show( Host );
                     break;
 
                 case Key.K_UPARROW:
@@ -94,7 +94,7 @@ namespace SharpQuake
                     if ( _Top != _OldTop || _Bottom != _OldBottom )
                         CommandBuffer.AddText( String.Format( "color {0} {1}\n", _Top, _Bottom ) );
                     Menu.EnterSound = true;
-                    MenuBase.MultiPlayerMenu.Show( );
+                    MenuBase.MultiPlayerMenu.Show( Host );
                     break;
 
                 case Key.K_BACKSPACE:
@@ -169,13 +169,13 @@ namespace SharpQuake
             Menu.BuildTranslationTable( _Top * 16, _Bottom * 16 );
             Menu.DrawTransPicTranslate( 172, 72, p );
 
-            Menu.DrawCharacter( 56, _CursorTable[_Cursor], 12 + ( ( Int32 ) ( host.RealTime * 4 ) & 1 ) );
+            Menu.DrawCharacter( 56, _CursorTable[_Cursor], 12 + ( ( Int32 ) ( Host.RealTime * 4 ) & 1 ) );
 
             if ( _Cursor == 0 )
-                Menu.DrawCharacter( 168 + 8 * _HostName.Length, _CursorTable[_Cursor], 10 + ( ( Int32 ) ( host.RealTime * 4 ) & 1 ) );
+                Menu.DrawCharacter( 168 + 8 * _HostName.Length, _CursorTable[_Cursor], 10 + ( ( Int32 ) ( Host.RealTime * 4 ) & 1 ) );
 
             if ( _Cursor == 1 )
-                Menu.DrawCharacter( 168 + 8 * _MyName.Length, _CursorTable[_Cursor], 10 + ( ( Int32 ) ( host.RealTime * 4 ) & 1 ) );
+                Menu.DrawCharacter( 168 + 8 * _MyName.Length, _CursorTable[_Cursor], 10 + ( ( Int32 ) ( Host.RealTime * 4 ) & 1 ) );
         }
     }
 }

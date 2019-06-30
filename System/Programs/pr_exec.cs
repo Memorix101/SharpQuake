@@ -160,7 +160,7 @@ namespace SharpQuake
             {
                 if( progs.GlobalStruct.self != 0 )
                     Print( server.ProgToEdict( progs.GlobalStruct.self ) );
-                host.Error( "PR_ExecuteProgram: NULL function" );
+                Host.Error( "PR_ExecuteProgram: NULL function" );
             }
 
             ProgramFunction f = _Functions[fnum];
@@ -419,7 +419,7 @@ namespace SharpQuake
                             var i = -newf.first_statement;
                             if( i >= QBuiltins.Count )
                                 RunError( "Bad builtin call number" );
-                            QBuiltins.Execute( i );
+                            QBuiltins.Execute( Host, i );
                             break;
                         }
 
@@ -472,7 +472,7 @@ namespace SharpQuake
 
             _Depth = 0;		// dump the stack so host_error can shutdown functions
 
-            host.Error( "Program error" );
+            Host.Error( "Program error" );
         }
 
         public static MemoryEdict EdictFromAddr( Int32 addr, out Int32 ofs )
