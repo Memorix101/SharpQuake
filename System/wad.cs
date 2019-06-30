@@ -79,7 +79,7 @@ namespace SharpQuake
         // W_LoadWadFile (char *filename)
         public static void LoadWadFile( string filename )
         {
-            _Data = common.LoadFile( filename );
+            _Data = FileSystem.LoadFile( filename );
             if( _Data == null )
                 sys.Error( "Wad.LoadWadFile: couldn't load {0}", filename );
 

@@ -216,7 +216,7 @@ namespace SharpQuake
             // now turn them into textures
             _CharTexture = LoadTexture( "charset", 128, 128, new ByteArraySegment( draw_chars, offset ), false, true );
 
-            byte[] buf = common.LoadFile( "gfx/conback.lmp" );
+            byte[] buf = FileSystem.LoadFile( "gfx/conback.lmp" );
             if( buf == null )
                 sys.Error( "Couldn't load gfx/conback.lmp" );
 
@@ -559,7 +559,7 @@ namespace SharpQuake
             //
             // load the pic from disk
             //
-            byte[] data = common.LoadFile( path );
+            byte[] data = FileSystem.LoadFile( path );
             if( data == null )
                 sys.Error( "Draw_CachePic: failed to load {0}", path );
             dqpicheader_t header = sys.BytesToStructure<dqpicheader_t>( data, 0 );

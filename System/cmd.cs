@@ -354,7 +354,7 @@ namespace SharpQuake
                 return;
             }
 
-            byte[] bytes = common.LoadFile( _Argv[1] );
+            byte[] bytes = FileSystem.LoadFile( _Argv[1] );
             if( bytes == null )
             {
                 Con.Print( "couldn't exec {0}\n", _Argv[1] );

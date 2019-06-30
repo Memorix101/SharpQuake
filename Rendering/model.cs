@@ -301,7 +301,7 @@ namespace SharpQuake
             //
             // load the file
             //
-            byte[] buf = common.LoadFile( mod.name );
+            byte[] buf = FileSystem.LoadFile( mod.name );
             if( buf == null )
             {
                 if( crash )
@@ -998,7 +998,7 @@ namespace SharpQuake
 
                 var tgaName = $"textures/{tx.name}.tga";
 
-                var file = common.LoadFile( tgaName );
+                var file = FileSystem.LoadFile( tgaName );
 
                 if ( file != null )
                 {

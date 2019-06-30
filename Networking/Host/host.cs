@@ -294,10 +294,10 @@ namespace SharpQuake
 
             if( client.cls.state != cactive_t.ca_dedicated )
             {
-                _BasePal = common.LoadFile( "gfx/palette.lmp" );
+                _BasePal = FileSystem.LoadFile( "gfx/palette.lmp" );
                 if( _BasePal == null )
                     sys.Error( "Couldn't load gfx/palette.lmp" );
-                _ColorMap = common.LoadFile( "gfx/colormap.lmp" );
+                _ColorMap = FileSystem.LoadFile( "gfx/colormap.lmp" );
                 if( _ColorMap == null )
                     sys.Error( "Couldn't load gfx/colormap.lmp" );
 

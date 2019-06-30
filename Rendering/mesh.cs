@@ -71,7 +71,7 @@ namespace SharpQuake
             string path = Path.ChangeExtension( "glquake/" + Path.GetFileNameWithoutExtension( m.name ), ".ms2" );
 
             DisposableWrapper<BinaryReader> file;
-            common.FOpenFile( path, out file );
+            FileSystem.FOpenFile( path, out file );
             if( file != null )
             {
                 using( file )

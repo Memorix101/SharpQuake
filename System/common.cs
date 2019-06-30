@@ -153,7 +153,7 @@ namespace SharpQuake
         {
             get
             {
-                return _GameDir;
+                return FileSystem.GameDir;
             }
         }
 
@@ -247,14 +247,9 @@ namespace SharpQuake
         private static IByteOrderConverter _Converter;
         private static cvar _Registered;
         private static cvar _CmdLine;
-        private static string _CacheDir; // com_cachedir[MAX_OSPATH];
-        private static string _GameDir; // com_gamedir[MAX_OSPATH];
-        private static List<searchpath_t> _SearchPaths; // searchpath_t    *com_searchpaths;
-        private static string[] _Argv;
-        private static string _Args; // com_cmdline
+        public static string[] _Argv;
+        public static string _Args; // com_cmdline
         private static GameKind _GameKind; // qboolean		standard_quake = true, rogue, hipnotic;
-        private static bool _IsModified; // com_modified
-        private static bool _StaticRegistered; // static_registered
         private static char[] _Slashes = new char[] { '/', '\\' };
         private static string _Token; // com_token
 
@@ -285,12 +280,13 @@ namespace SharpQuake
         public static void Init(string path, string[] argv)
         {
             _Argv = argv;
+
             _Registered = new cvar("registered", "0");
             _CmdLine = new cvar("cmdline", "0", false, true);
 
-            cmd.Add("path", Path_f);
+            cmd.Add("path", FileSystem.Path_f );
 
-            InitFileSystem();
+            FileSystem.InitFileSystem();
             CheckRegistered();
         }
 
@@ -420,126 +416,6 @@ namespace SharpQuake
 
             _Token = data.Substring(i0, i - i0 + 1);
             return (i + 1 < data.Length ? data.Substring(i + 1) : null);
-        }
-
-        /// <summary>
-        /// COM_LoadFile
-        /// </summary>
-        public static byte[] LoadFile(string path)
-        {
-            // look for it in the filesystem or pack files
-            DisposableWrapper<BinaryReader> file;
-            int length = OpenFile(path, out file);
-            if (file == null)
-                return null;
-
-            byte[] result = new byte[length];
-            using (file)
-            {
-                Drawer.BeginDisc();
-                int left = length;
-                while (left > 0)
-                {
-                    int count = file.Object.Read(result, length - left, left);
-                    if (count == 0)
-                        sys.Error("COM_LoadFile: reading failed!");
-                    left -= count;
-                }
-                Drawer.EndDisc();
-            }
-            return result;
-        }
-
-        /// <summary>
-        /// COM_LoadPackFile
-        /// Takes an explicit (not game tree related) path to a pak file.
-        /// Loads the header and directory, adding the files at the beginning
-        /// of the list so they override previous pack files.
-        /// </summary>
-        public static pack_t LoadPackFile(string packfile)
-        {
-            FileStream file = sys.FileOpenRead(packfile);
-            if (file == null)
-                return null;
-
-            dpackheader_t header = sys.ReadStructure<dpackheader_t>(file);
-
-            string id = Encoding.ASCII.GetString(header.id);
-            if (id != "PACK")
-                sys.Error("{0} is not a packfile", packfile);
-
-            header.dirofs = LittleLong(header.dirofs);
-            header.dirlen = LittleLong(header.dirlen);
-
-            int numpackfiles = header.dirlen / Marshal.SizeOf(typeof(dpackfile_t));
-
-            if (numpackfiles > MAX_FILES_IN_PACK)
-                sys.Error("{0} has {1} files", packfile, numpackfiles);
-
-            //if (numpackfiles != PAK0_COUNT)
-            //    _IsModified = true;    // not the original file
-
-            file.Seek(header.dirofs, SeekOrigin.Begin);
-            byte[] buf = new byte[header.dirlen];
-            if (file.Read(buf, 0, buf.Length) != buf.Length)
-            {
-                sys.Error("{0} buffering failed!", packfile);
-            }
-            List<dpackfile_t> info = new List<dpackfile_t>(MAX_FILES_IN_PACK);
-            GCHandle handle = GCHandle.Alloc(buf, GCHandleType.Pinned);
-            try
-            {
-                IntPtr ptr = handle.AddrOfPinnedObject();
-                int count = 0, structSize = Marshal.SizeOf(typeof(dpackfile_t));
-                while (count < header.dirlen)
-                {
-                    dpackfile_t tmp = (dpackfile_t)Marshal.PtrToStructure(ptr, typeof(dpackfile_t));
-                    info.Add(tmp);
-                    ptr = new IntPtr(ptr.ToInt64() + structSize);
-                    count += structSize;
-                }
-                if (numpackfiles != info.Count)
-                {
-                    sys.Error("{0} directory reading failed!", packfile);
-                }
-            }
-            finally
-            {
-                handle.Free();
-            }
-
-            // crc the directory to check for modifications
-            //ushort crc;
-            //CRC.Init(out crc);
-            //for (int i = 0; i < buf.Length; i++)
-            //    CRC.ProcessByte(ref crc, buf[i]);
-            //if (crc != PAK0_CRC)
-            //    _IsModified = true;
-
-            buf = null;
-
-            // parse the directory
-            packfile_t[] newfiles = new packfile_t[numpackfiles];
-            for (int i = 0; i < numpackfiles; i++)
-            {
-                packfile_t pf = new packfile_t();
-                pf.name = common.GetString(info[i].name);
-                pf.filepos = LittleLong(info[i].filepos);
-                pf.filelen = LittleLong(info[i].filelen);
-                newfiles[i] = pf;
-            }
-
-            pack_t pack = new pack_t(packfile, new BinaryReader(file, Encoding.ASCII), newfiles);
-            Con.Print("Added packfile {0} ({1} files)\n", packfile, numpackfiles);
-            return pack;
-        }
-
-        // COM_FOpenFile(char* filename, FILE** file)
-        // If the requested file is inside a packfile, a new FILE * will be opened
-        // into the file.
-        public static int FOpenFile(string filename, out DisposableWrapper<BinaryReader> file)
-        {
-            return FindFile(filename, out file, true);
         }
 
         public static int atoi(string s)
@@ -738,180 +614,7 @@ namespace SharpQuake
             dest[offset + 1] = u.b1;
             dest[offset + 2] = u.b2;
             dest[offset + 3] = u.b3;
-        }
-
-        // COM_CopyFile
-        //
-        // Copies a file over from the net to the local cache, creating any directories
-        // needed.  This is for the convenience of developers using ISDN from home.
-        private static void CopyFile(string netpath, string cachepath)
-        {
-            using (Stream src = sys.FileOpenRead(netpath), dest = sys.FileOpenWrite(cachepath))
-            {
-                if (src == null)
-                {
-                    sys.Error("CopyFile: cannot open file {0}\n", netpath);
-                }
-                long remaining = src.Length;
-                string dirName = Path.GetDirectoryName(cachepath);
-                if (!Directory.Exists(dirName))
-                    Directory.CreateDirectory(dirName);
-
-                byte[] buf = new byte[4096];
-                while (remaining > 0)
-                {
-                    int count = buf.Length;
-                    if (remaining < count)
-                        count = (int)remaining;
-
-                    src.Read(buf, 0, count);
-                    dest.Write(buf, 0, count);
-                    remaining -= count;
-                }
-            }
-        }
-
-        /// <summary>
-        /// COM_FindFile
-        /// Finds the file in the search path.
-        /// </summary>
-        private static int FindFile(string filename, out DisposableWrapper<BinaryReader> file, bool duplicateStream)
-        {
-            file = null;
-
-            string cachepath = String.Empty;
-
-            //
-            // search through the path, one element at a time
-            //
-            foreach (searchpath_t sp in _SearchPaths)
-            {
-                // is the element a pak file?
-                if (sp.pack != null)
-                {
-                    // look through all the pak file elements
-                    pack_t pak = sp.pack;
-                    foreach (packfile_t pfile in pak.files)
-                    {
-                        if (pfile.name.Equals(filename))
-                        {
-                            // found it!
-                            Con.DPrint("PackFile: {0} : {1}\n", sp.pack.filename, filename);
-                            if (duplicateStream)
-                            {
-                                FileStream pfs = (FileStream)pak.stream.BaseStream;
-                                FileStream fs = new FileStream(pfs.Name, FileMode.Open, FileAccess.Read, FileShare.Read);
-                                file = new DisposableWrapper<BinaryReader>(new BinaryReader(fs, Encoding.ASCII), true);
-                            }
-                            else
-                            {
-                                file = new DisposableWrapper<BinaryReader>(pak.stream, false);
-                            }
-
-                            file.Object.BaseStream.Seek(pfile.filepos, SeekOrigin.Begin);
-                            return pfile.filelen;
-                        }
-                    }
-                }
-                else if ( sp.pk3 != null ) // is the element a pk3 file?
-                {
-                    // look through all the pak file elements
-                    ZipArchive pk3 = sp.pk3;
-
-                    foreach ( var pfile in pk3.Entries )
-                    {
-                        if ( pfile.FullName.Equals( filename ) )
-                        {
-                            // found it!
-                            Con.DPrint( "PK3File: {0} : {1}\n", sp.pk3filename, filename );
-
-                            file = new DisposableWrapper<BinaryReader>( new BinaryReader( pfile.Open( ), Encoding.ASCII ), false );
-
-                            return ( Int32 ) pfile.Length;
-                        }
-                    }
-                }
-                else
-                {
-                    // check a file in the directory tree
-                    if (!_StaticRegistered)
-                    {
-                        // if not a registered version, don't ever go beyond base
-                        if (filename.IndexOfAny(_Slashes) != -1) // strchr (filename, '/') || strchr (filename,'\\'))
-                            continue;
-                    }
-
-                    string netpath = sp.filename + "/" + filename;  //sprintf (netpath, "%s/%s",search->filename, filename);
-                    DateTime findtime = sys.GetFileTime(netpath);
-                    if (findtime == DateTime.MinValue)
-                        continue;
-
-                    // see if the file needs to be updated in the cache
-                    if (String.IsNullOrEmpty(_CacheDir))// !com_cachedir[0])
-                    {
-                        cachepath = netpath; //  strcpy(cachepath, netpath);
-                    }
-                    else
-                    {
-                        if (sys.IsWindows)
-                        {
-                            if (netpath.Length < 2 || netpath[1] != ':')
-                                cachepath = _CacheDir + netpath;
-                            else
-                                cachepath = _CacheDir + netpath.Substring(2);
-                        }
-                        else
-                        {
-                            cachepath = _CacheDir + netpath;
-                        }
-
-                        DateTime cachetime = sys.GetFileTime(cachepath);
-                        if (cachetime < findtime)
-                            CopyFile(netpath, cachepath);
-                        netpath = cachepath;
-                    }
-
-                    Con.DPrint("FindFile: {0}\n", netpath);
-                    FileStream fs = sys.FileOpenRead(netpath);
-                    if (fs == null)
-                    {
-                        file = null;
-                        return -1;
-                    }
-                    file = new DisposableWrapper<BinaryReader>(new BinaryReader(fs, Encoding.ASCII), true);
-                    return (int)fs.Length;
-                }
-            }
-
-            Con.DPrint("FindFile: can't find {0}\n", filename);
-            return -1;
-        }
-
-        // COM_OpenFile(char* filename, int* hndl)
-        // filename never has a leading slash, but may contain directory walks
-        // returns a handle and a length
-        // it may actually be inside a pak file
-        private static int OpenFile(string filename, out DisposableWrapper<BinaryReader> file)
-        {
-            return FindFile(filename, out file, false);
-        }
-
-        // COM_Path_f
-        private static void Path_f()
-        {
-            Con.Print("Current search path:\n");
-            foreach (searchpath_t sp in _SearchPaths)
-            {
-                if (sp.pack != null)
-                {
-                    Con.Print("{0} ({1} files)\n", sp.pack.filename, sp.pack.files.Length);
-                }
-                else
-                {
-                    Con.Print("{0}\n", sp.filename);
-                }
-            }
-        }
+        }    
 
         // COM_CheckRegistered
         //
@@ -921,13 +624,13 @@ namespace SharpQuake
         // being registered.
         private static void CheckRegistered()
         {
-            _StaticRegistered = false;
+            FileSystem._StaticRegistered = false;
 
-            byte[] buf = LoadFile("gfx/pop.lmp");
+            byte[] buf = FileSystem.LoadFile("gfx/pop.lmp");
             if (buf == null || buf.Length < 256)
             {
                 Con.Print("Playing shareware version.\n");
-                if (_IsModified)
+                if ( FileSystem._IsModified )
                     sys.Error("You must have the registered version to use modified games");
                 return;
             }
@@ -942,148 +645,8 @@ namespace SharpQuake
 
             cvar.Set("cmdline", _Args);
             cvar.Set("registered", "1");
-            _StaticRegistered = true;
+            FileSystem._StaticRegistered = true;
             Con.Print("Playing registered version.\n");
-        }
-
-        // COM_InitFilesystem
-        private static void InitFileSystem()
-        {
-            //
-            // -basedir <path>
-            // Overrides the system supplied base directory (under GAMENAME)
-            //
-            string basedir = String.Empty;
-            int i = CheckParm("-basedir");
-            if ((i > 0) && (i < _Argv.Length - 1))
-            {
-                basedir = _Argv[i + 1];
-            }
-            else
-            {
-                basedir = host.Params.basedir;
-                qparam.globalbasedir = basedir;
-            }
-
-            if (!String.IsNullOrEmpty(basedir))
-            {
-                basedir.TrimEnd('\\', '/');
-            }
-
-            //
-            // -cachedir <path>
-            // Overrides the system supplied cache directory (NULL or /qcache)
-            // -cachedir - will disable caching.
-            //
-            i = CheckParm("-cachedir");
-            if ((i > 0) && (i < _Argv.Length - 1))
-            {
-                if (_Argv[i + 1][0] == '-')
-                    _CacheDir = String.Empty;
-                else
-                    _CacheDir = _Argv[i + 1];
-            }
-            else if (!String.IsNullOrEmpty(host.Params.cachedir))
-            {
-                _CacheDir = host.Params.cachedir;
-            }
-            else
-            {
-                _CacheDir = String.Empty;
-            }
-
-            //
-            // start up with GAMENAME by default (id1)
-            //
-            AddGameDirectory(basedir + "/" + QDef.GAMENAME);
-            qparam.globalgameid = QDef.GAMENAME;
-
-            if (HasParam("-rogue"))
-            {
-                AddGameDirectory(basedir + "/rogue");
-                qparam.globalgameid = "rogue";
-            }
-
-            if (HasParam("-hipnotic"))
-            {
-                AddGameDirectory(basedir + "/hipnotic");
-                qparam.globalgameid = "hipnotic";
-            }
-            //
-            // -game <gamedir>
-            // Adds basedir/gamedir as an override game
-            //
-            i = CheckParm("-game");
-            if ((i > 0) && (i < _Argv.Length - 1))
-            {
-                _IsModified = true;
-                AddGameDirectory(basedir + "/" + _Argv[i + 1]);
-            }
-
-            //
-            // -path <dir or packfile> [<dir or packfile>] ...
-            // Fully specifies the exact serach path, overriding the generated one
-            //
-            i = CheckParm("-path");
-            if (i > 0)
-            {
-                _IsModified = true;
-                _SearchPaths.Clear();
-                while (++i < _Argv.Length)
-                {
-                    if (String.IsNullOrEmpty(_Argv[i]) || _Argv[i][0] == '+' || _Argv[i][0] == '-')
-                        break;
-
-                    _SearchPaths.Insert(0, new searchpath_t(_Argv[i]));
-                }
-            }
-        }
-
-        // COM_AddGameDirectory
-        //
-        // Sets com_gamedir, adds the directory to the head of the path,
-        // then loads and adds pak1.pak pak2.pak ...
-        private static void AddGameDirectory(string dir)
-        {
-            _GameDir = dir;
-
-            //
-            // add the directory to the search path
-            //
-            _SearchPaths.Insert(0, new searchpath_t(dir));
-
-            //
-            // add any pak files in the format pak0.pak pak1.pak, ...
-            //
-            for (int i = 0; ; i++)
-            {
-                string pakfile = String.Format("{0}/PAK{1}.PAK", dir, i);
-                pack_t pak = LoadPackFile(pakfile);
-                if (pak == null)
-                    break;
-
-                _SearchPaths.Insert(0, new searchpath_t(pak));
-            }
-
-            //
-            // add any pk3 files in the format pak0.pk3 pak1.pk3, ...
-            //
-            foreach ( var pk3file in Directory.GetFiles( dir, "*.pk3" ).OrderByDescending( f => f ) )
-            {
-                FileStream file = sys.FileOpenRead( pk3file );
-
-                if ( file != null )
-                {
-                    file.Dispose( );
-
-                    ZipArchive pk3 = ZipFile.OpenRead( pk3file );
-
-                    if ( pk3 == null )
-                        break;
-
-                    _SearchPaths.Insert( 0, new searchpath_t( pk3 ) );
-                }
-            }
         }
 
         static common()
@@ -1097,8 +660,6 @@ namespace SharpQuake
             {
                 _Converter = new BigEndianConverter();
             }
-
-            _SearchPaths = new List<searchpath_t>();
         }
     }
 
@@ -1779,7 +1340,7 @@ namespace SharpQuake
     // in memory
     //
 
-    internal class packfile_t
+    public class packfile_t
     {
         public string name; // [MAX_QPATH];
         public int filepos, filelen;
@@ -1790,7 +1351,7 @@ namespace SharpQuake
         }
     } // packfile_t;
 
-    internal class pack_t
+    public class pack_t
     {
         public string filename; // [MAX_OSPATH];
         public BinaryReader stream; //int handle;
@@ -1821,7 +1382,7 @@ namespace SharpQuake
         {
             if (path.EndsWith(".PAK"))
             {
-                this.pack = common.LoadPackFile(path);
+                this.pack = FileSystem.LoadPackFile(path);
                 if (this.pack == null)
                     sys.Error("Couldn't load packfile: {0}", path);
             }
@@ -1847,7 +1408,7 @@ namespace SharpQuake
         }
     } // searchpath_t;
 
-    internal class DisposableWrapper<T> : IDisposable where T : class, IDisposable
+    public class DisposableWrapper<T> : IDisposable where T : class, IDisposable
     {
         public T Object
         {

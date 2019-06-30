@@ -177,7 +177,7 @@ namespace SharpQuake
                 cls.demofile.Dispose();
             }
             DisposableWrapper<BinaryReader> reader;
-            common.FOpenFile( name, out reader );
+            FileSystem.FOpenFile( name, out reader );
             cls.demofile = reader;
             if( cls.demofile == null )
             {

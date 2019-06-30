@@ -147,7 +147,7 @@ namespace SharpQuake
 
             crc.Init( out _Crc );
 
-            byte[] buf = common.LoadFile( "progs.dat" );
+            byte[] buf = FileSystem.LoadFile( "progs.dat" );
 
             _Progs = sys.BytesToStructure<dprograms_t>( buf, 0 );
             if( _Progs == null )

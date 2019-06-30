@@ -678,7 +678,7 @@ namespace SharpQuake
             // load it in
             string namebuffer = "sound/" + s.name;
 
-            byte[] data = common.LoadFile( namebuffer );
+            byte[] data = FileSystem.LoadFile( namebuffer );
             if( data == null )
             {
                 Con.Print( "Couldn't load {0}\n", namebuffer );
