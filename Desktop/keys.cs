@@ -118,253 +118,99 @@ namespace SharpQuake
             }
         }
 
-        //
-        // these are the key numbers that should be passed to Key_Event
-        //
-        public const Int32 K_TAB = 9;
-
-        public const Int32 K_ENTER = 13;
-
-        public const Int32 K_ESCAPE = 27;
-
-        public const Int32 K_SPACE = 32;
-
-        public const Int32 K_BACKSPACE = 127;
-
-        // normal keys should be passed as lowercased ascii
-        public const Int32 K_UPARROW = 128;
-
-        public const Int32 K_DOWNARROW = 129;
-
-        public const Int32 K_LEFTARROW = 130;
-
-        public const Int32 K_RIGHTARROW = 131;
-
-        public const Int32 K_ALT = 132;
-
-        public const Int32 K_CTRL = 133;
-
-        public const Int32 K_SHIFT = 134;
-
-        public const Int32 K_F1 = 135;
-
-        public const Int32 K_F2 = 136;
-
-        public const Int32 K_F3 = 137;
-
-        public const Int32 K_F4 = 138;
-
-        public const Int32 K_F5 = 139;
-
-        public const Int32 K_F6 = 140;
-
-        public const Int32 K_F7 = 141;
-
-        public const Int32 K_F8 = 142;
-
-        public const Int32 K_F9 = 143;
-
-        public const Int32 K_F10 = 144;
-
-        public const Int32 K_F11 = 145;
-
-        public const Int32 K_F12 = 146;
-
-        public const Int32 K_INS = 147;
-
-        public const Int32 K_DEL = 148;
-
-        public const Int32 K_PGDN = 149;
-
-        public const Int32 K_PGUP = 150;
-
-        public const Int32 K_HOME = 151;
-
-        public const Int32 K_END = 152;
-
-        public const Int32 K_PAUSE = 255;
-
-        //
-        // mouse buttons generate virtual keys
-        //
-        public const Int32 K_MOUSE1 = 200;
-
-        public const Int32 K_MOUSE2 = 201;
-
-        public const Int32 K_MOUSE3 = 202;
-
-        //
-        // joystick buttons
-        //
-        public const Int32 K_JOY1 = 203;
-
-        public const Int32 K_JOY2 = 204;
-
-        public const Int32 K_JOY3 = 205;
-
-        public const Int32 K_JOY4 = 206;
-
-        //
-        // aux keys are for multi-buttoned joysticks to generate so they can use
-        // the normal binding process
-        //
-        public const Int32 K_AUX1 = 207;
-
-        public const Int32 K_AUX2 = 208;
-
-        public const Int32 K_AUX3 = 209;
-
-        public const Int32 K_AUX4 = 210;
-
-        public const Int32 K_AUX5 = 211;
-
-        public const Int32 K_AUX6 = 212;
-
-        public const Int32 K_AUX7 = 213;
-
-        public const Int32 K_AUX8 = 214;
-
-        public const Int32 K_AUX9 = 215;
-
-        public const Int32 K_AUX10 = 216;
-
-        public const Int32 K_AUX11 = 217;
-
-        public const Int32 K_AUX12 = 218;
-
-        public const Int32 K_AUX13 = 219;
-
-        public const Int32 K_AUX14 = 220;
-
-        public const Int32 K_AUX15 = 221;
-
-        public const Int32 K_AUX16 = 222;
-
-        public const Int32 K_AUX17 = 223;
-
-        public const Int32 K_AUX18 = 224;
-
-        public const Int32 K_AUX19 = 225;
-
-        public const Int32 K_AUX20 = 226;
-
-        public const Int32 K_AUX21 = 227;
-
-        public const Int32 K_AUX22 = 228;
-
-        public const Int32 K_AUX23 = 229;
-
-        public const Int32 K_AUX24 = 230;
-
-        public const Int32 K_AUX25 = 231;
-
-        public const Int32 K_AUX26 = 232;
-
-        public const Int32 K_AUX27 = 233;
-
-        public const Int32 K_AUX28 = 234;
-
-        public const Int32 K_AUX29 = 235;
-
-        public const Int32 K_AUX30 = 236;
-
-        public const Int32 K_AUX31 = 237;
-
-        public const Int32 K_AUX32 = 238;
-
-        public const Int32 K_MWHEELUP = 239;
-
-        // JACK: Intellimouse(c) Mouse Wheel Support
-        public const Int32 K_MWHEELDOWN = 240;
+        // CHANGE
+        private static CommandBuffer CommandBuffer
+        {
+            get;
+            set;
+        }
 
         public static Int32 LinePos;
 
         public static Int32 KeyCount;
 
-        private const Int32 MAXCMDLINE = 256;
-
         private static keyname_t[] _KeyNames = new keyname_t[]
         {
-            new keyname_t("TAB", K_TAB),
-            new keyname_t("ENTER", K_ENTER),
-            new keyname_t("ESCAPE", K_ESCAPE),
-            new keyname_t("SPACE", K_SPACE),
-            new keyname_t("BACKSPACE", K_BACKSPACE),
-            new keyname_t("UPARROW", K_UPARROW),
-            new keyname_t("DOWNARROW", K_DOWNARROW),
-            new keyname_t("LEFTARROW", K_LEFTARROW),
-            new keyname_t("RIGHTARROW", K_RIGHTARROW),
+            new keyname_t("TAB", KeysDef.K_TAB),
+            new keyname_t("ENTER", KeysDef.K_ENTER),
+            new keyname_t("ESCAPE", KeysDef.K_ESCAPE),
+            new keyname_t("SPACE", KeysDef.K_SPACE),
+            new keyname_t("BACKSPACE", KeysDef.K_BACKSPACE),
+            new keyname_t("UPARROW", KeysDef.K_UPARROW),
+            new keyname_t("DOWNARROW", KeysDef.K_DOWNARROW),
+            new keyname_t("LEFTARROW", KeysDef.K_LEFTARROW),
+            new keyname_t("RIGHTARROW", KeysDef.K_RIGHTARROW),
 
-            new keyname_t("ALT", K_ALT),
-            new keyname_t("CTRL", K_CTRL),
-            new keyname_t("SHIFT", K_SHIFT),
+            new keyname_t("ALT", KeysDef.K_ALT),
+            new keyname_t("CTRL", KeysDef.K_CTRL),
+            new keyname_t("SHIFT", KeysDef.K_SHIFT),
 
-            new keyname_t("F1", K_F1),
-            new keyname_t("F2", K_F2),
-            new keyname_t("F3", K_F3),
-            new keyname_t("F4", K_F4),
-            new keyname_t("F5", K_F5),
-            new keyname_t("F6", K_F6),
-            new keyname_t("F7", K_F7),
-            new keyname_t("F8", K_F8),
-            new keyname_t("F9", K_F9),
-            new keyname_t("F10", K_F10),
-            new keyname_t("F11", K_F11),
-            new keyname_t("F12", K_F12),
+            new keyname_t("F1", KeysDef.K_F1),
+            new keyname_t("F2", KeysDef.K_F2),
+            new keyname_t("F3", KeysDef.K_F3),
+            new keyname_t("F4", KeysDef.K_F4),
+            new keyname_t("F5", KeysDef.K_F5),
+            new keyname_t("F6", KeysDef.K_F6),
+            new keyname_t("F7", KeysDef.K_F7),
+            new keyname_t("F8", KeysDef.K_F8),
+            new keyname_t("F9", KeysDef.K_F9),
+            new keyname_t("F10", KeysDef.K_F10),
+            new keyname_t("F11", KeysDef.K_F11),
+            new keyname_t("F12", KeysDef.K_F12),
 
-            new keyname_t("INS", K_INS),
-            new keyname_t("DEL", K_DEL),
-            new keyname_t("PGDN", K_PGDN),
-            new keyname_t("PGUP", K_PGUP),
-            new keyname_t("HOME", K_HOME),
-            new keyname_t("END", K_END),
+            new keyname_t("INS", KeysDef.K_INS),
+            new keyname_t("DEL", KeysDef.K_DEL),
+            new keyname_t("PGDN", KeysDef.K_PGDN),
+            new keyname_t("PGUP", KeysDef.K_PGUP),
+            new keyname_t("HOME", KeysDef.K_HOME),
+            new keyname_t("END", KeysDef.K_END),
 
-            new keyname_t("MOUSE1", K_MOUSE1),
-            new keyname_t("MOUSE2", K_MOUSE2),
-            new keyname_t("MOUSE3", K_MOUSE3),
+            new keyname_t("MOUSE1", KeysDef.K_MOUSE1),
+            new keyname_t("MOUSE2", KeysDef.K_MOUSE2),
+            new keyname_t("MOUSE3", KeysDef.K_MOUSE3),
 
-            new keyname_t("JOY1", K_JOY1),
-            new keyname_t("JOY2", K_JOY2),
-            new keyname_t("JOY3", K_JOY3),
-            new keyname_t("JOY4", K_JOY4),
+            new keyname_t("JOY1", KeysDef.K_JOY1),
+            new keyname_t("JOY2", KeysDef.K_JOY2),
+            new keyname_t("JOY3", KeysDef.K_JOY3),
+            new keyname_t("JOY4", KeysDef.K_JOY4),
 
-            new keyname_t("AUX1", K_AUX1),
-            new keyname_t("AUX2", K_AUX2),
-            new keyname_t("AUX3", K_AUX3),
-            new keyname_t("AUX4", K_AUX4),
-            new keyname_t("AUX5", K_AUX5),
-            new keyname_t("AUX6", K_AUX6),
-            new keyname_t("AUX7", K_AUX7),
-            new keyname_t("AUX8", K_AUX8),
-            new keyname_t("AUX9", K_AUX9),
-            new keyname_t("AUX10", K_AUX10),
-            new keyname_t("AUX11", K_AUX11),
-            new keyname_t("AUX12", K_AUX12),
-            new keyname_t("AUX13", K_AUX13),
-            new keyname_t("AUX14", K_AUX14),
-            new keyname_t("AUX15", K_AUX15),
-            new keyname_t("AUX16", K_AUX16),
-            new keyname_t("AUX17", K_AUX17),
-            new keyname_t("AUX18", K_AUX18),
-            new keyname_t("AUX19", K_AUX19),
-            new keyname_t("AUX20", K_AUX20),
-            new keyname_t("AUX21", K_AUX21),
-            new keyname_t("AUX22", K_AUX22),
-            new keyname_t("AUX23", K_AUX23),
-            new keyname_t("AUX24", K_AUX24),
-            new keyname_t("AUX25", K_AUX25),
-            new keyname_t("AUX26", K_AUX26),
-            new keyname_t("AUX27", K_AUX27),
-            new keyname_t("AUX28", K_AUX28),
-            new keyname_t("AUX29", K_AUX29),
-            new keyname_t("AUX30", K_AUX30),
-            new keyname_t("AUX31", K_AUX31),
-            new keyname_t("AUX32", K_AUX32),
+            new keyname_t("AUX1", KeysDef.K_AUX1),
+            new keyname_t("AUX2", KeysDef.K_AUX2),
+            new keyname_t("AUX3", KeysDef.K_AUX3),
+            new keyname_t("AUX4", KeysDef.K_AUX4),
+            new keyname_t("AUX5", KeysDef.K_AUX5),
+            new keyname_t("AUX6", KeysDef.K_AUX6),
+            new keyname_t("AUX7", KeysDef.K_AUX7),
+            new keyname_t("AUX8", KeysDef.K_AUX8),
+            new keyname_t("AUX9", KeysDef.K_AUX9),
+            new keyname_t("AUX10", KeysDef.K_AUX10),
+            new keyname_t("AUX11", KeysDef.K_AUX11),
+            new keyname_t("AUX12", KeysDef.K_AUX12),
+            new keyname_t("AUX13", KeysDef.K_AUX13),
+            new keyname_t("AUX14", KeysDef.K_AUX14),
+            new keyname_t("AUX15", KeysDef.K_AUX15),
+            new keyname_t("AUX16", KeysDef.K_AUX16),
+            new keyname_t("AUX17", KeysDef.K_AUX17),
+            new keyname_t("AUX18", KeysDef.K_AUX18),
+            new keyname_t("AUX19", KeysDef.K_AUX19),
+            new keyname_t("AUX20", KeysDef.K_AUX20),
+            new keyname_t("AUX21", KeysDef.K_AUX21),
+            new keyname_t("AUX22", KeysDef.K_AUX22),
+            new keyname_t("AUX23", KeysDef.K_AUX23),
+            new keyname_t("AUX24", KeysDef.K_AUX24),
+            new keyname_t("AUX25", KeysDef.K_AUX25),
+            new keyname_t("AUX26", KeysDef.K_AUX26),
+            new keyname_t("AUX27", KeysDef.K_AUX27),
+            new keyname_t("AUX28", KeysDef.K_AUX28),
+            new keyname_t("AUX29", KeysDef.K_AUX29),
+            new keyname_t("AUX30", KeysDef.K_AUX30),
+            new keyname_t("AUX31", KeysDef.K_AUX31),
+            new keyname_t("AUX32", KeysDef.K_AUX32),
 
-            new keyname_t("PAUSE", K_PAUSE),
+            new keyname_t("PAUSE", KeysDef.K_PAUSE),
 
-            new keyname_t("MWHEELUP", K_MWHEELUP),
-            new keyname_t("MWHEELDOWN", K_MWHEELDOWN),
+            new keyname_t("MWHEELUP", KeysDef.K_MWHEELUP),
+            new keyname_t("MWHEELDOWN", KeysDef.K_MWHEELDOWN),
 
             new keyname_t("SEMICOLON", ';'),	// because a raw semicolon seperates commands
         };
@@ -413,7 +259,7 @@ namespace SharpQuake
             if( down )
             {
                 _Repeats[key]++;
-                if( key != K_BACKSPACE && key != K_PAUSE && key != K_PGUP && key != K_PGDN && _Repeats[key] > 1 )
+                if( key != KeysDef.K_BACKSPACE && key != KeysDef.K_PAUSE && key != KeysDef.K_PGUP && key != KeysDef.K_PGDN && _Repeats[key] > 1 )
                 {
                     return; // ignore most autorepeats
                 }
@@ -422,13 +268,13 @@ namespace SharpQuake
                     Con.Print( "{0} is unbound, hit F4 to set.\n", KeynumToString( key ) );
             }
 
-            if( key == K_SHIFT )
+            if( key == KeysDef.K_SHIFT )
                 _ShiftDown = down;
 
             //
             // handle escape specialy, so the user can never unbind it
             //
-            if( key == K_ESCAPE )
+            if( key == KeysDef.K_ESCAPE )
             {
                 if( !down )
                     return;
@@ -541,11 +387,13 @@ namespace SharpQuake
         }
 
         // Key_Init (void);
-        public static void Init()
+        public static void Init( CommandBuffer commandBuffer )
         {
+            CommandBuffer = commandBuffer;
+
             for( var i = 0; i < 32; i++ )
             {
-                _Lines[i] = new Char[MAXCMDLINE];
+                _Lines[i] = new Char[KeysDef.MAXCMDLINE];
                 _Lines[i][0] = ']'; // key_lines[i][0] = ']'; key_lines[i][1] = 0;
             }
             LinePos = 1;
@@ -555,18 +403,18 @@ namespace SharpQuake
             //
             for( var i = 32; i < 128; i++ )
                 _ConsoleKeys[i] = true;
-            _ConsoleKeys[K_ENTER] = true;
-            _ConsoleKeys[K_TAB] = true;
-            _ConsoleKeys[K_LEFTARROW] = true;
-            _ConsoleKeys[K_RIGHTARROW] = true;
-            _ConsoleKeys[K_UPARROW] = true;
-            _ConsoleKeys[K_DOWNARROW] = true;
-            _ConsoleKeys[K_BACKSPACE] = true;
-            _ConsoleKeys[K_PGUP] = true;
-            _ConsoleKeys[K_PGDN] = true;
-            _ConsoleKeys[K_SHIFT] = true;
-            _ConsoleKeys[K_MWHEELUP] = true;
-            _ConsoleKeys[K_MWHEELDOWN] = true;
+            _ConsoleKeys[KeysDef.K_ENTER] = true;
+            _ConsoleKeys[KeysDef.K_TAB] = true;
+            _ConsoleKeys[KeysDef.K_LEFTARROW] = true;
+            _ConsoleKeys[KeysDef.K_RIGHTARROW] = true;
+            _ConsoleKeys[KeysDef.K_UPARROW] = true;
+            _ConsoleKeys[KeysDef.K_DOWNARROW] = true;
+            _ConsoleKeys[KeysDef.K_BACKSPACE] = true;
+            _ConsoleKeys[KeysDef.K_PGUP] = true;
+            _ConsoleKeys[KeysDef.K_PGDN] = true;
+            _ConsoleKeys[KeysDef.K_SHIFT] = true;
+            _ConsoleKeys[KeysDef.K_MWHEELUP] = true;
+            _ConsoleKeys[KeysDef.K_MWHEELDOWN] = true;
             _ConsoleKeys['`'] = false;
             _ConsoleKeys['~'] = false;
 
@@ -596,16 +444,16 @@ namespace SharpQuake
             _KeyShift['`'] = '~';
             _KeyShift['\\'] = '|';
 
-            _MenuBound[K_ESCAPE] = true;
+            _MenuBound[KeysDef.K_ESCAPE] = true;
             for( var i = 0; i < 12; i++ )
-                _MenuBound[K_F1 + i] = true;
+                _MenuBound[KeysDef.K_F1 + i] = true;
 
             //
             // register our functions
             //
-            Command.Add( "bind", Bind_f );
-            Command.Add( "unbind", Unbind_f );
-            Command.Add( "unbindall", UnbindAll_f );
+            CommandBuffer.Host.Command.Add( "bind", Bind_f );
+            CommandBuffer.Host.Command.Add( "unbind", Unbind_f );
+            CommandBuffer.Host.Command.Add( "unbindall", UnbindAll_f );
         }
 
         /// <summary>
@@ -697,16 +545,16 @@ namespace SharpQuake
         //Key_Unbind_f
         private static void Unbind_f()
         {
-            if( Command.Argc != 2 )
+            if( CommandBuffer.Host.Command.Argc != 2 )
             {
                 Con.Print( "unbind <key> : remove commands from a key\n" );
                 return;
             }
 
-            var b = StringToKeynum( Command.Argv( 1 ) );
+            var b = StringToKeynum( CommandBuffer.Host.Command.Argv( 1 ) );
             if( b == -1 )
             {
-                Con.Print( "\"{0}\" isn't a valid key\n", Command.Argv( 1 ) );
+                Con.Print( "\"{0}\" isn't a valid key\n", CommandBuffer.Host.Command.Argv( 1 ) );
                 return;
             }
 
@@ -724,26 +572,26 @@ namespace SharpQuake
         //Key_Bind_f
         private static void Bind_f()
         {
-            var c = Command.Argc;
+            var c = CommandBuffer.Host.Command.Argc;
             if( c != 2 && c != 3 )
             {
                 Con.Print( "bind <key> [command] : attach a command to a key\n" );
                 return;
             }
 
-            var b = StringToKeynum( Command.Argv( 1 ) );
+            var b = StringToKeynum( CommandBuffer.Host.Command.Argv( 1 ) );
             if( b == -1 )
             {
-                Con.Print( "\"{0}\" isn't a valid key\n", Command.Argv( 1 ) );
+                Con.Print( "\"{0}\" isn't a valid key\n", CommandBuffer.Host.Command.Argv( 1 ) );
                 return;
             }
 
             if( c == 2 )
             {
                 if( !String.IsNullOrEmpty( _Bindings[b] ) )// keybindings[b])
-                    Con.Print( "\"{0}\" = \"{1}\"\n", Command.Argv( 1 ), _Bindings[b] );
+                    Con.Print( "\"{0}\" = \"{1}\"\n", CommandBuffer.Host.Command.Argv( 1 ), _Bindings[b] );
                 else
-                    Con.Print( "\"{0}\" is not bound\n", Command.Argv( 1 ) );
+                    Con.Print( "\"{0}\" is not bound\n", CommandBuffer.Host.Command.Argv( 1 ) );
                 return;
             }
 
@@ -754,7 +602,7 @@ namespace SharpQuake
             {
                 if( i > 2 )
                     sb.Append( " " );
-                sb.Append( Command.Argv( i ) );
+                sb.Append( CommandBuffer.Host.Command.Argv( i ) );
             }
 
             SetBinding( b, sb.ToString() );
@@ -763,7 +611,7 @@ namespace SharpQuake
         // Key_Message (int key)
         private static void KeyMessage( Int32 key )
         {
-            if( key == K_ENTER )
+            if( key == KeysDef.K_ENTER )
             {
                 if( _TeamMessage )
                     CommandBuffer.AddText( "say_team \"" );
@@ -777,7 +625,7 @@ namespace SharpQuake
                 return;
             }
 
-            if( key == K_ESCAPE )
+            if( key == KeysDef.K_ESCAPE )
             {
                 Key.Destination = keydest_t.key_game;
                 _ChatBuffer.Length = 0;
@@ -787,7 +635,7 @@ namespace SharpQuake
             if( key < 32 || key > 127 )
                 return;	// non printable
 
-            if( key == K_BACKSPACE )
+            if( key == KeysDef.K_BACKSPACE )
             {
                 if( _ChatBuffer.Length > 0 )
                 {
@@ -808,7 +656,7 @@ namespace SharpQuake
         /// </summary>
         private static void KeyConsole( Int32 key )
         {
-            if( key == K_ENTER )
+            if( key == KeysDef.K_ENTER )
             {
                 var line = new String( _Lines[_EditLine] ).TrimEnd( '\0', ' ' );
                 var cmd = line.Substring( 1 );
@@ -825,11 +673,11 @@ namespace SharpQuake
                 return;
             }
 
-            if( key == K_TAB )
+            if( key == KeysDef.K_TAB )
             {
                 // command completion
-                var txt = new String( _Lines[_EditLine], 1, MAXCMDLINE - 1 ).TrimEnd( '\0', ' ' );
-                String[] cmds = Command.Complete( txt );
+                var txt = new String( _Lines[_EditLine], 1, KeysDef.MAXCMDLINE - 1 ).TrimEnd( '\0', ' ' );
+                String[] cmds = CommandBuffer.Host.Command.Complete( txt );
                 String[] vars = CVar.CompleteName( txt );
                 String match = null;
                 if( cmds != null )
@@ -856,7 +704,7 @@ namespace SharpQuake
                 }
                 if( !String.IsNullOrEmpty( match ) )
                 {
-                    var len = Math.Min( match.Length, MAXCMDLINE - 3 );
+                    var len = Math.Min( match.Length, KeysDef.MAXCMDLINE - 3 );
                     for( var i = 0; i < len; i++ )
                     {
                         _Lines[_EditLine][i + 1] = match[i];
@@ -869,14 +717,14 @@ namespace SharpQuake
                 }
             }
 
-            if( key == K_BACKSPACE || key == K_LEFTARROW )
+            if( key == KeysDef.K_BACKSPACE || key == KeysDef.K_LEFTARROW )
             {
                 if( Key.LinePos > 1 )
                     Key.LinePos--;
                 return;
             }
 
-            if( key == K_UPARROW )
+            if( key == KeysDef.K_UPARROW )
             {
                 do
                 {
@@ -884,14 +732,14 @@ namespace SharpQuake
                 } while( _HistoryLine != _EditLine && ( _Lines[_HistoryLine][1] == 0 ) );
                 if( _HistoryLine == _EditLine )
                     _HistoryLine = ( _EditLine + 1 ) & 31;
-                Array.Copy( _Lines[_HistoryLine], _Lines[_EditLine], MAXCMDLINE );
+                Array.Copy( _Lines[_HistoryLine], _Lines[_EditLine], KeysDef.MAXCMDLINE );
                 Key.LinePos = 0;
-                while( _Lines[_EditLine][Key.LinePos] != '\0' && Key.LinePos < MAXCMDLINE )
+                while( _Lines[_EditLine][Key.LinePos] != '\0' && Key.LinePos < KeysDef.MAXCMDLINE )
                     Key.LinePos++;
                 return;
             }
 
-            if( key == K_DOWNARROW )
+            if( key == KeysDef.K_DOWNARROW )
             {
                 if( _HistoryLine == _EditLine )
                     return;
@@ -907,15 +755,15 @@ namespace SharpQuake
                 }
                 else
                 {
-                    Array.Copy( _Lines[_HistoryLine], _Lines[_EditLine], MAXCMDLINE );
+                    Array.Copy( _Lines[_HistoryLine], _Lines[_EditLine], KeysDef.MAXCMDLINE );
                     Key.LinePos = 0;
-                    while( _Lines[_EditLine][Key.LinePos] != '\0' && Key.LinePos < MAXCMDLINE )
+                    while( _Lines[_EditLine][Key.LinePos] != '\0' && Key.LinePos < KeysDef.MAXCMDLINE )
                         Key.LinePos++;
                 }
                 return;
             }
 
-            if( key == K_PGUP || key == K_MWHEELUP )
+            if( key == KeysDef.K_PGUP || key == KeysDef.K_MWHEELUP )
             {
                 Con.BackScroll += 2;
                 if( Con.BackScroll > Con.TotalLines - ( Scr.vid.height >> 3 ) - 1 )
@@ -923,7 +771,7 @@ namespace SharpQuake
                 return;
             }
 
-            if( key == K_PGDN || key == K_MWHEELDOWN )
+            if( key == KeysDef.K_PGDN || key == KeysDef.K_MWHEELDOWN )
             {
                 Con.BackScroll -= 2;
                 if( Con.BackScroll < 0 )
@@ -931,13 +779,13 @@ namespace SharpQuake
                 return;
             }
 
-            if( key == K_HOME )
+            if( key == KeysDef.K_HOME )
             {
                 Con.BackScroll = Con.TotalLines - ( Scr.vid.height >> 3 ) - 1;
                 return;
             }
 
-            if( key == K_END )
+            if( key == KeysDef.K_END )
             {
                 Con.BackScroll = 0;
                 return;
@@ -946,7 +794,7 @@ namespace SharpQuake
             if( key < 32 || key > 127 )
                 return;	// non printable
 
-            if( Key.LinePos < MAXCMDLINE - 1 )
+            if( Key.LinePos < KeysDef.MAXCMDLINE - 1 )
             {
                 _Lines[_EditLine][Key.LinePos] = ( Char ) key;
                 Key.LinePos++;

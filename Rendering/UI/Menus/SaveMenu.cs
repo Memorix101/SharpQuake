@@ -25,25 +25,25 @@ namespace SharpQuake
         {
             switch ( key )
             {
-                case Key.K_ESCAPE:
+                case KeysDef.K_ESCAPE:
                     MenuBase.SinglePlayerMenu.Show( Host );
                     break;
 
-                case Key.K_ENTER:
+                case KeysDef.K_ENTER:
                     MenuBase.Hide( );
-                    CommandBuffer.AddText( String.Format( "save s{0}\n", _Cursor ) );
+                    Host.CommandBuffer.AddText( String.Format( "save s{0}\n", _Cursor ) );
                     return;
 
-                case Key.K_UPARROW:
-                case Key.K_LEFTARROW:
+                case KeysDef.K_UPARROW:
+                case KeysDef.K_LEFTARROW:
                     snd.LocalSound( "misc/menu1.wav" );
                     _Cursor--;
                     if ( _Cursor < 0 )
                         _Cursor = MAX_SAVEGAMES - 1;
                     break;
 
-                case Key.K_DOWNARROW:
-                case Key.K_RIGHTARROW:
+                case KeysDef.K_DOWNARROW:
+                case KeysDef.K_RIGHTARROW:
                     snd.LocalSound( "misc/menu1.wav" );
                     _Cursor++;
                     if ( _Cursor >= MAX_SAVEGAMES )

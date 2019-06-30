@@ -71,7 +71,7 @@ namespace SharpQuake
         // NET_Stats_f
         private void Stats_f()
         {
-            if( Command.Argc == 1 )
+            if( Host.Command.Argc == 1 )
             {
                 Con.Print( "unreliable messages sent   = %i\n", net.UnreliableMessagesSent );
                 Con.Print( "unreliable messages recv   = %i\n", net.UnreliableMessagesReceived );
@@ -84,7 +84,7 @@ namespace SharpQuake
                 Con.Print( "shortPacketCount           = %i\n", shortPacketCount );
                 Con.Print( "droppedDatagrams           = %i\n", droppedDatagrams );
             }
-            else if( Command.Argv( 1 ) == "*" )
+            else if( Host.Command.Argv( 1 ) == "*" )
             {
                 foreach( qsocket_t s in net.ActiveSockets )
                     PrintStats( s );
@@ -95,7 +95,7 @@ namespace SharpQuake
             else
             {
                 qsocket_t sock = null;
-                var cmdAddr = Command.Argv( 1 );
+                var cmdAddr = Host.Command.Argv( 1 );
 
                 foreach( qsocket_t s in net.ActiveSockets )
                     if( Utilities.SameText( s.address, cmdAddr ) )
@@ -161,7 +161,7 @@ namespace SharpQuake
             Host = host;
 
             _DriverLevel = Array.IndexOf( net.Drivers, this );
-            Command.Add( "net_stats", Stats_f );
+            Host.Command.Add( "net_stats", Stats_f );
 
             if( CommandLine.HasParam( "-nolan" ) )
                 return;

@@ -208,8 +208,8 @@ namespace SharpQuake
             if( renderer.Contains( "3dfx" ) || renderer.Contains( "Glide" ) )
                 CVar.Set( "gl_max_size", "256" );
 
-            Command.Add( "gl_texturemode", TextureMode_f );
-            Command.Add( "imagelist", Imagelist_f );
+            Host.Command.Add( "gl_texturemode", TextureMode_f );
+            Host.Command.Add( "imagelist", Imagelist_f );
 
             // load the console background and the charset
             // by hand, because we need to write the version
@@ -759,7 +759,7 @@ namespace SharpQuake
         private static void TextureMode_f()
         {
             Int32 i;
-            if( Command.Argc == 1 )
+            if( Host.Command.Argc == 1 )
             {
                 for( i = 0; i < 6; i++ )
                     if( _MinFilter == _Modes[i].minimize )
@@ -773,7 +773,7 @@ namespace SharpQuake
 
             for( i = 0; i < _Modes.Length; i++ )
             {
-                if( Utilities.SameText( _Modes[i].name, Command.Argv( 1 ) ) )
+                if( Utilities.SameText( _Modes[i].name, Host.Command.Argv( 1 ) ) )
                     break;
             }
             if( i == _Modes.Length )

@@ -15,22 +15,29 @@ namespace SharpQuake
 
     //The game starts with a Cbuf_AddText ("exec quake.rc\n"); Cbuf_Execute ();
 
-    public static class CommandBuffer // Cbuf
+    public class CommandBuffer // Cbuf
     {
-        private static StringBuilder _Buf;
-        private static Boolean _Wait;
+        private StringBuilder _Buf;
+        private Boolean _Wait;
+
+        public Host Host
+        {
+            get;
+            private set;
+        }
 
         // Cbuf_Init()
         // allocates an initial text buffer that will grow as needed
-        public static void Init( )
+        public void Initialise( Host host )
         {
+            Host = host;
             // nothing to do
         }
 
         // Cbuf_AddText()
         // as new commands are generated from the console or keybindings,
         // the text is added to the end of the command buffer.
-        public static void AddText( String text )
+        public void AddText( String text )
         {
             if ( String.IsNullOrEmpty( text ) )
                 return;
@@ -53,7 +60,7 @@ namespace SharpQuake
         // Adds command text immediately after the current command
         // ???Adds a \n to the text
         // FIXME: actually change the command buffer to do less copying
-        public static void InsertText( String text )
+        public void InsertText( String text )
         {
             _Buf.Insert( 0, text );
         }
@@ -63,7 +70,7 @@ namespace SharpQuake
         // them through Cmd_ExecuteString.  Stops when the buffer is empty.
         // Normally called once per frame, but may be explicitly invoked.
         // Do not call inside a command function!
-        public static void Execute( )
+        public void Execute( )
         {
             while ( _Buf.Length > 0 )
             {
@@ -101,7 +108,7 @@ namespace SharpQuake
                 // execute the command line
                 if ( !String.IsNullOrEmpty( line ) )
                 {
-                    Command.ExecuteString( line, CommandSource.src_command );
+                    Host.Command.ExecuteString( line, CommandSource.src_command );
 
                     if ( _Wait )
                     {
@@ -118,12 +125,12 @@ namespace SharpQuake
         // Causes execution of the remainder of the command buffer to be delayed until
         // next frame.  This allows commands like:
         // bind g "impulse 5 ; +attack ; wait ; -attack ; impulse 2"
-        public static void Cmd_Wait_f( )
+        public void Cmd_Wait_f( )
         {
             _Wait = true;
         }
 
-        static CommandBuffer( )
+        public CommandBuffer( )
         {
             _Buf = new StringBuilder( 8192 ); // space for commands and script files
         }

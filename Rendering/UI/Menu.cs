@@ -61,18 +61,18 @@ namespace SharpQuake
         {
             Host = host;
 
-            Command.Add( "togglemenu", ToggleMenu_f );
-            Command.Add( "menu_main", Menu_Main_f );
-            Command.Add( "menu_singleplayer", Menu_SinglePlayer_f );
-            Command.Add( "menu_load", Menu_Load_f );
-            Command.Add( "menu_save", Menu_Save_f );
-            Command.Add( "menu_multiplayer", Menu_MultiPlayer_f );
-            Command.Add( "menu_setup", Menu_Setup_f );
-            Command.Add( "menu_options", Menu_Options_f );
-            Command.Add( "menu_keys", Menu_Keys_f );
-            Command.Add( "menu_video", Menu_Video_f );
-            Command.Add( "help", Menu_Help_f );
-            Command.Add( "menu_quit", Menu_Quit_f );
+            Host.Command.Add( "togglemenu", ToggleMenu_f );
+            Host.Command.Add( "menu_main", Menu_Main_f );
+            Host.Command.Add( "menu_singleplayer", Menu_SinglePlayer_f );
+            Host.Command.Add( "menu_load", Menu_Load_f );
+            Host.Command.Add( "menu_save", Menu_Save_f );
+            Host.Command.Add( "menu_multiplayer", Menu_MultiPlayer_f );
+            Host.Command.Add( "menu_setup", Menu_Setup_f );
+            Host.Command.Add( "menu_options", Menu_Options_f );
+            Host.Command.Add( "menu_keys", Menu_Keys_f );
+            Host.Command.Add( "menu_video", Menu_Video_f );
+            Host.Command.Add( "help", Menu_Help_f );
+            Host.Command.Add( "menu_quit", Menu_Quit_f );
         }
 
         /// <summary>

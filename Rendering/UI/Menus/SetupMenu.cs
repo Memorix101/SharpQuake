@@ -40,25 +40,25 @@ namespace SharpQuake
         {
             switch ( key )
             {
-                case Key.K_ESCAPE:
+                case KeysDef.K_ESCAPE:
                     MenuBase.MultiPlayerMenu.Show( Host );
                     break;
 
-                case Key.K_UPARROW:
+                case KeysDef.K_UPARROW:
                     snd.LocalSound( "misc/menu1.wav" );
                     _Cursor--;
                     if ( _Cursor < 0 )
                         _Cursor = NUM_SETUP_CMDS - 1;
                     break;
 
-                case Key.K_DOWNARROW:
+                case KeysDef.K_DOWNARROW:
                     snd.LocalSound( "misc/menu1.wav" );
                     _Cursor++;
                     if ( _Cursor >= NUM_SETUP_CMDS )
                         _Cursor = 0;
                     break;
 
-                case Key.K_LEFTARROW:
+                case KeysDef.K_LEFTARROW:
                     if ( _Cursor < 2 )
                         return;
                     snd.LocalSound( "misc/menu3.wav" );
@@ -68,7 +68,7 @@ namespace SharpQuake
                         _Bottom = _Bottom - 1;
                     break;
 
-                case Key.K_RIGHTARROW:
+                case KeysDef.K_RIGHTARROW:
                     if ( _Cursor < 2 )
                         return;
                     forward:
@@ -79,7 +79,7 @@ namespace SharpQuake
                         _Bottom = _Bottom + 1;
                     break;
 
-                case Key.K_ENTER:
+                case KeysDef.K_ENTER:
                     if ( _Cursor == 0 || _Cursor == 1 )
                         return;
 
@@ -88,16 +88,16 @@ namespace SharpQuake
 
                     // _Cursor == 4 (OK)
                     if ( _MyName != client.Name )
-                        CommandBuffer.AddText( String.Format( "name \"{0}\"\n", _MyName ) );
+                        Host.CommandBuffer.AddText( String.Format( "name \"{0}\"\n", _MyName ) );
                     if ( net.HostName != _HostName )
                         CVar.Set( "hostname", _HostName );
                     if ( _Top != _OldTop || _Bottom != _OldBottom )
-                        CommandBuffer.AddText( String.Format( "color {0} {1}\n", _Top, _Bottom ) );
+                        Host.CommandBuffer.AddText( String.Format( "color {0} {1}\n", _Top, _Bottom ) );
                     Menu.EnterSound = true;
                     MenuBase.MultiPlayerMenu.Show( Host );
                     break;
 
-                case Key.K_BACKSPACE:
+                case KeysDef.K_BACKSPACE:
                     if ( _Cursor == 0 )
                     {
                         if ( !String.IsNullOrEmpty( _HostName ) )

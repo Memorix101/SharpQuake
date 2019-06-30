@@ -50,50 +50,58 @@ namespace SharpQuake
         public static kbutton_t DownBtn;
 
         public static Int32 Impulse;
-
-        public static void Init()
+        
+        public static Host Host
         {
-            Command.Add( "+moveup", UpDown );
-            Command.Add( "-moveup", UpUp );
-            Command.Add( "+movedown", DownDown );
-            Command.Add( "-movedown", DownUp );
-            Command.Add( "+left", LeftDown );
-            Command.Add( "-left", LeftUp );
-            Command.Add( "+right", RightDown );
-            Command.Add( "-right", RightUp );
-            Command.Add( "+forward", ForwardDown );
-            Command.Add( "-forward", ForwardUp );
-            Command.Add( "+back", BackDown );
-            Command.Add( "-back", BackUp );
-            Command.Add( "+lookup", LookupDown );
-            Command.Add( "-lookup", LookupUp );
-            Command.Add( "+lookdown", LookdownDown );
-            Command.Add( "-lookdown", LookdownUp );
-            Command.Add( "+strafe", StrafeDown );
-            Command.Add( "-strafe", StrafeUp );
-            Command.Add( "+moveleft", MoveleftDown );
-            Command.Add( "-moveleft", MoveleftUp );
-            Command.Add( "+moveright", MoverightDown );
-            Command.Add( "-moveright", MoverightUp );
-            Command.Add( "+speed", SpeedDown );
-            Command.Add( "-speed", SpeedUp );
-            Command.Add( "+attack", AttackDown );
-            Command.Add( "-attack", AttackUp );
-            Command.Add( "+use", UseDown );
-            Command.Add( "-use", UseUp );
-            Command.Add( "+jump", JumpDown );
-            Command.Add( "-jump", JumpUp );
-            Command.Add( "impulse", ImpulseCmd );
-            Command.Add( "+klook", KLookDown );
-            Command.Add( "-klook", KLookUp );
-            Command.Add( "+mlook", MLookDown );
-            Command.Add( "-mlook", MLookUp );
+            get;
+            private set;
+        }
+
+        public static void Init( Host host )
+        {
+            Host = host;
+
+            Host.Command.Add( "+moveup", UpDown );
+            Host.Command.Add( "-moveup", UpUp );
+            Host.Command.Add( "+movedown", DownDown );
+            Host.Command.Add( "-movedown", DownUp );
+            Host.Command.Add( "+left", LeftDown );
+            Host.Command.Add( "-left", LeftUp );
+            Host.Command.Add( "+right", RightDown );
+            Host.Command.Add( "-right", RightUp );
+            Host.Command.Add( "+forward", ForwardDown );
+            Host.Command.Add( "-forward", ForwardUp );
+            Host.Command.Add( "+back", BackDown );
+            Host.Command.Add( "-back", BackUp );
+            Host.Command.Add( "+lookup", LookupDown );
+            Host.Command.Add( "-lookup", LookupUp );
+            Host.Command.Add( "+lookdown", LookdownDown );
+            Host.Command.Add( "-lookdown", LookdownUp );
+            Host.Command.Add( "+strafe", StrafeDown );
+            Host.Command.Add( "-strafe", StrafeUp );
+            Host.Command.Add( "+moveleft", MoveleftDown );
+            Host.Command.Add( "-moveleft", MoveleftUp );
+            Host.Command.Add( "+moveright", MoverightDown );
+            Host.Command.Add( "-moveright", MoverightUp );
+            Host.Command.Add( "+speed", SpeedDown );
+            Host.Command.Add( "-speed", SpeedUp );
+            Host.Command.Add( "+attack", AttackDown );
+            Host.Command.Add( "-attack", AttackUp );
+            Host.Command.Add( "+use", UseDown );
+            Host.Command.Add( "-use", UseUp );
+            Host.Command.Add( "+jump", JumpDown );
+            Host.Command.Add( "-jump", JumpUp );
+            Host.Command.Add( "impulse", ImpulseCmd );
+            Host.Command.Add( "+klook", KLookDown );
+            Host.Command.Add( "-klook", KLookUp );
+            Host.Command.Add( "+mlook", MLookDown );
+            Host.Command.Add( "-mlook", MLookUp );
         }
 
         private static void KeyDown( ref kbutton_t b )
         {
             Int32 k;
-            var c = Command.Argv( 1 );
+            var c = Host.Command.Argv( 1 );
             if( !String.IsNullOrEmpty( c ) )
                 k = Int32.Parse( c );
             else
@@ -120,7 +128,7 @@ namespace SharpQuake
         private static void KeyUp( ref kbutton_t b )
         {
             Int32 k;
-            var c = Command.Argv( 1 );
+            var c = Host.Command.Argv( 1 );
             if( !String.IsNullOrEmpty( c ) )
                 k = Int32.Parse( c );
             else
@@ -322,7 +330,7 @@ namespace SharpQuake
 
         private static void ImpulseCmd()
         {
-            Impulse = MathLib.atoi( Command.Argv( 1 ) );
+            Impulse = MathLib.atoi( Host.Command.Argv( 1 ) );
         }
     }
 
@@ -389,9 +397,9 @@ namespace SharpQuake
         }
 
         // CL_InitInput
-        private static void InitInput()
+        private static void InitInput( Host host )
         {
-            client_input.Init();
+            client_input.Init( host );
         }
 
         /// <summary>

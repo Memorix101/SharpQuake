@@ -181,10 +181,10 @@ namespace SharpQuake
                 _WindowedMouse = new CVar( "_windowed_mouse", "1", true );
             }
 
-            Command.Add( "vid_nummodes", NumModes_f );
-            Command.Add( "vid_describecurrentmode", DescribeCurrentMode_f );
-            Command.Add( "vid_describemode", DescribeMode_f );
-            Command.Add( "vid_describemodes", DescribeModes_f );
+            Host.Command.Add( "vid_nummodes", NumModes_f );
+            Host.Command.Add( "vid_describecurrentmode", DescribeCurrentMode_f );
+            Host.Command.Add( "vid_describemode", DescribeMode_f );
+            Host.Command.Add( "vid_describemodes", DescribeModes_f );
 
             DisplayDevice dev = MainWindow.DisplayDevice;
 
@@ -547,7 +547,7 @@ namespace SharpQuake
         // VID_DescribeMode_f
         private static void DescribeMode_f()
         {
-            var modenum = MathLib.atoi( Command.Argv( 1 ) );
+            var modenum = MathLib.atoi( Host.Command.Argv( 1 ) );
 
             Con.Print( "{0}\n", GetExtModeDescription( modenum ) );
         }

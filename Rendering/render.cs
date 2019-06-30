@@ -172,7 +172,7 @@ namespace SharpQuake
             for( var i = 0; i < _Frustum.Length; i++ )
                 _Frustum[i] = new Plane();
 
-            Command.Add( "timerefresh", TimeRefresh_f );
+            Host.Command.Add( "timerefresh", TimeRefresh_f );
             //Cmd.Add("envmap", Envmap_f);
             //Cmd.Add("pointfile", ReadPointFile_f);
 

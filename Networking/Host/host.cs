@@ -160,6 +160,24 @@ namespace SharpQuake
             set;
         }
 
+        public Cache Cache
+        {
+            get;
+            private set;
+        }
+
+        public CommandBuffer CommandBuffer
+        {
+            get;
+            private set;
+        }
+
+        public Command Command
+        {
+            get;
+            private set;
+        }
+
         //private Server Server
         //{
         //    get;
@@ -195,6 +213,10 @@ namespace SharpQuake
         public Host( MainWindow window )
         {
             Window = window;
+
+            Cache = new Cache( );
+            CommandBuffer = new CommandBuffer( );
+            Command = new Command( );
         }
 
         /// <summary>
@@ -275,20 +297,21 @@ namespace SharpQuake
             Parameters = parms;
 
             Command.SetupWrapper( ); // Temporary workaround - change soon!
-            Cache.Init( 1024 * 1024 * 512 ); // debug
-            CommandBuffer.Init( );
-            Command.Init( this );
+            Cache.Initialise( 1024 * 1024 * 512 ); // debug
+            CommandBuffer.Initialise( this );
+            Command.Initialise( this );
+            CVar.Init( Command );
             view.Init( this );
             chase.Init( );
             InitialiseVCR( parms );
             Common.Init( this, parms.basedir, parms.argv );
             InitialiseLocal( );
             Wad.LoadWadFile( "gfx.wad" );
-            Key.Init( );
+            Key.Init( CommandBuffer );
             Con.Init( this );
             Menu.Init( this );
             progs.Init( this );
-            Mod.Init( );
+            Mod.Init( Cache );
             net.Init( this );
             server.Init( this );
 
@@ -313,7 +336,7 @@ namespace SharpQuake
                 Scr.Init( this );
                 render.Init( this );
                 snd.Init( this );
-                cd_audio.Init( );
+                cd_audio.Init( this );
                 sbar.Init( this );
                 client.Init( this );
             }

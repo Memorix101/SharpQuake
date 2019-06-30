@@ -193,12 +193,12 @@ namespace SharpQuake
                 {
                     if( ( mstate & ( 1 << i ) ) != 0 && ( _MouseOldButtonState & ( 1 << i ) ) == 0 )
                     {
-                        Key.Event( Key.K_MOUSE1 + i, true );
+                        Key.Event( KeysDef.K_MOUSE1 + i, true );
                     }
 
                     if( ( mstate & ( 1 << i ) ) == 0 && ( _MouseOldButtonState & ( 1 << i ) ) != 0 )
                     {
-                        Key.Event( Key.K_MOUSE1 + i, false );
+                        Key.Event( KeysDef.K_MOUSE1 + i, false );
                     }
                 }
 

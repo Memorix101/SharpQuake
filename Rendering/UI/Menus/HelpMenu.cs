@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using SharpQuake.Framework;
 
 namespace SharpQuake
 {
@@ -22,19 +23,19 @@ namespace SharpQuake
         {
             switch ( key )
             {
-                case Key.K_ESCAPE:
+                case KeysDef.K_ESCAPE:
                     MenuBase.MainMenu.Show( Host );
                     break;
 
-                case Key.K_UPARROW:
-                case Key.K_RIGHTARROW:
+                case KeysDef.K_UPARROW:
+                case KeysDef.K_RIGHTARROW:
                     Menu.EnterSound = true;
                     if ( ++_Page >= NUM_HELP_PAGES )
                         _Page = 0;
                     break;
 
-                case Key.K_DOWNARROW:
-                case Key.K_LEFTARROW:
+                case KeysDef.K_DOWNARROW:
+                case KeysDef.K_LEFTARROW:
                     Menu.EnterSound = true;
                     if ( --_Page < 0 )
                         _Page = NUM_HELP_PAGES - 1;

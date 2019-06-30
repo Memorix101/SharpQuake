@@ -60,25 +60,25 @@ namespace SharpQuake
         {
             switch ( key )
             {
-                case Key.K_ESCAPE:
+                case KeysDef.K_ESCAPE:
                     MenuBase.MultiPlayerMenu.Show( Host );
                     break;
 
-                case Key.K_UPARROW:
+                case KeysDef.K_UPARROW:
                     snd.LocalSound( "misc/menu1.wav" );
                     _Cursor--;
                     if ( _Cursor < 0 )
                         _Cursor = NUM_LANCONFIG_CMDS - 1;
                     break;
 
-                case Key.K_DOWNARROW:
+                case KeysDef.K_DOWNARROW:
                     snd.LocalSound( "misc/menu1.wav" );
                     _Cursor++;
                     if ( _Cursor >= NUM_LANCONFIG_CMDS )
                         _Cursor = 0;
                     break;
 
-                case Key.K_ENTER:
+                case KeysDef.K_ENTER:
                     if ( _Cursor == 0 )
                         break;
 
@@ -103,12 +103,12 @@ namespace SharpQuake
                         Menu.ReturnMenu = this;
                         Menu.ReturnOnError = true;
                         MenuBase.Hide( );
-                        CommandBuffer.AddText( String.Format( "connect \"{0}\"\n", _JoinName ) );
+                        Host.CommandBuffer.AddText( String.Format( "connect \"{0}\"\n", _JoinName ) );
                         break;
                     }
                     break;
 
-                case Key.K_BACKSPACE:
+                case KeysDef.K_BACKSPACE:
                     if ( _Cursor == 0 )
                     {
                         if ( !String.IsNullOrEmpty( _PortName ) )
@@ -144,7 +144,7 @@ namespace SharpQuake
             }
 
             if ( StartingGame && _Cursor == 2 )
-                if ( key == Key.K_UPARROW )
+                if ( key == KeysDef.K_UPARROW )
                     _Cursor = 1;
                 else
                     _Cursor = 0;

@@ -232,9 +232,9 @@ namespace SharpQuake
                             else if( Utilities.SameText( s, "ban", 3 ) )
                                 ret = 1;
                             if( ret == 2 )
-                                CommandBuffer.InsertText( s );
+                                Host.CommandBuffer.InsertText( s );
                             else if( ret == 1 )
-                                SharpQuake.Command.ExecuteString( s, CommandSource.src_client );
+                                Host.Command.ExecuteString( s, CommandSource.src_client );
                             else
                                 Con.DPrint( "{0} tried to {1}\n", Host.HostClient.name, s );
                             break;

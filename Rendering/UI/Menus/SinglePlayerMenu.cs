@@ -18,23 +18,23 @@ namespace SharpQuake
         {
             switch ( key )
             {
-                case Key.K_ESCAPE:
+                case KeysDef.K_ESCAPE:
                     MenuBase.MainMenu.Show( Host );
                     break;
 
-                case Key.K_DOWNARROW:
+                case KeysDef.K_DOWNARROW:
                     snd.LocalSound( "misc/menu1.wav" );
                     if ( ++_Cursor >= SINGLEPLAYER_ITEMS )
                         _Cursor = 0;
                     break;
 
-                case Key.K_UPARROW:
+                case KeysDef.K_UPARROW:
                     snd.LocalSound( "misc/menu1.wav" );
                     if ( --_Cursor < 0 )
                         _Cursor = SINGLEPLAYER_ITEMS - 1;
                     break;
 
-                case Key.K_ENTER:
+                case KeysDef.K_ENTER:
                     Menu.EnterSound = true;
 
                     switch ( _Cursor )
@@ -45,9 +45,9 @@ namespace SharpQuake
                                     break;
                             Key.Destination = keydest_t.key_game;
                             if ( server.sv.active )
-                                CommandBuffer.AddText( "disconnect\n" );
-                            CommandBuffer.AddText( "maxplayers 1\n" );
-                            CommandBuffer.AddText( "map start\n" );
+                                Host.CommandBuffer.AddText( "disconnect\n" );
+                            Host.CommandBuffer.AddText( "maxplayers 1\n" );
+                            Host.CommandBuffer.AddText( "map start\n" );
                             break;
 
                         case 1:

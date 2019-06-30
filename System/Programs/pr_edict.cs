@@ -128,11 +128,11 @@ namespace SharpQuake
         {
             Host = host;
 
-            Command.Add( "edict", PrintEdict_f );
-            Command.Add( "edicts", PrintEdicts );
-            Command.Add( "edictcount", EdictCount );
-            Command.Add( "profile", Profile_f );
-            Command.Add( "test5", Test5_f );
+            Host.Command.Add( "edict", PrintEdict_f );
+            Host.Command.Add( "edicts", PrintEdicts );
+            Host.Command.Add( "edictcount", EdictCount );
+            Host.Command.Add( "profile", Profile_f );
+            Host.Command.Add( "test5", Test5_f );
 
             if( _NoMonsters == null )
             {
@@ -774,7 +774,7 @@ namespace SharpQuake
         /// </summary>
         private static void PrintEdict_f()
         {
-            var i = MathLib.atoi( Command.Argv( 1 ) );
+            var i = MathLib.atoi( Host.Command.Argv( 1 ) );
             if( i >= server.sv.num_edicts )
             {
                 Con.Print( "Bad edict number\n" );

@@ -171,9 +171,9 @@ namespace SharpQuake
             //
             // register our commands
             //
-            Command.Add( "screenshot", ScreenShot_f );
-            Command.Add( "sizeup", SizeUp_f );
-            Command.Add( "sizedown", SizeDown_f );
+            Host.Command.Add( "screenshot", ScreenShot_f );
+            Host.Command.Add( "sizeup", SizeUp_f );
+            Host.Command.Add( "sizedown", SizeDown_f );
 
             _Ram = Drawer.PicFromWad( "ram" );
             _Net = Drawer.PicFromWad( "net" );
@@ -428,7 +428,7 @@ namespace SharpQuake
             {
                 Key.KeyCount = -1;		// wait for a key down and up
                 sys.SendKeyEvents();
-            } while( Key.LastPress != 'y' && Key.LastPress != 'n' && Key.LastPress != Key.K_ESCAPE );
+            } while( Key.LastPress != 'y' && Key.LastPress != 'n' && Key.LastPress != KeysDef.K_ESCAPE );
 
             Scr.FullUpdate = 0;
             UpdateScreen();

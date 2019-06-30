@@ -187,8 +187,8 @@ namespace SharpQuake
             _FaceInvisInvuln = Drawer.PicFromWad( "face_inv2" );
             _FaceQuad = Drawer.PicFromWad( "face_quad" );
 
-            Command.Add( "+showscores", ShowScores );
-            Command.Add( "-showscores", DontShowScores );
+            Host.Command.Add( "+showscores", ShowScores );
+            Host.Command.Add( "-showscores", DontShowScores );
 
             _SBar = Drawer.PicFromWad( "sbar" );
             _IBar = Drawer.PicFromWad( "ibar" );

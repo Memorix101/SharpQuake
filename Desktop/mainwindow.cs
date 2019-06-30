@@ -71,17 +71,17 @@ namespace SharpQuake
 
         private static Byte[] _KeyTable = new Byte[130]
         {
-            0, Key.K_SHIFT, Key.K_SHIFT, Key.K_CTRL, Key.K_CTRL, Key.K_ALT, Key.K_ALT, 0, // 0 - 7
-            0, 0, Key.K_F1, Key.K_F2, Key.K_F3, Key.K_F4, Key.K_F5, Key.K_F6, // 8 - 15
-            Key.K_F7, Key.K_F8, Key.K_F9, Key.K_F10, Key.K_F11, Key.K_F12, 0, 0, // 16 - 23
+            0, KeysDef.K_SHIFT, KeysDef.K_SHIFT, KeysDef.K_CTRL, KeysDef.K_CTRL, KeysDef.K_ALT, KeysDef.K_ALT, 0, // 0 - 7
+            0, 0, KeysDef.K_F1, KeysDef.K_F2, KeysDef.K_F3, KeysDef.K_F4, KeysDef.K_F5, KeysDef.K_F6, // 8 - 15
+            KeysDef.K_F7, KeysDef.K_F8, KeysDef.K_F9, KeysDef.K_F10, KeysDef.K_F11, KeysDef.K_F12, 0, 0, // 16 - 23
             0, 0, 0, 0, 0, 0, 0, 0, // 24 - 31
             0, 0, 0, 0, 0, 0, 0, 0, // 32 - 39
-            0, 0, 0, 0, 0, Key.K_UPARROW, Key.K_DOWNARROW, Key.K_LEFTARROW, // 40 - 47
-            Key.K_RIGHTARROW, Key.K_ENTER, Key.K_ESCAPE, Key.K_SPACE, Key.K_TAB, Key.K_BACKSPACE, Key.K_INS, Key.K_DEL, // 48 - 55
-            Key.K_PGUP, Key.K_PGDN, Key.K_HOME, Key.K_END, 0, 0, 0, Key.K_PAUSE, // 56 - 63
-            0, 0, 0, Key.K_INS, Key.K_END, Key.K_DOWNARROW, Key.K_PGDN, Key.K_LEFTARROW, // 64 - 71
-            0, Key.K_RIGHTARROW, Key.K_HOME, Key.K_UPARROW, Key.K_PGUP, (Byte)'/', (Byte)'*', (Byte)'-', // 72 - 79
-            (Byte)'+', (Byte)'.', Key.K_ENTER, (Byte)'a', (Byte)'b', (Byte)'c', (Byte)'d', (Byte)'e', // 80 - 87
+            0, 0, 0, 0, 0, KeysDef.K_UPARROW, KeysDef.K_DOWNARROW, KeysDef.K_LEFTARROW, // 40 - 47
+            KeysDef.K_RIGHTARROW, KeysDef.K_ENTER, KeysDef.K_ESCAPE, KeysDef.K_SPACE, KeysDef.K_TAB, KeysDef.K_BACKSPACE, KeysDef.K_INS, KeysDef.K_DEL, // 48 - 55
+            KeysDef.K_PGUP, KeysDef.K_PGDN, KeysDef.K_HOME, KeysDef.K_END, 0, 0, 0, KeysDef.K_PAUSE, // 56 - 63
+            0, 0, 0, KeysDef.K_INS, KeysDef.K_END, KeysDef.K_DOWNARROW, KeysDef.K_PGDN, KeysDef.K_LEFTARROW, // 64 - 71
+            0, KeysDef.K_RIGHTARROW, KeysDef.K_HOME, KeysDef.K_UPARROW, KeysDef.K_PGUP, (Byte)'/', (Byte)'*', (Byte)'-', // 72 - 79
+            (Byte)'+', (Byte)'.', KeysDef.K_ENTER, (Byte)'a', (Byte)'b', (Byte)'c', (Byte)'d', (Byte)'e', // 80 - 87
             (Byte)'f', (Byte)'g', (Byte)'h', (Byte)'i', (Byte)'j', (Byte)'k', (Byte)'l', (Byte)'m', // 88 - 95
             (Byte)'n', (Byte)'o', (Byte)'p', (Byte)'q', (Byte)'r', (Byte)'s', (Byte)'t', (Byte)'u', // 96 - 103
             (Byte)'v', (Byte)'w', (Byte)'x', (Byte)'y', (Byte)'z', (Byte)'0', (Byte)'1', (Byte)'2', // 104 - 111
@@ -312,13 +312,13 @@ namespace SharpQuake
         {
             if (e.Delta > 0)
             {
-                Key.Event(Key.K_MWHEELUP, true);
-                Key.Event(Key.K_MWHEELUP, false);
+                Key.Event(KeysDef.K_MWHEELUP, true);
+                Key.Event(KeysDef.K_MWHEELUP, false);
             }
             else
             {
-                Key.Event(Key.K_MWHEELDOWN, true);
-                Key.Event(Key.K_MWHEELDOWN, false);
+                Key.Event(KeysDef.K_MWHEELDOWN, true);
+                Key.Event(KeysDef.K_MWHEELDOWN, false);
             }
         }
 

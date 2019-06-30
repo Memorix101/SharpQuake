@@ -185,10 +185,10 @@ namespace SharpQuake
                 _NotifyTime = new CVar( "con_notifytime", "3" );
             }
 
-            Command.Add( "toggleconsole", ToggleConsole_f );
-            Command.Add( "messagemode", MessageMode_f );
-            Command.Add( "messagemode2", MessageMode2_f );
-            Command.Add( "clear", Clear_f );
+            Host.Command.Add( "toggleconsole", ToggleConsole_f );
+            Host.Command.Add( "messagemode", MessageMode_f );
+            Host.Command.Add( "messagemode2", MessageMode2_f );
+            Host.Command.Add( "clear", Clear_f );
 
             ConsoleWrapper.OnPrint += ( txt ) =>
             {

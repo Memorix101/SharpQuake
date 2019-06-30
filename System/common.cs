@@ -103,15 +103,25 @@ namespace SharpQuake
         private static CVar _CmdLine;
         private static GameKind _GameKind; // qboolean		standard_quake = true, rogue, hipnotic;
 
+
+        // CHANGE
+        private static Host Host
+        {
+            get;
+            set;
+        }
+
         // void COM_Init (char *path)
         public static void Init( Host host, String path, String[] argv)
         {
+            Host = host;
+
             CommandLine.Args = argv;
 
             _Registered = new CVar("registered", "0");
             _CmdLine = new CVar("cmdline", "0", false, true);
 
-            Command.Add("path", FileSystem.Path_f );
+            Host.Command.Add("path", FileSystem.Path_f );
 
             CommandLine.Init( path, argv );
             FileSystem.InitFileSystem( host.Parameters );

@@ -33,11 +33,11 @@ namespace SharpQuake
         {
             switch ( key )
             {
-                case Key.K_ESCAPE:
+                case KeysDef.K_ESCAPE:
                     MenuBase.MainMenu.Show( Host );
                     break;
 
-                case Key.K_ENTER:
+                case KeysDef.K_ENTER:
                     Menu.EnterSound = true;
                     switch ( _Cursor )
                     {
@@ -51,7 +51,7 @@ namespace SharpQuake
                             break;
 
                         case 2:
-                            CommandBuffer.AddText( "exec default.cfg\n" );
+                            Host.CommandBuffer.AddText( "exec default.cfg\n" );
                             break;
 
                         case 12:
@@ -64,32 +64,32 @@ namespace SharpQuake
                     }
                     return;
 
-                case Key.K_UPARROW:
+                case KeysDef.K_UPARROW:
                     snd.LocalSound( "misc/menu1.wav" );
                     _Cursor--;
                     if ( _Cursor < 0 )
                         _Cursor = OPTIONS_ITEMS - 1;
                     break;
 
-                case Key.K_DOWNARROW:
+                case KeysDef.K_DOWNARROW:
                     snd.LocalSound( "misc/menu1.wav" );
                     _Cursor++;
                     if ( _Cursor >= OPTIONS_ITEMS )
                         _Cursor = 0;
                     break;
 
-                case Key.K_LEFTARROW:
+                case KeysDef.K_LEFTARROW:
                     AdjustSliders( -1 );
                     break;
 
-                case Key.K_RIGHTARROW:
+                case KeysDef.K_RIGHTARROW:
                     AdjustSliders( 1 );
                     break;
             }
 
             /*if( _Cursor == 12 && VideoMenu == null )
             {
-                if( key == Key.K_UPARROW )
+                if( key == KeysDef.K_UPARROW )
                     _Cursor = 11;
                 else
                     _Cursor = 0;
@@ -97,7 +97,7 @@ namespace SharpQuake
 
             if ( _Cursor == 12 )
             {
-                if ( key == Key.K_UPARROW )
+                if ( key == KeysDef.K_UPARROW )
                     _Cursor = 11;
                 else
                     _Cursor = 0;

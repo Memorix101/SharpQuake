@@ -24,37 +24,37 @@ namespace SharpQuake
         {
             switch ( key )
             {
-                case Key.K_ESCAPE:
+                case KeysDef.K_ESCAPE:
                     MenuBase.LanConfigMenu.Show( Host );
                     break;
 
-                case Key.K_SPACE:
+                case KeysDef.K_SPACE:
                     MenuBase.SearchMenu.Show( Host );
                     break;
 
-                case Key.K_UPARROW:
-                case Key.K_LEFTARROW:
+                case KeysDef.K_UPARROW:
+                case KeysDef.K_LEFTARROW:
                     snd.LocalSound( "misc/menu1.wav" );
                     _Cursor--;
                     if ( _Cursor < 0 )
                         _Cursor = net.HostCacheCount - 1;
                     break;
 
-                case Key.K_DOWNARROW:
-                case Key.K_RIGHTARROW:
+                case KeysDef.K_DOWNARROW:
+                case KeysDef.K_RIGHTARROW:
                     snd.LocalSound( "misc/menu1.wav" );
                     _Cursor++;
                     if ( _Cursor >= net.HostCacheCount )
                         _Cursor = 0;
                     break;
 
-                case Key.K_ENTER:
+                case KeysDef.K_ENTER:
                     snd.LocalSound( "misc/menu2.wav" );
                     Menu.ReturnMenu = this;
                     Menu.ReturnOnError = true;
                     _Sorted = false;
                     MenuBase.Hide( );
-                    CommandBuffer.AddText( String.Format( "connect \"{0}\"\n", net.HostCache[_Cursor].cname ) );
+                    Host.CommandBuffer.AddText( String.Format( "connect \"{0}\"\n", net.HostCache[_Cursor].cname ) );
                     break;
 
                 default:

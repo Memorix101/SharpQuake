@@ -175,56 +175,56 @@ namespace SharpQuake
         {
             switch ( key )
             {
-                case Key.K_ESCAPE:
+                case KeysDef.K_ESCAPE:
                     MenuBase.LanConfigMenu.Show( Host );
                     break;
 
-                case Key.K_UPARROW:
+                case KeysDef.K_UPARROW:
                     snd.LocalSound( "misc/menu1.wav" );
                     _Cursor--;
                     if ( _Cursor < 0 )
                         _Cursor = NUM_GAMEOPTIONS - 1;
                     break;
 
-                case Key.K_DOWNARROW:
+                case KeysDef.K_DOWNARROW:
                     snd.LocalSound( "misc/menu1.wav" );
                     _Cursor++;
                     if ( _Cursor >= NUM_GAMEOPTIONS )
                         _Cursor = 0;
                     break;
 
-                case Key.K_LEFTARROW:
+                case KeysDef.K_LEFTARROW:
                     if ( _Cursor == 0 )
                         break;
                     snd.LocalSound( "misc/menu3.wav" );
                     Change( -1 );
                     break;
 
-                case Key.K_RIGHTARROW:
+                case KeysDef.K_RIGHTARROW:
                     if ( _Cursor == 0 )
                         break;
                     snd.LocalSound( "misc/menu3.wav" );
                     Change( 1 );
                     break;
 
-                case Key.K_ENTER:
+                case KeysDef.K_ENTER:
                     snd.LocalSound( "misc/menu2.wav" );
                     if ( _Cursor == 0 )
                     {
                         if ( server.IsActive )
-                            CommandBuffer.AddText( "disconnect\n" );
-                        CommandBuffer.AddText( "listen 0\n" );	// so host_netport will be re-examined
-                        CommandBuffer.AddText( String.Format( "maxplayers {0}\n", _MaxPlayers ) );
+                            Host.CommandBuffer.AddText( "disconnect\n" );
+                        Host.CommandBuffer.AddText( "listen 0\n" );	// so host_netport will be re-examined
+                        Host.CommandBuffer.AddText( String.Format( "maxplayers {0}\n", _MaxPlayers ) );
                         Scr.BeginLoadingPlaque( );
 
                         if ( Common.GameKind == GameKind.Hipnotic )
-                            CommandBuffer.AddText( String.Format( "map {0}\n",
+                            Host.CommandBuffer.AddText( String.Format( "map {0}\n",
                                 HipnoticLevels[HipnoticEpisodes[_StartEpisode].firstLevel + _StartLevel].name ) );
                         else if ( Common.GameKind == GameKind.Rogue )
-                            CommandBuffer.AddText( String.Format( "map {0}\n",
+                            Host.CommandBuffer.AddText( String.Format( "map {0}\n",
                                 RogueLevels[RogueEpisodes[_StartEpisode].firstLevel + _StartLevel].name ) );
                         else
-                            CommandBuffer.AddText( String.Format( "map {0}\n", Levels[Episodes[_StartEpisode].firstLevel + _StartLevel].name ) );
+                            Host.CommandBuffer.AddText( String.Format( "map {0}\n", Levels[Episodes[_StartEpisode].firstLevel + _StartLevel].name ) );
 
                         return;
                     }

@@ -59,6 +59,7 @@
     <Compile Include="Definitions\Bsp\PlaneDef.cs" />
     <Compile Include="Definitions\Bsp\SideDef.cs" />
     <Compile Include="Definitions\HostDef.cs" />
+    <Compile Include="Definitions\KeysDef.cs" />
     <Compile Include="Definitions\NetworkDef.cs" />
     <Compile Include="Definitions\ProgDef.cs" />
     <Compile Include="Definitions\ProgramOperatorDef.cs" />

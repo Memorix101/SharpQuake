@@ -57,17 +57,17 @@ namespace SharpQuake
         /// </summary>
         private static void Record_f()
         {
-            if( Command.Source != CommandSource.src_command )
+            if( Host.Command.Source != CommandSource.src_command )
                 return;
 
-            var c = Command.Argc;
+            var c = Host.Command.Argc;
             if( c != 2 && c != 3 && c != 4 )
             {
                 Con.Print( "record <demoname> [<map> [cd track]]\n" );
                 return;
             }
 
-            if( Command.Argv( 1 ).Contains( ".." ) )
+            if( Host.Command.Argv( 1 ).Contains( ".." ) )
             {
                 Con.Print( "Relative pathnames are not allowed.\n" );
                 return;
@@ -83,19 +83,19 @@ namespace SharpQuake
             Int32 track;
             if( c == 4 )
             {
-                track = MathLib.atoi( Command.Argv( 3 ) );
+                track = MathLib.atoi( Host.Command.Argv( 3 ) );
                 Con.Print( "Forcing CD track to {0}\n", track );
             }
             else
                 track = -1;
 
-            var name = Path.Combine( FileSystem.GameDir, Command.Argv( 1 ) );
+            var name = Path.Combine( FileSystem.GameDir, Host.Command.Argv( 1 ) );
 
             //
             // start the map up
             //
             if( c > 2 )
-                Command.ExecuteString( String.Format( "map {0}", Command.Argv( 2 ) ), CommandSource.src_command );
+                Host.Command.ExecuteString( String.Format( "map {0}", Host.Command.Argv( 2 ) ), CommandSource.src_command );
 
             //
             // open the demo file
@@ -124,7 +124,7 @@ namespace SharpQuake
         /// </summary>
         private static void Stop_f()
         {
-            if( Command.Source != CommandSource.src_command )
+            if( Host.Command.Source != CommandSource.src_command )
                 return;
 
             if( !cls.demorecording )
@@ -153,10 +153,10 @@ namespace SharpQuake
         // play [demoname]
         private static void PlayDemo_f()
         {
-            if( Command.Source != CommandSource.src_command )
+            if( Host.Command.Source != CommandSource.src_command )
                 return;
 
-            if( Command.Argc != 2 )
+            if( Host.Command.Argc != 2 )
             {
                 Con.Print( "play <demoname> : plays a demo\n" );
                 return;
@@ -170,7 +170,7 @@ namespace SharpQuake
             //
             // open the demo file
             //
-            var name = Path.ChangeExtension( Command.Argv( 1 ), ".dem" );
+            var name = Path.ChangeExtension( Host.Command.Argv( 1 ), ".dem" );
 
             Con.Print( "Playing demo from {0}.\n", name );
             if( cls.demofile != null )
@@ -218,10 +218,10 @@ namespace SharpQuake
         /// </summary>
         private static void TimeDemo_f()
         {
-            if( Command.Source != CommandSource.src_command )
+            if( Host.Command.Source != CommandSource.src_command )
                 return;
 
-            if( Command.Argc != 2 )
+            if( Host.Command.Argc != 2 )
             {
                 Con.Print( "timedemo <demoname> : gets demo speeds\n" );
                 return;

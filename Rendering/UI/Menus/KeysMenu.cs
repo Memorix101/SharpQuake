@@ -46,14 +46,14 @@ namespace SharpQuake
             {
                 // defining a key
                 snd.LocalSound( "misc/menu1.wav" );
-                if ( key == Key.K_ESCAPE )
+                if ( key == KeysDef.K_ESCAPE )
                 {
                     _BindGrab = false;
                 }
                 else if ( key != '`' )
                 {
                     var cmd = String.Format( "bind \"{0}\" \"{1}\"\n", Key.KeynumToString( key ), _BindNames[_Cursor][0] );
-                    CommandBuffer.InsertText( cmd );
+                    Host.CommandBuffer.InsertText( cmd );
                 }
 
                 _BindGrab = false;
@@ -62,27 +62,27 @@ namespace SharpQuake
 
             switch ( key )
             {
-                case Key.K_ESCAPE:
+                case KeysDef.K_ESCAPE:
                     MenuBase.OptionsMenu.Show( Host );
                     break;
 
-                case Key.K_LEFTARROW:
-                case Key.K_UPARROW:
+                case KeysDef.K_LEFTARROW:
+                case KeysDef.K_UPARROW:
                     snd.LocalSound( "misc/menu1.wav" );
                     _Cursor--;
                     if ( _Cursor < 0 )
                         _Cursor = _BindNames.Length - 1;
                     break;
 
-                case Key.K_DOWNARROW:
-                case Key.K_RIGHTARROW:
+                case KeysDef.K_DOWNARROW:
+                case KeysDef.K_RIGHTARROW:
                     snd.LocalSound( "misc/menu1.wav" );
                     _Cursor++;
                     if ( _Cursor >= _BindNames.Length )
                         _Cursor = 0;
                     break;
 
-                case Key.K_ENTER:		// go into bind mode
+                case KeysDef.K_ENTER:		// go into bind mode
                     Int32[] keys = new Int32[2];
                     FindKeysForCommand( _BindNames[_Cursor][0], keys );
                     snd.LocalSound( "misc/menu2.wav" );
@@ -91,8 +91,8 @@ namespace SharpQuake
                     _BindGrab = true;
                     break;
 
-                case Key.K_BACKSPACE:		// delete bindings
-                case Key.K_DEL:				// delete bindings
+                case KeysDef.K_BACKSPACE:		// delete bindings
+                case KeysDef.K_DEL:				// delete bindings
                     snd.LocalSound( "misc/menu2.wav" );
                     UnbindCommand( _BindNames[_Cursor][0] );
                     break;

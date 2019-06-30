@@ -34,7 +34,6 @@ namespace SharpQuake
     // d*_t structures are on-disk representations
     // m*_t structures are in-memory
 
-
     /*
     ==============================================================================
 
@@ -44,31 +43,8 @@ namespace SharpQuake
     */
 
 
-   
-
-
     // plane_t structure
     // !!! if this is changed, it must be changed in asm_i386.h too !!!
-   
-
-
-    
-
-   
-
-    
-
-    
-
-    
-
-    
-
-    
-
-
-    
-    
 
     // FIXME: shorten these?
     class mspriteframe_t
@@ -178,7 +154,6 @@ namespace SharpQuake
     // Whole model
     //
 
-
     static class EF
     {
         public const Int32 EF_ROCKET = 1;			// leave a trail
@@ -190,8 +165,6 @@ namespace SharpQuake
         public const Int32 EF_TRACER2 = 64;			// orange split trail + rotate
         public const Int32 EF_TRACER3 = 128;			// purple trail
     }
-
-    
 
     //
     // modelgen.h: header file for model generation program
@@ -206,7 +179,6 @@ namespace SharpQuake
     //#define ALIAS_ONSEAM				0x0020
 
     // must match definition in spritegn.h
-   
 
     enum aliasframetype_t
     {
@@ -347,7 +319,6 @@ namespace SharpQuake
 
         public static Int32 SizeInBytes = Marshal.SizeOf(typeof(daliasskintype_t));
     } //daliasskintype_t;
-
 
     //
     // spritegn.h

@@ -365,10 +365,10 @@ namespace SharpQuake
                 _HostName = new CVar( "hostname", "UNNAMED" );
             }
 
-            Command.Add( "slist", Slist_f );
-            Command.Add( "listen", Listen_f );
-            Command.Add( "maxplayers", MaxPlayers_f );
-            Command.Add( "port", Port_f );
+            Host.Command.Add( "slist", Slist_f );
+            Host.Command.Add( "listen", Listen_f );
+            Host.Command.Add( "maxplayers", MaxPlayers_f );
+            Host.Command.Add( "port", Port_f );
 
             // initialize all the drivers
             _DriverLevel = 0;
@@ -988,13 +988,13 @@ JustDoIt:
         // NET_Listen_f
         private static void Listen_f()
         {
-            if( Command.Argc != 2 )
+            if( Host.Command.Argc != 2 )
             {
                 Con.Print( "\"listen\" is \"{0}\"\n", _IsListening ? 1 : 0 );
                 return;
             }
 
-            _IsListening = ( MathLib.atoi( Command.Argv( 1 ) ) != 0 );
+            _IsListening = ( MathLib.atoi( Host.Command.Argv( 1 ) ) != 0 );
 
             foreach( INetDriver driver in _Drivers )
             {
@@ -1008,7 +1008,7 @@ JustDoIt:
         // MaxPlayers_f
         private static void MaxPlayers_f()
         {
-            if( Command.Argc != 2 )
+            if( Host.Command.Argc != 2 )
             {
                 Con.Print( "\"maxplayers\" is \"%u\"\n", server.svs.maxclients );
                 return;
@@ -1020,7 +1020,7 @@ JustDoIt:
                 return;
             }
 
-            var n = MathLib.atoi( Command.Argv( 1 ) );
+            var n = MathLib.atoi( Host.Command.Argv( 1 ) );
             if( n < 1 )
                 n = 1;
             if( n > server.svs.maxclientslimit )
@@ -1030,10 +1030,10 @@ JustDoIt:
             }
 
             if( n == 1 && _IsListening )
-                CommandBuffer.AddText( "listen 0\n" );
+                Host.CommandBuffer.AddText( "listen 0\n" );
 
             if( n > 1 && !_IsListening )
-                CommandBuffer.AddText( "listen 1\n" );
+                Host.CommandBuffer.AddText( "listen 1\n" );
 
             server.svs.maxclients = n;
             if( n == 1 )
@@ -1045,13 +1045,13 @@ JustDoIt:
         // NET_Port_f
         private static void Port_f()
         {
-            if( Command.Argc != 2 )
+            if( Host.Command.Argc != 2 )
             {
                 Con.Print( "\"port\" is \"{0}\"\n", HostPort );
                 return;
             }
 
-            var n = MathLib.atoi( Command.Argv( 1 ) );
+            var n = MathLib.atoi( Host.Command.Argv( 1 ) );
             if( n < 1 || n > 65534 )
             {
                 Con.Print( "Bad value, must be between 1 and 65534\n" );
@@ -1064,8 +1064,8 @@ JustDoIt:
             if( _IsListening )
             {
                 // force a change to the new port
-                CommandBuffer.AddText( "listen 0\n" );
-                CommandBuffer.AddText( "listen 1\n" );
+                Host.CommandBuffer.AddText( "listen 0\n" );
+                Host.CommandBuffer.AddText( "listen 1\n" );
             }
         }
 

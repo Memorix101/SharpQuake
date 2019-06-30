@@ -42,11 +42,20 @@ namespace SharpQuake
         static NullCDAudioController _Controller = new NullCDAudioController();
 #endif
 
+        // CHANGE
+        private static Host Host
+        {
+            get;
+            set;
+        }
+
         /// <summary>
         /// CDAudio_Init
         /// </summary>
-        public static Boolean Init()
+        public static Boolean Init( Host host )
         {
+            Host = host;
+
             if (client.cls.state == cactive_t.ca_dedicated)
                 return false;
 
@@ -57,7 +66,7 @@ namespace SharpQuake
 
             if (_Controller.IsInitialized)
             {
-                Command.Add("cd", CD_f);
+                Host.Command.Add("cd", CD_f);
                 Con.Print("CD Audio (Fallback) Initialized\n");
             }
 
@@ -105,10 +114,10 @@ namespace SharpQuake
 
         private static void CD_f()
         {
-            if (Command.Argc < 2)
+            if ( Host.Command.Argc < 2 )
                 return;
 
-            var command = Command.Argv(1);
+            var command = Host.Command.Argv(1);
 
             if (Utilities.SameText(command, "on"))
             {
@@ -136,7 +145,7 @@ namespace SharpQuake
 
             if (Utilities.SameText(command, "remap"))
             {
-                var ret = Command.Argc - 2;
+                var ret = Host.Command.Argc - 2;
                 Byte[] remap = _Controller.Remap;
                 if (ret <= 0)
                 {
@@ -146,7 +155,7 @@ namespace SharpQuake
                     return;
                 }
                 for ( var n = 1; n <= ret; n++)
-                    remap[n] = ( Byte ) MathLib.atoi(Command.Argv(n + 1));
+                    remap[n] = ( Byte ) MathLib.atoi( Host.Command.Argv(n + 1));
                 return;
             }
 
@@ -168,13 +177,13 @@ namespace SharpQuake
 
             if (Utilities.SameText(command, "play"))
             {
-                _Controller.Play(( Byte ) MathLib.atoi(Command.Argv(2)), false);
+                _Controller.Play(( Byte ) MathLib.atoi( Host.Command.Argv(2)), false);
                 return;
             }
 
             if (Utilities.SameText(command, "loop"))
             {
-                _Controller.Play(( Byte ) MathLib.atoi(Command.Argv(2)), true);
+                _Controller.Play(( Byte ) MathLib.atoi( Host.Command.Argv(2)), true);
                 return;
             }
 

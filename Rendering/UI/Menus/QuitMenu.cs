@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using SharpQuake.Framework;
 
 namespace SharpQuake
 {
@@ -25,7 +26,7 @@ namespace SharpQuake
         {
             switch ( key )
             {
-                case Key.K_ESCAPE:
+                case KeysDef.K_ESCAPE:
                 case 'n':
                 case 'N':
                     if ( _PrevMenu != null )

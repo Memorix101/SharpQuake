@@ -163,7 +163,7 @@ namespace SharpQuake
                         break;
 
                     case protocol.svc_stufftext:
-                        CommandBuffer.AddText( net.Reader.ReadString() );
+                        Host.CommandBuffer.AddText( net.Reader.ReadString() );
                         break;
 
                     case protocol.svc_damage:
@@ -316,7 +316,7 @@ namespace SharpQuake
                         break;
 
                     case protocol.svc_sellscreen:
-                        SharpQuake.Command.ExecuteString( "help", CommandSource.src_command );
+                        Host.Command.ExecuteString( "help", CommandSource.src_command );
                         break;
                 }
             }

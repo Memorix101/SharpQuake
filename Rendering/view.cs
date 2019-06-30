@@ -130,9 +130,9 @@ namespace SharpQuake
         {
             Host = host;
 
-            Command.Add( "v_cshift", CShift_f );
-            Command.Add( "bf", BonusFlash_f );
-            Command.Add( "centerview", StartPitchDrift );
+            Host.Command.Add( "v_cshift", CShift_f );
+            Host.Command.Add( "bf", BonusFlash_f );
+            Host.Command.Add( "centerview", StartPitchDrift );
 
             if( _LcdX == null )
             {
@@ -524,10 +524,10 @@ namespace SharpQuake
         // V_cshift_f
         private static void CShift_f()
         {
-            Int32.TryParse( Command.Argv( 1 ), out _CShift_empty.destcolor[0] );
-            Int32.TryParse( Command.Argv( 2 ), out _CShift_empty.destcolor[1] );
-            Int32.TryParse( Command.Argv( 3 ), out _CShift_empty.destcolor[2] );
-            Int32.TryParse( Command.Argv( 4 ), out _CShift_empty.percent );
+            Int32.TryParse( Host.Command.Argv( 1 ), out _CShift_empty.destcolor[0] );
+            Int32.TryParse( Host.Command.Argv( 2 ), out _CShift_empty.destcolor[1] );
+            Int32.TryParse( Host.Command.Argv( 3 ), out _CShift_empty.destcolor[2] );
+            Int32.TryParse( Host.Command.Argv( 4 ), out _CShift_empty.percent );
         }
 
         // V_BonusFlash_f

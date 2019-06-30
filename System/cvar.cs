@@ -88,6 +88,18 @@ namespace SharpQuake
             }
         }
 
+        // CHANGE
+        private static Command CommandInstance
+        {
+            get;
+            set;
+        }
+
+        public static void Init( Command command )
+        {
+            CommandInstance = command;
+        }
+
         private static CVar _Vars;
 
         private String _Name;
@@ -190,18 +202,18 @@ namespace SharpQuake
         public static Boolean Command()
         {
             // check variables
-            var var = Find( SharpQuake.Command.Argv( 0 ) );
+            var var = Find( CommandInstance.Argv( 0 ) );
             if( var == null )
                 return false;
 
             // perform a variable print or set
-            if( SharpQuake.Command.Argc == 1 )
+            if( CommandInstance.Argc == 1 )
             {
                 Con.Print( "\"{0}\" is \"{1}\"\n", var._Name, var._String );
             }
             else
             {
-                var.Set( SharpQuake.Command.Argv( 1 ) );
+                var.Set( CommandInstance.Argv( 1 ) );
             }
             return true;
         }
@@ -274,7 +286,7 @@ namespace SharpQuake
                 //Con_Printf("Can't register variable %s, allready defined\n", variable->name);
                 //return;
             }
-            if( SharpQuake.Command.Exists( name ) )
+            if( CommandInstance.Exists( name ) )
             {
                 throw new ArgumentException( String.Format( "Can't register variable: {0} is a command!\n", name ) );
             }

@@ -152,11 +152,11 @@ namespace SharpQuake
             for( var i = 0; i < _Channels.Length; i++ )
                 _Channels[i] = new channel_t();
 
-            Command.Add( "play", Play );
-            Command.Add( "playvol", PlayVol );
-            Command.Add( "stopsound", StopAllSoundsCmd );
-            Command.Add( "soundlist", SoundList );
-            Command.Add( "soundinfo", SoundInfo_f );
+            Host.Command.Add( "play", Play );
+            Host.Command.Add( "playvol", PlayVol );
+            Host.Command.Add( "stopsound", StopAllSoundsCmd );
+            Host.Command.Add( "soundlist", SoundList );
+            Host.Command.Add( "soundinfo", SoundInfo_f );
 
             _IsInitialized = true;
 
@@ -207,7 +207,7 @@ namespace SharpQuake
                 return;
 
             sfx_t sfx = FindName( sample );
-            Cache.Check( sfx.cache );
+            Host.Cache.Check( sfx.cache );
         }
 
         // S_ClearBuffer (void)
@@ -534,9 +534,9 @@ namespace SharpQuake
         // S_Play
         private static void Play()
         {
-            for( var i = 1; i < Command.Argc; i++ )
+            for( var i = 1; i < Host.Command.Argc; i++ )
             {
-                var name = Command.Argv( i );
+                var name = Host.Command.Argv( i );
                 var k = name.IndexOf( '.' );
                 if( k == -1 )
                     name += ".wav";
@@ -549,15 +549,15 @@ namespace SharpQuake
         // S_PlayVol
         private static void PlayVol()
         {
-            for( var i = 1; i < Command.Argc; i += 2 )
+            for( var i = 1; i < Host.Command.Argc; i += 2 )
             {
-                var name = Command.Argv( i );
+                var name = Host.Command.Argv( i );
                 var k = name.IndexOf( '.' );
                 if( k == -1 )
                     name += ".wav";
 
                 sfx_t sfx = PrecacheSound( name );
-                var vol = Single.Parse( Command.Argv( i + 1 ) );
+                var vol = Single.Parse( Host.Command.Argv( i + 1 ) );
                 StartSound( _PlayVolHash++, 0, sfx, ref _ListenerOrigin, vol, 1.0f );
             }
         }
@@ -569,7 +569,7 @@ namespace SharpQuake
             for( var i = 0; i < _NumSfx; i++ )
             {
                 sfx_t sfx = _KnownSfx[i];
-                sfxcache_t sc = (sfxcache_t)Cache.Check( sfx.cache );
+                sfxcache_t sc = (sfxcache_t) Host.Cache.Check( sfx.cache );
                 if( sc == null )
                     continue;
 
@@ -681,7 +681,7 @@ namespace SharpQuake
         private static sfxcache_t LoadSound( sfx_t s )
         {
             // see if still in memory
-            sfxcache_t sc = (sfxcache_t)Cache.Check( s.cache );
+            sfxcache_t sc = (sfxcache_t) Host.Cache.Check( s.cache );
             if( sc != null )
                 return sc;
 
@@ -707,7 +707,7 @@ namespace SharpQuake
 
             len *= info.width * info.channels;
 
-            s.cache = Cache.Alloc( len, s.name );
+            s.cache = Host.Cache.Alloc( len, s.name );
             if( s.cache == null )
                 return null;
 

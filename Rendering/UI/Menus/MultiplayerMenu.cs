@@ -15,23 +15,23 @@ namespace SharpQuake
         {
             switch ( key )
             {
-                case Key.K_ESCAPE:
+                case KeysDef.K_ESCAPE:
                     MenuBase.MainMenu.Show( Host );
                     break;
 
-                case Key.K_DOWNARROW:
+                case KeysDef.K_DOWNARROW:
                     snd.LocalSound( "misc/menu1.wav" );
                     if ( ++_Cursor >= MULTIPLAYER_ITEMS )
                         _Cursor = 0;
                     break;
 
-                case Key.K_UPARROW:
+                case KeysDef.K_UPARROW:
                     snd.LocalSound( "misc/menu1.wav" );
                     if ( --_Cursor < 0 )
                         _Cursor = MULTIPLAYER_ITEMS - 1;
                     break;
 
-                case Key.K_ENTER:
+                case KeysDef.K_ENTER:
                     Menu.EnterSound = true;
                     switch ( _Cursor )
                     {

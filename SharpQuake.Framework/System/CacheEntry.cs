@@ -40,6 +40,12 @@ namespace SharpQuake.Framework
             }
         }
 
+        private Cache Cache
+        {
+            get;
+            set;
+        }
+
         private CacheEntry _Prev;
         private CacheEntry _Next;
         private CacheEntry _LruPrev;
@@ -95,13 +101,13 @@ namespace SharpQuake.Framework
             _Next = _Prev = null;
 
             data = null;
-            Cache._BytesAllocated -= _Size;
+            Cache.BytesAllocated -= _Size;
             _Size = 0;
 
             RemoveFromLRU( );
         }
 
-        public CacheEntry( System.Boolean isHead = false )
+        public CacheEntry( Cache cache, System.Boolean isHead = false )
         {
             if ( isHead )
             {
@@ -112,15 +118,18 @@ namespace SharpQuake.Framework
             }
         }
 
-        public CacheEntry( System.Int32 size )
+        public CacheEntry( Cache cache, Int32 size )
         {
+            Cache = cache;
+
             _Size = size;
-            Cache._BytesAllocated += _Size;
+            Cache.BytesAllocated += _Size;
         }
 
         ~CacheEntry( )
         {
-            Cache._BytesAllocated -= _Size;
+            if ( Cache != null )
+                Cache.BytesAllocated -= _Size;
         }
     }
 }

@@ -87,6 +87,12 @@ namespace SharpQuake
             }
         }
 
+        // CHANGE
+        private static Cache Cache
+        {
+            get;
+            set;
+        }
        
 
         private static CVar _glSubDivideSize; // = { "gl_subdivide_size", "128", true };
@@ -108,9 +114,11 @@ namespace SharpQuake
         /// <summary>
         /// Mod_Init
         /// </summary>
-        public static void Init()
+        public static void Init( Cache cache )
         {
-            if( _glSubDivideSize == null )
+            Cache = cache;
+
+            if ( _glSubDivideSize == null )
             {
                 _glSubDivideSize = new CVar( "gl_subdivide_size", "128", true );
             }

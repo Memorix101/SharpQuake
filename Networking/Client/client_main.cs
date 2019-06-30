@@ -40,7 +40,7 @@ namespace SharpQuake
         {
             Host = host;
 
-            InitInput();
+            InitInput( Host );
             InitTempEntities();
 
             if( _Name == null )
@@ -81,12 +81,12 @@ namespace SharpQuake
             //
             // register our commands
             //
-            Command.Add( "entities", PrintEntities_f );
-            Command.Add( "disconnect", Disconnect_f );
-            Command.Add( "record", Record_f );
-            Command.Add( "stop", Stop_f );
-            Command.Add( "playdemo", PlayDemo_f );
-            Command.Add( "timedemo", TimeDemo_f );
+            Host.Command.Add( "entities", PrintEntities_f );
+            Host.Command.Add( "disconnect", Disconnect_f );
+            Host.Command.Add( "record", Record_f );
+            Host.Command.Add( "stop", Stop_f );
+            Host.Command.Add( "playdemo", PlayDemo_f );
+            Host.Command.Add( "timedemo", TimeDemo_f );
         }
 
         /// <summary>
@@ -136,7 +136,7 @@ namespace SharpQuake
                 }
             }
 
-            CommandBuffer.InsertText( String.Format( "playdemo {0}\n", cls.demos[cls.demonum] ) );
+            Host.CommandBuffer.InsertText( String.Format( "playdemo {0}\n", cls.demos[cls.demonum] ) );
             cls.demonum++;
         }
 
@@ -504,7 +504,7 @@ namespace SharpQuake
                 case 3:
                     cls.message.WriteByte( protocol.clc_stringcmd );
                     cls.message.WriteString( "begin" );
-                    Cache.Report();	// print remaining memory
+                    Host.Cache.Report();	// print remaining memory
                     break;
 
                 case 4:

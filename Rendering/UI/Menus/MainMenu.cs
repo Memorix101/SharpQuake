@@ -33,7 +33,7 @@ namespace SharpQuake
         {
             switch ( key )
             {
-                case Key.K_ESCAPE:
+                case KeysDef.K_ESCAPE:
                     //Key.Destination = keydest_t.key_game;
                     MenuBase.Hide( );
                     client.cls.demonum = _SaveDemoNum;
@@ -41,19 +41,19 @@ namespace SharpQuake
                         client.NextDemo( );
                     break;
 
-                case Key.K_DOWNARROW:
+                case KeysDef.K_DOWNARROW:
                     snd.LocalSound( "misc/menu1.wav" );
                     if ( ++_Cursor >= MAIN_ITEMS )
                         _Cursor = 0;
                     break;
 
-                case Key.K_UPARROW:
+                case KeysDef.K_UPARROW:
                     snd.LocalSound( "misc/menu1.wav" );
                     if ( --_Cursor < 0 )
                         _Cursor = MAIN_ITEMS - 1;
                     break;
 
-                case Key.K_ENTER:
+                case KeysDef.K_ENTER:
                     Menu.EnterSound = true;
 
                     switch ( _Cursor )
