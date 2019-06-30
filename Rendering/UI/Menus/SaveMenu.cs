@@ -31,7 +31,7 @@ namespace SharpQuake
 
                 case Key.K_ENTER:
                     MenuBase.Hide( );
-                    Cbuf.AddText( String.Format( "save s{0}\n", _Cursor ) );
+                    CommandBuffer.AddText( String.Format( "save s{0}\n", _Cursor ) );
                     return;
 
                 case Key.K_UPARROW:

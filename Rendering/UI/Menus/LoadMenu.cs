@@ -39,7 +39,7 @@ namespace SharpQuake
                     Scr.BeginLoadingPlaque( );
 
                     // issue the load command
-                    Cbuf.AddText( String.Format( "load s{0}\n", _Cursor ) );
+                    CommandBuffer.AddText( String.Format( "load s{0}\n", _Cursor ) );
                     return;
 
                 case Key.K_UPARROW:

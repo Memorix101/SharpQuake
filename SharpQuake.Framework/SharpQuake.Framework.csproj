@@ -89,7 +89,12 @@
     <Compile Include="Rendering\VidDef.cs" />
     <Compile Include="Rendering\VidMode.cs" />
     <Compile Include="Rendering\VRect.cs" />
+    <Compile Include="System\Cache.cs" />
+    <Compile Include="System\CacheEntry.cs" />
+    <Compile Include="System\CacheUser.cs" />
     <Compile Include="System\CommandLine.cs" />
+    <Compile Include="System\CommandSource.cs" />
+    <Compile Include="System\CommandWrapper.cs" />
     <Compile Include="System\ConsoleWrapper.cs" />
     <Compile Include="System\DisposableWrapper.cs" />
     <Compile Include="System\Edict.cs" />
@@ -108,8 +113,11 @@
     <Compile Include="Math\Plane.cs" />
     <Compile Include="Math\Vector3f.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="System\GameKind.cs" />
     <Compile Include="System\Link.cs" />
     <Compile Include="System\MemoryEdict.cs" />
+    <Compile Include="System\MessageReader.cs" />
+    <Compile Include="System\MessageWriter.cs" />
     <Compile Include="System\QParam.cs" />
     <Compile Include="Definitions\QDef.cs" />
     <Compile Include="Data\SwapHelper.cs" />
@@ -117,6 +125,7 @@
     <Compile Include="System\Timer.cs" />
     <Compile Include="System\Tokeniser.cs" />
     <Compile Include="System\Utilities.cs" />
+    <Compile Include="System\XComand.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="OpenTK.dll.config" />

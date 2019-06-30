@@ -394,7 +394,7 @@ namespace SharpQuake
         //
         // additional model data
         //
-        public cache_user_t cache; // cache_user_t	cache		// only access through Mod_Extradata
+        public CacheUser cache; // cache_user_t	cache		// only access through Mod_Extradata
 
         public model_t()
         {

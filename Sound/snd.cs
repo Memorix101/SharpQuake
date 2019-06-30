@@ -852,7 +852,7 @@ namespace SharpQuake
     internal class sfx_t
     {
         public String name; // char[MAX_QPATH];
-        public cache_user_t cache; // cache_user_t
+        public CacheUser cache; // cache_user_t
 
         public void Clear()
         {

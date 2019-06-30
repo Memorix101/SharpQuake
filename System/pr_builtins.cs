@@ -1007,7 +1007,7 @@ namespace SharpQuake
         private static void PF_localcmd()
         {
             var cmd = GetString( OFS.OFS_PARM0 );
-            Cbuf.AddText( cmd );
+            CommandBuffer.AddText( cmd );
         }
 
         /*
@@ -1577,7 +1577,7 @@ namespace SharpQuake
             server.svs.changelevel_issued = true;
 
             var s = GetString( OFS.OFS_PARM0 );
-            Cbuf.AddText( String.Format( "changelevel {0}\n", s ) );
+            CommandBuffer.AddText( String.Format( "changelevel {0}\n", s ) );
         }
 
         private static void PF_Fixme()

@@ -1023,10 +1023,10 @@ JustDoIt:
             }
 
             if( n == 1 && _IsListening )
-                Cbuf.AddText( "listen 0\n" );
+                CommandBuffer.AddText( "listen 0\n" );
 
             if( n > 1 && !_IsListening )
-                Cbuf.AddText( "listen 1\n" );
+                CommandBuffer.AddText( "listen 1\n" );
 
             server.svs.maxclients = n;
             if( n == 1 )
@@ -1057,8 +1057,8 @@ JustDoIt:
             if( _IsListening )
             {
                 // force a change to the new port
-                Cbuf.AddText( "listen 0\n" );
-                Cbuf.AddText( "listen 1\n" );
+                CommandBuffer.AddText( "listen 0\n" );
+                CommandBuffer.AddText( "listen 1\n" );
             }
         }
 
@@ -1119,6 +1119,18 @@ JustDoIt:
             public Int32 ret;
             // Uze: int len - removed
         } //vcrGetMessage;
+
+        // Temporary fix to support pulling messagereader/writer from main code
+
+
+        public static Int32 FillFrom( this MessageWriter writer, Socket socket, ref EndPoint ep )
+        {
+            writer.Clear( );
+            var result = LanDriver.Read( socket, writer._Buffer, writer._Buffer.Length, ref ep );
+            if ( result >= 0 )
+                writer._Count = result;
+            return result;
+        }
     }
 
     /// <summary>

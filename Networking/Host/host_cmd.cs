@@ -96,7 +96,7 @@ namespace SharpQuake
         private static void Status_f()
         {
             var flag = true;
-            if( Command.Source == cmd_source_t.src_command )
+            if( Command.Source == CommandSource.src_command )
             {
                 if( !server.sv.active )
                 {
@@ -157,7 +157,7 @@ namespace SharpQuake
         /// </summary>
         private static void God_f()
         {
-            if( Command.Source == cmd_source_t.src_command )
+            if( Command.Source == CommandSource.src_command )
             {
                 Command.ForwardToServer();
                 return;
@@ -178,7 +178,7 @@ namespace SharpQuake
         /// </summary>
         private static void Notarget_f()
         {
-            if( Command.Source == cmd_source_t.src_command )
+            if( Command.Source == CommandSource.src_command )
             {
                 Command.ForwardToServer();
                 return;
@@ -199,7 +199,7 @@ namespace SharpQuake
         /// </summary>
         private static void Noclip_f()
         {
-            if( Command.Source == cmd_source_t.src_command )
+            if( Command.Source == CommandSource.src_command )
             {
                 Command.ForwardToServer();
                 return;
@@ -228,7 +228,7 @@ namespace SharpQuake
         /// </summary>
         private static void Fly_f()
         {
-            if( Command.Source == cmd_source_t.src_command )
+            if( Command.Source == CommandSource.src_command )
             {
                 Command.ForwardToServer();
                 return;
@@ -254,7 +254,7 @@ namespace SharpQuake
         /// </summary>
         private static void Ping_f()
         {
-            if( Command.Source == cmd_source_t.src_command )
+            if( Command.Source == CommandSource.src_command )
             {
                 Command.ForwardToServer();
                 return;
@@ -281,7 +281,7 @@ namespace SharpQuake
         // command from the console.  Active clients are kicked off.
         private static void Map_f()
         {
-            if( Command.Source != cmd_source_t.src_command )
+            if( Command.Source != CommandSource.src_command )
                 return;
 
             client.cls.demonum = -1;		// stop demo loop in case this fails
@@ -304,7 +304,7 @@ namespace SharpQuake
             if( client.cls.state != cactive_t.ca_dedicated )
             {
                 client.cls.spawnparms = Command.JoinArgv();
-                Command.ExecuteString( "connect local", cmd_source_t.src_command );
+                Command.ExecuteString( "connect local", CommandSource.src_command );
             }
         }
 
@@ -337,7 +337,7 @@ namespace SharpQuake
             if( client.cls.demoplayback || !server.IsActive )
                 return;
 
-            if( Command.Source != cmd_source_t.src_command )
+            if( Command.Source != CommandSource.src_command )
                 return;
 
             var mapname = server.sv.name; // must copy out, because it gets cleared
@@ -399,7 +399,7 @@ namespace SharpQuake
         /// </summary>
         private static void Savegame_f()
         {
-            if( Command.Source != cmd_source_t.src_command )
+            if( Command.Source != CommandSource.src_command )
                 return;
 
             if( !server.sv.active )
@@ -489,7 +489,7 @@ namespace SharpQuake
         /// </summary>
         private static void Loadgame_f()
         {
-            if( Command.Source != cmd_source_t.src_command )
+            if( Command.Source != CommandSource.src_command )
                 return;
 
             if( Command.Argc != 2 )
@@ -634,7 +634,7 @@ namespace SharpQuake
             if( newName.Length > 16 )
                 newName = newName.Remove( 15 );
 
-            if( Command.Source == cmd_source_t.src_command )
+            if( Command.Source == CommandSource.src_command )
             {
                 if( client.Name == newName )
                     return;
@@ -671,7 +671,7 @@ namespace SharpQuake
         private static void Say( Boolean teamonly )
         {
             var fromServer = false;
-            if( Command.Source == cmd_source_t.src_command )
+            if( Command.Source == CommandSource.src_command )
             {
                 if( client.cls.state == cactive_t.ca_dedicated )
                 {
@@ -734,7 +734,7 @@ namespace SharpQuake
         // Host_Tell_f
         private static void Tell_f()
         {
-            if( Command.Source == cmd_source_t.src_command )
+            if( Command.Source == CommandSource.src_command )
             {
                 Command.ForwardToServer();
                 return;
@@ -797,7 +797,7 @@ namespace SharpQuake
 
             var playercolor = top * 16 + bottom;
 
-            if( Command.Source == cmd_source_t.src_command )
+            if( Command.Source == CommandSource.src_command )
             {
                 CVar.Set( "_cl_color", playercolor );
                 if( client.cls.state == cactive_t.ca_connected )
@@ -820,7 +820,7 @@ namespace SharpQuake
         /// </summary>
         private static void Kill_f()
         {
-            if( Command.Source == cmd_source_t.src_command )
+            if( Command.Source == CommandSource.src_command )
             {
                 Command.ForwardToServer();
                 return;
@@ -842,7 +842,7 @@ namespace SharpQuake
         /// </summary>
         private static void Pause_f()
         {
-            if( Command.Source == cmd_source_t.src_command )
+            if( Command.Source == CommandSource.src_command )
             {
                 Command.ForwardToServer();
                 return;
@@ -873,7 +873,7 @@ namespace SharpQuake
         /// </summary>
         private static void PreSpawn_f()
         {
-            if( Command.Source == cmd_source_t.src_command )
+            if( Command.Source == CommandSource.src_command )
             {
                 Con.Print( "prespawn is not valid from the console\n" );
                 return;
@@ -897,7 +897,7 @@ namespace SharpQuake
         /// </summary>
         private static void Spawn_f()
         {
-            if( Command.Source == cmd_source_t.src_command )
+            if( Command.Source == CommandSource.src_command )
             {
                 Con.Print( "spawn is not valid from the console\n" );
                 return;
@@ -1014,7 +1014,7 @@ namespace SharpQuake
         // Host_Begin_f
         private static void Begin_f()
         {
-            if( Command.Source == cmd_source_t.src_command )
+            if( Command.Source == CommandSource.src_command )
             {
                 Con.Print( "begin is not valid from the console\n" );
                 return;
@@ -1029,7 +1029,7 @@ namespace SharpQuake
         /// </summary>
         private static void Kick_f()
         {
-            if( Command.Source == cmd_source_t.src_command )
+            if( Command.Source == CommandSource.src_command )
             {
                 if( !server.sv.active )
                 {
@@ -1069,7 +1069,7 @@ namespace SharpQuake
             if( i < server.svs.maxclients )
             {
                 String who;
-                if( Command.Source == cmd_source_t.src_command )
+                if( Command.Source == CommandSource.src_command )
                     if( client.cls.state == cactive_t.ca_dedicated )
                         who = "Console";
                     else
@@ -1108,7 +1108,7 @@ namespace SharpQuake
         /// </summary>
         private static void Give_f()
         {
-            if( Command.Source == cmd_source_t.src_command )
+            if( Command.Source == CommandSource.src_command )
             {
                 Command.ForwardToServer();
                 return;
@@ -1335,7 +1335,7 @@ namespace SharpQuake
             if( client.cls.state == cactive_t.ca_dedicated )
             {
                 if( !server.sv.active )
-                    Cbuf.AddText( "map start\n" );
+                    CommandBuffer.AddText( "map start\n" );
                 return;
             }
 

@@ -103,7 +103,7 @@ namespace SharpQuake
                         Menu.ReturnMenu = this;
                         Menu.ReturnOnError = true;
                         MenuBase.Hide( );
-                        Cbuf.AddText( String.Format( "connect \"{0}\"\n", _JoinName ) );
+                        CommandBuffer.AddText( String.Format( "connect \"{0}\"\n", _JoinName ) );
                         break;
                     }
                     break;

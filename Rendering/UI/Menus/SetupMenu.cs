@@ -88,11 +88,11 @@ namespace SharpQuake
 
                     // _Cursor == 4 (OK)
                     if ( _MyName != client.Name )
-                        Cbuf.AddText( String.Format( "name \"{0}\"\n", _MyName ) );
+                        CommandBuffer.AddText( String.Format( "name \"{0}\"\n", _MyName ) );
                     if ( net.HostName != _HostName )
                         CVar.Set( "hostname", _HostName );
                     if ( _Top != _OldTop || _Bottom != _OldBottom )
-                        Cbuf.AddText( String.Format( "color {0} {1}\n", _Top, _Bottom ) );
+                        CommandBuffer.AddText( String.Format( "color {0} {1}\n", _Top, _Bottom ) );
                     Menu.EnterSound = true;
                     MenuBase.MultiPlayerMenu.Show( );
                     break;

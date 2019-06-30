@@ -45,9 +45,9 @@ namespace SharpQuake
                                     break;
                             Key.Destination = keydest_t.key_game;
                             if ( server.sv.active )
-                                Cbuf.AddText( "disconnect\n" );
-                            Cbuf.AddText( "maxplayers 1\n" );
-                            Cbuf.AddText( "map start\n" );
+                                CommandBuffer.AddText( "disconnect\n" );
+                            CommandBuffer.AddText( "maxplayers 1\n" );
+                            CommandBuffer.AddText( "map start\n" );
                             break;
 
                         case 1:

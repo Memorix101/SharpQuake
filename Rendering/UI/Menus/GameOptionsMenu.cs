@@ -211,19 +211,19 @@ namespace SharpQuake
                     if ( _Cursor == 0 )
                     {
                         if ( server.IsActive )
-                            Cbuf.AddText( "disconnect\n" );
-                        Cbuf.AddText( "listen 0\n" );	// so host_netport will be re-examined
-                        Cbuf.AddText( String.Format( "maxplayers {0}\n", _MaxPlayers ) );
+                            CommandBuffer.AddText( "disconnect\n" );
+                        CommandBuffer.AddText( "listen 0\n" );	// so host_netport will be re-examined
+                        CommandBuffer.AddText( String.Format( "maxplayers {0}\n", _MaxPlayers ) );
                         Scr.BeginLoadingPlaque( );
 
                         if ( Common.GameKind == GameKind.Hipnotic )
-                            Cbuf.AddText( String.Format( "map {0}\n",
+                            CommandBuffer.AddText( String.Format( "map {0}\n",
                                 HipnoticLevels[HipnoticEpisodes[_StartEpisode].firstLevel + _StartLevel].name ) );
                         else if ( Common.GameKind == GameKind.Rogue )
-                            Cbuf.AddText( String.Format( "map {0}\n",
+                            CommandBuffer.AddText( String.Format( "map {0}\n",
                                 RogueLevels[RogueEpisodes[_StartEpisode].firstLevel + _StartLevel].name ) );
                         else
-                            Cbuf.AddText( String.Format( "map {0}\n", Levels[Episodes[_StartEpisode].firstLevel + _StartLevel].name ) );
+                            CommandBuffer.AddText( String.Format( "map {0}\n", Levels[Episodes[_StartEpisode].firstLevel + _StartLevel].name ) );
 
                         return;
                     }

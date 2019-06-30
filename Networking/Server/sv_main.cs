@@ -1082,7 +1082,7 @@ namespace SharpQuake
             net.SendToAll( msg, 5 );
 
             if( client.cls.state != cactive_t.ca_dedicated )
-                Command.ExecuteString( "reconnect\n", cmd_source_t.src_command );
+                Command.ExecuteString( "reconnect\n", CommandSource.src_command );
         }
 
         /// <summary>

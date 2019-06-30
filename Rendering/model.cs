@@ -470,7 +470,7 @@ namespace SharpQuake
             msprite_t psprite = new msprite_t();
 
             // Uze: sprite models are not cached so
-            mod.cache = new cache_user_t();
+            mod.cache = new CacheUser();
             mod.cache.data = psprite;
 
             psprite.type = EndianHelper.LittleLong( pin.type );

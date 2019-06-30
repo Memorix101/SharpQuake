@@ -6,9 +6,8 @@ using System.Net;
 using System.Net.Sockets;
 using System.Text;
 using System.Threading.Tasks;
-using SharpQuake.Framework;
 
-namespace SharpQuake
+namespace SharpQuake.Framework
 {
     // MSG_WriteXxx() functions
     public class MessageWriter
@@ -59,9 +58,9 @@ namespace SharpQuake
             }
         }
 
-        private Byte[] _Buffer;
+        public Byte[] _Buffer;
 
-        private Int32 _Count;
+        public Int32 _Count;
 
         private Union4b _Val = Union4b.Empty;
 
@@ -221,14 +220,15 @@ namespace SharpQuake
             _Count = count;
         }
 
-        public Int32 FillFrom( Socket socket, ref EndPoint ep )
-        {
-            Clear( );
-            var result = net.LanDriver.Read( socket, _Buffer, _Buffer.Length, ref ep );
-            if ( result >= 0 )
-                _Count = result;
-            return result;
-        }
+        // Moved to net.cs temporarily as an extension method
+        //public Int32 FillFrom( Socket socket, ref EndPoint ep )
+        //{
+        //    Clear( );
+        //    var result = net.LanDriver.Read( socket, _Buffer, _Buffer.Length, ref ep );
+        //    if ( result >= 0 )
+        //        _Count = result;
+        //    return result;
+        //}
 
         public void AppendFrom( Byte[] src, Int32 startIndex, Int32 count )
         {

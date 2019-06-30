@@ -270,9 +270,9 @@ namespace SharpQuake
         public static void Init( quakeparms_t parms )
         {
             _Params = parms;
-
+            Command.SetupWrapper( ); // Temporary workaround
             Cache.Init( 1024 * 1024 * 512 ); // debug
-            Cbuf.Init();
+            CommandBuffer.Init();
             Command.Init();
             view.Init();
             chase.Init();
@@ -314,7 +314,7 @@ namespace SharpQuake
                 client.Init();
             }
 
-            Cbuf.InsertText( "exec quake.rc\n" );
+            CommandBuffer.InsertText( "exec quake.rc\n" );
 
             _IsInitialized = true;
 
@@ -705,7 +705,7 @@ namespace SharpQuake
             input.Commands();
 
             // process console commands
-            Cbuf.Execute();
+            CommandBuffer.Execute();
 
             net.Poll();
 
@@ -814,7 +814,7 @@ namespace SharpQuake
                 if( String.IsNullOrEmpty( cmd ) )
                     break;
 
-                Cbuf.AddText( cmd );
+                CommandBuffer.AddText( cmd );
             }
         }
     }

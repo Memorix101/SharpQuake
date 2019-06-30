@@ -53,7 +53,7 @@ namespace SharpQuake
                 else if ( key != '`' )
                 {
                     var cmd = String.Format( "bind \"{0}\" \"{1}\"\n", Key.KeynumToString( key ), _BindNames[_Cursor][0] );
-                    Cbuf.InsertText( cmd );
+                    CommandBuffer.InsertText( cmd );
                 }
 
                 _BindGrab = false;

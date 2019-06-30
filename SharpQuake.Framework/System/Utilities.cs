@@ -55,11 +55,6 @@ using OpenTK;
 
 namespace SharpQuake.Framework
 {
-    public enum GameKind
-    {
-        StandardQuake, Rogue, Hipnotic
-    }
-
     public static class Utilities
     {
         public static Boolean IsWindows

@@ -4,9 +4,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using OpenTK;
-using SharpQuake.Framework;
 
-namespace SharpQuake
+namespace SharpQuake.Framework
 {
     // MSG_ReadXxx() functions
     public class MessageReader

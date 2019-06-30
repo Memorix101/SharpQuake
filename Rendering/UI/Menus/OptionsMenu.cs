@@ -51,7 +51,7 @@ namespace SharpQuake
                             break;
 
                         case 2:
-                            Cbuf.AddText( "exec default.cfg\n" );
+                            CommandBuffer.AddText( "exec default.cfg\n" );
                             break;
 
                         case 12:

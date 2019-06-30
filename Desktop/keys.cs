@@ -467,13 +467,13 @@ namespace SharpQuake
                 var kb = _Bindings[key];
                 if( !String.IsNullOrEmpty( kb ) && kb.StartsWith( "+" ) )
                 {
-                    Cbuf.AddText( String.Format( "-{0} {1}\n", kb.Substring( 1 ), key ) );
+                    CommandBuffer.AddText( String.Format( "-{0} {1}\n", kb.Substring( 1 ), key ) );
                 }
                 if( _KeyShift[key] != key )
                 {
                     kb = _Bindings[_KeyShift[key]];
                     if( !String.IsNullOrEmpty( kb ) && kb.StartsWith( "+" ) )
-                        Cbuf.AddText( String.Format( "-{0} {1}\n", kb.Substring( 1 ), key ) );
+                        CommandBuffer.AddText( String.Format( "-{0} {1}\n", kb.Substring( 1 ), key ) );
                 }
                 return;
             }
@@ -500,12 +500,12 @@ namespace SharpQuake
                     if( kb.StartsWith( "+" ) )
                     {
                         // button commands add keynum as a parm
-                        Cbuf.AddText( String.Format( "{0} {1}\n", kb, key ) );
+                        CommandBuffer.AddText( String.Format( "{0} {1}\n", kb, key ) );
                     }
                     else
                     {
-                        Cbuf.AddText( kb );
-                        Cbuf.AddText( "\n" );
+                        CommandBuffer.AddText( kb );
+                        CommandBuffer.AddText( "\n" );
                     }
                 }
                 return;
@@ -766,11 +766,11 @@ namespace SharpQuake
             if( key == K_ENTER )
             {
                 if( _TeamMessage )
-                    Cbuf.AddText( "say_team \"" );
+                    CommandBuffer.AddText( "say_team \"" );
                 else
-                    Cbuf.AddText( "say \"" );
-                Cbuf.AddText( _ChatBuffer.ToString() );
-                Cbuf.AddText( "\"\n" );
+                    CommandBuffer.AddText( "say \"" );
+                CommandBuffer.AddText( _ChatBuffer.ToString() );
+                CommandBuffer.AddText( "\"\n" );
 
                 Key.Destination = keydest_t.key_game;
                 _ChatBuffer.Length = 0;
@@ -812,8 +812,8 @@ namespace SharpQuake
             {
                 var line = new String( _Lines[_EditLine] ).TrimEnd( '\0', ' ' );
                 var cmd = line.Substring( 1 );
-                Cbuf.AddText( cmd );	// skip the >
-                Cbuf.AddText( "\n" );
+                CommandBuffer.AddText( cmd );	// skip the >
+                CommandBuffer.AddText( "\n" );
                 Con.Print( "{0}\n", line );
                 _EditLine = ( _EditLine + 1 ) & 31;
                 _HistoryLine = _EditLine;

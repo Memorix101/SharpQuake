@@ -29,8 +29,7 @@ using SharpQuake.Framework;
 
 namespace SharpQuake
 {
-    internal delegate void xcommand_t(); // typedef void (*xcommand_t) (void);
-
+    
     // Command execution takes a string, breaks it into tokens,
     // then searches for a command or variable that matches the first token.
     //
@@ -38,17 +37,9 @@ namespace SharpQuake
     // to dissallow the action or forward it to a remote server if the source is
     // not apropriate.
 
-    internal enum cmd_source_t
-    {
-        src_client,     // came in over a net connection as a clc_stringcmd
-
-        // host_client will be valid during this state.
-        src_command		// from the command buffer
-    }
-
     internal static class Command
     {
-        public static cmd_source_t Source
+        public static CommandSource Source
         {
             get
             {
@@ -88,9 +79,9 @@ namespace SharpQuake
         private const Int32 MAX_ALIAS_NAME = 32;
         private const Int32 MAX_ARGS = 80;
 
-        private static cmd_source_t _Source; // extern	cmd_source_t	cmd_source;
+        private static CommandSource _Source; // extern	cmd_source_t	cmd_source;
         private static Dictionary<String, String> _Aliases;
-        private static Dictionary<String, xcommand_t> _Functions;
+        private static Dictionary<String, XCommand> _Functions;
         private static Int32 _Argc;
         private static String[] _Argv;// char	*cmd_argv[MAX_ARGS];
         private static String _Args;// char* cmd_args = NULL;
@@ -106,13 +97,13 @@ namespace SharpQuake
             Add( "echo", Echo_f );
             Add( "alias", Alias_f );
             Add( "cmd", ForwardToServer );
-            Add( "wait", Cbuf.Cmd_Wait_f ); // todo: move to Cbuf class?
+            Add( "wait", CommandBuffer.Cmd_Wait_f ); // todo: move to Cbuf class?
         }
 
         // Cmd_AddCommand()
         // called by the init functions of other parts of the program to
         // register commands and functions to call for them.
-        public static void Add( String name, xcommand_t function )
+        public static void Add( String name, XCommand function )
         {
             // ??? because hunk allocation would get stomped
             if( host.IsInitialized )
@@ -206,7 +197,7 @@ namespace SharpQuake
         //
         // A complete command line has been parsed, so try to execute it
         // FIXME: lookupnoadd the token to speed search?
-        public static void ExecuteString( String text, cmd_source_t src )
+        public static void ExecuteString( String text, CommandSource src )
         {
             _Source = src;
 
@@ -217,7 +208,7 @@ namespace SharpQuake
                 return;		// no tokens
 
             // check functions
-            xcommand_t handler = Find( _Argv[0] ); // must search with comparison like Q_strcasecmp()
+            XCommand handler = Find( _Argv[0] ); // must search with comparison like Q_strcasecmp()
             if( handler != null )
             {
                 handler();
@@ -228,7 +219,7 @@ namespace SharpQuake
                 var alias = FindAlias( _Argv[0] ); // must search with compare func like Q_strcasecmp
                 if( !String.IsNullOrEmpty( alias ) )
                 {
-                    Cbuf.InsertText( alias );
+                    CommandBuffer.InsertText( alias );
                 }
                 else
                 {
@@ -277,9 +268,9 @@ namespace SharpQuake
             return String.Join( " ", _Argv );
         }
 
-        private static xcommand_t Find( String name )
+        private static XCommand Find( String name )
         {
-            xcommand_t result;
+            XCommand result;
             _Functions.TryGetValue( name, out result );
             return result;
         }
@@ -342,7 +333,7 @@ namespace SharpQuake
 
             if( sb.Length > 0 )
             {
-                Cbuf.InsertText( sb.ToString() );
+                CommandBuffer.InsertText( sb.ToString() );
             }
         }
 
@@ -363,7 +354,7 @@ namespace SharpQuake
             }
             var script = Encoding.ASCII.GetString( bytes );
             Con.Print( "execing {0}\n", _Argv[1] );
-            Cbuf.InsertText( script );
+            CommandBuffer.InsertText( script );
         }
 
         // Cmd_Echo_f
@@ -413,131 +404,18 @@ namespace SharpQuake
         static Command()
         {
             _Aliases = new Dictionary<String, String>();
-            _Functions = new Dictionary<String, xcommand_t>();
+            _Functions = new Dictionary<String, XCommand>();
+        }
+
+        // Temporary workaround until code is refactored furher
+        public static void SetupWrapper()
+        {
+            CommandWrapper.OnAdd += ( name, cmd ) =>
+            {
+                Add( name, cmd );
+            };
         }
     }
 
     // cmd_source_t;
-
-    //Any number of commands can be added in a frame, from several different sources.
-    //Most commands come from either keybindings or console line input, but remote
-    //servers can also send across commands and entire text files can be execed.
-
-    //The + command line options are also added to the command buffer.
-
-    //The game starts with a Cbuf_AddText ("exec quake.rc\n"); Cbuf_Execute ();
-
-    internal static class Cbuf
-    {
-        private static StringBuilder _Buf;
-        private static Boolean _Wait;
-
-        // Cbuf_Init()
-        // allocates an initial text buffer that will grow as needed
-        public static void Init()
-        {
-            // nothing to do
-        }
-
-        // Cbuf_AddText()
-        // as new commands are generated from the console or keybindings,
-        // the text is added to the end of the command buffer.
-        public static void AddText( String text )
-        {
-            if( String.IsNullOrEmpty( text ) )
-                return;
-
-            var len = text.Length;
-            if( _Buf.Length + len > _Buf.Capacity )
-            {
-                Con.Print( "Cbuf.AddText: overflow!\n" );
-            }
-            else
-            {
-                _Buf.Append( text );
-            }
-        }
-
-        // Cbuf_InsertText()
-        // when a command wants to issue other commands immediately, the text is
-        // inserted at the beginning of the buffer, before any remaining unexecuted
-        // commands.
-        // Adds command text immediately after the current command
-        // ???Adds a \n to the text
-        // FIXME: actually change the command buffer to do less copying
-        public static void InsertText( String text )
-        {
-            _Buf.Insert( 0, text );
-        }
-
-        // Cbuf_Execute()
-        // Pulls off \n terminated lines of text from the command buffer and sends
-        // them through Cmd_ExecuteString.  Stops when the buffer is empty.
-        // Normally called once per frame, but may be explicitly invoked.
-        // Do not call inside a command function!
-        public static void Execute()
-        {
-            while( _Buf.Length > 0 )
-            {
-                var text = _Buf.ToString();
-
-                // find a \n or ; line break
-                Int32 quotes = 0, i;
-                for( i = 0; i < text.Length; i++ )
-                {
-                    if( text[i] == '"' )
-                        quotes++;
-
-                    if( ( ( quotes & 1 ) == 0 ) && ( text[i] == ';' ) )
-                        break;  // don't break if inside a quoted string
-
-                    if( text[i] == '\n' )
-                        break;
-                }
-
-                var line = text.Substring( 0, i ).TrimEnd( '\n', ';' );
-
-                // delete the text from the command buffer and move remaining commands down
-                // this is necessary because commands (exec, alias) can insert data at the
-                // beginning of the text buffer
-
-                if( i == _Buf.Length )
-                {
-                    _Buf.Length = 0;
-                }
-                else
-                {
-                    _Buf.Remove( 0, i + 1 );
-                }
-
-                // execute the command line
-                if( !String.IsNullOrEmpty( line ) )
-                {
-                    Command.ExecuteString( line, cmd_source_t.src_command );
-
-                    if( _Wait )
-                    {
-                        // skip out while text still remains in buffer, leaving it
-                        // for next frame
-                        _Wait = false;
-                        break;
-                    }
-                }
-            }
-        }
-
-        // Cmd_Wait_f
-        // Causes execution of the remainder of the command buffer to be delayed until
-        // next frame.  This allows commands like:
-        // bind g "impulse 5 ; +attack ; wait ; -attack ; impulse 2"
-        public static void Cmd_Wait_f()
-        {
-            _Wait = true;
-        }
-
-        static Cbuf()
-        {
-            _Buf = new StringBuilder( 8192 ); // space for commands and script files
-        }
-    }
 }

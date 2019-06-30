@@ -127,7 +127,7 @@ namespace SharpQuake
                 }
             }
 
-            Cbuf.InsertText( String.Format( "playdemo {0}\n", cls.demos[cls.demonum] ) );
+            CommandBuffer.InsertText( String.Format( "playdemo {0}\n", cls.demos[cls.demonum] ) );
             cls.demonum++;
         }
 

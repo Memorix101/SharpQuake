@@ -57,7 +57,7 @@ namespace SharpQuake
         /// </summary>
         private static void Record_f()
         {
-            if( Command.Source != cmd_source_t.src_command )
+            if( Command.Source != CommandSource.src_command )
                 return;
 
             var c = Command.Argc;
@@ -95,7 +95,7 @@ namespace SharpQuake
             // start the map up
             //
             if( c > 2 )
-                Command.ExecuteString( String.Format( "map {0}", Command.Argv( 2 ) ), cmd_source_t.src_command );
+                Command.ExecuteString( String.Format( "map {0}", Command.Argv( 2 ) ), CommandSource.src_command );
 
             //
             // open the demo file
@@ -124,7 +124,7 @@ namespace SharpQuake
         /// </summary>
         private static void Stop_f()
         {
-            if( Command.Source != cmd_source_t.src_command )
+            if( Command.Source != CommandSource.src_command )
                 return;
 
             if( !cls.demorecording )
@@ -153,7 +153,7 @@ namespace SharpQuake
         // play [demoname]
         private static void PlayDemo_f()
         {
-            if( Command.Source != cmd_source_t.src_command )
+            if( Command.Source != CommandSource.src_command )
                 return;
 
             if( Command.Argc != 2 )
@@ -218,7 +218,7 @@ namespace SharpQuake
         /// </summary>
         private static void TimeDemo_f()
         {
-            if( Command.Source != cmd_source_t.src_command )
+            if( Command.Source != CommandSource.src_command )
                 return;
 
             if( Command.Argc != 2 )

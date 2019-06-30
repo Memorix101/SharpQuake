@@ -111,6 +111,7 @@
     <Compile Include="Networking\Client\client_parse.cs" />
     <Compile Include="Networking\Client\client_temp_ent.cs" />
     <Compile Include="System\Command.cs" />
+    <Compile Include="System\CommandBuffer.cs" />
     <Compile Include="System\Common.cs" />
     <Compile Include="Rendering\console.cs" />
     <Compile Include="System\Crc.cs" />
@@ -131,8 +132,6 @@
     <Compile Include="Networking\net_loop.cs" />
     <Compile Include="Networking\net_tcp_ip.cs" />
     <Compile Include="Networking\net_vcr.cs" />
-    <Compile Include="System\MessageReader.cs" />
-    <Compile Include="System\MessageWriter.cs" />
     <Compile Include="System\progs.cs" />
     <Compile Include="System\pr_builtins.cs" />
     <Compile Include="System\pr_edict.cs" />
@@ -167,7 +166,6 @@
     <Compile Include="Rendering\vid.cs" />
     <Compile Include="Rendering\view.cs" />
     <Compile Include="Rendering\world.cs" />
-    <Compile Include="System\zone.cs" />
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
