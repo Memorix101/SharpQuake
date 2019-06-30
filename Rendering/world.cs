@@ -21,6 +21,7 @@
 /// </copyright>
 
 using OpenTK;
+using SharpQuake.Framework;
 
 // world.h
 
@@ -47,7 +48,7 @@ namespace SharpQuake
         public System.Single fraction;		// time completed, 1.0 = didn't hit anything
         public Vector3 endpos;			// final position
         public plane_t plane;			// surface normal at impact
-        public edict_t ent;			// entity the surface is on
+        public MemoryEdict ent;			// entity the surface is on
 
         public void CopyFrom( trace_t src )
         {

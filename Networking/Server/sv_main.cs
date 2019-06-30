@@ -40,7 +40,7 @@ namespace SharpQuake
             }
             for( var i = 0; i < _BoxPlanes.Length; i++ )
             {
-                _BoxPlanes[i] = new mplane_t();
+                _BoxPlanes[i] = new Plane();
             }
             for( var i = 0; i < _AreaNodes.Length; i++ )
             {
@@ -100,7 +100,7 @@ namespace SharpQuake
         /// An attenuation of 0 will play full volume everywhere in the level.
         /// Larger attenuations will drop off.  (max 4 attenuation)
         /// </summary>
-        public static void StartSound( edict_t entity, Int32 channel, String sample, Int32 volume, Single attenuation )
+        public static void StartSound( MemoryEdict entity, Int32 channel, String sample, Int32 volume, Single attenuation )
         {
             if( volume < 0 || volume > 255 )
                 Utilities.Error( "SV_StartSound: volume = {0}", volume );
@@ -338,14 +338,14 @@ namespace SharpQuake
         /// <summary>
         /// SV_WriteClientdataToMessage
         /// </summary>
-        public static void WriteClientDataToMessage( edict_t ent, MessageWriter msg )
+        public static void WriteClientDataToMessage( MemoryEdict ent, MessageWriter msg )
         {
             //
             // send a damage message
             //
             if( ent.v.dmg_take != 0 || ent.v.dmg_save != 0 )
             {
-                edict_t other = ProgToEdict( ent.v.dmg_inflictor );
+                MemoryEdict other = ProgToEdict( ent.v.dmg_inflictor );
                 msg.WriteByte( protocol.svc_damage );
                 msg.WriteByte( ( Int32 ) ent.v.dmg_save );
                 msg.WriteByte( ( Int32 ) ent.v.dmg_take );
@@ -584,15 +584,15 @@ namespace SharpQuake
             // allocate server memory
             sv.max_edicts = QDef.MAX_EDICTS;
 
-            sv.edicts = new edict_t[sv.max_edicts];
+            sv.edicts = new MemoryEdict[sv.max_edicts];
             for( var i = 0; i < sv.edicts.Length; i++ )
             {
-                sv.edicts[i] = new edict_t();
+                sv.edicts[i] = new MemoryEdict();
             }
 
             // leave slots at start for clients only
             sv.num_edicts = svs.maxclients + 1;
-            edict_t ent;
+            MemoryEdict ent;
             for( var i = 0; i < svs.maxclients; i++ )
             {
                 ent = EdictNum( i + 1 );
@@ -686,7 +686,7 @@ namespace SharpQuake
         {
             for( var i = 1; i < sv.num_edicts; i++ )
             {
-                edict_t ent = sv.edicts[i];
+                MemoryEdict ent = sv.edicts[i];
                 ent.v.effects = ( Int32 ) ent.v.effects & ~EntityEffects.EF_MUZZLEFLASH;
             }
         }
@@ -738,7 +738,7 @@ namespace SharpQuake
         /// <summary>
         /// SV_WriteEntitiesToClient
         /// </summary>
-        private static void WriteEntitiesToClient( edict_t clent, MessageWriter msg )
+        private static void WriteEntitiesToClient( MemoryEdict clent, MessageWriter msg )
         {
             // find the client's PVS
             Vector3 org = Common.ToVector( ref clent.v.origin ) + Common.ToVector( ref clent.v.view_ofs );
@@ -747,7 +747,7 @@ namespace SharpQuake
             // send over all entities (except the client) that touch the pvs
             for( var e = 1; e < sv.num_edicts; e++ )
             {
-                edict_t ent = sv.edicts[e];
+                MemoryEdict ent = sv.edicts[e];
                 // ignore if not touching a PV leaf
                 if( ent != clent )	// clent is ALLWAYS sent
                 {
@@ -889,7 +889,7 @@ namespace SharpQuake
                 }
 
                 mnode_t n = (mnode_t)node;
-                mplane_t plane = n.plane;
+                Plane plane = n.plane;
                 var d = Vector3.Dot( org, plane.normal ) - plane.dist;
                 if( d > 8 )
                     node = n.children[0];
@@ -952,7 +952,7 @@ namespace SharpQuake
             Con.DPrint( "Client {0} connected\n", client.netconnection.address );
 
             var edictnum = clientnum + 1;
-            edict_t ent = EdictNum( edictnum );
+            MemoryEdict ent = EdictNum( edictnum );
 
             // set up the client_t
             qsocket_t netconnection = client.netconnection;
@@ -1093,7 +1093,7 @@ namespace SharpQuake
             for( var entnum = 0; entnum < sv.num_edicts; entnum++ )
             {
                 // get the current server version
-                edict_t svent = EdictNum( entnum );
+                MemoryEdict svent = EdictNum( entnum );
                 if( svent.free )
                     continue;
                 if( entnum > svs.maxclients && svent.v.modelindex == 0 )

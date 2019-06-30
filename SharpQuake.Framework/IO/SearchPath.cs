@@ -10,7 +10,7 @@ namespace SharpQuake.Framework
     internal class searchpath_t
     {
         public String filename; // char[MAX_OSPATH];
-        public pack_t pack; // only one of filename / pack will be used
+        public Pak pack; // only one of filename / pack will be used
         public ZipArchive pk3;
         public String pk3filename;
 
@@ -33,7 +33,7 @@ namespace SharpQuake.Framework
                 this.filename = path;
         }
 
-        public searchpath_t( pack_t pak )
+        public searchpath_t( Pak pak )
         {
             this.pack = pak;
         }

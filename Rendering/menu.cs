@@ -141,12 +141,12 @@ namespace SharpQuake
             }
         }
 
-        public static void DrawPic( Int32 x, Int32 y, glpic_t pic )
+        public static void DrawPic( Int32 x, Int32 y, GLPic pic )
         {
             Drawer.DrawPic( x + ( ( Scr.vid.width - 320 ) >> 1 ), y, pic );
         }
 
-        public static void DrawTransPic( Int32 x, Int32 y, glpic_t pic )
+        public static void DrawTransPic( Int32 x, Int32 y, GLPic pic )
         {
             Drawer.DrawTransPic( x + ( ( Scr.vid.width - 320 ) >> 1 ), y, pic );
         }
@@ -154,7 +154,7 @@ namespace SharpQuake
         /// <summary>
         /// M_DrawTransPicTranslate
         /// </summary>
-        public static void DrawTransPicTranslate( Int32 x, Int32 y, glpic_t pic )
+        public static void DrawTransPicTranslate( Int32 x, Int32 y, GLPic pic )
         {
             Drawer.TransPicTranslate( x + ( ( Scr.vid.width - 320 ) >> 1 ), y, pic, _TranslationTable );
         }
@@ -199,7 +199,7 @@ namespace SharpQuake
             // draw left side
             var cx = x;
             var cy = y;
-            glpic_t p = Drawer.CachePic( "gfx/box_tl.lmp" );
+            GLPic p = Drawer.CachePic( "gfx/box_tl.lmp" );
             DrawTransPic( cx, cy, p );
             p = Drawer.CachePic( "gfx/box_ml.lmp" );
             for( var n = 0; n < lines; n++ )
@@ -512,7 +512,7 @@ namespace SharpQuake
         public override void Draw()
         {
             menu.DrawTransPic( 16, 4, Drawer.CachePic( "gfx/qplaque.lmp" ) );
-            glpic_t p = Drawer.CachePic( "gfx/ttl_main.lmp" );
+            GLPic p = Drawer.CachePic( "gfx/ttl_main.lmp" );
             menu.DrawPic( ( 320 - p.width ) / 2, 4, p );
             menu.DrawTransPic( 72, 32, Drawer.CachePic( "gfx/mainmenu.lmp" ) );
 
@@ -583,7 +583,7 @@ namespace SharpQuake
         public override void Draw()
         {
             menu.DrawTransPic( 16, 4, Drawer.CachePic( "gfx/qplaque.lmp" ) );
-            glpic_t p = Drawer.CachePic( "gfx/ttl_sgl.lmp" );
+            GLPic p = Drawer.CachePic( "gfx/ttl_sgl.lmp" );
             menu.DrawPic( ( 320 - p.width ) / 2, 4, p );
             menu.DrawTransPic( 72, 32, Drawer.CachePic( "gfx/sp_menu.lmp" ) );
 
@@ -647,7 +647,7 @@ namespace SharpQuake
 
         public override void Draw()
         {
-            glpic_t p = Drawer.CachePic( "gfx/p_load.lmp" );
+            GLPic p = Drawer.CachePic( "gfx/p_load.lmp" );
             menu.DrawPic( ( 320 - p.width ) / 2, 4, p );
 
             for( var i = 0; i < MAX_SAVEGAMES; i++ )
@@ -743,7 +743,7 @@ namespace SharpQuake
 
         public override void Draw()
         {
-            glpic_t p = Drawer.CachePic( "gfx/p_save.lmp" );
+            GLPic p = Drawer.CachePic( "gfx/p_save.lmp" );
             menu.DrawPic( ( 320 - p.width ) / 2, 4, p );
 
             for( var i = 0; i < MAX_SAVEGAMES; i++ )
@@ -972,7 +972,7 @@ namespace SharpQuake
         public override void Draw()
         {
             menu.DrawTransPic( 16, 4, Drawer.CachePic( "gfx/qplaque.lmp" ) );
-            glpic_t p = Drawer.CachePic( "gfx/p_option.lmp" );
+            GLPic p = Drawer.CachePic( "gfx/p_option.lmp" );
             menu.DrawPic( ( 320 - p.width ) / 2, 4, p );
 
             menu.Print( 16, 32, "    Customize controls" );
@@ -1209,7 +1209,7 @@ namespace SharpQuake
 
         public override void Draw()
         {
-            glpic_t p = Drawer.CachePic( "gfx/ttl_cstm.lmp" );
+            GLPic p = Drawer.CachePic( "gfx/ttl_cstm.lmp" );
             menu.DrawPic( ( 320 - p.width ) / 2, 4, p );
 
             if( _BindGrab )
@@ -1344,7 +1344,7 @@ namespace SharpQuake
         public override void Draw()
         {
             menu.DrawTransPic( 16, 4, Drawer.CachePic( "gfx/qplaque.lmp" ) );
-            glpic_t p = Drawer.CachePic( "gfx/p_multi.lmp" );
+            GLPic p = Drawer.CachePic( "gfx/p_multi.lmp" );
             menu.DrawPic( ( 320 - p.width ) / 2, 4, p );
             menu.DrawTransPic( 72, 32, Drawer.CachePic( "gfx/mp_menu.lmp" ) );
 
@@ -1511,7 +1511,7 @@ namespace SharpQuake
         public override void Draw()
         {
             menu.DrawTransPic( 16, 4, Drawer.CachePic( "gfx/qplaque.lmp" ) );
-            glpic_t p = Drawer.CachePic( "gfx/p_multi.lmp" );
+            GLPic p = Drawer.CachePic( "gfx/p_multi.lmp" );
             var basex = ( 320 - p.width ) / 2;
             menu.DrawPic( basex, 4, p );
 
@@ -1704,7 +1704,7 @@ forward:
         public override void Draw()
         {
             menu.DrawTransPic( 16, 4, Drawer.CachePic( "gfx/qplaque.lmp" ) );
-            glpic_t p = Drawer.CachePic( "gfx/p_multi.lmp" );
+            GLPic p = Drawer.CachePic( "gfx/p_multi.lmp" );
             menu.DrawPic( ( 320 - p.width ) / 2, 4, p );
 
             menu.Print( 64, 40, "Hostname" );
@@ -1966,7 +1966,7 @@ forward:
         public override void Draw()
         {
             menu.DrawTransPic( 16, 4, Drawer.CachePic( "gfx/qplaque.lmp" ) );
-            glpic_t p = Drawer.CachePic( "gfx/p_multi.lmp" );
+            GLPic p = Drawer.CachePic( "gfx/p_multi.lmp" );
             menu.DrawPic( ( 320 - p.width ) / 2, 4, p );
 
             menu.DrawTextBox( 152, 32, 10, 1 );
@@ -2268,7 +2268,7 @@ forward:
 
         public override void Draw()
         {
-            glpic_t p = Drawer.CachePic( "gfx/p_multi.lmp" );
+            GLPic p = Drawer.CachePic( "gfx/p_multi.lmp" );
             menu.DrawPic( ( 320 - p.width ) / 2, 4, p );
             var x = ( 320 / 2 ) - ( ( 12 * 8 ) / 2 ) + 4;
             menu.DrawTextBox( x - 8, 32, 12, 1 );
@@ -2371,7 +2371,7 @@ forward:
                 _Sorted = true;
             }
 
-            glpic_t p = Drawer.CachePic( "gfx/p_multi.lmp" );
+            GLPic p = Drawer.CachePic( "gfx/p_multi.lmp" );
             menu.DrawPic( ( 320 - p.width ) / 2, 4, p );
             for( var n = 0; n < net.HostCacheCount; n++ )
             {
@@ -2422,7 +2422,7 @@ forward:
 
         public override void Draw()
         {
-            glpic_t p = Drawer.CachePic( "gfx/vidmodes.lmp" );
+            GLPic p = Drawer.CachePic( "gfx/vidmodes.lmp" );
             menu.DrawPic( ( 320 - p.width ) / 2, 4, p );
 
             _WModes = 0;

@@ -288,7 +288,7 @@ namespace SharpQuake
             Scr.vid.maxwarpheight = WARP_HEIGHT;
             Scr.vid.colormap = host.ColorMap;
             var v = BitConverter.ToInt32( host.ColorMap, 2048 );
-            Scr.vid.fullbright = 256 - Common.LittleLong( v );
+            Scr.vid.fullbright = 256 - EndianHelper.LittleLong( v );
 
             CheckGamma( palette );
             SetPalette( palette );

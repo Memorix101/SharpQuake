@@ -66,16 +66,8 @@ namespace SharpQuake.Framework
         {
             get
             {
-                PlatformID platform = Environment.OSVersion.Platform;
+                var platform = Environment.OSVersion.Platform;
                 return ( platform == PlatformID.Win32Windows || platform == PlatformID.Win32NT || platform == PlatformID.WinCE || platform == PlatformID.Xbox );
-            }
-        }
-
-        public static Boolean IsBigEndian
-        {
-            get
-            {
-                return !BitConverter.IsLittleEndian;
             }
         }
 
@@ -124,34 +116,12 @@ namespace SharpQuake.Framework
 
         private static readonly Byte[] ZeroBytes = new Byte[4096];
 
-        // this graphic needs to be in the pak file to use registered features
-        private static UInt16[] _Pop = new UInt16[]
-        {
-            0x0000,0x0000,0x0000,0x0000,0x0000,0x0000,0x0000,0x0000
-        ,0x0000,0x0000,0x6600,0x0000,0x0000,0x0000,0x6600,0x0000
-        ,0x0000,0x0066,0x0000,0x0000,0x0000,0x0000,0x0067,0x0000
-        ,0x0000,0x6665,0x0000,0x0000,0x0000,0x0000,0x0065,0x6600
-        ,0x0063,0x6561,0x0000,0x0000,0x0000,0x0000,0x0061,0x6563
-        ,0x0064,0x6561,0x0000,0x0000,0x0000,0x0000,0x0061,0x6564
-        ,0x0064,0x6564,0x0000,0x6469,0x6969,0x6400,0x0064,0x6564
-        ,0x0063,0x6568,0x6200,0x0064,0x6864,0x0000,0x6268,0x6563
-        ,0x0000,0x6567,0x6963,0x0064,0x6764,0x0063,0x6967,0x6500
-        ,0x0000,0x6266,0x6769,0x6a68,0x6768,0x6a69,0x6766,0x6200
-        ,0x0000,0x0062,0x6566,0x6666,0x6666,0x6666,0x6562,0x0000
-        ,0x0000,0x0000,0x0062,0x6364,0x6664,0x6362,0x0000,0x0000
-        ,0x0000,0x0000,0x0000,0x0062,0x6662,0x0000,0x0000,0x0000
-        ,0x0000,0x0000,0x0000,0x0061,0x6661,0x0000,0x0000,0x0000
-        ,0x0000,0x0000,0x0000,0x0000,0x6500,0x0000,0x0000,0x0000
-        ,0x0000,0x0000,0x0000,0x0000,0x6400,0x0000,0x0000,0x0000
-        };
-
         // for passing as reference
         private static String[] safeargvs = new String[]
         {
         "-stdvid", "-nolan", "-nosound", "-nocdaudio", "-nojoy", "-nomouse", "-dibonly"
         };
 
-        private static IByteOrderConverter _Converter;
         public static String[] _Argv;
         public static String _Args; // com_cmdline
         private static GameKind _GameKind; // qboolean		standard_quake = true, rogue, hipnotic;
@@ -173,6 +143,7 @@ namespace SharpQuake.Framework
                 if ( _Argv[i].Equals( parm ) )
                     return i;
             }
+
             return 0;
         }
 
@@ -194,6 +165,7 @@ namespace SharpQuake.Framework
 
             // skip whitespace
             var i = 0;
+
             while ( i < data.Length )
             {
                 while ( i < data.Length )
@@ -227,6 +199,7 @@ namespace SharpQuake.Framework
             {
                 i++;
                 i0 = i;
+
                 while ( i < data.Length && data[i] != '\"' )
                     i++;
 
@@ -244,6 +217,7 @@ namespace SharpQuake.Framework
 
             // parse single characters
             var c = data[i];
+
             if ( c == '{' || c == '}' || c == ')' || c == '(' || c == '\'' || c == ':' )
             {
                 _Token = data.Substring( i, 1 );
@@ -254,11 +228,13 @@ namespace SharpQuake.Framework
             while ( i < data.Length )
             {
                 c = data[i];
+
                 if ( c <= 32 || c == '{' || c == '}' || c == ')' || c == '(' || c == '\'' || c == ':' )
                 {
                     i--;
                     break;
                 }
+
                 i++;
             }
 
@@ -272,55 +248,6 @@ namespace SharpQuake.Framework
             return ( i + 1 < data.Length ? data.Substring( i + 1 ) : null );
         }
 
-        public static Int32 atoi( String s )
-        {
-            if ( String.IsNullOrEmpty( s ) )
-                return 0;
-
-            var sign = 1;
-            var result = 0;
-            var offset = 0;
-            if ( s.StartsWith( "-" ) )
-            {
-                sign = -1;
-                offset++;
-            }
-
-            var i = -1;
-
-            if ( s.Length > 2 )
-            {
-                i = s.IndexOf( "0x", offset, 2 );
-                if ( i == -1 )
-                {
-                    i = s.IndexOf( "0X", offset, 2 );
-                }
-            }
-
-            if ( i == offset )
-            {
-                Int32.TryParse( s.Substring( offset + 2 ), System.Globalization.NumberStyles.HexNumber, null, out result );
-            }
-            else
-            {
-                i = s.IndexOf( '\'', offset, 1 );
-                if ( i != -1 )
-                {
-                    result = ( Byte ) s[i + 1];
-                }
-                else
-                    Int32.TryParse( s.Substring( offset ), out result );
-            }
-            return sign * result;
-        }
-
-        public static Single atof( String s )
-        {
-            Single v;
-            Single.TryParse( s, NumberStyles.Float, CultureInfo.InvariantCulture.NumberFormat, out v );
-            return v;
-        }
-
         public static Boolean SameText( String a, String b )
         {
             return ( String.Compare( a, b, true ) == 0 );
@@ -331,66 +258,18 @@ namespace SharpQuake.Framework
             return ( String.Compare( a, 0, b, 0, count, true ) == 0 );
         }
 
-        public static Int16 BigShort( Int16 l )
-        {
-            return _Converter.BigShort( l );
-        }
-
-        public static Int16 LittleShort( Int16 l )
-        {
-            return _Converter.LittleShort( l );
-        }
-
-        public static Int32 BigLong( Int32 l )
-        {
-            return _Converter.BigLong( l );
-        }
-
-        public static Int32 LittleLong( Int32 l )
-        {
-            return _Converter.LittleLong( l );
-        }
-
-        public static Single BigFloat( Single l )
-        {
-            return _Converter.BigFloat( l );
-        }
-
-        public static Single LittleFloat( Single l )
-        {
-            return _Converter.LittleFloat( l );
-        }
-
-        public static Vector3 LittleVector( Vector3 src )
-        {
-            return new Vector3( _Converter.LittleFloat( src.X ),
-                _Converter.LittleFloat( src.Y ), _Converter.LittleFloat( src.Z ) );
-        }
-
-        public static Vector3 LittleVector3( Single[] src )
-        {
-            return new Vector3( _Converter.LittleFloat( src[0] ),
-                _Converter.LittleFloat( src[1] ), _Converter.LittleFloat( src[2] ) );
-        }
-
-        public static Vector4 LittleVector4( Single[] src, Int32 offset )
-        {
-            return new Vector4( _Converter.LittleFloat( src[offset + 0] ),
-                _Converter.LittleFloat( src[offset + 1] ),
-                _Converter.LittleFloat( src[offset + 2] ),
-                _Converter.LittleFloat( src[offset + 3] ) );
-        }
-
         public static void FillArray<T>( T[] dest, T value )
         {
             var elementSizeInBytes = Marshal.SizeOf( typeof( T ) );
             var blockSize = Math.Min( dest.Length, 4096 / elementSizeInBytes );
+
             for ( var i = 0; i < blockSize; i++ )
                 dest[i] = value;
 
             var blockSizeInBytes = blockSize * elementSizeInBytes;
             var offset = blockSizeInBytes;
             var lengthInBytes = Buffer.ByteLength( dest );
+
             while ( true )// offset + blockSize <= lengthInBytes)
             {
                 var left = lengthInBytes - offset;
@@ -410,6 +289,7 @@ namespace SharpQuake.Framework
             var elementBytes = Marshal.SizeOf( typeof( T ) );
             var offset = startIndex * elementBytes;
             var sizeInBytes = dest.Length * elementBytes - offset;
+
             while ( true )
             {
                 var blockSize = sizeInBytes - offset;
@@ -449,6 +329,7 @@ namespace SharpQuake.Framework
         public static String GetString( Byte[] src )
         {
             var count = 0;
+
             while ( count < src.Length && src[count] != 0 )
                 count++;
 
@@ -462,25 +343,12 @@ namespace SharpQuake.Framework
 
         public static void WriteInt( Byte[] dest, Int32 offset, Int32 value )
         {
-            Union4b u = Union4b.Empty;
+            var u = Union4b.Empty;
             u.i0 = value;
             dest[offset + 0] = u.b0;
             dest[offset + 1] = u.b1;
             dest[offset + 2] = u.b2;
             dest[offset + 3] = u.b3;
-        }
-
-        static Utilities( )
-        {
-            // set the byte swapping variables in a portable manner
-            if ( BitConverter.IsLittleEndian )
-            {
-                _Converter = new LittleEndianConverter( );
-            }
-            else
-            {
-                _Converter = new BigEndianConverter( );
-            }
         }
 
         // void COM_Init (char *path)
@@ -511,7 +379,7 @@ namespace SharpQuake.Framework
             {
                 // force all the safe-mode switches. Note that we reserved extra space in
                 // case we need to add these, so we don't need an overflow check
-                String[] largv = new String[_Argv.Length + safeargvs.Length];
+                var largv = new String[_Argv.Length + safeargvs.Length];
                 _Argv.CopyTo( largv, 0 );
                 safeargvs.CopyTo( largv, _Argv.Length );
                 _Argv = largv;
@@ -539,18 +407,17 @@ namespace SharpQuake.Framework
         public static T ReadStructure<T>( Stream stream )
         {
             var count = Marshal.SizeOf( typeof( T ) );
-            Byte[] buf = new Byte[count];
+            var buf = new Byte[count];
+
             if ( stream.Read( buf, 0, count ) < count )
-            {
                 throw new IOException( "Stream reading error!" );
-            }
+
             return BytesToStructure<T>( buf, 0 );
         }
-
-
+        
         public static void WriteString( BinaryWriter dest, String value )
         {
-            Byte[] buf = Encoding.ASCII.GetBytes( value );
+            var buf = Encoding.ASCII.GetBytes( value );
             dest.Write( buf.Length );
             dest.Write( buf );
         }
@@ -558,22 +425,23 @@ namespace SharpQuake.Framework
         public static String ReadString( BinaryReader src )
         {
             var length = src.ReadInt32( );
+
             if ( length <= 0 )
-            {
                 throw new Exception( "Invalid string length: " + length.ToString( ) );
-            }
-            Byte[] buf = new Byte[length];
+
+            var buf = new Byte[length];
             src.Read( buf, 0, length );
+
             return Encoding.ASCII.GetString( buf );
         }
 
-
         public static T BytesToStructure<T>( Byte[] src, Int32 startIndex )
         {
-            GCHandle handle = GCHandle.Alloc( src, GCHandleType.Pinned );
+            var handle = GCHandle.Alloc( src, GCHandleType.Pinned );
+
             try
             {
-                IntPtr ptr = handle.AddrOfPinnedObject( );
+                var ptr = handle.AddrOfPinnedObject( );
                 if ( startIndex != 0 )
                 {
                     var ptr2 = ptr.ToInt64( ) + startIndex;
@@ -589,8 +457,9 @@ namespace SharpQuake.Framework
 
         public static Byte[] StructureToBytes<T>( ref T src )
         {
-            Byte[] buf = new Byte[Marshal.SizeOf( typeof( T ) )];
-            GCHandle handle = GCHandle.Alloc( buf, GCHandleType.Pinned );
+            var buf = new Byte[Marshal.SizeOf( typeof( T ) )];
+            var handle = GCHandle.Alloc( buf, GCHandleType.Pinned );
+
             try
             {
                 Marshal.StructureToPtr( src, handle.AddrOfPinnedObject( ), true );
@@ -599,12 +468,14 @@ namespace SharpQuake.Framework
             {
                 handle.Free( );
             }
+
             return buf;
         }
 
         public static void StructureToBytes<T>( ref T src, Byte[] dest, Int32 offset )
         {
-            GCHandle handle = GCHandle.Alloc( dest, GCHandleType.Pinned );
+            var handle = GCHandle.Alloc( dest, GCHandleType.Pinned );
+
             try
             {
                 var addr = handle.AddrOfPinnedObject( ).ToInt64( ) + offset;

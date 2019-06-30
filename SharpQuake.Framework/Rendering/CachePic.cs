@@ -6,9 +6,9 @@ using System.Threading.Tasks;
 
 namespace SharpQuake.Framework
 {
-    public class cachepic_t
+    public class CachePic
     {
         public String name; //[MAX_QPATH];
-        public glpic_t pic;
+        public GLPic pic;
     } // cachepic_t;
 }

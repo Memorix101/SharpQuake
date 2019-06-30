@@ -103,7 +103,7 @@ namespace SharpQuake
         /// <summary>
         /// EDICT_NUM
         /// </summary>
-        public static edict_t EdictNum( Int32 n )
+        public static MemoryEdict EdictNum( Int32 n )
         {
             if( n < 0 || n >= _Server.max_edicts )
                 Utilities.Error( "EDICT_NUM: bad number {0}", n );
@@ -118,9 +118,9 @@ namespace SharpQuake
         /// instead of being removed and recreated, which can cause interpolated
         /// angles and bad trails.
         /// </summary>
-        public static edict_t AllocEdict()
+        public static MemoryEdict AllocEdict()
         {
-            edict_t e;
+            MemoryEdict e;
             Int32 i;
             for( i = svs.maxclients + 1; i < sv.num_edicts; i++ )
             {
@@ -150,7 +150,7 @@ namespace SharpQuake
         /// Marks the edict as free
         /// FIXME: walk all entities and NULL out references to this entity
         /// </summary>
-        public static void FreeEdict( edict_t ed )
+        public static void FreeEdict( MemoryEdict ed )
         {
             UnlinkEdict( ed );		// unlink from world bsp
 
@@ -172,7 +172,7 @@ namespace SharpQuake
         /// <summary>
         /// EDICT_TO_PROG(e)
         /// </summary>
-        public static Int32 EdictToProg( edict_t e )
+        public static Int32 EdictToProg( MemoryEdict e )
         {
             return Array.IndexOf( _Server.edicts, e ); // todo: optimize this
         }
@@ -181,7 +181,7 @@ namespace SharpQuake
         /// PROG_TO_EDICT(e)
         /// Offset in bytes!
         /// </summary>
-        public static edict_t ProgToEdict( Int32 e )
+        public static MemoryEdict ProgToEdict( Int32 e )
         {
             if( e < 0 || e > sv.edicts.Length )
                 Utilities.Error( "ProgToEdict: Bad prog!" );
@@ -191,7 +191,7 @@ namespace SharpQuake
         /// <summary>
         /// NUM_FOR_EDICT
         /// </summary>
-        public static Int32 NumForEdict( edict_t e )
+        public static Int32 NumForEdict( MemoryEdict e )
         {
             var i = Array.IndexOf( sv.edicts, e ); // todo: optimize this
 
@@ -290,8 +290,8 @@ namespace SharpQuake
         public Int32 axis;		// -1 = leaf node
         public Single dist;
         public areanode_t[] children; // [2];
-        public link_t trigger_edicts;
-        public link_t solid_edicts;
+        public Link trigger_edicts;
+        public Link solid_edicts;
 
         public void Clear()
         {
@@ -306,8 +306,8 @@ namespace SharpQuake
         public areanode_t()
         {
             this.children = new areanode_t[2];
-            this.trigger_edicts = new link_t( this );
-            this.solid_edicts = new link_t( this );
+            this.trigger_edicts = new Link( this );
+            this.solid_edicts = new Link( this );
         }
     } //areanode_t;
 
@@ -341,7 +341,7 @@ namespace SharpQuake
         public String[] lightstyles; // [MAX_LIGHTSTYLES];
         public Int32 num_edicts;
         public Int32 max_edicts;
-        public edict_t[] edicts;        // can NOT be array indexed, because
+        public MemoryEdict[] edicts;        // can NOT be array indexed, because
 
         // edict_t is variable sized, but can
         // be used to reference the world ent
@@ -409,7 +409,7 @@ namespace SharpQuake
         // copied and clear once per frame
         //public byte[] msgbuf;//[MAX_MSGLEN];
 
-        public edict_t edict; // edict_t *edict	// EDICT_NUM(clientnum+1)
+        public MemoryEdict edict; // edict_t *edict	// EDICT_NUM(clientnum+1)
         public String name;//[32];			// for printing to other people
         public Int32 colors;
 

@@ -173,15 +173,15 @@ namespace SharpQuake
 
             Int32 ofs;
             var s = EnterFunction( f );
-            edict_t ed;
+            MemoryEdict ed;
 
             while( true )
             {
                 s++;	// next statement
 
-                eval_t* a = (eval_t*)Get( _Statements[s].a );
-                eval_t* b = (eval_t*)Get( _Statements[s].b );
-                eval_t* c = (eval_t*)Get( _Statements[s].c );
+                EVal* a = (EVal*)Get( _Statements[s].a );
+                EVal* b = (EVal*)Get( _Statements[s].b );
+                EVal* c = (EVal*)Get( _Statements[s].c );
 
                 if( --runaway == 0 )
                     RunError( "runaway loop error" );
@@ -475,7 +475,7 @@ namespace SharpQuake
             host.Error( "Program error" );
         }
 
-        public static edict_t EdictFromAddr( Int32 addr, out Int32 ofs )
+        public static MemoryEdict EdictFromAddr( Int32 addr, out Int32 ofs )
         {
             var prog = ( addr >> 16 ) & 0xFFFF;
             ofs = addr & 0xFFFF;

@@ -49,36 +49,36 @@ namespace SharpQuake
 
         // num frame for '-' stats digit
 
-        private static glpic_t[,] _Nums = new glpic_t[2, 11];
-        private static glpic_t _Colon;
-        private static glpic_t _Slash;
-        private static glpic_t _IBar;
-        private static glpic_t _SBar;
-        private static glpic_t _ScoreBar;
+        private static GLPic[,] _Nums = new GLPic[2, 11];
+        private static GLPic _Colon;
+        private static GLPic _Slash;
+        private static GLPic _IBar;
+        private static GLPic _SBar;
+        private static GLPic _ScoreBar;
 
-        private static glpic_t[,] _Weapons = new glpic_t[7, 8];   // 0 is active, 1 is owned, 2-5 are flashes
-        private static glpic_t[] _Ammo = new glpic_t[4];
-        private static glpic_t[] _Sigil = new glpic_t[4];
-        private static glpic_t[] _Armor = new glpic_t[3];
-        private static glpic_t[] _Items = new glpic_t[32];
+        private static GLPic[,] _Weapons = new GLPic[7, 8];   // 0 is active, 1 is owned, 2-5 are flashes
+        private static GLPic[] _Ammo = new GLPic[4];
+        private static GLPic[] _Sigil = new GLPic[4];
+        private static GLPic[] _Armor = new GLPic[3];
+        private static GLPic[] _Items = new GLPic[32];
 
-        private static glpic_t[,] _Faces = new glpic_t[7, 2];        // 0 is gibbed, 1 is dead, 2-6 are alive
+        private static GLPic[,] _Faces = new GLPic[7, 2];        // 0 is gibbed, 1 is dead, 2-6 are alive
 
         // 0 is static, 1 is temporary animation
-        private static glpic_t _FaceInvis;
+        private static GLPic _FaceInvis;
 
-        private static glpic_t _FaceQuad;
-        private static glpic_t _FaceInvuln;
-        private static glpic_t _FaceInvisInvuln;
+        private static GLPic _FaceQuad;
+        private static GLPic _FaceInvuln;
+        private static GLPic _FaceInvisInvuln;
 
-        private static glpic_t[] _RInvBar = new glpic_t[2];
-        private static glpic_t[] _RWeapons = new glpic_t[5];
-        private static glpic_t[] _RItems = new glpic_t[2];
-        private static glpic_t[] _RAmmo = new glpic_t[3];
-        private static glpic_t _RTeamBord;		// PGM 01/19/97 - team color border
+        private static GLPic[] _RInvBar = new GLPic[2];
+        private static GLPic[] _RWeapons = new GLPic[5];
+        private static GLPic[] _RItems = new GLPic[2];
+        private static GLPic[] _RAmmo = new GLPic[3];
+        private static GLPic _RTeamBord;		// PGM 01/19/97 - team color border
 
         //MED 01/04/97 added two more weapons + 3 alternates for grenade launcher
-        private static glpic_t[,] _HWeapons = new glpic_t[7, 5];   // 0 is active, 1 is owned, 2-5 are flashes
+        private static GLPic[,] _HWeapons = new GLPic[7, 5];   // 0 is active, 1 is owned, 2-5 are flashes
 
         //MED 01/04/97 added array to simplify weapon parsing
         private static Int32[] _HipWeapons = new Int32[]
@@ -87,7 +87,7 @@ namespace SharpQuake
         };
 
         //MED 01/04/97 added hipnotic items array
-        private static glpic_t[] _HItems = new glpic_t[2];
+        private static GLPic[] _HItems = new GLPic[2];
 
         private static Int32[] _FragSort = new Int32[QDef.MAX_SCOREBOARD];
         private static String[] _ScoreBoardText = new String[QDef.MAX_SCOREBOARD];
@@ -382,7 +382,7 @@ namespace SharpQuake
                 return;
             }
 
-            glpic_t pic = Drawer.CachePic( "gfx/complete.lmp" );
+            GLPic pic = Drawer.CachePic( "gfx/complete.lmp" );
             Drawer.DrawPic( 64, 24, pic );
 
             pic = Drawer.CachePic( "gfx/inter.lmp" );
@@ -412,7 +412,7 @@ namespace SharpQuake
         {
             Scr.CopyEverithing = true;
 
-            glpic_t pic = Drawer.CachePic( "gfx/finale.lmp" );
+            GLPic pic = Drawer.CachePic( "gfx/finale.lmp" );
             Drawer.DrawTransPic( ( Scr.vid.width - pic.width ) / 2, 16, pic );
         }
 
@@ -700,7 +700,7 @@ namespace SharpQuake
         }
 
         // Sbar_DrawPic
-        private static void DrawPic( Int32 x, Int32 y, glpic_t pic )
+        private static void DrawPic( Int32 x, Int32 y, GLPic pic )
         {
             if( client.cl.gametype == protocol.GAME_DEATHMATCH )
                 Drawer.DrawPic( x, y + ( Scr.vid.height - SBAR_HEIGHT ), pic );
@@ -978,7 +978,7 @@ namespace SharpQuake
             Scr.CopyEverithing = true;
             Scr.FullUpdate = 0;
 
-            glpic_t pic = Drawer.CachePic( "gfx/ranking.lmp" );
+            GLPic pic = Drawer.CachePic( "gfx/ranking.lmp" );
             menu.DrawPic( ( 320 - pic.width ) / 2, 8, pic );
 
             // scores
@@ -1023,7 +1023,7 @@ namespace SharpQuake
         }
 
         // Sbar_DrawTransPic
-        private static void DrawTransPic( Int32 x, Int32 y, glpic_t pic )
+        private static void DrawTransPic( Int32 x, Int32 y, GLPic pic )
         {
             if( client.cl.gametype == protocol.GAME_DEATHMATCH )
                 Drawer.DrawTransPic( x, y + ( Scr.vid.height - SBAR_HEIGHT ), pic );

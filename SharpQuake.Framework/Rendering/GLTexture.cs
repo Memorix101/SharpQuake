@@ -6,12 +6,12 @@ using System.Threading.Tasks;
 
 namespace SharpQuake.Framework
 {
-    public class gltexture_t
+    public class GLTexture
     {
         public Int32 texnum;
         public String owner;
         public String identifier; //char	identifier[64];
         public Int32 width, height;
-        public System.Boolean mipmap;
+        public Boolean mipmap;
     } //gltexture_t;
 }

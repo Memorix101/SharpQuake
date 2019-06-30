@@ -7,15 +7,15 @@ using System.Threading.Tasks;
 
 namespace SharpQuake.Framework
 {
-    public class pack_t
+    public class Pak
     {
         public String filename; // [MAX_OSPATH];
         public BinaryReader stream; //int handle;
 
         //int numfiles;
-        public packfile_t[] files;
+        public MemoryPakFile[] files;
 
-        public pack_t( String filename, BinaryReader reader, packfile_t[] files )
+        public Pak( String filename, BinaryReader reader, MemoryPakFile[] files )
         {
             this.filename = filename;
             this.stream = reader;

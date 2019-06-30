@@ -6,9 +6,9 @@ using System.Threading.Tasks;
 
 namespace SharpQuake.Framework
 {
-    public struct entity_state_t
+    public struct EntityState
     {
-        public static readonly entity_state_t Empty = new entity_state_t( );
+        public static readonly EntityState Empty = new EntityState( );
         public Vector3f origin;
         public Vector3f angles;
         public Int32 modelindex;

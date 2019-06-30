@@ -97,8 +97,8 @@ namespace SharpQuake
                 header.identification[2] != 'D' || header.identification[3] != '2' )
                 Utilities.Error( "Wad file {0} doesn't have WAD2 id\n", filename );
 
-            var numlumps = Common.LittleLong( header.numlumps );
-            var infotableofs = Common.LittleLong( header.infotableofs );
+            var numlumps = EndianHelper.LittleLong( header.numlumps );
+            var infotableofs = EndianHelper.LittleLong( header.infotableofs );
             var lumpInfoSize = Marshal.SizeOf( typeof( lumpinfo_t ) );
 
             _Lumps = new Dictionary<String, lumpinfo_t>( numlumps );
@@ -107,8 +107,8 @@ namespace SharpQuake
             {
                 IntPtr ptr = new IntPtr( _DataPtr.ToInt64() + infotableofs + i * lumpInfoSize );
                 lumpinfo_t lump = (lumpinfo_t)Marshal.PtrToStructure( ptr, typeof( lumpinfo_t ) );
-                lump.filepos = Common.LittleLong( lump.filepos );
-                lump.size = Common.LittleLong( lump.size );
+                lump.filepos = EndianHelper.LittleLong( lump.filepos );
+                lump.size = EndianHelper.LittleLong( lump.size );
                 if( lump.type == TYP_QPIC )
                 {
                     ptr = new IntPtr( _DataPtr.ToInt64() + lump.filepos );
@@ -146,8 +146,8 @@ namespace SharpQuake
         // SwapPic (qpic_t *pic)
         public static void SwapPic( dqpicheader_t pic )
         {
-            pic.width = Common.LittleLong( pic.width );
-            pic.height = Common.LittleLong( pic.height );
+            pic.width = EndianHelper.LittleLong( pic.width );
+            pic.height = EndianHelper.LittleLong( pic.height );
         }
     }
 

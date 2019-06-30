@@ -266,14 +266,14 @@ namespace SharpQuake
 
                 // get the next message
                 BinaryReader reader = ( (DisposableWrapper<BinaryReader>)cls.demofile ).Object;
-                var size = Common.LittleLong( reader.ReadInt32() );
+                var size = EndianHelper.LittleLong( reader.ReadInt32() );
                 if( size > QDef.MAX_MSGLEN )
                     Utilities.Error( "Demo message > MAX_MSGLEN" );
 
                 cl.mviewangles[1] = cl.mviewangles[0];
-                cl.mviewangles[0].X = Common.LittleFloat( reader.ReadSingle() );
-                cl.mviewangles[0].Y = Common.LittleFloat( reader.ReadSingle() );
-                cl.mviewangles[0].Z = Common.LittleFloat( reader.ReadSingle() );
+                cl.mviewangles[0].X = EndianHelper.LittleFloat( reader.ReadSingle() );
+                cl.mviewangles[0].Y = EndianHelper.LittleFloat( reader.ReadSingle() );
+                cl.mviewangles[0].Z = EndianHelper.LittleFloat( reader.ReadSingle() );
 
                 net.Message.FillFrom( reader.BaseStream, size );
                 if( net.Message.Length < size )
@@ -326,12 +326,12 @@ namespace SharpQuake
         /// </summary>
         private static void WriteDemoMessage()
         {
-            var len = Common.LittleLong( net.Message.Length );
+            var len = EndianHelper.LittleLong( net.Message.Length );
             BinaryWriter writer = ( (DisposableWrapper<BinaryWriter>)cls.demofile ).Object;
             writer.Write( len );
-            writer.Write( Common.LittleFloat( cl.viewangles.X ) );
-            writer.Write( Common.LittleFloat( cl.viewangles.Y ) );
-            writer.Write( Common.LittleFloat( cl.viewangles.Z ) );
+            writer.Write( EndianHelper.LittleFloat( cl.viewangles.X ) );
+            writer.Write( EndianHelper.LittleFloat( cl.viewangles.Y ) );
+            writer.Write( EndianHelper.LittleFloat( cl.viewangles.Z ) );
             writer.Write( net.Message.Data, 0, net.Message.Length );
             writer.Flush();
         }

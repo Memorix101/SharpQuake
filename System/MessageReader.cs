@@ -108,7 +108,7 @@ namespace SharpQuake
 
             _Count += 4;
 
-            _Val.i0 = Common.LittleLong( _Val.i0 );
+            _Val.i0 = EndianHelper.LittleLong( _Val.i0 );
             return _Val.f0;
         }
 

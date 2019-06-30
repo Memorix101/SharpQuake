@@ -32,7 +32,7 @@ namespace SharpQuake
     partial class render
     {
         private static Int32 _DlightFrameCount; // r_dlightframecount
-        private static mplane_t _LightPlane; // lightplane
+        private static Plane _LightPlane; // lightplane
 
         /// <summary>
         /// R_PushDlights
@@ -62,7 +62,7 @@ namespace SharpQuake
                 return;
 
             mnode_t n = (mnode_t)node;
-            mplane_t splitplane = n.plane;
+            Plane splitplane = n.plane;
             var dist = Vector3.Dot( light.origin, splitplane.normal ) - splitplane.dist;
 
             if( dist > light.radius )
@@ -179,7 +179,7 @@ namespace SharpQuake
             // calculate mid point
 
             // FIXME: optimize for axial
-            mplane_t plane = n.plane;
+            Plane plane = n.plane;
             var front = Vector3.Dot( start, plane.normal ) - plane.dist;
             var back = Vector3.Dot( end, plane.normal ) - plane.dist;
             var side = front < 0 ? 1 : 0;

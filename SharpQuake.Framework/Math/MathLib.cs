@@ -21,6 +21,7 @@
 /// </copyright>
 
 using System;
+using System.Globalization;
 using OpenTK;
 
 // mathlib.h
@@ -52,7 +53,7 @@ namespace SharpQuake.Framework
 
             forward.X = ( Single ) ( cp * cy );
             forward.Y = ( Single ) ( cp * sy );
-            forward.Z = -( ( System.Single ) sp );
+            forward.Z = -( ( Single ) sp );
             right.X = ( Single ) ( -1 * sr * sp * cy + -1 * cr * -sy );
             right.Y = ( Single ) ( -1 * sr * sp * sy + -1 * cr * cy );
             right.Z = ( Single ) ( -1 * sr * cp );
@@ -188,7 +189,7 @@ namespace SharpQuake.Framework
             return ( a.X * b.X + a.Y * b.Y + a.Z * b.Z );
         }
 
-        public static Int32 BoxOnPlaneSide( ref Vector3f emins, ref Vector3f emaxs, mplane_t p )
+        public static Int32 BoxOnPlaneSide( ref Vector3f emins, ref Vector3f emaxs, Plane p )
         {
             Single mindist, maxdist;
             switch( p.type )
@@ -217,7 +218,7 @@ namespace SharpQuake.Framework
             return ( p.dist <= mindist ? 1 : ( p.dist >= maxdist ? 2 : 3 ) );
         }
 
-        public static Int32 BoxOnPlaneSide( ref Vector3 emins, ref Vector3 emaxs, mplane_t p )
+        public static Int32 BoxOnPlaneSide( ref Vector3 emins, ref Vector3 emaxs, Plane p )
         {
             Single mindist, maxdist;
             switch( p.type )
@@ -294,7 +295,7 @@ namespace SharpQuake.Framework
         }
 
         //Returns 1, 2, or 1 + 2
-        private static Int32 _BoxOnPlaneSide( ref Vector3 emins, ref Vector3 emaxs, mplane_t p )
+        private static Int32 _BoxOnPlaneSide( ref Vector3 emins, ref Vector3 emaxs, Plane p )
         {
             // general case
             Single dist1, dist2;
@@ -359,6 +360,55 @@ namespace SharpQuake.Framework
 #endif
 
             return sides;
+        }
+
+        public static Int32 atoi( String s )
+        {
+            if ( String.IsNullOrEmpty( s ) )
+                return 0;
+
+            var sign = 1;
+            var result = 0;
+            var offset = 0;
+            if ( s.StartsWith( "-" ) )
+            {
+                sign = -1;
+                offset++;
+            }
+
+            var i = -1;
+
+            if ( s.Length > 2 )
+            {
+                i = s.IndexOf( "0x", offset, 2 );
+                if ( i == -1 )
+                {
+                    i = s.IndexOf( "0X", offset, 2 );
+                }
+            }
+
+            if ( i == offset )
+            {
+                Int32.TryParse( s.Substring( offset + 2 ), System.Globalization.NumberStyles.HexNumber, null, out result );
+            }
+            else
+            {
+                i = s.IndexOf( '\'', offset, 1 );
+                if ( i != -1 )
+                {
+                    result = ( Byte ) s[i + 1];
+                }
+                else
+                    Int32.TryParse( s.Substring( offset ), out result );
+            }
+            return sign * result;
+        }
+
+        public static Single atof( String s )
+        {
+            Single v;
+            Single.TryParse( s, NumberStyles.Float, CultureInfo.InvariantCulture.NumberFormat, out v );
+            return v;
         }
 
         //static Vector3 PerpendicularVector(ref Vector3 src)

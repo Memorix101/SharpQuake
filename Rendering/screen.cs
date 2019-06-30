@@ -108,9 +108,9 @@ namespace SharpQuake
         private static System.Boolean _IsInitialized;
 
         private static System.Boolean _InUpdate;
-        private static glpic_t _Ram;
-        private static glpic_t _Net;
-        private static glpic_t _Turtle;
+        private static GLPic _Ram;
+        private static GLPic _Net;
+        private static GLPic _Turtle;
         private static Int32 _TurtleCount; // static count from SCR_DrawTurtle()
         private static System.Boolean _CopyEverything;
 
@@ -727,7 +727,7 @@ namespace SharpQuake
             if( !_DrawLoading )
                 return;
 
-            glpic_t pic = Drawer.CachePic( "gfx/loading.lmp" );
+            GLPic pic = Drawer.CachePic( "gfx/loading.lmp" );
             Drawer.DrawPic( ( vid.width - pic.width ) / 2, ( vid.height - 48 - pic.height ) / 2, pic );
         }
 
@@ -801,7 +801,7 @@ namespace SharpQuake
             if( !client.cl.paused )
                 return;
 
-            glpic_t pic = Drawer.CachePic( "gfx/pause.lmp" );
+            GLPic pic = Drawer.CachePic( "gfx/pause.lmp" );
             Drawer.DrawPic( ( vid.width - pic.width ) / 2, ( vid.height - 48 - pic.height ) / 2, pic );
         }
 

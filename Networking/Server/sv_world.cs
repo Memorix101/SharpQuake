@@ -56,7 +56,7 @@ namespace SharpQuake
         // box_hull
         private static dclipnode_t[] _BoxClipNodes = new dclipnode_t[6];
 
-        private static mplane_t[] _BoxPlanes = new mplane_t[6];
+        private static Plane[] _BoxPlanes = new Plane[6];
 
         /// <summary>
         /// SV_ClearWorld
@@ -79,7 +79,7 @@ namespace SharpQuake
         /// so it doesn't clip against itself
         /// flags ent->v.modified
         /// </summary>
-        public static void UnlinkEdict( edict_t ent )
+        public static void UnlinkEdict( MemoryEdict ent )
         {
             if( ent.area.Prev == null )
                 return;		// not linked in anywhere
@@ -96,7 +96,7 @@ namespace SharpQuake
         /// sets ent->v.absmin and ent->v.absmax
         /// if touchtriggers, calls prog functions for the intersected triggers
         /// </summary>
-        public static void LinkEdict( edict_t ent, Boolean touch_triggers )
+        public static void LinkEdict( MemoryEdict ent, Boolean touch_triggers )
         {
             if( ent.area.Prev != null )
                 UnlinkEdict( ent );	// unlink from old position
@@ -187,7 +187,7 @@ namespace SharpQuake
         /// shouldn't be considered solid objects
         /// passedict is explicitly excluded from clipping checks (normally NULL)
         /// </summary>
-        public static trace_t Move( ref Vector3 start, ref Vector3 mins, ref Vector3 maxs, ref Vector3 end, Int32 type, edict_t passedict )
+        public static trace_t Move( ref Vector3 start, ref Vector3 mins, ref Vector3 maxs, ref Vector3 end, Int32 type, MemoryEdict passedict )
         {
             moveclip_t clip = new moveclip_t();
 
@@ -249,7 +249,7 @@ namespace SharpQuake
             // find the point distances
             //
             Int16[] node_children = hull.clipnodes[num].children;
-            mplane_t plane = hull.planes[hull.clipnodes[num].planenum];
+            Plane plane = hull.planes[hull.clipnodes[num].planenum];
             Single t1, t2;
 
             if( plane.type < 3 )
@@ -377,7 +377,7 @@ namespace SharpQuake
         /// SV_TestEntityPosition
         /// This could be a lot more efficient...
         /// </summary>
-        private static edict_t TestEntityPosition( edict_t ent )
+        private static MemoryEdict TestEntityPosition( MemoryEdict ent )
         {
             trace_t trace = Move( ref ent.v.origin, ref ent.v.mins, ref ent.v.maxs, ref ent.v.origin, 0, ent );
 
@@ -452,7 +452,7 @@ namespace SharpQuake
         /// Offset is filled in to contain the adjustment that must be added to the
         /// testing object's origin to get a point to use with the returned hull.
         /// </summary>
-        private static hull_t HullForEntity( edict_t ent, ref Vector3 mins, ref Vector3 maxs, out Vector3 offset )
+        private static hull_t HullForEntity( MemoryEdict ent, ref Vector3 mins, ref Vector3 maxs, out Vector3 offset )
         {
             hull_t hull = null;
 
@@ -495,7 +495,7 @@ namespace SharpQuake
         /// <summary>
         /// SV_FindTouchedLeafs
         /// </summary>
-        private static void FindTouchedLeafs( edict_t ent, mnodebase_t node )
+        private static void FindTouchedLeafs( MemoryEdict ent, mnodebase_t node )
         {
             if( node.contents == Contents.CONTENTS_SOLID )
                 return;
@@ -504,7 +504,7 @@ namespace SharpQuake
 
             if( node.contents < 0 )
             {
-                if( ent.num_leafs == progs.MAX_ENT_LEAFS )
+                if( ent.num_leafs == ProgDefs.MAX_ENT_LEAFS )
                     return;
 
                 mleaf_t leaf = (mleaf_t)node;
@@ -517,7 +517,7 @@ namespace SharpQuake
 
             // NODE_MIXED
             mnode_t n = (mnode_t)node;
-            mplane_t splitplane = n.plane;
+            Plane splitplane = n.plane;
             var sides = MathLib.BoxOnPlaneSide( ref ent.v.absmin, ref ent.v.absmax, splitplane );
 
             // recurse down the contacted sides
@@ -531,14 +531,14 @@ namespace SharpQuake
         /// <summary>
         /// SV_TouchLinks
         /// </summary>
-        private static void TouchLinks( edict_t ent, areanode_t node )
+        private static void TouchLinks( MemoryEdict ent, areanode_t node )
         {
             // touch linked edicts
-            link_t next;
-            for( link_t l = node.trigger_edicts.Next; l != node.trigger_edicts; l = next )
+            Link next;
+            for( Link l = node.trigger_edicts.Next; l != node.trigger_edicts; l = next )
             {
                 next = l.Next;
-                edict_t touch = (edict_t)l.Owner;// EDICT_FROM_AREA(l);
+                MemoryEdict touch = (MemoryEdict)l.Owner;// EDICT_FROM_AREA(l);
                 if( touch == ent )
                     continue;
                 if( touch.v.touch == 0 || touch.v.solid != Solids.SOLID_TRIGGER )
@@ -575,7 +575,7 @@ namespace SharpQuake
         /// Handles selection or creation of a clipping hull, and offseting (and
         /// eventually rotation) of the end points
         /// </summary>
-        private static trace_t ClipMoveToEntity( edict_t ent, ref Vector3 start, ref Vector3 mins, ref Vector3 maxs, ref Vector3 end )
+        private static trace_t ClipMoveToEntity( MemoryEdict ent, ref Vector3 start, ref Vector3 mins, ref Vector3 maxs, ref Vector3 end )
         {
             trace_t trace = new trace_t();
             // fill in a default trace
@@ -619,14 +619,14 @@ namespace SharpQuake
         /// </summary>
         private static void ClipToLinks( areanode_t node, moveclip_t clip )
         {
-            link_t next;
+            Link next;
             trace_t trace;
 
             // touch linked edicts
-            for( link_t l = node.solid_edicts.Next; l != node.solid_edicts; l = next )
+            for( Link l = node.solid_edicts.Next; l != node.solid_edicts; l = next )
             {
                 next = l.Next;
-                edict_t touch = (edict_t)l.Owner;// EDICT_FROM_AREA(l);
+                MemoryEdict touch = (MemoryEdict)l.Owner;// EDICT_FROM_AREA(l);
                 if( touch.v.solid == Solids.SOLID_NOT )
                     continue;
                 if( touch == clip.passedict )
@@ -697,7 +697,7 @@ namespace SharpQuake
                     Utilities.Error( "SV_HullPointContents: bad node number" );
 
                 Int16[] node_children = hull.clipnodes[num].children;
-                mplane_t plane = hull.planes[hull.clipnodes[num].planenum];
+                Plane plane = hull.planes[hull.clipnodes[num].planenum];
                 Single d;
                 if( plane.type < 3 )
                     d = MathLib.Comp( ref p, plane.type ) - plane.dist;
@@ -720,7 +720,7 @@ namespace SharpQuake
             public Vector3 start, end;
             public trace_t trace;
             public Int32 type;
-            public edict_t passedict;
+            public MemoryEdict passedict;
         } //moveclip_t;
     }
 }

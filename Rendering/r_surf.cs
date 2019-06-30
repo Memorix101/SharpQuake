@@ -855,7 +855,7 @@ namespace SharpQuake
             mnode_t n = (mnode_t)node;
 
             // find which side of the node we are on
-            mplane_t plane = n.plane;
+            Plane plane = n.plane;
             Double dot;
 
             switch( plane.type )
@@ -1291,7 +1291,7 @@ namespace SharpQuake
             for( var i = 0; i < clmodel.nummodelsurfaces; i++, surfOffset++ )
             {
                 // find which side of the node we are on
-                mplane_t pplane = psurf[surfOffset].plane;
+                Plane pplane = psurf[surfOffset].plane;
 
                 var dot = Vector3.Dot( _ModelOrg, pplane.normal ) - pplane.dist;
 

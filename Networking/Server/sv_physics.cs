@@ -48,7 +48,7 @@ namespace SharpQuake
             //
             for( var i = 0; i < sv.num_edicts; i++ )
             {
-                edict_t ent = sv.edicts[i];
+                MemoryEdict ent = sv.edicts[i];
                 if( ent.free )
                     continue;
 
@@ -101,7 +101,7 @@ namespace SharpQuake
         /// SV_Physics_Toss
         /// Toss, bounce, and fly movement.  When onground, do nothing.
         /// </summary>
-        private static void Physics_Toss( edict_t ent )
+        private static void Physics_Toss( MemoryEdict ent )
         {
             // regular thinking
             if( !RunThink( ent ) )
@@ -187,7 +187,7 @@ namespace SharpQuake
         /// PushEntity
         /// Does not change the entities velocity at all
         /// </summary>
-        private static trace_t PushEntity( edict_t ent, ref Vector3f push )
+        private static trace_t PushEntity( MemoryEdict ent, ref Vector3f push )
         {
             Vector3f end;
             MathLib.VectorAdd( ref ent.v.origin, ref push, out end );
@@ -213,7 +213,7 @@ namespace SharpQuake
         /// <summary>
         /// SV_CheckWaterTransition
         /// </summary>
-        private static void CheckWaterTransition( edict_t ent )
+        private static void CheckWaterTransition( MemoryEdict ent )
         {
             Vector3 org = Common.ToVector( ref ent.v.origin );
             var cont = PointContents( ref org );
@@ -251,7 +251,7 @@ namespace SharpQuake
         /// <summary>
         /// SV_AddGravity
         /// </summary>
-        private static void AddGravity( edict_t ent )
+        private static void AddGravity( MemoryEdict ent )
         {
             var val = progs.GetEdictFieldFloat( ent, "gravity" );
             if( val == 0 )
@@ -262,7 +262,7 @@ namespace SharpQuake
         /// <summary>
         /// SV_Physics_Step
         /// </summary>
-        private static void Physics_Step( edict_t ent )
+        private static void Physics_Step( MemoryEdict ent )
         {
             Boolean hitsound;
 
@@ -296,7 +296,7 @@ namespace SharpQuake
         /// SV_Physics_Noclip
         /// A moving object that doesn't obey physics
         /// </summary>
-        private static void Physics_Noclip( edict_t ent )
+        private static void Physics_Noclip( MemoryEdict ent )
         {
             // regular thinking
             if( !RunThink( ent ) )
@@ -311,7 +311,7 @@ namespace SharpQuake
         /// SV_Physics_None
         /// Non moving objects can only think
         /// </summary>
-        private static void Physics_None( edict_t ent )
+        private static void Physics_None( MemoryEdict ent )
         {
             // regular thinking
             RunThink( ent );
@@ -320,7 +320,7 @@ namespace SharpQuake
         /// <summary>
         /// SV_Physics_Pusher
         /// </summary>
-        private static void Physics_Pusher( edict_t ent )
+        private static void Physics_Pusher( MemoryEdict ent )
         {
             var oldltime = ent.v.ltime;
             var thinktime = ent.v.nextthink;
@@ -355,7 +355,7 @@ namespace SharpQuake
         /// SV_Physics_Client
         /// Player character actions
         /// </summary>
-        private static void Physics_Client( edict_t ent, Int32 num )
+        private static void Physics_Client( MemoryEdict ent, Int32 num )
         {
             if( !svs.clients[num - 1].active )
                 return;		// unconnected slot
@@ -428,7 +428,7 @@ namespace SharpQuake
         /// SV_WalkMove
         /// Only used by players
         /// </summary>
-        private static void WalkMove( edict_t ent )
+        private static void WalkMove( MemoryEdict ent )
         {
             //
             // do a regular slide move unless it looks like you ran into a step
@@ -523,7 +523,7 @@ namespace SharpQuake
         ///
         /// This is a hack, but in the interest of good gameplay...
         /// </summary>
-        private static Int32 TryUnstick( edict_t ent, ref Vector3f oldvel )
+        private static Int32 TryUnstick( MemoryEdict ent, ref Vector3f oldvel )
         {
             Vector3f oldorg = ent.v.origin;
             Vector3f dir = Common.ZeroVector3f;
@@ -599,7 +599,7 @@ namespace SharpQuake
         /// <summary>
         /// SV_WallFriction
         /// </summary>
-        private static void WallFriction( edict_t ent, trace_t trace )
+        private static void WallFriction( MemoryEdict ent, trace_t trace )
         {
             Vector3 forward, right, up, vangle = Common.ToVector( ref ent.v.v_angle );
             MathLib.AngleVectors( ref vangle, out forward, out right, out up );
@@ -624,7 +624,7 @@ namespace SharpQuake
         /// This is a big hack to try and fix the rare case of getting stuck in the world
         /// clipping hull.
         /// </summary>
-        private static void CheckStuck( edict_t ent )
+        private static void CheckStuck( MemoryEdict ent )
         {
             if( TestEntityPosition( ent ) == null )
             {
@@ -663,7 +663,7 @@ namespace SharpQuake
         /// <summary>
         /// SV_CheckWater
         /// </summary>
-        private static Boolean CheckWater( edict_t ent )
+        private static Boolean CheckWater( MemoryEdict ent )
         {
             Vector3 point;
             point.X = ent.v.origin.x;
@@ -699,7 +699,7 @@ namespace SharpQuake
         /// in a frame.  Not used for pushmove objects, because they must be exact.
         /// Returns false if the entity removed itself.
         /// </summary>
-        private static Boolean RunThink( edict_t ent )
+        private static Boolean RunThink( MemoryEdict ent )
         {
             Single thinktime;
 
@@ -724,7 +724,7 @@ namespace SharpQuake
         /// <summary>
         /// SV_CheckVelocity
         /// </summary>
-        private static void CheckVelocity( edict_t ent )
+        private static void CheckVelocity( MemoryEdict ent )
         {
             //
             // bound velocity
@@ -753,7 +753,7 @@ namespace SharpQuake
         /// 4 = dead stop
         /// If steptrace is not NULL, the trace of any vertical wall hit will be stored
         /// </summary>
-        private static Int32 FlyMove( edict_t ent, Single time, trace_t steptrace )
+        private static Int32 FlyMove( MemoryEdict ent, Single time, trace_t steptrace )
         {
             Vector3f original_velocity = ent.v.velocity;
             Vector3f primal_velocity = ent.v.velocity;
@@ -882,7 +882,7 @@ namespace SharpQuake
             return blocked;
         }
 
-        private static trace_t Move( ref Vector3f start, ref Vector3f mins, ref Vector3f maxs, ref Vector3f end, Int32 type, edict_t passedict )
+        private static trace_t Move( ref Vector3f start, ref Vector3f mins, ref Vector3f maxs, ref Vector3f end, Int32 type, MemoryEdict passedict )
         {
             Vector3 vstart, vmins, vmaxs, vend;
             MathLib.Copy( ref start, out vstart );
@@ -896,7 +896,7 @@ namespace SharpQuake
         /// SV_Impact
         /// Two entities have touched, so run their touch functions
         /// </summary>
-        private static void Impact( edict_t e1, edict_t e2 )
+        private static void Impact( MemoryEdict e1, MemoryEdict e2 )
         {
             var old_self = progs.GlobalStruct.self;
             var old_other = progs.GlobalStruct.other;
@@ -923,7 +923,7 @@ namespace SharpQuake
         /// <summary>
         /// SV_PushMove
         /// </summary>
-        private static void PushMove( edict_t pusher, Single movetime )
+        private static void PushMove( MemoryEdict pusher, Single movetime )
         {
             if( pusher.v.velocity.IsEmpty )
             {
@@ -938,7 +938,7 @@ namespace SharpQuake
 
             Vector3f pushorig = pusher.v.origin;
 
-            edict_t[] moved_edict = new edict_t[QDef.MAX_EDICTS];
+            MemoryEdict[] moved_edict = new MemoryEdict[QDef.MAX_EDICTS];
             Vector3f[] moved_from = new Vector3f[QDef.MAX_EDICTS];
 
             // move the pusher to it's final position
@@ -951,7 +951,7 @@ namespace SharpQuake
             var num_moved = 0;
             for( var e = 1; e < sv.num_edicts; e++ )
             {
-                edict_t check = sv.edicts[e];
+                MemoryEdict check = sv.edicts[e];
                 if( check.free )
                     continue;
                 if( check.v.movetype == Movetypes.MOVETYPE_PUSH ||
@@ -987,7 +987,7 @@ namespace SharpQuake
                 pusher.v.solid = Solids.SOLID_BSP;
 
                 // if it is still inside the pusher, block
-                edict_t block = TestEntityPosition( check );
+                MemoryEdict block = TestEntityPosition( check );
                 if( block != null )
                 {
                     // fail the move

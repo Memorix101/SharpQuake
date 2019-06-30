@@ -33,50 +33,9 @@ namespace SharpQuake
 {
     internal delegate void builtin_t();
 
-    [StructLayout( LayoutKind.Explicit, Size = 12, Pack = 1 )]
-    internal unsafe struct eval_t
-    {
-        [FieldOffset(0)]
-        public string_t _string;
+    
 
-        [FieldOffset(0)]
-        public Single _float;
-
-        [FieldOffset(0)]
-        public fixed Single vector[3];
-
-        [FieldOffset(0)]
-        public string_t function;
-
-        [FieldOffset(0)]
-        public string_t _int;
-
-        [FieldOffset(0)]
-        public string_t edict;
-    }
-
-    /// <summary>
-    /// On-disk edict
-    /// </summary>
-    [StructLayout( LayoutKind.Sequential, Pack = 1 )]
-    internal struct dedict_t
-    {
-        public Boolean free;
-        public string_t dummy1, dummy2;	 // former link_t area
-
-        public string_t num_leafs;
-
-        [MarshalAs(UnmanagedType.ByValArray, SizeConst = progs.MAX_ENT_LEAFS)]
-        public Int16[] leafnums; // [MAX_ENT_LEAFS];
-
-        public entity_state_t baseline;
-
-        public Single freetime;			// sv.time when the object was freed
-        public entvars_t v;					// C exported fields from progs
-        // other fields from progs come immediately after
-
-        public static string_t SizeInBytes = Marshal.SizeOf(typeof(dedict_t));
-    }
+    
 
     internal enum etype_t
     {
@@ -172,10 +131,10 @@ namespace SharpQuake
 
         public void SwapBytes()
         {
-            this.op = ( UInt16 ) Common.LittleShort( ( Int16 ) this.op );
-            this.a = Common.LittleShort( this.a );
-            this.b = Common.LittleShort( this.b );
-            this.c = Common.LittleShort( this.c );
+            this.op = ( UInt16 ) EndianHelper.LittleShort( ( Int16 ) this.op );
+            this.a = EndianHelper.LittleShort( this.a );
+            this.b = EndianHelper.LittleShort( this.b );
+            this.c = EndianHelper.LittleShort( this.c );
         }
     }
 
@@ -185,103 +144,6 @@ namespace SharpQuake
     internal struct pad_int28
     {
         //int pad[28];
-    }
-
-    [StructLayout( LayoutKind.Sequential, Pack = 1 )]
-    internal struct entvars_t
-    {
-        public Single modelindex;
-        public Vector3f absmin;
-        public Vector3f absmax;
-        public Single ltime;
-        public Single movetype;
-        public Single solid;
-        public Vector3f origin;
-        public Vector3f oldorigin;
-        public Vector3f velocity;
-        public Vector3f angles;
-        public Vector3f avelocity;
-        public Vector3f punchangle;
-        public string_t classname;
-        public string_t model;
-        public Single frame;
-        public Single skin;
-        public Single effects;
-        public Vector3f mins;
-        public Vector3f maxs;
-        public Vector3f size;
-        public func_t touch;
-        public func_t use;
-        public func_t think;
-        public func_t blocked;
-        public Single nextthink;
-        public string_t groundentity;
-        public Single health;
-        public Single frags;
-        public Single weapon;
-        public string_t weaponmodel;
-        public Single weaponframe;
-        public Single currentammo;
-        public Single ammo_shells;
-        public Single ammo_nails;
-        public Single ammo_rockets;
-        public Single ammo_cells;
-        public Single items;
-        public Single takedamage;
-        public string_t chain;
-        public Single deadflag;
-        public Vector3f view_ofs;
-        public Single button0;
-        public Single button1;
-        public Single button2;
-        public Single impulse;
-        public Single fixangle;
-        public Vector3f v_angle;
-        public Single idealpitch;
-        public string_t netname;
-        public string_t enemy;
-        public Single flags;
-        public Single colormap;
-        public Single team;
-        public Single max_health;
-        public Single teleport_time;
-        public Single armortype;
-        public Single armorvalue;
-        public Single waterlevel;
-        public Single watertype;
-        public Single ideal_yaw;
-        public Single yaw_speed;
-        public string_t aiment;
-        public string_t goalentity;
-        public Single spawnflags;
-        public string_t target;
-        public string_t targetname;
-        public Single dmg_take;
-        public Single dmg_save;
-        public string_t dmg_inflictor;
-        public string_t owner;
-        public Vector3f movedir;
-        public string_t message;
-        public Single sounds;
-        public string_t noise;
-        public string_t noise1;
-        public string_t noise2;
-        public string_t noise3;
-
-        public static string_t SizeInBytes = Marshal.SizeOf(typeof(entvars_t));
-    }
-
-    /// <summary>
-    /// PR_functions
-    /// </summary>
-    static partial class progs
-    {
-        public const string_t DEF_SAVEGLOBAL = (1<<15);
-        public const string_t MAX_PARMS = 8;
-        public const string_t MAX_ENT_LEAFS = 16;
-
-        private const string_t PROG_VERSION = 6;
-        private const string_t PROGHEADER_CRC = 5927;
     }
 
     // eval_t;
@@ -301,207 +163,7 @@ namespace SharpQuake
         public const string_t RESERVED_OFS = 28;
     }
 
-    /// <summary>
-    /// In-memory edict
-    /// </summary>
-    internal class edict_t
-    {
-        public Boolean free;
-        public link_t area; // linked to a division node or leaf
-
-        public string_t num_leafs;
-        public Int16[] leafnums; // [MAX_ENT_LEAFS];
-
-        public entity_state_t baseline;
-
-        public Single freetime;			// sv.time when the object was freed
-        public entvars_t v;					// C exported fields from progs
-        public Single[] fields; // other fields from progs
-
-        public void Clear()
-        {
-            this.v = default( entvars_t );
-            if( this.fields != null )
-                Array.Clear( this.fields, 0, this.fields.Length );
-            this.free = false;
-        }
-
-        public Boolean IsV( string_t offset, out string_t correctedOffset )
-        {
-            if( offset < ( entvars_t.SizeInBytes >> 2 ) )
-            {
-                correctedOffset = offset;
-                return true;
-            }
-            correctedOffset = offset - ( entvars_t.SizeInBytes >> 2 );
-            return false;
-        }
-
-        public unsafe void LoadInt( string_t offset, eval_t* result )
-        {
-            Int32 offset1;
-            if( IsV( offset, out offset1 ) )
-            {
-                fixed ( void* pv = &this.v )
-                {
-                    eval_t* a = (eval_t*)( ( Int32* )pv + offset1 );
-                    result->_int = a->_int;
-                }
-            }
-            else
-            {
-                fixed ( void* pv = this.fields )
-                {
-                    eval_t* a = (eval_t*)( ( Int32* )pv + offset1 );
-                    result->_int = a->_int;
-                }
-            }
-        }
-
-        public unsafe void StoreInt( string_t offset, eval_t* value )
-        {
-            Int32 offset1;
-            if( IsV( offset, out offset1 ) )
-            {
-                fixed ( void* pv = &this.v )
-                {
-                    eval_t* a = (eval_t*)( ( Int32* )pv + offset1 );
-                    a->_int = value->_int;
-                }
-            }
-            else
-            {
-                fixed ( void* pv = this.fields )
-                {
-                    eval_t* a = (eval_t*)( ( Int32* )pv + offset1 );
-                    a->_int = value->_int;
-                }
-            }
-        }
-
-        public unsafe void LoadVector( string_t offset, eval_t* result )
-        {
-            Int32 offset1;
-            if( IsV( offset, out offset1 ) )
-            {
-                fixed ( void* pv = &this.v )
-                {
-                    eval_t* a = (eval_t*)( ( Int32* )pv + offset1 );
-                    result->vector[0] = a->vector[0];
-                    result->vector[1] = a->vector[1];
-                    result->vector[2] = a->vector[2];
-                }
-            }
-            else
-            {
-                fixed ( void* pf = this.fields )
-                {
-                    eval_t* a = (eval_t*)( ( Int32* )pf + offset1 );
-                    result->vector[0] = a->vector[0];
-                    result->vector[1] = a->vector[1];
-                    result->vector[2] = a->vector[2];
-                }
-            }
-        }
-
-        public unsafe void StoreVector( string_t offset, eval_t* value )
-        {
-            Int32 offset1;
-            if( IsV( offset, out offset1 ) )
-            {
-                fixed ( void* pv = &this.v )
-                {
-                    eval_t* a = (eval_t*)( ( Int32* )pv + offset1 );
-                    a->vector[0] = value->vector[0];
-                    a->vector[1] = value->vector[1];
-                    a->vector[2] = value->vector[2];
-                }
-            }
-            else
-            {
-                fixed ( void* pf = this.fields )
-                {
-                    eval_t* a = (eval_t*)( ( Int32* )pf + offset1 );
-                    a->vector[0] = value->vector[0];
-                    a->vector[1] = value->vector[1];
-                    a->vector[2] = value->vector[2];
-                }
-            }
-        }
-
-        public unsafe string_t GetInt( string_t offset )
-        {
-            Int32 offset1, result;
-            if( IsV( offset, out offset1 ) )
-            {
-                fixed ( void* pv = &this.v )
-                {
-                    eval_t* a = (eval_t*)( ( Int32* )pv + offset1 );
-                    result = a->_int;
-                }
-            }
-            else
-            {
-                fixed ( void* pv = this.fields )
-                {
-                    eval_t* a = (eval_t*)( ( Int32* )pv + offset1 );
-                    result = a->_int;
-                }
-            }
-            return result;
-        }
-
-        public unsafe Single GetFloat( string_t offset )
-        {
-            Int32 offset1;
-            Single result;
-            if( IsV( offset, out offset1 ) )
-            {
-                fixed ( void* pv = &this.v )
-                {
-                    eval_t* a = (eval_t*)( ( Single* )pv + offset1 );
-                    result = a->_float;
-                }
-            }
-            else
-            {
-                fixed ( void* pv = this.fields )
-                {
-                    eval_t* a = (eval_t*)( ( Single* )pv + offset1 );
-                    result = a->_float;
-                }
-            }
-            return result;
-        }
-
-        public unsafe void SetFloat( string_t offset, Single value )
-        {
-            Int32 offset1;
-            if( IsV( offset, out offset1 ) )
-            {
-                fixed ( void* pv = &this.v )
-                {
-                    eval_t* a = (eval_t*)( ( Single* )pv + offset1 );
-                    a->_float = value;
-                }
-            }
-            else
-            {
-                fixed ( void* pv = this.fields )
-                {
-                    eval_t* a = (eval_t*)( ( Single* )pv + offset1 );
-                    a->_float = value;
-                }
-            }
-        }
-
-        public edict_t()
-        {
-            this.area = new link_t( this );
-            this.leafnums = new Int16[progs.MAX_ENT_LEAFS];
-            this.fields = new Single[( progs.EdictSize - entvars_t.SizeInBytes ) >> 2];
-        }
-    } // edict_t;
+    
 
     // edict_t;
 
@@ -525,9 +187,9 @@ namespace SharpQuake
 
         public void SwapBytes()
         {
-            this.type = ( UInt16 ) Common.LittleShort( ( Int16 ) this.type );
-            this.ofs = ( UInt16 ) Common.LittleShort( ( Int16 ) this.ofs );
-            this.s_name = Common.LittleLong( this.s_name );
+            this.type = ( UInt16 ) EndianHelper.LittleShort( ( Int16 ) this.type );
+            this.ofs = ( UInt16 ) EndianHelper.LittleShort( ( Int16 ) this.ofs );
+            this.s_name = EndianHelper.LittleLong( this.s_name );
         }
     } // ddef_t;
 
@@ -545,7 +207,7 @@ namespace SharpQuake
 
         public string_t numparms;
 
-        [MarshalAs(UnmanagedType.ByValArray, SizeConst = progs.MAX_PARMS)]
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = ProgDefs.MAX_PARMS)]
         public Byte[] parm_size; // [MAX_PARMS];
 
         public static string_t SizeInBytes = Marshal.SizeOf(typeof(dfunction_t));
@@ -568,12 +230,12 @@ namespace SharpQuake
 
         public void SwapBytes()
         {
-            this.first_statement = Common.LittleLong( this.first_statement );
-            this.parm_start = Common.LittleLong( this.parm_start );
-            this.locals = Common.LittleLong( this.locals );
-            this.s_name = Common.LittleLong( this.s_name );
-            this.s_file = Common.LittleLong( this.s_file );
-            this.numparms = Common.LittleLong( this.numparms );
+            this.first_statement = EndianHelper.LittleLong( this.first_statement );
+            this.parm_start = EndianHelper.LittleLong( this.parm_start );
+            this.locals = EndianHelper.LittleLong( this.locals );
+            this.s_name = EndianHelper.LittleLong( this.s_name );
+            this.s_file = EndianHelper.LittleLong( this.s_file );
+            this.numparms = EndianHelper.LittleLong( this.numparms );
         }
 
         public override String ToString()
@@ -612,21 +274,21 @@ namespace SharpQuake
 
         public void SwapBytes()
         {
-            this.version = Common.LittleLong( this.version );
-            this.crc = Common.LittleLong( this.crc );
-            this.ofs_statements = Common.LittleLong( this.ofs_statements );
-            this.numstatements = Common.LittleLong( this.numstatements );
-            this.ofs_globaldefs = Common.LittleLong( this.ofs_globaldefs );
-            this.numglobaldefs = Common.LittleLong( this.numglobaldefs );
-            this.ofs_fielddefs = Common.LittleLong( this.ofs_fielddefs );
-            this.numfielddefs = Common.LittleLong( this.numfielddefs );
-            this.ofs_functions = Common.LittleLong( this.ofs_functions );
-            this.numfunctions = Common.LittleLong( this.numfunctions );
-            this.ofs_strings = Common.LittleLong( this.ofs_strings );
-            this.numstrings = Common.LittleLong( this.numstrings );
-            this.ofs_globals = Common.LittleLong( this.ofs_globals );
-            this.numglobals = Common.LittleLong( this.numglobals );
-            this.entityfields = Common.LittleLong( this.entityfields );
+            this.version = EndianHelper.LittleLong( this.version );
+            this.crc = EndianHelper.LittleLong( this.crc );
+            this.ofs_statements = EndianHelper.LittleLong( this.ofs_statements );
+            this.numstatements = EndianHelper.LittleLong( this.numstatements );
+            this.ofs_globaldefs = EndianHelper.LittleLong( this.ofs_globaldefs );
+            this.numglobaldefs = EndianHelper.LittleLong( this.numglobaldefs );
+            this.ofs_fielddefs = EndianHelper.LittleLong( this.ofs_fielddefs );
+            this.numfielddefs = EndianHelper.LittleLong( this.numfielddefs );
+            this.ofs_functions = EndianHelper.LittleLong( this.ofs_functions );
+            this.numfunctions = EndianHelper.LittleLong( this.numfunctions );
+            this.ofs_strings = EndianHelper.LittleLong( this.ofs_strings );
+            this.numstrings = EndianHelper.LittleLong( this.numstrings );
+            this.ofs_globals = EndianHelper.LittleLong( this.ofs_globals );
+            this.numglobals = EndianHelper.LittleLong( this.numglobals );
+            this.entityfields = EndianHelper.LittleLong( this.entityfields );
         }
     } // dprograms_t;
 

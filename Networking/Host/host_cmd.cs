@@ -588,7 +588,7 @@ namespace SharpQuake
                         else
                         {
                             // parse an edict
-                            edict_t ent = server.EdictNum( entnum );
+                            MemoryEdict ent = server.EdictNum( entnum );
                             ent.Clear();
                             progs.ParseEdict( data, ent );
 
@@ -909,7 +909,7 @@ namespace SharpQuake
                 return;
             }
 
-            edict_t ent;
+            MemoryEdict ent;
 
             // run the entrance script
             if( server.sv.loadgame )
@@ -1236,11 +1236,11 @@ namespace SharpQuake
             }
         }
 
-        private static edict_t FindViewthing()
+        private static MemoryEdict FindViewthing()
         {
             for( var i = 0; i < server.sv.num_edicts; i++ )
             {
-                edict_t e = server.EdictNum( i );
+                MemoryEdict e = server.EdictNum( i );
                 if( progs.GetString( e.v.classname ) == "viewthing" )
                     return e;
             }
@@ -1251,7 +1251,7 @@ namespace SharpQuake
         // Host_Viewmodel_f
         private static void Viewmodel_f()
         {
-            edict_t e = FindViewthing();
+            MemoryEdict e = FindViewthing();
             if( e == null )
                 return;
 
@@ -1271,7 +1271,7 @@ namespace SharpQuake
         /// </summary>
         private static void Viewframe_f()
         {
-            edict_t e = FindViewthing();
+            MemoryEdict e = FindViewthing();
             if( e == null )
                 return;
 
@@ -1298,7 +1298,7 @@ namespace SharpQuake
         /// </summary>
         private static void Viewnext_f()
         {
-            edict_t e = FindViewthing();
+            MemoryEdict e = FindViewthing();
             if( e == null )
                 return;
 
@@ -1316,7 +1316,7 @@ namespace SharpQuake
         /// </summary>
         private static void Viewprev_f()
         {
-            edict_t e = FindViewthing();
+            MemoryEdict e = FindViewthing();
             if( e == null )
                 return;
 

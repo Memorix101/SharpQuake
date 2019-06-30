@@ -33,7 +33,6 @@ namespace SharpQuake
         private static Stopwatch _StopWatch;
         private static Random _Random = new Random();
 
-
         /// <summary>
         /// Sys_FloatTime
         /// </summary>
@@ -46,7 +45,6 @@ namespace SharpQuake
             }
             return _StopWatch.Elapsed.TotalSeconds;
         }
-
 
         public static Int32 Random()
         {

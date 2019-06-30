@@ -28,7 +28,7 @@ namespace SharpQuake
 {
     partial class server
     {
-        public static edict_t Player
+        public static MemoryEdict Player
         {
             get
             {
@@ -38,7 +38,7 @@ namespace SharpQuake
 
         private const Int32 MAX_FORWARD = 6;
 
-        private static edict_t _Player; // sv_player
+        private static MemoryEdict _Player; // sv_player
         private static Boolean _OnGround; // onground
 
         // world

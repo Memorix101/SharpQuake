@@ -161,9 +161,9 @@ namespace SharpQuake
             // byte swap the header
             _Progs.SwapBytes();
 
-            if( _Progs.version != PROG_VERSION )
-                Utilities.Error( "progs.dat has wrong version number ({0} should be {1})", _Progs.version, PROG_VERSION );
-            if( _Progs.crc != PROGHEADER_CRC )
+            if( _Progs.version != ProgDefs.PROG_VERSION )
+                Utilities.Error( "progs.dat has wrong version number ({0} should be {1})", _Progs.version, ProgDefs.PROG_VERSION );
+            if( _Progs.crc != ProgDefs.PROGHEADER_CRC )
                 Utilities.Error( "progs.dat system vars have been modified, progdefs.h is out of date" );
 
             // Functions
@@ -203,7 +203,7 @@ namespace SharpQuake
             {
                 _FieldDefs[i] = Utilities.BytesToStructure<ddef_t>( buf, offset );
                 _FieldDefs[i].SwapBytes();
-                if( ( _FieldDefs[i].type & DEF_SAVEGLOBAL ) != 0 )
+                if( ( _FieldDefs[i].type & ProgDefs.DEF_SAVEGLOBAL ) != 0 )
                     Utilities.Error( "PR_LoadProgs: pr_fielddefs[i].type & DEF_SAVEGLOBAL" );
             }
 
@@ -229,8 +229,8 @@ namespace SharpQuake
             _Globals = new Single[_Progs.numglobals - globalvars_t.SizeInBytes / 4];
             Buffer.BlockCopy( buf, _Progs.ofs_globals + globalvars_t.SizeInBytes, _Globals, 0, _Globals.Length * 4 );
 
-            _EdictSize = _Progs.entityfields * 4 + dedict_t.SizeInBytes - entvars_t.SizeInBytes;
-
+            _EdictSize = _Progs.entityfields * 4 + Edict.SizeInBytes - EntVars.SizeInBytes;
+            ProgDefs.EdictSize = _EdictSize;
             _HGlobals = GCHandle.Alloc( _Globals, GCHandleType.Pinned );
             _GlobalsAddr = _HGlobals.AddrOfPinnedObject().ToInt64();
 
@@ -281,7 +281,7 @@ namespace SharpQuake
         /// </summary>
         public static void LoadFromFile( String data )
         {
-            edict_t ent = null;
+            MemoryEdict ent = null;
             var inhibit = 0;
             progs.GlobalStruct.time = ( Single ) server.sv.time;
 
@@ -355,7 +355,7 @@ namespace SharpQuake
         /// ed should be a properly initialized empty edict.
         /// Used for initial level load and for savegames.
         /// </summary>
-        public static String ParseEdict( String data, edict_t ent )
+        public static String ParseEdict( String data, MemoryEdict ent )
         {
             var init = false;
 
@@ -435,7 +435,7 @@ namespace SharpQuake
         /// ED_Print
         /// For debugging
         /// </summary>
-        public unsafe static void Print( edict_t ed )
+        public unsafe static void Print( MemoryEdict ed )
         {
             if( ed.free )
             {
@@ -452,7 +452,7 @@ namespace SharpQuake
                 if( name.Length > 2 && name[name.Length - 2] == '_' )
                     continue; // skip _x, _y, _z vars
 
-                var type = d.type & ~DEF_SAVEGLOBAL;
+                var type = d.type & ~ProgDefs.DEF_SAVEGLOBAL;
                 Int32 offset;
                 if( ed.IsV( d.ofs, out offset ) )
                 {
@@ -547,7 +547,7 @@ namespace SharpQuake
             return id;
         }
 
-        public static Single GetEdictFieldFloat( edict_t ed, String field, Single defValue = 0 )
+        public static Single GetEdictFieldFloat( MemoryEdict ed, String field, Single defValue = 0 )
         {
             ddef_t def = CachedSearch( ed, field );
             if( def == null )
@@ -556,7 +556,7 @@ namespace SharpQuake
             return ed.GetFloat( def.ofs );
         }
 
-        public static Boolean SetEdictFieldFloat( edict_t ed, String field, Single value )
+        public static Boolean SetEdictFieldFloat( MemoryEdict ed, String field, Single value )
         {
             ddef_t def = CachedSearch( ed, field );
             if( def != null )
@@ -598,10 +598,10 @@ namespace SharpQuake
             {
                 ddef_t def = _GlobalDefs[i];
                 etype_t type = (etype_t)def.type;
-                if( ( def.type & DEF_SAVEGLOBAL ) == 0 )
+                if( ( def.type & ProgDefs.DEF_SAVEGLOBAL ) == 0 )
                     continue;
 
-                type &= (etype_t)~DEF_SAVEGLOBAL;
+                type &= (etype_t)~ProgDefs.DEF_SAVEGLOBAL;
 
                 if( type != etype_t.ev_string && type != etype_t.ev_float && type != etype_t.ev_entity )
                     continue;
@@ -609,7 +609,7 @@ namespace SharpQuake
                 writer.Write( "\"" );
                 writer.Write( GetString( def.s_name ) );
                 writer.Write( "\" \"" );
-                writer.Write( UglyValueString( type, (eval_t*)Get( def.ofs ) ) );
+                writer.Write( UglyValueString( type, (EVal*)Get( def.ofs ) ) );
                 writer.WriteLine( "\"" );
             }
             writer.WriteLine( "}" );
@@ -618,7 +618,7 @@ namespace SharpQuake
         /// <summary>
         /// ED_Write
         /// </summary>
-        public unsafe static void WriteEdict( StreamWriter writer, edict_t ed )
+        public unsafe static void WriteEdict( StreamWriter writer, MemoryEdict ed )
         {
             writer.WriteLine( "{" );
 
@@ -635,7 +635,7 @@ namespace SharpQuake
                 if( name != null && name.Length > 2 && name[name.Length - 2] == '_' )// [strlen(name) - 2] == '_')
                     continue;	// skip _x, _y, _z vars
 
-                var type = d.type & ~DEF_SAVEGLOBAL;
+                var type = d.type & ~ProgDefs.DEF_SAVEGLOBAL;
                 Int32 offset1;
                 if( ed.IsV( d.ofs, out offset1 ) )
                 {
@@ -645,7 +645,7 @@ namespace SharpQuake
                         if( IsEmptyField( type, v ) )
                             continue;
 
-                        writer.WriteLine( "\"{0}\" \"{1}\"", name, UglyValueString( (etype_t)d.type, (eval_t*)v ) );
+                        writer.WriteLine( "\"{0}\" \"{1}\"", name, UglyValueString( (etype_t)d.type, (EVal*)v ) );
                     }
                 }
                 else
@@ -656,7 +656,7 @@ namespace SharpQuake
                         if( IsEmptyField( type, v ) )
                             continue;
 
-                        writer.WriteLine( "\"{0}\" \"{1}\"", name, UglyValueString( (etype_t)d.type, (eval_t*)v ) );
+                        writer.WriteLine( "\"{0}\" \"{1}\"", name, UglyValueString( (etype_t)d.type, (EVal*)v ) );
                     }
                 }
             }
@@ -719,7 +719,7 @@ namespace SharpQuake
 
             for( var i = 0; i < server.sv.edicts.Length; i++ )
             {
-                edict_t ed = server.sv.edicts[i];
+                MemoryEdict ed = server.sv.edicts[i];
 
                 if( ed.free )
                     continue;
@@ -774,7 +774,7 @@ namespace SharpQuake
 
             for( var i = 0; i < server.sv.num_edicts; i++ )
             {
-                edict_t ent = server.EdictNum( i );
+                MemoryEdict ent = server.EdictNum( i );
                 if( ent.free )
                     continue;
                 active++;
@@ -821,12 +821,12 @@ namespace SharpQuake
         /// to choose between thistwo parts.
         /// Warning: Key offset is in integers not bytes!
         /// </summary>
-        private static unsafe Boolean ParsePair( edict_t ent, ddef_t key, String s )
+        private static unsafe Boolean ParsePair( MemoryEdict ent, ddef_t key, String s )
         {
             Int32 offset1;
             if( ent.IsV( key.ofs, out offset1 ) )
             {
-                fixed ( entvars_t* ptr = &ent.v )
+                fixed ( EntVars* ptr = &ent.v )
                 {
                     return ParsePair( ( Int32* )ptr + offset1, key, s );
                 }
@@ -847,7 +847,7 @@ namespace SharpQuake
         {
             void* d = value;// (void *)((int *)base + key->ofs);
 
-            switch( (etype_t)( key.type & ~DEF_SAVEGLOBAL ) )
+            switch( (etype_t)( key.type & ~ProgDefs.DEF_SAVEGLOBAL ) )
             {
                 case etype_t.ev_string:
                     *( Int32* )d = NewString( s );// - pr_strings;
@@ -969,7 +969,7 @@ namespace SharpQuake
         private static unsafe String ValueString( etype_t type, void* val )
         {
             String result;
-            type &= (etype_t)~DEF_SAVEGLOBAL;
+            type &= (etype_t)~ProgDefs.DEF_SAVEGLOBAL;
 
             switch( type )
             {
@@ -1038,7 +1038,7 @@ namespace SharpQuake
             return null;
         }
 
-        private static ddef_t CachedSearch( edict_t ed, String field )
+        private static ddef_t CachedSearch( MemoryEdict ed, String field )
         {
             ddef_t def = null;
             for( var i = 0; i < GEFV_CACHESIZE; i++ )
@@ -1075,9 +1075,9 @@ namespace SharpQuake
         /// Returns a string describing *data in a type specific manner
         /// Easier to parse than PR_ValueString
         /// </summary>
-        private static unsafe String UglyValueString( etype_t type, eval_t* val )
+        private static unsafe String UglyValueString( etype_t type, EVal* val )
         {
-            type &= (etype_t)~DEF_SAVEGLOBAL;
+            type &= (etype_t)~ProgDefs.DEF_SAVEGLOBAL;
             String result;
 
             switch( type )

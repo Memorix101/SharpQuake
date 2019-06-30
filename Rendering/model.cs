@@ -217,7 +217,7 @@ namespace SharpQuake
                 }
 
                 mnode_t n = (mnode_t)node;
-                mplane_t plane = n.plane;
+                Plane plane = n.plane;
                 var d = Vector3.Dot( p, plane.normal ) - plane.dist;
                 if( d > 0 )
                     node = n.children[0];
@@ -347,7 +347,7 @@ namespace SharpQuake
         {
             mdl_t pinmodel = Utilities.BytesToStructure<mdl_t>( buffer, 0 );
 
-            var version = Common.LittleLong( pinmodel.version );
+            var version = EndianHelper.LittleLong( pinmodel.version );
             if( version != ALIAS_VERSION )
                 Utilities.Error( "{0} has wrong version number ({1} should be {2})",
                     mod.name, version, ALIAS_VERSION );
@@ -358,20 +358,20 @@ namespace SharpQuake
             //
             _Header = new aliashdr_t();
 
-            mod.flags = Common.LittleLong( pinmodel.flags );
+            mod.flags = EndianHelper.LittleLong( pinmodel.flags );
 
             //
             // endian-adjust and copy the data, starting with the alias model header
             //
-            _Header.boundingradius = Common.LittleFloat( pinmodel.boundingradius );
-            _Header.numskins = Common.LittleLong( pinmodel.numskins );
-            _Header.skinwidth = Common.LittleLong( pinmodel.skinwidth );
-            _Header.skinheight = Common.LittleLong( pinmodel.skinheight );
+            _Header.boundingradius = EndianHelper.LittleFloat( pinmodel.boundingradius );
+            _Header.numskins = EndianHelper.LittleLong( pinmodel.numskins );
+            _Header.skinwidth = EndianHelper.LittleLong( pinmodel.skinwidth );
+            _Header.skinheight = EndianHelper.LittleLong( pinmodel.skinheight );
 
             if( _Header.skinheight > MAX_LBM_HEIGHT )
                 Utilities.Error( "model {0} has a skin taller than {1}", mod.name, MAX_LBM_HEIGHT );
 
-            _Header.numverts = Common.LittleLong( pinmodel.numverts );
+            _Header.numverts = EndianHelper.LittleLong( pinmodel.numverts );
 
             if( _Header.numverts <= 0 )
                 Utilities.Error( "model {0} has no vertices", mod.name );
@@ -379,23 +379,23 @@ namespace SharpQuake
             if( _Header.numverts > MAXALIASVERTS )
                 Utilities.Error( "model {0} has too many vertices", mod.name );
 
-            _Header.numtris = Common.LittleLong( pinmodel.numtris );
+            _Header.numtris = EndianHelper.LittleLong( pinmodel.numtris );
 
             if( _Header.numtris <= 0 )
                 Utilities.Error( "model {0} has no triangles", mod.name );
 
-            _Header.numframes = Common.LittleLong( pinmodel.numframes );
+            _Header.numframes = EndianHelper.LittleLong( pinmodel.numframes );
             var numframes = _Header.numframes;
             if( numframes < 1 )
                 Utilities.Error( "Mod_LoadAliasModel: Invalid # of frames: {0}\n", numframes );
 
-            _Header.size = Common.LittleFloat( pinmodel.size ) * ALIAS_BASE_SIZE_RATIO;
-            mod.synctype = (synctype_t)Common.LittleLong( ( Int32 ) pinmodel.synctype );
+            _Header.size = EndianHelper.LittleFloat( pinmodel.size ) * ALIAS_BASE_SIZE_RATIO;
+            mod.synctype = (synctype_t) EndianHelper.LittleLong( ( Int32 ) pinmodel.synctype );
             mod.numframes = _Header.numframes;
 
-            _Header.scale = Common.LittleVector( Common.ToVector( ref pinmodel.scale ) );
-            _Header.scale_origin = Common.LittleVector( Common.ToVector( ref pinmodel.scale_origin ) );
-            _Header.eyeposition = Common.LittleVector( Common.ToVector( ref pinmodel.eyeposition ) );
+            _Header.scale = EndianHelper.LittleVector( Common.ToVector( ref pinmodel.scale ) );
+            _Header.scale_origin = EndianHelper.LittleVector( Common.ToVector( ref pinmodel.scale_origin ) );
+            _Header.eyeposition = EndianHelper.LittleVector( Common.ToVector( ref pinmodel.eyeposition ) );
 
             //
             // load the skins
@@ -410,9 +410,9 @@ namespace SharpQuake
             {
                 _STVerts[i] = Utilities.BytesToStructure<stvert_t>( buffer, offset );
 
-                _STVerts[i].onseam = Common.LittleLong( _STVerts[i].onseam );
-                _STVerts[i].s = Common.LittleLong( _STVerts[i].s );
-                _STVerts[i].t = Common.LittleLong( _STVerts[i].t );
+                _STVerts[i].onseam = EndianHelper.LittleLong( _STVerts[i].onseam );
+                _STVerts[i].s = EndianHelper.LittleLong( _STVerts[i].s );
+                _STVerts[i].t = EndianHelper.LittleLong( _STVerts[i].t );
             }
 
             //
@@ -423,10 +423,10 @@ namespace SharpQuake
             for( var i = 0; i < _Header.numtris; i++, offset += dtriangle_t.SizeInBytes )
             {
                 _Triangles[i] = Utilities.BytesToStructure<dtriangle_t>( buffer, offset );
-                _Triangles[i].facesfront = Common.LittleLong( _Triangles[i].facesfront );
+                _Triangles[i].facesfront = EndianHelper.LittleLong( _Triangles[i].facesfront );
 
                 for( var j = 0; j < 3; j++ )
-                    _Triangles[i].vertindex[j] = Common.LittleLong( _Triangles[i].vertindex[j] );
+                    _Triangles[i].vertindex[j] = EndianHelper.LittleLong( _Triangles[i].vertindex[j] );
             }
 
             //
@@ -481,12 +481,12 @@ namespace SharpQuake
         {
             dsprite_t pin = Utilities.BytesToStructure<dsprite_t>( buffer, 0 );
 
-            var version = Common.LittleLong( pin.version );
+            var version = EndianHelper.LittleLong( pin.version );
             if( version != SPRITE_VERSION )
                 Utilities.Error( "{0} has wrong version number ({1} should be {2})",
                     mod.name, version, SPRITE_VERSION );
 
-            var numframes = Common.LittleLong( pin.numframes );
+            var numframes = EndianHelper.LittleLong( pin.numframes );
 
             msprite_t psprite = new msprite_t();
 
@@ -494,11 +494,11 @@ namespace SharpQuake
             mod.cache = new cache_user_t();
             mod.cache.data = psprite;
 
-            psprite.type = Common.LittleLong( pin.type );
-            psprite.maxwidth = Common.LittleLong( pin.width );
-            psprite.maxheight = Common.LittleLong( pin.height );
-            psprite.beamlength = Common.LittleFloat( pin.beamlength );
-            mod.synctype = (synctype_t)Common.LittleLong( ( Int32 ) pin.synctype );
+            psprite.type = EndianHelper.LittleLong( pin.type );
+            psprite.maxwidth = EndianHelper.LittleLong( pin.width );
+            psprite.maxheight = EndianHelper.LittleLong( pin.height );
+            psprite.beamlength = EndianHelper.LittleFloat( pin.beamlength );
+            mod.synctype = (synctype_t)EndianHelper.LittleLong( ( Int32 ) pin.synctype );
             psprite.numframes = numframes;
 
             mod.mins.X = mod.mins.Y = -psprite.maxwidth / 2;
@@ -547,7 +547,7 @@ namespace SharpQuake
 
             dheader_t header = Utilities.BytesToStructure<dheader_t>( buffer, 0 );
 
-            var i = Common.LittleLong( header.version );
+            var i = EndianHelper.LittleLong( header.version );
             if( i != bsp_file.BSPVERSION )
                 Utilities.Error( "Mod_LoadBrushModel: {0} has wrong version number ({1} should be {2})", mod.name, i, bsp_file.BSPVERSION );
 
@@ -558,8 +558,8 @@ namespace SharpQuake
 
             for( i = 0; i < header.lumps.Length; i++ )
             {
-                header.lumps[i].filelen = Common.LittleLong( header.lumps[i].filelen );
-                header.lumps[i].fileofs = Common.LittleLong( header.lumps[i].fileofs );
+                header.lumps[i].filelen = EndianHelper.LittleLong( header.lumps[i].filelen );
+                header.lumps[i].fileofs = EndianHelper.LittleLong( header.lumps[i].fileofs );
             }
 
             // load into heap
@@ -704,7 +704,7 @@ namespace SharpQuake
                     // animating skin group.  yuck.
                     offset += daliasskintype_t.SizeInBytes;
                     daliasskingroup_t pinskingroup = Utilities.BytesToStructure<daliasskingroup_t>( data.Data, offset );
-                    var groupskins = Common.LittleLong( pinskingroup.numskins );
+                    var groupskins = EndianHelper.LittleLong( pinskingroup.numskins );
                     offset += daliasskingroup_t.SizeInBytes;
                     daliasskininterval_t pinskinintervals = Utilities.BytesToStructure<daliasskininterval_t>( data.Data, offset );
 
@@ -782,7 +782,7 @@ namespace SharpQuake
         {
             var offset = pin.StartIndex;
             daliasgroup_t pingroup = Utilities.BytesToStructure<daliasgroup_t>( pin.Data, offset );
-            var numframes = Common.LittleLong( pingroup.numframes );
+            var numframes = EndianHelper.LittleLong( pingroup.numframes );
 
             frame.Init();
             frame.firstpose = _PoseNum;
@@ -798,7 +798,7 @@ namespace SharpQuake
             offset += daliasgroup_t.SizeInBytes;
             daliasinterval_t pin_intervals = Utilities.BytesToStructure<daliasinterval_t>( pin.Data, offset ); // (daliasinterval_t*)(pingroup + 1);
 
-            frame.interval = Common.LittleFloat( pin_intervals.interval );
+            frame.interval = EndianHelper.LittleFloat( pin_intervals.interval );
 
             offset += numframes * daliasinterval_t.SizeInBytes;
 
@@ -827,8 +827,8 @@ namespace SharpQuake
         {
             dspriteframe_t pinframe = Utilities.BytesToStructure<dspriteframe_t>( pin.Data, pin.StartIndex );
 
-            var width = Common.LittleLong( pinframe.width );
-            var height = Common.LittleLong( pinframe.height );
+            var width = EndianHelper.LittleLong( pinframe.width );
+            var height = EndianHelper.LittleLong( pinframe.height );
             var size = width * height;
 
             mspriteframe_t pspriteframe = new mspriteframe_t();
@@ -837,8 +837,8 @@ namespace SharpQuake
 
             pspriteframe.width = width;
             pspriteframe.height = height;
-            var orgx = Common.LittleLong( pinframe.origin[0] );
-            var orgy = Common.LittleLong( pinframe.origin[1] );
+            var orgx = EndianHelper.LittleLong( pinframe.origin[0] );
+            var orgy = EndianHelper.LittleLong( pinframe.origin[1] );
 
             pspriteframe.up = orgy;// origin[1];
             pspriteframe.down = orgy - height;
@@ -859,7 +859,7 @@ namespace SharpQuake
         {
             dspritegroup_t pingroup = Utilities.BytesToStructure<dspritegroup_t>( pin.Data, pin.StartIndex );
 
-            var numframes = Common.LittleLong( pingroup.numframes );
+            var numframes = EndianHelper.LittleLong( pingroup.numframes );
             mspritegroup_t pspritegroup = new mspritegroup_t();
             pspritegroup.numframes = numframes;
             pspritegroup.frames = new mspriteframe_t[numframes];
@@ -871,7 +871,7 @@ namespace SharpQuake
             for( var i = 0; i < numframes; i++, offset += dspriteinterval_t.SizeInBytes )
             {
                 dspriteinterval_t interval = Utilities.BytesToStructure<dspriteinterval_t>( pin.Data, offset );
-                poutintervals[i] = Common.LittleFloat( interval.interval );
+                poutintervals[i] = EndianHelper.LittleFloat( interval.interval );
                 if( poutintervals[i] <= 0 )
                     Utilities.Error( "Mod_LoadSpriteGroup: interval<=0" );
             }
@@ -903,7 +903,7 @@ namespace SharpQuake
             for( Int32 i = 0, offset = l.fileofs; i < count; i++, offset += dvertex_t.SizeInBytes )
             {
                 dvertex_t src = Utilities.BytesToStructure<dvertex_t>( _ModBase, offset );
-                verts[i].position = Common.LittleVector3( src.point );
+                verts[i].position = EndianHelper.LittleVector3( src.point );
             }
         }
 
@@ -926,8 +926,8 @@ namespace SharpQuake
             {
                 dedge_t src = Utilities.BytesToStructure<dedge_t>( _ModBase, offset );
                 edges[i].v = new UInt16[] {
-                    (UInt16)Common.LittleShort((Int16)src.v[0]),
-                    (UInt16)Common.LittleShort((Int16)src.v[1])
+                    (UInt16)EndianHelper.LittleShort((Int16)src.v[0]),
+                    (UInt16)EndianHelper.LittleShort((Int16)src.v[1])
                 };
             }
         }
@@ -949,7 +949,7 @@ namespace SharpQuake
             for( Int32 i = 0, offset = l.fileofs; i < count; i++, offset += 4 )
             {
                 var src = BitConverter.ToInt32( _ModBase, offset );
-                edges[i] = src; // Common.LittleLong(in[i]);
+                edges[i] = src; // EndianHelper.LittleLong(in[i]);
             }
         }
 
@@ -966,7 +966,7 @@ namespace SharpQuake
 
             dmiptexlump_t m = Utilities.BytesToStructure<dmiptexlump_t>( _ModBase, l.fileofs );// (dmiptexlump_t *)(mod_base + l.fileofs);
 
-            m.nummiptex = Common.LittleLong( m.nummiptex );
+            m.nummiptex = EndianHelper.LittleLong( m.nummiptex );
 
             Int32[] dataofs = new Int32[m.nummiptex];
 
@@ -977,16 +977,16 @@ namespace SharpQuake
 
             for( var i = 0; i < m.nummiptex; i++ )
             {
-                dataofs[i] = Common.LittleLong( dataofs[i] );
+                dataofs[i] = EndianHelper.LittleLong( dataofs[i] );
                 if( dataofs[i] == -1 )
                     continue;
 
                 var mtOffset = l.fileofs + dataofs[i];
                 miptex_t mt = Utilities.BytesToStructure<miptex_t>( _ModBase, mtOffset ); //mt = (miptex_t *)((byte *)m + m.dataofs[i]);
-                mt.width = ( UInt32 ) Common.LittleLong( ( Int32 ) mt.width );
-                mt.height = ( UInt32 ) Common.LittleLong( ( Int32 ) mt.height );
+                mt.width = ( UInt32 ) EndianHelper.LittleLong( ( Int32 ) mt.width );
+                mt.height = ( UInt32 ) EndianHelper.LittleLong( ( Int32 ) mt.height );
                 for( var j = 0; j < bsp_file.MIPLEVELS; j++ )
-                    mt.offsets[j] = ( UInt32 ) Common.LittleLong( ( Int32 ) mt.offsets[j] );
+                    mt.offsets[j] = ( UInt32 ) EndianHelper.LittleLong( ( Int32 ) mt.offsets[j] );
 
                 if( ( mt.width & 15 ) != 0 || ( mt.height & 15 ) != 0 )
                     Utilities.Error( "Texture {0} is not 16 aligned", mt.name );
@@ -1191,10 +1191,10 @@ namespace SharpQuake
 
             var count = l.filelen / dplane_t.SizeInBytes;
             // Uze: Possible error! Why in original is out = Hunk_AllocName ( count*2*sizeof(*out), loadname)???
-            mplane_t[] planes = new mplane_t[count];
+            Plane[] planes = new Plane[count];
 
             for( var i = 0; i < planes.Length; i++ )
-                planes[i] = new mplane_t();
+                planes[i] = new Plane();
 
             _LoadModel.planes = planes;
             _LoadModel.numplanes = count;
@@ -1203,15 +1203,15 @@ namespace SharpQuake
             {
                 dplane_t src = Utilities.BytesToStructure<dplane_t>( _ModBase, l.fileofs + i * dplane_t.SizeInBytes );
                 var bits = 0;
-                planes[i].normal = Common.LittleVector3( src.normal );
+                planes[i].normal = EndianHelper.LittleVector3( src.normal );
                 if( planes[i].normal.X < 0 )
                     bits |= 1;
                 if( planes[i].normal.Y < 0 )
                     bits |= 1 << 1;
                 if( planes[i].normal.Z < 0 )
                     bits |= 1 << 2;
-                planes[i].dist = Common.LittleFloat( src.dist );
-                planes[i].type = ( Byte ) Common.LittleLong( src.type );
+                planes[i].dist = EndianHelper.LittleFloat( src.dist );
+                planes[i].type = ( Byte ) EndianHelper.LittleLong( src.type );
                 planes[i].signbits = ( Byte ) bits;
             }
         }
@@ -1239,7 +1239,7 @@ namespace SharpQuake
                 texinfo_t src = Utilities.BytesToStructure<texinfo_t>( _ModBase, l.fileofs + i * texinfo_t.SizeInBytes );
 
                 for( var j = 0; j < 2; j++ )
-                    infos[i].vecs[j] = Common.LittleVector4( src.vecs, j * 4 );
+                    infos[i].vecs[j] = EndianHelper.LittleVector4( src.vecs, j * 4 );
 
                 var len1 = infos[i].vecs[0].Length;
                 var len2 = infos[i].vecs[1].Length;
@@ -1253,8 +1253,8 @@ namespace SharpQuake
                 else
                     infos[i].mipadjust = 1;
 
-                var miptex = Common.LittleLong( src.miptex );
-                infos[i].flags = Common.LittleLong( src.flags );
+                var miptex = EndianHelper.LittleLong( src.miptex );
+                infos[i].flags = EndianHelper.LittleLong( src.flags );
 
                 if( _LoadModel.textures == null )
                 {
@@ -1296,17 +1296,17 @@ namespace SharpQuake
             {
                 dface_t src = Utilities.BytesToStructure<dface_t>( _ModBase, offset );
 
-                dest[surfnum].firstedge = Common.LittleLong( src.firstedge );
-                dest[surfnum].numedges = Common.LittleShort( src.numedges );
+                dest[surfnum].firstedge = EndianHelper.LittleLong( src.firstedge );
+                dest[surfnum].numedges = EndianHelper.LittleShort( src.numedges );
                 dest[surfnum].flags = 0;
 
-                Int32 planenum = Common.LittleShort( src.planenum );
-                Int32 side = Common.LittleShort( src.side );
+                Int32 planenum = EndianHelper.LittleShort( src.planenum );
+                Int32 side = EndianHelper.LittleShort( src.side );
                 if( side != 0 )
                     dest[surfnum].flags |= Surf.SURF_PLANEBACK;
 
                 dest[surfnum].plane = _LoadModel.planes[planenum];
-                dest[surfnum].texinfo = _LoadModel.texinfo[Common.LittleShort( src.texinfo )];
+                dest[surfnum].texinfo = _LoadModel.texinfo[EndianHelper.LittleShort( src.texinfo )];
 
                 CalcSurfaceExtents( dest[surfnum] );
 
@@ -1315,7 +1315,7 @@ namespace SharpQuake
                 for( var i = 0; i < bsp_file.MAXLIGHTMAPS; i++ )
                     dest[surfnum].styles[i] = src.styles[i];
 
-                var i2 = Common.LittleLong( src.lightofs );
+                var i2 = EndianHelper.LittleLong( src.lightofs );
                 if( i2 == -1 )
                     dest[surfnum].sample_base = null;
                 else
@@ -1407,22 +1407,22 @@ namespace SharpQuake
             {
                 dleaf_t src = Utilities.BytesToStructure<dleaf_t>( _ModBase, offset );
 
-                dest[i].mins.X = Common.LittleShort( src.mins[0] );
-                dest[i].mins.Y = Common.LittleShort( src.mins[1] );
-                dest[i].mins.Z = Common.LittleShort( src.mins[2] );
+                dest[i].mins.X = EndianHelper.LittleShort( src.mins[0] );
+                dest[i].mins.Y = EndianHelper.LittleShort( src.mins[1] );
+                dest[i].mins.Z = EndianHelper.LittleShort( src.mins[2] );
 
-                dest[i].maxs.X = Common.LittleShort( src.maxs[0] );
-                dest[i].maxs.Y = Common.LittleShort( src.maxs[1] );
-                dest[i].maxs.Z = Common.LittleShort( src.maxs[2] );
+                dest[i].maxs.X = EndianHelper.LittleShort( src.maxs[0] );
+                dest[i].maxs.Y = EndianHelper.LittleShort( src.maxs[1] );
+                dest[i].maxs.Z = EndianHelper.LittleShort( src.maxs[2] );
 
-                var p = Common.LittleLong( src.contents );
+                var p = EndianHelper.LittleLong( src.contents );
                 dest[i].contents = p;
 
                 dest[i].marksurfaces = _LoadModel.marksurfaces;
-                dest[i].firstmarksurface = Common.LittleShort( ( Int16 ) src.firstmarksurface );
-                dest[i].nummarksurfaces = Common.LittleShort( ( Int16 ) src.nummarksurfaces );
+                dest[i].firstmarksurface = EndianHelper.LittleShort( ( Int16 ) src.firstmarksurface );
+                dest[i].nummarksurfaces = EndianHelper.LittleShort( ( Int16 ) src.nummarksurfaces );
 
-                p = Common.LittleLong( src.visofs );
+                p = EndianHelper.LittleLong( src.visofs );
                 if( p == -1 )
                     dest[i].compressed_vis = null;
                 else
@@ -1466,23 +1466,23 @@ namespace SharpQuake
             {
                 dnode_t src = Utilities.BytesToStructure<dnode_t>( _ModBase, offset );
 
-                dest[i].mins.X = Common.LittleShort( src.mins[0] );
-                dest[i].mins.Y = Common.LittleShort( src.mins[1] );
-                dest[i].mins.Z = Common.LittleShort( src.mins[2] );
+                dest[i].mins.X = EndianHelper.LittleShort( src.mins[0] );
+                dest[i].mins.Y = EndianHelper.LittleShort( src.mins[1] );
+                dest[i].mins.Z = EndianHelper.LittleShort( src.mins[2] );
 
-                dest[i].maxs.X = Common.LittleShort( src.maxs[0] );
-                dest[i].maxs.Y = Common.LittleShort( src.maxs[1] );
-                dest[i].maxs.Z = Common.LittleShort( src.maxs[2] );
+                dest[i].maxs.X = EndianHelper.LittleShort( src.maxs[0] );
+                dest[i].maxs.Y = EndianHelper.LittleShort( src.maxs[1] );
+                dest[i].maxs.Z = EndianHelper.LittleShort( src.maxs[2] );
 
-                var p = Common.LittleLong( src.planenum );
+                var p = EndianHelper.LittleLong( src.planenum );
                 dest[i].plane = _LoadModel.planes[p];
 
-                dest[i].firstsurface = ( UInt16 ) Common.LittleShort( ( Int16 ) src.firstface );
-                dest[i].numsurfaces = ( UInt16 ) Common.LittleShort( ( Int16 ) src.numfaces );
+                dest[i].firstsurface = ( UInt16 ) EndianHelper.LittleShort( ( Int16 ) src.firstface );
+                dest[i].numsurfaces = ( UInt16 ) EndianHelper.LittleShort( ( Int16 ) src.numfaces );
 
                 for( var j = 0; j < 2; j++ )
                 {
-                    p = Common.LittleShort( src.children[j] );
+                    p = EndianHelper.LittleShort( src.children[j] );
                     if( p >= 0 )
                         dest[i].children[j] = _LoadModel.nodes[p];
                     else
@@ -1535,10 +1535,10 @@ namespace SharpQuake
             {
                 dclipnode_t src = Utilities.BytesToStructure<dclipnode_t>( _ModBase, offset );
 
-                dest[i].planenum = Common.LittleLong( src.planenum ); // Uze: changed from LittleShort
+                dest[i].planenum = EndianHelper.LittleLong( src.planenum ); // Uze: changed from LittleShort
                 dest[i].children = new Int16[2];
-                dest[i].children[0] = Common.LittleShort( src.children[0] );
-                dest[i].children[1] = Common.LittleShort( src.children[1] );
+                dest[i].children[0] = EndianHelper.LittleShort( src.children[0] );
+                dest[i].children[1] = EndianHelper.LittleShort( src.children[1] );
             }
         }
 
@@ -1580,18 +1580,18 @@ namespace SharpQuake
                 for( var j = 0; j < 3; j++ )
                 {
                     // spread the mins / maxs by a pixel
-                    dest[i].mins[j] = Common.LittleFloat( src.mins[j] ) - 1;
-                    dest[i].maxs[j] = Common.LittleFloat( src.maxs[j] ) + 1;
-                    dest[i].origin[j] = Common.LittleFloat( src.origin[j] );
+                    dest[i].mins[j] = EndianHelper.LittleFloat( src.mins[j] ) - 1;
+                    dest[i].maxs[j] = EndianHelper.LittleFloat( src.maxs[j] ) + 1;
+                    dest[i].origin[j] = EndianHelper.LittleFloat( src.origin[j] );
                 }
 
                 dest[i].headnode = new Int32[bsp_file.MAX_MAP_HULLS];
                 for( var j = 0; j < bsp_file.MAX_MAP_HULLS; j++ )
-                    dest[i].headnode[j] = Common.LittleLong( src.headnode[j] );
+                    dest[i].headnode[j] = EndianHelper.LittleLong( src.headnode[j] );
 
-                dest[i].visleafs = Common.LittleLong( src.visleafs );
-                dest[i].firstface = Common.LittleLong( src.firstface );
-                dest[i].numfaces = Common.LittleLong( src.numfaces );
+                dest[i].visleafs = EndianHelper.LittleLong( src.visleafs );
+                dest[i].firstface = EndianHelper.LittleLong( src.firstface );
+                dest[i].numfaces = EndianHelper.LittleLong( src.numfaces );
             }
         }
 

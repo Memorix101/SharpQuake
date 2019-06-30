@@ -146,7 +146,7 @@ namespace SharpQuake
             for ( var i = 0; ; i++ )
             {
                 var pakfile = String.Format( "{0}/PAK{1}.PAK", dir, i );
-                pack_t pak = LoadPackFile( pakfile );
+                Pak pak = LoadPackFile( pakfile );
                 if ( pak == null )
                     break;
 
@@ -245,8 +245,8 @@ namespace SharpQuake
                 if ( sp.pack != null )
                 {
                     // look through all the pak file elements
-                    pack_t pak = sp.pack;
-                    foreach ( packfile_t pfile in pak.files )
+                    Pak pak = sp.pack;
+                    foreach ( MemoryPakFile pfile in pak.files )
                     {
                         if ( pfile.name.Equals( filename ) )
                         {
@@ -385,22 +385,22 @@ namespace SharpQuake
         /// Loads the header and directory, adding the files at the beginning
         /// of the list so they override previous pack files.
         /// </summary>
-        public static pack_t LoadPackFile( String packfile )
+        public static Pak LoadPackFile( String packfile )
         {
             FileStream file = FileSystem.OpenRead( packfile );
             if ( file == null )
                 return null;
 
-            dpackheader_t header = Utilities.ReadStructure<dpackheader_t>( file );
+            PakHeader header = Utilities.ReadStructure<PakHeader>( file );
 
             var id = Encoding.ASCII.GetString( header.id );
             if ( id != "PACK" )
                 Utilities.Error( "{0} is not a packfile", packfile );
 
-            header.dirofs = Utilities.LittleLong( header.dirofs );
-            header.dirlen = Utilities.LittleLong( header.dirlen );
+            header.dirofs = EndianHelper.LittleLong( header.dirofs );
+            header.dirlen = EndianHelper.LittleLong( header.dirlen );
 
-            var numpackfiles = header.dirlen / Marshal.SizeOf( typeof( dpackfile_t ) );
+            var numpackfiles = header.dirlen / Marshal.SizeOf( typeof( PakFile ) );
 
             if ( numpackfiles > MAX_FILES_IN_PACK )
                 Utilities.Error( "{0} has {1} files", packfile, numpackfiles );
@@ -414,15 +414,15 @@ namespace SharpQuake
             {
                 Utilities.Error( "{0} buffering failed!", packfile );
             }
-            List<dpackfile_t> info = new List<dpackfile_t>( MAX_FILES_IN_PACK );
+            List<PakFile> info = new List<PakFile>( MAX_FILES_IN_PACK );
             GCHandle handle = GCHandle.Alloc( buf, GCHandleType.Pinned );
             try
             {
                 IntPtr ptr = handle.AddrOfPinnedObject( );
-                Int32 count = 0, structSize = Marshal.SizeOf( typeof( dpackfile_t ) );
+                Int32 count = 0, structSize = Marshal.SizeOf( typeof( PakFile ) );
                 while ( count < header.dirlen )
                 {
-                    dpackfile_t tmp = ( dpackfile_t ) Marshal.PtrToStructure( ptr, typeof( dpackfile_t ) );
+                    PakFile tmp = ( PakFile ) Marshal.PtrToStructure( ptr, typeof( PakFile ) );
                     info.Add( tmp );
                     ptr = new IntPtr( ptr.ToInt64( ) + structSize );
                     count += structSize;
@@ -448,17 +448,17 @@ namespace SharpQuake
             buf = null;
 
             // parse the directory
-            packfile_t[] newfiles = new packfile_t[numpackfiles];
+            MemoryPakFile[] newfiles = new MemoryPakFile[numpackfiles];
             for ( var i = 0; i < numpackfiles; i++ )
             {
-                packfile_t pf = new packfile_t( );
+                MemoryPakFile pf = new MemoryPakFile( );
                 pf.name = Utilities.GetString( info[i].name );
-                pf.filepos = Utilities.LittleLong( info[i].filepos );
-                pf.filelen = Utilities.LittleLong( info[i].filelen );
+                pf.filepos = EndianHelper.LittleLong( info[i].filepos );
+                pf.filelen = EndianHelper.LittleLong( info[i].filelen );
                 newfiles[i] = pf;
             }
 
-            pack_t pack = new pack_t( packfile, new BinaryReader( file, Encoding.ASCII ), newfiles );
+            Pak pack = new Pak( packfile, new BinaryReader( file, Encoding.ASCII ), newfiles );
             ConsoleWrapper.Print( "Added packfile {0} ({1} files)\n", packfile, numpackfiles );
             return pack;
         }

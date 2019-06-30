@@ -7,13 +7,13 @@ using OpenTK.Graphics.OpenGL;
 
 namespace SharpQuake.Framework
 {
-    public class glmode_t
+    public class GLMode
     {
         public String name;
         public TextureMinFilter minimize;
         public TextureMagFilter maximize;
 
-        public glmode_t( String name, TextureMinFilter minFilter, TextureMagFilter magFilter )
+        public GLMode( String name, TextureMinFilter minFilter, TextureMagFilter magFilter )
         {
             this.name = name;
             this.minimize = minFilter;

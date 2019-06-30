@@ -7,7 +7,7 @@ using OpenTK;
 
 namespace SharpQuake.Framework
 {
-    public class mplane_t
+    public class Plane
     {
         public Vector3 normal;
         public Single dist;

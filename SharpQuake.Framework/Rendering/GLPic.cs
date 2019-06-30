@@ -6,13 +6,13 @@ using System.Threading.Tasks;
 
 namespace SharpQuake.Framework
 {
-    public class glpic_t
+    public class GLPic
     {
         public Int32 width, height;
         public Int32 texnum;
         public Single sl, tl, sh, th;
 
-        public glpic_t( )
+        public GLPic( )
         {
             sl = 0;
             sh = 1;

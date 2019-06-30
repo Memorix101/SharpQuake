@@ -175,7 +175,7 @@ namespace SharpQuake
     {
         public Int32 visframe;		// should be drawn when node is crossed
 
-        public mplane_t plane;
+        public Plane plane;
         public Int32 flags;
 
         public Int32 firstedge;	// look up in model->surfedges[], negative numbers
@@ -235,7 +235,7 @@ namespace SharpQuake
     class mnode_t : mnodebase_t
     {
         // node specific
-        public mplane_t plane;
+        public Plane plane;
         public mnodebase_t[] children; //[2];	
 
         public UInt16 firstsurface;
@@ -278,7 +278,7 @@ namespace SharpQuake
     class hull_t
     {
         public dclipnode_t[] clipnodes;
-        public mplane_t[] planes;
+        public Plane[] planes;
         public Int32 firstclipnode;
         public Int32 lastclipnode;
         public Vector3 clip_mins;
@@ -462,7 +462,7 @@ namespace SharpQuake
         public dmodel_t[] submodels;
 
         public Int32 numplanes;
-        public mplane_t[] planes; // mplane_t*
+        public Plane[] planes; // mplane_t*
 
         public Int32 numleafs;		// number of visible leafs, not counting 0
         public mleaf_t[] leafs; // mleaf_t*

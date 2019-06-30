@@ -8,12 +8,12 @@ using System.Threading.Tasks;
 namespace SharpQuake.Framework
 {
     [StructLayout( LayoutKind.Sequential, Pack = 1 )]
-    public class link_t
+    public class Link
     {
-        private link_t _Prev, _Next;
+        private Link _Prev, _Next;
         private Object _Owner;
 
-        public link_t Prev
+        public Link Prev
         {
             get
             {
@@ -21,7 +21,7 @@ namespace SharpQuake.Framework
             }
         }
 
-        public link_t Next
+        public Link Next
         {
             get
             {
@@ -37,7 +37,7 @@ namespace SharpQuake.Framework
             }
         }
 
-        public link_t( Object owner )
+        public Link( Object owner )
         {
             _Owner = owner;
         }
@@ -60,7 +60,7 @@ namespace SharpQuake.Framework
             _Prev = null;
         }
 
-        public void InsertBefore( link_t before )
+        public void InsertBefore( Link before )
         {
             _Next = before;
             _Prev = before._Prev;
@@ -68,7 +68,7 @@ namespace SharpQuake.Framework
             _Next._Prev = this;
         }
 
-        public void InsertAfter( link_t after )
+        public void InsertAfter( Link after )
         {
             _Next = after.Next;
             _Prev = after;

@@ -144,7 +144,7 @@ namespace SharpQuake
         {
             NeedRoom( 4 );
             _Val.f0 = f;
-            _Val.i0 = Common.LittleLong( _Val.i0 );
+            _Val.i0 = EndianHelper.LittleLong( _Val.i0 );
 
             _Buffer[_Count++] = _Val.b0;
             _Buffer[_Count++] = _Val.b1;

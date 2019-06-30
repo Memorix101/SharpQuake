@@ -39,7 +39,7 @@ namespace SharpQuake
         /// possible, no move is done, false is returned, and
         /// pr_global_struct.trace_normal is set to the normal of the blocking wall
         /// </summary>
-        public static Boolean MoveStep( edict_t ent, ref Vector3f move, Boolean relink )
+        public static Boolean MoveStep( MemoryEdict ent, ref Vector3f move, Boolean relink )
         {
             trace_t trace;
 
@@ -55,7 +55,7 @@ namespace SharpQuake
                 for( var i = 0; i < 2; i++ )
                 {
                     MathLib.VectorAdd( ref ent.v.origin, ref move, out neworg );
-                    edict_t enemy = ProgToEdict( ent.v.enemy );
+                    MemoryEdict enemy = ProgToEdict( ent.v.enemy );
                     if( i == 0 && enemy != sv.edicts[0] )
                     {
                         var dz = ent.v.origin.z - enemy.v.origin.z;
@@ -149,7 +149,7 @@ namespace SharpQuake
         /// <summary>
         /// SV_CheckBottom
         /// </summary>
-        public static Boolean CheckBottom( edict_t ent )
+        public static Boolean CheckBottom( MemoryEdict ent )
         {
             Vector3f mins, maxs;
             MathLib.VectorAdd( ref ent.v.origin, ref ent.v.mins, out mins );
@@ -214,8 +214,8 @@ RealCheck:
         /// </summary>
         public static void MoveToGoal()
         {
-            edict_t ent = ProgToEdict( progs.GlobalStruct.self );
-            edict_t goal = ProgToEdict( ent.v.goalentity );
+            MemoryEdict ent = ProgToEdict( progs.GlobalStruct.self );
+            MemoryEdict goal = ProgToEdict( ent.v.goalentity );
             var dist = QBuiltins.GetFloat( OFS.OFS_PARM0 );
 
             if( ( ( Int32 ) ent.v.flags & ( EdictFlags.FL_ONGROUND | EdictFlags.FL_FLY | EdictFlags.FL_SWIM ) ) == 0 )
@@ -238,7 +238,7 @@ RealCheck:
         /// <summary>
         /// SV_CloseEnough
         /// </summary>
-        private static Boolean CloseEnough( edict_t ent, edict_t goal, Single dist )
+        private static Boolean CloseEnough( MemoryEdict ent, MemoryEdict goal, Single dist )
         {
             if( goal.v.absmin.x > ent.v.absmax.x + dist )
                 return false;
@@ -261,7 +261,7 @@ RealCheck:
         /// SV_StepDirection
         /// Turns to the movement direction, and walks the current distance if facing it.
         /// </summary>
-        private static Boolean StepDirection( edict_t ent, Single yaw, Single dist )
+        private static Boolean StepDirection( MemoryEdict ent, Single yaw, Single dist )
         {
             ent.v.ideal_yaw = yaw;
             QBuiltins.PF_changeyaw();
@@ -292,7 +292,7 @@ RealCheck:
         /// <summary>
         /// SV_NewChaseDir
         /// </summary>
-        private static void NewChaseDir( edict_t actor, edict_t enemy, Single dist )
+        private static void NewChaseDir( MemoryEdict actor, MemoryEdict enemy, Single dist )
         {
             var olddir = MathLib.AngleMod( ( Int32 ) ( actor.v.ideal_yaw / 45 ) * 45 );
             var turnaround = MathLib.AngleMod( olddir - 180 );
@@ -373,7 +373,7 @@ RealCheck:
         /// <summary>
         /// SV_FixCheckBottom
         /// </summary>
-        private static void FixCheckBottom( edict_t ent )
+        private static void FixCheckBottom( MemoryEdict ent )
         {
             ent.v.flags = ( Int32 ) ent.v.flags | EdictFlags.FL_PARTIALGROUND;
         }

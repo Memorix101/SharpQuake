@@ -138,11 +138,11 @@ namespace SharpQuake
         private static Int32 _BrushPolys; // c_brush_polys
         private static Int32 _AliasPolys; // c_alias_polys
         private static System.Boolean _IsMirror; // mirror
-        private static mplane_t _MirrorPlane; // mirror_plane
+        private static Plane _MirrorPlane; // mirror_plane
         private static Single _glDepthMin; // gldepthmin
         private static Single _glDepthMax; // gldepthmax
         private static Int32 _TrickFrame; // static int trickframe from R_Clear()
-        private static mplane_t[] _Frustum = new mplane_t[4]; // frustum
+        private static Plane[] _Frustum = new Plane[4]; // frustum
         private static System.Boolean _IsEnvMap = false; // envmap	// true during envmap command capture
         private static Matrix4 _WorldMatrix; // r_world_matrix
         private static Matrix4 _BaseWorldMatrix; // r_base_world_matrix
@@ -162,7 +162,7 @@ namespace SharpQuake
         public static void Init()
         {
             for( var i = 0; i < _Frustum.Length; i++ )
-                _Frustum[i] = new mplane_t();
+                _Frustum[i] = new Plane();
 
             Command.Add( "timerefresh", TimeRefresh_f );
             //Cmd.Add("envmap", Envmap_f);
@@ -1204,7 +1204,7 @@ namespace SharpQuake
             }
         }
 
-        private static Int32 SignbitsForPlane( mplane_t p )
+        private static Int32 SignbitsForPlane( Plane p )
         {
             // for fast box on planeside test
             var bits = 0;
@@ -1361,7 +1361,7 @@ namespace SharpQuake
     {
         public System.Boolean forcelink;		// model changed
         public Int32 update_type;
-        public entity_state_t baseline;		// to fill in defaults in updates
+        public EntityState baseline;		// to fill in defaults in updates
         public Double msgtime;		// time of last update
         public Vector3[] msg_origins; //[2];	// last two updates (0 is newest)
         public Vector3 origin;
@@ -1392,7 +1392,7 @@ namespace SharpQuake
             this.forcelink = false;
             this.update_type = 0;
 
-            this.baseline = entity_state_t.Empty;
+            this.baseline = EntityState.Empty;
 
             this.msgtime = 0;
             this.msg_origins[0] = Vector3.Zero;
