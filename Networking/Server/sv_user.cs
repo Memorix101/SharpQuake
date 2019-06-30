@@ -22,6 +22,7 @@
 
 using System;
 using OpenTK;
+using SharpQuake.Framework;
 
 namespace SharpQuake
 {
@@ -100,12 +101,12 @@ namespace SharpQuake
             Single[] z = new Single[MAX_FORWARD];
             for( var i = 0; i < MAX_FORWARD; i++ )
             {
-                v3f top = _Player.v.origin;
+                Vector3f top = _Player.v.origin;
                 top.x += ( Single ) ( cosval * ( i + 3 ) * 12 );
                 top.y += ( Single ) ( sinval * ( i + 3 ) * 12 );
                 top.z += _Player.v.view_ofs.z;
 
-                v3f bottom = top;
+                Vector3f bottom = top;
                 bottom.z -= 160;
 
                 trace_t tr = Move( ref top, ref Common.ZeroVector3f, ref Common.ZeroVector3f, ref bottom, 1, _Player );
@@ -313,7 +314,7 @@ namespace SharpQuake
             // show 1/3 the pitch angle and all the roll angle
             _Cmd = host.HostClient.cmd;
 
-            v3f v_angle;
+            Vector3f v_angle;
             MathLib.VectorAdd( ref _Player.v.v_angle, ref _Player.v.punchangle, out v_angle );
             Vector3 pang = Common.ToVector( ref _Player.v.angles );
             Vector3 pvel = Common.ToVector( ref _Player.v.velocity );

@@ -1,3 +1,10 @@
+
+// zone.h
+// zone.c
+
+// Used only to emulate Chache_xxx functions
+
+using SharpQuake.Framework;
 /// <copyright>
 ///
 /// Rewritten in C# by Yury Kiselev, 2010.
@@ -19,12 +26,6 @@
 /// along with this program; if not, write to the Free Software
 /// Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 /// </copyright>
-
-// zone.h
-// zone.c
-
-// Used only to emulate Chache_xxx functions
-
 namespace SharpQuake
 {
     /// <summary>
@@ -71,7 +72,7 @@ namespace SharpQuake
         public static cache_user_t Alloc( System.Int32 size, System.String name )
         {
             if( size <= 0 )
-                sys.Error( "Cache_Alloc: size {0}", size );
+                Utilities.Error( "Cache_Alloc: size {0}", size );
 
             size = ( size + 15 ) & ~15;
 
@@ -86,7 +87,7 @@ namespace SharpQuake
 
                 // free the least recently used cahedat
                 if( _Head.LruPrev == _Head )// cache_head.lru_prev == &cache_head)
-                    sys.Error( "Cache_Alloc: out of memory" );
+                    Utilities.Error( "Cache_Alloc: out of memory" );
                 // not enough memory at all
                 Free( _Head.LruPrev );
             }
@@ -119,7 +120,7 @@ namespace SharpQuake
         private static void Free( cache_user_t c )
         {
             if( c.data == null )
-                sys.Error( "Cache_Free: not allocated" );
+                Utilities.Error( "Cache_Free: not allocated" );
 
             CacheEntry entry = (CacheEntry)c;
             entry.Remove();
@@ -181,7 +182,7 @@ namespace SharpQuake
             public void RemoveFromLRU()
             {
                 if( _LruNext == null || _LruPrev == null )
-                    sys.Error( "Cache_UnlinkLRU: NULL link" );
+                    Utilities.Error( "Cache_UnlinkLRU: NULL link" );
 
                 _LruNext._LruPrev = _LruPrev;
                 _LruPrev._LruNext = _LruNext;
@@ -192,7 +193,7 @@ namespace SharpQuake
             public void LRUInstertAfter( CacheEntry prev )
             {
                 if( _LruNext != null || _LruPrev != null )
-                    sys.Error( "Cache_MakeLRU: active link" );
+                    Utilities.Error( "Cache_MakeLRU: active link" );
 
                 prev._LruNext._LruPrev = this;
                 _LruNext = prev._LruNext;

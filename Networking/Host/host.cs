@@ -23,6 +23,7 @@
 using System;
 using System.IO;
 using System.Text;
+using SharpQuake.Framework;
 
 // host.c
 
@@ -296,10 +297,10 @@ namespace SharpQuake
             {
                 _BasePal = FileSystem.LoadFile( "gfx/palette.lmp" );
                 if( _BasePal == null )
-                    sys.Error( "Couldn't load gfx/palette.lmp" );
+                    Utilities.Error( "Couldn't load gfx/palette.lmp" );
                 _ColorMap = FileSystem.LoadFile( "gfx/colormap.lmp" );
                 if( _ColorMap == null )
-                    sys.Error( "Couldn't load gfx/colormap.lmp" );
+                    Utilities.Error( "Couldn't load gfx/colormap.lmp" );
 
                 // on non win32, mouse comes before video for security reasons
                 input.Init();
@@ -380,7 +381,7 @@ namespace SharpQuake
             try
             {
                 if( _ErrorDepth > 1 )
-                    sys.Error( "Host_Error: recursively entered. " + error, args );
+                    Utilities.Error( "Host_Error: recursively entered. " + error, args );
 
                 Scr.EndLoadingPlaque();		// reenable screen updates
 
@@ -391,7 +392,7 @@ namespace SharpQuake
                     ShutdownServer( false );
 
                 if( client.cls.state == cactive_t.ca_dedicated )
-                    sys.Error( "Host_Error: {0}\n", message );	// dedicated servers exit
+                    Utilities.Error( "Host_Error: {0}\n", message );	// dedicated servers exit
 
                 client.Disconnect();
                 client.cls.demonum = -1;
@@ -416,7 +417,7 @@ namespace SharpQuake
                 host.ShutdownServer( false );
 
             if( client.cls.state == cactive_t.ca_dedicated )
-                sys.Error( "Host_EndGame: {0}\n", str );	// dedicated servers exit
+                Utilities.Error( "Host_EndGame: {0}\n", str );	// dedicated servers exit
 
             if( client.cls.demonum != -1 )
                 client.NextDemo();
@@ -545,7 +546,7 @@ namespace SharpQuake
             if( _IsInitialized & !host.IsDedicated )
             {
                 var path = Path.Combine( Common.GameDir, "config.cfg" );
-                using( FileStream fs = sys.FileOpenWrite( path, true ) )
+                using( FileStream fs = FileSystem.OpenWrite( path, true ) )
                 {
                     if( fs != null )
                     {
@@ -613,7 +614,7 @@ namespace SharpQuake
             if( i > 0 )
             {
                 if( cls.state == cactive_t.ca_dedicated )
-                    sys.Error( "Only one of -dedicated or -listen can be specified" );
+                    Utilities.Error( "Only one of -dedicated or -listen can be specified" );
                 if( i != ( Common.Argc - 1 ) )
                     svs.maxclients = Common.atoi( Common.Argv( i + 1 ) );
                 else
@@ -642,16 +643,16 @@ namespace SharpQuake
             if( Common.HasParam( "-playback" ) )
             {
                 if( Common.Argc != 2 )
-                    sys.Error( "No other parameters allowed with -playback\n" );
+                    Utilities.Error( "No other parameters allowed with -playback\n" );
 
-                Stream file = sys.FileOpenRead( "quake.vcr" );
+                Stream file = FileSystem.OpenRead( "quake.vcr" );
                 if( file == null )
-                    sys.Error( "playback file not found\n" );
+                    Utilities.Error( "playback file not found\n" );
 
                 _VcrReader = new BinaryReader( file, Encoding.ASCII );
                 var signature = _VcrReader.ReadInt32();  //Sys_FileRead(vcrFile, &i, sizeof(int));
                 if( signature != host.VCR_SIGNATURE )
-                    sys.Error( "Invalid signature in vcr file\n" );
+                    Utilities.Error( "Invalid signature in vcr file\n" );
 
                 var argc = _VcrReader.ReadInt32(); // Sys_FileRead(vcrFile, &com_argc, sizeof(int));
                 String[] argv = new String[argc + 1];
@@ -659,7 +660,7 @@ namespace SharpQuake
 
                 for( var i = 1; i < argv.Length; i++ )
                 {
-                    argv[i] = sys.ReadString( _VcrReader );
+                    argv[i] = Utilities.ReadString( _VcrReader );
                 }
                 Common.Args = argv;
                 parms.argv = argv;
@@ -668,7 +669,7 @@ namespace SharpQuake
             var n = Common.CheckParm( "-record" );
             if( n != 0 )
             {
-                Stream file = sys.FileOpenWrite( "quake.vcr" ); // vcrFile = Sys_FileOpenWrite("quake.vcr");
+                Stream file = FileSystem.OpenWrite( "quake.vcr" ); // vcrFile = Sys_FileOpenWrite("quake.vcr");
                 _VcrWriter = new BinaryWriter( file, Encoding.ASCII );
 
                 _VcrWriter.Write( VCR_SIGNATURE ); //  Sys_FileWrite(vcrFile, &i, sizeof(int));
@@ -677,10 +678,10 @@ namespace SharpQuake
                 {
                     if( i == n )
                     {
-                        sys.WriteString( _VcrWriter, "-playback" );
+                        Utilities.WriteString( _VcrWriter, "-playback" );
                         continue;
                     }
-                    sys.WriteString( _VcrWriter, Common.Argv( i ) );
+                    Utilities.WriteString( _VcrWriter, Common.Argv( i ) );
                 }
             }
         }

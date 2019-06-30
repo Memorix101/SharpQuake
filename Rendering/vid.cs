@@ -26,6 +26,7 @@ using System.Drawing;
 using System.IO;
 using OpenTK;
 using OpenTK.Graphics.OpenGL;
+using SharpQuake.Framework;
 
 // vid.h -- video driver defs
 
@@ -332,7 +333,7 @@ namespace SharpQuake
         {
             if( modenum < 0 || modenum >= _Modes.Length )
             {
-                sys.Error( "Bad video mode\n" );
+                Utilities.Error( "Bad video mode\n" );
             }
 
             mode_t mode = _Modes[modenum];
@@ -354,7 +355,7 @@ namespace SharpQuake
                 }
                 catch (Exception ex)
                 {
-                    sys.Error("Couldn't set video mode: " + ex.Message);
+                    Utilities.Error("Couldn't set video mode: " + ex.Message);
                 }
                 form.WindowState = WindowState.Normal;
                 form.WindowBorder = WindowBorder.Fixed;
@@ -381,7 +382,7 @@ namespace SharpQuake
                 }
                 catch( Exception ex )
                 {
-                    sys.Error( "Couldn't set video mode: " + ex.Message );
+                    Utilities.Error( "Couldn't set video mode: " + ex.Message );
                 }
                 form.WindowState = WindowState.Fullscreen;
                 form.WindowBorder = WindowBorder.Hidden;
@@ -452,7 +453,7 @@ namespace SharpQuake
 
             // JACK: 3D distance calcs - k is last closest, l is the distance.
             // FIXME: Precalculate this and cache to disk.
-            Union4B val = Union4B.Empty;
+            Union4b val = Union4b.Empty;
             for( UInt32 i = 0; i < ( 1 << 15 ); i++ )
             {
                 // Maps

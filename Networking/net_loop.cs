@@ -21,6 +21,7 @@
 /// </copyright>
 
 using System;
+using SharpQuake.Framework;
 
 namespace SharpQuake
 {
@@ -164,7 +165,7 @@ namespace SharpQuake
             qsocket_t sock2 = (qsocket_t)sock.driverdata;
 
             if( ( sock2.receiveMessageLength + data.Length + 4 ) > net.NET_MAXMESSAGE )
-                sys.Error( "Loop_SendMessage: overflow\n" );
+                Utilities.Error( "Loop_SendMessage: overflow\n" );
 
             // message type
             var offset = sock2.receiveMessageLength;

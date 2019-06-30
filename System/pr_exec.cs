@@ -21,6 +21,7 @@
 /// </copyright>
 
 using System;
+using SharpQuake.Framework;
 
 namespace SharpQuake
 {
@@ -613,7 +614,7 @@ namespace SharpQuake
         private static Int32 LeaveFunction()
         {
             if( _Depth <= 0 )
-                sys.Error( "prog stack underflow" );
+                Utilities.Error( "prog stack underflow" );
 
             // restore locals from the stack
             var c = xFunction.locals;

@@ -22,6 +22,7 @@
 
 using System;
 using OpenTK;
+using SharpQuake.Framework;
 
 namespace SharpQuake
 {
@@ -85,7 +86,7 @@ namespace SharpQuake
                             break;
 
                         default:
-                            sys.Error( "SV_Physics: bad movetype {0}", ( Int32 ) ent.v.movetype );
+                            Utilities.Error( "SV_Physics: bad movetype {0}", ( Int32 ) ent.v.movetype );
                             break;
                     }
             }
@@ -120,7 +121,7 @@ namespace SharpQuake
             MathLib.VectorMA( ref ent.v.angles, ( Single ) host.FrameTime, ref ent.v.avelocity, out ent.v.angles );
 
             // move origin
-            v3f move;
+            Vector3f move;
             MathLib.VectorScale( ref ent.v.velocity, ( Single ) host.FrameTime, out move );
             trace_t trace = PushEntity( ent, ref move );
 
@@ -144,8 +145,8 @@ namespace SharpQuake
                 {
                     ent.v.flags = ( Int32 ) ent.v.flags | EdictFlags.FL_ONGROUND;
                     ent.v.groundentity = EdictToProg( trace.ent );
-                    ent.v.velocity = default( v3f );
-                    ent.v.avelocity = default( v3f );
+                    ent.v.velocity = default( Vector3f );
+                    ent.v.avelocity = default( Vector3f );
                 }
             }
 
@@ -158,7 +159,7 @@ namespace SharpQuake
         /// Slide off of the impacting object
         /// returns the blocked flags (1 = floor, 2 = step / wall)
         /// </summary>
-        private static Int32 ClipVelocity( ref v3f src, ref Vector3 normal, out v3f dest, Single overbounce )
+        private static Int32 ClipVelocity( ref Vector3f src, ref Vector3 normal, out Vector3f dest, Single overbounce )
         {
             var blocked = 0;
             if( normal.Z > 0 )
@@ -186,9 +187,9 @@ namespace SharpQuake
         /// PushEntity
         /// Does not change the entities velocity at all
         /// </summary>
-        private static trace_t PushEntity( edict_t ent, ref v3f push )
+        private static trace_t PushEntity( edict_t ent, ref Vector3f push )
         {
-            v3f end;
+            Vector3f end;
             MathLib.VectorAdd( ref ent.v.origin, ref push, out end );
 
             trace_t trace;
@@ -409,7 +410,7 @@ namespace SharpQuake
                     break;
 
                 default:
-                    sys.Error( "SV_Physics_client: bad movetype {0}", ( Int32 ) ent.v.movetype );
+                    Utilities.Error( "SV_Physics_client: bad movetype {0}", ( Int32 ) ent.v.movetype );
                     break;
             }
 
@@ -435,8 +436,8 @@ namespace SharpQuake
             var oldonground = ( Int32 ) ent.v.flags & EdictFlags.FL_ONGROUND;
             ent.v.flags = ( Int32 ) ent.v.flags & ~EdictFlags.FL_ONGROUND;
 
-            v3f oldorg = ent.v.origin;
-            v3f oldvel = ent.v.velocity;
+            Vector3f oldorg = ent.v.origin;
+            Vector3f oldvel = ent.v.velocity;
             trace_t steptrace = new trace_t();
             var clip = FlyMove( ent, ( Single ) host.FrameTime, steptrace );
 
@@ -455,16 +456,16 @@ namespace SharpQuake
             if( ( ( Int32 ) _Player.v.flags & EdictFlags.FL_WATERJUMP ) != 0 )
                 return;
 
-            v3f nosteporg = ent.v.origin;
-            v3f nostepvel = ent.v.velocity;
+            Vector3f nosteporg = ent.v.origin;
+            Vector3f nostepvel = ent.v.velocity;
 
             //
             // try moving up and forward to go up a step
             //
             ent.v.origin = oldorg;	// back to start pos
 
-            v3f upmove = Common.ZeroVector3f;
-            v3f downmove = upmove;
+            Vector3f upmove = Common.ZeroVector3f;
+            Vector3f downmove = upmove;
             upmove.z = STEPSIZE;
             downmove.z = ( Single ) ( -STEPSIZE + oldvel.z * host.FrameTime );
 
@@ -522,10 +523,10 @@ namespace SharpQuake
         ///
         /// This is a hack, but in the interest of good gameplay...
         /// </summary>
-        private static Int32 TryUnstick( edict_t ent, ref v3f oldvel )
+        private static Int32 TryUnstick( edict_t ent, ref Vector3f oldvel )
         {
-            v3f oldorg = ent.v.origin;
-            v3f dir = Common.ZeroVector3f;
+            Vector3f oldorg = ent.v.origin;
+            Vector3f dir = Common.ZeroVector3f;
 
             trace_t steptrace = new trace_t();
             for( var i = 0; i < 8; i++ )
@@ -631,7 +632,7 @@ namespace SharpQuake
                 return;
             }
 
-            v3f org = ent.v.origin;
+            Vector3f org = ent.v.origin;
             ent.v.origin = ent.v.oldorigin;
             if( TestEntityPosition( ent ) == null )
             {
@@ -754,8 +755,8 @@ namespace SharpQuake
         /// </summary>
         private static Int32 FlyMove( edict_t ent, Single time, trace_t steptrace )
         {
-            v3f original_velocity = ent.v.velocity;
-            v3f primal_velocity = ent.v.velocity;
+            Vector3f original_velocity = ent.v.velocity;
+            Vector3f primal_velocity = ent.v.velocity;
 
             var numbumps = 4;
             var blocked = 0;
@@ -768,14 +769,14 @@ namespace SharpQuake
                 if( ent.v.velocity.IsEmpty )
                     break;
 
-                v3f end;
+                Vector3f end;
                 MathLib.VectorMA( ref ent.v.origin, time_left, ref ent.v.velocity, out end );
 
                 trace_t trace = Move( ref ent.v.origin, ref ent.v.mins, ref ent.v.maxs, ref end, 0, ent );
 
                 if( trace.allsolid )
                 {	// entity is trapped in another solid
-                    ent.v.velocity = default( v3f );
+                    ent.v.velocity = default( Vector3f );
                     return 3;
                 }
 
@@ -790,7 +791,7 @@ namespace SharpQuake
                     break;		// moved the entire distance
 
                 if( trace.ent == null )
-                    sys.Error( "SV_FlyMove: !trace.ent" );
+                    Utilities.Error( "SV_FlyMove: !trace.ent" );
 
                 if( trace.plane.normal.Z > 0.7 )
                 {
@@ -822,7 +823,7 @@ namespace SharpQuake
                 if( numplanes >= MAX_CLIP_PLANES )
                 {
                     // this shouldn't really happen
-                    ent.v.velocity = default( v3f );
+                    ent.v.velocity = default( Vector3f );
                     return 3;
                 }
 
@@ -832,7 +833,7 @@ namespace SharpQuake
                 //
                 // modify original_velocity so it parallels all of the clip planes
                 //
-                v3f new_velocity = default( v3f );
+                Vector3f new_velocity = default( Vector3f );
                 Int32 i, j;
                 for( i = 0; i < numplanes; i++ )
                 {
@@ -858,7 +859,7 @@ namespace SharpQuake
                     // go along the crease
                     if( numplanes != 2 )
                     {
-                        ent.v.velocity = default( v3f );
+                        ent.v.velocity = default( Vector3f );
                         return 7;
                     }
                     Vector3 dir = Vector3.Cross( planes[0], planes[1] );
@@ -873,7 +874,7 @@ namespace SharpQuake
                 //
                 if( MathLib.DotProduct( ref ent.v.velocity, ref primal_velocity ) <= 0 )
                 {
-                    ent.v.velocity = default( v3f );
+                    ent.v.velocity = default( Vector3f );
                     return blocked;
                 }
             }
@@ -881,7 +882,7 @@ namespace SharpQuake
             return blocked;
         }
 
-        private static trace_t Move( ref v3f start, ref v3f mins, ref v3f maxs, ref v3f end, Int32 type, edict_t passedict )
+        private static trace_t Move( ref Vector3f start, ref Vector3f mins, ref Vector3f maxs, ref Vector3f end, Int32 type, edict_t passedict )
         {
             Vector3 vstart, vmins, vmaxs, vend;
             MathLib.Copy( ref start, out vstart );
@@ -930,15 +931,15 @@ namespace SharpQuake
                 return;
             }
 
-            v3f move, mins, maxs;
+            Vector3f move, mins, maxs;
             MathLib.VectorScale( ref pusher.v.velocity, movetime, out move );
             MathLib.VectorAdd( ref pusher.v.absmin, ref move, out mins );
             MathLib.VectorAdd( ref pusher.v.absmax, ref move, out maxs );
 
-            v3f pushorig = pusher.v.origin;
+            Vector3f pushorig = pusher.v.origin;
 
             edict_t[] moved_edict = new edict_t[QDef.MAX_EDICTS];
-            v3f[] moved_from = new v3f[QDef.MAX_EDICTS];
+            Vector3f[] moved_from = new Vector3f[QDef.MAX_EDICTS];
 
             // move the pusher to it's final position
 
@@ -975,7 +976,7 @@ namespace SharpQuake
                 if( check.v.movetype != Movetypes.MOVETYPE_WALK )
                     check.v.flags = ( Int32 ) check.v.flags & ~EdictFlags.FL_ONGROUND;
 
-                v3f entorig = check.v.origin;
+                Vector3f entorig = check.v.origin;
                 moved_from[num_moved] = entorig;
                 moved_edict[num_moved] = check;
                 num_moved++;

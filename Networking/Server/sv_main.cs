@@ -22,6 +22,7 @@
 
 using System;
 using OpenTK;
+using SharpQuake.Framework;
 
 namespace SharpQuake
 {
@@ -102,13 +103,13 @@ namespace SharpQuake
         public static void StartSound( edict_t entity, Int32 channel, String sample, Int32 volume, Single attenuation )
         {
             if( volume < 0 || volume > 255 )
-                sys.Error( "SV_StartSound: volume = {0}", volume );
+                Utilities.Error( "SV_StartSound: volume = {0}", volume );
 
             if( attenuation < 0 || attenuation > 4 )
-                sys.Error( "SV_StartSound: attenuation = {0}", attenuation );
+                Utilities.Error( "SV_StartSound: attenuation = {0}", attenuation );
 
             if( channel < 0 || channel > 7 )
-                sys.Error( "SV_StartSound: channel = {0}", channel );
+                Utilities.Error( "SV_StartSound: channel = {0}", channel );
 
             if( sv.datagram.Length > QDef.MAX_DATAGRAM - 16 )
                 return;
@@ -144,7 +145,7 @@ namespace SharpQuake
                 sv.datagram.WriteByte( ( Int32 ) ( attenuation * 64 ) );
             sv.datagram.WriteShort( channel );
             sv.datagram.WriteByte( sound_num );
-            v3f v;
+            Vector3f v;
             MathLib.VectorAdd( ref entity.v.mins, ref entity.v.maxs, out v );
             MathLib.VectorMA( ref entity.v.origin, 0.5f, ref v, out v );
             sv.datagram.WriteCoord( v.x );
@@ -303,7 +304,7 @@ namespace SharpQuake
                     return i;
 
             if( i == QDef.MAX_MODELS || String.IsNullOrEmpty( sv.model_precache[i] ) )
-                sys.Error( "SV_ModelIndex: model {0} not precached", name );
+                Utilities.Error( "SV_ModelIndex: model {0} not precached", name );
             return i;
         }
 
@@ -501,7 +502,7 @@ namespace SharpQuake
                     if( !svs.clients[i].active )
                         break;
                 if( i == svs.maxclients )
-                    sys.Error( "Host_CheckForNewClients: no free clients" );
+                    Utilities.Error( "Host_CheckForNewClients: no free clients" );
 
                 svs.clients[i].netconnection = ret;
                 ConnectClient( i );
@@ -772,7 +773,7 @@ namespace SharpQuake
 
                 // send an update
                 var bits = 0;
-                v3f miss;
+                Vector3f miss;
                 MathLib.VectorSubtract( ref ent.v.origin, ref ent.baseline.origin, out miss );
                 if( miss.x < -0.1f || miss.x > 0.1f )
                     bits |= protocol.U_ORIGIN1;

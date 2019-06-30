@@ -24,6 +24,7 @@ using System;
 using System.IO;
 using System.Runtime.InteropServices;
 using System.Text;
+using SharpQuake.Framework;
 
 namespace SharpQuake
 {
@@ -62,7 +63,7 @@ namespace SharpQuake
 
         public void Init()
         {
-            _Next = sys.ReadStructure<VcrRecord>( host.VcrReader.BaseStream );
+            _Next = Utilities.ReadStructure<VcrRecord>( host.VcrReader.BaseStream );
             _IsInitialized = true;
         }
 
@@ -84,7 +85,7 @@ namespace SharpQuake
         public qsocket_t CheckNewConnections()
         {
             if( host.Time != _Next.time || _Next.op != VcrOp.VCR_OP_CONNECT )
-                sys.Error( "VCR missmatch" );
+                Utilities.Error( "VCR missmatch" );
 
             if( _Next.session == 0 )
             {
@@ -107,7 +108,7 @@ namespace SharpQuake
         public Int32 GetMessage( qsocket_t sock )
         {
             if( host.Time != _Next.time || _Next.op != VcrOp.VCR_OP_GETMESSAGE || _Next.session != SocketToSession( sock ) )
-                sys.Error( "VCR missmatch" );
+                Utilities.Error( "VCR missmatch" );
 
             var ret = host.VcrReader.ReadInt32();
             if( ret != 1 )
@@ -127,7 +128,7 @@ namespace SharpQuake
         public Int32 SendMessage( qsocket_t sock, MessageWriter data )
         {
             if( host.Time != _Next.time || _Next.op != VcrOp.VCR_OP_SENDMESSAGE || _Next.session != SocketToSession( sock ) )
-                sys.Error( "VCR missmatch" );
+                Utilities.Error( "VCR missmatch" );
 
             var ret = host.VcrReader.ReadInt32();
 
@@ -144,7 +145,7 @@ namespace SharpQuake
         public Boolean CanSendMessage( qsocket_t sock )
         {
             if( host.Time != _Next.time || _Next.op != VcrOp.VCR_OP_CANSENDMESSAGE || _Next.session != SocketToSession( sock ) )
-                sys.Error( "VCR missmatch" );
+                Utilities.Error( "VCR missmatch" );
 
             var ret = host.VcrReader.ReadInt32();
 
@@ -175,16 +176,16 @@ namespace SharpQuake
         {
             try
             {
-                _Next = sys.ReadStructure<VcrRecord>( host.VcrReader.BaseStream );
+                _Next = Utilities.ReadStructure<VcrRecord>( host.VcrReader.BaseStream );
             }
             catch( IOException )
             {
                 _Next = new VcrRecord();
                 _Next.op = 255;
-                sys.Error( "=== END OF PLAYBACK===\n" );
+                Utilities.Error( "=== END OF PLAYBACK===\n" );
             }
             if( _Next.op < 1 || _Next.op > VcrOp.VCR_MAX_MESSAGE )
-                sys.Error( "VCR_ReadNext: bad op" );
+                Utilities.Error( "VCR_ReadNext: bad op" );
         }
 
         #endregion INetDriver Members

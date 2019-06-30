@@ -22,6 +22,7 @@
 
 using System;
 using OpenTK;
+using SharpQuake.Framework;
 
 // cl_parse.c
 
@@ -187,7 +188,7 @@ namespace SharpQuake
                     case protocol.svc_lightstyle:
                         i = net.Reader.ReadByte();
                         if( i >= QDef.MAX_LIGHTSTYLES )
-                            sys.Error( "svc_lightstyle > MAX_LIGHTSTYLES" );
+                            Utilities.Error( "svc_lightstyle > MAX_LIGHTSTYLES" );
                         _LightStyle[i].map = net.Reader.ReadString();
                         break;
 
@@ -277,7 +278,7 @@ namespace SharpQuake
                     case protocol.svc_updatestat:
                         i = net.Reader.ReadByte();
                         if( i < 0 || i >= QStats.MAX_CL_STATS )
-                            sys.Error( "svc_updatestat: {0} is invalid", i );
+                            Utilities.Error( "svc_updatestat: {0} is invalid", i );
                         cl.stats[i] = net.Reader.ReadLong();
                         break;
 
@@ -412,7 +413,7 @@ namespace SharpQuake
             else
             {
                 if( i > cl.maxclients )
-                    sys.Error( "i >= cl.maxclients" );
+                    Utilities.Error( "i >= cl.maxclients" );
                 ent.colormap = cl.scores[i - 1].translations;
             }
 
@@ -741,7 +742,7 @@ namespace SharpQuake
         private static void NewTranslation( Int32 slot )
         {
             if( slot > cl.maxclients )
-                sys.Error( "CL_NewTranslation: slot > cl.maxclients" );
+                Utilities.Error( "CL_NewTranslation: slot > cl.maxclients" );
 
             Byte[] dest = cl.scores[slot].translations;
             Byte[] source = Scr.vid.colormap;

@@ -23,6 +23,7 @@
 using System;
 using OpenTK;
 using OpenTK.Graphics;
+using SharpQuake.Framework;
 
 // view.h
 // view.c -- player eye positioning

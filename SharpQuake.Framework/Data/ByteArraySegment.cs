@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace SharpQuake
+namespace SharpQuake.Framework
 {
-    internal class ByteArraySegment
+    public class ByteArraySegment
     {
         public Byte[] Data
         {

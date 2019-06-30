@@ -23,6 +23,7 @@
 using System;
 using System.IO;
 using System.Text;
+using SharpQuake.Framework;
 
 // menu.h
 // menu.c
@@ -666,7 +667,7 @@ namespace SharpQuake
                 _FileNames[i] = "--- UNUSED SLOT ---";
                 _Loadable[i] = false;
                 var name = String.Format( "{0}/s{1}.sav", Common.GameDir, i );
-                FileStream fs = sys.FileOpenRead( name );
+                FileStream fs = FileSystem.OpenRead( name );
                 if( fs == null )
                     continue;
 

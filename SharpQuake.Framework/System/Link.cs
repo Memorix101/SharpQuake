@@ -5,10 +5,10 @@ using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace SharpQuake
+namespace SharpQuake.Framework
 {
     [StructLayout( LayoutKind.Sequential, Pack = 1 )]
-    internal class link_t
+    public class link_t
     {
         private link_t _Prev, _Next;
         private Object _Owner;

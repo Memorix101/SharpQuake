@@ -24,6 +24,7 @@ using System;
 using System.Net;
 using System.Net.Sockets;
 using System.Runtime.InteropServices;
+using SharpQuake.Framework;
 
 namespace SharpQuake
 {
@@ -521,7 +522,7 @@ namespace SharpQuake
                     continue;
                 }
 
-                PacketHeader header = sys.BytesToStructure<PacketHeader>( _PacketBuffer, 0 );
+                PacketHeader header = Utilities.BytesToStructure<PacketHeader>( _PacketBuffer, 0 );
 
                 length = Common.BigLong( header.length );
                 var flags = length & ( ~NetFlags.NETFLAG_LENGTH_MASK );
@@ -594,7 +595,7 @@ namespace SharpQuake
                     header.length = Common.BigLong( net.NET_HEADERSIZE | NetFlags.NETFLAG_ACK );
                     header.sequence = Common.BigLong( ( Int32 ) sequence );
 
-                    sys.StructureToBytes( ref header, _PacketBuffer, 0 );
+                    Utilities.StructureToBytes( ref header, _PacketBuffer, 0 );
                     sock.Write( _PacketBuffer, net.NET_HEADERSIZE, readaddr );
 
                     if( sequence != sock.receiveSequence )
@@ -636,13 +637,13 @@ namespace SharpQuake
         {
 #if DEBUG
             if (data.IsEmpty)
-                sys.Error("Datagram_SendMessage: zero length message\n");
+                Utilities.Error("Datagram_SendMessage: zero length message\n");
 
             if (data.Length > net.NET_MAXMESSAGE)
-                sys.Error("Datagram_SendMessage: message too big {0}\n", data.Length);
+                Utilities.Error("Datagram_SendMessage: message too big {0}\n", data.Length);
 
             if (!sock.canSend)
-                sys.Error("SendMessage: called with canSend == false\n");
+                Utilities.Error("SendMessage: called with canSend == false\n");
 #endif
             Buffer.BlockCopy( data.Data, 0, sock.sendMessage, 0, data.Length );
             sock.sendMessageLength = data.Length;
@@ -663,7 +664,7 @@ namespace SharpQuake
             PacketHeader header;
             header.length = Common.BigLong( packetLen | NetFlags.NETFLAG_DATA | eom );
             header.sequence = Common.BigLong( ( Int32 ) sock.sendSequence++ );
-            sys.StructureToBytes( ref header, _PacketBuffer, 0 );
+            Utilities.StructureToBytes( ref header, _PacketBuffer, 0 );
             Buffer.BlockCopy( data.Data, 0, _PacketBuffer, PacketHeader.SizeInBytes, dataLen );
 
             sock.canSend = false;
@@ -685,10 +686,10 @@ namespace SharpQuake
 
 #if DEBUG
             if (data.IsEmpty)
-                sys.Error("Datagram_SendUnreliableMessage: zero length message\n");
+                Utilities.Error("Datagram_SendUnreliableMessage: zero length message\n");
 
             if (data.Length > QDef.MAX_DATAGRAM)
-                sys.Error("Datagram_SendUnreliableMessage: message too big {0}\n", data.Length);
+                Utilities.Error("Datagram_SendUnreliableMessage: message too big {0}\n", data.Length);
 #endif
 
             packetLen = net.NET_HEADERSIZE + data.Length;
@@ -696,7 +697,7 @@ namespace SharpQuake
             PacketHeader header;
             header.length = Common.BigLong( packetLen | NetFlags.NETFLAG_UNRELIABLE );
             header.sequence = Common.BigLong( ( Int32 ) sock.unreliableSendSequence++ );
-            sys.StructureToBytes( ref header, _PacketBuffer, 0 );
+            Utilities.StructureToBytes( ref header, _PacketBuffer, 0 );
             Buffer.BlockCopy( data.Data, 0, _PacketBuffer, PacketHeader.SizeInBytes, data.Length );
 
             if( sock.Write( _PacketBuffer, packetLen, sock.addr ) == -1 )
@@ -1047,7 +1048,7 @@ ErrorReturn2:
             PacketHeader header;
             header.length = Common.BigLong( packetLen | ( NetFlags.NETFLAG_DATA | eom ) );
             header.sequence = Common.BigLong( ( Int32 ) sock.sendSequence++ );
-            sys.StructureToBytes( ref header, _PacketBuffer, 0 );
+            Utilities.StructureToBytes( ref header, _PacketBuffer, 0 );
             Buffer.BlockCopy( sock.sendMessage, 0, _PacketBuffer, PacketHeader.SizeInBytes, dataLen );
 
             sock.sendNext = false;
@@ -1081,7 +1082,7 @@ ErrorReturn2:
             PacketHeader header;
             header.length = Common.BigLong( packetLen | ( NetFlags.NETFLAG_DATA | eom ) );
             header.sequence = Common.BigLong( ( Int32 ) ( sock.sendSequence - 1 ) );
-            sys.StructureToBytes( ref header, _PacketBuffer, 0 );
+            Utilities.StructureToBytes( ref header, _PacketBuffer, 0 );
             Buffer.BlockCopy( sock.sendMessage, 0, _PacketBuffer, PacketHeader.SizeInBytes, dataLen );
 
             sock.sendNext = false;

@@ -23,6 +23,7 @@
 using System;
 using System.Runtime.InteropServices;
 using OpenTK.Graphics.OpenGL;
+using SharpQuake.Framework;
 using Buffer = System.Buffer;
 
 // gl_draw.c
@@ -218,9 +219,9 @@ namespace SharpQuake
 
             Byte[] buf = FileSystem.LoadFile( "gfx/conback.lmp" );
             if( buf == null )
-                sys.Error( "Couldn't load gfx/conback.lmp" );
+                Utilities.Error( "Couldn't load gfx/conback.lmp" );
 
-            dqpicheader_t cbHeader = sys.BytesToStructure<dqpicheader_t>( buf, 0 );
+            dqpicheader_t cbHeader = Utilities.BytesToStructure<dqpicheader_t>( buf, 0 );
             Wad.SwapPic( cbHeader );
 
             // hack the version number directly into the pic
@@ -425,13 +426,13 @@ namespace SharpQuake
                     if( glt.identifier == identifier && glt.owner == owner )
                     {
                         if( width != glt.width || height != glt.height )
-                            sys.Error( "GL_LoadTexture: cache mismatch!" );
+                            Utilities.Error( "GL_LoadTexture: cache mismatch!" );
                         return glt.texnum;
                     }
                 }
             }
             if( _NumTextures == _glTextures.Length )
-                sys.Error( "GL_LoadTexture: no more texture slots available!" );
+                Utilities.Error( "GL_LoadTexture: no more texture slots available!" );
 
             gltexture_t tex = new gltexture_t();
             _glTextures[_NumTextures] = tex;
@@ -468,13 +469,13 @@ namespace SharpQuake
                     if ( glt.identifier == identifier && glt.owner == owner )
                     {
                         if ( width != glt.width || height != glt.height )
-                            sys.Error( "GL_LoadTexture: cache mismatch!" );
+                            Utilities.Error( "GL_LoadTexture: cache mismatch!" );
                         return glt.texnum;
                     }
                 }
             }
             if ( _NumTextures == _glTextures.Length )
-                sys.Error( "GL_LoadTexture: no more texture slots available!" );
+                Utilities.Error( "GL_LoadTexture: no more texture slots available!" );
 
             gltexture_t tex = new gltexture_t( );
             _glTextures[_NumTextures] = tex;
@@ -550,7 +551,7 @@ namespace SharpQuake
             }
 
             if( _MenuNumCachePics == MAX_CACHED_PICS )
-                sys.Error( "menu_numcachepics == MAX_CACHED_PICS" );
+                Utilities.Error( "menu_numcachepics == MAX_CACHED_PICS" );
 
             cachepic_t pic = _MenuCachePics[_MenuNumCachePics];
             _MenuNumCachePics++;
@@ -561,8 +562,8 @@ namespace SharpQuake
             //
             Byte[] data = FileSystem.LoadFile( path );
             if( data == null )
-                sys.Error( "Draw_CachePic: failed to load {0}", path );
-            dqpicheader_t header = sys.BytesToStructure<dqpicheader_t>( data, 0 );
+                Utilities.Error( "Draw_CachePic: failed to load {0}", path );
+            dqpicheader_t header = Utilities.BytesToStructure<dqpicheader_t>( data, 0 );
             Wad.SwapPic( header );
 
             var headerSize = Marshal.SizeOf( typeof( dqpicheader_t ) );
@@ -617,7 +618,7 @@ namespace SharpQuake
             if( x < 0 || ( UInt32 ) ( x + pic.width ) > Scr.vid.width ||
                 y < 0 || ( UInt32 ) ( y + pic.height ) > Scr.vid.height )
             {
-                sys.Error( "Draw_TransPic: bad coordinates" );
+                Utilities.Error( "Draw_TransPic: bad coordinates" );
             }
 
             DrawPic( x, y, pic );
@@ -729,7 +730,7 @@ namespace SharpQuake
                     break;
 
                 default:
-                    sys.Error( "GL_SelectTexture: Unknown target\n" );
+                    Utilities.Error( "GL_SelectTexture: Unknown target\n" );
                     break;
             }
 
@@ -859,7 +860,7 @@ namespace SharpQuake
             else
             {
                 if( ( s & 3 ) != 0 )
-                    sys.Error( "GL_Upload8: s&3" );
+                    Utilities.Error( "GL_Upload8: s&3" );
 
                 for( var i = 0; i < s; i += 4, offset += 4 )
                 {
@@ -1084,7 +1085,7 @@ Done:
         // Operates in place, quartering the size of the texture
         private static void MipMap( UInt32[] src, Int32 width, Int32 height )
         {
-            Union4B p1 = Union4B.Empty, p2 = Union4B.Empty, p3 = Union4B.Empty, p4 = Union4B.Empty;
+            Union4b p1 = Union4b.Empty, p2 = Union4b.Empty, p3 = Union4b.Empty, p4 = Union4b.Empty;
 
             width >>= 1;
             height >>= 1;
@@ -1155,7 +1156,7 @@ Done:
                 return texnum;
             }
 
-            sys.Error( "Scrap_AllocBlock: full" );
+            Utilities.Error( "Scrap_AllocBlock: full" );
             return -1;
         }
 
@@ -1170,28 +1171,6 @@ Done:
             _ScrapDirty = false;
         }
 
-        private class glmode_t
-        {
-            public String name;
-            public TextureMinFilter minimize;
-            public TextureMagFilter maximize;
-
-            public glmode_t( String name, TextureMinFilter minFilter, TextureMagFilter magFilter )
-            {
-                this.name = name;
-                this.minimize = minFilter;
-                this.maximize = magFilter;
-            }
-        } //glmode_t;
-
-        private class gltexture_t
-        {
-            public Int32 texnum;
-            public String owner;
-            public String identifier; //char	identifier[64];
-            public Int32 width, height;
-            public System.Boolean mipmap;
-        } //gltexture_t;
 
         // pic_count
 
@@ -1219,25 +1198,4 @@ Done:
             }
         }
     }
-
-    internal class glpic_t
-    {
-        public Int32 width, height;
-        public Int32 texnum;
-        public Single sl, tl, sh, th;
-
-        public glpic_t()
-        {
-            sl = 0;
-            sh = 1;
-            tl = 0;
-            th = 1;
-        }
-    } //glpic_t;
-
-    internal class cachepic_t
-    {
-        public String name; //[MAX_QPATH];
-        public glpic_t pic;
-    } // cachepic_t;
 }

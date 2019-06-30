@@ -23,6 +23,7 @@
 using System;
 using System.IO;
 using System.Text;
+using SharpQuake.Framework;
 
 namespace SharpQuake
 {
@@ -102,7 +103,7 @@ namespace SharpQuake
             name = Path.ChangeExtension( name, ".dem" );
 
             Con.Print( "recording to {0}.\n", name );
-            FileStream fs = sys.FileOpenWrite( name, true );
+            FileStream fs = FileSystem.OpenWrite( name, true );
             if( fs == null )
             {
                 Con.Print( "ERROR: couldn't open.\n" );
@@ -267,7 +268,7 @@ namespace SharpQuake
                 BinaryReader reader = ( (DisposableWrapper<BinaryReader>)cls.demofile ).Object;
                 var size = Common.LittleLong( reader.ReadInt32() );
                 if( size > QDef.MAX_MSGLEN )
-                    sys.Error( "Demo message > MAX_MSGLEN" );
+                    Utilities.Error( "Demo message > MAX_MSGLEN" );
 
                 cl.mviewangles[1] = cl.mviewangles[0];
                 cl.mviewangles[0].X = Common.LittleFloat( reader.ReadSingle() );

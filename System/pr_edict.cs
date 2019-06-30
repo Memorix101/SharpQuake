@@ -26,6 +26,7 @@ using System.Globalization;
 using System.IO;
 using System.Runtime.InteropServices;
 using System.Text;
+using SharpQuake.Framework;
 
 namespace SharpQuake
 {
@@ -149,9 +150,9 @@ namespace SharpQuake
 
             Byte[] buf = FileSystem.LoadFile( "progs.dat" );
 
-            _Progs = sys.BytesToStructure<dprograms_t>( buf, 0 );
+            _Progs = Utilities.BytesToStructure<dprograms_t>( buf, 0 );
             if( _Progs == null )
-                sys.Error( "PR_LoadProgs: couldn't load progs.dat" );
+                Utilities.Error( "PR_LoadProgs: couldn't load progs.dat" );
             Con.DPrint( "Programs occupy {0}K.\n", buf.Length / 1024 );
 
             for( var i = 0; i < buf.Length; i++ )
@@ -161,16 +162,16 @@ namespace SharpQuake
             _Progs.SwapBytes();
 
             if( _Progs.version != PROG_VERSION )
-                sys.Error( "progs.dat has wrong version number ({0} should be {1})", _Progs.version, PROG_VERSION );
+                Utilities.Error( "progs.dat has wrong version number ({0} should be {1})", _Progs.version, PROG_VERSION );
             if( _Progs.crc != PROGHEADER_CRC )
-                sys.Error( "progs.dat system vars have been modified, progdefs.h is out of date" );
+                Utilities.Error( "progs.dat system vars have been modified, progdefs.h is out of date" );
 
             // Functions
             _Functions = new dfunction_t[_Progs.numfunctions];
             var offset = _Progs.ofs_functions;
             for( var i = 0; i < _Functions.Length; i++, offset += dfunction_t.SizeInBytes )
             {
-                _Functions[i] = sys.BytesToStructure<dfunction_t>( buf, offset );
+                _Functions[i] = Utilities.BytesToStructure<dfunction_t>( buf, offset );
                 _Functions[i].SwapBytes();
             }
 
@@ -191,7 +192,7 @@ namespace SharpQuake
             offset = _Progs.ofs_globaldefs;
             for( var i = 0; i < _GlobalDefs.Length; i++, offset += ddef_t.SizeInBytes )
             {
-                _GlobalDefs[i] = sys.BytesToStructure<ddef_t>( buf, offset );
+                _GlobalDefs[i] = Utilities.BytesToStructure<ddef_t>( buf, offset );
                 _GlobalDefs[i].SwapBytes();
             }
 
@@ -200,10 +201,10 @@ namespace SharpQuake
             offset = _Progs.ofs_fielddefs;
             for( var i = 0; i < _FieldDefs.Length; i++, offset += ddef_t.SizeInBytes )
             {
-                _FieldDefs[i] = sys.BytesToStructure<ddef_t>( buf, offset );
+                _FieldDefs[i] = Utilities.BytesToStructure<ddef_t>( buf, offset );
                 _FieldDefs[i].SwapBytes();
                 if( ( _FieldDefs[i].type & DEF_SAVEGLOBAL ) != 0 )
-                    sys.Error( "PR_LoadProgs: pr_fielddefs[i].type & DEF_SAVEGLOBAL" );
+                    Utilities.Error( "PR_LoadProgs: pr_fielddefs[i].type & DEF_SAVEGLOBAL" );
             }
 
             // Statements
@@ -211,7 +212,7 @@ namespace SharpQuake
             offset = _Progs.ofs_statements;
             for( var i = 0; i < _Statements.Length; i++, offset += dstatement_t.SizeInBytes )
             {
-                _Statements[i] = sys.BytesToStructure<dstatement_t>( buf, offset );
+                _Statements[i] = Utilities.BytesToStructure<dstatement_t>( buf, offset );
                 _Statements[i].SwapBytes();
             }
 
@@ -224,7 +225,7 @@ namespace SharpQuake
                     SwapHelper.Swap4b( buf, offset );
                 }
             }
-            GlobalStruct = sys.BytesToStructure<globalvars_t>( buf, _Progs.ofs_globals );
+            GlobalStruct = Utilities.BytesToStructure<globalvars_t>( buf, _Progs.ofs_globals );
             _Globals = new Single[_Progs.numglobals - globalvars_t.SizeInBytes / 4];
             Buffer.BlockCopy( buf, _Progs.ofs_globals + globalvars_t.SizeInBytes, _Globals, 0, _Globals.Length * 4 );
 
@@ -293,7 +294,7 @@ namespace SharpQuake
                     break;
 
                 if( Common.Token != "{" )
-                    sys.Error( "ED_LoadFromFile: found {0} when expecting {", Common.Token );
+                    Utilities.Error( "ED_LoadFromFile: found {0} when expecting {", Common.Token );
 
                 if( ent == null )
                     ent = server.EdictNum( 0 );
@@ -372,7 +373,7 @@ namespace SharpQuake
                     break;
 
                 if( data == null )
-                    sys.Error( "ED_ParseEntity: EOF without closing brace" );
+                    Utilities.Error( "ED_ParseEntity: EOF without closing brace" );
 
                 var token = Common.Token;
 
@@ -395,10 +396,10 @@ namespace SharpQuake
                 // parse value
                 data = Common.Parse( data );
                 if( data == null )
-                    sys.Error( "ED_ParseEntity: EOF without closing brace" );
+                    Utilities.Error( "ED_ParseEntity: EOF without closing brace" );
 
                 if( Common.Token.StartsWith( "}" ) )
-                    sys.Error( "ED_ParseEntity: closing brace without data" );
+                    Utilities.Error( "ED_ParseEntity: closing brace without data" );
 
                 init = true;
 
@@ -676,17 +677,17 @@ namespace SharpQuake
                     break;
 
                 if( String.IsNullOrEmpty( data ) )
-                    sys.Error( "ED_ParseEntity: EOF without closing brace" );
+                    Utilities.Error( "ED_ParseEntity: EOF without closing brace" );
 
                 var keyname = Common.Token;
 
                 // parse value
                 data = Common.Parse( data );
                 if( String.IsNullOrEmpty( data ) )
-                    sys.Error( "ED_ParseEntity: EOF without closing brace" );
+                    Utilities.Error( "ED_ParseEntity: EOF without closing brace" );
 
                 if( Common.Token.StartsWith( "}" ) )
-                    sys.Error( "ED_ParseEntity: closing brace without data" );
+                    Utilities.Error( "ED_ParseEntity: closing brace without data" );
 
                 ddef_t key = FindGlobal( keyname );
                 if( key == null )

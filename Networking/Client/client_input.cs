@@ -21,6 +21,7 @@
 /// </copyright>
 
 using System;
+using SharpQuake.Framework;
 
 // cl_input.c
 

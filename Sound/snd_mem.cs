@@ -22,6 +22,7 @@
 
 using System;
 using System.Text;
+using SharpQuake.Framework;
 
 // snd_mem.c
 
@@ -116,7 +117,7 @@ namespace SharpQuake
             if( info.samples > 0 )
             {
                 if( samples < info.samples )
-                    sys.Error( "Sound {0} has a bad loop length", name );
+                    Utilities.Error( "Sound {0} has a bad loop length", name );
             }
             else
                 info.samples = samples;

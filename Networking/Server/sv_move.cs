@@ -22,6 +22,7 @@
 
 using System;
 using OpenTK;
+using SharpQuake.Framework;
 
 // sv_move.c
 
@@ -38,13 +39,13 @@ namespace SharpQuake
         /// possible, no move is done, false is returned, and
         /// pr_global_struct.trace_normal is set to the normal of the blocking wall
         /// </summary>
-        public static Boolean MoveStep( edict_t ent, ref v3f move, Boolean relink )
+        public static Boolean MoveStep( edict_t ent, ref Vector3f move, Boolean relink )
         {
             trace_t trace;
 
             // try the move
-            v3f oldorg = ent.v.origin;
-            v3f neworg;
+            Vector3f oldorg = ent.v.origin;
+            Vector3f neworg;
             MathLib.VectorAdd( ref ent.v.origin, ref move, out neworg );
 
             // flying monsters don't step up
@@ -86,7 +87,7 @@ namespace SharpQuake
 
             // push down from a step height above the wished position
             neworg.z += STEPSIZE;
-            v3f end = neworg;
+            Vector3f end = neworg;
             end.z -= STEPSIZE * 2;
 
             trace = Move( ref neworg, ref ent.v.mins, ref ent.v.maxs, ref end, 0, ent );
@@ -150,7 +151,7 @@ namespace SharpQuake
         /// </summary>
         public static Boolean CheckBottom( edict_t ent )
         {
-            v3f mins, maxs;
+            Vector3f mins, maxs;
             MathLib.VectorAdd( ref ent.v.origin, ref ent.v.mins, out mins );
             MathLib.VectorAdd( ref ent.v.origin, ref ent.v.maxs, out maxs );
 
@@ -266,12 +267,12 @@ RealCheck:
             QBuiltins.PF_changeyaw();
 
             yaw = ( Single ) ( yaw * Math.PI * 2.0 / 360 );
-            v3f move;
+            Vector3f move;
             move.x = ( Single ) Math.Cos( yaw ) * dist;
             move.y = ( Single ) Math.Sin( yaw ) * dist;
             move.z = 0;
 
-            v3f oldorigin = ent.v.origin;
+            Vector3f oldorigin = ent.v.origin;
             if( MoveStep( ent, ref move, false ) )
             {
                 var delta = ent.v.angles.y - ent.v.ideal_yaw;
@@ -298,7 +299,7 @@ RealCheck:
 
             var deltax = enemy.v.origin.x - actor.v.origin.x;
             var deltay = enemy.v.origin.y - actor.v.origin.y;
-            v3f d;
+            Vector3f d;
             if( deltax > 10 )
                 d.y = 0;
             else if( deltax < -10 )

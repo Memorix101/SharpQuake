@@ -24,6 +24,7 @@ using System;
 using System.Globalization;
 using System.IO;
 using System.Text;
+using SharpQuake.Framework;
 
 // host_cmd.c
 
@@ -443,7 +444,7 @@ namespace SharpQuake
             var name = Path.ChangeExtension( Path.Combine( Common.GameDir, Command.Argv( 1 ) ), ".sav" );
 
             Con.Print( "Saving game to {0}...\n", name );
-            FileStream fs = sys.FileOpenWrite( name, true );
+            FileStream fs = FileSystem.OpenWrite( name, true );
             if( fs == null )
             {
                 Con.Print( "ERROR: couldn't open.\n" );
@@ -506,7 +507,7 @@ namespace SharpQuake
             //	SCR_BeginLoadingPlaque ();
 
             Con.Print( "Loading game from {0}...\n", name );
-            FileStream fs = sys.FileOpenRead( name );
+            FileStream fs = FileSystem.OpenRead( name );
             if( fs == null )
             {
                 Con.Print( "ERROR: couldn't open.\n" );
@@ -566,7 +567,7 @@ namespace SharpQuake
                 {
                     line = reader.ReadLine();
                     if( line == null )
-                        sys.Error( "EOF without closing brace" );
+                        Utilities.Error( "EOF without closing brace" );
 
                     sb.AppendLine( line );
                     var idx = line.IndexOf( '}' );
@@ -577,7 +578,7 @@ namespace SharpQuake
                         if( String.IsNullOrEmpty( Common.Token ) )
                             break; // end of file
                         if( Common.Token != "{" )
-                            sys.Error( "First token isn't a brace" );
+                            Utilities.Error( "First token isn't a brace" );
 
                         if( entnum == -1 )
                         {

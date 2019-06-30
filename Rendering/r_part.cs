@@ -23,6 +23,7 @@
 using System;
 using OpenTK;
 using OpenTK.Graphics.OpenGL;
+using SharpQuake.Framework;
 
 // r_part.c
 

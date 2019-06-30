@@ -6,6 +6,7 @@ using System.Net;
 using System.Net.Sockets;
 using System.Text;
 using System.Threading.Tasks;
+using SharpQuake.Framework;
 
 namespace SharpQuake
 {
@@ -62,7 +63,7 @@ namespace SharpQuake
 
         private Int32 _Count;
 
-        private Union4B _Val = Union4B.Empty;
+        private Union4b _Val = Union4b.Empty;
 
         public Object GetState( )
         {
@@ -99,7 +100,7 @@ namespace SharpQuake
         {
 #if PARANOID
             if (c < -128 || c > 127)
-                Sys.Error("MSG_WriteChar: range error");
+                Utilities.Error("MSG_WriteChar: range error");
 #endif
             NeedRoom( 1 );
             _Buffer[_Count++] = ( Byte ) c;
@@ -110,7 +111,7 @@ namespace SharpQuake
         {
 #if PARANOID
             if (c < 0 || c > 255)
-                Sys.Error("MSG_WriteByte: range error");
+                Utilities.Error("MSG_WriteByte: range error");
 #endif
             NeedRoom( 1 );
             _Buffer[_Count++] = ( Byte ) c;
@@ -121,7 +122,7 @@ namespace SharpQuake
         {
 #if PARANOID
             if (c < short.MinValue || c > short.MaxValue)
-                Sys.Error("MSG_WriteShort: range error");
+                Utilities.Error("MSG_WriteShort: range error");
 #endif
             NeedRoom( 2 );
             _Buffer[_Count++] = ( Byte ) ( c & 0xff );
@@ -241,12 +242,12 @@ namespace SharpQuake
             if ( _Count + bytes > _Buffer.Length )
             {
                 if ( !this.AllowOverflow )
-                    sys.Error( "MsgWriter: overflow without allowoverflow set!" );
+                    Utilities.Error( "MsgWriter: overflow without allowoverflow set!" );
 
                 this.IsOveflowed = true;
                 _Count = 0;
                 if ( bytes > _Buffer.Length )
-                    sys.Error( "MsgWriter: Requested more than whole buffer has!" );
+                    Utilities.Error( "MsgWriter: Requested more than whole buffer has!" );
             }
         }
 

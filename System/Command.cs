@@ -23,6 +23,7 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using SharpQuake.Framework;
 
 // cmd.h -- Command buffer and command execution
 
@@ -115,7 +116,7 @@ namespace SharpQuake
         {
             // ??? because hunk allocation would get stomped
             if( host.IsInitialized )
-                sys.Error( "Cmd.Add after host initialized!" );
+                Utilities.Error( "Cmd.Add after host initialized!" );
 
             // fail if the command is a variable name
             if( CVar.Exists( name ) )

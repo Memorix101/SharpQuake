@@ -22,6 +22,7 @@
 
 using System;
 using System.Text;
+using SharpQuake.Framework;
 
 // sbar.h
 

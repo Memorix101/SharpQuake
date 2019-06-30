@@ -24,6 +24,7 @@ using System;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using System.Text;
+using SharpQuake.Framework;
 
 namespace SharpQuake
 {
@@ -81,7 +82,7 @@ namespace SharpQuake
         {
             _Data = FileSystem.LoadFile( filename );
             if( _Data == null )
-                sys.Error( "Wad.LoadWadFile: couldn't load {0}", filename );
+                Utilities.Error( "Wad.LoadWadFile: couldn't load {0}", filename );
 
             if( _Handle.IsAllocated )
             {
@@ -90,11 +91,11 @@ namespace SharpQuake
             _Handle = GCHandle.Alloc( _Data, GCHandleType.Pinned );
             _DataPtr = _Handle.AddrOfPinnedObject();
 
-            wadinfo_t header = sys.BytesToStructure<wadinfo_t>( _Data, 0 );
+            wadinfo_t header = Utilities.BytesToStructure<wadinfo_t>( _Data, 0 );
 
             if( header.identification[0] != 'W' || header.identification[1] != 'A' ||
                 header.identification[2] != 'D' || header.identification[3] != '2' )
-                sys.Error( "Wad file {0} doesn't have WAD2 id\n", filename );
+                Utilities.Error( "Wad file {0} doesn't have WAD2 id\n", filename );
 
             var numlumps = Common.LittleLong( header.numlumps );
             var infotableofs = Common.LittleLong( header.infotableofs );
@@ -129,7 +130,7 @@ namespace SharpQuake
             }
             else
             {
-                sys.Error( "W_GetLumpinfo: {0} not found", name );
+                Utilities.Error( "W_GetLumpinfo: {0} not found", name );
             }
             // We must never be there
             throw new InvalidOperationException( "W_GetLumpinfo: Unreachable code reached!" );

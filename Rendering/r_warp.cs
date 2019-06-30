@@ -23,6 +23,7 @@
 using System;
 using OpenTK;
 using OpenTK.Graphics.OpenGL;
+using SharpQuake.Framework;
 
 // gl_warp.c
 
@@ -92,7 +93,7 @@ namespace SharpQuake
             var r = 0;
             var g = 0;
             var b = 0;
-            Union4B rgba = Union4B.Empty;
+            Union4b rgba = Union4b.Empty;
             for( var i = 0; i < 128; i++ )
                 for( var j = 0; j < 128; j++ )
                 {
@@ -170,7 +171,7 @@ namespace SharpQuake
         private static void SubdividePolygon( Int32 numverts, Vector3[] verts )
         {
             if( numverts > 60 )
-                sys.Error( "numverts = {0}", numverts );
+                Utilities.Error( "numverts = {0}", numverts );
 
             Vector3 mins, maxs;
             BoundPoly( numverts, verts, out mins, out maxs );

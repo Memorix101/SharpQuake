@@ -31,6 +31,7 @@ using System.Net.Sockets;
 using System.Runtime.InteropServices;
 using System.Text;
 using OpenTK;
+using SharpQuake.Framework;
 
 //
 // Source: common.h + common.c
@@ -132,7 +133,7 @@ namespace SharpQuake
         public static Vector3 ZeroVector = Vector3.Zero;
 
         // for passing as reference
-        public static v3f ZeroVector3f = default(v3f);
+        public static Vector3f ZeroVector3f = default(Vector3f);
 
         private static readonly Byte[] ZeroBytes = new Byte[4096];
 
@@ -205,12 +206,14 @@ namespace SharpQuake
 
             Command.Add("path", FileSystem.Path_f );
 
-            FileSystem.InitFileSystem();
+            Utilities.Init( path, argv );
+            FileSystem.InitFileSystem( host.Params );
+
             CheckRegistered();
         }
 
         // void COM_InitArgv (int argc, char **argv)
-        public static void InitArgv( String[] argv)
+        public static void InitArgv( String[] argv )
         {
             // reconstitute the command line for the cmdline externally visible cvar
             _Args = String.Join(" ", argv);
@@ -244,6 +247,8 @@ namespace SharpQuake
 
             if (HasParam("-hipnotic"))
                 _GameKind = GameKind.Hipnotic;
+
+            Utilities.InitArgv( argv );
         }
 
         /// <summary>
@@ -520,14 +525,14 @@ namespace SharpQuake
             return (count > 0 ? Encoding.ASCII.GetString(src, 0, count) : String.Empty);
         }
 
-        public static Vector3 ToVector(ref v3f v)
+        public static Vector3 ToVector(ref Vector3f v)
         {
             return new Vector3(v.x, v.y, v.z);
         }
 
         public static void WriteInt( Byte[] dest, Int32 offset, Int32 value )
         {
-            Union4B u = Union4B.Empty;
+            Union4b u = Union4b.Empty;
             u.i0 = value;
             dest[offset + 0] = u.b0;
             dest[offset + 1] = u.b1;
@@ -550,7 +555,7 @@ namespace SharpQuake
             {
                 Con.Print("Playing shareware version.\n");
                 if ( FileSystem._IsModified )
-                    sys.Error("You must have the registered version to use modified games");
+                    Utilities.Error("You must have the registered version to use modified games");
                 return;
             }
 
@@ -559,7 +564,7 @@ namespace SharpQuake
             for ( var i = 0; i < 128; i++)
             {
                 if (_Pop[i] != ( UInt16 ) _Converter.BigShort(( Int16 ) check[i]))
-                    sys.Error("Corrupted data file.");
+                    Utilities.Error("Corrupted data file.");
             }
 
             CVar.Set("cmdline", _Args);

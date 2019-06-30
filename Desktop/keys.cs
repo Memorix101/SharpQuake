@@ -23,6 +23,7 @@
 using System;
 using System.IO;
 using System.Text;
+using SharpQuake.Framework;
 
 // keys.h
 // keys.c
@@ -448,7 +449,7 @@ namespace SharpQuake
                         break;
 
                     default:
-                        sys.Error( "Bad key_dest" );
+                        Utilities.Error( "Bad key_dest" );
                         break;
                 }
                 return;
@@ -534,7 +535,7 @@ namespace SharpQuake
                     break;
 
                 default:
-                    sys.Error( "Bad key_dest" );
+                    Utilities.Error( "Bad key_dest" );
                     break;
             }
         }

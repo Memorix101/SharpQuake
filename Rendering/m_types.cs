@@ -23,6 +23,7 @@
 using System;
 using System.Runtime.InteropServices;
 using OpenTK;
+using SharpQuake.Framework;
 
 // gl_model.h
 // modelgen.h
@@ -77,13 +78,7 @@ namespace SharpQuake
 
     // plane_t structure
     // !!! if this is changed, it must be changed in asm_i386.h too !!!
-    class mplane_t
-    {
-        public Vector3 normal;
-        public Single dist;
-        public Byte type;			// for texture axis selection and fast side tests
-        public Byte signbits;		// signx + signy<<1 + signz<<1
-    } //mplane_t;
+   
 
 
     // Uze:
@@ -680,10 +675,10 @@ namespace SharpQuake
     {
         public Int32 ident;
         public Int32 version;
-        public v3f scale;
-        public v3f scale_origin;
+        public Vector3f scale;
+        public Vector3f scale_origin;
         public Single boundingradius;
-        public v3f eyeposition;
+        public Vector3f eyeposition;
         public Int32 numskins;
         public Int32 skinwidth;
         public Int32 skinheight;

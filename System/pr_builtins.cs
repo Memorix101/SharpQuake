@@ -23,6 +23,7 @@
 using System;
 using System.Text;
 using OpenTK;
+using SharpQuake.Framework;
 
 // pr_cmds.c
 
@@ -221,7 +222,7 @@ namespace SharpQuake
         /// <summary>
         /// G_VECTOR(OFS_RETURN) = value
         /// </summary>
-        public static unsafe void ReturnVector( ref v3f value )
+        public static unsafe void ReturnVector( ref Vector3f value )
         {
             Single* ptr = ( Single* )progs.GlobalStructAddr;
             ptr[OFS.OFS_RETURN + 0] = value.x;
@@ -344,7 +345,7 @@ namespace SharpQuake
             return sb.ToString();
         }
 
-        private static unsafe void Copy( Single* src, ref v3f dest )
+        private static unsafe void Copy( Single* src, ref Vector3f dest )
         {
             dest.x = src[0];
             dest.y = src[1];
@@ -1248,7 +1249,7 @@ namespace SharpQuake
 
             yaw = ( Single ) ( yaw * Math.PI * 2.0 / 360.0 );
 
-            v3f move;
+            Vector3f move;
             move.x = ( Single ) Math.Cos( yaw ) * dist;
             move.y = ( Single ) Math.Sin( yaw ) * dist;
             move.z = 0;
@@ -1440,7 +1441,7 @@ namespace SharpQuake
                 if( host.TeamPlay != 0 && ent.v.team > 0 && ent.v.team == check.v.team )
                     continue;	// don't aim at teammate
 
-                v3f tmp;
+                Vector3f tmp;
                 MathLib.VectorAdd( ref check.v.mins, ref check.v.maxs, out tmp );
                 MathLib.VectorMA( ref check.v.origin, 0.5f, ref tmp, out tmp );
                 MathLib.Copy( ref tmp, out end );
@@ -1460,7 +1461,7 @@ namespace SharpQuake
 
             if( bestent != null )
             {
-                v3f dir2, end2;
+                Vector3f dir2, end2;
                 MathLib.VectorSubtract( ref bestent.v.origin, ref ent.v.origin, out dir2 );
                 var dist = MathLib.DotProduct( ref dir2, ref progs.GlobalStruct.v_forward );
                 MathLib.VectorScale( ref progs.GlobalStruct.v_forward, dist, out end2 );

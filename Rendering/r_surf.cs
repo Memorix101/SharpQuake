@@ -24,6 +24,7 @@ using System;
 using System.Runtime.InteropServices;
 using OpenTK;
 using OpenTK.Graphics.OpenGL;
+using SharpQuake.Framework;
 
 // gl_rsurf.c
 
@@ -327,7 +328,7 @@ namespace SharpQuake
                 return texnum;
             }
 
-            sys.Error( "AllocBlock: full" );
+            Utilities.Error( "AllocBlock: full" );
             return 0; // shut up compiler
         }
 
@@ -413,7 +414,7 @@ namespace SharpQuake
                     break;
 
                 default:
-                    sys.Error( "Bad lightmap format" );
+                    Utilities.Error( "Bad lightmap format" );
                     break;
             }
         }
@@ -1172,9 +1173,9 @@ namespace SharpQuake
             {
                 t = t.anim_next;
                 if( t == null )
-                    sys.Error( "R_TextureAnimation: broken cycle" );
+                    Utilities.Error( "R_TextureAnimation: broken cycle" );
                 if( ++count > 100 )
-                    sys.Error( "R_TextureAnimation: infinite cycle" );
+                    Utilities.Error( "R_TextureAnimation: infinite cycle" );
             }
 
             return t;

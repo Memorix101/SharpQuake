@@ -22,6 +22,7 @@
 
 using System;
 using OpenTK;
+using SharpQuake.Framework;
 
 // cl_tent.c
 
@@ -270,7 +271,7 @@ namespace SharpQuake
                     break;
 
                 default:
-                    sys.Error( "CL_ParseTEnt: bad type" );
+                    Utilities.Error( "CL_ParseTEnt: bad type" );
                     break;
             }
         }

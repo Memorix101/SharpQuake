@@ -23,6 +23,7 @@
 using System;
 using System.Net;
 using System.Net.Sockets;
+using SharpQuake.Framework;
 
 namespace SharpQuake
 {
@@ -122,12 +123,12 @@ namespace SharpQuake
                 {
                     var ipaddr = Common.Argv( i2 + 1 );
                     if( !IPAddress.TryParse( ipaddr, out _MyAddress ) )
-                        sys.Error( "{0} is not a valid IP address!", ipaddr );
+                        Utilities.Error( "{0} is not a valid IP address!", ipaddr );
                     net.MyTcpIpAddress = ipaddr;
                 }
                 else
                 {
-                    sys.Error( "Net.Init: you must specify an IP address after -ip" );
+                    Utilities.Error( "Net.Init: you must specify an IP address after -ip" );
                 }
             }
             else
@@ -168,7 +169,7 @@ namespace SharpQuake
                 {
                     _AcceptSocket = OpenSocket( net.HostPort );
                     if( _AcceptSocket == null )
-                        sys.Error( "UDP_Listen: Unable to open accept socket\n" );
+                        Utilities.Error( "UDP_Listen: Unable to open accept socket\n" );
                 }
             }
             else
@@ -347,7 +348,7 @@ namespace SharpQuake
             if( socket != _BroadcastSocket )
             {
                 if( _BroadcastSocket != null )
-                    sys.Error( "Attempted to use multiple broadcasts sockets\n" );
+                    Utilities.Error( "Attempted to use multiple broadcasts sockets\n" );
                 try
                 {
                     socket.EnableBroadcast = true;

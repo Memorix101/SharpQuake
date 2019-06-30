@@ -23,6 +23,7 @@
 using System;
 using System.IO;
 using System.Text;
+using SharpQuake.Framework;
 
 // gl_mesh.c
 
@@ -98,7 +99,7 @@ namespace SharpQuake
                 // save out the cached version
                 //
                 var fullpath = Path.Combine( Common.GameDir, path );
-                Stream fs = sys.FileOpenWrite( fullpath, true );
+                Stream fs = FileSystem.OpenWrite( fullpath, true );
                 if( fs != null )
                     using( BinaryWriter writer = new BinaryWriter( fs, Encoding.ASCII ) )
                     {
@@ -187,7 +188,7 @@ namespace SharpQuake
                 else
                     _Commands[_NumCommands++] = -( bestlen + 2 );
 
-                Union4B uval = Union4B.Empty;
+                Union4b uval = Union4b.Empty;
                 for( var j = 0; j < bestlen + 2; j++ )
                 {
                     // emit a vertex into the reorder buffer

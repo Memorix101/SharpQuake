@@ -22,6 +22,7 @@
 
 using System;
 using OpenTK;
+using SharpQuake.Framework;
 
 namespace SharpQuake
 {
@@ -105,7 +106,7 @@ namespace SharpQuake
         public static edict_t EdictNum( Int32 n )
         {
             if( n < 0 || n >= _Server.max_edicts )
-                sys.Error( "EDICT_NUM: bad number {0}", n );
+                Utilities.Error( "EDICT_NUM: bad number {0}", n );
             return _Server.edicts[n];
         }
 
@@ -135,7 +136,7 @@ namespace SharpQuake
             }
 
             if( i == QDef.MAX_EDICTS )
-                sys.Error( "ED_Alloc: no free edicts" );
+                Utilities.Error( "ED_Alloc: no free edicts" );
 
             sv.num_edicts++;
             e = EdictNum( i );
@@ -160,8 +161,8 @@ namespace SharpQuake
             ed.v.colormap = 0;
             ed.v.skin = 0;
             ed.v.frame = 0;
-            ed.v.origin = default( v3f );
-            ed.v.angles = default( v3f );
+            ed.v.origin = default( Vector3f );
+            ed.v.angles = default( Vector3f );
             ed.v.nextthink = -1;
             ed.v.solid = 0;
 
@@ -183,7 +184,7 @@ namespace SharpQuake
         public static edict_t ProgToEdict( Int32 e )
         {
             if( e < 0 || e > sv.edicts.Length )
-                sys.Error( "ProgToEdict: Bad prog!" );
+                Utilities.Error( "ProgToEdict: Bad prog!" );
             return sv.edicts[e];
         }
 
@@ -195,7 +196,7 @@ namespace SharpQuake
             var i = Array.IndexOf( sv.edicts, e ); // todo: optimize this
 
             if( i < 0 )
-                sys.Error( "NUM_FOR_EDICT: bad pointer" );
+                Utilities.Error( "NUM_FOR_EDICT: bad pointer" );
             return i;
         }
 

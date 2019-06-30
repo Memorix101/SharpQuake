@@ -26,12 +26,12 @@ using OpenTK;
 // mathlib.h
 // mathlib.c
 
-namespace SharpQuake
+namespace SharpQuake.Framework
 {
     /// <summary>
     /// Quake math functions
     /// </summary>
-    internal static class MathLib
+    public static class MathLib
     {
         /// <summary>
         /// AngleVectors
@@ -74,17 +74,17 @@ namespace SharpQuake
             return length;
         }
 
-        public static Single Length( ref v3f v )
+        public static Single Length( ref Vector3f v )
         {
             return ( Single ) Math.Sqrt( v.x * v.x + v.y * v.y + v.z * v.z );
         }
 
-        public static Single LengthXY( ref v3f v )
+        public static Single LengthXY( ref Vector3f v )
         {
             return ( Single ) Math.Sqrt( v.x * v.x + v.y * v.y );
         }
 
-        public static Single Normalize( ref v3f v )
+        public static Single Normalize( ref Vector3f v )
         {
             var length = ( Single ) Math.Sqrt( v.x * v.x + v.y * v.y + v.z * v.z );
             if( length != 0 )
@@ -100,47 +100,47 @@ namespace SharpQuake
         /// <summary>
         /// c = a + b * scale;
         /// </summary>
-        public static void VectorMA( ref v3f a, Single scale, ref v3f b, out v3f c )
+        public static void VectorMA( ref Vector3f a, Single scale, ref Vector3f b, out Vector3f c )
         {
             c.x = a.x + b.x * scale;
             c.y = a.y + b.y * scale;
             c.z = a.z + b.z * scale;
         }
 
-        public static void VectorScale( ref v3f a, Single scale, out v3f b )
+        public static void VectorScale( ref Vector3f a, Single scale, out Vector3f b )
         {
             b.x = a.x * scale;
             b.y = a.y * scale;
             b.z = a.z * scale;
         }
 
-        public static void VectorAdd( ref v3f a, ref v3f b, out v3f c )
+        public static void VectorAdd( ref Vector3f a, ref Vector3f b, out Vector3f c )
         {
             c.x = a.x + b.x;
             c.y = a.y + b.y;
             c.z = a.z + b.z;
         }
 
-        public static void VectorSubtract( ref v3f a, ref v3f b, out v3f c )
+        public static void VectorSubtract( ref Vector3f a, ref Vector3f b, out Vector3f c )
         {
             c.x = a.x - b.x;
             c.y = a.y - b.y;
             c.z = a.z - b.z;
         }
 
-        public static void Clamp( ref v3f src, ref Vector3 min, ref Vector3 max, out v3f dest )
+        public static void Clamp( ref Vector3f src, ref Vector3 min, ref Vector3 max, out Vector3f dest )
         {
             dest.x = Math.Max( Math.Min( src.x, max.X ), min.X );
             dest.y = Math.Max( Math.Min( src.y, max.Y ), min.Y );
             dest.z = Math.Max( Math.Min( src.z, max.Z ), min.Z );
         }
 
-        public static Single DotProduct( ref v3f a, ref v3f b )
+        public static Single DotProduct( ref Vector3f a, ref Vector3f b )
         {
             return a.x * b.x + a.y * b.y + a.z * b.z;
         }
 
-        public static Boolean CheckNaN( ref v3f v, Single defValue )
+        public static Boolean CheckNaN( ref Vector3f v, Single defValue )
         {
             var flag = false;
             if( Single.IsNaN( v.x ) )
@@ -161,7 +161,7 @@ namespace SharpQuake
             return flag;
         }
 
-        public static Single Comp( ref v3f a, Int32 index )
+        public static Single Comp( ref Vector3f a, Int32 index )
         {
             if( index < 0 || index > 2 )
                 throw new ArgumentOutOfRangeException( "index" );
@@ -188,7 +188,7 @@ namespace SharpQuake
             return ( a.X * b.X + a.Y * b.Y + a.Z * b.Z );
         }
 
-        public static Int32 BoxOnPlaneSide( ref v3f emins, ref v3f emaxs, mplane_t p )
+        public static Int32 BoxOnPlaneSide( ref Vector3f emins, ref Vector3f emaxs, mplane_t p )
         {
             Single mindist, maxdist;
             switch( p.type )
@@ -277,7 +277,7 @@ namespace SharpQuake
             Vector3.Transform( ref point, ref m, out dst );
         }
 
-        public static void Copy( ref v3f src, out Vector3 dest )
+        public static void Copy( ref Vector3f src, out Vector3 dest )
         {
             dest.X = src.x;
             dest.Y = src.y;
@@ -286,7 +286,7 @@ namespace SharpQuake
 
         //    return p - d * n;
         //}
-        public static void Copy( ref Vector3 src, out v3f dest )
+        public static void Copy( ref Vector3 src, out Vector3f dest )
         {
             dest.x = src.X;
             dest.y = src.Y;
@@ -343,7 +343,7 @@ namespace SharpQuake
 
                 default:
                     dist1 = dist2 = 0;		// shut up compiler
-                    sys.Error( "BoxOnPlaneSide:  Bad signbits" );
+                    Utilities.Error( "BoxOnPlaneSide:  Bad signbits" );
                     break;
             }
 
@@ -355,7 +355,7 @@ namespace SharpQuake
 
 #if PARANOID
             if (sides == 0)
-                Sys.Error("BoxOnPlaneSide: sides==0");
+                Utilities.Error("BoxOnPlaneSide: sides==0");
 #endif
 
             return sides;

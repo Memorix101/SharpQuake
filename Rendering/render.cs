@@ -24,6 +24,7 @@ using System;
 using System.Runtime.InteropServices;
 using OpenTK;
 using OpenTK.Graphics.OpenGL;
+using SharpQuake.Framework;
 
 // refresh.h -- public interface to refresh functions
 // gl_rmisc.c
@@ -249,7 +250,7 @@ namespace SharpQuake
                 return;
 
             if( _WorldEntity.model == null || client.cl.worldmodel == null )
-                sys.Error( "R_RenderView: NULL worldmodel" );
+                Utilities.Error( "R_RenderView: NULL worldmodel" );
 
             Double time1 = 0;
             if( _Speeds.Value != 0 )
@@ -363,7 +364,7 @@ namespace SharpQuake
             aliashdr_t paliashdr = Mod.GetExtraData( model );
             var s = paliashdr.skinwidth * paliashdr.skinheight;
             if( ( s & 3 ) != 0 )
-                sys.Error( "R_TranslateSkin: s&3" );
+                Utilities.Error( "R_TranslateSkin: s&3" );
 
             Byte[] original;
             if( _CurrentEntity.skinnum < 0 || _CurrentEntity.skinnum >= paliashdr.numskins )
@@ -1053,7 +1054,7 @@ namespace SharpQuake
                 else
                     GL.Begin( PrimitiveType.TriangleStrip );
 
-                Union4B u1 = Union4B.Empty, u2 = Union4B.Empty;
+                Union4b u1 = Union4b.Empty, u2 = Union4b.Empty;
                 do
                 {
                     // texture coordinates come from the draw list

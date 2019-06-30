@@ -21,6 +21,7 @@
 /// </copyright>
 
 using System;
+using SharpQuake.Framework;
 
 namespace SharpQuake
 {
@@ -168,7 +169,7 @@ namespace SharpQuake
             var step = 3 - _shm.channels;
             var snd_vol = ( Int32 ) ( _Volume.Value * 256 );
             Byte[] buffer = _Controller.LockBuffer();
-            Union4B uval = Union4B.Empty;
+            Union4b uval = Union4b.Empty;
             Int32 val, srcIndex = 0;
             var useLeft = true;
             var destCount = ( count * ( _shm.samplebits >> 3 ) ) & out_mask;
@@ -241,7 +242,7 @@ namespace SharpQuake
             var srcOffset = 0;
             var destCount = 0;//uze
             var destOffset = 0;
-            Union4B uval = Union4B.Empty;
+            Union4b uval = Union4b.Empty;
 
             while( lpaintedtime < endtime )
             {

@@ -5,10 +5,10 @@ using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace SharpQuake
+namespace SharpQuake.Framework
 {
     [StructLayout( LayoutKind.Explicit )]
-    public struct Union4B
+    public struct Union4b
     {
         [FieldOffset( 0 )]
         public UInt32 ui0;
@@ -43,9 +43,9 @@ namespace SharpQuake
         [FieldOffset( 3 )]
         public Byte b3;
 
-        public static readonly Union4B Empty = new Union4B( 0, 0, 0, 0 );
+        public static readonly Union4b Empty = new Union4b( 0, 0, 0, 0 );
 
-        public Union4B( Byte b0, Byte b1, Byte b2, Byte b3 )
+        public Union4b( Byte b0, Byte b1, Byte b2, Byte b3 )
         {
             // Shut up compiler
             this.ui0 = 0;

@@ -23,6 +23,7 @@
 using System;
 using System.IO;
 using System.Text;
+using SharpQuake.Framework;
 
 namespace SharpQuake
 {
@@ -179,6 +180,21 @@ namespace SharpQuake
             Command.Add( "messagemode", MessageMode_f );
             Command.Add( "messagemode2", MessageMode2_f );
             Command.Add( "clear", Clear_f );
+
+            ConsoleWrapper.OnPrint += ( txt ) =>
+            {
+                Print( txt );
+            };
+
+            ConsoleWrapper.OnPrint2 += ( fmt, args ) =>
+            {
+                Print( fmt, args );
+            };
+
+            ConsoleWrapper.OnDPrint += ( fmt, args ) =>
+            {
+                DPrint( fmt, args );
+            };
 
             _IsInitialized = true;
         }

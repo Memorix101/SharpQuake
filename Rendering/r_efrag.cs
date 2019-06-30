@@ -21,6 +21,7 @@
 /// </copyright>
 
 using OpenTK;
+using SharpQuake.Framework;
 
 // gl_refrag.c
 
@@ -160,7 +161,7 @@ namespace SharpQuake
                         break;
 
                     default:
-                        sys.Error( "R_StoreEfrags: Bad entity type {0}\n", clmodel.type );
+                        Utilities.Error( "R_StoreEfrags: Bad entity type {0}\n", clmodel.type );
                         break;
                 }
             }

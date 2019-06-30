@@ -23,6 +23,7 @@
 using System;
 using System.Runtime.InteropServices;
 using OpenTK;
+using SharpQuake.Framework;
 
 // sound.h -- client sound i/o functions
 
@@ -603,10 +604,10 @@ namespace SharpQuake
         private static sfx_t FindName( String name )
         {
             if( String.IsNullOrEmpty( name ) )
-                sys.Error( "S_FindName: NULL or empty\n" );
+                Utilities.Error( "S_FindName: NULL or empty\n" );
 
             if( name.Length >= QDef.MAX_QPATH )
-                sys.Error( "Sound name too long: {0}", name );
+                Utilities.Error( "Sound name too long: {0}", name );
 
             // see if already loaded
             for( var i = 0; i < _NumSfx; i++ )
@@ -616,7 +617,7 @@ namespace SharpQuake
             }
 
             if( _NumSfx == MAX_SFX )
-                sys.Error( "S_FindName: out of sfx_t" );
+                Utilities.Error( "S_FindName: out of sfx_t" );
 
             sfx_t sfx = _KnownSfx[_NumSfx];
             sfx.name = name;

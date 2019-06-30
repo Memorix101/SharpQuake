@@ -22,6 +22,7 @@
 
 using System;
 using System.Runtime.InteropServices;
+using SharpQuake.Framework;
 using func_t = System.Int32;
 
 // progs.h
@@ -178,19 +179,7 @@ namespace SharpQuake
         }
     }
 
-    [StructLayout( LayoutKind.Sequential, Pack = 1 )]
-    internal struct v3f
-    {
-        public Single x, y, z;
-
-        public Boolean IsEmpty
-        {
-            get
-            {
-                return ( this.x == 0 ) && ( this.y == 0 ) && ( this.z == 0 );
-            }
-        }
-    }
+    
 
     [StructLayout( LayoutKind.Explicit, Size = ( 4 * 28 ) )]
     internal struct pad_int28
@@ -202,25 +191,25 @@ namespace SharpQuake
     internal struct entvars_t
     {
         public Single modelindex;
-        public v3f absmin;
-        public v3f absmax;
+        public Vector3f absmin;
+        public Vector3f absmax;
         public Single ltime;
         public Single movetype;
         public Single solid;
-        public v3f origin;
-        public v3f oldorigin;
-        public v3f velocity;
-        public v3f angles;
-        public v3f avelocity;
-        public v3f punchangle;
+        public Vector3f origin;
+        public Vector3f oldorigin;
+        public Vector3f velocity;
+        public Vector3f angles;
+        public Vector3f avelocity;
+        public Vector3f punchangle;
         public string_t classname;
         public string_t model;
         public Single frame;
         public Single skin;
         public Single effects;
-        public v3f mins;
-        public v3f maxs;
-        public v3f size;
+        public Vector3f mins;
+        public Vector3f maxs;
+        public Vector3f size;
         public func_t touch;
         public func_t use;
         public func_t think;
@@ -241,13 +230,13 @@ namespace SharpQuake
         public Single takedamage;
         public string_t chain;
         public Single deadflag;
-        public v3f view_ofs;
+        public Vector3f view_ofs;
         public Single button0;
         public Single button1;
         public Single button2;
         public Single impulse;
         public Single fixangle;
-        public v3f v_angle;
+        public Vector3f v_angle;
         public Single idealpitch;
         public string_t netname;
         public string_t enemy;
@@ -271,7 +260,7 @@ namespace SharpQuake
         public Single dmg_save;
         public string_t dmg_inflictor;
         public string_t owner;
-        public v3f movedir;
+        public Vector3f movedir;
         public string_t message;
         public Single sounds;
         public string_t noise;
@@ -680,14 +669,14 @@ namespace SharpQuake
         public Single parm14;
         public Single parm15;
         public Single parm16;
-        public v3f v_forward;
-        public v3f v_up;
-        public v3f v_right;
+        public Vector3f v_forward;
+        public Vector3f v_up;
+        public Vector3f v_right;
         public Single trace_allsolid;
         public Single trace_startsolid;
         public Single trace_fraction;
-        public v3f trace_endpos;
-        public v3f trace_plane_normal;
+        public Vector3f trace_endpos;
+        public Vector3f trace_plane_normal;
         public Single trace_plane_dist;
         public string_t trace_ent;
         public Single trace_inopen;

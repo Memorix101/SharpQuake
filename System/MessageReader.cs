@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using OpenTK;
+using SharpQuake.Framework;
 
 namespace SharpQuake
 {
@@ -35,7 +36,7 @@ namespace SharpQuake
         private MessageWriter _Source;
         private Boolean _IsBadRead;
         private Int32 _Count;
-        private Union4B _Val;
+        private Union4b _Val;
         private Char[] _Tmp;
 
         /// <summary>
@@ -170,7 +171,7 @@ namespace SharpQuake
         public MessageReader( MessageWriter source )
         {
             _Source = source;
-            _Val = Union4B.Empty;
+            _Val = Union4b.Empty;
             _Tmp = new Char[2048];
         }
     }

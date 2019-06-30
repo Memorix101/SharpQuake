@@ -22,6 +22,7 @@
 
 using System;
 using OpenTK;
+using SharpQuake.Framework;
 
 // world.c -- world query functions
 
@@ -242,7 +243,7 @@ namespace SharpQuake
             }
 
             if( num < hull.firstclipnode || num > hull.lastclipnode )
-                sys.Error( "SV_RecursiveHullCheck: bad node number" );
+                Utilities.Error( "SV_RecursiveHullCheck: bad node number" );
 
             //
             // find the point distances
@@ -459,12 +460,12 @@ namespace SharpQuake
             if( ent.v.solid == Solids.SOLID_BSP )
             {	// explicit hulls in the BSP model
                 if( ent.v.movetype != Movetypes.MOVETYPE_PUSH )
-                    sys.Error( "SOLID_BSP without MOVETYPE_PUSH" );
+                    Utilities.Error( "SOLID_BSP without MOVETYPE_PUSH" );
 
                 model_t model = sv.models[( Int32 ) ent.v.modelindex];
 
                 if( model == null || model.type != modtype_t.mod_brush )
-                    sys.Error( "MOVETYPE_PUSH with a non bsp model" );
+                    Utilities.Error( "MOVETYPE_PUSH with a non bsp model" );
 
                 Vector3 size = maxs - mins;
                 if( size.X < 3 )
@@ -631,7 +632,7 @@ namespace SharpQuake
                 if( touch == clip.passedict )
                     continue;
                 if( touch.v.solid == Solids.SOLID_TRIGGER )
-                    sys.Error( "Trigger in clipping list" );
+                    Utilities.Error( "Trigger in clipping list" );
 
                 if( clip.type == MOVE_NOMONSTERS && touch.v.solid != Solids.SOLID_BSP )
                     continue;
@@ -693,7 +694,7 @@ namespace SharpQuake
             while( num >= 0 )
             {
                 if( num < hull.firstclipnode || num > hull.lastclipnode )
-                    sys.Error( "SV_HullPointContents: bad node number" );
+                    Utilities.Error( "SV_HullPointContents: bad node number" );
 
                 Int16[] node_children = hull.clipnodes[num].children;
                 mplane_t plane = hull.planes[hull.clipnodes[num].planenum];

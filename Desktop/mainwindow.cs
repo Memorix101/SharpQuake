@@ -25,6 +25,7 @@ using OpenTK;
 using OpenTK.Graphics;
 using OpenTK.Input;
 using SDL2;
+using SharpQuake.Framework;
 
 namespace SharpQuake
 {

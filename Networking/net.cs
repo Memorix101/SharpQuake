@@ -26,6 +26,7 @@ using System.Net;
 using System.Net.Sockets;
 using System.Runtime.InteropServices;
 using System.Text;
+using SharpQuake.Framework;
 
 namespace SharpQuake
 {
@@ -329,7 +330,7 @@ namespace SharpQuake
                 if( i < Common.Argc - 1 )
                     _DefHostPort = Common.atoi( Common.Argv( i + 1 ) );
                 else
-                    sys.Error( "Net.Init: you must specify a number after -port!" );
+                    Utilities.Error( "Net.Init: you must specify a number after -port!" );
             }
             HostPort = _DefHostPort;
 
@@ -434,7 +435,7 @@ namespace SharpQuake
                         _VcrConnect.time = host.Time;
                         _VcrConnect.op = VcrOp.VCR_OP_CONNECT;
                         _VcrConnect.session = 1; // (long)ret; // Uze: todo: make it work on 64bit systems
-                        Byte[] buf = sys.StructureToBytes( ref _VcrConnect );
+                        Byte[] buf = Utilities.StructureToBytes( ref _VcrConnect );
                         host.VcrWriter.Write( buf, 0, buf.Length );
                         buf = Encoding.ASCII.GetBytes( ret.address );
                         var count = Math.Min( buf.Length, NET_NAMELEN );
@@ -452,7 +453,7 @@ namespace SharpQuake
                 _VcrConnect.time = host.Time;
                 _VcrConnect.op = VcrOp.VCR_OP_CONNECT;
                 _VcrConnect.session = 0;
-                Byte[] buf = sys.StructureToBytes( ref _VcrConnect );
+                Byte[] buf = Utilities.StructureToBytes( ref _VcrConnect );
                 host.VcrWriter.Write( buf, 0, buf.Length );
             }
 
@@ -566,7 +567,7 @@ JustDoIt:
                 _VcrSendMessage.op = VcrOp.VCR_OP_CANSENDMESSAGE;
                 _VcrSendMessage.session = 1; // (long)sock; Uze: todo: do something?
                 _VcrSendMessage.ret = r ? 1 : 0;
-                Byte[] buf = sys.StructureToBytes( ref _VcrSendMessage );
+                Byte[] buf = Utilities.StructureToBytes( ref _VcrSendMessage );
                 host.VcrWriter.Write( buf, 0, buf.Length );
             }
 
@@ -625,7 +626,7 @@ JustDoIt:
                     _VcrGetMessage.op = VcrOp.VCR_OP_GETMESSAGE;
                     _VcrGetMessage.session = 1;// (long)sock; Uze todo: write somethisng meaningful
                     _VcrGetMessage.ret = ret;
-                    Byte[] buf = sys.StructureToBytes( ref _VcrGetMessage );
+                    Byte[] buf = Utilities.StructureToBytes( ref _VcrGetMessage );
                     host.VcrWriter.Write( buf, 0, buf.Length );
                     host.VcrWriter.Write( net.Message.Length );
                     host.VcrWriter.Write( net.Message.Data, 0, net.Message.Length );
@@ -639,7 +640,7 @@ JustDoIt:
                     _VcrGetMessage.op = VcrOp.VCR_OP_GETMESSAGE;
                     _VcrGetMessage.session = 1; // (long)sock; Uze todo: fix this
                     _VcrGetMessage.ret = ret;
-                    Byte[] buf = sys.StructureToBytes( ref _VcrGetMessage );
+                    Byte[] buf = Utilities.StructureToBytes( ref _VcrGetMessage );
                     host.VcrWriter.Write( buf, 0, buf.Length );
                 }
             }
@@ -678,7 +679,7 @@ JustDoIt:
                 _VcrSendMessage.op = VcrOp.VCR_OP_SENDMESSAGE;
                 _VcrSendMessage.session = 1; // (long)sock; Uze: todo: do something?
                 _VcrSendMessage.ret = r;
-                Byte[] buf = sys.StructureToBytes( ref _VcrSendMessage );
+                Byte[] buf = Utilities.StructureToBytes( ref _VcrSendMessage );
                 host.VcrWriter.Write( buf, 0, buf.Length );
             }
 
@@ -715,7 +716,7 @@ JustDoIt:
                 _VcrSendMessage.op = VcrOp.VCR_OP_SENDMESSAGE;
                 _VcrSendMessage.session = 1;// (long)sock; Uze todo: ???????
                 _VcrSendMessage.ret = r;
-                Byte[] buf = sys.StructureToBytes( ref _VcrSendMessage );
+                Byte[] buf = Utilities.StructureToBytes( ref _VcrSendMessage );
                 host.VcrWriter.Write( buf );
             }
 
@@ -826,7 +827,7 @@ JustDoIt:
         {
             // remove it from active list
             if( !_ActiveSockets.Remove( sock ) )
-                sys.Error( "NET_FreeQSocket: not active\n" );
+                Utilities.Error( "NET_FreeQSocket: not active\n" );
 
             // add it to free list
             _FreeSockets.Add( sock );

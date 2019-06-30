@@ -25,6 +25,7 @@ using System.Drawing;
 using System.IO;
 using OpenTK;
 using OpenTK.Graphics.OpenGL;
+using SharpQuake.Framework;
 
 // screen.h
 // gl_screen.c
@@ -456,7 +457,7 @@ namespace SharpQuake
             for( i = 0; i <= 999; i++ )
             {
                 path = Path.Combine( Common.GameDir, String.Format( "quake{0:D3}.tga", i ) );
-                if( sys.GetFileTime( path ) == DateTime.MinValue )
+                if( FileSystem.GetFileTime( path ) == DateTime.MinValue )
                     break;	// file doesn't exist
             }
             if( i == 100 )
@@ -465,7 +466,7 @@ namespace SharpQuake
                 return;
             }
 
-            FileStream fs = sys.FileOpenWrite( path, true );
+            FileStream fs = FileSystem.OpenWrite( path, true );
             if( fs == null )
             {
                 Con.Print( "SCR_ScreenShot_f: Couldn't create a file\n" );
@@ -610,7 +611,7 @@ namespace SharpQuake
         private static Single CalcFov( Single fov_x, Single width, Single height )
         {
             if( fov_x < 1 || fov_x > 179 )
-                sys.Error( "Bad fov: {0}", fov_x );
+                Utilities.Error( "Bad fov: {0}", fov_x );
 
             var x = width / Math.Tan( fov_x / 360.0 * Math.PI );
             var a = Math.Atan( height / x );

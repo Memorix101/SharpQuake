@@ -26,6 +26,7 @@ using System;
 using System.IO;
 using OpenTK.Audio;
 using NVorbis.OpenTKSupport;
+using SharpQuake.Framework;
 
 namespace SharpQuake
 {
