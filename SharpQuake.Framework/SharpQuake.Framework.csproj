@@ -80,6 +80,8 @@
     <Compile Include="IO\Bsp\BspPlane.cs" />
     <Compile Include="IO\Bsp\BspTextureInfo.cs" />
     <Compile Include="IO\Bsp\BspVertex.cs" />
+    <Compile Include="IO\Input\KeyDestination.cs" />
+    <Compile Include="IO\Input\KeyName.cs" />
     <Compile Include="IO\Programs\ProgramDefinition.cs" />
     <Compile Include="IO\Programs\ProgramFunction.cs" />
     <Compile Include="IO\Pak\MemoryPakFile.cs" />

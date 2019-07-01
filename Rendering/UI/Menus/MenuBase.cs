@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using SharpQuake.Framework;
 
 namespace SharpQuake
 {
@@ -54,9 +55,9 @@ namespace SharpQuake
             set;
         }
 
-        public static void Hide( )
+        public void Hide( )
         {
-            Key.Destination = keydest_t.key_game;
+            Host.Keyboard.Destination = KeyDestination.key_game;
             _CurrentMenu = null;
         }
 
@@ -65,7 +66,7 @@ namespace SharpQuake
             Host = host;
 
             Menu.EnterSound = true;
-            Key.Destination = keydest_t.key_menu;
+            Host.Keyboard.Destination = KeyDestination.key_menu;
             _CurrentMenu = this;
         }
 

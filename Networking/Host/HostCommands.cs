@@ -16,7 +16,7 @@ namespace SharpQuake
         /// </summary>
         public void Quit_f( )
         {
-            if ( Key.Destination != keydest_t.key_console && client.cls.state != cactive_t.ca_dedicated )
+            if ( Keyboard.Destination != KeyDestination.key_console && client.cls.state != cactive_t.ca_dedicated )
             {
                 MenuBase.QuitMenu.Show( this );
                 return;
@@ -350,7 +350,7 @@ namespace SharpQuake
             client.Disconnect( );
             ShutdownServer( false );
 
-            Key.Destination = keydest_t.key_game;			// remove console or menu
+            Keyboard.Destination = KeyDestination.key_game;			// remove console or menu
             Scr.BeginLoadingPlaque( );
 
             client.cls.mapstring = Command.JoinArgv( ) + "\n";

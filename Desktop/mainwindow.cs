@@ -97,6 +97,12 @@ namespace SharpQuake
             private set;
         }
 
+        public static Input Input
+        {
+            get;
+            private set;
+        }
+
         public static Common Common
         {
             get;
@@ -279,6 +285,8 @@ namespace SharpQuake
             Common = new Common( );
             Common.InitArgv(args2);
 
+            Input = new Input( );
+
             parms.argv = new String[CommandLine.Argc];
             CommandLine.Args.CopyTo(parms.argv, 0);
 
@@ -319,13 +327,13 @@ namespace SharpQuake
         {
             if (e.Delta > 0)
             {
-                Key.Event(KeysDef.K_MWHEELUP, true);
-                Key.Event(KeysDef.K_MWHEELUP, false);
+                MainWindow.Instance.Host.Keyboard.Event(KeysDef.K_MWHEELUP, true);
+                MainWindow.Instance.Host.Keyboard.Event(KeysDef.K_MWHEELUP, false);
             }
             else
             {
-                Key.Event(KeysDef.K_MWHEELDOWN, true);
-                Key.Event(KeysDef.K_MWHEELDOWN, false);
+                MainWindow.Instance.Host.Keyboard.Event(KeysDef.K_MWHEELDOWN, true);
+                MainWindow.Instance.Host.Keyboard.Event(KeysDef.K_MWHEELDOWN, false);
             }
         }
 
@@ -366,12 +374,12 @@ namespace SharpQuake
 
         private void Keyboard_KeyUp( Object sender, OpenTK.Input.KeyboardKeyEventArgs e)
         {
-            Key.Event(MapKey(e.Key), false);
+            MainWindow.Instance.Host.Keyboard.Event(MapKey(e.Key), false);
         }
 
         private void Keyboard_KeyDown( Object sender, OpenTK.Input.KeyboardKeyEventArgs e)
         {
-            Key.Event(MapKey(e.Key), true);
+            MainWindow.Instance.Host.Keyboard.Event(MapKey(e.Key), true);
         }
 
         private MainWindow(Size size, GraphicsMode mode, Boolean fullScreen )

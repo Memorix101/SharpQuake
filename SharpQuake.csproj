@@ -120,7 +120,7 @@
     <Compile Include="Rendering\draw.cs" />
     <Compile Include="System\External.cs" />
     <Compile Include="Desktop\Input.cs" />
-    <Compile Include="Desktop\keys.cs" />
+    <Compile Include="Desktop\Keyboard.cs" />
     <Compile Include="Desktop\MainWindow.cs" />
     <Compile Include="Rendering\UI\Menu.cs" />
     <Compile Include="Rendering\mesh.cs" />

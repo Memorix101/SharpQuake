@@ -190,6 +190,18 @@ namespace SharpQuake
             private set;
         }
 
+        public Wad GfxWad
+        {
+            get;
+            private set;
+        }
+
+        public Keyboard Keyboard
+        {
+            get;
+            private set;
+        }
+
         //private Server Server
         //{
         //    get;
@@ -231,6 +243,8 @@ namespace SharpQuake
             Command = new Command( );
             View = new View( );
             ChaseView = new ChaseView( );
+            GfxWad = new Wad( );
+            Keyboard = new Keyboard( );
         }
 
         /// <summary>
@@ -252,7 +266,7 @@ namespace SharpQuake
 
             // move things around and think
             // always pause in single player if in console or menus
-            if ( !server.sv.paused && ( server.svs.maxclients > 1 || Key.Destination == keydest_t.key_game ) )
+            if ( !server.sv.paused && ( server.svs.maxclients > 1 || Keyboard.Destination == KeyDestination.key_game ) )
                 server.Physics( );
 
             // send all messages to the clients
@@ -314,14 +328,14 @@ namespace SharpQuake
             Cache.Initialise( 1024 * 1024 * 512 ); // debug
             CommandBuffer.Initialise( this );
             Command.Initialise( this );
-            CVar.Init( Command );
+            CVar.Initialise( Command );
             View.Initialise( this );
-            ChaseView.Init( );
+            ChaseView.Initialise( );
             InitialiseVCR( parms );
-            MainWindow.Common.Init( MainWindow, parms.basedir, parms.argv );
+            MainWindow.Common.Initialise( MainWindow, parms.basedir, parms.argv );
             InitialiseLocal( );
-            Wad.LoadWadFile( "gfx.wad" );
-            Key.Init( CommandBuffer );
+            GfxWad.LoadWadFile( "gfx.wad" );
+            Keyboard.Initialise( this );
             Con.Init( this );
             Menu.Init( this );
             progs.Init( this );
@@ -344,7 +358,7 @@ namespace SharpQuake
                     Utilities.Error( "Couldn't load gfx/colormap.lmp" );
 
                 // on non win32, mouse comes before video for security reasons
-                Input.Init( this );
+                MainWindow.Input.Initialise( this );
                 vid.Init( this, BasePal );
                 Drawer.Init( this );
                 Scr.Init( this );
@@ -544,7 +558,7 @@ namespace SharpQuake
             sys.SendKeyEvents( );
 
             // allow mice or other external controllers to add commands
-            Input.Commands( );
+            MainWindow.Input.Commands( );
 
             // process console commands
             CommandBuffer.Execute( );
@@ -632,7 +646,7 @@ namespace SharpQuake
                 CommandBuffer.AddText( cmd );
             }
         }
-        
+
         /// <summary>
         /// host_EndGame
         /// </summary>
@@ -768,7 +782,7 @@ namespace SharpQuake
                 {
                     if ( fs != null )
                     {
-                        Key.WriteBindings( fs );
+                        Keyboard.WriteBindings( fs );
                         CVar.WriteVariables( fs );
                     }
                 }
@@ -794,7 +808,7 @@ namespace SharpQuake
                 cd_audio.Shutdown( );
                 net.Shutdown( );
                 snd.Shutdown( );
-                Input.Shutdown( );
+                MainWindow.Input.Shutdown( );
 
                 if ( VcrWriter != null )
                 {

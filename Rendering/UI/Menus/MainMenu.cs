@@ -17,7 +17,7 @@ namespace SharpQuake
 
         public override void Show( Host host )
         {
-            if ( Key.Destination != keydest_t.key_menu )
+            if ( host.Keyboard.Destination != KeyDestination.key_menu )
             {
                 _SaveDemoNum = client.cls.demonum;
                 client.cls.demonum = -1;
@@ -34,8 +34,8 @@ namespace SharpQuake
             switch ( key )
             {
                 case KeysDef.K_ESCAPE:
-                    //Key.Destination = keydest_t.key_game;
-                    MenuBase.Hide( );
+                    //Host.Keyboard.Destination = keydest_t.key_game;
+                    MenuBase.CurrentMenu.Hide( );
                     client.cls.demonum = _SaveDemoNum;
                     if ( client.cls.demonum != -1 && !client.cls.demoplayback && client.cls.state != cactive_t.ca_connected )
                         client.NextDemo( );

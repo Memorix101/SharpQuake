@@ -168,5 +168,91 @@ namespace SharpQuake.Framework
         public const Int32 K_MWHEELDOWN = 240;
 
         public const Int32 MAXCMDLINE = 256;
+
+        public static KeyName[] KeyNames = new KeyName[]
+        {
+            new KeyName("TAB", K_TAB),
+            new KeyName("ENTER", K_ENTER),
+            new KeyName("ESCAPE", K_ESCAPE),
+            new KeyName("SPACE", K_SPACE),
+            new KeyName("BACKSPACE", K_BACKSPACE),
+            new KeyName("UPARROW", K_UPARROW),
+            new KeyName("DOWNARROW", K_DOWNARROW),
+            new KeyName("LEFTARROW", K_LEFTARROW),
+            new KeyName("RIGHTARROW", K_RIGHTARROW),
+
+            new KeyName("ALT", K_ALT),
+            new KeyName("CTRL", K_CTRL),
+            new KeyName("SHIFT", K_SHIFT),
+
+            new KeyName("F1", K_F1),
+            new KeyName("F2", K_F2),
+            new KeyName("F3", K_F3),
+            new KeyName("F4", K_F4),
+            new KeyName("F5", K_F5),
+            new KeyName("F6", K_F6),
+            new KeyName("F7", K_F7),
+            new KeyName("F8", K_F8),
+            new KeyName("F9", K_F9),
+            new KeyName("F10", K_F10),
+            new KeyName("F11", K_F11),
+            new KeyName("F12", K_F12),
+
+            new KeyName("INS", K_INS),
+            new KeyName("DEL", K_DEL),
+            new KeyName("PGDN", K_PGDN),
+            new KeyName("PGUP", K_PGUP),
+            new KeyName("HOME", K_HOME),
+            new KeyName("END", K_END),
+
+            new KeyName("MOUSE1", K_MOUSE1),
+            new KeyName("MOUSE2", K_MOUSE2),
+            new KeyName("MOUSE3", K_MOUSE3),
+
+            new KeyName("JOY1", K_JOY1),
+            new KeyName("JOY2", K_JOY2),
+            new KeyName("JOY3", K_JOY3),
+            new KeyName("JOY4", K_JOY4),
+
+            new KeyName("AUX1", K_AUX1),
+            new KeyName("AUX2", K_AUX2),
+            new KeyName("AUX3", K_AUX3),
+            new KeyName("AUX4", K_AUX4),
+            new KeyName("AUX5", K_AUX5),
+            new KeyName("AUX6", K_AUX6),
+            new KeyName("AUX7", K_AUX7),
+            new KeyName("AUX8", K_AUX8),
+            new KeyName("AUX9", K_AUX9),
+            new KeyName("AUX10", K_AUX10),
+            new KeyName("AUX11", K_AUX11),
+            new KeyName("AUX12", K_AUX12),
+            new KeyName("AUX13", K_AUX13),
+            new KeyName("AUX14", K_AUX14),
+            new KeyName("AUX15", K_AUX15),
+            new KeyName("AUX16", K_AUX16),
+            new KeyName("AUX17", K_AUX17),
+            new KeyName("AUX18", K_AUX18),
+            new KeyName("AUX19", K_AUX19),
+            new KeyName("AUX20", K_AUX20),
+            new KeyName("AUX21", K_AUX21),
+            new KeyName("AUX22", K_AUX22),
+            new KeyName("AUX23", K_AUX23),
+            new KeyName("AUX24", K_AUX24),
+            new KeyName("AUX25", K_AUX25),
+            new KeyName("AUX26", K_AUX26),
+            new KeyName("AUX27", K_AUX27),
+            new KeyName("AUX28", K_AUX28),
+            new KeyName("AUX29", K_AUX29),
+            new KeyName("AUX30", K_AUX30),
+            new KeyName("AUX31", K_AUX31),
+            new KeyName("AUX32", K_AUX32),
+
+            new KeyName("PAUSE", K_PAUSE),
+
+            new KeyName("MWHEELUP", K_MWHEELUP),
+            new KeyName("MWHEELDOWN", K_MWHEELDOWN),
+
+            new KeyName("SEMICOLON", ';'),	// because a raw semicolon seperates commands
+        };
     }
 }

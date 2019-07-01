@@ -32,9 +32,9 @@ namespace SharpQuake
     /// <summary>
     /// In_functions
     /// </summary>
-    internal static class Input
+    public class Input
     {
-        public static System.Boolean IsMouseActive
+        public System.Boolean IsMouseActive
         {
             get
             {
@@ -42,7 +42,7 @@ namespace SharpQuake
             }
         }
 
-        public static Point WindowCenter
+        public Point WindowCenter
         {
             get
             {
@@ -53,17 +53,17 @@ namespace SharpQuake
             }
         }
 
-        private static CVar _MouseFilter;// = { "m_filter", "0" };
-        private static Vector2 _OldMouse; // old_mouse_x, old_mouse_y
-        private static Vector2 _Mouse; // mouse_x, mouse_y
-        private static Vector2 _MouseAccum; // mx_accum, my_accum
-        private static System.Boolean _IsMouseActive; // mouseactive
-        private static System.Int32 _MouseButtons; // mouse_buttons
-        private static System.Int32 _MouseOldButtonState; // mouse_oldbuttonstate
-        private static System.Boolean _MouseActivateToggle; // mouseactivatetoggle
-        private static System.Boolean _MouseShowToggle = true; // mouseshowtoggle
+        private CVar _MouseFilter;// = { "m_filter", "0" };
+        private Vector2 _OldMouse; // old_mouse_x, old_mouse_y
+        private Vector2 _Mouse; // mouse_x, mouse_y
+        private Vector2 _MouseAccum; // mx_accum, my_accum
+        private System.Boolean _IsMouseActive; // mouseactive
+        private System.Int32 _MouseButtons; // mouse_buttons
+        private System.Int32 _MouseOldButtonState; // mouse_oldbuttonstate
+        private System.Boolean _MouseActivateToggle; // mouseactivatetoggle
+        private System.Boolean _MouseShowToggle = true; // mouseshowtoggle
 
-        // CHANGE
+        // Instances
         private static Host Host
         {
             get;
@@ -71,7 +71,7 @@ namespace SharpQuake
         }
 
         // IN_Init
-        public static void Init( Host host )
+        public void Initialise( Host host )
         {
             Host = host;
 
@@ -90,7 +90,7 @@ namespace SharpQuake
         /// <summary>
         /// IN_Shutdown
         /// </summary>
-        public static void Shutdown()
+        public void Shutdown()
         {
             DeactivateMouse();
             ShowMouse();
@@ -98,7 +98,7 @@ namespace SharpQuake
 
         // IN_Commands
         // oportunity for devices to stick commands on the script buffer
-        public static void Commands()
+        public void Commands()
         {
             // joystick not supported
         }
@@ -106,7 +106,7 @@ namespace SharpQuake
         /// <summary>
         /// IN_ActivateMouse
         /// </summary>
-        public static void ActivateMouse()
+        public void ActivateMouse()
         {
             _MouseActivateToggle = true;
 
@@ -116,7 +116,7 @@ namespace SharpQuake
                 //    restore_spi = SystemParametersInfo (SPI_SETMOUSE, 0, newmouseparms, 0);
 
                 //Cursor.Position = Input.WindowCenter;
-                Mouse.SetPosition(Input.WindowCenter.X, Input.WindowCenter.Y);
+                Mouse.SetPosition(WindowCenter.X, WindowCenter.Y);
 
 
                 //SetCapture(mainwindow);
@@ -130,7 +130,7 @@ namespace SharpQuake
         /// <summary>
         /// IN_DeactivateMouse
         /// </summary>
-        public static void DeactivateMouse()
+        public void DeactivateMouse()
         {
             _MouseActivateToggle = false;
 
@@ -142,7 +142,7 @@ namespace SharpQuake
         /// <summary>
         /// IN_HideMouse
         /// </summary>
-        public static void HideMouse()
+        public void HideMouse()
         {
             if( _MouseShowToggle )
             {
@@ -154,7 +154,7 @@ namespace SharpQuake
         /// <summary>
         /// IN_ShowMouse
         /// </summary>
-        public static void ShowMouse()
+        public void ShowMouse()
         {
             if( !_MouseShowToggle )
             {
@@ -168,7 +168,7 @@ namespace SharpQuake
 
         // IN_Move
         // add additional movement on top of the keyboard move cmd
-        public static void Move( usercmd_t cmd )
+        public void Move( usercmd_t cmd )
         {
             if( !MainWindow.Instance.Focused )
                 return;
@@ -181,7 +181,7 @@ namespace SharpQuake
 
         // IN_ClearStates
         // restores all button and position states to defaults
-        public static void ClearStates()
+        public void ClearStates()
         {
             if( _IsMouseActive )
             {
@@ -193,7 +193,7 @@ namespace SharpQuake
         /// <summary>
         /// IN_MouseEvent
         /// </summary>
-        public static void MouseEvent( System.Int32 mstate )
+        public void MouseEvent( System.Int32 mstate )
         {
             if( _IsMouseActive )
             {
@@ -202,12 +202,12 @@ namespace SharpQuake
                 {
                     if( ( mstate & ( 1 << i ) ) != 0 && ( _MouseOldButtonState & ( 1 << i ) ) == 0 )
                     {
-                        Key.Event( KeysDef.K_MOUSE1 + i, true );
+                        Host.Keyboard.Event( KeysDef.K_MOUSE1 + i, true );
                     }
 
                     if( ( mstate & ( 1 << i ) ) == 0 && ( _MouseOldButtonState & ( 1 << i ) ) != 0 )
                     {
-                        Key.Event( KeysDef.K_MOUSE1 + i, false );
+                        Host.Keyboard.Event( KeysDef.K_MOUSE1 + i, false );
                     }
                 }
 
@@ -218,13 +218,13 @@ namespace SharpQuake
         /// <summary>
         /// IN_MouseMove
         /// </summary>
-        private static void MouseMove( usercmd_t cmd )
+        private void MouseMove( usercmd_t cmd )
         {
             if( !_IsMouseActive )
                 return;
            
             Point current_pos = new Point(Mouse.GetCursorState().X, Mouse.GetCursorState().Y); //Cursor.Position;
-            Point window_center = Input.WindowCenter;
+            Point window_center = WindowCenter;
 
             var mx = ( System.Int32 ) ( current_pos.X - window_center.X + _MouseAccum.X );
             var my = ( System.Int32 ) ( current_pos.Y - window_center.Y + _MouseAccum.Y );

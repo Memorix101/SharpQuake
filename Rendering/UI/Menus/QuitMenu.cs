@@ -16,7 +16,7 @@ namespace SharpQuake
             if ( CurrentMenu == this )
                 return;
 
-            Key.Destination = keydest_t.key_menu;
+            host.Keyboard.Destination = KeyDestination.key_menu;
             _PrevMenu = CurrentMenu;
 
             base.Show( host );
@@ -32,12 +32,12 @@ namespace SharpQuake
                     if ( _PrevMenu != null )
                         _PrevMenu.Show( Host );
                     else
-                        MenuBase.Hide( );
+                        MenuBase.CurrentMenu.Hide( );
                     break;
 
                 case 'Y':
                 case 'y':
-                    Key.Destination = keydest_t.key_console;
+                    Host.Keyboard.Destination = KeyDestination.key_console;
                     Host.Quit_f( );
                     break;
 

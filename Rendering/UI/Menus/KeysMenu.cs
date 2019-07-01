@@ -52,7 +52,7 @@ namespace SharpQuake
                 }
                 else if ( key != '`' )
                 {
-                    var cmd = String.Format( "bind \"{0}\" \"{1}\"\n", Key.KeynumToString( key ), _BindNames[_Cursor][0] );
+                    var cmd = String.Format( "bind \"{0}\" \"{1}\"\n", Host.Keyboard.KeynumToString( key ), _BindNames[_Cursor][0] );
                     Host.CommandBuffer.InsertText( cmd );
                 }
 
@@ -126,13 +126,13 @@ namespace SharpQuake
                 }
                 else
                 {
-                    var name = Key.KeynumToString( keys[0] );
+                    var name = Host.Keyboard.KeynumToString( keys[0] );
                     Menu.Print( 140, y, name );
                     var x = name.Length * 8;
                     if ( keys[1] != -1 )
                     {
                         Menu.Print( 140 + x + 8, y, "or" );
-                        Menu.Print( 140 + x + 32, y, Key.KeynumToString( keys[1] ) );
+                        Menu.Print( 140 + x + 32, y, Host.Keyboard.KeynumToString( keys[1] ) );
                     }
                 }
             }
@@ -154,7 +154,7 @@ namespace SharpQuake
 
             for ( var j = 0; j < 256; j++ )
             {
-                var b = Key.Bindings[j];
+                var b = Host.Keyboard.Bindings[j];
                 if ( String.IsNullOrEmpty( b ) )
                     continue;
 
@@ -177,12 +177,12 @@ namespace SharpQuake
 
             for ( var j = 0; j < 256; j++ )
             {
-                var b = Key.Bindings[j];
+                var b = Host.Keyboard.Bindings[j];
                 if ( String.IsNullOrEmpty( b ) )
                     continue;
 
                 if ( String.Compare( b, 0, command, 0, len ) == 0 )
-                    Key.SetBinding( j, String.Empty );
+                    Host.Keyboard.SetBinding( j, String.Empty );
             }
         }
     }

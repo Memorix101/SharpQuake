@@ -82,7 +82,7 @@ namespace SharpQuake
                 }
 
                 // always pause in single player if in console or menus
-                if( !sv.paused && ( svs.maxclients > 1 || Key.Destination == keydest_t.key_game ) )
+                if( !sv.paused && ( svs.maxclients > 1 || Host.Keyboard.Destination == KeyDestination.key_game ) )
                     ClientThink();
             }
         }

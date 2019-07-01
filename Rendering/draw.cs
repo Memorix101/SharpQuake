@@ -215,8 +215,8 @@ namespace SharpQuake
             // by hand, because we need to write the version
             // string into the background before turning
             // it into a texture
-            var offset = Wad.GetLumpNameOffset( "conchars" );
-            Byte[] draw_chars = Wad.Data; // draw_chars
+            var offset = Host.GfxWad.GetLumpNameOffset( "conchars" );
+            Byte[] draw_chars = Host.GfxWad.Data; // draw_chars
             for( var i = 0; i < 256 * 64; i++ )
             {
                 if( draw_chars[offset + i] == 0 )
@@ -233,7 +233,7 @@ namespace SharpQuake
                 Utilities.Error( "Couldn't load gfx/conback.lmp" );
 
             WadPicHeader cbHeader = Utilities.BytesToStructure<WadPicHeader>( buf, 0 );
-            Wad.SwapPic( cbHeader );
+            Host.GfxWad.SwapPic( cbHeader );
 
             // hack the version number directly into the pic
             var ver = String.Format( "(c# {0,7:F2}) {1,7:F2}", ( Single ) QDef.CSQUAKE_VERSION, ( Single ) QDef.VERSION );
@@ -356,8 +356,8 @@ namespace SharpQuake
         //qpic_t *Draw_PicFromWad (char *name);
         public static GLPic PicFromWad( String name )
         {
-            var offset = Wad.GetLumpNameOffset( name );
-            IntPtr ptr = new IntPtr( Wad.DataPointer.ToInt64() + offset );
+            var offset = Host.GfxWad.GetLumpNameOffset( name );
+            IntPtr ptr = new IntPtr( Host.GfxWad.DataPointer.ToInt64() + offset );
             WadPicHeader header = (WadPicHeader)Marshal.PtrToStructure( ptr, typeof( WadPicHeader ) );
             GLPic gl = new GLPic(); // (glpic_t)Marshal.PtrToStructure(ptr, typeof(glpic_t));
             gl.width = header.width;
@@ -373,7 +373,7 @@ namespace SharpQuake
                 var k = 0;
                 for( var i = 0; i < gl.height; i++ )
                     for( var j = 0; j < gl.width; j++, k++ )
-                        _ScrapTexels[texnum][( y + i ) * BLOCK_WIDTH + x + j] = Wad.Data[offset + k];// p->data[k];
+                        _ScrapTexels[texnum][( y + i ) * BLOCK_WIDTH + x + j] = Host.GfxWad.Data[offset + k];// p->data[k];
                 texnum += _ScrapTexNum;
                 gl.texnum = texnum;
                 gl.sl = ( Single ) ( ( x + 0.01 ) / ( Single ) BLOCK_WIDTH );
@@ -386,7 +386,7 @@ namespace SharpQuake
             }
             else
             {
-                gl.texnum = LoadTexture( gl, new ByteArraySegment( Wad.Data, offset ) );
+                gl.texnum = LoadTexture( gl, new ByteArraySegment( Host.GfxWad.Data, offset ) );
             }
             return gl;
         }
@@ -575,7 +575,7 @@ namespace SharpQuake
             if( data == null )
                 Utilities.Error( "Draw_CachePic: failed to load {0}", path );
             WadPicHeader header = Utilities.BytesToStructure<WadPicHeader>( data, 0 );
-            Wad.SwapPic( header );
+            Host.GfxWad.SwapPic( header );
 
             var headerSize = Marshal.SizeOf( typeof( WadPicHeader ) );
 

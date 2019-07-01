@@ -46,7 +46,7 @@ namespace SharpQuake
                             break;
 
                         case 1:
-                            MenuBase.Hide( );
+                            MenuBase.CurrentMenu.Hide( );
                             Con.ToggleConsole_f( );
                             break;
 

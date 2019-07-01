@@ -89,7 +89,7 @@ namespace SharpQuake
         /// </summary>
         public static void Draw()
         {
-            if( MenuBase.CurrentMenu == null || Key.Destination != keydest_t.key_menu )
+            if( MenuBase.CurrentMenu == null || Host.Keyboard.Destination != KeyDestination.key_menu )
                 return;
 
             if( !_RecursiveDraw )
@@ -130,17 +130,17 @@ namespace SharpQuake
         {
             EnterSound = true;
 
-            if( Key.Destination == keydest_t.key_menu )
+            if( Host.Keyboard.Destination == KeyDestination.key_menu )
             {
                 if( MenuBase.CurrentMenu != MenuBase.MainMenu )
                 {
                     MenuBase.MainMenu.Show( Host );
                     return;
                 }
-                MenuBase.Hide();
+                MenuBase.CurrentMenu.Hide();
                 return;
             }
-            if( Key.Destination == keydest_t.key_console )
+            if( Host.Keyboard.Destination == KeyDestination.key_console )
             {
                 Con.ToggleConsole_f();
             }

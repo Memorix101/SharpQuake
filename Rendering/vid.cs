@@ -600,11 +600,11 @@ namespace SharpQuake
             // send an up event for each key, to make sure the server clears them all
             for( var i = 0; i < 256; i++ )
             {
-                Key.Event( i, false );
+                Host.Keyboard.Event( i, false );
             }
 
-            Key.ClearStates();
-            Input.ClearStates();
+            Host.Keyboard.ClearStates();
+            MainWindow.Input.ClearStates();
         }
 
         /// <summary>

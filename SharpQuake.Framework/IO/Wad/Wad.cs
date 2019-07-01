@@ -30,9 +30,9 @@ namespace SharpQuake.Framework
     /// <summary>
     /// W_functions
     /// </summary>
-    public static class Wad
+    public class Wad
     {
-        public static Byte[] Data
+        public Byte[] Data
         {
             get
             {
@@ -40,7 +40,7 @@ namespace SharpQuake.Framework
             }
         }
 
-        public static IntPtr DataPointer
+        public IntPtr DataPointer
         {
             get
             {
@@ -61,13 +61,13 @@ namespace SharpQuake.Framework
         public const Int32 TYP_SOUND = 67;
         public const Int32 TYP_MIPTEX = 68;
 
-        private static Byte[] _Data; // void* wad_base
-        private static Dictionary<String, WadLumpInfo> _Lumps;
-        private static GCHandle _Handle;
-        private static IntPtr _DataPtr;
+        private Byte[] _Data; // void* wad_base
+        private Dictionary<String, WadLumpInfo> _Lumps;
+        private GCHandle _Handle;
+        private IntPtr _DataPtr;
 
         // W_LoadWadFile (char *filename)
-        public static void LoadWadFile( String filename )
+        public void LoadWadFile( String filename )
         {
             _Data = FileSystem.LoadFile( filename );
             if( _Data == null )
@@ -110,7 +110,7 @@ namespace SharpQuake.Framework
         }
 
         // lumpinfo_t *W_GetLumpinfo (char *name)
-        public static WadLumpInfo GetLumpInfo( String name )
+        public WadLumpInfo GetLumpInfo( String name )
         {
             WadLumpInfo lump;
             if( _Lumps.TryGetValue( name, out lump ) )
@@ -127,13 +127,13 @@ namespace SharpQuake.Framework
 
         // void	*W_GetLumpName (char *name)
         // Uze: returns index in _Data byte array where the lumpinfo_t starts
-        public static Int32 GetLumpNameOffset( String name )
+        public Int32 GetLumpNameOffset( String name )
         {
             return GetLumpInfo( name ).filepos; // GetLumpInfo() never returns null
         }
 
         // SwapPic (qpic_t *pic)
-        public static void SwapPic( WadPicHeader pic )
+        public void SwapPic( WadPicHeader pic )
         {
             pic.width = EndianHelper.LittleLong( pic.width );
             pic.height = EndianHelper.LittleLong( pic.height );

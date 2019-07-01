@@ -30,7 +30,7 @@ namespace SharpQuake
                     break;
 
                 case KeysDef.K_ENTER:
-                    MenuBase.Hide( );
+                    MenuBase.CurrentMenu.Hide( );
                     Host.CommandBuffer.AddText( String.Format( "save s{0}\n", _Cursor ) );
                     return;
 

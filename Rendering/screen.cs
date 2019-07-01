@@ -270,11 +270,11 @@ namespace SharpQuake
                     DrawLoading();
                     sbar.Draw();
                 }
-                else if( client.cl.intermission == 1 && Key.Destination == keydest_t.key_game )
+                else if( client.cl.intermission == 1 && Host.Keyboard.Destination == KeyDestination.key_game )
                 {
                     sbar.IntermissionOverlay();
                 }
-                else if( client.cl.intermission == 2 && Key.Destination == keydest_t.key_game )
+                else if( client.cl.intermission == 2 && Host.Keyboard.Destination == KeyDestination.key_game )
                 {
                     sbar.FinaleOverlay();
                     CheckDrawCenterString();
@@ -323,24 +323,24 @@ namespace SharpQuake
             {
                 if(_IsMouseWindowed)
                 {
-                    Input.DeactivateMouse();
-                    Input.ShowMouse();
+                    MainWindow.Input.DeactivateMouse();
+                    MainWindow.Input.ShowMouse();
                     _IsMouseWindowed = false;
                 }
             }
             else
             {
                 _IsMouseWindowed = true;
-                if(Key.Destination == keydest_t.key_game && !Input.IsMouseActive &&
+                if( Host.Keyboard.Destination == KeyDestination.key_game && !MainWindow.Input.IsMouseActive &&
                     client.cls.state != cactive_t.ca_disconnected )// && ActiveApp)
                 {
-                    Input.ActivateMouse();
-                    Input.HideMouse();
+                    MainWindow.Input.ActivateMouse();
+                    MainWindow.Input.HideMouse();
                 }
-                else if(Input.IsMouseActive && Key.Destination != keydest_t.key_game )
+                else if( MainWindow.Input.IsMouseActive && Host.Keyboard.Destination != KeyDestination.key_game )
                 {
-                    Input.DeactivateMouse();
-                    Input.ShowMouse();
+                    MainWindow.Input.DeactivateMouse();
+                    MainWindow.Input.ShowMouse();
                 }
             }
 
@@ -426,14 +426,14 @@ namespace SharpQuake
 
             do
             {
-                Key.KeyCount = -1;		// wait for a key down and up
+                Host.Keyboard.KeyCount = -1;		// wait for a key down and up
                 sys.SendKeyEvents();
-            } while( Key.LastPress != 'y' && Key.LastPress != 'n' && Key.LastPress != KeysDef.K_ESCAPE );
+            } while( Host.Keyboard.LastPress != 'y' && Host.Keyboard.LastPress != 'n' && Host.Keyboard.LastPress != KeysDef.K_ESCAPE );
 
             Scr.FullUpdate = 0;
             UpdateScreen();
 
-            return ( Key.LastPress == 'y' );
+            return ( Host.Keyboard.LastPress == 'y' );
         }
 
         // SCR_SizeUp_f
@@ -645,7 +645,7 @@ namespace SharpQuake
                 _ConLines = _VidDef.height; // full screen
                 _ConCurrent = _ConLines;
             }
-            else if( Key.Destination == keydest_t.key_console )
+            else if( Host.Keyboard.Destination == KeyDestination.key_console )
                 _ConLines = _VidDef.height / 2; // half screen
             else
                 _ConLines = 0; // none visible
@@ -750,7 +750,7 @@ namespace SharpQuake
 
             if( CenterTimeOff <= 0 && client.cl.intermission == 0 )
                 return;
-            if( Key.Destination != keydest_t.key_game )
+            if( Host.Keyboard.Destination != KeyDestination.key_game )
                 return;
 
             DrawCenterString();
@@ -822,8 +822,8 @@ namespace SharpQuake
                 Con.Draw( ( Int32 ) _ConCurrent, true );
                 _ClearConsole = 0;
             }
-            else if( Key.Destination == keydest_t.key_game ||
-                Key.Destination == keydest_t.key_message )
+            else if( Host.Keyboard.Destination == KeyDestination.key_game ||
+                Host.Keyboard.Destination == KeyDestination.key_message )
             {
                 Con.DrawNotify();	// only draw notify in game
             }

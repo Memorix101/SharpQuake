@@ -95,7 +95,7 @@ namespace SharpQuake
             set;
         }
 
-        public static void Init( Command command )
+        public static void Initialise( Command command )
         {
             CommandInstance = command;
         }

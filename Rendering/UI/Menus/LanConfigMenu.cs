@@ -102,7 +102,7 @@ namespace SharpQuake
                     {
                         Menu.ReturnMenu = this;
                         Menu.ReturnOnError = true;
-                        MenuBase.Hide( );
+                        MenuBase.CurrentMenu.Hide( );
                         Host.CommandBuffer.AddText( String.Format( "connect \"{0}\"\n", _JoinName ) );
                         break;
                     }

@@ -112,7 +112,7 @@ namespace SharpQuake
         }
 
         // void COM_Init (char *path)
-        public void Init( MainWindow mainWindow, String path, String[] argv)
+        public void Initialise( MainWindow mainWindow, String path, String[] argv)
         {
             MainWindow = mainWindow;
 

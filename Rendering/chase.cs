@@ -51,7 +51,7 @@ namespace SharpQuake
         private Vector3 _Dest;
 
         // Chase_Init
-        public void Init()
+        public void Initialise()
         {
             if( _Back == null )
             {

@@ -53,7 +53,7 @@ namespace SharpQuake
                     Menu.ReturnMenu = this;
                     Menu.ReturnOnError = true;
                     _Sorted = false;
-                    MenuBase.Hide( );
+                    MenuBase.CurrentMenu.Hide( );
                     Host.CommandBuffer.AddText( String.Format( "connect \"{0}\"\n", net.HostCache[_Cursor].cname ) );
                     break;
 

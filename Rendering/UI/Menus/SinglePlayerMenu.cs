@@ -43,7 +43,7 @@ namespace SharpQuake
                             if ( server.sv.active )
                                 if ( !Scr.ModalMessage( "Are you sure you want to\nstart a new game?\n" ) )
                                     break;
-                            Key.Destination = keydest_t.key_game;
+                            Host.Keyboard.Destination = KeyDestination.key_game;
                             if ( server.sv.active )
                                 Host.CommandBuffer.AddText( "disconnect\n" );
                             Host.CommandBuffer.AddText( "maxplayers 1\n" );

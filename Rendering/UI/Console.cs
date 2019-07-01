@@ -330,7 +330,7 @@ namespace SharpQuake
                 v += 8;
             }
 
-            if( Key.Destination == keydest_t.key_message )
+            if( Host.Keyboard.Destination == KeyDestination.key_message )
             {
                 Scr.ClearNotify = 0;
                 Scr.CopyTop = true;
@@ -338,7 +338,7 @@ namespace SharpQuake
                 var x = 0;
 
                 Drawer.DrawString( 8, v, "say:" );
-                var chat = Key.ChatBuffer;
+                var chat = Host.Keyboard.ChatBuffer;
                 for( ; x < chat.Length; x++ )
                 {
                     Drawer.DrawCharacter( ( x + 5 ) << 3, v, chat[x] );
@@ -363,13 +363,13 @@ namespace SharpQuake
         /// </summary>
         public static void ToggleConsole_f()
         {
-            if( Key.Destination == keydest_t.key_console )
+            if( Host.Keyboard.Destination == KeyDestination.key_console )
             {
                 if( client.cls.state == cactive_t.ca_connected )
                 {
-                    Key.Destination = keydest_t.key_game;
-                    Key.Lines[Key.EditLine][1] = '\0';	// clear any typing
-                    Key.LinePos = 1;
+                    Host.Keyboard.Destination = KeyDestination.key_game;
+                    Host.Keyboard.Lines[Host.Keyboard.EditLine][1] = '\0';	// clear any typing
+                    Host.Keyboard.LinePos = 1;
                 }
                 else
                 {
@@ -377,7 +377,7 @@ namespace SharpQuake
                 }
             }
             else
-                Key.Destination = keydest_t.key_console;
+                Host.Keyboard.Destination = KeyDestination.key_console;
 
             Scr.EndLoadingPlaque();
             Array.Clear( _Times, 0, _Times.Length );
@@ -488,15 +488,15 @@ namespace SharpQuake
         // Con_MessageMode_f
         private static void MessageMode_f()
         {
-            Key.Destination = keydest_t.key_message;
-            Key.TeamMessage = false;
+            Host.Keyboard.Destination = KeyDestination.key_message;
+            Host.Keyboard.TeamMessage = false;
         }
 
         //Con_MessageMode2_f
         private static void MessageMode2_f()
         {
-            Key.Destination = keydest_t.key_message;
-            Key.TeamMessage = true;
+            Host.Keyboard.Destination = KeyDestination.key_message;
+            Host.Keyboard.TeamMessage = true;
         }
 
         // Con_Linefeed
@@ -516,30 +516,30 @@ namespace SharpQuake
         // The input line scrolls horizontally if typing goes beyond the right edge
         private static void DrawInput()
         {
-            if( Key.Destination != keydest_t.key_console && !_ForcedUp )
+            if( Host.Keyboard.Destination != KeyDestination.key_console && !_ForcedUp )
                 return;		// don't draw anything
 
             // add the cursor frame
-            Key.Lines[Key.EditLine][Key.LinePos] = ( Char ) ( 10 + ( ( Int32 ) ( Host.RealTime * _CursorSpeed ) & 1 ) );
+            Host.Keyboard.Lines[Host.Keyboard.EditLine][Host.Keyboard.LinePos] = ( Char ) ( 10 + ( ( Int32 ) ( Host.RealTime * _CursorSpeed ) & 1 ) );
 
             // fill out remainder with spaces
-            for( var i = Key.LinePos + 1; i < _LineWidth; i++ )
-                Key.Lines[Key.EditLine][i] = ' ';
+            for( var i = Host.Keyboard.LinePos + 1; i < _LineWidth; i++ )
+                Host.Keyboard.Lines[Host.Keyboard.EditLine][i] = ' ';
 
             //	prestep if horizontally scrolling
             var offset = 0;
-            if( Key.LinePos >= _LineWidth )
-                offset = 1 + Key.LinePos - _LineWidth;
+            if( Host.Keyboard.LinePos >= _LineWidth )
+                offset = 1 + Host.Keyboard.LinePos - _LineWidth;
             //text += 1 + key_linepos - con_linewidth;
 
             // draw it
             var y = _VisLines - 16;
 
             for( var i = 0; i < _LineWidth; i++ )
-                Drawer.DrawCharacter( ( i + 1 ) << 3, _VisLines - 16, Key.Lines[Key.EditLine][offset + i] );
+                Drawer.DrawCharacter( ( i + 1 ) << 3, _VisLines - 16, Host.Keyboard.Lines[Host.Keyboard.EditLine][offset + i] );
 
             // remove cursor
-            Key.Lines[Key.EditLine][Key.LinePos] = '\0';
+            Host.Keyboard.Lines[Host.Keyboard.EditLine][Host.Keyboard.LinePos] = '\0';
         }
     }
 }
