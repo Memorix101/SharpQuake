@@ -326,7 +326,7 @@ namespace SharpQuake
         }
 
         // Draw_EndDisc
-        // Erases the disc icon.
+        // Erases the disc iHost.Console.
         // Call after completing any disc IO
         public static void EndDisc()
         {
@@ -764,10 +764,10 @@ namespace SharpQuake
                 for( i = 0; i < 6; i++ )
                     if( _MinFilter == _Modes[i].minimize )
                     {
-                        Con.Print( "{0}\n", _Modes[i].name );
+                        Host.Console.Print( "{0}\n", _Modes[i].name );
                         return;
                     }
-                Con.Print( "current filter is unknown???\n" );
+                Host.Console.Print( "current filter is unknown???\n" );
                 return;
             }
 
@@ -778,7 +778,7 @@ namespace SharpQuake
             }
             if( i == _Modes.Length )
             {
-                Con.Print( "bad filter name!\n" );
+                Host.Console.Print( "bad filter name!\n" );
                 return;
             }
 
@@ -805,13 +805,13 @@ namespace SharpQuake
             {
                 if (glTexture != null)
                 {
-                    Con.Print( "{0} x {1}   {2}:{3}\n", glTexture.width, glTexture.height,
+                    Host.Console.Print( "{0} x {1}   {2}:{3}\n", glTexture.width, glTexture.height,
                     glTexture.owner, glTexture.identifier );
                     textureCount++;
                 }
             }
 
-            Con.Print( "{0} textures currently loaded.\n", textureCount );
+            Host.Console.Print( "{0} textures currently loaded.\n", textureCount );
         }
 
         /// <summary>

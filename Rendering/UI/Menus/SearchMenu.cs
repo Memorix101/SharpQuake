@@ -29,10 +29,10 @@ namespace SharpQuake
         public override void Draw( )
         {
             GLPic p = Drawer.CachePic( "gfx/p_multi.lmp" );
-            Menu.DrawPic( ( 320 - p.width ) / 2, 4, p );
+            Host.Menu.DrawPic( ( 320 - p.width ) / 2, 4, p );
             var x = ( 320 / 2 ) - ( ( 12 * 8 ) / 2 ) + 4;
-            Menu.DrawTextBox( x - 8, 32, 12, 1 );
-            Menu.Print( x, 40, "Searching..." );
+            Host.Menu.DrawTextBox( x - 8, 32, 12, 1 );
+            Host.Menu.Print( x, 40, "Searching..." );
 
             if ( net.SlistInProgress )
             {
@@ -52,7 +52,7 @@ namespace SharpQuake
                 return;
             }
 
-            Menu.PrintWhite( ( 320 / 2 ) - ( ( 22 * 8 ) / 2 ), 64, "No Quake servers found" );
+            Host.Menu.PrintWhite( ( 320 / 2 ) - ( ( 22 * 8 ) / 2 ), 64, "No Quake servers found" );
             if ( ( Host.RealTime - _SearchCompleteTime ) < 3.0 )
                 return;
 

@@ -40,7 +40,7 @@ namespace SharpQuake
         public override void Draw( )
         {
             GLPic p = Drawer.CachePic( "gfx/vidmodes.lmp" );
-            Menu.DrawPic( ( 320 - p.width ) / 2, 4, p );
+            Host.Menu.DrawPic( ( 320 - p.width ) / 2, 4, p );
 
             _WModes = 0;
             var lnummodes = vid.Modes.Length;
@@ -63,7 +63,7 @@ namespace SharpQuake
 
             if ( _WModes > 0 )
             {
-                Menu.Print( 2 * 8, 36 + 0 * 8, "Fullscreen Modes (WIDTHxHEIGHTxBPP)" );
+                Host.Menu.Print( 2 * 8, 36 + 0 * 8, "Fullscreen Modes (WIDTHxHEIGHTxBPP)" );
 
                 var column = 8;
                 var row = 36 + 2 * 8;
@@ -71,9 +71,9 @@ namespace SharpQuake
                 for ( var i = 0; i < _WModes; i++ )
                 {
                     if ( _ModeDescs[i].iscur )
-                        Menu.PrintWhite( column, row, _ModeDescs[i].desc );
+                        Host.Menu.PrintWhite( column, row, _ModeDescs[i].desc );
                     else
-                        Menu.Print( column, row, _ModeDescs[i].desc );
+                        Host.Menu.Print( column, row, _ModeDescs[i].desc );
 
                     column += 13 * 8;
 
@@ -85,10 +85,10 @@ namespace SharpQuake
                 }
             }
 
-            Menu.Print( 3 * 8, 36 + MODE_AREA_HEIGHT * 8 + 8 * 2, "Video modes must be set from the" );
-            Menu.Print( 3 * 8, 36 + MODE_AREA_HEIGHT * 8 + 8 * 3, "command line with -width <width>" );
-            Menu.Print( 3 * 8, 36 + MODE_AREA_HEIGHT * 8 + 8 * 4, "and -bpp <bits-per-pixel>" );
-            Menu.Print( 3 * 8, 36 + MODE_AREA_HEIGHT * 8 + 8 * 6, "Select windowed mode with -window" );
+            Host.Menu.Print( 3 * 8, 36 + MODE_AREA_HEIGHT * 8 + 8 * 2, "Video modes must be set from the" );
+            Host.Menu.Print( 3 * 8, 36 + MODE_AREA_HEIGHT * 8 + 8 * 3, "command line with -width <width>" );
+            Host.Menu.Print( 3 * 8, 36 + MODE_AREA_HEIGHT * 8 + 8 * 4, "and -bpp <bits-per-pixel>" );
+            Host.Menu.Print( 3 * 8, 36 + MODE_AREA_HEIGHT * 8 + 8 * 6, "Select windowed mode with -window" );
         }
     }
 }

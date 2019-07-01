@@ -65,7 +65,7 @@ namespace SharpQuake
         {
             Host = host;
 
-            Menu.EnterSound = true;
+            Host.Menu.EnterSound = true;
             Host.Keyboard.Destination = KeyDestination.key_menu;
             _CurrentMenu = this;
         }

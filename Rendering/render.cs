@@ -290,7 +290,7 @@ namespace SharpQuake
             if( _Speeds.Value != 0 )
             {
                 var time2 = Timer.GetFloatTime();
-                Con.Print( "{0,3} ms  {1,4} wpoly {2,4} epoly\n", ( Int32 ) ( ( time2 - time1 ) * 1000 ), _BrushPolys, _AliasPolys );
+                ConsoleWrapper.Print( "{0,3} ms  {1,4} wpoly {2,4} epoly\n", ( Int32 ) ( ( time2 - time1 ) * 1000 ), _BrushPolys, _AliasPolys );
             }
         }
 
@@ -377,7 +377,7 @@ namespace SharpQuake
             Byte[] original;
             if( _CurrentEntity.skinnum < 0 || _CurrentEntity.skinnum >= paliashdr.numskins )
             {
-                Con.Print( "({0}): Invalid player skin #{1}\n", playernum, _CurrentEntity.skinnum );
+                ConsoleWrapper.Print( "({0}): Invalid player skin #{1}\n", playernum, _CurrentEntity.skinnum );
                 original = ( Byte[])paliashdr.texels[0];// (byte *)paliashdr + paliashdr.texels[0];
             }
             else
@@ -788,7 +788,7 @@ namespace SharpQuake
 
             if( ( frame >= psprite.numframes ) || ( frame < 0 ) )
             {
-                Con.Print( "R_DrawSprite: no such frame {0}\n", frame );
+                Host.Console.Print( "R_DrawSprite: no such frame {0}\n", frame );
                 frame = 0;
             }
 
@@ -1019,7 +1019,7 @@ namespace SharpQuake
         {
             if( ( frame >= paliashdr.numframes ) || ( frame < 0 ) )
             {
-                Con.DPrint( "R_AliasSetupFrame: no such frame {0}\n", frame );
+                Host.Console.DPrint( "R_AliasSetupFrame: no such frame {0}\n", frame );
                 frame = 0;
             }
 
@@ -1328,7 +1328,7 @@ namespace SharpQuake
             GL.Finish();
             var stop = Timer.GetFloatTime();
             var time = stop - start;
-            Con.Print( "{0:F} seconds ({1:F1} fps)\n", time, 128 / time );
+            Host.Console.Print( "{0:F} seconds ({1:F1} fps)\n", time, 128 / time );
 
             //GL.DrawBuffer(DrawBufferMode.Back);
             Scr.EndRendering();

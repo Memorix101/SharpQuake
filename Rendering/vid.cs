@@ -412,7 +412,7 @@ namespace SharpQuake
             // fix the leftover Alt from any Alt-Tab or the like that switched us away
             ClearAllStates();
 
-            Con.SafePrint( "Video mode {0} initialized.\n", GetModeDescription( _ModeNum ) );
+            Host.Console.SafePrint( "Video mode {0} initialized.\n", GetModeDescription( _ModeNum ) );
 
             SetPalette( palette );
 
@@ -493,14 +493,14 @@ namespace SharpQuake
         private static void InitOpenGL()
         {
             _glVendor = GL.GetString( StringName.Vendor );
-            Con.Print( "GL_VENDOR: {0}\n", _glVendor );
+            Host.Console.Print( "GL_VENDOR: {0}\n", _glVendor );
             _glRenderer = GL.GetString( StringName.Renderer );
-            Con.Print( "GL_RENDERER: {0}\n", _glRenderer );
+            Host.Console.Print( "GL_RENDERER: {0}\n", _glRenderer );
 
             _glVersion = GL.GetString( StringName.Version );
-            Con.Print( "GL_VERSION: {0}\n", _glVersion );
+            Host.Console.Print( "GL_VERSION: {0}\n", _glVersion );
             _glExtensions = GL.GetString( StringName.Extensions );
-            Con.Print( "GL_EXTENSIONS: {0}\n", _glExtensions );
+            Host.Console.Print( "GL_EXTENSIONS: {0}\n", _glExtensions );
 
             if( _glRenderer.StartsWith( "PowerVR", StringComparison.InvariantCultureIgnoreCase ) )
                 Scr.FullSbarDraw = true;
@@ -533,15 +533,15 @@ namespace SharpQuake
         {
             var nummodes = _Modes.Length;
             if( nummodes == 1 )
-                Con.Print( "{0} video mode is available\n", nummodes );
+                Host.Console.Print( "{0} video mode is available\n", nummodes );
             else
-                Con.Print( "{0} video modes are available\n", nummodes );
+                Host.Console.Print( "{0} video modes are available\n", nummodes );
         }
 
         // VID_DescribeCurrentMode_f
         private static void DescribeCurrentMode_f()
         {
-            Con.Print( "{0}\n", GetExtModeDescription( _ModeNum ) );
+            Host.Console.Print( "{0}\n", GetExtModeDescription( _ModeNum ) );
         }
 
         // VID_DescribeMode_f
@@ -549,7 +549,7 @@ namespace SharpQuake
         {
             var modenum = MathLib.atoi( Host.Command.Argv( 1 ) );
 
-            Con.Print( "{0}\n", GetExtModeDescription( modenum ) );
+            Host.Console.Print( "{0}\n", GetExtModeDescription( modenum ) );
         }
 
         // VID_DescribeModes_f
@@ -557,7 +557,7 @@ namespace SharpQuake
         {
             for( var i = 0; i < _Modes.Length; i++ )
             {
-                Con.Print( "{0}:{1}\n", i, GetExtModeDescription( i ) );
+                Host.Console.Print( "{0}:{1}\n", i, GetExtModeDescription( i ) );
             }
         }
 
@@ -625,7 +625,7 @@ namespace SharpQuake
         {
             if( _glExtensions.Contains( "GL_SGIS_multitexture " ) && !CommandLine.HasParam( "-nomtex" ) )
             {
-                Con.Print( "Multitexture extensions found.\n" );
+                Host.Console.Print( "Multitexture extensions found.\n" );
                 _glMTexable = true;
             }
         }

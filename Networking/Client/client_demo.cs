@@ -63,19 +63,19 @@ namespace SharpQuake
             var c = Host.Command.Argc;
             if( c != 2 && c != 3 && c != 4 )
             {
-                Con.Print( "record <demoname> [<map> [cd track]]\n" );
+                Host.Console.Print( "record <demoname> [<map> [cd track]]\n" );
                 return;
             }
 
             if( Host.Command.Argv( 1 ).Contains( ".." ) )
             {
-                Con.Print( "Relative pathnames are not allowed.\n" );
+                Host.Console.Print( "Relative pathnames are not allowed.\n" );
                 return;
             }
 
             if( c == 2 && cls.state == cactive_t.ca_connected )
             {
-                Con.Print( "Can not record - already connected to server\nClient demo recording must be started before connecting\n" );
+                Host.Console.Print( "Can not record - already connected to server\nClient demo recording must be started before connecting\n" );
                 return;
             }
 
@@ -84,7 +84,7 @@ namespace SharpQuake
             if( c == 4 )
             {
                 track = MathLib.atoi( Host.Command.Argv( 3 ) );
-                Con.Print( "Forcing CD track to {0}\n", track );
+                Host.Console.Print( "Forcing CD track to {0}\n", track );
             }
             else
                 track = -1;
@@ -102,11 +102,11 @@ namespace SharpQuake
             //
             name = Path.ChangeExtension( name, ".dem" );
 
-            Con.Print( "recording to {0}.\n", name );
+            Host.Console.Print( "recording to {0}.\n", name );
             FileStream fs = FileSystem.OpenWrite( name, true );
             if( fs == null )
             {
-                Con.Print( "ERROR: couldn't open.\n" );
+                Host.Console.Print( "ERROR: couldn't open.\n" );
                 return;
             }
             BinaryWriter writer = new BinaryWriter( fs, Encoding.ASCII );
@@ -129,7 +129,7 @@ namespace SharpQuake
 
             if( !cls.demorecording )
             {
-                Con.Print( "Not recording a demo.\n" );
+                Host.Console.Print( "Not recording a demo.\n" );
                 return;
             }
 
@@ -145,7 +145,7 @@ namespace SharpQuake
                 cls.demofile = null;
             }
             cls.demorecording = false;
-            Con.Print( "Completed demo\n" );
+            Host.Console.Print( "Completed demo\n" );
         }
 
         // CL_PlayDemo_f
@@ -158,7 +158,7 @@ namespace SharpQuake
 
             if( Host.Command.Argc != 2 )
             {
-                Con.Print( "play <demoname> : plays a demo\n" );
+                Host.Console.Print( "play <demoname> : plays a demo\n" );
                 return;
             }
 
@@ -172,7 +172,7 @@ namespace SharpQuake
             //
             var name = Path.ChangeExtension( Host.Command.Argv( 1 ), ".dem" );
 
-            Con.Print( "Playing demo from {0}.\n", name );
+            Host.Console.Print( "Playing demo from {0}.\n", name );
             if( cls.demofile != null )
             {
                 cls.demofile.Dispose();
@@ -182,7 +182,7 @@ namespace SharpQuake
             cls.demofile = reader;
             if( cls.demofile == null )
             {
-                Con.Print( "ERROR: couldn't open.\n" );
+                Host.Console.Print( "ERROR: couldn't open.\n" );
                 cls.demonum = -1;		// stop demo loop
                 return;
             }
@@ -223,7 +223,7 @@ namespace SharpQuake
 
             if( Host.Command.Argc != 2 )
             {
-                Con.Print( "timedemo <demoname> : gets demo speeds\n" );
+                Host.Console.Print( "timedemo <demoname> : gets demo speeds\n" );
                 return;
             }
 
@@ -294,7 +294,7 @@ namespace SharpQuake
 
                 // discard nop keepalive message
                 if( net.Message.Length == 1 && net.Message.Data[0] == protocol.svc_nop )
-                    Con.Print( "<-- server to client keepalive\n" );
+                    Host.Console.Print( "<-- server to client keepalive\n" );
                 else
                     break;
             }
@@ -317,7 +317,7 @@ namespace SharpQuake
             var time = ( Single ) Host.RealTime - cls.td_starttime;
             if( time == 0 )
                 time = 1;
-            Con.Print( "{0} frames {1:F5} seconds {2:F2} fps\n", frames, time, frames / time );
+            Host.Console.Print( "{0} frames {1:F5} seconds {2:F2} fps\n", frames, time, frames / time );
         }
 
         /// <summary>

@@ -102,12 +102,12 @@ namespace SharpQuake
         public override void Draw( )
         {
             GLPic p = Drawer.CachePic( "gfx/ttl_cstm.lmp" );
-            Menu.DrawPic( ( 320 - p.width ) / 2, 4, p );
+            Host.Menu.DrawPic( ( 320 - p.width ) / 2, 4, p );
 
             if ( _BindGrab )
-                Menu.Print( 12, 32, "Press a key or button for this action" );
+                Host.Menu.Print( 12, 32, "Press a key or button for this action" );
             else
-                Menu.Print( 18, 32, "Enter to change, backspace to clear" );
+                Host.Menu.Print( 18, 32, "Enter to change, backspace to clear" );
 
             // search for known bindings
             Int32[] keys = new Int32[2];
@@ -116,31 +116,31 @@ namespace SharpQuake
             {
                 var y = 48 + 8 * i;
 
-                Menu.Print( 16, y, _BindNames[i][1] );
+                Host.Menu.Print( 16, y, _BindNames[i][1] );
 
                 FindKeysForCommand( _BindNames[i][0], keys );
 
                 if ( keys[0] == -1 )
                 {
-                    Menu.Print( 140, y, "???" );
+                    Host.Menu.Print( 140, y, "???" );
                 }
                 else
                 {
                     var name = Host.Keyboard.KeynumToString( keys[0] );
-                    Menu.Print( 140, y, name );
+                    Host.Menu.Print( 140, y, name );
                     var x = name.Length * 8;
                     if ( keys[1] != -1 )
                     {
-                        Menu.Print( 140 + x + 8, y, "or" );
-                        Menu.Print( 140 + x + 32, y, Host.Keyboard.KeynumToString( keys[1] ) );
+                        Host.Menu.Print( 140 + x + 8, y, "or" );
+                        Host.Menu.Print( 140 + x + 32, y, Host.Keyboard.KeynumToString( keys[1] ) );
                     }
                 }
             }
 
             if ( _BindGrab )
-                Menu.DrawCharacter( 130, 48 + _Cursor * 8, '=' );
+                Host.Menu.DrawCharacter( 130, 48 + _Cursor * 8, '=' );
             else
-                Menu.DrawCharacter( 130, 48 + _Cursor * 8, 12 + ( ( Int32 ) ( Host.RealTime * 4 ) & 1 ) );
+                Host.Menu.DrawCharacter( 130, 48 + _Cursor * 8, 12 + ( ( Int32 ) ( Host.RealTime * 4 ) & 1 ) );
         }
 
         /// <summary>

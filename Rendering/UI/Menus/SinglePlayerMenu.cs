@@ -35,7 +35,7 @@ namespace SharpQuake
                     break;
 
                 case KeysDef.K_ENTER:
-                    Menu.EnterSound = true;
+                    Host.Menu.EnterSound = true;
 
                     switch ( _Cursor )
                     {
@@ -67,14 +67,14 @@ namespace SharpQuake
         /// </summary>
         public override void Draw( )
         {
-            Menu.DrawTransPic( 16, 4, Drawer.CachePic( "gfx/qplaque.lmp" ) );
+            Host.Menu.DrawTransPic( 16, 4, Drawer.CachePic( "gfx/qplaque.lmp" ) );
             GLPic p = Drawer.CachePic( "gfx/ttl_sgl.lmp" );
-            Menu.DrawPic( ( 320 - p.width ) / 2, 4, p );
-            Menu.DrawTransPic( 72, 32, Drawer.CachePic( "gfx/sp_menu.lmp" ) );
+            Host.Menu.DrawPic( ( 320 - p.width ) / 2, 4, p );
+            Host.Menu.DrawTransPic( 72, 32, Drawer.CachePic( "gfx/sp_menu.lmp" ) );
 
             var f = ( Int32 ) ( Host.Time * 10 ) % 6;
 
-            Menu.DrawTransPic( 54, 32 + _Cursor * 20, Drawer.CachePic( String.Format( "gfx/menudot{0}.lmp", f + 1 ) ) );
+            Host.Menu.DrawTransPic( 54, 32 + _Cursor * 20, Drawer.CachePic( String.Format( "gfx/menudot{0}.lmp", f + 1 ) ) );
         }
     }
 }

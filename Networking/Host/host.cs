@@ -202,6 +202,18 @@ namespace SharpQuake
             private set;
         }
 
+        public Con Console
+        {
+            get;
+            private set;
+        }
+
+        public Menu Menu
+        {
+            get;
+            private set;
+        }
+
         //private Server Server
         //{
         //    get;
@@ -245,6 +257,8 @@ namespace SharpQuake
             ChaseView = new ChaseView( );
             GfxWad = new Wad( );
             Keyboard = new Keyboard( );
+            Console = new Con( );
+            Menu = new Menu( );
         }
 
         /// <summary>
@@ -278,7 +292,7 @@ namespace SharpQuake
         /// </summary>
         public void ClearMemory( )
         {
-            Con.DPrint( "Clearing memory\n" );
+            Console.DPrint( "Clearing memory\n" );
 
             Mod.ClearAll( );
             client.cls.signon = 0;
@@ -301,7 +315,7 @@ namespace SharpQuake
                 Scr.EndLoadingPlaque( );		// reenable screen updates
 
                 var message = ( args.Length > 0 ? String.Format( error, args ) : error );
-                Con.Print( "host_old_Error: {0}\n", message );
+                Console.Print( "host_old_Error: {0}\n", message );
 
                 if ( server.sv.active )
                     ShutdownServer( false );
@@ -336,8 +350,8 @@ namespace SharpQuake
             InitialiseLocal( );
             GfxWad.LoadWadFile( "gfx.wad" );
             Keyboard.Initialise( this );
-            Con.Init( this );
-            Menu.Init( this );
+            Console.Initialise( this );
+            Menu.Initialise( this );
             progs.Init( this );
             Mod.Init( Cache );
             net.Init( this );
@@ -373,7 +387,7 @@ namespace SharpQuake
 
             IsInitialised = true;
 
-            Con.DPrint( "========Quake Initialized=========\n" );
+            Console.DPrint( "========Quake Initialized=========\n" );
         }
 
         /// <summary>
@@ -626,7 +640,7 @@ namespace SharpQuake
                 _Time3 = Timer.GetFloatTime( );
                 var pass2 = ( Int32 ) ( ( _Time2 - _Time1 ) * 1000 );
                 var pass3 = ( Int32 ) ( ( _Time3 - _Time2 ) * 1000 );
-                Con.Print( "{0,3} tot {1,3} server {2,3} gfx {3,3} snd\n", pass1 + pass2 + pass3, pass1, pass2, pass3 );
+                Console.Print( "{0,3} tot {1,3} server {2,3} gfx {3,3} snd\n", pass1 + pass2 + pass3, pass1, pass2, pass3 );
             }
 
             FrameCount++;
@@ -653,7 +667,7 @@ namespace SharpQuake
         public void EndGame( String message, params Object[] args )
         {
             var str = String.Format( message, args );
-            Con.DPrint( "host_old_EndGame: {0}\n", str );
+            Console.DPrint( "host_old_EndGame: {0}\n", str );
 
             if ( server.IsActive )
                 ShutdownServer( false );
@@ -717,7 +731,7 @@ namespace SharpQuake
             writer.WriteByte( protocol.svc_disconnect );
             count = net.SendToAll( writer, 5 );
             if ( count != 0 )
-                Con.Print( "Host_ShutdownServer: NET_SendToAll failed for {0} clients\n", count );
+                Console.Print( "Host_ShutdownServer: NET_SendToAll failed for {0} clients\n", count );
 
             for ( var i = 0; i < server.svs.maxclients; i++ )
             {
@@ -763,7 +777,7 @@ namespace SharpQuake
                     c++;
             }
 
-            Con.Print( "serverprofile: {0,2:d} clients {1,2:d} msec\n", c, m );
+            Console.Print( "serverprofile: {0,2:d} clients {1,2:d} msec\n", c, m );
         }
 
         /// <summary>
@@ -812,13 +826,13 @@ namespace SharpQuake
 
                 if ( VcrWriter != null )
                 {
-                    Con.Print( "Closing vcrfile.\n" );
+                    Console.Print( "Closing vcrfile.\n" );
                     VcrWriter.Close( );
                     VcrWriter = null;
                 }
                 if ( VcrReader != null )
                 {
-                    Con.Print( "Closing vcrfile.\n" );
+                    Console.Print( "Closing vcrfile.\n" );
                     VcrReader.Close( );
                     VcrReader = null;
                 }
@@ -828,7 +842,7 @@ namespace SharpQuake
                     vid.Shutdown( );
                 }
 
-                Con.Shutdown( );
+                Console.Shutdown( );
             }
             finally
             {
@@ -842,6 +856,7 @@ namespace SharpQuake
         public void Dispose( )
         {
             ShutdownServer( false );
+            Shutdown( );
         }
     }
 }

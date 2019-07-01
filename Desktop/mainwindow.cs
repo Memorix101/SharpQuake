@@ -298,7 +298,7 @@ namespace SharpQuake
 
             using (var form = MainWindow.CreateInstance(size, mode, false))
             {
-                Con.DPrint("Host.Init\n");
+                form.Host.Console.DPrint("Host.Init\n");
 
                 form.Host.Initialise( parms );
 
@@ -367,7 +367,7 @@ namespace SharpQuake
                 return 0;
 
             if (_KeyTable[key] == 0)
-                Con.DPrint("key 0x{0:X} has no translation\n", key);
+                MainWindow.Instance.Host.Console.DPrint("key 0x{0:X} has no translation\n", key);
 
             return _KeyTable[key];
         }

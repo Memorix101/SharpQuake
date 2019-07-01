@@ -80,7 +80,7 @@ namespace SharpQuake
             Model m = Mod.ForName( Command.Argv( 1 ), false );
             if ( m == null )
             {
-                Con.Print( "Can't load {0}\n", Command.Argv( 1 ) );
+                Console.Print( "Can't load {0}\n", Command.Argv( 1 ) );
                 return;
             }
 
@@ -106,13 +106,13 @@ namespace SharpQuake
             e.v.frame = f;
         }
 
-        private static void PrintFrameName( Model m, Int32 frame )
+        private void PrintFrameName( Model m, Int32 frame )
         {
             aliashdr_t hdr = Mod.GetExtraData( m );
             if ( hdr == null )
                 return;
 
-            Con.Print( "frame {0}: {1}\n", frame, hdr.frames[frame].name );
+            Console.Print( "frame {0}: {1}\n", frame, hdr.frames[frame].name );
         }
 
         /// <summary>
@@ -207,7 +207,7 @@ namespace SharpQuake
             }
 
             if ( flag )
-                Con.Print( sb.ToString( ) );
+                Console.Print( sb.ToString( ) );
             else
                 server.ClientPrint( sb.ToString( ) );
         }
@@ -377,12 +377,12 @@ namespace SharpQuake
         {
             if ( Command.Argc != 2 )
             {
-                Con.Print( "changelevel <levelname> : continue game on a new level\n" );
+                Console.Print( "changelevel <levelname> : continue game on a new level\n" );
                 return;
             }
             if ( !server.sv.active || client.cls.demoplayback )
             {
-                Con.Print( "Only the server may changelevel\n" );
+                Console.Print( "Only the server may changelevel\n" );
                 return;
             }
             server.SaveSpawnparms( );
@@ -465,31 +465,31 @@ namespace SharpQuake
 
             if ( !server.sv.active )
             {
-                Con.Print( "Not playing a local game.\n" );
+                Console.Print( "Not playing a local game.\n" );
                 return;
             }
 
             if ( client.cl.intermission != 0 )
             {
-                Con.Print( "Can't save in intermission.\n" );
+                Console.Print( "Can't save in intermission.\n" );
                 return;
             }
 
             if ( server.svs.maxclients != 1 )
             {
-                Con.Print( "Can't save multiplayer games.\n" );
+                Console.Print( "Can't save multiplayer games.\n" );
                 return;
             }
 
             if ( Command.Argc != 2 )
             {
-                Con.Print( "save <savename> : save a game\n" );
+                Console.Print( "save <savename> : save a game\n" );
                 return;
             }
 
             if ( Command.Argv( 1 ).Contains( ".." ) )
             {
-                Con.Print( "Relative pathnames are not allowed.\n" );
+                Console.Print( "Relative pathnames are not allowed.\n" );
                 return;
             }
 
@@ -497,18 +497,18 @@ namespace SharpQuake
             {
                 if ( server.svs.clients[i].active && ( server.svs.clients[i].edict.v.health <= 0 ) )
                 {
-                    Con.Print( "Can't savegame with a dead player\n" );
+                    Console.Print( "Can't savegame with a dead player\n" );
                     return;
                 }
             }
 
             var name = Path.ChangeExtension( Path.Combine( FileSystem.GameDir, Command.Argv( 1 ) ), ".sav" );
 
-            Con.Print( "Saving game to {0}...\n", name );
+            Console.Print( "Saving game to {0}...\n", name );
             FileStream fs = FileSystem.OpenWrite( name, true );
             if ( fs == null )
             {
-                Con.Print( "ERROR: couldn't open.\n" );
+                Console.Print( "ERROR: couldn't open.\n" );
                 return;
             }
             using ( StreamWriter writer = new StreamWriter( fs, Encoding.ASCII ) )
@@ -542,7 +542,7 @@ namespace SharpQuake
                     writer.Flush( );
                 }
             }
-            Con.Print( "done.\n" );
+            Console.Print( "done.\n" );
         }
 
         /// <summary>
@@ -555,7 +555,7 @@ namespace SharpQuake
 
             if ( Command.Argc != 2 )
             {
-                Con.Print( "load <savename> : load a game\n" );
+                Console.Print( "load <savename> : load a game\n" );
                 return;
             }
 
@@ -567,11 +567,11 @@ namespace SharpQuake
             // been used.  The menu calls it before stuffing loadgame command
             //	SCR_BeginLoadingPlaque ();
 
-            Con.Print( "Loading game from {0}...\n", name );
+            Console.Print( "Loading game from {0}...\n", name );
             FileStream fs = FileSystem.OpenRead( name );
             if ( fs == null )
             {
-                Con.Print( "ERROR: couldn't open.\n" );
+                Console.Print( "ERROR: couldn't open.\n" );
                 return;
             }
 
@@ -581,7 +581,7 @@ namespace SharpQuake
                 var version = MathLib.atoi( line );
                 if ( version != HostDef.SAVEGAME_VERSION )
                 {
-                    Con.Print( "Savegame is version {0}, not {1}\n", version, HostDef.SAVEGAME_VERSION );
+                    Console.Print( "Savegame is version {0}, not {1}\n", version, HostDef.SAVEGAME_VERSION );
                     return;
                 }
                 line = reader.ReadLine( );
@@ -607,7 +607,7 @@ namespace SharpQuake
 
                 if ( !server.sv.active )
                 {
-                    Con.Print( "Couldn't load map\n" );
+                    Console.Print( "Couldn't load map\n" );
                     return;
                 }
                 server.sv.paused = true;		// pause until all clients connect
@@ -682,7 +682,7 @@ namespace SharpQuake
         {
             if ( Command.Argc == 1 )
             {
-                Con.Print( "\"name\" is \"{0}\"\n", client.Name );
+                Console.Print( "\"name\" is \"{0}\"\n", client.Name );
                 return;
             }
 
@@ -707,7 +707,7 @@ namespace SharpQuake
 
             if ( !String.IsNullOrEmpty( HostClient.name ) && HostClient.name != "unconnected" )
                 if ( HostClient.name != newName )
-                    Con.Print( "{0} renamed to {1}\n", HostClient.name, newName );
+                    Console.Print( "{0} renamed to {1}\n", HostClient.name, newName );
 
             HostClient.name = newName;
             HostClient.edict.v.netname = progs.NewString( newName );
@@ -722,8 +722,8 @@ namespace SharpQuake
         // Host_Version_f
         private void Version_f( )
         {
-            Con.Print( "Version {0}\n", QDef.VERSION );
-            Con.Print( "Exe hash code: {0}\n", System.Reflection.Assembly.GetExecutingAssembly( ).GetHashCode( ) );
+            Console.Print( "Version {0}\n", QDef.VERSION );
+            Console.Print( "Exe hash code: {0}\n", System.Reflection.Assembly.GetExecutingAssembly( ).GetHashCode( ) );
         }
 
         /// <summary>
@@ -835,8 +835,8 @@ namespace SharpQuake
         {
             if ( Command.Argc == 1 )
             {
-                Con.Print( "\"color\" is \"{0} {1}\"\n", ( ( Int32 ) client.Color ) >> 4, ( ( Int32 ) client.Color ) & 0x0f );
-                Con.Print( "color <0-13> [0-13]\n" );
+                Console.Print( "\"color\" is \"{0} {1}\"\n", ( ( Int32 ) client.Color ) >> 4, ( ( Int32 ) client.Color ) & 0x0f );
+                Console.Print( "color <0-13> [0-13]\n" );
                 return;
             }
 
@@ -936,13 +936,13 @@ namespace SharpQuake
         {
             if ( Command.Source == CommandSource.src_command )
             {
-                Con.Print( "prespawn is not valid from the console\n" );
+                Console.Print( "prespawn is not valid from the console\n" );
                 return;
             }
 
             if ( HostClient.spawned )
             {
-                Con.Print( "prespawn not valid -- allready spawned\n" );
+                Console.Print( "prespawn not valid -- allready spawned\n" );
                 return;
             }
 
@@ -960,13 +960,13 @@ namespace SharpQuake
         {
             if ( Command.Source == CommandSource.src_command )
             {
-                Con.Print( "spawn is not valid from the console\n" );
+                Console.Print( "spawn is not valid from the console\n" );
                 return;
             }
 
             if ( HostClient.spawned )
             {
-                Con.Print( "Spawn not valid -- allready spawned\n" );
+                Console.Print( "Spawn not valid -- allready spawned\n" );
                 return;
             }
 
@@ -999,7 +999,7 @@ namespace SharpQuake
                 progs.Execute( progs.GlobalStruct.ClientConnect );
 
                 if ( ( Timer.GetFloatTime( ) - HostClient.netconnection.connecttime ) <= server.sv.time )
-                    Con.DPrint( "{0} entered the game\n", HostClient.name );
+                    Console.DPrint( "{0} entered the game\n", HostClient.name );
 
                 progs.Execute( progs.GlobalStruct.PutClientInServer );
             }
@@ -1077,7 +1077,7 @@ namespace SharpQuake
         {
             if ( Command.Source == CommandSource.src_command )
             {
-                Con.Print( "begin is not valid from the console\n" );
+                Console.Print( "begin is not valid from the console\n" );
                 return;
             }
 
@@ -1306,7 +1306,7 @@ namespace SharpQuake
                 if ( progs.GetString( e.v.classname ) == "viewthing" )
                     return e;
             }
-            Con.Print( "No viewthing on map\n" );
+            Console.Print( "No viewthing on map\n" );
             return null;
         }
 
@@ -1323,10 +1323,10 @@ namespace SharpQuake
             var c = Command.Argc - 1;
             if ( c > client.MAX_DEMOS )
             {
-                Con.Print( "Max {0} demos in demoloop\n", client.MAX_DEMOS );
+                Console.Print( "Max {0} demos in demoloop\n", client.MAX_DEMOS );
                 c = client.MAX_DEMOS;
             }
-            Con.Print( "{0} demo(s) in loop\n", c );
+            Console.Print( "{0} demo(s) in loop\n", c );
 
             for ( var i = 1; i < c + 1; i++ )
                 client.cls.demos[i - 1] = Utilities.Copy( Command.Argv( i ), client.MAX_DEMONAME );

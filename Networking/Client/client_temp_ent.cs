@@ -315,7 +315,7 @@ namespace SharpQuake
                     return;
                 }
             }
-            Con.Print( "beam list overflow!\n" );
+            Host.Console.Print( "beam list overflow!\n" );
         }
     }
 }

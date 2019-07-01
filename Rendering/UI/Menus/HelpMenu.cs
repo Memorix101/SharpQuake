@@ -29,14 +29,14 @@ namespace SharpQuake
 
                 case KeysDef.K_UPARROW:
                 case KeysDef.K_RIGHTARROW:
-                    Menu.EnterSound = true;
+                    Host.Menu.EnterSound = true;
                     if ( ++_Page >= NUM_HELP_PAGES )
                         _Page = 0;
                     break;
 
                 case KeysDef.K_DOWNARROW:
                 case KeysDef.K_LEFTARROW:
-                    Menu.EnterSound = true;
+                    Host.Menu.EnterSound = true;
                     if ( --_Page < 0 )
                         _Page = NUM_HELP_PAGES - 1;
                     break;
@@ -45,7 +45,7 @@ namespace SharpQuake
 
         public override void Draw( )
         {
-            Menu.DrawPic( 0, 0, Drawer.CachePic( String.Format( "gfx/help{0}.lmp", _Page ) ) );
+            Host.Menu.DrawPic( 0, 0, Drawer.CachePic( String.Format( "gfx/help{0}.lmp", _Page ) ) );
         }
     }
 }

@@ -79,11 +79,20 @@ namespace SharpQuake
             }
         }
 
+        // Instances
+        private Host Host
+        {
+            get;
+            set;
+        }
+
         /// <summary>
         /// UDP_Init
         /// </summary>
-        public Boolean Init()
+        public Boolean Init( Object host )
         {
+            Host = ( Host ) host;
+
             _IsInitialized = false;
 
             if( CommandLine.HasParam( "-noudp" ) )
@@ -97,7 +106,7 @@ namespace SharpQuake
             }
             catch( SocketException se )
             {
-                Con.DPrint( "Cannot get host name: {0}\n", se.Message );
+                Host.Console.DPrint( "Cannot get host name: {0}\n", se.Message );
                 return false;
             }
 
@@ -140,14 +149,14 @@ namespace SharpQuake
             _ControlSocket = OpenSocket( 0 );
             if( _ControlSocket == null )
             {
-                Con.Print( "TCP/IP: Unable to open control socket\n" );
+                Host.Console.Print( "TCP/IP: Unable to open control socket\n" );
                 return false;
             }
 
             _BroadcastAddress = new IPEndPoint( IPAddress.Broadcast, net.HostPort );
 
             _IsInitialized = true;
-            Con.Print( "TCP/IP Initialized\n" );
+            Host.Console.Print( "TCP/IP Initialized\n" );
             return true;
         }
 
@@ -200,7 +209,7 @@ namespace SharpQuake
                     result.Close();
                     result = null;
                 }
-                Con.Print( "Unable to create socket: " + ex.Message );
+                Host.Console.Print( "Unable to create socket: " + ex.Message );
             }
 
             return result;
@@ -355,7 +364,7 @@ namespace SharpQuake
                 }
                 catch( SocketException se )
                 {
-                    Con.Print( "Unable to make socket broadcast capable: {0}\n", se.Message );
+                    Host.Console.Print( "Unable to make socket broadcast capable: {0}\n", se.Message );
                     return -1;
                 }
             }

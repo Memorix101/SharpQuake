@@ -377,7 +377,7 @@ namespace SharpQuake
         private static void PF_error()
         {
             var s = PF_VarString( 0 );
-            Con.Print( "======SERVER ERROR in {0}:\n{1}\n",
+            Host.Console.Print( "======SERVER ERROR in {0}:\n{1}\n",
                 progs.GetString( progs.xFunction.s_name ), s );
             MemoryEdict ed = server.ProgToEdict( progs.GlobalStruct.self );
             progs.Print( ed );
@@ -398,7 +398,7 @@ namespace SharpQuake
         private static void PF_objerror()
         {
             var s = PF_VarString( 0 );
-            Con.Print( "======OBJECT ERROR in {0}:\n{1}\n",
+            Host.Console.Print( "======OBJECT ERROR in {0}:\n{1}\n",
                 GetString( progs.xFunction.s_name ), s );
             MemoryEdict ed = server.ProgToEdict( progs.GlobalStruct.self );
             progs.Print( ed );
@@ -599,7 +599,7 @@ namespace SharpQuake
 
             if( entnum < 1 || entnum > server.svs.maxclients )
             {
-                Con.Print( "tried to sprint to a non-client\n" );
+                Host.Console.Print( "tried to sprint to a non-client\n" );
                 return;
             }
 
@@ -626,7 +626,7 @@ namespace SharpQuake
 
             if( entnum < 1 || entnum > server.svs.maxclients )
             {
-                Con.Print( "tried to centerprint to a non-client\n" );
+                Host.Console.Print( "tried to centerprint to a non-client\n" );
                 return;
             }
 
@@ -801,7 +801,7 @@ namespace SharpQuake
                 }
             }
 
-            Con.Print( "no precache: {0}\n", samp );
+            Host.Console.Print( "no precache: {0}\n", samp );
         }
 
         /*
@@ -841,7 +841,7 @@ namespace SharpQuake
 
         private static void PF_break()
         {
-            Con.Print( "break statement\n" );
+            Host.Console.Print( "break statement\n" );
             //*(int *)-4 = 0;	// dump to debugger
         }
 
@@ -1094,7 +1094,7 @@ namespace SharpQuake
 
         private static void PF_dprint()
         {
-            Con.DPrint( PF_VarString( 0 ) );
+            Host.Console.DPrint( PF_VarString( 0 ) );
         }
 
         private static void PF_ftos()

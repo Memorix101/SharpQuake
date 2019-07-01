@@ -91,9 +91,9 @@ namespace SharpQuake
             // if recording demos, copy the message out
             //
             if( _ShowNet.Value == 1 )
-                Con.Print( "{0} ", net.Message.Length );
+                Host.Console.Print( "{0} ", net.Message.Length );
             else if( _ShowNet.Value == 2 )
-                Con.Print( "------------------\n" );
+                Host.Console.Print( "------------------\n" );
 
             cl.onground = false;	// unless the server says otherwise
 
@@ -155,7 +155,7 @@ namespace SharpQuake
                         break;
 
                     case protocol.svc_print:
-                        Con.Print( net.Reader.ReadString() );
+                        Host.Console.Print( net.Reader.ReadString() );
                         break;
 
                     case protocol.svc_centerprint:
@@ -325,7 +325,7 @@ namespace SharpQuake
         private static void ShowNet( String s )
         {
             if( _ShowNet.Value == 2 )
-                Con.Print( "{0,3}:{1}\n", net.Reader.Position - 1, s );
+                Host.Console.Print( "{0,3}:{1}\n", net.Reader.Position - 1, s );
         }
 
         /// <summary>
@@ -597,7 +597,7 @@ namespace SharpQuake
         /// </summary>
         private static void ParseServerInfo()
         {
-            Con.DPrint( "Serverinfo packet received.\n" );
+            Host.Console.DPrint( "Serverinfo packet received.\n" );
 
             //
             // wipe the client_state_t struct
@@ -608,7 +608,7 @@ namespace SharpQuake
             var i = net.Reader.ReadLong();
             if( i != protocol.PROTOCOL_VERSION )
             {
-                Con.Print( "Server returned version {0}, not {1}", i, protocol.PROTOCOL_VERSION );
+                Host.Console.Print( "Server returned version {0}, not {1}", i, protocol.PROTOCOL_VERSION );
                 return;
             }
 
@@ -616,7 +616,7 @@ namespace SharpQuake
             cl.maxclients = net.Reader.ReadByte();
             if( cl.maxclients < 1 || cl.maxclients > QDef.MAX_SCOREBOARD )
             {
-                Con.Print( "Bad maxclients ({0}) from server\n", cl.maxclients );
+                Host.Console.Print( "Bad maxclients ({0}) from server\n", cl.maxclients );
                 return;
             }
             cl.scores = new scoreboard_t[cl.maxclients];// Hunk_AllocName (cl.maxclients*sizeof(*cl.scores), "scores");
@@ -631,8 +631,8 @@ namespace SharpQuake
             cl.levelname = Utilities.Copy( str, 40 );
 
             // seperate the printfs so the server message can have a color
-            Con.Print( ConsoleBar );
-            Con.Print( "{0}{1}\n", ( Char ) 2, str );
+            Host.Console.Print( ConsoleBar );
+            Host.Console.Print( "{0}{1}\n", ( Char ) 2, str );
 
             //
             // first we go through and touch all of the precache data that still
@@ -652,7 +652,7 @@ namespace SharpQuake
 
                 if( nummodels == QDef.MAX_MODELS )
                 {
-                    Con.Print( "Server sent too many model precaches\n" );
+                    Host.Console.Print( "Server sent too many model precaches\n" );
                     return;
                 }
                 model_precache[nummodels] = str;
@@ -670,7 +670,7 @@ namespace SharpQuake
                     break;
                 if( numsounds == QDef.MAX_SOUNDS )
                 {
-                    Con.Print( "Server sent too many sound precaches\n" );
+                    Host.Console.Print( "Server sent too many sound precaches\n" );
                     return;
                 }
                 sound_precache[numsounds] = str;
@@ -685,7 +685,7 @@ namespace SharpQuake
                 cl.model_precache[i] = Mod.ForName( model_precache[i], false );
                 if( cl.model_precache[i] == null )
                 {
-                    Con.Print( "Model {0} not found\n", model_precache[i] );
+                    Host.Console.Print( "Model {0} not found\n", model_precache[i] );
                     return;
                 }
                 KeepaliveMessage();
@@ -899,7 +899,7 @@ namespace SharpQuake
             _LastMsg = time;
 
             // write out a nop
-            Con.Print( "--> client to server keepalive\n" );
+            Host.Console.Print( "--> client to server keepalive\n" );
 
             cls.message.WriteByte( protocol.clc_nop );
             net.SendMessage( cls.netcon, cls.message );

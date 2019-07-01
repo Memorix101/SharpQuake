@@ -385,7 +385,7 @@ namespace SharpQuake
             //if (*my_ipx_address)
             //    Con_DPrintf("IPX address %s\n", my_ipx_address);
             if( !String.IsNullOrEmpty( _MyTcpIpAddress ) )
-                Con.DPrint( "TCP/IP address {0}\n", _MyTcpIpAddress );
+                Host.Console.DPrint( "TCP/IP address {0}\n", _MyTcpIpAddress );
         }
 
         // net_driverlevel
@@ -514,7 +514,7 @@ namespace SharpQuake
                 if( HostCacheCount != 1 )
                     return null;
                 host = _HostCache[0].cname;
-                Con.Print( "Connecting to...\n{0} @ {1}\n\n", _HostCache[0].name, host );
+                Host.Console.Print( "Connecting to...\n{0} @ {1}\n\n", _HostCache[0].name, host );
             }
 
             _DriverLevel = 0;
@@ -542,7 +542,7 @@ JustDoIt:
 
             if( host != null )
             {
-                Con.Print( "\n" );
+                Host.Console.Print( "\n" );
                 PrintSlistHeader();
                 PrintSlist();
                 PrintSlistTrailer();
@@ -598,7 +598,7 @@ JustDoIt:
 
             if( sock.disconnected )
             {
-                Con.Print( "NET_GetMessage: disconnected socket\n" );
+                Host.Console.Print( "NET_GetMessage: disconnected socket\n" );
                 return -1;
             }
 
@@ -670,7 +670,7 @@ JustDoIt:
 
             if( sock.disconnected )
             {
-                Con.Print( "NET_SendMessage: disconnected socket\n" );
+                Host.Console.Print( "NET_SendMessage: disconnected socket\n" );
                 return -1;
             }
 
@@ -707,7 +707,7 @@ JustDoIt:
 
             if( sock.disconnected )
             {
-                Con.Print( "NET_SendMessage: disconnected socket\n" );
+                Host.Console.Print( "NET_SendMessage: disconnected socket\n" );
                 return -1;
             }
 
@@ -875,7 +875,7 @@ JustDoIt:
 
             if( !net.SlistSilent )
             {
-                Con.Print( "Looking for Quake servers...\n" );
+                Host.Console.Print( "Looking for Quake servers...\n" );
                 PrintSlistHeader();
             }
 
@@ -932,8 +932,8 @@ JustDoIt:
         // pollProcedureList
         private static void PrintSlistHeader()
         {
-            Con.Print( "Server          Map             Users\n" );
-            Con.Print( "--------------- --------------- -----\n" );
+            Host.Console.Print( "Server          Map             Users\n" );
+            Host.Console.Print( "--------------- --------------- -----\n" );
             _SlistLastShown = 0;
         }
 
@@ -945,9 +945,9 @@ JustDoIt:
             {
                 hostcache_t hc = _HostCache[i];
                 if( hc.maxusers != 0 )
-                    Con.Print( "{0,-15} {1,-15}\n {2,2}/{3,2}\n", Utilities.Copy( hc.name, 15 ), Utilities.Copy( hc.map, 15 ), hc.users, hc.maxusers );
+                    Host.Console.Print( "{0,-15} {1,-15}\n {2,2}/{3,2}\n", Utilities.Copy( hc.name, 15 ), Utilities.Copy( hc.map, 15 ), hc.users, hc.maxusers );
                 else
-                    Con.Print( "{0,-15} {1,-15}\n", Utilities.Copy( hc.name, 15 ), Utilities.Copy( hc.map, 15 ) );
+                    Host.Console.Print( "{0,-15} {1,-15}\n", Utilities.Copy( hc.name, 15 ), Utilities.Copy( hc.map, 15 ) );
             }
             _SlistLastShown = i;
         }
@@ -955,9 +955,9 @@ JustDoIt:
         private static void PrintSlistTrailer()
         {
             if( HostCacheCount != 0 )
-                Con.Print( "== end list ==\n\n" );
+                Host.Console.Print( "== end list ==\n\n" );
             else
-                Con.Print( "No Quake servers found.\n\n" );
+                Host.Console.Print( "No Quake servers found.\n\n" );
         }
 
         /// <summary>
@@ -990,7 +990,7 @@ JustDoIt:
         {
             if( Host.Command.Argc != 2 )
             {
-                Con.Print( "\"listen\" is \"{0}\"\n", _IsListening ? 1 : 0 );
+                Host.Console.Print( "\"listen\" is \"{0}\"\n", _IsListening ? 1 : 0 );
                 return;
             }
 
@@ -1010,13 +1010,13 @@ JustDoIt:
         {
             if( Host.Command.Argc != 2 )
             {
-                Con.Print( "\"maxplayers\" is \"%u\"\n", server.svs.maxclients );
+                Host.Console.Print( "\"maxplayers\" is \"%u\"\n", server.svs.maxclients );
                 return;
             }
 
             if( server.sv.active )
             {
-                Con.Print( "maxplayers can not be changed while a server is running.\n" );
+                Host.Console.Print( "maxplayers can not be changed while a server is running.\n" );
                 return;
             }
 
@@ -1026,7 +1026,7 @@ JustDoIt:
             if( n > server.svs.maxclientslimit )
             {
                 n = server.svs.maxclientslimit;
-                Con.Print( "\"maxplayers\" set to \"{0}\"\n", n );
+                Host.Console.Print( "\"maxplayers\" set to \"{0}\"\n", n );
             }
 
             if( n == 1 && _IsListening )
@@ -1047,14 +1047,14 @@ JustDoIt:
         {
             if( Host.Command.Argc != 2 )
             {
-                Con.Print( "\"port\" is \"{0}\"\n", HostPort );
+                Host.Console.Print( "\"port\" is \"{0}\"\n", HostPort );
                 return;
             }
 
             var n = MathLib.atoi( Host.Command.Argv( 1 ) );
             if( n < 1 || n > 65534 )
             {
-                Con.Print( "Bad value, must be between 1 and 65534\n" );
+                Host.Console.Print( "Bad value, must be between 1 and 65534\n" );
                 return;
             }
 

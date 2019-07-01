@@ -86,11 +86,11 @@ namespace SharpQuake
         private String _Args;// char* cmd_args = NULL;
         private Boolean _Wait; // qboolean cmd_wait;
 
-        // CHANGE
-        private Host Host
+        // Instances
+        public Host Host
         {
             get;
-            set;
+            private set;
         }
 
         public void Initialise( Host host )
@@ -119,14 +119,14 @@ namespace SharpQuake
             // fail if the command is a variable name
             if( CVar.Exists( name ) )
             {
-                Con.Print( "Cmd.Add: {0} already defined as a var!\n", name );
+                Host.Console.Print( "Cmd.Add: {0} already defined as a var!\n", name );
                 return;
             }
 
             // fail if the command already exists
             if( Exists( name ) )
             {
-                Con.Print( "Cmd.Add: {0} already defined!\n", name );
+                Host.Console.Print( "Cmd.Add: {0} already defined!\n", name );
                 return;
             }
 
@@ -232,7 +232,7 @@ namespace SharpQuake
                 {
                     // check cvars
                     if( !CVar.Command() )
-                        Con.Print( "Unknown command \"{0}\"\n", _Argv[0] );
+                        Host.Console.Print( "Unknown command \"{0}\"\n", _Argv[0] );
                 }
             }
         }
@@ -247,7 +247,7 @@ namespace SharpQuake
         {
             if( client.cls.state != cactive_t.ca_connected )
             {
-                Con.Print( "Can't \"{0}\", not connected\n", Host.Command.Argv( 0 ) );
+                Host.Console.Print( "Can't \"{0}\", not connected\n", Host.Command.Argv( 0 ) );
                 return;
             }
 
@@ -300,7 +300,7 @@ namespace SharpQuake
         {
             if( _Argc != 1 )
             {
-                Con.Print( "stuffcmds : execute command line parameters\n" );
+                Host.Console.Print( "stuffcmds : execute command line parameters\n" );
                 return;
             }
 
@@ -349,18 +349,18 @@ namespace SharpQuake
         {
             if( _Argc != 2 )
             {
-                Con.Print( "exec <filename> : execute a script file\n" );
+                Host.Console.Print( "exec <filename> : execute a script file\n" );
                 return;
             }
 
             Byte[] bytes = FileSystem.LoadFile( _Argv[1] );
             if( bytes == null )
             {
-                Con.Print( "couldn't exec {0}\n", _Argv[1] );
+                Host.Console.Print( "couldn't exec {0}\n", _Argv[1] );
                 return;
             }
             var script = Encoding.ASCII.GetString( bytes );
-            Con.Print( "execing {0}\n", _Argv[1] );
+            Host.Console.Print( "execing {0}\n", _Argv[1] );
             Host.CommandBuffer.InsertText( script );
         }
 
@@ -370,9 +370,9 @@ namespace SharpQuake
         {
             for( var i = 1; i < _Argc; i++ )
             {
-                Con.Print( "{0} ", _Argv[i] );
+                Host.Console.Print( "{0} ", _Argv[i] );
             }
-            Con.Print( "\n" );
+            Host.Console.Print( "\n" );
         }
 
         // Cmd_Alias_f
@@ -381,10 +381,10 @@ namespace SharpQuake
         {
             if( _Argc == 1 )
             {
-                Con.Print( "Current alias commands:\n" );
+                Host.Console.Print( "Current alias commands:\n" );
                 foreach( KeyValuePair<String, String> alias in _Aliases )
                 {
-                    Con.Print( "{0} : {1}\n", alias.Key, alias.Value );
+                    Host.Console.Print( "{0} : {1}\n", alias.Key, alias.Value );
                 }
                 return;
             }
@@ -392,7 +392,7 @@ namespace SharpQuake
             var name = _Argv[1];
             if( name.Length >= MAX_ALIAS_NAME )
             {
-                Con.Print( "Alias name is too long\n" );
+                Host.Console.Print( "Alias name is too long\n" );
                 return;
             }
 

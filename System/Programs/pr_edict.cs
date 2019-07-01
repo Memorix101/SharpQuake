@@ -171,7 +171,7 @@ namespace SharpQuake
             _Progs = Utilities.BytesToStructure<Program>( buf, 0 );
             if( _Progs == null )
                 Utilities.Error( "PR_LoadProgs: couldn't load progs.dat" );
-            Con.DPrint( "Programs occupy {0}K.\n", buf.Length / 1024 );
+            Host.Console.DPrint( "Programs occupy {0}K.\n", buf.Length / 1024 );
 
             for( var i = 0; i < buf.Length; i++ )
                 SharpQuake.Framework.Crc.ProcessByte( ref _Crc, buf[i] );
@@ -261,7 +261,7 @@ namespace SharpQuake
         // For debugging, prints all the entities in the current server
         public static void PrintEdicts()
         {
-            Con.Print( "{0} entities\n", server.sv.num_edicts );
+            Host.Console.Print( "{0} entities\n", server.sv.num_edicts );
             for( var i = 0; i < server.sv.num_edicts; i++ )
                 PrintNum( i );
         }
@@ -344,7 +344,7 @@ namespace SharpQuake
                 //
                 if( ent.v.classname == 0 )
                 {
-                    Con.Print( "No classname for:\n" );
+                    Host.Console.Print( "No classname for:\n" );
                     Print( ent );
                     server.FreeEdict( ent );
                     continue;
@@ -354,7 +354,7 @@ namespace SharpQuake
                 var func = IndexOfFunction( GetString( ent.v.classname ) );
                 if( func == -1 )
                 {
-                    Con.Print( "No spawn function for:\n" );
+                    Host.Console.Print( "No spawn function for:\n" );
                     Print( ent );
                     server.FreeEdict( ent );
                     continue;
@@ -364,7 +364,7 @@ namespace SharpQuake
                 Execute( func );
             }
 
-            Con.DPrint( "{0} entities inhibited\n", inhibit );
+            Host.Console.DPrint( "{0} entities inhibited\n", inhibit );
         }
 
         /// <summary>
@@ -429,7 +429,7 @@ namespace SharpQuake
                 ProgramDefinition key = FindField( keyname );
                 if( key == null )
                 {
-                    Con.Print( "'{0}' is not a field\n", keyname );
+                    Host.Console.Print( "'{0}' is not a field\n", keyname );
                     continue;
                 }
 
@@ -457,11 +457,11 @@ namespace SharpQuake
         {
             if( ed.free )
             {
-                Con.Print( "FREE\n" );
+                Host.Console.Print( "FREE\n" );
                 return;
             }
 
-            Con.Print( "\nEDICT {0}:\n", server.NumForEdict( ed ) );
+            Host.Console.Print( "\nEDICT {0}:\n", server.NumForEdict( ed ) );
             for( var i = 1; i < _Progs.numfielddefs; i++ )
             {
                 ProgramDefinition d = _FieldDefs[i];
@@ -480,8 +480,8 @@ namespace SharpQuake
                         if( IsEmptyField( type, v ) )
                             continue;
 
-                        Con.Print( "{0,15} ", name );
-                        Con.Print( "{0}\n", ValueString( (EdictType)d.type, (void*)v ) );
+                        Host.Console.Print( "{0,15} ", name );
+                        Host.Console.Print( "{0}\n", ValueString( (EdictType)d.type, (void*)v ) );
                     }
                 }
                 else
@@ -492,8 +492,8 @@ namespace SharpQuake
                         if( IsEmptyField( type, v ) )
                             continue;
 
-                        Con.Print( "{0,15} ", name );
-                        Con.Print( "{0}\n", ValueString( (EdictType)d.type, (void*)v ) );
+                        Host.Console.Print( "{0,15} ", name );
+                        Host.Console.Print( "{0}\n", ValueString( (EdictType)d.type, (void*)v ) );
                     }
                 }
             }
@@ -710,7 +710,7 @@ namespace SharpQuake
                 ProgramDefinition key = FindGlobal( keyname );
                 if( key == null )
                 {
-                    Con.Print( "'{0}' is not a global\n", keyname );
+                    Host.Console.Print( "'{0}' is not a global\n", keyname );
                     continue;
                 }
 
@@ -749,7 +749,7 @@ namespace SharpQuake
                 if( org.X >= vmin.X && org.Y >= vmin.Y && org.Z >= vmin.Z &&
                     org.X <= vmax.X && org.Y <= vmax.Y && org.Z <= vmax.Z )
                 {
-                    Con.Print( "{0}\n", i );
+                    Host.Console.Print( "{0}\n", i );
                 }
             }
         }
@@ -777,7 +777,7 @@ namespace SharpQuake
             var i = MathLib.atoi( Host.Command.Argv( 1 ) );
             if( i >= server.sv.num_edicts )
             {
-                Con.Print( "Bad edict number\n" );
+                Host.Console.Print( "Bad edict number\n" );
                 return;
             }
             progs.PrintNum( i );
@@ -804,11 +804,11 @@ namespace SharpQuake
                     step++;
             }
 
-            Con.Print( "num_edicts:{0}\n", server.sv.num_edicts );
-            Con.Print( "active    :{0}\n", active );
-            Con.Print( "view      :{0}\n", models );
-            Con.Print( "touch     :{0}\n", solid );
-            Con.Print( "step      :{0}\n", step );
+            Host.Console.Print( "num_edicts:{0}\n", server.sv.num_edicts );
+            Host.Console.Print( "active    :{0}\n", active );
+            Host.Console.Print( "view      :{0}\n", models );
+            Host.Console.Print( "touch     :{0}\n", solid );
+            Host.Console.Print( "step      :{0}\n", step );
         }
 
         /// <summary>
@@ -890,7 +890,7 @@ namespace SharpQuake
                     var f = IndexOfField( s );
                     if( f == -1 )
                     {
-                        Con.Print( "Can't find field {0}\n", s );
+                        Host.Console.Print( "Can't find field {0}\n", s );
                         return false;
                     }
                     *( Int32* )d = GetInt32( _FieldDefs[f].ofs );
@@ -900,7 +900,7 @@ namespace SharpQuake
                     var func = IndexOfFunction( s );
                     if( func == -1 )
                     {
-                        Con.Print( "Can't find function {0}\n", s );
+                        Host.Console.Print( "Can't find function {0}\n", s );
                         return false;
                     }
                     *( Int32* )d = func;// - pr_functions;

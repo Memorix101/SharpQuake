@@ -71,8 +71,16 @@ namespace SharpQuake
             }
         }
 
-        public void Init()
+        public Host Host
         {
+            get;
+            private set;
+        }
+
+        public void Initialise( Object host )
+        {
+            Host = ( Host ) host;
+
             FreeContext();
 
             _Context = new AudioContext();
@@ -160,7 +168,7 @@ namespace SharpQuake
 
             if( _FreeBuffers.Count == 0 )
             {
-                Con.DPrint( "UnlockBuffer: No free buffers!\n" );
+                Host.Console.DPrint( "UnlockBuffer: No free buffers!\n" );
                 return;
             }
 
@@ -181,7 +189,7 @@ namespace SharpQuake
                 if( (ALSourceState)state != ALSourceState.Playing )
                 {
                     AL.SourcePlay( _Source );
-                    Con.DPrint( "Sound resumed from {0}, free {1} of {2} buffers\n",
+                    Host.Console.DPrint( "Sound resumed from {0}, free {1} of {2} buffers\n",
                         ( (ALSourceState)state ).ToString( "F" ), _FreeBuffers.Count, _Buffers.Length );
                 }
             }

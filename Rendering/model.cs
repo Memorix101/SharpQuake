@@ -229,11 +229,11 @@ namespace SharpQuake
         // Mod_Print
         public static void Print()
         {
-            Con.Print( "Cached models:\n" );
+            ConsoleWrapper.Print( "Cached models:\n" );
             for( var i = 0; i < _NumKnown; i++ )
             {
                 Model mod = _Known[i];
-                Con.Print( "{0}\n", mod.name );
+                ConsoleWrapper.Print( "{0}\n", mod.name );
             }
         }
 
@@ -1039,7 +1039,7 @@ namespace SharpQuake
                     else
                     {
                         Buffer.BlockCopy(_ModBase, mtOffset, tx.pixels, 0, pixels);
-                        Con.Print("Texture info of {0} truncated to fit in bounds of _ModBase\n", _LoadModel.name);
+                        ConsoleWrapper.Print("Texture info of {0} truncated to fit in bounds of _ModBase\n", _LoadModel.name);
                     }
                 }
 

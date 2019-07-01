@@ -215,13 +215,13 @@ namespace SharpQuake
                     if( ( Host.RealTime - _DisabledTime ) > 60 )
                     {
                         IsDisabledForLoading = false;
-                        Con.Print( "Load failed.\n" );
+                        Host.Console.Print( "Load failed.\n" );
                     }
                     else
                         return;
                 }
 
-                if( !Con.IsInitialized )
+                if( !Host.Console.IsInitialized )
                     return;	// not initialized yet
 
                 BeginRendering();
@@ -291,7 +291,7 @@ namespace SharpQuake
                     CheckDrawCenterString();
                     sbar.Draw();
                     DrawConsole();
-                    Menu.Draw();
+                    Host.Menu.Draw();
                 }
 
                 Host.View.UpdatePalette();
@@ -374,7 +374,7 @@ namespace SharpQuake
         {
             Scr.IsDisabledForLoading = false;
             Scr.FullUpdate = 0;
-            Con.ClearNotify();
+            Host.Console.ClearNotify();
         }
 
         /// <summary>
@@ -390,7 +390,7 @@ namespace SharpQuake
                 return;
 
             // redraw with no console and the loading plaque
-            Con.ClearNotify();
+            Host.Console.ClearNotify();
             CenterTimeOff = 0;
             _ConCurrent = 0;
 
@@ -470,14 +470,14 @@ namespace SharpQuake
             }
             if( i == 100 )
             {
-                Con.Print( "SCR_ScreenShot_f: Couldn't create a file\n" );
+                Host.Console.Print( "SCR_ScreenShot_f: Couldn't create a file\n" );
                 return;
             }
 
             FileStream fs = FileSystem.OpenWrite( path, true );
             if( fs == null )
             {
-                Con.Print( "SCR_ScreenShot_f: Couldn't create a file\n" );
+                Host.Console.Print( "SCR_ScreenShot_f: Couldn't create a file\n" );
                 return;
             }
             using( BinaryWriter writer = new BinaryWriter( fs ) )
@@ -508,7 +508,7 @@ namespace SharpQuake
                 }
                 writer.Write( buffer, 0, buffer.Length );
             }
-            Con.Print( "Wrote {0}\n", Path.GetFileName( path ) );
+            Host.Console.Print( "Wrote {0}\n", Path.GetFileName( path ) );
         }
 
         /// <summary>
@@ -632,15 +632,15 @@ namespace SharpQuake
         /// </summary>
         private static void SetUpToDrawConsole()
         {
-            Con.CheckResize();
+            Host.Console.CheckResize();
 
             if( _DrawLoading )
                 return;     // never a console with loading plaque
 
             // decide on the height of the console
-            Con.ForcedUp = ( client.cl.worldmodel == null ) || ( client.cls.signon != client.SIGNONS );
+            Host.Console.ForcedUp = ( client.cl.worldmodel == null ) || ( client.cls.signon != client.SIGNONS );
 
-            if( Con.ForcedUp )
+            if( Host.Console.ForcedUp )
             {
                 _ConLines = _VidDef.height; // full screen
                 _ConCurrent = _ConLines;
@@ -672,7 +672,7 @@ namespace SharpQuake
                 //????????????
             }
             else
-                Con.NotifyLines = 0;
+                Host.Console.NotifyLines = 0;
         }
 
         // SCR_TileClear
@@ -819,13 +819,13 @@ namespace SharpQuake
             if( _ConCurrent > 0 )
             {
                 _CopyEverything = true;
-                Con.Draw( ( Int32 ) _ConCurrent, true );
+                Host.Console.Draw( ( Int32 ) _ConCurrent, true );
                 _ClearConsole = 0;
             }
             else if( Host.Keyboard.Destination == KeyDestination.key_game ||
                 Host.Keyboard.Destination == KeyDestination.key_message )
             {
-                Con.DrawNotify();	// only draw notify in game
+                Host.Console.DrawNotify();	// only draw notify in game
             }
         }
 

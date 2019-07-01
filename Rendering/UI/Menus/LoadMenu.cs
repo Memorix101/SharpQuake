@@ -63,13 +63,13 @@ namespace SharpQuake
         public override void Draw( )
         {
             GLPic p = Drawer.CachePic( "gfx/p_load.lmp" );
-            Menu.DrawPic( ( 320 - p.width ) / 2, 4, p );
+            Host.Menu.DrawPic( ( 320 - p.width ) / 2, 4, p );
 
             for ( var i = 0; i < MAX_SAVEGAMES; i++ )
-                Menu.Print( 16, 32 + 8 * i, _FileNames[i] );
+                Host.Menu.Print( 16, 32 + 8 * i, _FileNames[i] );
 
             // line cursor
-            Menu.DrawCharacter( 8, 32 + _Cursor * 8, 12 + ( ( Int32 ) ( Host.RealTime * 4 ) & 1 ) );
+            Host.Menu.DrawCharacter( 8, 32 + _Cursor * 8, 12 + ( ( Int32 ) ( Host.RealTime * 4 ) & 1 ) );
         }
 
         /// <summary>

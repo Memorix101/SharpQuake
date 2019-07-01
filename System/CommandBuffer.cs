@@ -45,7 +45,7 @@ namespace SharpQuake
             var len = text.Length;
             if ( _Buf.Length + len > _Buf.Capacity )
             {
-                Con.Print( "Cbuf.AddText: overflow!\n" );
+                Host.Console.Print( "Cbuf.AddText: overflow!\n" );
             }
             else
             {

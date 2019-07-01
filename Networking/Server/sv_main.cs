@@ -131,7 +131,7 @@ namespace SharpQuake
 
             if( sound_num == QDef.MAX_SOUNDS || String.IsNullOrEmpty( sv.sound_precache[sound_num] ) )
             {
-                Con.Print( "SV_StartSound: {0} not precacheed\n", sample );
+                Host.Console.Print( "SV_StartSound: {0} not precacheed\n", sample );
                 return;
             }
 
@@ -191,7 +191,7 @@ namespace SharpQuake
                     progs.GlobalStruct.self = saveSelf;
                 }
 
-                Con.DPrint( "Client {0} removed\n", client.name );
+                Host.Console.DPrint( "Client {0} removed\n", client.name );
             }
 
             // break the net connection
@@ -553,7 +553,7 @@ namespace SharpQuake
 
             Scr.CenterTimeOff = 0;
 
-            Con.DPrint( "SpawnServer: {0}\n", server );
+            Host.Console.DPrint( "SpawnServer: {0}\n", server );
             svs.changelevel_issued = false;		// now safe to issue another
 
             //
@@ -615,7 +615,7 @@ namespace SharpQuake
             sv.worldmodel = Mod.ForName( sv.modelname, false );
             if( sv.worldmodel == null )
             {
-                Con.Print( "Couldn't spawn server {0}\n", sv.modelname );
+                Host.Console.Print( "Couldn't spawn server {0}\n", sv.modelname );
                 sv.active = false;
                 return;
             }
@@ -685,7 +685,7 @@ namespace SharpQuake
             }
 
             GC.Collect();
-            Con.DPrint( "Server spawned.\n" );
+            Host.Console.DPrint( "Server spawned.\n" );
         }
 
         /// <summary>
@@ -776,7 +776,7 @@ namespace SharpQuake
 
                 if( msg.Capacity - msg.Length < 16 )
                 {
-                    Con.Print( "packet overflow\n" );
+                    Host.Console.Print( "packet overflow\n" );
                     return;
                 }
 
@@ -958,7 +958,7 @@ namespace SharpQuake
         {
             client_t client = svs.clients[clientnum];
 
-            Con.DPrint( "Client {0} connected\n", client.netconnection.address );
+            Host.Console.DPrint( "Client {0} connected\n", client.netconnection.address );
 
             var edictnum = clientnum + 1;
             MemoryEdict ent = EdictNum( edictnum );

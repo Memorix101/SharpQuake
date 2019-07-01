@@ -162,7 +162,7 @@ namespace SharpQuake
                 }
 
                 if ( key >= 200 && String.IsNullOrEmpty( _Bindings[key] ) )
-                    Con.Print( "{0} is unbound, hit F4 to set.\n", KeynumToString( key ) );
+                    Host.Console.Print( "{0} is unbound, hit F4 to set.\n", KeynumToString( key ) );
             }
 
             if ( key == KeysDef.K_SHIFT )
@@ -183,12 +183,12 @@ namespace SharpQuake
                         break;
 
                     case KeyDestination.key_menu:
-                        Menu.KeyDown( key );
+                        Host.Menu.KeyDown( key );
                         break;
 
                     case KeyDestination.key_game:
                     case KeyDestination.key_console:
-                        Menu.ToggleMenu_f( );
+                        Host.Menu.ToggleMenu_f( );
                         break;
 
                     default:
@@ -228,7 +228,7 @@ namespace SharpQuake
             //
             if ( client.cls.demoplayback && down && _ConsoleKeys[key] && _KeyDest == KeyDestination.key_game )
             {
-                Menu.ToggleMenu_f( );
+                Host.Menu.ToggleMenu_f( );
                 return;
             }
 
@@ -237,7 +237,7 @@ namespace SharpQuake
             //
             if ( ( _KeyDest == KeyDestination.key_menu && _MenuBound[key] ) ||
                 ( _KeyDest == KeyDestination.key_console && !_ConsoleKeys[key] ) ||
-                ( _KeyDest == KeyDestination.key_game && ( !Con.ForcedUp || !_ConsoleKeys[key] ) ) )
+                ( _KeyDest == KeyDestination.key_game && ( !Host.Console.ForcedUp || !_ConsoleKeys[key] ) ) )
             {
                 var kb = _Bindings[key];
                 if ( !String.IsNullOrEmpty( kb ) )
@@ -271,7 +271,7 @@ namespace SharpQuake
                     break;
 
                 case KeyDestination.key_menu:
-                    Menu.KeyDown( key );
+                    Host.Menu.KeyDown( key );
                     break;
 
                 case KeyDestination.key_game:
@@ -448,14 +448,14 @@ namespace SharpQuake
         {
             if ( Host.Command.Argc != 2 )
             {
-                Con.Print( "unbind <key> : remove commands from a key\n" );
+                Host.Console.Print( "unbind <key> : remove commands from a key\n" );
                 return;
             }
 
             var b = StringToKeynum( Host.Command.Argv( 1 ) );
             if ( b == -1 )
             {
-                Con.Print( "\"{0}\" isn't a valid key\n", Host.Command.Argv( 1 ) );
+                Host.Console.Print( "\"{0}\" isn't a valid key\n", Host.Command.Argv( 1 ) );
                 return;
             }
 
@@ -476,23 +476,23 @@ namespace SharpQuake
             var c = Host.Command.Argc;
             if ( c != 2 && c != 3 )
             {
-                Con.Print( "bind <key> [command] : attach a command to a key\n" );
+                Host.Console.Print( "bind <key> [command] : attach a command to a key\n" );
                 return;
             }
 
             var b = StringToKeynum( Host.Command.Argv( 1 ) );
             if ( b == -1 )
             {
-                Con.Print( "\"{0}\" isn't a valid key\n", Host.Command.Argv( 1 ) );
+                Host.Console.Print( "\"{0}\" isn't a valid key\n", Host.Command.Argv( 1 ) );
                 return;
             }
 
             if ( c == 2 )
             {
                 if ( !String.IsNullOrEmpty( _Bindings[b] ) )// keybindings[b])
-                    Con.Print( "\"{0}\" = \"{1}\"\n", Host.Command.Argv( 1 ), _Bindings[b] );
+                    Host.Console.Print( "\"{0}\" = \"{1}\"\n", Host.Command.Argv( 1 ), _Bindings[b] );
                 else
-                    Con.Print( "\"{0}\" is not bound\n", Host.Command.Argv( 1 ) );
+                    Host.Console.Print( "\"{0}\" is not bound\n", Host.Command.Argv( 1 ) );
                 return;
             }
 
@@ -564,7 +564,7 @@ namespace SharpQuake
                 var cmd = line.Substring( 1 );
                 Host.CommandBuffer.AddText( cmd );	// skip the >
                 Host.CommandBuffer.AddText( "\n" );
-                Con.Print( "{0}\n", line );
+                Host.Console.Print( "{0}\n", line );
                 _EditLine = ( _EditLine + 1 ) & 31;
                 _HistoryLine = _EditLine;
                 _Lines[_EditLine][0] = ']';
@@ -586,9 +586,9 @@ namespace SharpQuake
                 {
                     if ( cmds.Length > 1 || vars != null )
                     {
-                        Con.Print( "\nCommands:\n" );
+                        Host.Console.Print( "\nCommands:\n" );
                         foreach ( var s in cmds )
-                            Con.Print( "  {0}\n", s );
+                            Host.Console.Print( "  {0}\n", s );
                     }
                     else
                         match = cmds[0];
@@ -597,9 +597,9 @@ namespace SharpQuake
                 {
                     if ( vars.Length > 1 || cmds != null )
                     {
-                        Con.Print( "\nVariables:\n" );
+                        Host.Console.Print( "\nVariables:\n" );
                         foreach ( var s in vars )
-                            Con.Print( "  {0}\n", s );
+                            Host.Console.Print( "  {0}\n", s );
                     }
                     else if ( match == null )
                         match = vars[0];
@@ -667,29 +667,29 @@ namespace SharpQuake
 
             if ( key == KeysDef.K_PGUP || key == KeysDef.K_MWHEELUP )
             {
-                Con.BackScroll += 2;
-                if ( Con.BackScroll > Con.TotalLines - ( Scr.vid.height >> 3 ) - 1 )
-                    Con.BackScroll = Con.TotalLines - ( Scr.vid.height >> 3 ) - 1;
+                Host.Console.BackScroll += 2;
+                if ( Host.Console.BackScroll > Host.Console.TotalLines - ( Scr.vid.height >> 3 ) - 1 )
+                    Host.Console.BackScroll = Host.Console.TotalLines - ( Scr.vid.height >> 3 ) - 1;
                 return;
             }
 
             if ( key == KeysDef.K_PGDN || key == KeysDef.K_MWHEELDOWN )
             {
-                Con.BackScroll -= 2;
-                if ( Con.BackScroll < 0 )
-                    Con.BackScroll = 0;
+                Host.Console.BackScroll -= 2;
+                if ( Host.Console.BackScroll < 0 )
+                    Host.Console.BackScroll = 0;
                 return;
             }
 
             if ( key == KeysDef.K_HOME )
             {
-                Con.BackScroll = Con.TotalLines - ( Scr.vid.height >> 3 ) - 1;
+                Host.Console.BackScroll = Host.Console.TotalLines - ( Scr.vid.height >> 3 ) - 1;
                 return;
             }
 
             if ( key == KeysDef.K_END )
             {
-                Con.BackScroll = 0;
+                Host.Console.BackScroll = 0;
                 return;
             }
 

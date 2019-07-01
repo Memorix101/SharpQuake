@@ -144,7 +144,7 @@ namespace SharpQuake
         {
             Host = host;
 
-            Con.Print( "\nSound Initialization\n" );
+            Host.Console.Print( "\nSound Initialization\n" );
 
             if( CommandLine.HasParam( "-nosound" ) )
                 return;
@@ -166,7 +166,7 @@ namespace SharpQuake
 
             _NumSfx = 0;
 
-            Con.Print( "Sound sampling rate: {0}\n", _shm.speed );
+            Host.Console.Print( "Sound sampling rate: {0}\n", _shm.speed );
 
             // provides a tick sound until washed clean
             _AmbientSfx[AmbientDef.AMBIENT_WATER] = PrecacheSound( "ambience/water1.wav" );
@@ -227,7 +227,7 @@ namespace SharpQuake
 
             if( _TotalChannels == MAX_CHANNELS )
             {
-                Con.Print( "total_channels == MAX_CHANNELS\n" );
+                Host.Console.Print( "total_channels == MAX_CHANNELS\n" );
                 return;
             }
 
@@ -240,7 +240,7 @@ namespace SharpQuake
 
             if( sc.loopstart == -1 )
             {
-                Con.Print( "Sound {0} not looped\n", sfx.name );
+                Host.Console.Print( "Sound {0} not looped\n", sfx.name );
                 return;
             }
 
@@ -432,7 +432,7 @@ namespace SharpQuake
                         total++;
                     }
                 }
-                Con.Print( "----({0})----\n", total );
+                Host.Console.Print( "----({0})----\n", total );
             }
 
             // mix some sound
@@ -494,7 +494,7 @@ namespace SharpQuake
             sfx_t sfx = PrecacheSound( sound );
             if( sfx == null )
             {
-                Con.Print( "S_LocalSound: can't cache {0}\n", sound );
+                Host.Console.Print( "S_LocalSound: can't cache {0}\n", sound );
                 return;
             }
             StartSound( client.cl.viewentity, -1, sfx, ref Utilities.ZeroVector, 1, 1 );
@@ -505,7 +505,7 @@ namespace SharpQuake
         {
             if( _IsInitialized && !_Controller.IsInitialized )
             {
-                _Controller.Init();
+                _Controller.Initialise( Host );
                 _SoundStarted = _Controller.IsInitialized;
             }
         }
@@ -576,12 +576,12 @@ namespace SharpQuake
                 var size = sc.length * sc.width * ( sc.stereo + 1 );
                 total += size;
                 if( sc.loopstart >= 0 )
-                    Con.Print( "L" );
+                    Host.Console.Print( "L" );
                 else
-                    Con.Print( " " );
-                Con.Print( "({0:d2}b) {1:g6} : {2}\n", sc.width * 8, size, sfx.name );
+                    Host.Console.Print( " " );
+                Host.Console.Print( "({0:d2}b) {1:g6} : {2}\n", sc.width * 8, size, sfx.name );
             }
-            Con.Print( "Total resident: {0}\n", total );
+            Host.Console.Print( "Total resident: {0}\n", total );
         }
 
         // S_SoundInfo_f
@@ -589,18 +589,18 @@ namespace SharpQuake
         {
             if( !_Controller.IsInitialized || _shm == null )
             {
-                Con.Print( "sound system not started\n" );
+                Host.Console.Print( "sound system not started\n" );
                 return;
             }
 
-            Con.Print( "{0:d5} stereo\n", _shm.channels - 1 );
-            Con.Print( "{0:d5} samples\n", _shm.samples );
-            Con.Print( "{0:d5} samplepos\n", _shm.samplepos );
-            Con.Print( "{0:d5} samplebits\n", _shm.samplebits );
-            Con.Print( "{0:d5} submission_chunk\n", _shm.submission_chunk );
-            Con.Print( "{0:d5} speed\n", _shm.speed );
-            //Con.Print("0x%x dma buffer\n", _shm.buffer);
-            Con.Print( "{0:d5} total_channels\n", _TotalChannels );
+            Host.Console.Print( "{0:d5} stereo\n", _shm.channels - 1 );
+            Host.Console.Print( "{0:d5} samples\n", _shm.samples );
+            Host.Console.Print( "{0:d5} samplepos\n", _shm.samplepos );
+            Host.Console.Print( "{0:d5} samplebits\n", _shm.samplebits );
+            Host.Console.Print( "{0:d5} submission_chunk\n", _shm.submission_chunk );
+            Host.Console.Print( "{0:d5} speed\n", _shm.speed );
+            //Host.Console.Print("0x%x dma buffer\n", _shm.buffer);
+            Host.Console.Print( "{0:d5} total_channels\n", _TotalChannels );
         }
 
         // S_StopAllSoundsC
@@ -691,14 +691,14 @@ namespace SharpQuake
             Byte[] data = FileSystem.LoadFile( namebuffer );
             if( data == null )
             {
-                Con.Print( "Couldn't load {0}\n", namebuffer );
+                Host.Console.Print( "Couldn't load {0}\n", namebuffer );
                 return null;
             }
 
             wavinfo_t info = GetWavInfo( s.name, data );
             if( info.channels != 1 )
             {
-                Con.Print( "{0} is a stereo sample\n", s.name );
+                Host.Console.Print( "{0} is a stereo sample\n", s.name );
                 return null;
             }
 
@@ -945,7 +945,7 @@ namespace SharpQuake
             get;
         }
 
-        void Init();
+        void Initialise(Object host);
 
         void Shutdown();
 

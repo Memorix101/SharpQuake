@@ -987,7 +987,7 @@ namespace SharpQuake
             Scr.FullUpdate = 0;
 
             GLPic pic = Drawer.CachePic( "gfx/ranking.lmp" );
-            Menu.DrawPic( ( 320 - pic.width ) / 2, 8, pic );
+            Host.Menu.DrawPic( ( 320 - pic.width ) / 2, 8, pic );
 
             // scores
             SortFrags();

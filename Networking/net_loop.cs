@@ -102,7 +102,7 @@ namespace SharpQuake
                 _Client = net.NewSocket();
                 if( _Client == null )
                 {
-                    Con.Print( "Loop_Connect: no qsocket available\n" );
+                    Host.Console.Print( "Loop_Connect: no qsocket available\n" );
                     return null;
                 }
                 _Client.address = "localhost";
@@ -115,7 +115,7 @@ namespace SharpQuake
                 _Server = net.NewSocket();
                 if( _Server == null )
                 {
-                    Con.Print( "Loop_Connect: no qsocket available\n" );
+                    Host.Console.Print( "Loop_Connect: no qsocket available\n" );
                     return null;
                 }
                 _Server.address = "LOCAL";

@@ -38,7 +38,7 @@ namespace SharpQuake
                     break;
 
                 case KeysDef.K_ENTER:
-                    Menu.EnterSound = true;
+                    Host.Menu.EnterSound = true;
                     switch ( _Cursor )
                     {
                         case 0:
@@ -47,7 +47,7 @@ namespace SharpQuake
 
                         case 1:
                             MenuBase.CurrentMenu.Hide( );
-                            Con.ToggleConsole_f( );
+                            Host.Console.ToggleConsole_f( );
                             break;
 
                         case 2:
@@ -116,59 +116,59 @@ namespace SharpQuake
 
         public override void Draw( )
         {
-            Menu.DrawTransPic( 16, 4, Drawer.CachePic( "gfx/qplaque.lmp" ) );
+            Host.Menu.DrawTransPic( 16, 4, Drawer.CachePic( "gfx/qplaque.lmp" ) );
             GLPic p = Drawer.CachePic( "gfx/p_option.lmp" );
-            Menu.DrawPic( ( 320 - p.width ) / 2, 4, p );
+            Host.Menu.DrawPic( ( 320 - p.width ) / 2, 4, p );
 
-            Menu.Print( 16, 32, "    Customize controls" );
-            Menu.Print( 16, 40, "         Go to console" );
-            Menu.Print( 16, 48, "     Reset to defaults" );
+            Host.Menu.Print( 16, 32, "    Customize controls" );
+            Host.Menu.Print( 16, 40, "         Go to console" );
+            Host.Menu.Print( 16, 48, "     Reset to defaults" );
 
-            Menu.Print( 16, 56, "           Screen size" );
+            Host.Menu.Print( 16, 56, "           Screen size" );
             var r = ( Scr.ViewSize.Value - 30 ) / ( 120 - 30 );
-            Menu.DrawSlider( 220, 56, r );
+            Host.Menu.DrawSlider( 220, 56, r );
 
-            Menu.Print( 16, 64, "            Brightness" );
+            Host.Menu.Print( 16, 64, "            Brightness" );
             r = ( 1.0f - Host.View.Gamma ) / 0.5f;
-            Menu.DrawSlider( 220, 64, r );
+            Host.Menu.DrawSlider( 220, 64, r );
 
-            Menu.Print( 16, 72, "           Mouse Speed" );
+            Host.Menu.Print( 16, 72, "           Mouse Speed" );
             r = ( client.Sensitivity - 1 ) / 10;
-            Menu.DrawSlider( 220, 72, r );
+            Host.Menu.DrawSlider( 220, 72, r );
 
-            Menu.Print( 16, 80, "       CD Music Volume" );
+            Host.Menu.Print( 16, 80, "       CD Music Volume" );
             r = snd.BgmVolume;
-            Menu.DrawSlider( 220, 80, r );
+            Host.Menu.DrawSlider( 220, 80, r );
 
-            Menu.Print( 16, 88, "          Sound Volume" );
+            Host.Menu.Print( 16, 88, "          Sound Volume" );
             r = snd.Volume;
-            Menu.DrawSlider( 220, 88, r );
+            Host.Menu.DrawSlider( 220, 88, r );
 
-            Menu.Print( 16, 96, "            Always Run" );
-            Menu.DrawCheckbox( 220, 96, client.ForwardSpeed > 200 );
+            Host.Menu.Print( 16, 96, "            Always Run" );
+            Host.Menu.DrawCheckbox( 220, 96, client.ForwardSpeed > 200 );
 
-            Menu.Print( 16, 104, "          Invert Mouse" );
-            Menu.DrawCheckbox( 220, 104, client.MPitch < 0 );
+            Host.Menu.Print( 16, 104, "          Invert Mouse" );
+            Host.Menu.DrawCheckbox( 220, 104, client.MPitch < 0 );
 
-            Menu.Print( 16, 112, "            Lookspring" );
-            Menu.DrawCheckbox( 220, 112, client.LookSpring );
+            Host.Menu.Print( 16, 112, "            Lookspring" );
+            Host.Menu.DrawCheckbox( 220, 112, client.LookSpring );
 
-            Menu.Print( 16, 120, "            Lookstrafe" );
-            Menu.DrawCheckbox( 220, 120, client.LookStrafe );
+            Host.Menu.Print( 16, 120, "            Lookstrafe" );
+            Host.Menu.DrawCheckbox( 220, 120, client.LookStrafe );
 
             /*if( VideoMenu != null )
-                Menu.Print( 16, 128, "         Video Options" );*/
+                Host.Menu.Print( 16, 128, "         Video Options" );*/
 
 #if _WIN32
 	if (modestate == MS_WINDOWED)
 	{
-		Menu.Print (16, 136, "             Use Mouse");
-		Menu.DrawCheckbox (220, 136, _windowed_mouse.value);
+		Host.Menu.Print (16, 136, "             Use Mouse");
+		Host.Menu.DrawCheckbox (220, 136, _windowed_mouse.value);
 	}
 #endif
 
             // cursor
-            Menu.DrawCharacter( 200, 32 + _Cursor * 8, 12 + ( ( Int32 ) ( Host.RealTime * 4 ) & 1 ) );
+            Host.Menu.DrawCharacter( 200, 32 + _Cursor * 8, 12 + ( ( Int32 ) ( Host.RealTime * 4 ) & 1 ) );
         }
 
         /// <summary>

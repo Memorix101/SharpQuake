@@ -67,7 +67,7 @@ namespace SharpQuake
             if (_Controller.IsInitialized)
             {
                 Host.Command.Add("cd", CD_f);
-                Con.Print("CD Audio (Fallback) Initialized\n");
+                Host.Console.Print("CD Audio (Fallback) Initialized\n");
             }
 
             return _Controller.IsInitialized;
@@ -151,7 +151,7 @@ namespace SharpQuake
                 {
                     for ( var n = 1; n < 100; n++)
                         if (remap[n] != n)
-                            Con.Print("  {0} -> {1}\n", n, remap[n]);
+                            Host.Console.Print("  {0} -> {1}\n", n, remap[n]);
                     return;
                 }
                 for ( var n = 1; n <= ret; n++)
@@ -170,7 +170,7 @@ namespace SharpQuake
                 _Controller.ReloadDiskInfo();
                 if (!_Controller.IsValidCD)
                 {
-                    Con.Print("No CD in player.\n");
+                    Host.Console.Print("No CD in player.\n");
                     return;
                 }
             }
@@ -215,12 +215,12 @@ namespace SharpQuake
 
             if (Utilities.SameText(command, "info"))
             {
-                Con.Print("%u tracks\n", _Controller.MaxTrack);
+                Host.Console.Print("%u tracks\n", _Controller.MaxTrack);
                 if (_Controller.IsPlaying)
-                    Con.Print("Currently {0} track {1}\n", _Controller.IsLooping ? "looping" : "playing", _Controller.CurrentTrack);
+                    Host.Console.Print("Currently {0} track {1}\n", _Controller.IsLooping ? "looping" : "playing", _Controller.CurrentTrack);
                 else if (_Controller.IsPaused)
-                    Con.Print("Paused {0} track {1}\n", _Controller.IsLooping ? "looping" : "playing", _Controller.CurrentTrack);
-                Con.Print("Volume is {0}\n", _Controller.Volume);
+                    Host.Console.Print("Paused {0} track {1}\n", _Controller.IsLooping ? "looping" : "playing", _Controller.CurrentTrack);
+                Host.Console.Print("Volume is {0}\n", _Controller.Volume);
                 return;
             }
         }

@@ -26,7 +26,7 @@ namespace SharpQuake.Framework
             get;
         }
 
-        Boolean Init( );
+        Boolean Init( Object host );
 
         void Shutdown( );
 

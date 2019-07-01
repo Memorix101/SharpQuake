@@ -185,7 +185,7 @@ namespace SharpQuake
             if( var == null )
             {
                 // there is an error in C code if this happens
-                Con.Print( "Cvar.Set: variable {0} not found\n", name );
+                CommandInstance.Host.Console.Print( "Cvar.Set: variable {0} not found\n", name );
                 return;
             }
             var.Set( value );
@@ -209,7 +209,7 @@ namespace SharpQuake
             // perform a variable print or set
             if( CommandInstance.Argc == 1 )
             {
-                Con.Print( "\"{0}\" is \"{1}\"\n", var._Name, var._String );
+                CommandInstance.Host.Console.Print( "\"{0}\" is \"{1}\"\n", var._Name, var._String );
             }
             else
             {

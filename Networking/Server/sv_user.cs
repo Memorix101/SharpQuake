@@ -156,7 +156,7 @@ namespace SharpQuake
                 var ret = net.GetMessage( Host.HostClient.netconnection );
                 if( ret == -1 )
                 {
-                    Con.DPrint( "SV_ReadClientMessage: NET_GetMessage failed\n" );
+                    Host.Console.DPrint( "SV_ReadClientMessage: NET_GetMessage failed\n" );
                     return false;
                 }
                 if( ret == 0 )
@@ -172,7 +172,7 @@ namespace SharpQuake
 
                     if( net.Reader.IsBadRead )
                     {
-                        Con.DPrint( "SV_ReadClientMessage: badread\n" );
+                        Host.Console.DPrint( "SV_ReadClientMessage: badread\n" );
                         return false;
                     }
 
@@ -236,7 +236,7 @@ namespace SharpQuake
                             else if( ret == 1 )
                                 Host.Command.ExecuteString( s, CommandSource.src_client );
                             else
-                                Con.DPrint( "{0} tried to {1}\n", Host.HostClient.name, s );
+                                Host.Console.DPrint( "{0} tried to {1}\n", Host.HostClient.name, s );
                             break;
 
                         case protocol.clc_disconnect:
@@ -247,7 +247,7 @@ namespace SharpQuake
                             break;
 
                         default:
-                            Con.DPrint( "SV_ReadClientMessage: unknown command char\n" );
+                            Host.Console.DPrint( "SV_ReadClientMessage: unknown command char\n" );
                             return false;
                     }
                 }

@@ -636,7 +636,7 @@ namespace SharpQuake
             ent.v.origin = ent.v.oldorigin;
             if( TestEntityPosition( ent ) == null )
             {
-                Con.DPrint( "Unstuck.\n" );
+                Host.Console.DPrint( "Unstuck.\n" );
                 LinkEdict( ent, true );
                 return;
             }
@@ -650,14 +650,14 @@ namespace SharpQuake
                         ent.v.origin.z = org.z + z;
                         if( TestEntityPosition( ent ) == null )
                         {
-                            Con.DPrint( "Unstuck.\n" );
+                            Host.Console.DPrint( "Unstuck.\n" );
                             LinkEdict( ent, true );
                             return;
                         }
                     }
 
             ent.v.origin = org;
-            Con.DPrint( "player is stuck.\n" );
+            Host.Console.DPrint( "player is stuck.\n" );
         }
 
         /// <summary>
@@ -731,12 +731,12 @@ namespace SharpQuake
             //
             if( MathLib.CheckNaN( ref ent.v.velocity, 0 ) )
             {
-                Con.Print( "Got a NaN velocity on {0}\n", progs.GetString( ent.v.classname ) );
+                Host.Console.Print( "Got a NaN velocity on {0}\n", progs.GetString( ent.v.classname ) );
             }
 
             if( MathLib.CheckNaN( ref ent.v.origin, 0 ) )
             {
-                Con.Print( "Got a NaN origin on {0}\n", progs.GetString( ent.v.classname ) );
+                Host.Console.Print( "Got a NaN origin on {0}\n", progs.GetString( ent.v.classname ) );
             }
 
             Vector3 max = Vector3.One * _MaxVelocity.Value;

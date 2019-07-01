@@ -236,23 +236,23 @@ namespace SharpQuake
 
         public override void Draw( )
         {
-            Menu.DrawTransPic( 16, 4, Drawer.CachePic( "gfx/qplaque.lmp" ) );
+            Host.Menu.DrawTransPic( 16, 4, Drawer.CachePic( "gfx/qplaque.lmp" ) );
             GLPic p = Drawer.CachePic( "gfx/p_multi.lmp" );
-            Menu.DrawPic( ( 320 - p.width ) / 2, 4, p );
+            Host.Menu.DrawPic( ( 320 - p.width ) / 2, 4, p );
 
-            Menu.DrawTextBox( 152, 32, 10, 1 );
-            Menu.Print( 160, 40, "begin game" );
+            Host.Menu.DrawTextBox( 152, 32, 10, 1 );
+            Host.Menu.Print( 160, 40, "begin game" );
 
-            Menu.Print( 0, 56, "      Max players" );
-            Menu.Print( 160, 56, _MaxPlayers.ToString( ) );
+            Host.Menu.Print( 0, 56, "      Max players" );
+            Host.Menu.Print( 160, 56, _MaxPlayers.ToString( ) );
 
-            Menu.Print( 0, 64, "        Game Type" );
+            Host.Menu.Print( 0, 64, "        Game Type" );
             if ( Host.IsCoop )
-                Menu.Print( 160, 64, "Cooperative" );
+                Host.Menu.Print( 160, 64, "Cooperative" );
             else
-                Menu.Print( 160, 64, "Deathmatch" );
+                Host.Menu.Print( 160, 64, "Deathmatch" );
 
-            Menu.Print( 0, 72, "        Teamplay" );
+            Host.Menu.Print( 0, 72, "        Teamplay" );
             if ( MainWindow.Common.GameKind == GameKind.Rogue )
             {
                 String msg;
@@ -286,7 +286,7 @@ namespace SharpQuake
                         msg = "Off";
                         break;
                 }
-                Menu.Print( 160, 72, msg );
+                Host.Menu.Print( 160, 72, msg );
             }
             else
             {
@@ -305,74 +305,74 @@ namespace SharpQuake
                         msg = "Off";
                         break;
                 }
-                Menu.Print( 160, 72, msg );
+                Host.Menu.Print( 160, 72, msg );
             }
 
-            Menu.Print( 0, 80, "            Skill" );
+            Host.Menu.Print( 0, 80, "            Skill" );
             if ( Host.Skill == 0 )
-                Menu.Print( 160, 80, "Easy difficulty" );
+                Host.Menu.Print( 160, 80, "Easy difficulty" );
             else if ( Host.Skill == 1 )
-                Menu.Print( 160, 80, "Normal difficulty" );
+                Host.Menu.Print( 160, 80, "Normal difficulty" );
             else if ( Host.Skill == 2 )
-                Menu.Print( 160, 80, "Hard difficulty" );
+                Host.Menu.Print( 160, 80, "Hard difficulty" );
             else
-                Menu.Print( 160, 80, "Nightmare difficulty" );
+                Host.Menu.Print( 160, 80, "Nightmare difficulty" );
 
-            Menu.Print( 0, 88, "       Frag Limit" );
+            Host.Menu.Print( 0, 88, "       Frag Limit" );
             if ( Host.FragLimit == 0 )
-                Menu.Print( 160, 88, "none" );
+                Host.Menu.Print( 160, 88, "none" );
             else
-                Menu.Print( 160, 88, String.Format( "{0} frags", ( Int32 ) Host.FragLimit ) );
+                Host.Menu.Print( 160, 88, String.Format( "{0} frags", ( Int32 ) Host.FragLimit ) );
 
-            Menu.Print( 0, 96, "       Time Limit" );
+            Host.Menu.Print( 0, 96, "       Time Limit" );
             if ( Host.TimeLimit == 0 )
-                Menu.Print( 160, 96, "none" );
+                Host.Menu.Print( 160, 96, "none" );
             else
-                Menu.Print( 160, 96, String.Format( "{0} minutes", ( Int32 ) Host.TimeLimit ) );
+                Host.Menu.Print( 160, 96, String.Format( "{0} minutes", ( Int32 ) Host.TimeLimit ) );
 
-            Menu.Print( 0, 112, "         Episode" );
+            Host.Menu.Print( 0, 112, "         Episode" );
             //MED 01/06/97 added hipnotic episodes
             if ( MainWindow.Common.GameKind == GameKind.Hipnotic )
-                Menu.Print( 160, 112, HipnoticEpisodes[_StartEpisode].description );
+                Host.Menu.Print( 160, 112, HipnoticEpisodes[_StartEpisode].description );
             //PGM 01/07/97 added rogue episodes
             else if ( MainWindow.Common.GameKind == GameKind.Rogue )
-                Menu.Print( 160, 112, RogueEpisodes[_StartEpisode].description );
+                Host.Menu.Print( 160, 112, RogueEpisodes[_StartEpisode].description );
             else
-                Menu.Print( 160, 112, Episodes[_StartEpisode].description );
+                Host.Menu.Print( 160, 112, Episodes[_StartEpisode].description );
 
-            Menu.Print( 0, 120, "           Level" );
+            Host.Menu.Print( 0, 120, "           Level" );
             //MED 01/06/97 added hipnotic episodes
             if ( MainWindow.Common.GameKind == GameKind.Hipnotic )
             {
-                Menu.Print( 160, 120, HipnoticLevels[HipnoticEpisodes[_StartEpisode].firstLevel + _StartLevel].description );
-                Menu.Print( 160, 128, HipnoticLevels[HipnoticEpisodes[_StartEpisode].firstLevel + _StartLevel].name );
+                Host.Menu.Print( 160, 120, HipnoticLevels[HipnoticEpisodes[_StartEpisode].firstLevel + _StartLevel].description );
+                Host.Menu.Print( 160, 128, HipnoticLevels[HipnoticEpisodes[_StartEpisode].firstLevel + _StartLevel].name );
             }
             //PGM 01/07/97 added rogue episodes
             else if ( MainWindow.Common.GameKind == GameKind.Rogue )
             {
-                Menu.Print( 160, 120, RogueLevels[RogueEpisodes[_StartEpisode].firstLevel + _StartLevel].description );
-                Menu.Print( 160, 128, RogueLevels[RogueEpisodes[_StartEpisode].firstLevel + _StartLevel].name );
+                Host.Menu.Print( 160, 120, RogueLevels[RogueEpisodes[_StartEpisode].firstLevel + _StartLevel].description );
+                Host.Menu.Print( 160, 128, RogueLevels[RogueEpisodes[_StartEpisode].firstLevel + _StartLevel].name );
             }
             else
             {
-                Menu.Print( 160, 120, Levels[Episodes[_StartEpisode].firstLevel + _StartLevel].description );
-                Menu.Print( 160, 128, Levels[Episodes[_StartEpisode].firstLevel + _StartLevel].name );
+                Host.Menu.Print( 160, 120, Levels[Episodes[_StartEpisode].firstLevel + _StartLevel].description );
+                Host.Menu.Print( 160, 128, Levels[Episodes[_StartEpisode].firstLevel + _StartLevel].name );
             }
 
             // line cursor
-            Menu.DrawCharacter( 144, _CursorTable[_Cursor], 12 + ( ( Int32 ) ( Host.RealTime * 4 ) & 1 ) );
+            Host.Menu.DrawCharacter( 144, _CursorTable[_Cursor], 12 + ( ( Int32 ) ( Host.RealTime * 4 ) & 1 ) );
 
             if ( _ServerInfoMessage )
             {
                 if ( ( Host.RealTime - _ServerInfoMessageTime ) < 5.0 )
                 {
                     var x = ( 320 - 26 * 8 ) / 2;
-                    Menu.DrawTextBox( x, 138, 24, 4 );
+                    Host.Menu.DrawTextBox( x, 138, 24, 4 );
                     x += 8;
-                    Menu.Print( x, 146, "  More than 4 players   " );
-                    Menu.Print( x, 154, " requires using command " );
-                    Menu.Print( x, 162, "line parameters; please " );
-                    Menu.Print( x, 170, "   see techinfo.txt.    " );
+                    Host.Menu.Print( x, 146, "  More than 4 players   " );
+                    Host.Menu.Print( x, 154, " requires using command " );
+                    Host.Menu.Print( x, 162, "line parameters; please " );
+                    Host.Menu.Print( x, 170, "   see techinfo.txt.    " );
                 }
                 else
                 {

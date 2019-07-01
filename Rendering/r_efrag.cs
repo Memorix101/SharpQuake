@@ -81,7 +81,7 @@ namespace SharpQuake
                 EFrag ef = client.cl.free_efrags;
                 if( ef == null )
                 {
-                    Con.Print( "Too many efrags!\n" );
+                    Host.Console.Print( "Too many efrags!\n" );
                     return;	// no free fragments...
                 }
                 client.cl.free_efrags = client.cl.free_efrags.entnext;

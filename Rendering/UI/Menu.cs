@@ -33,31 +33,31 @@ namespace SharpQuake
     /// <summary>
     /// M_functions
     /// </summary>
-    internal static class Menu
+    public class Menu
     {
-        public static Boolean EnterSound;
-        public static Boolean ReturnOnError;
-        public static String ReturnReason;
-        public static MenuBase ReturnMenu;
+        public Boolean EnterSound;
+        public Boolean ReturnOnError;
+        public String ReturnReason;
+        public MenuBase ReturnMenu;
         private const Int32 SLIDER_RANGE = 10;
 
         //qboolean	m_entersound	// play after drawing a frame, so caching
 
         // won't disrupt the sound
-        private static Boolean _RecursiveDraw; // qboolean m_recursiveDraw
+        private Boolean _RecursiveDraw; // qboolean m_recursiveDraw
 
-        private static Byte[] _IdentityTable = new Byte[256]; // identityTable
-        private static Byte[] _TranslationTable = new Byte[256]; //translationTable
+        private Byte[] _IdentityTable = new Byte[256]; // identityTable
+        private Byte[] _TranslationTable = new Byte[256]; //translationTable
 
-        // CHANGE
-        private static Host Host
+        // Instances
+        private Host Host
         {
             get;
             set;
         }
 
         // M_Init (void)
-        public static void Init( Host host )
+        public void Initialise( Host host )
         {
             Host = host;
 
@@ -78,7 +78,7 @@ namespace SharpQuake
         /// <summary>
         /// M_Keydown
         /// </summary>
-        public static void KeyDown( Int32 key )
+        public void KeyDown( Int32 key )
         {
             if( MenuBase.CurrentMenu != null )
                 MenuBase.CurrentMenu.KeyEvent( key );
@@ -87,7 +87,7 @@ namespace SharpQuake
         /// <summary>
         /// M_Draw
         /// </summary>
-        public static void Draw()
+        public void Draw()
         {
             if( MenuBase.CurrentMenu == null || Host.Keyboard.Destination != KeyDestination.key_menu )
                 return;
@@ -126,7 +126,7 @@ namespace SharpQuake
         /// <summary>
         /// M_ToggleMenu_f
         /// </summary>
-        public static void ToggleMenu_f()
+        public void ToggleMenu_f()
         {
             EnterSound = true;
 
@@ -142,7 +142,7 @@ namespace SharpQuake
             }
             if( Host.Keyboard.Destination == KeyDestination.key_console )
             {
-                Con.ToggleConsole_f();
+                Host.Console.ToggleConsole_f();
             }
             else
             {
@@ -150,12 +150,12 @@ namespace SharpQuake
             }
         }
 
-        public static void DrawPic( Int32 x, Int32 y, GLPic pic )
+        public void DrawPic( Int32 x, Int32 y, GLPic pic )
         {
             Drawer.DrawPic( x + ( ( Scr.vid.width - 320 ) >> 1 ), y, pic );
         }
 
-        public static void DrawTransPic( Int32 x, Int32 y, GLPic pic )
+        public void DrawTransPic( Int32 x, Int32 y, GLPic pic )
         {
             Drawer.DrawTransPic( x + ( ( Scr.vid.width - 320 ) >> 1 ), y, pic );
         }
@@ -163,7 +163,7 @@ namespace SharpQuake
         /// <summary>
         /// M_DrawTransPicTranslate
         /// </summary>
-        public static void DrawTransPicTranslate( Int32 x, Int32 y, GLPic pic )
+        public void DrawTransPicTranslate( Int32 x, Int32 y, GLPic pic )
         {
             Drawer.TransPicTranslate( x + ( ( Scr.vid.width - 320 ) >> 1 ), y, pic, _TranslationTable );
         }
@@ -171,7 +171,7 @@ namespace SharpQuake
         /// <summary>
         /// M_Print
         /// </summary>
-        public static void Print( Int32 cx, Int32 cy, String str )
+        public void Print( Int32 cx, Int32 cy, String str )
         {
             for( var i = 0; i < str.Length; i++ )
             {
@@ -183,7 +183,7 @@ namespace SharpQuake
         /// <summary>
         /// M_DrawCharacter
         /// </summary>
-        public static void DrawCharacter( Int32 cx, Int32 line, Int32 num )
+        public void DrawCharacter( Int32 cx, Int32 line, Int32 num )
         {
             Drawer.DrawCharacter( cx + ( ( Scr.vid.width - 320 ) >> 1 ), line, num );
         }
@@ -191,7 +191,7 @@ namespace SharpQuake
         /// <summary>
         /// M_PrintWhite
         /// </summary>
-        public static void PrintWhite( Int32 cx, Int32 cy, String str )
+        public void PrintWhite( Int32 cx, Int32 cy, String str )
         {
             for( var i = 0; i < str.Length; i++ )
             {
@@ -203,7 +203,7 @@ namespace SharpQuake
         /// <summary>
         /// M_DrawTextBox
         /// </summary>
-        public static void DrawTextBox( Int32 x, Int32 y, Int32 width, Int32 lines )
+        public void DrawTextBox( Int32 x, Int32 y, Int32 width, Int32 lines )
         {
             // draw left side
             var cx = x;
@@ -257,7 +257,7 @@ namespace SharpQuake
         /// <summary>
         /// M_DrawSlider
         /// </summary>
-        public static void DrawSlider( Int32 x, Int32 y, Single range )
+        public void DrawSlider( Int32 x, Int32 y, Single range )
         {
             if( range < 0 )
                 range = 0;
@@ -274,7 +274,7 @@ namespace SharpQuake
         /// <summary>
         /// M_DrawCheckbox
         /// </summary>
-        public static void DrawCheckbox( Int32 x, Int32 y, Boolean on )
+        public void DrawCheckbox( Int32 x, Int32 y, Boolean on )
         {
             if( on )
                 Print( x, y, "on" );
@@ -285,7 +285,7 @@ namespace SharpQuake
         /// <summary>
         /// M_BuildTranslationTable
         /// </summary>
-        public static void BuildTranslationTable( Int32 top, Int32 bottom )
+        public void BuildTranslationTable( Int32 top, Int32 bottom )
         {
             for( var j = 0; j < 256; j++ )
                 _IdentityTable[j] = ( Byte ) j;
@@ -308,7 +308,7 @@ namespace SharpQuake
         /// <summary>
         /// M_Menu_Main_f
         /// </summary>
-        private static void Menu_Main_f()
+        private void Menu_Main_f()
         {
             MenuBase.MainMenu.Show( Host );
         }
@@ -316,37 +316,37 @@ namespace SharpQuake
         /// <summary>
         /// M_Menu_SinglePlayer_f
         /// </summary>
-        private static void Menu_SinglePlayer_f()
+        private void Menu_SinglePlayer_f()
         {
             MenuBase.SinglePlayerMenu.Show( Host );
         }
 
         // M_Menu_Load_f
-        private static void Menu_Load_f()
+        private void Menu_Load_f()
         {
             MenuBase.LoadMenu.Show( Host );
         }
 
         // M_Menu_Save_f
-        private static void Menu_Save_f()
+        private void Menu_Save_f()
         {
             MenuBase.SaveMenu.Show( Host );
         }
 
         // M_Menu_MultiPlayer_f
-        private static void Menu_MultiPlayer_f()
+        private void Menu_MultiPlayer_f()
         {
             MenuBase.MultiPlayerMenu.Show( Host );
         }
 
         // M_Menu_Setup_f
-        private static void Menu_Setup_f()
+        private void Menu_Setup_f()
         {
             MenuBase.SetupMenu.Show( Host );
         }
 
         // M_Menu_Options_f
-        private static void Menu_Options_f()
+        private void Menu_Options_f()
         {
             MenuBase.OptionsMenu.Show( Host );
         }
@@ -354,7 +354,7 @@ namespace SharpQuake
         /// <summary>
         /// M_Menu_Keys_f
         /// </summary>
-        private static void Menu_Keys_f()
+        private void Menu_Keys_f()
         {
             MenuBase.KeysMenu.Show( Host );
         }
@@ -362,7 +362,7 @@ namespace SharpQuake
         /// <summary>
         /// M_Menu_Video_f
         /// </summary>
-        private static void Menu_Video_f()
+        private void Menu_Video_f()
         {
             MenuBase.VideoMenu.Show( Host );
         }
@@ -370,7 +370,7 @@ namespace SharpQuake
         /// <summary>
         /// M_Menu_Help_f
         /// </summary>
-        private static void Menu_Help_f()
+        private void Menu_Help_f()
         {
             MenuBase.HelpMenu.Show( Host );
         }
@@ -378,7 +378,7 @@ namespace SharpQuake
         /// <summary>
         /// M_Menu_Quit_f
         /// </summary>
-        private static void Menu_Quit_f()
+        private void Menu_Quit_f()
         {
             MenuBase.QuitMenu.Show( Host );
         }

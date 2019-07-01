@@ -184,7 +184,7 @@ namespace SharpQuake
         /// </summary>
         public void RenderView()
         {
-            if( Con.ForcedUp )
+            if( Host.Console.ForcedUp )
                 return;
 
             // don't allow cheats in multiplayer

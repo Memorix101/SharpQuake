@@ -34,7 +34,7 @@ namespace SharpQuake
             }
         }
 
-        public void Init()
+        public void Initialise( object host )
         {
             snd.shm.channels = 2;
             snd.shm.samplebits = 16;

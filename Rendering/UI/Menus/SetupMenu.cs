@@ -93,7 +93,7 @@ namespace SharpQuake
                         CVar.Set( "hostname", _HostName );
                     if ( _Top != _OldTop || _Bottom != _OldBottom )
                         Host.CommandBuffer.AddText( String.Format( "color {0} {1}\n", _Top, _Bottom ) );
-                    Menu.EnterSound = true;
+                    Host.Menu.EnterSound = true;
                     MenuBase.MultiPlayerMenu.Show( Host );
                     break;
 
@@ -145,37 +145,37 @@ namespace SharpQuake
 
         public override void Draw( )
         {
-            Menu.DrawTransPic( 16, 4, Drawer.CachePic( "gfx/qplaque.lmp" ) );
+            Host.Menu.DrawTransPic( 16, 4, Drawer.CachePic( "gfx/qplaque.lmp" ) );
             GLPic p = Drawer.CachePic( "gfx/p_multi.lmp" );
-            Menu.DrawPic( ( 320 - p.width ) / 2, 4, p );
+            Host.Menu.DrawPic( ( 320 - p.width ) / 2, 4, p );
 
-            Menu.Print( 64, 40, "Hostname" );
-            Menu.DrawTextBox( 160, 32, 16, 1 );
-            Menu.Print( 168, 40, _HostName );
+            Host.Menu.Print( 64, 40, "Hostname" );
+            Host.Menu.DrawTextBox( 160, 32, 16, 1 );
+            Host.Menu.Print( 168, 40, _HostName );
 
-            Menu.Print( 64, 56, "Your name" );
-            Menu.DrawTextBox( 160, 48, 16, 1 );
-            Menu.Print( 168, 56, _MyName );
+            Host.Menu.Print( 64, 56, "Your name" );
+            Host.Menu.DrawTextBox( 160, 48, 16, 1 );
+            Host.Menu.Print( 168, 56, _MyName );
 
-            Menu.Print( 64, 80, "Shirt color" );
-            Menu.Print( 64, 104, "Pants color" );
+            Host.Menu.Print( 64, 80, "Shirt color" );
+            Host.Menu.Print( 64, 104, "Pants color" );
 
-            Menu.DrawTextBox( 64, 140 - 8, 14, 1 );
-            Menu.Print( 72, 140, "Accept Changes" );
+            Host.Menu.DrawTextBox( 64, 140 - 8, 14, 1 );
+            Host.Menu.Print( 72, 140, "Accept Changes" );
 
             p = Drawer.CachePic( "gfx/bigbox.lmp" );
-            Menu.DrawTransPic( 160, 64, p );
+            Host.Menu.DrawTransPic( 160, 64, p );
             p = Drawer.CachePic( "gfx/menuplyr.lmp" );
-            Menu.BuildTranslationTable( _Top * 16, _Bottom * 16 );
-            Menu.DrawTransPicTranslate( 172, 72, p );
+            Host.Menu.BuildTranslationTable( _Top * 16, _Bottom * 16 );
+            Host.Menu.DrawTransPicTranslate( 172, 72, p );
 
-            Menu.DrawCharacter( 56, _CursorTable[_Cursor], 12 + ( ( Int32 ) ( Host.RealTime * 4 ) & 1 ) );
+            Host.Menu.DrawCharacter( 56, _CursorTable[_Cursor], 12 + ( ( Int32 ) ( Host.RealTime * 4 ) & 1 ) );
 
             if ( _Cursor == 0 )
-                Menu.DrawCharacter( 168 + 8 * _HostName.Length, _CursorTable[_Cursor], 10 + ( ( Int32 ) ( Host.RealTime * 4 ) & 1 ) );
+                Host.Menu.DrawCharacter( 168 + 8 * _HostName.Length, _CursorTable[_Cursor], 10 + ( ( Int32 ) ( Host.RealTime * 4 ) & 1 ) );
 
             if ( _Cursor == 1 )
-                Menu.DrawCharacter( 168 + 8 * _MyName.Length, _CursorTable[_Cursor], 10 + ( ( Int32 ) ( Host.RealTime * 4 ) & 1 ) );
+                Host.Menu.DrawCharacter( 168 + 8 * _MyName.Length, _CursorTable[_Cursor], 10 + ( ( Int32 ) ( Host.RealTime * 4 ) & 1 ) );
         }
     }
 }

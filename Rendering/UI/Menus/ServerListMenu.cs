@@ -15,8 +15,8 @@ namespace SharpQuake
         {
             base.Show( host );
             _Cursor = 0;
-            Menu.ReturnOnError = false;
-            Menu.ReturnReason = String.Empty;
+            Host.Menu.ReturnOnError = false;
+            Host.Menu.ReturnReason = String.Empty;
             _Sorted = false;
         }
 
@@ -50,8 +50,8 @@ namespace SharpQuake
 
                 case KeysDef.K_ENTER:
                     snd.LocalSound( "misc/menu2.wav" );
-                    Menu.ReturnMenu = this;
-                    Menu.ReturnOnError = true;
+                    Host.Menu.ReturnMenu = this;
+                    Host.Menu.ReturnOnError = true;
                     _Sorted = false;
                     MenuBase.CurrentMenu.Hide( );
                     Host.CommandBuffer.AddText( String.Format( "connect \"{0}\"\n", net.HostCache[_Cursor].cname ) );
@@ -79,7 +79,7 @@ namespace SharpQuake
             }
 
             GLPic p = Drawer.CachePic( "gfx/p_multi.lmp" );
-            Menu.DrawPic( ( 320 - p.width ) / 2, 4, p );
+            Host.Menu.DrawPic( ( 320 - p.width ) / 2, 4, p );
             for ( var n = 0; n < net.HostCacheCount; n++ )
             {
                 hostcache_t hc = net.HostCache[n];
@@ -88,12 +88,12 @@ namespace SharpQuake
                     tmp = String.Format( "{0,-15} {1,-15} {2:D2}/{3:D2}\n", hc.name, hc.map, hc.users, hc.maxusers );
                 else
                     tmp = String.Format( "{0,-15} {1,-15}\n", hc.name, hc.map );
-                Menu.Print( 16, 32 + 8 * n, tmp );
+                Host.Menu.Print( 16, 32 + 8 * n, tmp );
             }
-            Menu.DrawCharacter( 0, 32 + _Cursor * 8, 12 + ( ( Int32 ) ( Host.RealTime * 4 ) & 1 ) );
+            Host.Menu.DrawCharacter( 0, 32 + _Cursor * 8, 12 + ( ( Int32 ) ( Host.RealTime * 4 ) & 1 ) );
 
-            if ( !String.IsNullOrEmpty( Menu.ReturnReason ) )
-                Menu.PrintWhite( 16, 148, Menu.ReturnReason );
+            if ( !String.IsNullOrEmpty( Host.Menu.ReturnReason ) )
+                Host.Menu.PrintWhite( 16, 148, Host.Menu.ReturnReason );
         }
     }
 }

@@ -116,7 +116,7 @@ namespace SharpQuake
                 b.down1 = k;
             else
             {
-                Con.Print( "Three keys down for a button!\n" );
+                Host.Console.Print( "Three keys down for a button!\n" );
                 return;
             }
 
@@ -391,7 +391,7 @@ namespace SharpQuake
 
             if( net.SendUnreliableMessage( cls.netcon, msg ) == -1 )
             {
-                Con.Print( "CL_SendMove: lost server connection\n" );
+                Host.Console.Print( "CL_SendMove: lost server connection\n" );
                 Disconnect();
             }
         }

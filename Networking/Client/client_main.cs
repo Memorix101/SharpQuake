@@ -106,7 +106,7 @@ namespace SharpQuake
             if( cls.netcon == null )
                 Host.Error( "CL_Connect: connect failed\n" );
 
-            Con.DPrint( "CL_EstablishConnection: connected to {0}\n", host );
+            Host.Console.DPrint( "CL_EstablishConnection: connected to {0}\n", host );
 
             cls.demonum = -1;			// not in the demo loop now
             cls.state = cactive_t.ca_connected;
@@ -130,7 +130,7 @@ namespace SharpQuake
                 cls.demonum = 0;
                 if( String.IsNullOrEmpty( cls.demos[cls.demonum] ) )
                 {
-                    Con.Print( "No demos listed with startdemos\n" );
+                    Host.Console.Print( "No demos listed with startdemos\n" );
                     cls.demonum = -1;
                     return;
                 }
@@ -240,7 +240,7 @@ namespace SharpQuake
 
             if( !net.CanSendMessage( cls.netcon ) )
             {
-                Con.DPrint( "CL_WriteToServer: can't send\n" );
+                Host.Console.DPrint( "CL_WriteToServer: can't send\n" );
                 return;
             }
 
@@ -272,7 +272,7 @@ namespace SharpQuake
             } while( ret != 0 && cls.state == cactive_t.ca_connected );
 
             if( _ShowNet.Value != 0 )
-                Con.Print( "\n" );
+                Host.Console.Print( "\n" );
 
             //
             // bring the links up to date
@@ -305,7 +305,7 @@ namespace SharpQuake
                 if( cls.demorecording )
                     Stop_f();
 
-                Con.DPrint( "Sending clc_disconnect\n" );
+                Host.Console.DPrint( "Sending clc_disconnect\n" );
                 cls.message.Clear();
                 cls.message.WriteByte( protocol.clc_disconnect );
                 net.SendUnreliableMessage( cls.netcon, cls.message );
@@ -327,13 +327,13 @@ namespace SharpQuake
             for( var i = 0; i < _State.num_entities; i++ )
             {
                 Entity ent = _Entities[i];
-                Con.Print( "{0:d3}:", i );
+                Host.Console.Print( "{0:d3}:", i );
                 if( ent.model == null )
                 {
-                    Con.Print( "EMPTY\n" );
+                    Host.Console.Print( "EMPTY\n" );
                     continue;
                 }
-                Con.Print( "{0}:{1:d2}  ({2}) [{3}]\n", ent.model.name, ent.frame, ent.origin, ent.angles );
+                Host.Console.Print( "{0}:{1:d2}  ({2}) [{3}]\n", ent.model.name, ent.frame, ent.origin, ent.angles );
             }
         }
 
@@ -481,7 +481,7 @@ namespace SharpQuake
         /// </summary>
         private static void SignonReply()
         {
-            Con.DPrint( "CL_SignonReply: {0}\n", cls.signon );
+            Host.Console.DPrint( "CL_SignonReply: {0}\n", cls.signon );
 
             switch( cls.signon )
             {

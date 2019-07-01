@@ -156,7 +156,7 @@ namespace SharpQuake
             Byte[] buf = FileSystem.LoadFile("gfx/pop.lmp");
             if (buf == null || buf.Length < 256)
             {
-                Con.Print("Playing shareware version.\n");
+                MainWindow.Host.Console.Print("Playing shareware version.\n");
                 if ( FileSystem._IsModified )
                     Utilities.Error("You must have the registered version to use modified games");
                 return;
@@ -173,7 +173,7 @@ namespace SharpQuake
             CVar.Set("cmdline", CommandLine._Args);
             CVar.Set("registered", "1");
             FileSystem._StaticRegistered = true;
-            Con.Print("Playing registered version.\n");
+            MainWindow.Host.Console.Print("Playing registered version.\n");
         }
     }
 }

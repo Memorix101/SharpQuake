@@ -468,7 +468,7 @@ namespace SharpQuake
         {
             PrintStatement( ref _Statements[_xStatement] );
             StackTrace();
-            Con.Print( fmt, args );
+            Host.Console.Print( fmt, args );
 
             _Depth = 0;		// dump the stack so host_error can shutdown functions
 
@@ -506,7 +506,7 @@ namespace SharpQuake
                 if( best != null )
                 {
                     if( num < 10 )
-                        Con.Print( "{0,7} {1}\n", best.profile, GetString( best.s_name ) );
+                        Host.Console.Print( "{0,7} {1}\n", best.profile, GetString( best.s_name ) );
                     num++;
                     best.profile = 0;
                 }
@@ -556,7 +556,7 @@ namespace SharpQuake
         {
             if( _Depth == 0 )
             {
-                Con.Print( "<NO STACK>\n" );
+                Host.Console.Print( "<NO STACK>\n" );
                 return;
             }
 
@@ -567,10 +567,10 @@ namespace SharpQuake
 
                 if( f == null )
                 {
-                    Con.Print( "<NO FUNCTION>\n" );
+                    Host.Console.Print( "<NO FUNCTION>\n" );
                 }
                 else
-                    Con.Print( "{0,12} : {1}\n", GetString( f.s_file ), GetString( f.s_name ) );
+                    Host.Console.Print( "{0,12} : {1}\n", GetString( f.s_file ), GetString( f.s_name ) );
             }
         }
 
@@ -581,31 +581,31 @@ namespace SharpQuake
         {
             if( s.op < OpNames.Length )
             {
-                Con.Print( "{0,10} ", OpNames[s.op] );
+                Host.Console.Print( "{0,10} ", OpNames[s.op] );
             }
 
             ProgramOperator op = (ProgramOperator)s.op;
             if( op == ProgramOperator.OP_IF || op == ProgramOperator.OP_IFNOT )
-                Con.Print( "{0}branch {1}", GlobalString( s.a ), s.b );
+                Host.Console.Print( "{0}branch {1}", GlobalString( s.a ), s.b );
             else if( op == ProgramOperator.OP_GOTO )
             {
-                Con.Print( "branch {0}", s.a );
+                Host.Console.Print( "branch {0}", s.a );
             }
             else if( ( UInt32 ) ( s.op - ProgramOperator.OP_STORE_F ) < 6 )
             {
-                Con.Print( GlobalString( s.a ) );
-                Con.Print( GlobalStringNoContents( s.b ) );
+                Host.Console.Print( GlobalString( s.a ) );
+                Host.Console.Print( GlobalStringNoContents( s.b ) );
             }
             else
             {
                 if( s.a != 0 )
-                    Con.Print( GlobalString( s.a ) );
+                    Host.Console.Print( GlobalString( s.a ) );
                 if( s.b != 0 )
-                    Con.Print( GlobalString( s.b ) );
+                    Host.Console.Print( GlobalString( s.b ) );
                 if( s.c != 0 )
-                    Con.Print( GlobalStringNoContents( s.c ) );
+                    Host.Console.Print( GlobalStringNoContents( s.c ) );
             }
-            Con.Print( "\n" );
+            Host.Console.Print( "\n" );
         }
 
         /// <summary>
