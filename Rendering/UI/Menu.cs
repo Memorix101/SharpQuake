@@ -98,11 +98,11 @@ namespace SharpQuake
 
                 if( Scr.ConCurrent > 0 )
                 {
-                    Drawer.DrawConsoleBackground( Scr.vid.height );
+                    Host.DrawingContext.DrawConsoleBackground( Scr.vid.height );
                     snd.ExtraUpdate();
                 }
                 else
-                    Drawer.FadeScreen();
+                    Host.DrawingContext.FadeScreen();
 
                 Scr.FullUpdate = 0;
             }
@@ -152,12 +152,12 @@ namespace SharpQuake
 
         public void DrawPic( Int32 x, Int32 y, GLPic pic )
         {
-            Drawer.DrawPic( x + ( ( Scr.vid.width - 320 ) >> 1 ), y, pic );
+            Host.DrawingContext.DrawPic( x + ( ( Scr.vid.width - 320 ) >> 1 ), y, pic );
         }
 
         public void DrawTransPic( Int32 x, Int32 y, GLPic pic )
         {
-            Drawer.DrawTransPic( x + ( ( Scr.vid.width - 320 ) >> 1 ), y, pic );
+            Host.DrawingContext.DrawTransPic( x + ( ( Scr.vid.width - 320 ) >> 1 ), y, pic );
         }
 
         /// <summary>
@@ -165,7 +165,7 @@ namespace SharpQuake
         /// </summary>
         public void DrawTransPicTranslate( Int32 x, Int32 y, GLPic pic )
         {
-            Drawer.TransPicTranslate( x + ( ( Scr.vid.width - 320 ) >> 1 ), y, pic, _TranslationTable );
+            Host.DrawingContext.TransPicTranslate( x + ( ( Scr.vid.width - 320 ) >> 1 ), y, pic, _TranslationTable );
         }
 
         /// <summary>
@@ -185,7 +185,7 @@ namespace SharpQuake
         /// </summary>
         public void DrawCharacter( Int32 cx, Int32 line, Int32 num )
         {
-            Drawer.DrawCharacter( cx + ( ( Scr.vid.width - 320 ) >> 1 ), line, num );
+            Host.DrawingContext.DrawCharacter( cx + ( ( Scr.vid.width - 320 ) >> 1 ), line, num );
         }
 
         /// <summary>
@@ -208,15 +208,15 @@ namespace SharpQuake
             // draw left side
             var cx = x;
             var cy = y;
-            var p = Drawer.CachePic( "gfx/box_tl.lmp" );
+            var p = Host.DrawingContext.CachePic( "gfx/box_tl.lmp" );
             DrawTransPic( cx, cy, p );
-            p = Drawer.CachePic( "gfx/box_ml.lmp" );
+            p = Host.DrawingContext.CachePic( "gfx/box_ml.lmp" );
             for( var n = 0; n < lines; n++ )
             {
                 cy += 8;
                 DrawTransPic( cx, cy, p );
             }
-            p = Drawer.CachePic( "gfx/box_bl.lmp" );
+            p = Host.DrawingContext.CachePic( "gfx/box_bl.lmp" );
             DrawTransPic( cx, cy + 8, p );
 
             // draw middle
@@ -224,17 +224,17 @@ namespace SharpQuake
             while( width > 0 )
             {
                 cy = y;
-                p = Drawer.CachePic( "gfx/box_tm.lmp" );
+                p = Host.DrawingContext.CachePic( "gfx/box_tm.lmp" );
                 DrawTransPic( cx, cy, p );
-                p = Drawer.CachePic( "gfx/box_mm.lmp" );
+                p = Host.DrawingContext.CachePic( "gfx/box_mm.lmp" );
                 for( var n = 0; n < lines; n++ )
                 {
                     cy += 8;
                     if( n == 1 )
-                        p = Drawer.CachePic( "gfx/box_mm2.lmp" );
+                        p = Host.DrawingContext.CachePic( "gfx/box_mm2.lmp" );
                     DrawTransPic( cx, cy, p );
                 }
-                p = Drawer.CachePic( "gfx/box_bm.lmp" );
+                p = Host.DrawingContext.CachePic( "gfx/box_bm.lmp" );
                 DrawTransPic( cx, cy + 8, p );
                 width -= 2;
                 cx += 16;
@@ -242,15 +242,15 @@ namespace SharpQuake
 
             // draw right side
             cy = y;
-            p = Drawer.CachePic( "gfx/box_tr.lmp" );
+            p = Host.DrawingContext.CachePic( "gfx/box_tr.lmp" );
             DrawTransPic( cx, cy, p );
-            p = Drawer.CachePic( "gfx/box_mr.lmp" );
+            p = Host.DrawingContext.CachePic( "gfx/box_mr.lmp" );
             for( var n = 0; n < lines; n++ )
             {
                 cy += 8;
                 DrawTransPic( cx, cy, p );
             }
-            p = Drawer.CachePic( "gfx/box_br.lmp" );
+            p = Host.DrawingContext.CachePic( "gfx/box_br.lmp" );
             DrawTransPic( cx, cy + 8, p );
         }
 

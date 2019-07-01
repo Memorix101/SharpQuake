@@ -175,9 +175,9 @@ namespace SharpQuake
             Host.Command.Add( "sizeup", SizeUp_f );
             Host.Command.Add( "sizedown", SizeDown_f );
 
-            _Ram = Drawer.PicFromWad( "ram" );
-            _Net = Drawer.PicFromWad( "net" );
-            _Turtle = Drawer.PicFromWad( "turtle" );
+            _Ram = Host.DrawingContext.PicFromWad( "ram" );
+            _Net = Host.DrawingContext.PicFromWad( "net" );
+            _Turtle = Host.DrawingContext.PicFromWad( "turtle" );
 
             if( CommandLine.HasParam( "-fullsbar" ) )
                 FullSbarDraw = true;
@@ -201,8 +201,8 @@ namespace SharpQuake
             {
                 if( MainWindow.Instance != null && !MainWindow.Instance.IsDisposed)
                 {
-                    if( (MainWindow.Instance.VSync == VSyncMode.On ) != SharpQuake.vid.Wait )
-                        MainWindow.Instance.VSync = (SharpQuake.vid.Wait ? VSyncMode.On : VSyncMode.Off );
+                    if( (MainWindow.Instance.VSync == VSyncMode.On ) != Host.Video.Wait )
+                        MainWindow.Instance.VSync = (Host.Video.Wait ? VSyncMode.On : VSyncMode.Off );
                 }
 
                 _VidDef.numpages = 2 + ( Int32 ) _glTripleBuffer.Value;
@@ -261,7 +261,7 @@ namespace SharpQuake
                 if( _DrawDialog )
                 {
                     sbar.Draw();
-                    Drawer.FadeScreen();
+                    Host.DrawingContext.FadeScreen();
                     DrawNotifyString();
                     _CopyEverything = true;
                 }
@@ -282,7 +282,7 @@ namespace SharpQuake
                 else
                 {
                     if( Host.View.Crosshair > 0 )
-                        Drawer.DrawCharacter( _VRect.x + _VRect.width / 2, _VRect.y + _VRect.height / 2, '+' );
+                        Host.DrawingContext.DrawCharacter( _VRect.x + _VRect.width / 2, _VRect.y + _VRect.height / 2, '+' );
 
                     DrawRam();
                     DrawNet();
@@ -319,7 +319,7 @@ namespace SharpQuake
                 form.SwapBuffers();
 
             // handle the mouse state
-            if( !SharpQuake.vid.WindowedMouse )
+            if( !Host.Video.WindowedMouse )
             {
                 if(_IsMouseWindowed)
                 {
@@ -682,18 +682,18 @@ namespace SharpQuake
             if( rdef.vrect.x > 0 )
             {
                 // left
-                Drawer.TileClear( 0, 0, rdef.vrect.x, _VidDef.height - sbar.Lines );
+                Host.DrawingContext.TileClear( 0, 0, rdef.vrect.x, _VidDef.height - sbar.Lines );
                 // right
-                Drawer.TileClear( rdef.vrect.x + rdef.vrect.width, 0,
+                Host.DrawingContext.TileClear( rdef.vrect.x + rdef.vrect.width, 0,
                     _VidDef.width - rdef.vrect.x + rdef.vrect.width,
                     _VidDef.height - sbar.Lines );
             }
             if( rdef.vrect.y > 0 )
             {
                 // top
-                Drawer.TileClear( rdef.vrect.x, 0, rdef.vrect.x + rdef.vrect.width, rdef.vrect.y );
+                Host.DrawingContext.TileClear( rdef.vrect.x, 0, rdef.vrect.x + rdef.vrect.width, rdef.vrect.y );
                 // bottom
-                Drawer.TileClear( rdef.vrect.x, rdef.vrect.y + rdef.vrect.height,
+                Host.DrawingContext.TileClear( rdef.vrect.x, rdef.vrect.y + rdef.vrect.height,
                     rdef.vrect.width, _VidDef.height - sbar.Lines - ( rdef.vrect.height + rdef.vrect.y ) );
             }
         }
@@ -719,7 +719,7 @@ namespace SharpQuake
                 {
                     var x = ( vid.width - length * 8 ) / 2;
                     for( var j = 0; j < length; j++, x += 8 )
-                        Drawer.DrawCharacter( x, y, _NotifyString[offset + j] );
+                        Host.DrawingContext.DrawCharacter( x, y, _NotifyString[offset + j] );
 
                     y += 8;
                 }
@@ -735,8 +735,8 @@ namespace SharpQuake
             if( !_DrawLoading )
                 return;
 
-            var pic = Drawer.CachePic( "gfx/loading.lmp" );
-            Drawer.DrawPic( ( vid.width - pic.width ) / 2, ( vid.height - 48 - pic.height ) / 2, pic );
+            var pic = Host.DrawingContext.CachePic( "gfx/loading.lmp" );
+            Host.DrawingContext.DrawPic( ( vid.width - pic.width ) / 2, ( vid.height - 48 - pic.height ) / 2, pic );
         }
 
         // SCR_CheckDrawCenterString
@@ -765,7 +765,7 @@ namespace SharpQuake
             if( !render.CacheTrash )
                 return;
 
-            Drawer.DrawPic( _VRect.x + 32, _VRect.y, _Ram );
+            Host.DrawingContext.DrawPic( _VRect.x + 32, _VRect.y, _Ram );
         }
 
         // SCR_DrawTurtle
@@ -786,7 +786,7 @@ namespace SharpQuake
             if( _TurtleCount < 3 )
                 return;
 
-            Drawer.DrawPic( _VRect.x, _VRect.y, _Turtle );
+            Host.DrawingContext.DrawPic( _VRect.x, _VRect.y, _Turtle );
         }
 
         // SCR_DrawNet
@@ -797,7 +797,7 @@ namespace SharpQuake
             if( Host.Client.cls.demoplayback )
                 return;
 
-            Drawer.DrawPic( _VRect.x + 64, _VRect.y, _Net );
+            Host.DrawingContext.DrawPic( _VRect.x + 64, _VRect.y, _Net );
         }
 
         // DrawPause
@@ -809,8 +809,8 @@ namespace SharpQuake
             if( !Host.Client.cl.paused )
                 return;
 
-            var pic = Drawer.CachePic( "gfx/pause.lmp" );
-            Drawer.DrawPic( ( vid.width - pic.width ) / 2, ( vid.height - 48 - pic.height ) / 2, pic );
+            var pic = Host.DrawingContext.CachePic( "gfx/pause.lmp" );
+            Host.DrawingContext.DrawPic( ( vid.width - pic.width ) / 2, ( vid.height - 48 - pic.height ) / 2, pic );
         }
 
         // SCR_DrawConsole
@@ -852,7 +852,7 @@ namespace SharpQuake
 
                 for( var j = 0; j < line.Length; j++, x += 8 )
                 {
-                    Drawer.DrawCharacter( x, y, line[j] );
+                    Host.DrawingContext.DrawCharacter( x, y, line[j] );
                     if( remaining-- <= 0 )
                         return;
                 }

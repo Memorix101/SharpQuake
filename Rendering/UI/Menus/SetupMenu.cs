@@ -145,8 +145,8 @@ namespace SharpQuake
 
         public override void Draw( )
         {
-            Host.Menu.DrawTransPic( 16, 4, Drawer.CachePic( "gfx/qplaque.lmp" ) );
-            var p = Drawer.CachePic( "gfx/p_multi.lmp" );
+            Host.Menu.DrawTransPic( 16, 4, Host.DrawingContext.CachePic( "gfx/qplaque.lmp" ) );
+            var p = Host.DrawingContext.CachePic( "gfx/p_multi.lmp" );
             Host.Menu.DrawPic( ( 320 - p.width ) / 2, 4, p );
 
             Host.Menu.Print( 64, 40, "Hostname" );
@@ -163,9 +163,9 @@ namespace SharpQuake
             Host.Menu.DrawTextBox( 64, 140 - 8, 14, 1 );
             Host.Menu.Print( 72, 140, "Accept Changes" );
 
-            p = Drawer.CachePic( "gfx/bigbox.lmp" );
+            p = Host.DrawingContext.CachePic( "gfx/bigbox.lmp" );
             Host.Menu.DrawTransPic( 160, 64, p );
-            p = Drawer.CachePic( "gfx/menuplyr.lmp" );
+            p = Host.DrawingContext.CachePic( "gfx/menuplyr.lmp" );
             Host.Menu.BuildTranslationTable( _Top * 16, _Bottom * 16 );
             Host.Menu.DrawTransPicTranslate( 172, 72, p );
 

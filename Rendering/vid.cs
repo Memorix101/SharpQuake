@@ -35,9 +35,9 @@ namespace SharpQuake
     /// <summary>
     /// Vid_functions
     /// </summary>
-    internal static class vid
+    public class vid
     {
-        public static UInt16[] Table8to16
+        public UInt16[] Table8to16
         {
             get
             {
@@ -45,7 +45,7 @@ namespace SharpQuake
             }
         }
 
-        public static UInt32[] Table8to24
+        public UInt32[] Table8to24
         {
             get
             {
@@ -53,7 +53,7 @@ namespace SharpQuake
             }
         }
 
-        public static Byte[] Table15to8
+        public Byte[] Table15to8
         {
             get
             {
@@ -61,7 +61,7 @@ namespace SharpQuake
             }
         }
 
-        public static System.Boolean glMTexable
+        public System.Boolean glMTexable
         {
             get
             {
@@ -69,7 +69,7 @@ namespace SharpQuake
             }
         }
 
-        public static System.Boolean glZTrick
+        public System.Boolean glZTrick
         {
             get
             {
@@ -77,7 +77,7 @@ namespace SharpQuake
             }
         }
 
-        public static System.Boolean WindowedMouse
+        public System.Boolean WindowedMouse
         {
             get
             {
@@ -85,7 +85,7 @@ namespace SharpQuake
             }
         }
 
-        public static System.Boolean Wait
+        public System.Boolean Wait
         {
             get
             {
@@ -93,7 +93,7 @@ namespace SharpQuake
             }
         }
 
-        public static VidMode[] Modes
+        public VidMode[] Modes
         {
             get
             {
@@ -101,7 +101,7 @@ namespace SharpQuake
             }
         }
 
-        public static Int32 ModeNum
+        public Int32 ModeNum
         {
             get
             {
@@ -114,45 +114,45 @@ namespace SharpQuake
         public const Int32 VID_ROW_SIZE = 3;
         private const Int32 WARP_WIDTH = 320;
         private const Int32 WARP_HEIGHT = 200;
-        private static UInt16[] _8to16table = new UInt16[256]; // d_8to16table[256]
-        private static UInt32[] _8to24table = new UInt32[256]; // d_8to24table[256]
-        private static Byte[] _15to8table = new Byte[65536]; // d_15to8table[65536]
+        private UInt16[] _8to16table = new UInt16[256]; // d_8to16table[256]
+        private UInt32[] _8to24table = new UInt32[256]; // d_8to24table[256]
+        private Byte[] _15to8table = new Byte[65536]; // d_15to8table[65536]
 
-        private static VidMode[] _Modes;
-        private static Int32 _ModeNum; // vid_modenum
+        private VidMode[] _Modes;
+        private Int32 _ModeNum; // vid_modenum
 
-        private static CVar _glZTrick;// = { "gl_ztrick", "1" };
-        private static CVar _Mode;// = { "vid_mode", "0", false };
+        private CVar _glZTrick;// = { "gl_ztrick", "1" };
+        private CVar _Mode;// = { "vid_mode", "0", false };
 
         // Note that 0 is MODE_WINDOWED
-        private static CVar _DefaultMode;// = { "_vid_default_mode", "0", true };
+        private CVar _DefaultMode;// = { "_vid_default_mode", "0", true };
 
         // Note that 3 is MODE_FULLSCREEN_DEFAULT
-        private static CVar _DefaultModeWin;// = { "_vid_default_mode_win", "3", true };
+        private CVar _DefaultModeWin;// = { "_vid_default_mode_win", "3", true };
 
-        private static CVar _Wait;// = { "vid_wait", "0" };
-        private static CVar _NoPageFlip;// = { "vid_nopageflip", "0", true };
-        private static CVar _WaitOverride;// = { "_vid_wait_override", "0", true };
-        private static CVar _ConfigX;// = { "vid_config_x", "800", true };
-        private static CVar _ConfigY;// = { "vid_config_y", "600", true };
-        private static CVar _StretchBy2;// = { "vid_stretch_by_2", "1", true };
-        private static CVar _WindowedMouse;// = { "_windowed_mouse", "1", true };
+        private CVar _Wait;// = { "vid_wait", "0" };
+        private CVar _NoPageFlip;// = { "vid_nopageflip", "0", true };
+        private CVar _WaitOverride;// = { "_vid_wait_override", "0", true };
+        private CVar _ConfigX;// = { "vid_config_x", "800", true };
+        private CVar _ConfigY;// = { "vid_config_y", "600", true };
+        private CVar _StretchBy2;// = { "vid_stretch_by_2", "1", true };
+        private CVar _WindowedMouse;// = { "_windowed_mouse", "1", true };
 
-        private static System.Boolean _Windowed; // windowed
+        private System.Boolean _Windowed; // windowed
 
-        //private static bool _IsInitialized; // vid_initialized
-        private static Single _Gamma = 1.0f; // vid_gamma
+        //private bool _IsInitialized; // vid_initialized
+        private Single _Gamma = 1.0f; // vid_gamma
 
-        private static Int32 _DefModeNum;
-        private static System.Boolean _glMTexable = false; // gl_mtexable
+        private Int32 _DefModeNum;
+        private System.Boolean _glMTexable = false; // gl_mtexable
 
-        private static String _glVendor; // gl_vendor
-        private static String _glRenderer; // gl_renderer
-        private static String _glVersion; // gl_version
-        private static String _glExtensions; // gl_extensions
+        private String _glVendor; // gl_vendor
+        private String _glRenderer; // gl_renderer
+        private String _glVersion; // gl_version
+        private String _glExtensions; // gl_extensions
 
         // CHANGE
-        private static Host Host
+        private Host Host
         {
             get;
             set;
@@ -162,7 +162,7 @@ namespace SharpQuake
         // Called at startup to set up translation tables, takes 256 8 bit RGB values
         // the palette data will go away after the call, so it must be copied off if
         // the video driver will need it again
-        public static void Init( Host host, Byte[] palette )
+        public void Initialise( Host host, Byte[] palette )
         {
             Host = host;
 
@@ -325,7 +325,7 @@ namespace SharpQuake
         /// VID_Shutdown
         /// Called at shutdown
         /// </summary>
-        public static void Shutdown()
+        public void Shutdown()
         {
             //_IsInitialized = false;
         }
@@ -333,7 +333,7 @@ namespace SharpQuake
         // VID_SetMode (int modenum, unsigned char *palette)
         // sets the mode; only used by the Quake engine for resetting to mode 0 (the
         // base mode) on memory allocation failures
-        public static void SetMode( Int32 modenum, Byte[] palette )
+        public void SetMode( Int32 modenum, Byte[] palette )
         {
             if( modenum < 0 || modenum >= _Modes.Length )
             {
@@ -422,7 +422,7 @@ namespace SharpQuake
         /// <summary>
         /// VID_GetModeDescription
         /// </summary>
-        public static String GetModeDescription( Int32 mode )
+        public String GetModeDescription( Int32 mode )
         {
             if( mode < 0 || mode >= _Modes.Length )
                 return String.Empty;
@@ -435,7 +435,7 @@ namespace SharpQuake
         /// VID_SetPalette
         /// called at startup and after any gamma correction
         /// </summary>
-        public static void SetPalette( Byte[] palette )
+        public void SetPalette( Byte[] palette )
         {
             //
             // 8 8 8 encoding
@@ -490,7 +490,7 @@ namespace SharpQuake
         /// <summary>
         /// GL_Init
         /// </summary>
-        private static void InitOpenGL()
+        private void InitOpenGL()
         {
             _glVendor = GL.GetString( StringName.Vendor );
             Host.Console.Print( "GL_VENDOR: {0}\n", _glVendor );
@@ -521,7 +521,7 @@ namespace SharpQuake
             GL.PolygonMode( MaterialFace.FrontAndBack, PolygonMode.Fill );
             GL.ShadeModel( ShadingModel.Flat );
 
-            Drawer.SetTextureFilters( TextureMinFilter.Nearest, TextureMagFilter.Nearest );
+            Host.DrawingContext.SetTextureFilters( TextureMinFilter.Nearest, TextureMagFilter.Nearest );
             GL.TexParameter( TextureTarget.Texture2D, TextureParameterName.TextureWrapS, ( Int32 ) TextureWrapMode.Repeat );
             GL.TexParameter( TextureTarget.Texture2D, TextureParameterName.TextureWrapT, ( Int32 ) TextureWrapMode.Repeat );
             GL.BlendFunc( BlendingFactor.SrcAlpha, BlendingFactor.OneMinusSrcAlpha );
@@ -529,7 +529,7 @@ namespace SharpQuake
         }
 
         // VID_NumModes_f
-        private static void NumModes_f()
+        private void NumModes_f()
         {
             var nummodes = _Modes.Length;
             if( nummodes == 1 )
@@ -539,13 +539,13 @@ namespace SharpQuake
         }
 
         // VID_DescribeCurrentMode_f
-        private static void DescribeCurrentMode_f()
+        private void DescribeCurrentMode_f()
         {
             Host.Console.Print( "{0}\n", GetExtModeDescription( _ModeNum ) );
         }
 
         // VID_DescribeMode_f
-        private static void DescribeMode_f()
+        private void DescribeMode_f()
         {
             var modenum = MathLib.atoi( Host.Command.Argv( 1 ) );
 
@@ -553,7 +553,7 @@ namespace SharpQuake
         }
 
         // VID_DescribeModes_f
-        private static void DescribeModes_f()
+        private void DescribeModes_f()
         {
             for( var i = 0; i < _Modes.Length; i++ )
             {
@@ -561,13 +561,13 @@ namespace SharpQuake
             }
         }
 
-        private static String GetExtModeDescription( Int32 mode )
+        private String GetExtModeDescription( Int32 mode )
         {
             return GetModeDescription( mode );
         }
 
         // Check_Gamma
-        private static void CheckGamma( Byte[] pal )
+        private void CheckGamma( Byte[] pal )
         {
             var i = CommandLine.CheckParm( "-gamma" );
             if( i == 0 )
@@ -595,7 +595,7 @@ namespace SharpQuake
         }
 
         // ClearAllStates
-        private static void ClearAllStates()
+        private void ClearAllStates()
         {
             // send an up event for each key, to make sure the server clears them all
             for( var i = 0; i < 256; i++ )
@@ -610,7 +610,7 @@ namespace SharpQuake
         /// <summary>
         /// CheckTextureExtensions
         /// </summary>
-        private static void CheckTextureExtensions()
+        private void CheckTextureExtensions()
         {
             const String TEXTURE_EXT_STRING = "GL_EXT_texture_object";
 
@@ -621,7 +621,7 @@ namespace SharpQuake
         /// <summary>
         /// CheckMultiTextureExtensions
         /// </summary>
-        private static void CheckMultiTextureExtensions()
+        private void CheckMultiTextureExtensions()
         {
             if( _glExtensions.Contains( "GL_SGIS_multitexture " ) && !CommandLine.HasParam( "-nomtex" ) )
             {

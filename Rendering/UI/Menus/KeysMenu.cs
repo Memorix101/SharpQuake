@@ -101,7 +101,7 @@ namespace SharpQuake
 
         public override void Draw( )
         {
-            var p = Drawer.CachePic( "gfx/ttl_cstm.lmp" );
+            var p = Host.DrawingContext.CachePic( "gfx/ttl_cstm.lmp" );
             Host.Menu.DrawPic( ( 320 - p.width ) / 2, 4, p );
 
             if ( _BindGrab )

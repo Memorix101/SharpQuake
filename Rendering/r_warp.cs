@@ -89,7 +89,7 @@ namespace SharpQuake
             // a fringe on the top level
             const Int32 size = 128 * 128;
             var trans = new UInt32[size];
-            var v8to24 = vid.Table8to24;
+            var v8to24 = Host.Video.Table8to24;
             var r = 0;
             var g = 0;
             var b = 0;
@@ -113,10 +113,10 @@ namespace SharpQuake
             var transpix = rgba.ui0;
 
             if( _SolidSkyTexture == 0 )
-                _SolidSkyTexture = Drawer.GenerateTextureNumber();
-            Drawer.Bind( _SolidSkyTexture );
-            GL.TexImage2D( TextureTarget.Texture2D, 0, Drawer.SolidFormat, 128, 128, 0, PixelFormat.Rgba, PixelType.UnsignedByte, trans );
-            Drawer.SetTextureFilters( TextureMinFilter.Linear, TextureMagFilter.Linear );
+                _SolidSkyTexture = Host.DrawingContext.GenerateTextureNumber();
+            Host.DrawingContext.Bind( _SolidSkyTexture );
+            GL.TexImage2D( TextureTarget.Texture2D, 0, Host.DrawingContext.SolidFormat, 128, 128, 0, PixelFormat.Rgba, PixelType.UnsignedByte, trans );
+            Host.DrawingContext.SetTextureFilters( TextureMinFilter.Linear, TextureMagFilter.Linear );
 
             for( var i = 0; i < 128; i++ )
                 for( var j = 0; j < 128; j++ )
@@ -129,10 +129,10 @@ namespace SharpQuake
                 }
 
             if( _AlphaSkyTexture == 0 )
-                _AlphaSkyTexture = Drawer.GenerateTextureNumber();
-            Drawer.Bind( _AlphaSkyTexture );
-            GL.TexImage2D( TextureTarget.Texture2D, 0, Drawer.AlphaFormat, 128, 128, 0, PixelFormat.Rgba, PixelType.UnsignedByte, trans );
-            Drawer.SetTextureFilters( TextureMinFilter.Linear, TextureMagFilter.Linear );
+                _AlphaSkyTexture = Host.DrawingContext.GenerateTextureNumber();
+            Host.DrawingContext.Bind( _AlphaSkyTexture );
+            GL.TexImage2D( TextureTarget.Texture2D, 0, Host.DrawingContext.AlphaFormat, 128, 128, 0, PixelFormat.Rgba, PixelType.UnsignedByte, trans );
+            Host.DrawingContext.SetTextureFilters( TextureMinFilter.Linear, TextureMagFilter.Linear );
         }
 
         /// <summary>
@@ -320,7 +320,7 @@ namespace SharpQuake
             DisableMultitexture();
 
             // used when gl_texsort is on
-            Drawer.Bind( _SolidSkyTexture );
+            Host.DrawingContext.Bind( _SolidSkyTexture );
             _SpeedScale = ( Single ) Host.RealTime * 8;
             _SpeedScale -= ( Int32 ) _SpeedScale & ~127;
 
@@ -328,7 +328,7 @@ namespace SharpQuake
                 EmitSkyPolys( fa );
 
             GL.Enable( EnableCap.Blend );
-            Drawer.Bind( _AlphaSkyTexture );
+            Host.DrawingContext.Bind( _AlphaSkyTexture );
             _SpeedScale = ( Single ) Host.RealTime * 16;
             _SpeedScale -= ( Int32 ) _SpeedScale & ~127;
 
@@ -348,14 +348,14 @@ namespace SharpQuake
         {
             DisableMultitexture();
 
-            Drawer.Bind( _SolidSkyTexture );
+            Host.DrawingContext.Bind( _SolidSkyTexture );
             _SpeedScale = ( Single ) Host.RealTime * 8;
             _SpeedScale -= ( Int32 ) _SpeedScale & ~127;
 
             EmitSkyPolys( fa );
 
             GL.Enable( EnableCap.Blend );
-            Drawer.Bind( _AlphaSkyTexture );
+            Host.DrawingContext.Bind( _AlphaSkyTexture );
             _SpeedScale = ( Single ) Host.RealTime * 16;
             _SpeedScale -= ( Int32 ) _SpeedScale & ~127;
 

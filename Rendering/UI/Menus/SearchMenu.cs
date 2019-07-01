@@ -28,7 +28,7 @@ namespace SharpQuake
 
         public override void Draw( )
         {
-            var p = Drawer.CachePic( "gfx/p_multi.lmp" );
+            var p = Host.DrawingContext.CachePic( "gfx/p_multi.lmp" );
             Host.Menu.DrawPic( ( 320 - p.width ) / 2, 4, p );
             var x = ( 320 / 2 ) - ( ( 12 * 8 ) / 2 ) + 4;
             Host.Menu.DrawTextBox( x - 8, 32, 12, 1 );

@@ -205,14 +205,14 @@ namespace SharpQuake
                 _glDoubleEyes = new CVar( "gl_doubleeys", "1" );
             }
 
-            if( vid.glMTexable )
+            if( Host.Video.glMTexable )
                 CVar.Set( "gl_texsort", 0.0f );
 
             InitParticles();
             InitParticleTexture();
 
             // reserve 16 textures
-            _PlayerTextures = Drawer.GenerateTextureNumberRange( 16 );
+            _PlayerTextures = Host.DrawingContext.GenerateTextureNumberRange( 16 );
         }
 
         // R_InitTextures
@@ -388,10 +388,10 @@ namespace SharpQuake
 
             // because this happens during gameplay, do it fast
             // instead of sending it through gl_upload 8
-            Drawer.Bind( _PlayerTextures + playernum );
+            Host.DrawingContext.Bind( _PlayerTextures + playernum );
 
-            var scaled_width = ( Int32 ) ( Drawer.glMaxSize < 512 ? Drawer.glMaxSize : 512 );
-            var scaled_height = ( Int32 ) ( Drawer.glMaxSize < 256 ? Drawer.glMaxSize : 256 );
+            var scaled_width = ( Int32 ) ( Host.DrawingContext.glMaxSize < 512 ? Host.DrawingContext.glMaxSize : 512 );
+            var scaled_height = ( Int32 ) ( Host.DrawingContext.glMaxSize < 256 ? Host.DrawingContext.glMaxSize : 256 );
 
             // allow users to crunch sizes down even more if they want
             scaled_width >>= ( Int32 ) _glPlayerMip.Value;
@@ -402,7 +402,7 @@ namespace SharpQuake
 
             var translate32 = new UInt32[256];
             for( var i = 0; i < 256; i++ )
-                translate32[i] = vid.Table8to24[translate[i]];
+                translate32[i] = Host.Video.Table8to24[translate[i]];
 
             var dest = new UInt32[512 * 256];
             destOffset = 0;
@@ -426,7 +426,7 @@ namespace SharpQuake
             var handle = GCHandle.Alloc( dest, GCHandleType.Pinned );
             try
             {
-                GL.TexImage2D( TextureTarget.Texture2D, 0, Drawer.SolidFormat, scaled_width, scaled_height, 0,
+                GL.TexImage2D( TextureTarget.Texture2D, 0, Host.DrawingContext.SolidFormat, scaled_width, scaled_height, 0,
                      PixelFormat.Rgba, PixelType.UnsignedByte, handle.AddrOfPinnedObject() );
             }
             finally
@@ -434,7 +434,7 @@ namespace SharpQuake
                 handle.Free();
             }
             GL.TexEnv( TextureEnvTarget.TextureEnv, TextureEnvParameter.TextureEnvMode, ( Int32 ) TextureEnvMode.Modulate );
-            Drawer.SetTextureFilters( TextureMinFilter.Linear, TextureMagFilter.Linear );
+            Host.DrawingContext.SetTextureFilters( TextureMinFilter.Linear, TextureMagFilter.Linear );
         }
 
         /// <summary>
@@ -445,7 +445,7 @@ namespace SharpQuake
             if( _MTexEnabled )
             {
                 GL.Disable( EnableCap.Texture2D );
-                Drawer.SelectTexture( MTexTarget.TEXTURE0_SGIS );
+                Host.DrawingContext.SelectTexture( MTexTarget.TEXTURE0_SGIS );
                 _MTexEnabled = false;
             }
         }
@@ -455,9 +455,9 @@ namespace SharpQuake
         /// </summary>
         public static void EnableMultitexture()
         {
-            if( vid.glMTexable )
+            if( Host.Video.glMTexable )
             {
-                Drawer.SelectTexture( MTexTarget.TEXTURE1_SGIS );
+                Host.DrawingContext.SelectTexture( MTexTarget.TEXTURE1_SGIS );
                 GL.Enable( EnableCap.Texture2D );
                 _MTexEnabled = true;
             }
@@ -753,7 +753,7 @@ namespace SharpQuake
 
             DisableMultitexture();
 
-            Drawer.Bind( frame.gl_texturenum );
+            Host.DrawingContext.Bind( frame.gl_texturenum );
 
             GL.Enable( EnableCap.AlphaTest );
             GL.Begin( PrimitiveType.Quads );
@@ -915,13 +915,13 @@ namespace SharpQuake
             }
 
             var anim = ( Int32 ) ( Host.Client.cl.time * 10 ) & 3;
-            Drawer.Bind( paliashdr.gl_texturenum[_CurrentEntity.skinnum, anim] );
+            Host.DrawingContext.Bind( paliashdr.gl_texturenum[_CurrentEntity.skinnum, anim] );
 
             // we can't dynamically colormap textures, so they are cached
             // seperately for the players.  Heads are just uncolored.
             if( _CurrentEntity.colormap != Scr.vid.colormap && _glNoColors.Value == 0 && playernum >= 1 )
             {
-                Drawer.Bind( _PlayerTextures - 1 + playernum );
+                Host.DrawingContext.Bind( _PlayerTextures - 1 + playernum );
             }
 
             if( _glSmoothModels.Value != 0 )
@@ -1270,7 +1270,7 @@ namespace SharpQuake
                 _glDepthMax = 0.5f;
                 GL.DepthFunc( DepthFunction.Lequal );
             }
-            else if( vid.glZTrick )
+            else if( Host.Video.glZTrick )
             {
                 if( _glClear.Value != 0 )
                     GL.Clear( ClearBufferMask.ColorBufferBit );

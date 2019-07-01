@@ -678,7 +678,7 @@ namespace SharpQuake
                     _Header.gl_texturenum[i, 1] =
                     _Header.gl_texturenum[i, 2] =
                     _Header.gl_texturenum[i, 3] =
-                        Drawer.LoadTexture( name, _Header.skinwidth,
+                        Host.DrawingContext.LoadTexture( name, _Header.skinwidth,
                         _Header.skinheight, new ByteArraySegment( data.Data, offset ), true, false ); // (byte*)(pskintype + 1)
 
                     // set offset to next daliasskintype_t block...
@@ -710,7 +710,7 @@ namespace SharpQuake
 
                         var name = String.Format( "{0}_{1}_{2}", _LoadModel.name, i, j );
                         _Header.gl_texturenum[i, j & 3] =
-                            Drawer.LoadTexture( name, _Header.skinwidth,
+                            Host.DrawingContext.LoadTexture( name, _Header.skinwidth,
                             _Header.skinheight, new ByteArraySegment( data.Data, offset ), true, false ); //  (byte*)(pskintype)
 
                         offset += s;
@@ -832,7 +832,7 @@ namespace SharpQuake
             pspriteframe.right = width + orgx;// origin[0];
 
             var name = _LoadModel.name + "_" + framenum.ToString();
-            pspriteframe.gl_texturenum = Drawer.LoadTexture( name, width, height,
+            pspriteframe.gl_texturenum = Host.DrawingContext.LoadTexture( name, width, height,
                 new ByteArraySegment( pin.Data, pin.StartIndex + dspriteframe_t.SizeInBytes ), true, true ); //   (byte *)(pinframe + 1)
 
             return pin.StartIndex + dspriteframe_t.SizeInBytes + size;
@@ -1048,12 +1048,12 @@ namespace SharpQuake
                 {
                     if ( tx.rawBitmap == null )
                     {
-                        tx.gl_texturenum = Drawer.LoadTexture( tx.name, ( Int32 ) tx.width, ( Int32 ) tx.height,
+                        tx.gl_texturenum = Host.DrawingContext.LoadTexture( tx.name, ( Int32 ) tx.width, ( Int32 ) tx.height,
                             new ByteArraySegment( tx.pixels ), true, false, _LoadModel.name );
                     }
                     else
                     {
-                        tx.gl_texturenum = Drawer.LoadTexture( tx.name, ( Int32 ) tx.width, ( Int32 ) tx.height,
+                        tx.gl_texturenum = Host.DrawingContext.LoadTexture( tx.name, ( Int32 ) tx.width, ( Int32 ) tx.height,
                             tx.rawBitmap, true, false, _LoadModel.name );
                     }
                 }
@@ -1727,7 +1727,7 @@ namespace SharpQuake
         {
             var filledcolor = 0;
             // attempt to find opaque black
-            var t8to24 = vid.Table8to24;
+            var t8to24 = MainWindow.Instance.Host.Video.Table8to24;
             for( var i = 0; i < 256; ++i )
                 if( t8to24[i] == ( 255 << 0 ) ) // alpha 1.0
                 {

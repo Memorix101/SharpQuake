@@ -78,7 +78,7 @@ namespace SharpQuake
                 _Sorted = true;
             }
 
-            var p = Drawer.CachePic( "gfx/p_multi.lmp" );
+            var p = Host.DrawingContext.CachePic( "gfx/p_multi.lmp" );
             Host.Menu.DrawPic( ( 320 - p.width ) / 2, 4, p );
             for ( var n = 0; n < Host.Network.HostCacheCount; n++ )
             {

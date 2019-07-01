@@ -83,8 +83,8 @@
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Networking\Host\Host.cs" />
-    <Compile Include="Networking\Host\HostCommands.cs" />
+    <Compile Include="System\Host\Host.cs" />
+    <Compile Include="System\Host\HostCommands.cs" />
     <Compile Include="Rendering\anorm_dots.cs" />
     <Compile Include="Rendering\anorms.cs" />
     <Compile Include="Rendering\UI\Menus\GameOptionsMenu.cs" />

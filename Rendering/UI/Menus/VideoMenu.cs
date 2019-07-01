@@ -39,15 +39,15 @@ namespace SharpQuake
 
         public override void Draw( )
         {
-            var p = Drawer.CachePic( "gfx/vidmodes.lmp" );
+            var p = Host.DrawingContext.CachePic( "gfx/vidmodes.lmp" );
             Host.Menu.DrawPic( ( 320 - p.width ) / 2, 4, p );
 
             _WModes = 0;
-            var lnummodes = vid.Modes.Length;
+            var lnummodes = Host.Video.Modes.Length;
 
             for ( var i = 1; ( i < lnummodes ) && ( _WModes < MAX_MODEDESCS ); i++ )
             {
-                var m = vid.Modes[i];
+                var m = Host.Video.Modes[i];
 
                 var k = _WModes;
 
@@ -55,7 +55,7 @@ namespace SharpQuake
                 _ModeDescs[k].desc = String.Format( "{0}x{1}x{2}", m.width, m.height, m.bpp );
                 _ModeDescs[k].iscur = false;
 
-                if ( i == vid.ModeNum )
+                if ( i == Host.Video.ModeNum )
                     _ModeDescs[k].iscur = true;
 
                 _WModes++;

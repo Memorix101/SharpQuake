@@ -30,7 +30,7 @@ using Buffer = System.Buffer;
 
 namespace SharpQuake
 {
-    internal enum MTexTarget
+    public enum MTexTarget
     {
         TEXTURE0_SGIS = 0x835E,
         TEXTURE1_SGIS = 0x835F
@@ -39,9 +39,9 @@ namespace SharpQuake
     /// <summary>
     /// Draw_functions, GL_functions
     /// </summary>
-    internal static class Drawer
+    public class Drawer
     {
-        public static PixelInternalFormat AlphaFormat
+        public PixelInternalFormat AlphaFormat
         {
             get
             {
@@ -49,7 +49,7 @@ namespace SharpQuake
             }
         }
 
-        public static PixelInternalFormat SolidFormat
+        public PixelInternalFormat SolidFormat
         {
             get
             {
@@ -57,7 +57,7 @@ namespace SharpQuake
             }
         }
 
-        public static GLPic Disc
+        public GLPic Disc
         {
             get
             {
@@ -65,7 +65,7 @@ namespace SharpQuake
             }
         }
 
-        public static Single glMaxSize
+        public Single glMaxSize
         {
             get
             {
@@ -73,9 +73,9 @@ namespace SharpQuake
             }
         }
 
-        public static Int32 CurrentTexture = -1;
+        public Int32 CurrentTexture = -1;
 
-        public static PixelFormat LightMapFormat = PixelFormat.Rgba;
+        public PixelFormat LightMapFormat = PixelFormat.Rgba;
 
         private const Int32 MAX_GLTEXTURES = 1024;
 
@@ -103,93 +103,93 @@ namespace SharpQuake
             new GLMode("GL_LINEAR_MIPMAP_LINEAR", TextureMinFilter.LinearMipmapLinear, TextureMagFilter.Linear)
         };
 
-        private static readonly GLTexture[] _glTextures = new GLTexture[MAX_GLTEXTURES];
+        private readonly GLTexture[] _glTextures = new GLTexture[MAX_GLTEXTURES];
 
-        private static readonly CachePic[] _MenuCachePics = new CachePic[MAX_CACHED_PICS];
+        private readonly CachePic[] _MenuCachePics = new CachePic[MAX_CACHED_PICS];
 
-        private static readonly Byte[] _MenuPlayerPixels = new Byte[4096];
+        private readonly Byte[] _MenuPlayerPixels = new Byte[4096];
 
-        private static Int32[][] _ScrapAllocated;
+        private Int32[][] _ScrapAllocated;
 
         //[MAX_SCRAPS][BLOCK_WIDTH];
-        private static Byte[][] _ScrapTexels;
+        private Byte[][] _ScrapTexels;
 
         // [MAX_SCRAPS][BLOCK_WIDTH*BLOCK_HEIGHT*4];
-        private static System.Boolean _ScrapDirty;
+        private System.Boolean _ScrapDirty;
 
         // scrap_dirty
-        private static Int32 _ScrapTexNum;
+        private Int32 _ScrapTexNum;
 
         // scrap_texnum
-        private static Int32 _ScrapUploads;
+        private Int32 _ScrapUploads;
 
         // scrap_uploads;
-        private static Int32 _NumTextures;
+        private Int32 _NumTextures;
 
         // numgltextures; // how many slots are used
-        private static Int32 _Texels;
+        private Int32 _Texels;
 
         // texels
-        private static Int32 _PicTexels;
+        private Int32 _PicTexels;
 
         // pic_texels
-        private static Int32 _PicCount;
+        private Int32 _PicCount;
 
-        private static CVar _glNoBind;
+        private CVar _glNoBind;
 
         // = {"gl_nobind", "0"};
-        private static CVar _glMaxSize;
+        private CVar _glMaxSize;
 
         // = {"gl_max_size", "1024"};
-        private static CVar _glPicMip;
+        private CVar _glPicMip;
 
-        private static GLPic _Disc;
+        private GLPic _Disc;
 
         // draw_disc
-        private static GLPic _BackTile;
+        private GLPic _BackTile;
 
         // draw_backtile
-        private static GLPic _ConBack;
+        private GLPic _ConBack;
 
-        private static Int32 _CharTexture;
+        private Int32 _CharTexture;
 
         // char_texture
-        private static Int32 _TranslateTexture;
+        private Int32 _TranslateTexture;
 
         // translate_texture
-        private static Int32 _TextureExtensionNumber = 1;
+        private Int32 _TextureExtensionNumber = 1;
 
         // texture_extension_number = 1;
         // currenttexture = -1		// to avoid unnecessary texture sets
-        private static MTexTarget _OldTarget = MTexTarget.TEXTURE0_SGIS;
+        private MTexTarget _OldTarget = MTexTarget.TEXTURE0_SGIS;
 
         // oldtarget
-        private static Int32[] _CntTextures = new Int32[2] { -1, -1 };
+        private Int32[] _CntTextures = new Int32[2] { -1, -1 };
 
         // cnttextures
-        private static TextureMinFilter _MinFilter = TextureMinFilter.LinearMipmapNearest;
+        private TextureMinFilter _MinFilter = TextureMinFilter.LinearMipmapNearest;
 
         // gl_filter_min = GL_LINEAR_MIPMAP_NEAREST
-        private static TextureMagFilter _MagFilter = TextureMagFilter.Linear;
+        private TextureMagFilter _MagFilter = TextureMagFilter.Linear;
 
         // gl_lightmap_format = 4
-        private static PixelInternalFormat _SolidFormat = PixelInternalFormat.Three;
+        private PixelInternalFormat _SolidFormat = PixelInternalFormat.Three;
 
         // gl_solid_format = 3
-        private static PixelInternalFormat _AlphaFormat = PixelInternalFormat.Four;
+        private PixelInternalFormat _AlphaFormat = PixelInternalFormat.Four;
 
         // menu_cachepics
-        private static Int32 _MenuNumCachePics;
+        private Int32 _MenuNumCachePics;
 
         // CHANGE
-        private static Host Host
+        private Host Host
         {
             get;
             set;
         }
 
         // Draw_Init
-        public static void Init( Host host )
+        public void Init( Host host )
         {
             Host = host;
 
@@ -267,7 +267,7 @@ namespace SharpQuake
             _BackTile = PicFromWad( "backtile" );
         }
 
-        public static void SetTextureFilters( TextureMinFilter min, TextureMagFilter mag )
+        public void SetTextureFilters( TextureMinFilter min, TextureMagFilter mag )
         {
             GL.TexParameter( TextureTarget.Texture2D, TextureParameterName.TextureMinFilter, ( Int32 ) min );
             GL.TexParameter( TextureTarget.Texture2D, TextureParameterName.TextureMagFilter, ( Int32 ) mag );
@@ -276,7 +276,7 @@ namespace SharpQuake
         /// <summary>
         /// gets texture_extension_number++
         /// </summary>
-        public static Int32 GenerateTextureNumber()
+        public Int32 GenerateTextureNumber()
         {
             return _TextureExtensionNumber++;
         }
@@ -284,7 +284,7 @@ namespace SharpQuake
         /// <summary>
         /// gets texture_extension_number++
         /// </summary>
-        public static Int32 GenerateTextureNumberRange( Int32 count )
+        public Int32 GenerateTextureNumberRange( Int32 count )
         {
             var result = _TextureExtensionNumber;
             _TextureExtensionNumber += count;
@@ -292,7 +292,7 @@ namespace SharpQuake
         }
 
         // Draw_Pic(int x, int y, qpic_t* pic)
-        public static void DrawPic( Int32 x, Int32 y, GLPic pic )
+        public void DrawPic( Int32 x, Int32 y, GLPic pic )
         {
             if( _ScrapDirty )
                 UploadScrap();
@@ -315,7 +315,7 @@ namespace SharpQuake
         //
         // Draws the little blue disc in the corner of the screen.
         // Call before beginning any disc IO.
-        public static void BeginDisc()
+        public void BeginDisc()
         {
             if( _Disc != null )
             {
@@ -328,7 +328,7 @@ namespace SharpQuake
         // Draw_EndDisc
         // Erases the disc iHost.Console.
         // Call after completing any disc IO
-        public static void EndDisc()
+        public void EndDisc()
         {
             // nothing to do?
         }
@@ -337,7 +337,7 @@ namespace SharpQuake
         //
         // This repeats a 64*64 tile graphic to fill the screen around a sized down
         // refresh window.
-        public static void TileClear( Int32 x, Int32 y, Int32 w, Int32 h )
+        public void TileClear( Int32 x, Int32 y, Int32 w, Int32 h )
         {
             GL.Color3( 1.0f, 1.0f, 1.0f );
             Bind( _BackTile.texnum ); //GL_Bind (*(int *)draw_backtile->data);
@@ -354,7 +354,7 @@ namespace SharpQuake
         }
 
         //qpic_t *Draw_PicFromWad (char *name);
-        public static GLPic PicFromWad( String name )
+        public GLPic PicFromWad( String name )
         {
             var offset = Host.GfxWad.GetLumpNameOffset( name );
             var ptr = new IntPtr( Host.GfxWad.DataPointer.ToInt64() + offset );
@@ -392,7 +392,7 @@ namespace SharpQuake
         }
 
         // GL_Bind (int texnum)
-        public static void Bind( Int32 texnum )
+        public void Bind( Int32 texnum )
         {
             //if (_glNoBind.Value != 0)
             //    texnum = _CharTexture;
@@ -403,7 +403,7 @@ namespace SharpQuake
         }
 
         // Draw_FadeScreen
-        public static void FadeScreen()
+        public void FadeScreen()
         {
             GL.Enable( EnableCap.Blend );
             GL.Disable( EnableCap.Texture2D );
@@ -426,7 +426,7 @@ namespace SharpQuake
         /// <summary>
         /// GL_LoadTexture
         /// </summary>
-        public static Int32 LoadTexture( String identifier, Int32 width, Int32 height, ByteArraySegment data, System.Boolean mipmap, System.Boolean alpha, String owner = "" )
+        public Int32 LoadTexture( String identifier, Int32 width, Int32 height, ByteArraySegment data, System.Boolean mipmap, System.Boolean alpha, String owner = "" )
         {
             // see if the texture is allready present
             if( !String.IsNullOrEmpty( identifier ) )
@@ -469,7 +469,7 @@ namespace SharpQuake
         /// <summary>
         /// GL_LoadTexture32
         /// </summary>
-        public static Int32 LoadTexture( String identifier, Int32 width, Int32 height, System.Drawing.Bitmap bitmap, System.Boolean mipmap, System.Boolean alpha, String owner = "" )
+        public Int32 LoadTexture( String identifier, Int32 width, Int32 height, System.Drawing.Bitmap bitmap, System.Boolean mipmap, System.Boolean alpha, String owner = "" )
         {
             // see if the texture is allready present
             if ( !String.IsNullOrEmpty( identifier ) )
@@ -513,7 +513,7 @@ namespace SharpQuake
         // Draws one 8*8 graphics character with 0 being transparent.
         // It can be clipped to the top of the screen to allow the console to be
         // smoothly scrolled off.
-        public static void DrawCharacter( Int32 x, Int32 y, Int32 num )
+        public void DrawCharacter( Int32 x, Int32 y, Int32 num )
         {
             if( num == 32 )
                 return;		// space
@@ -545,14 +545,14 @@ namespace SharpQuake
         }
 
         // Draw_String
-        public static void DrawString( Int32 x, Int32 y, String str )
+        public void DrawString( Int32 x, Int32 y, String str )
         {
             for( var i = 0; i < str.Length; i++, x += 8 )
                 DrawCharacter( x, y, str[i] );
         }
 
         // Draw_CachePic
-        public static GLPic CachePic( String path )
+        public GLPic CachePic( String path )
         {
             for( var i = 0; i < _MenuNumCachePics; i++ )
             {
@@ -606,7 +606,7 @@ namespace SharpQuake
         // Draw_Fill
         //
         // Fills a box of pixels with a single color
-        public static void Fill( Int32 x, Int32 y, Int32 w, Int32 h, Int32 c )
+        public void Fill( Int32 x, Int32 y, Int32 w, Int32 h, Int32 c )
         {
             GL.Disable( EnableCap.Texture2D );
 
@@ -624,7 +624,7 @@ namespace SharpQuake
         }
 
         // Draw_TransPic
-        public static void DrawTransPic( Int32 x, Int32 y, GLPic pic )
+        public void DrawTransPic( Int32 x, Int32 y, GLPic pic )
         {
             if( x < 0 || ( UInt32 ) ( x + pic.width ) > Scr.vid.width ||
                 y < 0 || ( UInt32 ) ( y + pic.height ) > Scr.vid.height )
@@ -639,7 +639,7 @@ namespace SharpQuake
         /// Draw_TransPicTranslate
         /// Only used for the player color selection menu
         /// </summary>
-        public static void TransPicTranslate( Int32 x, Int32 y, GLPic pic, Byte[] translation )
+        public void TransPicTranslate( Int32 x, Int32 y, GLPic pic, Byte[] translation )
         {
             Bind( _TranslateTexture );
 
@@ -656,14 +656,14 @@ namespace SharpQuake
                     if( p == 255 )
                         trans[destOffset + u] = p;
                     else
-                        trans[destOffset + u] = vid.Table8to24[translation[p]];
+                        trans[destOffset + u] = Host.Video.Table8to24[translation[p]];
                 }
             }
 
             var handle = GCHandle.Alloc( trans, GCHandleType.Pinned );
             try
             {
-                GL.TexImage2D( TextureTarget.Texture2D, 0, Drawer.AlphaFormat, 64, 64, 0,
+                GL.TexImage2D( TextureTarget.Texture2D, 0, Host.DrawingContext.AlphaFormat, 64, 64, 0,
                     PixelFormat.Rgba, PixelType.UnsignedByte, handle.AddrOfPinnedObject() );
             }
             finally
@@ -687,7 +687,7 @@ namespace SharpQuake
         }
 
         // Draw_ConsoleBackground
-        public static void DrawConsoleBackground( Int32 lines )
+        public void DrawConsoleBackground( Int32 lines )
         {
             var y = ( Scr.vid.height * 3 ) >> 2;
 
@@ -698,7 +698,7 @@ namespace SharpQuake
         }
 
         // Draw_AlphaPic
-        public static void DrawAlphaPic( Int32 x, Int32 y, GLPic pic, Single alpha )
+        public void DrawAlphaPic( Int32 x, Int32 y, GLPic pic, Single alpha )
         {
             if( _ScrapDirty )
                 UploadScrap();
@@ -725,9 +725,9 @@ namespace SharpQuake
         /// <summary>
         /// GL_SelectTexture
         /// </summary>
-        public static void SelectTexture( MTexTarget target )
+        public void SelectTexture( MTexTarget target )
         {
-            if( !vid.glMTexable )
+            if( !Host.Video.glMTexable )
                 return;
 
             switch( target )
@@ -748,15 +748,15 @@ namespace SharpQuake
             if( target == _OldTarget )
                 return;
 
-            _CntTextures[_OldTarget - MTexTarget.TEXTURE0_SGIS] = Drawer.CurrentTexture;
-            Drawer.CurrentTexture = _CntTextures[target - MTexTarget.TEXTURE0_SGIS];
+            _CntTextures[_OldTarget - MTexTarget.TEXTURE0_SGIS] = Host.DrawingContext.CurrentTexture;
+            Host.DrawingContext.CurrentTexture = _CntTextures[target - MTexTarget.TEXTURE0_SGIS];
             _OldTarget = target;
         }
 
         /// <summary>
         /// Draw_TextureMode_f
         /// </summary>
-        private static void TextureMode_f()
+        private void TextureMode_f()
         {
             Int32 i;
             if( Host.Command.Argc == 1 )
@@ -797,7 +797,7 @@ namespace SharpQuake
             }
         }
 
-        private static void Imagelist_f()
+        private void Imagelist_f()
         {
             Int16 textureCount = 0;
 
@@ -817,12 +817,12 @@ namespace SharpQuake
         /// <summary>
         /// GL_LoadPicTexture
         /// </summary>
-        private static Int32 LoadTexture( GLPic pic, ByteArraySegment data )
+        private Int32 LoadTexture( GLPic pic, ByteArraySegment data )
         {
             return LoadTexture( String.Empty, pic.width, pic.height, data, false, true );
         }
 
-        private static void CharToConback( Int32 num, ByteArraySegment dest, ByteArraySegment drawChars )
+        private void CharToConback( Int32 num, ByteArraySegment dest, ByteArraySegment drawChars )
         {
             var row = num >> 4;
             var col = num & 15;
@@ -844,11 +844,11 @@ namespace SharpQuake
         /// <summary>
         /// GL_Upload8
         /// </summary>
-        private static void Upload8( ByteArraySegment data, Int32 width, Int32 height, System.Boolean mipmap, System.Boolean alpha )
+        private void Upload8( ByteArraySegment data, Int32 width, Int32 height, System.Boolean mipmap, System.Boolean alpha )
         {
             var s = width * height;
             var trans = new UInt32[s];
-            var table = vid.Table8to24;
+            var table = Host.Video.Table8to24;
             var data1 = data.Data;
             var offset = data.StartIndex;
 
@@ -886,7 +886,7 @@ namespace SharpQuake
         }
 
         // GL_Upload32
-        private static void Upload32( UInt32[] data, Int32 width, Int32 height, System.Boolean mipmap, System.Boolean alpha )
+        private void Upload32( UInt32[] data, Int32 width, Int32 height, System.Boolean mipmap, System.Boolean alpha )
         {
             Int32 scaled_width, scaled_height;
 
@@ -970,7 +970,7 @@ Done:
         }
 
         // GL_UploadBitmap
-        private static void UploadBitmap( System.Drawing.Bitmap bitmap, Int32 width, Int32 height, System.Boolean mipmap, System.Boolean alpha )
+        private void UploadBitmap( System.Drawing.Bitmap bitmap, Int32 width, Int32 height, System.Boolean mipmap, System.Boolean alpha )
         {
             //bitmap.Save( "F:\\Test.png" );
 
@@ -1067,7 +1067,7 @@ Done:
         }
 
         // GL_ResampleTexture
-        private static void ResampleTexture( UInt32[] src, Int32 srcWidth, Int32 srcHeight, out UInt32[] dest, Int32 destWidth, Int32 destHeight )
+        private void ResampleTexture( UInt32[] src, Int32 srcWidth, Int32 srcHeight, out UInt32[] dest, Int32 destWidth, Int32 destHeight )
         {
             dest = new UInt32[destWidth * destHeight];
             var fracstep = srcWidth * 0x10000 / destWidth;
@@ -1094,7 +1094,7 @@ Done:
         // GL_MipMap
         //
         // Operates in place, quartering the size of the texture
-        private static void MipMap( UInt32[] src, Int32 width, Int32 height )
+        private void MipMap( UInt32[] src, Int32 width, Int32 height )
         {
             Union4b p1 = Union4b.Empty, p2 = Union4b.Empty, p3 = Union4b.Empty, p4 = Union4b.Empty;
 
@@ -1131,7 +1131,7 @@ Done:
 
         // Scrap_AllocBlock
         // returns a texture number and the position inside it
-        private static Int32 AllocScrapBlock( Int32 w, Int32 h, out Int32 x, out Int32 y )
+        private Int32 AllocScrapBlock( Int32 w, Int32 h, out Int32 x, out Int32 y )
         {
             x = -1;
             y = -1;
@@ -1171,7 +1171,7 @@ Done:
             return -1;
         }
 
-        private static void UploadScrap()
+        private void UploadScrap()
         {
             _ScrapUploads++;
             for( var i = 0; i < MAX_SCRAPS; i++ )
@@ -1195,7 +1195,7 @@ Done:
 
         // menu_numcachepics
         // menuplyr_pixels
-        static Drawer()
+        public Drawer()
         {
             _ScrapAllocated = new Int32[MAX_SCRAPS][]; //[MAX_SCRAPS][BLOCK_WIDTH];
             for( var i = 0; i < _ScrapAllocated.GetLength( 0 ); i++ )

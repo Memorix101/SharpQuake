@@ -250,6 +250,18 @@ namespace SharpQuake
             private set;
         }
 
+        public vid Video
+        {
+            get;
+            private set;
+        }
+
+        public Drawer DrawingContext
+        {
+            get;
+            private set;
+        }
+
         private CVar _Sys_TickRate; // = {"sys_ticrate","0.05"};
         private CVar _Developer; // {"developer","0"};
         private CVar _FrameRate;// = {"host_framerate","0"};	// set for slow motion
@@ -295,6 +307,8 @@ namespace SharpQuake
             Network = new Network( );
             Server = new server( );
             Client = new client( );
+            Video = new vid( );
+            DrawingContext = new Drawer( );
         }
 
         /// <summary>
@@ -410,8 +424,8 @@ namespace SharpQuake
 
                 // on non win32, mouse comes before video for security reasons
                 MainWindow.Input.Initialise( this );
-                vid.Init( this, BasePal );
-                Drawer.Init( this );
+                Video.Initialise( this, BasePal );
+                DrawingContext.Init( this );
                 Scr.Init( this );
                 render.Init( this );
                 snd.Init( this );
@@ -876,7 +890,7 @@ namespace SharpQuake
 
                 if ( Client.cls.state != cactive_t.ca_dedicated )
                 {
-                    vid.Shutdown( );
+                    Video.Shutdown( );
                 }
 
                 Console.Shutdown( );

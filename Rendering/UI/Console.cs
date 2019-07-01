@@ -218,7 +218,7 @@ namespace SharpQuake
                 return;
 
             // draw the background
-            Drawer.DrawConsoleBackground( lines );
+            Host.DrawingContext.DrawConsoleBackground( lines );
 
             // draw the text
             _VisLines = lines;
@@ -235,7 +235,7 @@ namespace SharpQuake
                 var offset = ( j % _TotalLines ) * _LineWidth;
 
                 for( var x = 0; x < _LineWidth; x++ )
-                    Drawer.DrawCharacter( ( x + 1 ) << 3, y, _Text[offset + x] );
+                    Host.DrawingContext.DrawCharacter( ( x + 1 ) << 3, y, _Text[offset + x] );
             }
 
             // draw the input prompt, user text, and cursor if desired
@@ -325,7 +325,7 @@ namespace SharpQuake
                 Scr.CopyTop = true;
 
                 for( var x = 0; x < _LineWidth; x++ )
-                    Drawer.DrawCharacter( ( x + 1 ) << 3, v, _Text[textOffset + x] );
+                    Host.DrawingContext.DrawCharacter( ( x + 1 ) << 3, v, _Text[textOffset + x] );
 
                 v += 8;
             }
@@ -337,13 +337,13 @@ namespace SharpQuake
 
                 var x = 0;
 
-                Drawer.DrawString( 8, v, "say:" );
+                Host.DrawingContext.DrawString( 8, v, "say:" );
                 var chat = Host.Keyboard.ChatBuffer;
                 for( ; x < chat.Length; x++ )
                 {
-                    Drawer.DrawCharacter( ( x + 5 ) << 3, v, chat[x] );
+                    Host.DrawingContext.DrawCharacter( ( x + 5 ) << 3, v, chat[x] );
                 }
-                Drawer.DrawCharacter( ( x + 5 ) << 3, v, 10 + ( ( Int32 ) ( Host.RealTime * _CursorSpeed ) & 1 ) );
+                Host.DrawingContext.DrawCharacter( ( x + 5 ) << 3, v, 10 + ( ( Int32 ) ( Host.RealTime * _CursorSpeed ) & 1 ) );
                 v += 8;
             }
 
@@ -536,7 +536,7 @@ namespace SharpQuake
             var y = _VisLines - 16;
 
             for( var i = 0; i < _LineWidth; i++ )
-                Drawer.DrawCharacter( ( i + 1 ) << 3, _VisLines - 16, Host.Keyboard.Lines[Host.Keyboard.EditLine][offset + i] );
+                Host.DrawingContext.DrawCharacter( ( i + 1 ) << 3, _VisLines - 16, Host.Keyboard.Lines[Host.Keyboard.EditLine][offset + i] );
 
             // remove cursor
             Host.Keyboard.Lines[Host.Keyboard.EditLine][Host.Keyboard.LinePos] = '\0';

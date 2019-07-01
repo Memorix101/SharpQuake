@@ -430,8 +430,8 @@ namespace SharpQuake
         // R_InitParticleTexture
         private static void InitParticleTexture()
         {
-            _ParticleTexture = Drawer.GenerateTextureNumber();// texture_extension_number++;
-            Drawer.Bind( _ParticleTexture );
+            _ParticleTexture = Host.DrawingContext.GenerateTextureNumber();// texture_extension_number++;
+            Host.DrawingContext.Bind( _ParticleTexture );
 
             var data = new Byte[8, 8, 4];
             for( var x = 0; x < 8; x++ )
@@ -444,9 +444,9 @@ namespace SharpQuake
                     data[y, x, 3] = ( Byte ) ( _DotTexture[x, y] * 255 );
                 }
             }
-            GL.TexImage2D( TextureTarget.Texture2D, 0, Drawer.AlphaFormat, 8, 8, 0, PixelFormat.Rgba, PixelType.UnsignedByte, data );
+            GL.TexImage2D( TextureTarget.Texture2D, 0, Host.DrawingContext.AlphaFormat, 8, 8, 0, PixelFormat.Rgba, PixelType.UnsignedByte, data );
             GL.TexEnv( TextureEnvTarget.TextureEnv, TextureEnvParameter.TextureEnvMode, ( Int32 ) TextureEnvMode.Modulate );
-            Drawer.SetTextureFilters( TextureMinFilter.Linear, TextureMagFilter.Linear );
+            Host.DrawingContext.SetTextureFilters( TextureMinFilter.Linear, TextureMagFilter.Linear );
         }
 
         // particletexture	// little dot for particles
@@ -468,7 +468,7 @@ namespace SharpQuake
         /// </summary>
         private static void DrawParticles()
         {
-            Drawer.Bind( _ParticleTexture );
+            Host.DrawingContext.Bind( _ParticleTexture );
             GL.Enable( EnableCap.Blend );
             GL.TexEnv( TextureEnvTarget.TextureEnv, TextureEnvParameter.TextureEnvMode, ( Int32 ) TextureEnvMode.Modulate );
             GL.Begin( PrimitiveType.Triangles );
@@ -518,7 +518,7 @@ namespace SharpQuake
                     scale = 1 + scale * 0.004f;
 
                 // Uze todo: check if this is correct
-                var color = vid.Table8to24[( Byte ) p.color];
+                var color = Host.Video.Table8to24[( Byte ) p.color];
                 GL.Color4( ( Byte ) ( color & 0xff ), ( Byte ) ( ( color >> 8 ) & 0xff ), ( Byte ) ( ( color >> 16 ) & 0xff ), ( Byte ) ( ( color >> 24 ) & 0xff ) );
                 GL.TexCoord2( 0f, 0 );
                 GL.Vertex3( p.org );
