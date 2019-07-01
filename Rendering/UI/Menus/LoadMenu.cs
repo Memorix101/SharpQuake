@@ -62,7 +62,7 @@ namespace SharpQuake
 
         public override void Draw( )
         {
-            GLPic p = Drawer.CachePic( "gfx/p_load.lmp" );
+            var p = Drawer.CachePic( "gfx/p_load.lmp" );
             Host.Menu.DrawPic( ( 320 - p.width ) / 2, 4, p );
 
             for ( var i = 0; i < MAX_SAVEGAMES; i++ )
@@ -82,11 +82,11 @@ namespace SharpQuake
                 _FileNames[i] = "--- UNUSED SLOT ---";
                 _Loadable[i] = false;
                 var name = String.Format( "{0}/s{1}.sav", FileSystem.GameDir, i );
-                FileStream fs = FileSystem.OpenRead( name );
+                var fs = FileSystem.OpenRead( name );
                 if ( fs == null )
                     continue;
 
-                using ( StreamReader reader = new StreamReader( fs, Encoding.ASCII ) )
+                using ( var reader = new StreamReader( fs, Encoding.ASCII ) )
                 {
                     var version = reader.ReadLine( );
                     if ( version == null )

@@ -120,7 +120,7 @@ namespace SharpQuake
         // Cvar_FindVar()
         public static CVar Find( String name )
         {
-            CVar var = _Vars;
+            var var = _Vars;
             while( var != null )
             {
                 if( var._Name.Equals( name ) )
@@ -141,7 +141,7 @@ namespace SharpQuake
         public static Single GetValue( String name )
         {
             Single result = 0;
-            CVar var = Find( name );
+            var var = Find( name );
             if( var != null )
             {
                 result = MathLib.atof( var._String );
@@ -152,7 +152,7 @@ namespace SharpQuake
         // Cvar_VariableString()
         public static String GetString( String name )
         {
-            CVar var = Find( name );
+            var var = Find( name );
             if( var != null )
             {
                 return var._String;
@@ -166,8 +166,8 @@ namespace SharpQuake
             if( String.IsNullOrEmpty( partial ) )
                 return null;
 
-            List<String> result = new List<String>();
-            CVar var = _Vars;
+            var result = new List<String>();
+            var var = _Vars;
             while( var != null )
             {
                 if( var._Name.StartsWith( partial ) )
@@ -181,7 +181,7 @@ namespace SharpQuake
         // Cvar_Set()
         public static void Set( String name, String value )
         {
-            CVar var = Find( name );
+            var var = Find( name );
             if( var == null )
             {
                 // there is an error in C code if this happens
@@ -225,8 +225,8 @@ namespace SharpQuake
         /// </summary>
         public static void WriteVariables( Stream dest )
         {
-            StringBuilder sb = new StringBuilder( 4096 );
-            CVar var = _Vars;
+            var sb = new StringBuilder( 4096 );
+            var var = _Vars;
             while( var != null )
             {
                 if( var.IsArchive )
@@ -238,7 +238,7 @@ namespace SharpQuake
                 }
                 var = var._Next;
             }
-            Byte[] buf = Encoding.ASCII.GetBytes( sb.ToString() );
+            var buf = Encoding.ASCII.GetBytes( sb.ToString() );
             dest.Write( buf, 0, buf.Length );
         }
 
@@ -279,7 +279,7 @@ namespace SharpQuake
             {
                 throw new ArgumentNullException( "name" );
             }
-            CVar var = Find( name );
+            var var = Find( name );
             if( var != null )
             {
                 throw new ArgumentException( String.Format( "Can't register variable {0}, already defined!\n", name ) );

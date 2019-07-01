@@ -341,7 +341,7 @@ namespace SharpQuake
         {
             cl.cmd = cmd; // cl.cmd = *cmd - struct copying!!!
 
-            MessageWriter msg = new MessageWriter( 128 );
+            var msg = new MessageWriter( 128 );
 
             //
             // send the movement message
@@ -389,7 +389,7 @@ namespace SharpQuake
             if( ++cl.movemessages <= 2 )
                 return;
 
-            if( net.SendUnreliableMessage( cls.netcon, msg ) == -1 )
+            if( Host.Network.SendUnreliableMessage( cls.netcon, msg ) == -1 )
             {
                 Host.Console.Print( "CL_SendMove: lost server connection\n" );
                 Disconnect();

@@ -77,7 +77,7 @@ namespace SharpQuake
             {
                 using( file )
                 {
-                    BinaryReader reader = file.Object;
+                    var reader = file.Object;
                     _NumCommands = reader.ReadInt32();
                     _NumOrder = reader.ReadInt32();
                     for( var i = 0; i < _NumCommands; i++ )
@@ -101,7 +101,7 @@ namespace SharpQuake
                 var fullpath = Path.Combine( FileSystem.GameDir, path );
                 Stream fs = FileSystem.OpenWrite( fullpath, true );
                 if( fs != null )
-                    using( BinaryWriter writer = new BinaryWriter( fs, Encoding.ASCII ) )
+                    using( var writer = new BinaryWriter( fs, Encoding.ASCII ) )
                     {
                         writer.Write( _NumCommands );
                         writer.Write( _NumOrder );
@@ -117,12 +117,12 @@ namespace SharpQuake
             //
             _AliasHdr.poseverts = _NumOrder;
 
-            Int32[] cmds = new Int32[_NumCommands]; //Hunk_Alloc (numcommands * 4);
+            var cmds = new Int32[_NumCommands]; //Hunk_Alloc (numcommands * 4);
             _AliasHdr.commands = cmds; // in bytes??? // (byte*)cmds - (byte*)paliashdr;
             Buffer.BlockCopy( _Commands, 0, cmds, 0, _NumCommands * 4 ); //memcpy (cmds, commands, numcommands * 4);
 
-            trivertx_t[][] poseverts = MainWindow.Instance.Host.Model.PoseVerts;
-            trivertx_t[] verts = new trivertx_t[_AliasHdr.numposes * _AliasHdr.poseverts]; // Hunk_Alloc (paliashdr->numposes * paliashdr->poseverts * sizeof(trivertx_t) );
+            var poseverts = MainWindow.Instance.Host.Model.PoseVerts;
+            var verts = new trivertx_t[_AliasHdr.numposes * _AliasHdr.poseverts]; // Hunk_Alloc (paliashdr->numposes * paliashdr->poseverts * sizeof(trivertx_t) );
             _AliasHdr.posedata = verts; // (byte*)verts - (byte*)paliashdr;
             var offset = 0;
 
@@ -137,8 +137,8 @@ namespace SharpQuake
         /// </summary>
         private static void BuildTris()
         {
-            Int32[] bestverts = new Int32[1024];
-            Int32[] besttris = new Int32[1024];
+            var bestverts = new Int32[1024];
+            var besttris = new Int32[1024];
 
             // Uze
             // All references to pheader from model.c changed to _AliasHdr (former paliashdr)
@@ -146,8 +146,8 @@ namespace SharpQuake
             //
             // build tristrips
             //
-            stvert_t[] stverts = MainWindow.Instance.Host.Model.STVerts;
-            dtriangle_t[] triangles = MainWindow.Instance.Host.Model.Triangles;
+            var stverts = MainWindow.Instance.Host.Model.STVerts;
+            var triangles = MainWindow.Instance.Host.Model.Triangles;
             _NumOrder = 0;
             _NumCommands = 0;
             Array.Clear( _Used, 0, _Used.Length ); // memset (used, 0, sizeof(used));
@@ -188,7 +188,7 @@ namespace SharpQuake
                 else
                     _Commands[_NumCommands++] = -( bestlen + 2 );
 
-                Union4b uval = Union4b.Empty;
+                var uval = Union4b.Empty;
                 for( var j = 0; j < bestlen + 2; j++ )
                 {
                     // emit a vertex into the reorder buffer
@@ -222,9 +222,9 @@ namespace SharpQuake
         {
             _Used[starttri] = 2;
 
-            dtriangle_t[] triangles = MainWindow.Instance.Host.Model.Triangles;
+            var triangles = MainWindow.Instance.Host.Model.Triangles;
 
-            Int32[] vidx = triangles[starttri].vertindex; //last = &triangles[starttri];
+            var vidx = triangles[starttri].vertindex; //last = &triangles[starttri];
             _StripVerts[0] = vidx[( startv ) % 3];
             _StripVerts[1] = vidx[( startv + 1 ) % 3];
             _StripVerts[2] = vidx[( startv + 2 ) % 3];
@@ -286,10 +286,10 @@ done:
         {
             _Used[starttri] = 2;
 
-            dtriangle_t[] triangles = MainWindow.Instance.Host.Model.Triangles;
+            var triangles = MainWindow.Instance.Host.Model.Triangles;
             //last = &triangles[starttri];
 
-            Int32[] vidx = triangles[starttri].vertindex;
+            var vidx = triangles[starttri].vertindex;
 
             _StripVerts[0] = vidx[( startv ) % 3];
             _StripVerts[1] = vidx[( startv + 1 ) % 3];

@@ -53,7 +53,7 @@ namespace SharpQuake
             _LastObj = ent; //  lastlink = &ent->efrag;
             _EfragTopNode = null;
 
-            Model entmodel = ent.model;
+            var entmodel = ent.model;
             _EMins = ent.origin + entmodel.mins;
             _EMaxs = ent.origin + entmodel.maxs;
 
@@ -75,10 +75,10 @@ namespace SharpQuake
                 if( _EfragTopNode == null )
                     _EfragTopNode = node as MemoryNode;
 
-                MemoryLeaf leaf = (MemoryLeaf)( System.Object ) node;
+                var leaf = (MemoryLeaf)( System.Object ) node;
 
                 // grab an efrag off the free list
-                EFrag ef = client.cl.free_efrags;
+                var ef = client.cl.free_efrags;
                 if( ef == null )
                 {
                     Host.Console.Print( "Too many efrags!\n" );
@@ -110,11 +110,11 @@ namespace SharpQuake
             }
 
             // NODE_MIXED
-            MemoryNode n = node as MemoryNode;
+            var n = node as MemoryNode;
             if( n == null )
                 return;
 
-            Plane splitplane = n.plane;
+            var splitplane = n.plane;
             var sides = MathLib.BoxOnPlaneSide( ref _EMins, ref _EMaxs, splitplane );
 
             if( sides == 3 )
@@ -141,8 +141,8 @@ namespace SharpQuake
         {
             while( ef != null )
             {
-                Entity pent = ef.entity;
-                Model clmodel = pent.model;
+                var pent = ef.entity;
+                var clmodel = pent.model;
 
                 switch( clmodel.type )
                 {

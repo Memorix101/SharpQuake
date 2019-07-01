@@ -46,8 +46,8 @@ namespace SharpQuake
         {
             get
             {
-                Rectangle bounds = MainWindow.Instance.Bounds;
-                Point p = bounds.Location;
+                var bounds = MainWindow.Instance.Bounds;
+                var p = bounds.Location;
                 p.Offset( bounds.Width / 2, bounds.Height / 2 );
                 return p;
             }
@@ -223,8 +223,8 @@ namespace SharpQuake
             if( !_IsMouseActive )
                 return;
            
-            Point current_pos = new Point(Mouse.GetCursorState().X, Mouse.GetCursorState().Y); //Cursor.Position;
-            Point window_center = WindowCenter;
+            var current_pos = new Point(Mouse.GetCursorState().X, Mouse.GetCursorState().Y); //Cursor.Position;
+            var window_center = WindowCenter;
 
             var mx = ( System.Int32 ) ( current_pos.X - window_center.X + _MouseAccum.X );
             var my = ( System.Int32 ) ( current_pos.Y - window_center.Y + _MouseAccum.Y );

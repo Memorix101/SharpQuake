@@ -15,10 +15,10 @@ namespace SharpQuake
         public override void Show( Host host )
         {
             base.Show( host );
-            net.SlistSilent = true;
-            net.SlistLocal = false;
+            Host.Network.SlistSilent = true;
+            Host.Network.SlistLocal = false;
             _SearchComplete = false;
-            net.Slist_f( );
+            Host.Network.Slist_f( );
         }
 
         public override void KeyEvent( Int32 key )
@@ -28,15 +28,15 @@ namespace SharpQuake
 
         public override void Draw( )
         {
-            GLPic p = Drawer.CachePic( "gfx/p_multi.lmp" );
+            var p = Drawer.CachePic( "gfx/p_multi.lmp" );
             Host.Menu.DrawPic( ( 320 - p.width ) / 2, 4, p );
             var x = ( 320 / 2 ) - ( ( 12 * 8 ) / 2 ) + 4;
             Host.Menu.DrawTextBox( x - 8, 32, 12, 1 );
             Host.Menu.Print( x, 40, "Searching..." );
 
-            if ( net.SlistInProgress )
+            if ( Host.Network.SlistInProgress )
             {
-                net.Poll( );
+                Host.Network.Poll( );
                 return;
             }
 
@@ -46,7 +46,7 @@ namespace SharpQuake
                 _SearchCompleteTime = Host.RealTime;
             }
 
-            if ( net.HostCacheCount > 0 )
+            if ( Host.Network.HostCacheCount > 0 )
             {
                 MenuBase.ServerListMenu.Show( Host );
                 return;

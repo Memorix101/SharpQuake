@@ -81,7 +81,7 @@ namespace SharpQuake
             _Dest.Z = render.RefDef.vieworg.Z + _Up.Value;
 
             // find the spot the player is looking at
-            Vector3 dest = render.RefDef.vieworg + forward * 4096;
+            var dest = render.RefDef.vieworg + forward * 4096;
 
             Vector3 stop;
             TraceLine( ref render.RefDef.vieworg, ref dest, out stop );
@@ -102,7 +102,7 @@ namespace SharpQuake
 
         private void TraceLine( ref Vector3 start, ref Vector3 end, out Vector3 impact )
         {
-            trace_t trace = new trace_t();
+            var trace = new trace_t();
 
             server.RecursiveHullCheck( client.cl.worldmodel.hulls[0], 0, 0, 1, ref start, ref end, trace );
 

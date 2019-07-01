@@ -32,9 +32,9 @@ namespace SharpQuake
 {
     internal delegate void PollHandler( Object arg );
 
-    internal static class net
+    public class Network
     {
-        public static INetDriver[] Drivers
+        public INetDriver[] Drivers
         {
             get
             {
@@ -42,7 +42,7 @@ namespace SharpQuake
             }
         }
 
-        public static INetLanDriver[] LanDrivers
+        public INetLanDriver[] LanDrivers
         {
             get
             {
@@ -50,7 +50,7 @@ namespace SharpQuake
             }
         }
 
-        public static IEnumerable<qsocket_t> ActiveSockets
+        public IEnumerable<qsocket_t> ActiveSockets
         {
             get
             {
@@ -58,7 +58,7 @@ namespace SharpQuake
             }
         }
 
-        public static IEnumerable<qsocket_t> FreeSockets
+        public IEnumerable<qsocket_t> FreeSockets
         {
             get
             {
@@ -66,7 +66,7 @@ namespace SharpQuake
             }
         }
 
-        public static Int32 MessagesSent
+        public Int32 MessagesSent
         {
             get
             {
@@ -74,7 +74,7 @@ namespace SharpQuake
             }
         }
 
-        public static Int32 MessagesReceived
+        public Int32 MessagesReceived
         {
             get
             {
@@ -82,7 +82,7 @@ namespace SharpQuake
             }
         }
 
-        public static Int32 UnreliableMessagesSent
+        public Int32 UnreliableMessagesSent
         {
             get
             {
@@ -90,7 +90,7 @@ namespace SharpQuake
             }
         }
 
-        public static Int32 UnreliableMessagesReceived
+        public Int32 UnreliableMessagesReceived
         {
             get
             {
@@ -98,7 +98,7 @@ namespace SharpQuake
             }
         }
 
-        public static String HostName
+        public String HostName
         {
             get
             {
@@ -106,7 +106,7 @@ namespace SharpQuake
             }
         }
 
-        public static String MyTcpIpAddress
+        public String MyTcpIpAddress
         {
             get
             {
@@ -118,7 +118,7 @@ namespace SharpQuake
             }
         }
 
-        public static Int32 DefaultHostPort
+        public Int32 DefaultHostPort
         {
             get
             {
@@ -126,7 +126,7 @@ namespace SharpQuake
             }
         }
 
-        public static Boolean TcpIpAvailable
+        public Boolean TcpIpAvailable
         {
             get
             {
@@ -134,7 +134,7 @@ namespace SharpQuake
             }
         }
 
-        public static hostcache_t[] HostCache
+        public hostcache_t[] HostCache
         {
             get
             {
@@ -142,7 +142,7 @@ namespace SharpQuake
             }
         }
 
-        public static Int32 DriverLevel
+        public Int32 DriverLevel
         {
             get
             {
@@ -150,7 +150,7 @@ namespace SharpQuake
             }
         }
 
-        public static INetLanDriver LanDriver
+        public INetLanDriver LanDriver
         {
             get
             {
@@ -158,7 +158,7 @@ namespace SharpQuake
             }
         }
 
-        public static INetDriver Driver
+        public INetDriver Driver
         {
             get
             {
@@ -166,7 +166,7 @@ namespace SharpQuake
             }
         }
 
-        public static Boolean SlistInProgress
+        public Boolean SlistInProgress
         {
             get
             {
@@ -174,7 +174,7 @@ namespace SharpQuake
             }
         }
 
-        public static Double Time
+        public Double Time
         {
             get
             {
@@ -183,96 +183,98 @@ namespace SharpQuake
         }
 
        
-        public static Int32 HostPort;
+        public Int32 HostPort;
 
-        public static Int32 ActiveConnections;
+        public Int32 ActiveConnections;
 
-        public static MessageWriter Message;
+        public MessageWriter Message;
 
         // sizebuf_t net_message
-        public static MessageReader Reader;
+        public MessageReader Reader;
 
-        public static Int32 HostCacheCount;
+        public Int32 HostCacheCount;
 
-        public static Boolean SlistSilent;
+        public Boolean SlistSilent;
 
         // slistSilent
-        public static Boolean SlistLocal = true;
+        public Boolean SlistLocal = true;
 
-        public static Int32 LanDriverLevel;
+        public Int32 LanDriverLevel;
 
-        private static readonly PollProcedure _SlistSendProcedure = new PollProcedure( null, 0.0, SlistSend, null );
+        private PollProcedure _SlistSendProcedure;
+        private PollProcedure _SlistPollProcedure;
 
-        private static readonly PollProcedure _SlistPollProcedure = new PollProcedure( null, 0.0, SlistPoll, null );
-
-        private static INetDriver[] _Drivers;
+        private INetDriver[] _Drivers;
 
         // net_driver_t net_drivers[MAX_NET_DRIVERS];
-        private static INetLanDriver[] _LanDrivers;
+        private INetLanDriver[] _LanDrivers;
 
         // net_landriver_t	net_landrivers[MAX_NET_DRIVERS]
-        private static Boolean _IsRecording;
+        private Boolean _IsRecording;
 
         // recording
-        private static Int32 _DefHostPort = 26000;
+        private Int32 _DefHostPort = 26000;
 
         // int	DEFAULTnet_hostport = 26000;
         // net_hostport;
-        private static Boolean _IsListening;
+        private Boolean _IsListening;
 
-        // static qboolean	listening = false;
-        private static List<qsocket_t> _FreeSockets;
+        // qboolean	listening = false;
+        private List<qsocket_t> _FreeSockets;
 
         // net_freeSockets
-        private static List<qsocket_t> _ActiveSockets;
+        private List<qsocket_t> _ActiveSockets;
 
         // net_activeSockets
         // net_activeconnections
-        private static Double _Time;
+        private Double _Time;
 
-        private static String _MyTcpIpAddress;
+        private String _MyTcpIpAddress;
 
         // char my_tcpip_address[NET_NAMELEN];
-        private static Int32 _MessagesSent = 0;
+        private Int32 _MessagesSent = 0;
 
         // reads from net_message
-        private static Int32 _MessagesReceived = 0;
+        private Int32 _MessagesReceived = 0;
 
         // net_time
-        private static Int32 _UnreliableMessagesSent = 0;
+        private Int32 _UnreliableMessagesSent = 0;
 
-        private static Int32 _UnreliableMessagesReceived = 0;
+        private Int32 _UnreliableMessagesReceived = 0;
 
-        private static CVar _MessageTimeout;
+        private CVar _MessageTimeout;
 
         // = { "net_messagetimeout", "300" };
-        private static CVar _HostName;
+        private CVar _HostName;
 
-        private static PollProcedure _PollProcedureList;
+        private PollProcedure _PollProcedureList;
 
-        private static hostcache_t[] _HostCache = new hostcache_t[NetworkDef.HOSTCACHESIZE];
+        private hostcache_t[] _HostCache = new hostcache_t[NetworkDef.HOSTCACHESIZE];
 
-        private static Boolean _SlistInProgress;
+        private Boolean _SlistInProgress;
 
         // slistInProgress
         // slistLocal
-        private static Int32 _SlistLastShown;
+        private Int32 _SlistLastShown;
 
         // slistLastShown
-        private static Double _SlistStartTime;
+        private Double _SlistStartTime;
 
-        private static Int32 _DriverLevel;
+        private Int32 _DriverLevel;
 
-        private static VcrRecord _VcrConnect = new VcrRecord();
+        private VcrRecord _VcrConnect = new VcrRecord();
 
         // vcrConnect
-        private static VcrRecord2 _VcrGetMessage = new VcrRecord2();
+        private VcrRecord2 _VcrGetMessage = new VcrRecord2();
 
         // vcrGetMessage
-        private static VcrRecord2 _VcrSendMessage = new VcrRecord2();
+        private VcrRecord2 _VcrSendMessage = new VcrRecord2();
 
-        static net()
+        public Network()
         {
+            _SlistSendProcedure = new PollProcedure( null, 0.0, SlistSend, null );
+            _SlistPollProcedure = new PollProcedure( null, 0.0, SlistPoll, null );
+
             // Temporary workaround will sort out soon
             NetworkWrapper.OnGetLanDriver += ( index ) => 
             {
@@ -281,7 +283,7 @@ namespace SharpQuake
         }
 
         // CHANGE
-        private static Host Host
+        private Host Host
         {
             get;
             set;
@@ -289,7 +291,7 @@ namespace SharpQuake
 
         // vcrSendMessage
         // NET_Init (void)
-        public static void Init( Host host )
+        public void Initialise( Host host )
         {
             Host = host;
 
@@ -357,7 +359,7 @@ namespace SharpQuake
 
             // allocate space for network message buffer
             Message = new MessageWriter( NetworkDef.NET_MAXMESSAGE ); // SZ_Alloc (&net_message, NET_MAXMESSAGE);
-            Reader = new MessageReader( net.Message );
+            Reader = new MessageReader( Message );
 
             if( _MessageTimeout == null )
             {
@@ -372,10 +374,10 @@ namespace SharpQuake
 
             // initialize all the drivers
             _DriverLevel = 0;
-            foreach( INetDriver driver in _Drivers )
+            foreach( var driver in _Drivers )
             {
-                driver.Init( Host );
-                if( driver.IsInitialized && _IsListening )
+                driver.Initialise( Host );
+                if( driver.IsInitialised && _IsListening )
                 {
                     driver.Listen( true );
                 }
@@ -393,14 +395,14 @@ namespace SharpQuake
         /// <summary>
         /// NET_Shutdown
         /// </summary>
-        public static void Shutdown()
+        public void Shutdown()
         {
             SetNetTime();
 
             if( _ActiveSockets != null )
             {
-                qsocket_t[] tmp = _ActiveSockets.ToArray();
-                foreach( qsocket_t sock in tmp )
+                var tmp = _ActiveSockets.ToArray();
+                foreach( var sock in tmp )
                     Close( sock );
             }
 
@@ -411,7 +413,7 @@ namespace SharpQuake
             {
                 for( _DriverLevel = 0; _DriverLevel < _Drivers.Length; _DriverLevel++ )
                 {
-                    if( _Drivers[_DriverLevel].IsInitialized )
+                    if( _Drivers[_DriverLevel].IsInitialised )
                         _Drivers[_DriverLevel].Shutdown();
                 }
             }
@@ -422,19 +424,19 @@ namespace SharpQuake
         /// NET_CheckNewConnections
         /// </summary>
         /// <returns></returns>
-        public static qsocket_t CheckNewConnections()
+        public qsocket_t CheckNewConnections()
         {
             SetNetTime();
 
             for( _DriverLevel = 0; _DriverLevel < _Drivers.Length; _DriverLevel++ )
             {
-                if( !_Drivers[_DriverLevel].IsInitialized )
+                if( !_Drivers[_DriverLevel].IsInitialised )
                     continue;
 
                 if( _DriverLevel > 0 && !_IsListening )
                     continue;
 
-                qsocket_t ret = net.Driver.CheckNewConnections();
+                var ret = Driver.CheckNewConnections();
                 if( ret != null )
                 {
                     if( _IsRecording )
@@ -442,7 +444,7 @@ namespace SharpQuake
                         _VcrConnect.time = Host.Time;
                         _VcrConnect.op = VcrOp.VCR_OP_CONNECT;
                         _VcrConnect.session = 1; // (long)ret; // Uze: todo: make it work on 64bit systems
-                        Byte[] buf = Utilities.StructureToBytes( ref _VcrConnect );
+                        var buf = Utilities.StructureToBytes( ref _VcrConnect );
                         Host.VcrWriter.Write( buf, 0, buf.Length );
                         buf = Encoding.ASCII.GetBytes( ret.address );
                         var count = Math.Min( buf.Length, NetworkDef.NET_NAMELEN );
@@ -460,7 +462,7 @@ namespace SharpQuake
                 _VcrConnect.time = Host.Time;
                 _VcrConnect.op = VcrOp.VCR_OP_CONNECT;
                 _VcrConnect.session = 0;
-                Byte[] buf = Utilities.StructureToBytes( ref _VcrConnect );
+                var buf = Utilities.StructureToBytes( ref _VcrConnect );
                 Host.VcrWriter.Write( buf, 0, buf.Length );
             }
 
@@ -473,7 +475,7 @@ namespace SharpQuake
         /// NET_Connect
         /// called by client to connect to a host.  Returns -1 if not able to connect
         /// </summary>
-        public static qsocket_t Connect( String host )
+        public qsocket_t Connect( String host )
         {
             var numdrivers = _Drivers.Length;// net_numdrivers;
 
@@ -492,7 +494,7 @@ namespace SharpQuake
 
                 if( HostCacheCount > 0 )
                 {
-                    foreach( hostcache_t hc in _HostCache )
+                    foreach( var hc in _HostCache )
                     {
                         if( Utilities.SameText( hc.name, host ) )
                         {
@@ -518,7 +520,7 @@ namespace SharpQuake
             }
 
             _DriverLevel = 0;
-            foreach( hostcache_t hc in _HostCache )
+            foreach( var hc in _HostCache )
             {
                 if( Utilities.SameText( host, hc.name ) )
                 {
@@ -530,11 +532,11 @@ namespace SharpQuake
 
 JustDoIt:
             _DriverLevel = 0;
-            foreach( INetDriver drv in _Drivers )
+            foreach( var drv in _Drivers )
             {
-                if( !drv.IsInitialized )
+                if( !drv.IsInitialised )
                     continue;
-                qsocket_t ret = drv.Connect( host );
+                var ret = drv.Connect( host );
                 if( ret != null )
                     return ret;
                 _DriverLevel++;
@@ -556,7 +558,7 @@ JustDoIt:
         /// Returns true or false if the given qsocket can currently accept a
         /// message to be transmitted.
         /// </summary>
-        public static Boolean CanSendMessage( qsocket_t sock )
+        public Boolean CanSendMessage( qsocket_t sock )
         {
             if( sock == null )
                 return false;
@@ -574,7 +576,7 @@ JustDoIt:
                 _VcrSendMessage.op = VcrOp.VCR_OP_CANSENDMESSAGE;
                 _VcrSendMessage.session = 1; // (long)sock; Uze: todo: do something?
                 _VcrSendMessage.ret = r ? 1 : 0;
-                Byte[] buf = Utilities.StructureToBytes( ref _VcrSendMessage );
+                var buf = Utilities.StructureToBytes( ref _VcrSendMessage );
                 Host.VcrWriter.Write( buf, 0, buf.Length );
             }
 
@@ -589,7 +591,7 @@ JustDoIt:
         /// returns 2 if an unreliable message was received
         /// returns -1 if the connection died
         /// </summary>
-        public static Int32 GetMessage( qsocket_t sock )
+        public Int32 GetMessage( qsocket_t sock )
         {
             //int ret;
 
@@ -633,10 +635,10 @@ JustDoIt:
                     _VcrGetMessage.op = VcrOp.VCR_OP_GETMESSAGE;
                     _VcrGetMessage.session = 1;// (long)sock; Uze todo: write somethisng meaningful
                     _VcrGetMessage.ret = ret;
-                    Byte[] buf = Utilities.StructureToBytes( ref _VcrGetMessage );
+                    var buf = Utilities.StructureToBytes( ref _VcrGetMessage );
                     Host.VcrWriter.Write( buf, 0, buf.Length );
-                    Host.VcrWriter.Write( net.Message.Length );
-                    Host.VcrWriter.Write( net.Message.Data, 0, net.Message.Length );
+                    Host.VcrWriter.Write( Message.Length );
+                    Host.VcrWriter.Write( Message.Data, 0, Message.Length );
                 }
             }
             else
@@ -647,7 +649,7 @@ JustDoIt:
                     _VcrGetMessage.op = VcrOp.VCR_OP_GETMESSAGE;
                     _VcrGetMessage.session = 1; // (long)sock; Uze todo: fix this
                     _VcrGetMessage.ret = ret;
-                    Byte[] buf = Utilities.StructureToBytes( ref _VcrGetMessage );
+                    var buf = Utilities.StructureToBytes( ref _VcrGetMessage );
                     Host.VcrWriter.Write( buf, 0, buf.Length );
                 }
             }
@@ -663,7 +665,7 @@ JustDoIt:
         /// returns 1 if the message was sent properly
         /// returns -1 if the connection died
         /// </summary>
-        public static Int32 SendMessage( qsocket_t sock, MessageWriter data )
+        public Int32 SendMessage( qsocket_t sock, MessageWriter data )
         {
             if( sock == null )
                 return -1;
@@ -686,7 +688,7 @@ JustDoIt:
                 _VcrSendMessage.op = VcrOp.VCR_OP_SENDMESSAGE;
                 _VcrSendMessage.session = 1; // (long)sock; Uze: todo: do something?
                 _VcrSendMessage.ret = r;
-                Byte[] buf = Utilities.StructureToBytes( ref _VcrSendMessage );
+                var buf = Utilities.StructureToBytes( ref _VcrSendMessage );
                 Host.VcrWriter.Write( buf, 0, buf.Length );
             }
 
@@ -700,7 +702,7 @@ JustDoIt:
         /// returns 1 if the message was sent properly
         /// returns -1 if the connection died
         /// </summary>
-        public static Int32 SendUnreliableMessage( qsocket_t sock, MessageWriter data )
+        public Int32 SendUnreliableMessage( qsocket_t sock, MessageWriter data )
         {
             if( sock == null )
                 return -1;
@@ -723,7 +725,7 @@ JustDoIt:
                 _VcrSendMessage.op = VcrOp.VCR_OP_SENDMESSAGE;
                 _VcrSendMessage.session = 1;// (long)sock; Uze todo: ???????
                 _VcrSendMessage.ret = r;
-                Byte[] buf = Utilities.StructureToBytes( ref _VcrSendMessage );
+                var buf = Utilities.StructureToBytes( ref _VcrSendMessage );
                 Host.VcrWriter.Write( buf );
             }
 
@@ -734,10 +736,10 @@ JustDoIt:
         /// NET_SendToAll
         /// This is a reliable *blocking* send to all attached clients.
         /// </summary>
-        public static Int32 SendToAll( MessageWriter data, Int32 blocktime )
+        public Int32 SendToAll( MessageWriter data, Int32 blocktime )
         {
-            Boolean[] state1 = new Boolean[QDef.MAX_SCOREBOARD];
-            Boolean[] state2 = new Boolean[QDef.MAX_SCOREBOARD];
+            var state1 = new Boolean[QDef.MAX_SCOREBOARD];
+            var state2 = new Boolean[QDef.MAX_SCOREBOARD];
 
             var count = 0;
             for( var i = 0; i < server.svs.maxclients; i++ )
@@ -811,7 +813,7 @@ JustDoIt:
         /// <summary>
         /// NET_Close
         /// </summary>
-        public static void Close( qsocket_t sock )
+        public void Close( qsocket_t sock )
         {
             if( sock == null )
                 return;
@@ -830,7 +832,7 @@ JustDoIt:
         /// <summary>
         /// NET_FreeQSocket
         /// </summary>
-        public static void FreeSocket( qsocket_t sock )
+        public void FreeSocket( qsocket_t sock )
         {
             // remove it from active list
             if( !_ActiveSockets.Remove( sock ) )
@@ -844,11 +846,11 @@ JustDoIt:
         /// <summary>
         /// NET_Poll
         /// </summary>
-        public static void Poll()
+        public void Poll()
         {
             SetNetTime();
 
-            for( PollProcedure pp = _PollProcedureList; pp != null; pp = pp.next )
+            for( var pp = _PollProcedureList; pp != null; pp = pp.next )
             {
                 if( pp.nextTime > _Time )
                     break;
@@ -859,7 +861,7 @@ JustDoIt:
         }
 
         // double SetNetTime
-        public static Double SetNetTime()
+        public Double SetNetTime()
         {
             _Time = Timer.GetFloatTime();
             return _Time;
@@ -868,12 +870,12 @@ JustDoIt:
         /// <summary>
         /// NET_Slist_f
         /// </summary>
-        public static void Slist_f()
+        public void Slist_f()
         {
             if( _SlistInProgress )
                 return;
 
-            if( !net.SlistSilent )
+            if( !SlistSilent )
             {
                 Host.Console.Print( "Looking for Quake servers...\n" );
                 PrintSlistHeader();
@@ -885,7 +887,7 @@ JustDoIt:
             SchedulePollProcedure( _SlistSendProcedure, 0.0 );
             SchedulePollProcedure( _SlistPollProcedure, 0.1 );
 
-            net.HostCacheCount = 0;
+            HostCacheCount = 0;
         }
 
         /// <summary>
@@ -893,17 +895,17 @@ JustDoIt:
         /// Called by drivers when a new communications endpoint is required
         /// The sequence and buffer fields will be filled in properly
         /// </summary>
-        public static qsocket_t NewSocket()
+        public qsocket_t NewSocket()
         {
             if( _FreeSockets.Count == 0 )
                 return null;
 
-            if( net.ActiveConnections >= server.svs.maxclients )
+            if( ActiveConnections >= server.svs.maxclients )
                 return null;
 
             // get one from free list
             var i = _FreeSockets.Count - 1;
-            qsocket_t sock = _FreeSockets[i];
+            var sock = _FreeSockets[i];
             _FreeSockets.RemoveAt( i );
 
             // add it to active list
@@ -930,7 +932,7 @@ JustDoIt:
         }
 
         // pollProcedureList
-        private static void PrintSlistHeader()
+        private void PrintSlistHeader()
         {
             Host.Console.Print( "Server          Map             Users\n" );
             Host.Console.Print( "--------------- --------------- -----\n" );
@@ -938,12 +940,12 @@ JustDoIt:
         }
 
         // = { "hostname", "UNNAMED" };
-        private static void PrintSlist()
+        private void PrintSlist()
         {
             Int32 i;
             for( i = _SlistLastShown; i < HostCacheCount; i++ )
             {
-                hostcache_t hc = _HostCache[i];
+                var hc = _HostCache[i];
                 if( hc.maxusers != 0 )
                     Host.Console.Print( "{0,-15} {1,-15}\n {2,2}/{3,2}\n", Utilities.Copy( hc.name, 15 ), Utilities.Copy( hc.map, 15 ), hc.users, hc.maxusers );
                 else
@@ -952,7 +954,7 @@ JustDoIt:
             _SlistLastShown = i;
         }
 
-        private static void PrintSlistTrailer()
+        private void PrintSlistTrailer()
         {
             if( HostCacheCount != 0 )
                 Host.Console.Print( "== end list ==\n\n" );
@@ -963,7 +965,7 @@ JustDoIt:
         /// <summary>
         /// SchedulePollProcedure
         /// </summary>
-        private static void SchedulePollProcedure( PollProcedure proc, Double timeOffset )
+        private void SchedulePollProcedure( PollProcedure proc, Double timeOffset )
         {
             proc.nextTime = Timer.GetFloatTime() + timeOffset;
             PollProcedure pp, prev;
@@ -986,7 +988,7 @@ JustDoIt:
         }
 
         // NET_Listen_f
-        private static void Listen_f()
+        private void Listen_f()
         {
             if( Host.Command.Argc != 2 )
             {
@@ -996,9 +998,9 @@ JustDoIt:
 
             _IsListening = ( MathLib.atoi( Host.Command.Argv( 1 ) ) != 0 );
 
-            foreach( INetDriver driver in _Drivers )
+            foreach( var driver in _Drivers )
             {
-                if( driver.IsInitialized )
+                if( driver.IsInitialised )
                 {
                     driver.Listen( _IsListening );
                 }
@@ -1006,7 +1008,7 @@ JustDoIt:
         }
 
         // MaxPlayers_f
-        private static void MaxPlayers_f()
+        private void MaxPlayers_f()
         {
             if( Host.Command.Argc != 2 )
             {
@@ -1043,7 +1045,7 @@ JustDoIt:
         }
 
         // NET_Port_f
-        private static void Port_f()
+        private void Port_f()
         {
             if( Host.Command.Argc != 2 )
             {
@@ -1072,13 +1074,13 @@ JustDoIt:
         /// <summary>
         /// Slist_Send
         /// </summary>
-        private static void SlistSend( Object arg )
+        private void SlistSend( Object arg )
         {
             for( _DriverLevel = 0; _DriverLevel < _Drivers.Length; _DriverLevel++ )
             {
-                if( !net.SlistLocal && _DriverLevel == 0 )
+                if( !SlistLocal && _DriverLevel == 0 )
                     continue;
-                if( !_Drivers[_DriverLevel].IsInitialized )
+                if( !_Drivers[_DriverLevel].IsInitialised )
                     continue;
 
                 _Drivers[_DriverLevel].SearchForHosts( true );
@@ -1091,19 +1093,19 @@ JustDoIt:
         /// <summary>
         /// Slist_Poll
         /// </summary>
-        private static void SlistPoll( Object arg )
+        private void SlistPoll( Object arg )
         {
             for( _DriverLevel = 0; _DriverLevel < _Drivers.Length; _DriverLevel++ )
             {
-                if( !net.SlistLocal && _DriverLevel == 0 )
+                if( !SlistLocal && _DriverLevel == 0 )
                     continue;
-                if( !_Drivers[_DriverLevel].IsInitialized )
+                if( !_Drivers[_DriverLevel].IsInitialised )
                     continue;
 
                 _Drivers[_DriverLevel].SearchForHosts( false );
             }
 
-            if( !net.SlistSilent )
+            if( !SlistSilent )
                 PrintSlist();
 
             if( ( Timer.GetFloatTime() - _SlistStartTime ) < 1.5 )
@@ -1112,12 +1114,12 @@ JustDoIt:
                 return;
             }
 
-            if( !net.SlistSilent )
+            if( !SlistSilent )
                 PrintSlistTrailer();
 
             _SlistInProgress = false;
-            net.SlistSilent = false;
-            net.SlistLocal = true;
+            SlistSilent = false;
+            SlistLocal = true;
         }
 
         [StructLayout( LayoutKind.Sequential, Pack = 1 )]
@@ -1130,16 +1132,19 @@ JustDoIt:
         // Temporary fix to support pulling messagereader/writer from main code
 
 
-        public static Int32 FillFrom( this MessageWriter writer, Socket socket, ref EndPoint ep )
+    }
+
+    public static class MessageWriterExtensions
+    {
+        public static Int32 FillFrom( this MessageWriter writer, Network network, Socket socket, ref EndPoint ep )
         {
             writer.Clear( );
-            var result = LanDriver.Read( socket, writer._Buffer, writer._Buffer.Length, ref ep );
+            var result = network.LanDriver.Read( socket, writer._Buffer, writer._Buffer.Length, ref ep );
             if ( result >= 0 )
                 writer._Count = result;
             return result;
         }
     }
-
     /// <summary>
     /// NetHeader flags
     /// </summary>
@@ -1198,55 +1203,8 @@ JustDoIt:
         }
     }
 
-    internal class hostcache_t
-    {
-        public String name; //[16];
-        public String map; //[16];
-        public String cname; //[32];
-        public Int32 users;
-        public Int32 maxusers;
-        public Int32 driver;
-        public Int32 ldriver;
-        public EndPoint addr; // qsockaddr ?????
-    }
+    
 
-    // struct net_driver_t
-    internal interface INetDriver
-    {
-        String Name
-        {
-            get;
-        }
-
-        Boolean IsInitialized
-        {
-            get;
-        }
-
-        void Init( Host host );
-
-        void Listen( Boolean state );
-
-        void SearchForHosts( Boolean xmit );
-
-        qsocket_t Connect( String host );
-
-        qsocket_t CheckNewConnections();
-
-        Int32 GetMessage( qsocket_t sock );
-
-        Int32 SendMessage( qsocket_t sock, MessageWriter data );
-
-        Int32 SendUnreliableMessage( qsocket_t sock, MessageWriter data );
-
-        Boolean CanSendMessage( qsocket_t sock );
-
-        Boolean CanSendUnreliableMessage( qsocket_t sock );
-
-        void Close( qsocket_t sock );
-
-        void Shutdown();
-    } //net_driver_t;
 
     
 

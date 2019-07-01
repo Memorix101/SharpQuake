@@ -141,7 +141,7 @@ namespace SharpQuake
             if( String.IsNullOrEmpty( partial ) )
                 return null;
 
-            List<String> result = new List<String>();
+            var result = new List<String>();
             foreach( var cmd in _Functions.Keys )
             {
                 if( cmd.StartsWith( partial ) )
@@ -178,7 +178,7 @@ namespace SharpQuake
             _Args = null;
             _Argv = null;
 
-            List<String> argv = new List<String>( MAX_ARGS );
+            var argv = new List<String>( MAX_ARGS );
             while( !String.IsNullOrEmpty( text ) )
             {
                 if( _Argc == 1 )
@@ -215,7 +215,7 @@ namespace SharpQuake
                 return;		// no tokens
 
             // check functions
-            XCommand handler = Find( _Argv[0] ); // must search with comparison like Q_strcasecmp()
+            var handler = Find( _Argv[0] ); // must search with comparison like Q_strcasecmp()
             if( handler != null )
             {
                 handler();
@@ -254,7 +254,7 @@ namespace SharpQuake
             if( client.cls.demoplayback )
                 return;		// not really connected
 
-            MessageWriter writer = client.cls.message;
+            var writer = client.cls.message;
             writer.WriteByte( protocol.clc_stringcmd );
             if( !Host.Command.Argv( 0 ).Equals( "cmd" ) )
             {
@@ -305,7 +305,7 @@ namespace SharpQuake
             }
 
             // build the combined string to parse from
-            StringBuilder sb = new StringBuilder( 1024 );
+            var sb = new StringBuilder( 1024 );
             for( var i = 1; i < _Argc; i++ )
             {
                 if( !String.IsNullOrEmpty( _Argv[i] ) )
@@ -353,7 +353,7 @@ namespace SharpQuake
                 return;
             }
 
-            Byte[] bytes = FileSystem.LoadFile( _Argv[1] );
+            var bytes = FileSystem.LoadFile( _Argv[1] );
             if( bytes == null )
             {
                 Host.Console.Print( "couldn't exec {0}\n", _Argv[1] );
@@ -382,7 +382,7 @@ namespace SharpQuake
             if( _Argc == 1 )
             {
                 Host.Console.Print( "Current alias commands:\n" );
-                foreach( KeyValuePair<String, String> alias in _Aliases )
+                foreach( var alias in _Aliases )
                 {
                     Host.Console.Print( "{0} : {1}\n", alias.Key, alias.Value );
                 }
@@ -397,7 +397,7 @@ namespace SharpQuake
             }
 
             // copy the rest of the command line
-            StringBuilder sb = new StringBuilder( 1024 );
+            var sb = new StringBuilder( 1024 );
             for( var i = 2; i < _Argc; i++ )
             {
                 sb.Append( _Argv[i] );

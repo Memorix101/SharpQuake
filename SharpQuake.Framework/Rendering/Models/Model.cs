@@ -139,7 +139,7 @@ namespace SharpQuake.Framework
             this.nummarksurfaces = 0;
             this.marksurfaces = null;
 
-            foreach ( BspHull h in this.hulls )
+            foreach ( var h in this.hulls )
                 h.Clear( );
 
             this.numtextures = 0;

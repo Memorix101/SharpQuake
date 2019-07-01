@@ -131,9 +131,9 @@
     <Compile Include="Networking\net_loop.cs" />
     <Compile Include="Networking\net_tcp_ip.cs" />
     <Compile Include="Networking\net_vcr.cs" />
-    <Compile Include="System\Programs\pr_builtins.cs" />
-    <Compile Include="System\Programs\pr_edict.cs" />
-    <Compile Include="System\Programs\pr_exec.cs" />
+    <Compile Include="System\Programs\ProgramsBuiltIn.cs" />
+    <Compile Include="System\Programs\ProgramsEdict.cs" />
+    <Compile Include="System\Programs\ProgramsExec.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Networking\protocol.cs" />
     <Compile Include="Rendering\render.cs" />

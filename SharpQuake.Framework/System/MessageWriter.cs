@@ -77,7 +77,7 @@ namespace SharpQuake.Framework
             {
                 state = new State( );
             }
-            State st = GetState( state );
+            var st = GetState( state );
             if ( st.Buffer == null || st.Buffer.Length != _Buffer.Length )
             {
                 st.Buffer = new Byte[_Buffer.Length];
@@ -88,7 +88,7 @@ namespace SharpQuake.Framework
 
         public void RestoreState( Object state )
         {
-            State st = GetState( state );
+            var st = GetState( state );
             SetBufferSize( st.Buffer.Length );
             Buffer.BlockCopy( st.Buffer, 0, _Buffer, 0, _Buffer.Length );
             _Count = st.Count;
@@ -279,7 +279,7 @@ namespace SharpQuake.Framework
             {
                 throw new ArgumentNullException( );
             }
-            State st = state as State;
+            var st = state as State;
             if ( st == null )
             {
                 throw new ArgumentException( "Passed object is not a state!" );

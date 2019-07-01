@@ -130,7 +130,7 @@ namespace SharpQuake
                 if( _LineWidth < numchars )
                     numchars = _LineWidth;
 
-                Char[] tmp = _Text;
+                var tmp = _Text;
                 _Text = new Char[CON_TEXTSIZE];
                 Utilities.FillArray( _Text, ' ' );
 
@@ -390,7 +390,7 @@ namespace SharpQuake
         {
             if( _Log != null )
             {
-                Byte[] tmp = Encoding.UTF8.GetBytes( msg );
+                var tmp = Encoding.UTF8.GetBytes( msg );
                 _Log.Write( tmp, 0, tmp.Length );
             }
         }

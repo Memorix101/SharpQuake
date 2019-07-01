@@ -27,7 +27,7 @@ namespace SharpQuake
 {
     internal class net_loop : INetDriver
     {
-        private Boolean _IsInitialized;
+        private Boolean _IsInitialised;
         private Boolean _LocalConnectPending; // localconnectpending
         private qsocket_t _Client; // loop_client
         private qsocket_t _Server; // loop_server
@@ -42,11 +42,11 @@ namespace SharpQuake
             }
         }
 
-        public Boolean IsInitialized
+        public Boolean IsInitialised
         {
             get
             {
-                return _IsInitialized;
+                return _IsInitialised;
             }
         }
 
@@ -57,14 +57,14 @@ namespace SharpQuake
             set;
         }
 
-        public void Init( Host host )
+        public void Initialise( Object host )
         {
-            Host = host;
+            Host = ( Host ) host;
 
             if( client.cls.state == cactive_t.ca_dedicated )
                 return;// -1;
 
-            _IsInitialized = true;
+            _IsInitialised = true;
         }
 
         public void Listen( Boolean state )
@@ -77,17 +77,17 @@ namespace SharpQuake
             if( !server.sv.active )
                 return;
 
-            net.HostCacheCount = 1;
-            if( net.HostName == "UNNAMED" )
-                net.HostCache[0].name = "local";
+            Host.Network.HostCacheCount = 1;
+            if( Host.Network.HostName == "UNNAMED" )
+                Host.Network.HostCache[0].name = "local";
             else
-                net.HostCache[0].name = net.HostName;
+                Host.Network.HostCache[0].name = Host.Network.HostName;
 
-            net.HostCache[0].map = server.sv.name;
-            net.HostCache[0].users = net.ActiveConnections;
-            net.HostCache[0].maxusers = server.svs.maxclients;
-            net.HostCache[0].driver = net.DriverLevel;
-            net.HostCache[0].cname = "local";
+            Host.Network.HostCache[0].map = server.sv.name;
+            Host.Network.HostCache[0].users = Host.Network.ActiveConnections;
+            Host.Network.HostCache[0].maxusers = server.svs.maxclients;
+            Host.Network.HostCache[0].driver = Host.Network.DriverLevel;
+            Host.Network.HostCache[0].cname = "local";
         }
 
         public qsocket_t Connect( String host )
@@ -99,7 +99,7 @@ namespace SharpQuake
 
             if( _Client == null )
             {
-                _Client = net.NewSocket();
+                _Client = Host.Network.NewSocket();
                 if( _Client == null )
                 {
                     Host.Console.Print( "Loop_Connect: no qsocket available\n" );
@@ -112,7 +112,7 @@ namespace SharpQuake
 
             if( _Server == null )
             {
-                _Server = net.NewSocket();
+                _Server = Host.Network.NewSocket();
                 if( _Server == null )
                 {
                     Host.Console.Print( "Loop_Connect: no qsocket available\n" );
@@ -151,8 +151,8 @@ namespace SharpQuake
             var length = sock.receiveMessage[1] + ( sock.receiveMessage[2] << 8 );
 
             // alignment byte skipped here
-            net.Message.Clear();
-            net.Message.FillFrom( sock.receiveMessage, 4, length );
+            Host.Network.Message.Clear();
+            Host.Network.Message.FillFrom( sock.receiveMessage, 4, length );
 
             length = IntAlign( length + 4 );
             sock.receiveMessageLength -= length;
@@ -171,7 +171,7 @@ namespace SharpQuake
             if( sock.driverdata == null )
                 return -1;
 
-            qsocket_t sock2 = (qsocket_t)sock.driverdata;
+            var sock2 = (qsocket_t)sock.driverdata;
 
             if( ( sock2.receiveMessageLength + data.Length + 4 ) > NetworkDef.NET_MAXMESSAGE )
                 Utilities.Error( "Loop_SendMessage: overflow\n" );
@@ -200,7 +200,7 @@ namespace SharpQuake
             if( sock.driverdata == null )
                 return -1;
 
-            qsocket_t sock2 = (qsocket_t)sock.driverdata;
+            var sock2 = (qsocket_t)sock.driverdata;
 
             if( ( sock2.receiveMessageLength + data.Length + sizeof( Byte ) + sizeof( Int16 ) ) > NetworkDef.NET_MAXMESSAGE )
                 return 0;
@@ -251,7 +251,7 @@ namespace SharpQuake
 
         public void Shutdown()
         {
-            _IsInitialized = false;
+            _IsInitialised = false;
         }
 
         private Int32 IntAlign( Int32 value )

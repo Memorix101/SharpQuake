@@ -25,7 +25,7 @@ using SharpQuake.Framework;
 
 namespace SharpQuake
 {
-    public partial class progs
+    public partial class Programs
     {
         public Int32 Argc
         {
@@ -157,7 +157,7 @@ namespace SharpQuake
                 Host.Error( "PR_ExecuteProgram: NULL function" );
             }
 
-            ProgramFunction f = _Functions[fnum];
+            var f = _Functions[fnum];
 
             var runaway = 100000;
             Trace = false;
@@ -173,9 +173,9 @@ namespace SharpQuake
             {
                 s++;	// next statement
 
-                EVal* a = (EVal*)Get( _Statements[s].a );
-                EVal* b = (EVal*)Get( _Statements[s].b );
-                EVal* c = (EVal*)Get( _Statements[s].c );
+                var a = (EVal*)Get( _Statements[s].a );
+                var b = (EVal*)Get( _Statements[s].b );
+                var c = (EVal*)Get( _Statements[s].c );
 
                 if( --runaway == 0 )
                     RunError( "runaway loop error" );
@@ -405,15 +405,15 @@ namespace SharpQuake
                         if( a->function == 0 )
                             RunError( "NULL function" );
 
-                        ProgramFunction newf = _Functions[a->function];
+                        var newf = _Functions[a->function];
 
                         if( newf.first_statement < 0 )
                         {
                             // negative statements are built in functions
                             var i = -newf.first_statement;
-                            if( i >= QBuiltins.Count )
+                            if( i >= Host.ProgramsBuiltIn.Count )
                                 RunError( "Bad builtin call number" );
-                            QBuiltins.Execute( Host, i );
+                            Host.ProgramsBuiltIn.Execute( i );
                             break;
                         }
 
@@ -422,7 +422,7 @@ namespace SharpQuake
 
                     case ProgramOperator.OP_DONE:
                     case ProgramOperator.OP_RETURN:
-                        Single* ptr = ( Single* )_GlobalStructAddr;
+                        var ptr = ( Single* )_GlobalStructAddr;
                         Int32 sta = _Statements[s].a;
                         ptr[ProgramOperatorDef.OFS_RETURN + 0] = *( Single* )Get( sta );
                         ptr[ProgramOperatorDef.OFS_RETURN + 1] = *( Single* )Get( sta + 1 );
@@ -490,7 +490,7 @@ namespace SharpQuake
                 best = null;
                 for( var i = 0; i < _Functions.Length; i++ )
                 {
-                    ProgramFunction f = _Functions[i];
+                    var f = _Functions[i];
                     if( f.profile > max )
                     {
                         max = f.profile;
@@ -557,7 +557,7 @@ namespace SharpQuake
             _Stack[_Depth].f = Host.Programs.xFunction;
             for( var i = _Depth; i >= 0; i-- )
             {
-                ProgramFunction f = _Stack[i].f;
+                var f = _Stack[i].f;
 
                 if( f == null )
                 {
@@ -578,7 +578,7 @@ namespace SharpQuake
                 Host.Console.Print( "{0,10} ", OpNames[s.op] );
             }
 
-            ProgramOperator op = (ProgramOperator)s.op;
+            var op = (ProgramOperator)s.op;
             if( op == ProgramOperator.OP_IF || op == ProgramOperator.OP_IFNOT )
                 Host.Console.Print( "{0}branch {1}", GlobalString( s.a ), s.b );
             else if( op == ProgramOperator.OP_GOTO )

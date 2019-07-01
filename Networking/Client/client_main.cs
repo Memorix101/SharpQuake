@@ -102,7 +102,7 @@ namespace SharpQuake
 
             Disconnect();
 
-            cls.netcon = net.Connect( host );
+            cls.netcon = Host.Network.Connect( host );
             if( cls.netcon == null )
                 Host.Error( "CL_Connect: connect failed\n" );
 
@@ -190,7 +190,7 @@ namespace SharpQuake
 
             for( var i = 0; i < MAX_DLIGHTS; i++ )
             {
-                dlight_t dl = _DLights[i];
+                var dl = _DLights[i];
                 if( dl.die < cl.time || dl.radius == 0 )
                     continue;
 
@@ -216,7 +216,7 @@ namespace SharpQuake
 
             if( cls.signon == SIGNONS )
             {
-                usercmd_t cmd = new usercmd_t();
+                var cmd = new usercmd_t();
 
                 // get basic movement from keyboard
                 BaseMove( ref cmd );
@@ -238,13 +238,13 @@ namespace SharpQuake
             if( cls.message.IsEmpty )
                 return;		// no message at all
 
-            if( !net.CanSendMessage( cls.netcon ) )
+            if( !Host.Network.CanSendMessage( cls.netcon ) )
             {
                 Host.Console.DPrint( "CL_WriteToServer: can't send\n" );
                 return;
             }
 
-            if( net.SendMessage( cls.netcon, cls.message ) == -1 )
+            if( Host.Network.SendMessage( cls.netcon, cls.message ) == -1 )
                 Host.Error( "CL_WriteToServer: lost server connection" );
 
             cls.message.Clear();
@@ -308,9 +308,9 @@ namespace SharpQuake
                 Host.Console.DPrint( "Sending clc_disconnect\n" );
                 cls.message.Clear();
                 cls.message.WriteByte( protocol.clc_disconnect );
-                net.SendUnreliableMessage( cls.netcon, cls.message );
+                Host.Network.SendUnreliableMessage( cls.netcon, cls.message );
                 cls.message.Clear();
-                net.Close( cls.netcon );
+                Host.Network.Close( cls.netcon );
 
                 cls.state = cactive_t.ca_disconnected;
                 if( server.sv.active )
@@ -326,7 +326,7 @@ namespace SharpQuake
         {
             for( var i = 0; i < _State.num_entities; i++ )
             {
-                Entity ent = _Entities[i];
+                var ent = _Entities[i];
                 Host.Console.Print( "{0:d3}:", i );
                 if( ent.model == null )
                 {
@@ -355,7 +355,7 @@ namespace SharpQuake
             if( cls.demoplayback )
             {
                 // interpolate the angles
-                Vector3 angleDelta = cl.mviewangles[0] - cl.mviewangles[1];
+                var angleDelta = cl.mviewangles[0] - cl.mviewangles[1];
                 MathLib.CorrectAngles180( ref angleDelta );
                 cl.viewangles = cl.mviewangles[1] + frac * angleDelta;
             }
@@ -365,7 +365,7 @@ namespace SharpQuake
             // start on the entity after the world
             for( var i = 1; i < cl.num_entities; i++ )
             {
-                Entity ent = _Entities[i];
+                var ent = _Entities[i];
                 if( ent.model == null )
                 {
                     // empty slot
@@ -381,7 +381,7 @@ namespace SharpQuake
                     continue;
                 }
 
-                Vector3 oldorg = ent.origin;
+                var oldorg = ent.origin;
 
                 if( ent.forcelink )
                 {
@@ -394,13 +394,13 @@ namespace SharpQuake
                 {
                     // if the delta is large, assume a teleport and don't lerp
                     var f = frac;
-                    Vector3 delta = ent.msg_origins[0] - ent.msg_origins[1];
+                    var delta = ent.msg_origins[0] - ent.msg_origins[1];
                     if( Math.Abs( delta.X ) > 100 || Math.Abs( delta.Y ) > 100 || Math.Abs( delta.Z ) > 100 )
                         f = 1; // assume a teleportation, not a motion
 
                     // interpolate the origin and angles
                     ent.origin = ent.msg_origins[1] + f * delta;
-                    Vector3 angleDelta = ent.msg_angles[0] - ent.msg_angles[1];
+                    var angleDelta = ent.msg_angles[0] - ent.msg_angles[1];
                     MathLib.CorrectAngles180( ref angleDelta );
                     ent.angles = ent.msg_angles[1] + f * angleDelta;
                 }
@@ -414,7 +414,7 @@ namespace SharpQuake
 
                 if( ( ent.effects & EntityEffects.EF_MUZZLEFLASH ) != 0 )
                 {
-                    dlight_t dl = AllocDlight( i );
+                    var dl = AllocDlight( i );
                     dl.origin = ent.origin;
                     dl.origin.Z += 16;
                     Vector3 fv, rv, uv;
@@ -426,7 +426,7 @@ namespace SharpQuake
                 }
                 if( ( ent.effects & EntityEffects.EF_BRIGHTLIGHT ) != 0 )
                 {
-                    dlight_t dl = AllocDlight( i );
+                    var dl = AllocDlight( i );
                     dl.origin = ent.origin;
                     dl.origin.Z += 16;
                     dl.radius = 400 + ( MathLib.Random() & 31 );
@@ -434,7 +434,7 @@ namespace SharpQuake
                 }
                 if( ( ent.effects & EntityEffects.EF_DIMLIGHT ) != 0 )
                 {
-                    dlight_t dl = AllocDlight( i );
+                    var dl = AllocDlight( i );
                     dl.origin = ent.origin;
                     dl.radius = 200 + ( MathLib.Random() & 31 );
                     dl.die = ( Single ) cl.time + 0.001f;
@@ -451,7 +451,7 @@ namespace SharpQuake
                 else if( ( ent.model.flags & EF.EF_ROCKET ) != 0 )
                 {
                     render.RocketTrail( ref oldorg, ref ent.origin, 0 );
-                    dlight_t dl = AllocDlight( i );
+                    var dl = AllocDlight( i );
                     dl.origin = ent.origin;
                     dl.radius = 200;
                     dl.die = ( Single ) cl.time + 0.01f;
@@ -527,20 +527,20 @@ namespace SharpQuake
             cls.message.Clear();
 
             // clear other arrays
-            foreach( EFrag ef in _EFrags )
+            foreach( var ef in _EFrags )
                 ef.Clear();
-            foreach( Entity et in _Entities )
+            foreach( var et in _Entities )
                 et.Clear();
 
-            foreach( dlight_t dl in _DLights )
+            foreach( var dl in _DLights )
                 dl.Clear();
 
             Array.Clear( _LightStyle, 0, _LightStyle.Length );
 
-            foreach( Entity et in _TempEntities )
+            foreach( var et in _TempEntities )
                 et.Clear();
 
-            foreach( beam_t b in _Beams )
+            foreach( var b in _Beams )
                 b.Clear();
 
             //

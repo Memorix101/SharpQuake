@@ -146,7 +146,7 @@ namespace SharpQuake
             if (Utilities.SameText(command, "remap"))
             {
                 var ret = Host.Command.Argc - 2;
-                Byte[] remap = _Controller.Remap;
+                var remap = _Controller.Remap;
                 if (ret <= 0)
                 {
                     for ( var n = 1; n < 100; n++)

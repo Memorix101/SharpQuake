@@ -29,7 +29,7 @@ namespace SharpQuake
         public override void Show( Host host )
         {
             _MyName = client.Name;
-            _HostName = net.HostName;
+            _HostName = Host.Network.HostName;
             _Top = _OldTop = ( ( Int32 ) client.Color ) >> 4;
             _Bottom = _OldBottom = ( ( Int32 ) client.Color ) & 15;
 
@@ -89,7 +89,7 @@ namespace SharpQuake
                     // _Cursor == 4 (OK)
                     if ( _MyName != client.Name )
                         Host.CommandBuffer.AddText( String.Format( "name \"{0}\"\n", _MyName ) );
-                    if ( net.HostName != _HostName )
+                    if ( Host.Network.HostName != _HostName )
                         CVar.Set( "hostname", _HostName );
                     if ( _Top != _OldTop || _Bottom != _OldBottom )
                         Host.CommandBuffer.AddText( String.Format( "color {0} {1}\n", _Top, _Bottom ) );
@@ -146,7 +146,7 @@ namespace SharpQuake
         public override void Draw( )
         {
             Host.Menu.DrawTransPic( 16, 4, Drawer.CachePic( "gfx/qplaque.lmp" ) );
-            GLPic p = Drawer.CachePic( "gfx/p_multi.lmp" );
+            var p = Drawer.CachePic( "gfx/p_multi.lmp" );
             Host.Menu.DrawPic( ( 320 - p.width ) / 2, 4, p );
 
             Host.Menu.Print( 64, 40, "Hostname" );

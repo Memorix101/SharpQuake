@@ -206,7 +206,7 @@ namespace SharpQuake
             if( !_Controller.IsInitialized )
                 return;
 
-            sfx_t sfx = FindName( sample );
+            var sfx = FindName( sample );
             Host.Cache.Check( sfx.cache );
         }
 
@@ -231,10 +231,10 @@ namespace SharpQuake
                 return;
             }
 
-            channel_t ss = _Channels[_TotalChannels];
+            var ss = _Channels[_TotalChannels];
             _TotalChannels++;
 
-            sfxcache_t sc = LoadSound( sfx );
+            var sc = LoadSound( sfx );
             if( sc == null )
                 return;
 
@@ -265,7 +265,7 @@ namespace SharpQuake
             var vol = ( Int32 ) ( fvol * 255 );
 
             // pick a channel to play on
-            channel_t target_chan = PickChannel( entnum, entchannel );
+            var target_chan = PickChannel( entnum, entchannel );
             if( target_chan == null )
                 return;
 
@@ -282,7 +282,7 @@ namespace SharpQuake
                 return;		// not audible at all
 
             // new channel
-            sfxcache_t sc = LoadSound( sfx );
+            var sc = LoadSound( sfx );
             if( sc == null )
             {
                 target_chan.sfx = null;
@@ -297,7 +297,7 @@ namespace SharpQuake
             // a bit to keep it from just making the first one louder
             for( var i = AmbientDef.NUM_AMBIENTS; i < AmbientDef.NUM_AMBIENTS + MAX_DYNAMIC_CHANNELS; i++ )
             {
-                channel_t check = _Channels[i];
+                var check = _Channels[i];
                 if( check == target_chan )
                     continue;
 
@@ -334,7 +334,7 @@ namespace SharpQuake
             if( !_IsInitialized || _NoSound.Value != 0 )
                 return null;
 
-            sfx_t sfx = FindName( sample );
+            var sfx = FindName( sample );
 
             // cache it in
             if( _Precache.Value != 0 )
@@ -371,7 +371,7 @@ namespace SharpQuake
             //channel_t ch = channels + NUM_AMBIENTS;
             for( var i = AmbientDef.NUM_AMBIENTS; i < _TotalChannels; i++ )
             {
-                channel_t ch = _Channels[i];// channels + NUM_AMBIENTS;
+                var ch = _Channels[i];// channels + NUM_AMBIENTS;
                 if( ch.sfx == null )
                     continue;
 
@@ -426,7 +426,7 @@ namespace SharpQuake
                 var total = 0;
                 for( var i = 0; i < _TotalChannels; i++ )
                 {
-                    channel_t ch = _Channels[i];
+                    var ch = _Channels[i];
                     if( ch.sfx != null && ( ch.leftvol > 0 || ch.rightvol > 0 ) )
                     {
                         total++;
@@ -491,7 +491,7 @@ namespace SharpQuake
             if( !_Controller.IsInitialized )
                 return;
 
-            sfx_t sfx = PrecacheSound( sound );
+            var sfx = PrecacheSound( sound );
             if( sfx == null )
             {
                 Host.Console.Print( "S_LocalSound: can't cache {0}\n", sound );
@@ -541,7 +541,7 @@ namespace SharpQuake
                 if( k == -1 )
                     name += ".wav";
 
-                sfx_t sfx = PrecacheSound( name );
+                var sfx = PrecacheSound( name );
                 StartSound( _PlayHash++, 0, sfx, ref _ListenerOrigin, 1.0f, 1.0f );
             }
         }
@@ -556,7 +556,7 @@ namespace SharpQuake
                 if( k == -1 )
                     name += ".wav";
 
-                sfx_t sfx = PrecacheSound( name );
+                var sfx = PrecacheSound( name );
                 var vol = Single.Parse( Host.Command.Argv( i + 1 ) );
                 StartSound( _PlayVolHash++, 0, sfx, ref _ListenerOrigin, vol, 1.0f );
             }
@@ -568,8 +568,8 @@ namespace SharpQuake
             var total = 0;
             for( var i = 0; i < _NumSfx; i++ )
             {
-                sfx_t sfx = _KnownSfx[i];
-                sfxcache_t sc = (sfxcache_t) Host.Cache.Check( sfx.cache );
+                var sfx = _KnownSfx[i];
+                var sc = (sfxcache_t) Host.Cache.Check( sfx.cache );
                 if( sc == null )
                     continue;
 
@@ -628,7 +628,7 @@ namespace SharpQuake
             if( _NumSfx == MAX_SFX )
                 Utilities.Error( "S_FindName: out of sfx_t" );
 
-            sfx_t sfx = _KnownSfx[_NumSfx];
+            var sfx = _KnownSfx[_NumSfx];
             sfx.name = name;
 
             _NumSfx++;
@@ -647,8 +647,8 @@ namespace SharpQuake
             }
 
             // calculate stereo seperation and distance attenuation
-            sfx_t snd = ch.sfx;
-            Vector3 source_vec = ch.origin - _ListenerOrigin;
+            var snd = ch.sfx;
+            var source_vec = ch.origin - _ListenerOrigin;
 
             var dist = MathLib.Normalize( ref source_vec ) * ch.dist_mult;
             var dot = Vector3.Dot( _ListenerRight, source_vec );
@@ -681,21 +681,21 @@ namespace SharpQuake
         private static sfxcache_t LoadSound( sfx_t s )
         {
             // see if still in memory
-            sfxcache_t sc = (sfxcache_t) Host.Cache.Check( s.cache );
+            var sc = (sfxcache_t) Host.Cache.Check( s.cache );
             if( sc != null )
                 return sc;
 
             // load it in
             var namebuffer = "sound/" + s.name;
 
-            Byte[] data = FileSystem.LoadFile( namebuffer );
+            var data = FileSystem.LoadFile( namebuffer );
             if( data == null )
             {
                 Host.Console.Print( "Couldn't load {0}\n", namebuffer );
                 return null;
             }
 
-            wavinfo_t info = GetWavInfo( s.name, data );
+            var info = GetWavInfo( s.name, data );
             if( info.channels != 1 )
             {
                 Host.Console.Print( "{0} is a stereo sample\n", s.name );
@@ -771,7 +771,7 @@ namespace SharpQuake
             if( client.cl.worldmodel == null )
                 return;
 
-            MemoryLeaf l = Host.Model.PointInLeaf( ref _ListenerOrigin, client.cl.worldmodel );
+            var l = Host.Model.PointInLeaf( ref _ListenerOrigin, client.cl.worldmodel );
             if( l == null || _AmbientLevel.Value == 0 )
             {
                 for( var i = 0; i < AmbientDef.NUM_AMBIENTS; i++ )
@@ -781,7 +781,7 @@ namespace SharpQuake
 
             for( var i = 0; i < AmbientDef.NUM_AMBIENTS; i++ )
             {
-                channel_t chan = _Channels[i];
+                var chan = _Channels[i];
                 chan.sfx = _AmbientSfx[i];
 
                 var vol = _AmbientLevel.Value * l.ambient_sound_level[i];

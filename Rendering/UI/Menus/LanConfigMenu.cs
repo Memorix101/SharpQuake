@@ -49,7 +49,7 @@ namespace SharpQuake
             }
             if ( StartingGame && _Cursor == 2 )
                 _Cursor = 1;
-            _Port = net.DefaultHostPort;
+            _Port = Host.Network.DefaultHostPort;
             _PortName = _Port.ToString( );
 
             Host.Menu.ReturnOnError = false;
@@ -83,7 +83,7 @@ namespace SharpQuake
                         break;
 
                     Host.Menu.EnterSound = true;
-                    net.HostPort = _Port;
+                    Host.Network.HostPort = _Port;
 
                     if ( _Cursor == 1 )
                     {
@@ -160,7 +160,7 @@ namespace SharpQuake
         public override void Draw( )
         {
             Host.Menu.DrawTransPic( 16, 4, Drawer.CachePic( "gfx/qplaque.lmp" ) );
-            GLPic p = Drawer.CachePic( "gfx/p_multi.lmp" );
+            var p = Drawer.CachePic( "gfx/p_multi.lmp" );
             var basex = ( 320 - p.width ) / 2;
             Host.Menu.DrawPic( basex, 4, p );
 
@@ -174,7 +174,7 @@ namespace SharpQuake
             basex += 8;
 
             Host.Menu.Print( basex, 52, "Address:" );
-            Host.Menu.Print( basex + 9 * 8, 52, net.MyTcpIpAddress );
+            Host.Menu.Print( basex + 9 * 8, 52, Host.Network.MyTcpIpAddress );
 
             Host.Menu.Print( basex, _CursorTable[0], "Port" );
             Host.Menu.DrawTextBox( basex + 8 * 8, _CursorTable[0] - 8, 6, 1 );

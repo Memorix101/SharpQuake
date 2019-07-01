@@ -505,9 +505,9 @@ namespace SharpQuake
             Array.Clear( this.item_gettime, 0, this.item_gettime.Length );
             this.faceanimtime = 0;
 
-            foreach( cshift_t cs in this.cshifts )
+            foreach( var cs in this.cshifts )
                 cs.Clear();
-            foreach( cshift_t cs in this.prev_cshifts )
+            foreach( var cs in this.prev_cshifts )
                 cs.Clear();
 
             this.mviewangles[0] = Vector3.Zero;

@@ -48,7 +48,7 @@ namespace SharpQuake
             //
             for( var i = 0; i < sv.num_edicts; i++ )
             {
-                MemoryEdict ent = sv.edicts[i];
+                var ent = sv.edicts[i];
                 if( ent.free )
                     continue;
 
@@ -123,7 +123,7 @@ namespace SharpQuake
             // move origin
             Vector3f move;
             MathLib.VectorScale( ref ent.v.velocity, ( Single ) Host.FrameTime, out move );
-            trace_t trace = PushEntity( ent, ref move );
+            var trace = PushEntity( ent, ref move );
 
             if( trace.fraction == 1 )
                 return;
@@ -215,7 +215,7 @@ namespace SharpQuake
         /// </summary>
         private static void CheckWaterTransition( MemoryEdict ent )
         {
-            Vector3 org = Utilities.ToVector( ref ent.v.origin );
+            var org = Utilities.ToVector( ref ent.v.origin );
             var cont = PointContents( ref org );
 
             if( ent.v.watertype == 0 )
@@ -436,9 +436,9 @@ namespace SharpQuake
             var oldonground = ( Int32 ) ent.v.flags & EdictFlags.FL_ONGROUND;
             ent.v.flags = ( Int32 ) ent.v.flags & ~EdictFlags.FL_ONGROUND;
 
-            Vector3f oldorg = ent.v.origin;
-            Vector3f oldvel = ent.v.velocity;
-            trace_t steptrace = new trace_t();
+            var oldorg = ent.v.origin;
+            var oldvel = ent.v.velocity;
+            var steptrace = new trace_t();
             var clip = FlyMove( ent, ( Single ) Host.FrameTime, steptrace );
 
             if( ( clip & 2 ) == 0 )
@@ -456,16 +456,16 @@ namespace SharpQuake
             if( ( ( Int32 ) _Player.v.flags & EdictFlags.FL_WATERJUMP ) != 0 )
                 return;
 
-            Vector3f nosteporg = ent.v.origin;
-            Vector3f nostepvel = ent.v.velocity;
+            var nosteporg = ent.v.origin;
+            var nostepvel = ent.v.velocity;
 
             //
             // try moving up and forward to go up a step
             //
             ent.v.origin = oldorg;	// back to start pos
 
-            Vector3f upmove = Utilities.ZeroVector3f;
-            Vector3f downmove = upmove;
+            var upmove = Utilities.ZeroVector3f;
+            var downmove = upmove;
             upmove.z = STEPSIZE;
             downmove.z = ( Single ) ( -STEPSIZE + oldvel.z * Host.FrameTime );
 
@@ -494,7 +494,7 @@ namespace SharpQuake
                 WallFriction( ent, steptrace );
 
             // move down
-            trace_t downtrace = PushEntity( ent, ref downmove );	// FIXME: don't link?
+            var downtrace = PushEntity( ent, ref downmove );	// FIXME: don't link?
 
             if( downtrace.plane.normal.Z > 0.7 )
             {
@@ -525,10 +525,10 @@ namespace SharpQuake
         /// </summary>
         private static Int32 TryUnstick( MemoryEdict ent, ref Vector3f oldvel )
         {
-            Vector3f oldorg = ent.v.origin;
-            Vector3f dir = Utilities.ZeroVector3f;
+            var oldorg = ent.v.origin;
+            var dir = Utilities.ZeroVector3f;
 
-            trace_t steptrace = new trace_t();
+            var steptrace = new trace_t();
             for( var i = 0; i < 8; i++ )
             {
                 // try pushing a little in an axial direction
@@ -610,10 +610,10 @@ namespace SharpQuake
                 return;
 
             // cut the tangential velocity
-            Vector3 vel = Utilities.ToVector( ref ent.v.velocity );
+            var vel = Utilities.ToVector( ref ent.v.velocity );
             var i = Vector3.Dot( trace.plane.normal, vel );
-            Vector3 into = trace.plane.normal * i;
-            Vector3 side = vel - into;
+            var into = trace.plane.normal * i;
+            var side = vel - into;
 
             ent.v.velocity.x = side.X * ( 1 + d );
             ent.v.velocity.y = side.Y * ( 1 + d );
@@ -632,7 +632,7 @@ namespace SharpQuake
                 return;
             }
 
-            Vector3f org = ent.v.origin;
+            var org = ent.v.origin;
             ent.v.origin = ent.v.oldorigin;
             if( TestEntityPosition( ent ) == null )
             {
@@ -739,8 +739,8 @@ namespace SharpQuake
                 Host.Console.Print( "Got a NaN origin on {0}\n", Host.Programs.GetString( ent.v.classname ) );
             }
 
-            Vector3 max = Vector3.One * _MaxVelocity.Value;
-            Vector3 min = -Vector3.One * _MaxVelocity.Value;
+            var max = Vector3.One * _MaxVelocity.Value;
+            var min = -Vector3.One * _MaxVelocity.Value;
             MathLib.Clamp( ref ent.v.velocity, ref min, ref max, out ent.v.velocity );
         }
 
@@ -755,12 +755,12 @@ namespace SharpQuake
         /// </summary>
         private static Int32 FlyMove( MemoryEdict ent, Single time, trace_t steptrace )
         {
-            Vector3f original_velocity = ent.v.velocity;
-            Vector3f primal_velocity = ent.v.velocity;
+            var original_velocity = ent.v.velocity;
+            var primal_velocity = ent.v.velocity;
 
             var numbumps = 4;
             var blocked = 0;
-            Vector3[] planes = new Vector3[MAX_CLIP_PLANES];
+            var planes = new Vector3[MAX_CLIP_PLANES];
             var numplanes = 0;
             var time_left = time;
 
@@ -772,7 +772,7 @@ namespace SharpQuake
                 Vector3f end;
                 MathLib.VectorMA( ref ent.v.origin, time_left, ref ent.v.velocity, out end );
 
-                trace_t trace = Move( ref ent.v.origin, ref ent.v.mins, ref ent.v.maxs, ref end, 0, ent );
+                var trace = Move( ref ent.v.origin, ref ent.v.mins, ref ent.v.maxs, ref end, 0, ent );
 
                 if( trace.allsolid )
                 {	// entity is trapped in another solid
@@ -833,7 +833,7 @@ namespace SharpQuake
                 //
                 // modify original_velocity so it parallels all of the clip planes
                 //
-                Vector3f new_velocity = default( Vector3f );
+                var new_velocity = default( Vector3f );
                 Int32 i, j;
                 for( i = 0; i < numplanes; i++ )
                 {
@@ -862,7 +862,7 @@ namespace SharpQuake
                         ent.v.velocity = default( Vector3f );
                         return 7;
                     }
-                    Vector3 dir = Vector3.Cross( planes[0], planes[1] );
+                    var dir = Vector3.Cross( planes[0], planes[1] );
                     var d = dir.X * ent.v.velocity.x + dir.Y * ent.v.velocity.y + dir.Z * ent.v.velocity.z;
                     MathLib.Copy( ref dir, out ent.v.velocity );
                     MathLib.VectorScale( ref ent.v.velocity, d, out ent.v.velocity );
@@ -936,10 +936,10 @@ namespace SharpQuake
             MathLib.VectorAdd( ref pusher.v.absmin, ref move, out mins );
             MathLib.VectorAdd( ref pusher.v.absmax, ref move, out maxs );
 
-            Vector3f pushorig = pusher.v.origin;
+            var pushorig = pusher.v.origin;
 
-            MemoryEdict[] moved_edict = new MemoryEdict[QDef.MAX_EDICTS];
-            Vector3f[] moved_from = new Vector3f[QDef.MAX_EDICTS];
+            var moved_edict = new MemoryEdict[QDef.MAX_EDICTS];
+            var moved_from = new Vector3f[QDef.MAX_EDICTS];
 
             // move the pusher to it's final position
 
@@ -951,7 +951,7 @@ namespace SharpQuake
             var num_moved = 0;
             for( var e = 1; e < sv.num_edicts; e++ )
             {
-                MemoryEdict check = sv.edicts[e];
+                var check = sv.edicts[e];
                 if( check.free )
                     continue;
                 if( check.v.movetype == Movetypes.MOVETYPE_PUSH ||
@@ -976,7 +976,7 @@ namespace SharpQuake
                 if( check.v.movetype != Movetypes.MOVETYPE_WALK )
                     check.v.flags = ( Int32 ) check.v.flags & ~EdictFlags.FL_ONGROUND;
 
-                Vector3f entorig = check.v.origin;
+                var entorig = check.v.origin;
                 moved_from[num_moved] = entorig;
                 moved_edict[num_moved] = check;
                 num_moved++;
@@ -987,7 +987,7 @@ namespace SharpQuake
                 pusher.v.solid = Solids.SOLID_BSP;
 
                 // if it is still inside the pusher, block
-                MemoryEdict block = TestEntityPosition( check );
+                var block = TestEntityPosition( check );
                 if( block != null )
                 {
                     // fail the move

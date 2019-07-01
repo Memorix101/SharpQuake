@@ -80,7 +80,7 @@ namespace SharpQuake.Framework
             _Handle = GCHandle.Alloc( _Data, GCHandleType.Pinned );
             _DataPtr = _Handle.AddrOfPinnedObject();
 
-            WadInfo header = Utilities.BytesToStructure<WadInfo>( _Data, 0 );
+            var header = Utilities.BytesToStructure<WadInfo>( _Data, 0 );
 
             if( header.identification[0] != 'W' || header.identification[1] != 'A' ||
                 header.identification[2] != 'D' || header.identification[3] != '2' )
@@ -94,14 +94,14 @@ namespace SharpQuake.Framework
 
             for( var i = 0; i < numlumps; i++ )
             {
-                IntPtr ptr = new IntPtr( _DataPtr.ToInt64() + infotableofs + i * lumpInfoSize );
-                WadLumpInfo lump = (WadLumpInfo)Marshal.PtrToStructure( ptr, typeof( WadLumpInfo ) );
+                var ptr = new IntPtr( _DataPtr.ToInt64() + infotableofs + i * lumpInfoSize );
+                var lump = (WadLumpInfo)Marshal.PtrToStructure( ptr, typeof( WadLumpInfo ) );
                 lump.filepos = EndianHelper.LittleLong( lump.filepos );
                 lump.size = EndianHelper.LittleLong( lump.size );
                 if( lump.type == TYP_QPIC )
                 {
                     ptr = new IntPtr( _DataPtr.ToInt64() + lump.filepos );
-                    WadPicHeader pic = (WadPicHeader)Marshal.PtrToStructure( ptr, typeof( WadPicHeader ) );
+                    var pic = (WadPicHeader)Marshal.PtrToStructure( ptr, typeof( WadPicHeader ) );
                     SwapPic( pic );
                     Marshal.StructureToPtr( pic, ptr, true );
                 }

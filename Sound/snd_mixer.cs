@@ -57,14 +57,14 @@ namespace SharpQuake
                 // paint in the channels.
                 for( var i = 0; i < _TotalChannels; i++ )
                 {
-                    channel_t ch = _Channels[i];
+                    var ch = _Channels[i];
 
                     if( ch.sfx == null )
                         continue;
                     if( ch.leftvol == 0 && ch.rightvol == 0 )
                         continue;
 
-                    sfxcache_t sc = LoadSound( ch.sfx );
+                    var sc = LoadSound( ch.sfx );
                     if( sc == null )
                         continue;
 
@@ -121,7 +121,7 @@ namespace SharpQuake
 
             var lscale = ch.leftvol >> 3;
             var rscale = ch.rightvol >> 3;
-            Byte[] sfx = sc.data;
+            var sfx = sc.data;
             var offset = ch.pos;
 
             for( var i = 0; i < count; i++ )
@@ -138,7 +138,7 @@ namespace SharpQuake
         {
             var leftvol = ch.leftvol;
             var rightvol = ch.rightvol;
-            Byte[] sfx = sc.data;
+            var sfx = sc.data;
             var offset = ch.pos * 2; // sfx = (signed short *)sc->data + ch->pos;
 
             for( var i = 0; i < count; i++ )
@@ -168,8 +168,8 @@ namespace SharpQuake
             var out_idx = 0; //_PaintedTime * _shm.channels & out_mask;
             var step = 3 - _shm.channels;
             var snd_vol = ( Int32 ) ( _Volume.Value * 256 );
-            Byte[] buffer = _Controller.LockBuffer();
-            Union4b uval = Union4b.Empty;
+            var buffer = _Controller.LockBuffer();
+            var uval = Union4b.Empty;
             Int32 val, srcIndex = 0;
             var useLeft = true;
             var destCount = ( count * ( _shm.samplebits >> 3 ) ) & out_mask;
@@ -238,11 +238,11 @@ namespace SharpQuake
         {
             var snd_vol = ( Int32 ) ( _Volume.Value * 256 );
             var lpaintedtime = _PaintedTime;
-            Byte[] buffer = _Controller.LockBuffer();
+            var buffer = _Controller.LockBuffer();
             var srcOffset = 0;
             var destCount = 0;//uze
             var destOffset = 0;
-            Union4b uval = Union4b.Empty;
+            var uval = Union4b.Empty;
 
             while( lpaintedtime < endtime )
             {

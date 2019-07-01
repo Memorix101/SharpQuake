@@ -186,11 +186,11 @@ namespace SharpQuake
             Host.Command.Add( "vid_describemode", DescribeMode_f );
             Host.Command.Add( "vid_describemodes", DescribeModes_f );
 
-            DisplayDevice dev = MainWindow.DisplayDevice;
+            var dev = MainWindow.DisplayDevice;
 
             // Enumerate available modes, skip 8 bpp modes, and group by refresh rates
-            List<VidMode> tmp = new List<VidMode>( dev.AvailableResolutions.Count );
-            foreach( DisplayResolution res in dev.AvailableResolutions )
+            var tmp = new List<VidMode>( dev.AvailableResolutions.Count );
+            foreach( var res in dev.AvailableResolutions )
             {
                 if( res.BitsPerPixel <= 8 )
                     continue;
@@ -202,7 +202,7 @@ namespace SharpQuake
                 if( tmp.Exists( SameMode ) )
                     continue;
 
-                VidMode mode = new VidMode();
+                var mode = new VidMode();
                 mode.width = res.Width;
                 mode.height = res.Height;
                 mode.bpp = res.BitsPerPixel;
@@ -211,7 +211,7 @@ namespace SharpQuake
             }
             _Modes = tmp.ToArray();
 
-            VidMode mode1 = new VidMode();
+            var mode1 = new VidMode();
             mode1.width = dev.Width;
             mode1.height = dev.Height;
             mode1.bpp = dev.BitsPerPixel;
@@ -224,7 +224,7 @@ namespace SharpQuake
             {
                 width = MathLib.atoi( CommandLine.Argv( i + 1 ) );
 
-                foreach( DisplayResolution res in dev.AvailableResolutions )
+                foreach( var res in dev.AvailableResolutions )
                 {
                     if( res.Width == width )
                     {
@@ -302,7 +302,7 @@ namespace SharpQuake
             _DefModeNum = -1;
             for( i = 0; i < _Modes.Length; i++ )
             {
-                VidMode m = _Modes[i];
+                var m = _Modes[i];
                 if( m.width != mode1.width || m.height != mode1.height )
                     continue;
 
@@ -340,7 +340,7 @@ namespace SharpQuake
                 Utilities.Error( "Bad video mode\n" );
             }
 
-            VidMode mode = _Modes[modenum];
+            var mode = _Modes[modenum];
 
             // so Con_Printfs don't mess us up by forcing vid and snd updates
             var temp = Scr.IsDisabledForLoading;
@@ -349,8 +349,8 @@ namespace SharpQuake
             cd_audio.Pause();
 
             // Set either the fullscreen or windowed mode
-            DisplayDevice dev = MainWindow.DisplayDevice;
-            MainWindow form = MainWindow.Instance;
+            var dev = MainWindow.DisplayDevice;
+            var form = MainWindow.Instance;
             if( _Windowed )
             {
                 try
@@ -392,7 +392,7 @@ namespace SharpQuake
                 form.WindowBorder = WindowBorder.Hidden;
             }
 
-            VidDef vid = Scr.vid;
+            var vid = Scr.vid;
             if( vid.conheight > dev.Height )
                 vid.conheight = dev.Height;
             if( vid.conwidth > dev.Width )
@@ -427,7 +427,7 @@ namespace SharpQuake
             if( mode < 0 || mode >= _Modes.Length )
                 return String.Empty;
 
-            VidMode m = _Modes[mode];
+            var m = _Modes[mode];
             return String.Format( "{0}x{1}x{2} {3}", m.width, m.height, m.bpp, _Windowed ? "windowed" : "fullscreen" );
         }
 
@@ -441,8 +441,8 @@ namespace SharpQuake
             // 8 8 8 encoding
             //
             var offset = 0;
-            Byte[] pal = palette;
-            UInt32[] table = _8to24table;
+            var pal = palette;
+            var table = _8to24table;
             for( var i = 0; i < table.Length; i++ )
             {
                 UInt32 r = pal[offset + 0];
@@ -457,7 +457,7 @@ namespace SharpQuake
 
             // JACK: 3D distance calcs - k is last closest, l is the distance.
             // FIXME: Precalculate this and cache to disk.
-            Union4b val = Union4b.Empty;
+            var val = Union4b.Empty;
             for( UInt32 i = 0; i < ( 1 << 15 ); i++ )
             {
                 // Maps

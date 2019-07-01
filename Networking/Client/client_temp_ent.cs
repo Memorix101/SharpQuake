@@ -68,7 +68,7 @@ namespace SharpQuake
             // update lightning
             for( var i = 0; i < MAX_BEAMS; i++ )
             {
-                beam_t b = _Beams[i];
+                var b = _Beams[i];
                 if( b.model == null || b.endtime < cl.time )
                     continue;
 
@@ -79,7 +79,7 @@ namespace SharpQuake
                 }
 
                 // calculate pitch and yaw
-                Vector3 dist = b.end - b.start;
+                var dist = b.end - b.start;
                 Single yaw, pitch, forward;
 
                 if( dist.Y == 0 && dist.X == 0 )
@@ -103,11 +103,11 @@ namespace SharpQuake
                 }
 
                 // add new entities for the lightning
-                Vector3 org = b.start;
+                var org = b.start;
                 var d = MathLib.Normalize( ref dist );
                 while( d > 0 )
                 {
-                    Entity ent = NewTempEntity();
+                    var ent = NewTempEntity();
                     if( ent == null )
                         return;
 
@@ -136,7 +136,7 @@ namespace SharpQuake
             if( _NumTempEntities == MAX_TEMP_ENTITIES )
                 return null;
 
-            Entity ent = _TempEntities[_NumTempEntities];
+            var ent = _TempEntities[_NumTempEntities];
             _NumTempEntities++;
             _VisEdicts[NumVisEdicts] = ent;
             NumVisEdicts++;
@@ -153,23 +153,23 @@ namespace SharpQuake
         {
             Vector3 pos;
             dlight_t dl;
-            var type = net.Reader.ReadByte();
+            var type = Host.Network.Reader.ReadByte();
             switch( type )
             {
                 case protocol.TE_WIZSPIKE:			// spike hitting wall
-                    pos = net.Reader.ReadCoords();
+                    pos = Host.Network.Reader.ReadCoords();
                     render.RunParticleEffect( ref pos, ref Utilities.ZeroVector, 20, 30 );
                     snd.StartSound( -1, 0, _SfxWizHit, ref pos, 1, 1 );
                     break;
 
                 case protocol.TE_KNIGHTSPIKE:			// spike hitting wall
-                    pos = net.Reader.ReadCoords();
+                    pos = Host.Network.Reader.ReadCoords();
                     render.RunParticleEffect( ref pos, ref Utilities.ZeroVector, 226, 20 );
                     snd.StartSound( -1, 0, _SfxKnigtHit, ref pos, 1, 1 );
                     break;
 
                 case protocol.TE_SPIKE:			// spike hitting wall
-                    pos = net.Reader.ReadCoords();
+                    pos = Host.Network.Reader.ReadCoords();
 #if GLTEST
                     Test_Spawn (pos);
 #else
@@ -190,7 +190,7 @@ namespace SharpQuake
                     break;
 
                 case protocol.TE_SUPERSPIKE:			// super spike hitting wall
-                    pos = net.Reader.ReadCoords();
+                    pos = Host.Network.Reader.ReadCoords();
                     render.RunParticleEffect( ref pos, ref Utilities.ZeroVector, 0, 20 );
 
                     if( ( MathLib.Random() % 5 ) != 0 )
@@ -208,12 +208,12 @@ namespace SharpQuake
                     break;
 
                 case protocol.TE_GUNSHOT:			// bullet hitting wall
-                    pos = net.Reader.ReadCoords();
+                    pos = Host.Network.Reader.ReadCoords();
                     render.RunParticleEffect( ref pos, ref Utilities.ZeroVector, 0, 20 );
                     break;
 
                 case protocol.TE_EXPLOSION:			// rocket explosion
-                    pos = net.Reader.ReadCoords();
+                    pos = Host.Network.Reader.ReadCoords();
                     render.ParticleExplosion( ref pos );
                     dl = AllocDlight( 0 );
                     dl.origin = pos;
@@ -224,7 +224,7 @@ namespace SharpQuake
                     break;
 
                 case protocol.TE_TAREXPLOSION:			// tarbaby explosion
-                    pos = net.Reader.ReadCoords();
+                    pos = Host.Network.Reader.ReadCoords();
                     render.BlobExplosion( ref pos );
                     snd.StartSound( -1, 0, _SfxRExp3, ref pos, 1, 1 );
                     break;
@@ -248,19 +248,19 @@ namespace SharpQuake
                 // PGM 01/21/97
 
                 case protocol.TE_LAVASPLASH:
-                    pos = net.Reader.ReadCoords();
+                    pos = Host.Network.Reader.ReadCoords();
                     render.LavaSplash( ref pos );
                     break;
 
                 case protocol.TE_TELEPORT:
-                    pos = net.Reader.ReadCoords();
+                    pos = Host.Network.Reader.ReadCoords();
                     render.TeleportSplash( ref pos );
                     break;
 
                 case protocol.TE_EXPLOSION2:				// color mapped explosion
-                    pos = net.Reader.ReadCoords();
-                    var colorStart = net.Reader.ReadByte();
-                    var colorLength = net.Reader.ReadByte();
+                    pos = Host.Network.Reader.ReadCoords();
+                    var colorStart = Host.Network.Reader.ReadByte();
+                    var colorLength = Host.Network.Reader.ReadByte();
                     render.ParticleExplosion( ref pos, colorStart, colorLength );
                     dl = AllocDlight( 0 );
                     dl.origin = pos;
@@ -281,15 +281,15 @@ namespace SharpQuake
         /// </summary>
         private static void ParseBeam( Model m )
         {
-            var ent = net.Reader.ReadShort();
+            var ent = Host.Network.Reader.ReadShort();
 
-            Vector3 start = net.Reader.ReadCoords();
-            Vector3 end = net.Reader.ReadCoords();
+            var start = Host.Network.Reader.ReadCoords();
+            var end = Host.Network.Reader.ReadCoords();
 
             // override any beam with the same entity
             for( var i = 0; i < MAX_BEAMS; i++ )
             {
-                beam_t b = _Beams[i];
+                var b = _Beams[i];
                 if( b.entity == ent )
                 {
                     b.entity = ent;
@@ -304,7 +304,7 @@ namespace SharpQuake
             // find a free beam
             for( var i = 0; i < MAX_BEAMS; i++ )
             {
-                beam_t b = _Beams[i];
+                var b = _Beams[i];
                 if( b.model == null || b.endtime < cl.time )
                 {
                     b.entity = ent;

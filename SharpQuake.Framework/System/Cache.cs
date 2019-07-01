@@ -46,7 +46,7 @@ namespace SharpQuake.Framework
         /// </summary>
         public Object Check( CacheUser c )
         {
-            CacheEntry cs = ( CacheEntry ) c;
+            var cs = ( CacheEntry ) c;
 
             if ( cs == null || cs.data == null )
                 return null;
@@ -112,7 +112,7 @@ namespace SharpQuake.Framework
             if ( c.data == null )
                 Utilities.Error( "Cache_Free: not allocated" );
 
-            CacheEntry entry = ( CacheEntry ) c;
+            var entry = ( CacheEntry ) c;
             entry.Remove( );
         }
 
@@ -122,7 +122,7 @@ namespace SharpQuake.Framework
             if ( BytesAllocated + size > Capacity )
                 return null;
 
-            CacheEntry result = new CacheEntry( this, size );
+            var result = new CacheEntry( this, size );
             Head.InsertBefore( result );
             result.LRUInstertAfter( Head );
             return result;

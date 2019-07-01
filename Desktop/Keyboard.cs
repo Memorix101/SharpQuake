@@ -362,7 +362,7 @@ namespace SharpQuake
         /// </summary>
         public void WriteBindings( Stream dest )
         {
-            StringBuilder sb = new StringBuilder( 4096 );
+            var sb = new StringBuilder( 4096 );
             for ( var i = 0; i < 256; i++ )
             {
                 if ( !String.IsNullOrEmpty( _Bindings[i] ) )
@@ -374,7 +374,7 @@ namespace SharpQuake
                     sb.AppendLine( "\"" );
                 }
             }
-            Byte[] buf = Encoding.ASCII.GetBytes( sb.ToString( ) );
+            var buf = Encoding.ASCII.GetBytes( sb.ToString( ) );
             dest.Write( buf, 0, buf.Length );
         }
 
@@ -415,7 +415,7 @@ namespace SharpQuake
                 return ( ( Char ) keynum ).ToString( );
             }
 
-            foreach ( KeyName kn in KeysDef.KeyNames )
+            foreach ( var kn in KeysDef.KeyNames )
             {
                 if ( kn.keynum == keynum )
                     return kn.name;
@@ -435,7 +435,7 @@ namespace SharpQuake
             if ( str.Length == 1 )
                 return str[0];
 
-            foreach ( KeyName keyname in KeysDef.KeyNames )
+            foreach ( var keyname in KeysDef.KeyNames )
             {
                 if ( Utilities.SameText( keyname.name, str ) )
                     return keyname.keynum;
@@ -498,7 +498,7 @@ namespace SharpQuake
 
             // copy the rest of the command line
             // start out with a null string
-            StringBuilder sb = new StringBuilder( 1024 );
+            var sb = new StringBuilder( 1024 );
             for ( var i = 2; i < c; i++ )
             {
                 if ( i > 2 )
@@ -579,8 +579,8 @@ namespace SharpQuake
             {
                 // command completion
                 var txt = new String( _Lines[_EditLine], 1, KeysDef.MAXCMDLINE - 1 ).TrimEnd( '\0', ' ' );
-                String[] cmds = Host.Command.Complete( txt );
-                String[] vars = CVar.CompleteName( txt );
+                var cmds = Host.Command.Complete( txt );
+                var vars = CVar.CompleteName( txt );
                 String match = null;
                 if ( cmds != null )
                 {

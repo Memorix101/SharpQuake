@@ -231,7 +231,7 @@ namespace SharpQuake
             offset += 4 * 4;
             _NoTextureMip.offsets[3] = offset;
 
-            Byte[] dest = _NoTextureMip.pixels;
+            var dest = _NoTextureMip.pixels;
             for( var m = 0; m < 4; m++ )
             {
                 offset = _NoTextureMip.offsets[m];
@@ -300,14 +300,14 @@ namespace SharpQuake
         /// </summary>
         public static void RemoveEfrags( Entity ent )
         {
-            EFrag ef = ent.efrag;
+            var ef = ent.efrag;
 
             while( ef != null )
             {
-                MemoryLeaf leaf = ef.leaf;
+                var leaf = ef.leaf;
                 while( true )
                 {
-                    EFrag walk = leaf.efrags;
+                    var walk = leaf.efrags;
                     if( walk == null )
                         break;
                     if( walk == ef )
@@ -320,7 +320,7 @@ namespace SharpQuake
                         leaf = (MemoryLeaf)( Object ) walk.leafnext;
                 }
 
-                EFrag old = ef;
+                var old = ef;
                 ef = ef.entnext;
 
                 // put it on the free list
@@ -342,7 +342,7 @@ namespace SharpQuake
             var top = client.cl.scores[playernum].colors & 0xf0;
             var bottom = ( client.cl.scores[playernum].colors & 15 ) << 4;
 
-            Byte[] translate = new Byte[256];
+            var translate = new Byte[256];
             for( var i = 0; i < 256; i++ )
                 translate[i] = ( Byte ) i;
 
@@ -363,13 +363,13 @@ namespace SharpQuake
             // locate the original skin pixels
             //
             _CurrentEntity = client.Entities[1 + playernum];
-            Model model = _CurrentEntity.model;
+            var model = _CurrentEntity.model;
             if( model == null )
                 return;		// player doesn't have a model yet
             if( model.type != ModelType.mod_alias )
                 return; // only translate skins on alias models
 
-            aliashdr_t paliashdr = Host.Model.GetExtraData( model );
+            var paliashdr = Host.Model.GetExtraData( model );
             var s = paliashdr.skinwidth * paliashdr.skinheight;
             if( ( s & 3 ) != 0 )
                 Utilities.Error( "R_TranslateSkin: s&3" );
@@ -400,11 +400,11 @@ namespace SharpQuake
             UInt32 fracstep, frac;
             Int32 destOffset;
 
-            UInt32[] translate32 = new UInt32[256];
+            var translate32 = new UInt32[256];
             for( var i = 0; i < 256; i++ )
                 translate32[i] = vid.Table8to24[translate[i]];
 
-            UInt32[] dest = new UInt32[512 * 256];
+            var dest = new UInt32[512 * 256];
             destOffset = 0;
             fracstep = ( UInt32 ) ( inwidth * 0x10000 / scaled_width );
             for( var i = 0; i < scaled_height; i++, destOffset += scaled_width )
@@ -423,7 +423,7 @@ namespace SharpQuake
                     frac += fracstep;
                 }
             }
-            GCHandle handle = GCHandle.Alloc( dest, GCHandleType.Pinned );
+            var handle = GCHandle.Alloc( dest, GCHandleType.Pinned );
             try
             {
                 GL.TexImage2D( TextureTarget.Texture2D, 0, Drawer.SolidFormat, scaled_width, scaled_height, 0,
@@ -487,7 +487,7 @@ namespace SharpQuake
             // identify sky texture
             _SkyTextureNum = -1;
             _MirrorTextureNum = -1;
-            Model world = client.cl.worldmodel;
+            var world = client.cl.worldmodel;
             for( var i = 0; i < world.numtextures; i++ )
             {
                 if( world.textures[i] == null )
@@ -559,7 +559,7 @@ namespace SharpQuake
                 ( Single ) ( Math.Atan2( render.ViewPn.Y, render.ViewPn.X ) / Math.PI * 180.0 ),
                 -_RefDef.viewangles.Z );
 
-            Entity ent = client.ViewEntity;
+            var ent = client.ViewEntity;
             if( client.NumVisEdicts < client.MAX_VISEDICTS )
             {
                 client.VisEdicts[client.NumVisEdicts] = ent;
@@ -592,7 +592,7 @@ namespace SharpQuake
             GL.LoadMatrix( ref _BaseWorldMatrix );
 
             GL.Color4( 1, 1, 1, _MirrorAlpha.Value );
-            MemorySurface s = client.cl.worldmodel.textures[_MirrorTextureNum].texturechain;
+            var s = client.cl.worldmodel.textures[_MirrorTextureNum].texturechain;
             for( ; s != null; s = s.texturechain )
                 RenderBrushPoly( s );
             client.cl.worldmodel.textures[_MirrorTextureNum].texturechain = null;
@@ -637,13 +637,13 @@ namespace SharpQuake
             // add dynamic lights
             for( var lnum = 0; lnum < client.MAX_DLIGHTS; lnum++ )
             {
-                dlight_t dl = client.DLights[lnum];
+                var dl = client.DLights[lnum];
                 if( dl.radius == 0 )
                     continue;
                 if( dl.die < client.cl.time )
                     continue;
 
-                Vector3 dist = _CurrentEntity.origin - dl.origin;
+                var dist = _CurrentEntity.origin - dl.origin;
                 var add = dl.radius - dist.Length;
                 if( add > 0 )
                     _AmbientLight += add;
@@ -734,8 +734,8 @@ namespace SharpQuake
         {
             // don't even bother culling, because it's just a single
             // polygon without a surface cache
-            mspriteframe_t frame = GetSpriteFrame( e );
-            msprite_t psprite = (msprite_t)e.model.cache.data; // Uze: changed from _CurrentEntity to e
+            var frame = GetSpriteFrame( e );
+            var psprite = (msprite_t)e.model.cache.data; // Uze: changed from _CurrentEntity to e
 
             Vector3 v_forward, right, up;
             if( psprite.type == SPR.SPR_ORIENTED )
@@ -759,7 +759,7 @@ namespace SharpQuake
             GL.Begin( PrimitiveType.Quads );
 
             GL.TexCoord2( 0f, 1 );
-            Vector3 point = e.origin + up * frame.down + right * frame.left;
+            var point = e.origin + up * frame.down + right * frame.left;
             GL.Vertex3( point );
 
             GL.TexCoord2( 0f, 0 );
@@ -783,7 +783,7 @@ namespace SharpQuake
         /// </summary>
         private static mspriteframe_t GetSpriteFrame( Entity currententity )
         {
-            msprite_t psprite = (msprite_t)currententity.model.cache.data;
+            var psprite = (msprite_t)currententity.model.cache.data;
             var frame = currententity.frame;
 
             if( ( frame >= psprite.numframes ) || ( frame < 0 ) )
@@ -799,8 +799,8 @@ namespace SharpQuake
             }
             else
             {
-                mspritegroup_t pspritegroup = (mspritegroup_t)psprite.frames[frame].frameptr;
-                Single[] pintervals = pspritegroup.intervals;
+                var pspritegroup = (mspritegroup_t)psprite.frames[frame].frameptr;
+                var pintervals = pspritegroup.intervals;
                 var numframes = pspritegroup.numframes;
                 var fullinterval = pintervals[numframes - 1];
                 var time = ( Single ) client.cl.time + currententity.syncbase;
@@ -825,9 +825,9 @@ namespace SharpQuake
         /// </summary>
         private static void DrawAliasModel( Entity e )
         {
-            Model clmodel = _CurrentEntity.model;
-            Vector3 mins = _CurrentEntity.origin + clmodel.mins;
-            Vector3 maxs = _CurrentEntity.origin + clmodel.maxs;
+            var clmodel = _CurrentEntity.model;
+            var mins = _CurrentEntity.origin + clmodel.mins;
+            var maxs = _CurrentEntity.origin + clmodel.maxs;
 
             if( CullBox( ref mins, ref maxs ) )
                 return;
@@ -849,7 +849,7 @@ namespace SharpQuake
             {
                 if( client.DLights[lnum].die >= client.cl.time )
                 {
-                    Vector3 dist = _CurrentEntity.origin - client.DLights[lnum].origin;
+                    var dist = _CurrentEntity.origin - client.DLights[lnum].origin;
                     var add = client.DLights[lnum].radius - dist.Length;
                     if( add > 0 )
                     {
@@ -888,7 +888,7 @@ namespace SharpQuake
             //
             // locate the proper data
             //
-            aliashdr_t paliashdr = Host.Model.GetExtraData( _CurrentEntity.model );
+            var paliashdr = Host.Model.GetExtraData( _CurrentEntity.model );
 
             _AliasPolys += paliashdr.numtris;
 
@@ -902,7 +902,7 @@ namespace SharpQuake
             RotateForEntity( e );
             if( clmodel.name == "progs/eyes.mdl" && _glDoubleEyes.Value != 0 )
             {
-                Vector3 v = paliashdr.scale_origin;
+                var v = paliashdr.scale_origin;
                 v.Z -= ( 22 + 8 );
                 GL.Translate( v );
                 // double size of eyes, since they are really hard to see in gl
@@ -964,9 +964,9 @@ namespace SharpQuake
         {
             var lheight = _CurrentEntity.origin.Z - _LightSpot.Z;
             Single height = 0;
-            trivertx_t[] verts = paliashdr.posedata;
+            var verts = paliashdr.posedata;
             var voffset = posenum * paliashdr.poseverts;
-            Int32[] order = paliashdr.commands;
+            var order = paliashdr.commands;
 
             height = -lheight + 1.0f;
             var orderOffset = 0;
@@ -993,7 +993,7 @@ namespace SharpQuake
                     orderOffset += 2;
 
                     // normals and vertexes come from the frame list
-                    Vector3 point = new Vector3(
+                    var point = new Vector3(
                         verts[voffset].v[0] * paliashdr.scale.X + paliashdr.scale_origin.X,
                         verts[voffset].v[1] * paliashdr.scale.Y + paliashdr.scale_origin.Y,
                         verts[voffset].v[2] * paliashdr.scale.Z + paliashdr.scale_origin.Z
@@ -1042,9 +1042,9 @@ namespace SharpQuake
         {
             _LastPoseNum = posenum;
 
-            trivertx_t[] verts = paliashdr.posedata;
+            var verts = paliashdr.posedata;
             var vertsOffset = posenum * paliashdr.poseverts;
-            Int32[] order = paliashdr.commands;
+            var order = paliashdr.commands;
             var orderOffset = 0;
 
             while( true )

@@ -237,7 +237,7 @@ namespace SharpQuake
         public override void Draw( )
         {
             Host.Menu.DrawTransPic( 16, 4, Drawer.CachePic( "gfx/qplaque.lmp" ) );
-            GLPic p = Drawer.CachePic( "gfx/p_multi.lmp" );
+            var p = Drawer.CachePic( "gfx/p_multi.lmp" );
             Host.Menu.DrawPic( ( 320 - p.width ) / 2, 4, p );
 
             Host.Menu.DrawTextBox( 152, 32, 10, 1 );

@@ -111,7 +111,7 @@ namespace SharpQuake
             }
 
             // if the quake hostname isn't set, set it to the machine name
-            if( net.HostName == "UNNAMED" )
+            if( Host.Network.HostName == "UNNAMED" )
             {
                 IPAddress addr;
                 if( !IPAddress.TryParse( hostName, out addr ) )
@@ -133,7 +133,7 @@ namespace SharpQuake
                     var ipaddr = CommandLine.Argv( i2 + 1 );
                     if( !IPAddress.TryParse( ipaddr, out _MyAddress ) )
                         Utilities.Error( "{0} is not a valid IP address!", ipaddr );
-                    net.MyTcpIpAddress = ipaddr;
+                    Host.Network.MyTcpIpAddress = ipaddr;
                 }
                 else
                 {
@@ -143,7 +143,7 @@ namespace SharpQuake
             else
             {
                 _MyAddress = IPAddress.Any;
-                net.MyTcpIpAddress = "INADDR_ANY";
+                Host.Network.MyTcpIpAddress = "INADDR_ANY";
             }
 
             _ControlSocket = OpenSocket( 0 );
@@ -153,7 +153,7 @@ namespace SharpQuake
                 return false;
             }
 
-            _BroadcastAddress = new IPEndPoint( IPAddress.Broadcast, net.HostPort );
+            _BroadcastAddress = new IPEndPoint( IPAddress.Broadcast, Host.Network.HostPort );
 
             _IsInitialized = true;
             Host.Console.Print( "TCP/IP Initialized\n" );
@@ -176,7 +176,7 @@ namespace SharpQuake
             {
                 if( _AcceptSocket == null )
                 {
-                    _AcceptSocket = OpenSocket( net.HostPort );
+                    _AcceptSocket = OpenSocket( Host.Network.HostPort );
                     if( _AcceptSocket == null )
                         Utilities.Error( "UDP_Listen: Unable to open accept socket\n" );
                 }
@@ -233,7 +233,7 @@ namespace SharpQuake
         {
             try
             {
-                IPHostEntry entry = Dns.GetHostEntry( ( (IPEndPoint)addr ).Address );
+                var entry = Dns.GetHostEntry( ( (IPEndPoint)addr ).Address );
                 return entry.HostName;
             }
             catch( SocketException )
@@ -249,7 +249,7 @@ namespace SharpQuake
                 IPAddress addr;
                 var i = name.IndexOf( ':' );
                 String saddr;
-                var port = net.HostPort;
+                var port = Host.Network.HostPort;
                 if( i != -1 )
                 {
                     saddr = name.Substring( 0, i );
@@ -264,8 +264,8 @@ namespace SharpQuake
                 {
                     return new IPEndPoint( addr, port );
                 }
-                IPHostEntry entry = Dns.GetHostEntry( name );
-                foreach( IPAddress addr2 in entry.AddressList )
+                var entry = Dns.GetHostEntry( name );
+                foreach( var addr2 in entry.AddressList )
                 {
                     return new IPEndPoint( addr2, port );
                 }
@@ -281,8 +281,8 @@ namespace SharpQuake
             if( addr1.AddressFamily != addr2.AddressFamily )
                 return -1;
 
-            IPEndPoint ep1 = addr1 as IPEndPoint;
-            IPEndPoint ep2 = addr2 as IPEndPoint;
+            var ep1 = addr1 as IPEndPoint;
+            var ep2 = addr2 as IPEndPoint;
 
             if( ep1 == null || ep2 == null )
                 return -1;

@@ -36,12 +36,12 @@ namespace SharpQuake
                     switch ( _Cursor )
                     {
                         case 0:
-                            if ( net.TcpIpAvailable )
+                            if ( Host.Network.TcpIpAvailable )
                                 MenuBase.LanConfigMenu.Show( Host );
                             break;
 
                         case 1:
-                            if ( net.TcpIpAvailable )
+                            if ( Host.Network.TcpIpAvailable )
                                 MenuBase.LanConfigMenu.Show( Host );
                             break;
 
@@ -56,7 +56,7 @@ namespace SharpQuake
         public override void Draw( )
         {
             Host.Menu.DrawTransPic( 16, 4, Drawer.CachePic( "gfx/qplaque.lmp" ) );
-            GLPic p = Drawer.CachePic( "gfx/p_multi.lmp" );
+            var p = Drawer.CachePic( "gfx/p_multi.lmp" );
             Host.Menu.DrawPic( ( 320 - p.width ) / 2, 4, p );
             Host.Menu.DrawTransPic( 72, 32, Drawer.CachePic( "gfx/mp_menu.lmp" ) );
 
@@ -64,7 +64,7 @@ namespace SharpQuake
 
             Host.Menu.DrawTransPic( 54, 32 + _Cursor * 20, Drawer.CachePic( String.Format( "gfx/menudot{0}.lmp", f + 1 ) ) );
 
-            if ( net.TcpIpAvailable )
+            if ( Host.Network.TcpIpAvailable )
                 return;
             Host.Menu.PrintWhite( ( 320 / 2 ) - ( ( 27 * 8 ) / 2 ), 148, "No Communications Available" );
         }

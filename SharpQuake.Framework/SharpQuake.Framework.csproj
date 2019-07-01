@@ -94,6 +94,8 @@
     <Compile Include="IO\Wad\WadLumpInfo.cs" />
     <Compile Include="IO\Wad\WadPicHeader.cs" />
     <Compile Include="Networking\Client\UserCommand.cs" />
+    <Compile Include="Networking\HostCache.cs" />
+    <Compile Include="Networking\INetDriver.cs" />
     <Compile Include="Networking\INetLanDriver.cs" />
     <Compile Include="Networking\NetworkWrapper.cs" />
     <Compile Include="Networking\QuakeSocket.cs" />

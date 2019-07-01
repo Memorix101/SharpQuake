@@ -311,7 +311,7 @@ namespace SharpQuake
             if ( MainWindow.Instance == null || MainWindow.Instance.IsDisposed )
                 return;
 
-            MainWindow form = MainWindow.Instance;
+            var form = MainWindow.Instance;
             if( form == null )
                 return;
 
@@ -474,13 +474,13 @@ namespace SharpQuake
                 return;
             }
 
-            FileStream fs = FileSystem.OpenWrite( path, true );
+            var fs = FileSystem.OpenWrite( path, true );
             if( fs == null )
             {
                 Host.Console.Print( "SCR_ScreenShot_f: Couldn't create a file\n" );
                 return;
             }
-            using( BinaryWriter writer = new BinaryWriter( fs ) )
+            using( var writer = new BinaryWriter( fs ) )
             {
                 // Write tga header (18 bytes)
                 writer.Write( ( UInt16 ) 0 );
@@ -495,7 +495,7 @@ namespace SharpQuake
                 writer.Write( ( Byte ) 24 ); // pixel size
                 writer.Write( ( UInt16 ) 0 );
 
-                Byte[] buffer = new Byte[glWidth * glHeight * 3];
+                var buffer = new Byte[glWidth * glHeight * 3];
                 GL.ReadPixels( glX, glY, glWidth, glHeight, PixelFormat.Rgb, PixelType.UnsignedByte, buffer );
 
                 // swap 012 to 102
@@ -527,7 +527,7 @@ namespace SharpQuake
             INativeWindow window = MainWindow.Instance;
             if( window != null )
             {
-                Size size = window.ClientSize;
+                var size = window.ClientSize;
                 glWidth = size.Width;
                 glHeight = size.Height;
             }
@@ -590,7 +590,7 @@ namespace SharpQuake
 
             var h = _VidDef.height - sbar.Lines;
 
-            refdef_t rdef = render.RefDef;
+            var rdef = render.RefDef;
             rdef.vrect.width = ( Int32 ) ( _VidDef.width * size );
             if( rdef.vrect.width < 96 )
             {
@@ -678,7 +678,7 @@ namespace SharpQuake
         // SCR_TileClear
         private static void TileClear()
         {
-            refdef_t rdef = render.RefDef;
+            var rdef = render.RefDef;
             if( rdef.vrect.x > 0 )
             {
                 // left
@@ -735,7 +735,7 @@ namespace SharpQuake
             if( !_DrawLoading )
                 return;
 
-            GLPic pic = Drawer.CachePic( "gfx/loading.lmp" );
+            var pic = Drawer.CachePic( "gfx/loading.lmp" );
             Drawer.DrawPic( ( vid.width - pic.width ) / 2, ( vid.height - 48 - pic.height ) / 2, pic );
         }
 
@@ -809,7 +809,7 @@ namespace SharpQuake
             if( !client.cl.paused )
                 return;
 
-            GLPic pic = Drawer.CachePic( "gfx/pause.lmp" );
+            var pic = Drawer.CachePic( "gfx/pause.lmp" );
             Drawer.DrawPic( ( vid.width - pic.width ) / 2, ( vid.height - 48 - pic.height ) / 2, pic );
         }
 
@@ -844,7 +844,7 @@ namespace SharpQuake
             if( _CenterLines <= 4 )
                 y = ( Int32 ) ( _VidDef.height * 0.35 );
 
-            String[] lines = _CenterString.Split( '\n' );
+            var lines = _CenterString.Split( '\n' );
             for( var i = 0; i < lines.Length; i++ )
             {
                 var line = lines[i].TrimEnd( '\r' );

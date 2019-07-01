@@ -33,7 +33,7 @@ namespace SharpQuake
         // GetWavinfo
         private static wavinfo_t GetWavInfo( String name, Byte[] wav )
         {
-            wavinfo_t info = new wavinfo_t();
+            var info = new wavinfo_t();
 
             if( wav == null )
                 return info;
@@ -43,7 +43,7 @@ namespace SharpQuake
             //{
             //    fs.Write(wav, 0, wav.Length);
             //}
-            WavHelper helper = new WavHelper( wav );
+            var helper = new WavHelper( wav );
 
             var offset = 0;
 
@@ -130,7 +130,7 @@ namespace SharpQuake
         // ResampleSfx
         private static void ResampleSfx( sfx_t sfx, Int32 inrate, Int32 inwidth, ByteArraySegment data )
         {
-            sfxcache_t sc = (sfxcache_t) Host.Cache.Check( sfx.cache );
+            var sc = (sfxcache_t) Host.Cache.Check( sfx.cache );
             if( sc == null )
                 return;
 
@@ -151,7 +151,7 @@ namespace SharpQuake
             sc.data = new Byte[outcount * sc.width]; // uze: check this later!!!
 
             // resample / decimate to the current source rate
-            Byte[] src = data.Data;
+            var src = data.Data;
             if( stepscale == 1 && inwidth == 1 && sc.width == 1 )
             {
                 // fast special case
@@ -167,7 +167,7 @@ namespace SharpQuake
                 var samplefrac = 0;
                 var fracstep = ( Int32 ) ( stepscale * 256 );
                 Int32 sample;
-                Int16[] sa = new Int16[1];
+                var sa = new Int16[1];
                 for( var i = 0; i < outcount; i++ )
                 {
                     var srcsample = samplefrac >> 8;

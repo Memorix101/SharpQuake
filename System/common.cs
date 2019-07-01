@@ -153,7 +153,7 @@ namespace SharpQuake
         {
             FileSystem._StaticRegistered = false;
 
-            Byte[] buf = FileSystem.LoadFile("gfx/pop.lmp");
+            var buf = FileSystem.LoadFile("gfx/pop.lmp");
             if (buf == null || buf.Length < 256)
             {
                 MainWindow.Host.Console.Print("Playing shareware version.\n");
@@ -162,7 +162,7 @@ namespace SharpQuake
                 return;
             }
 
-            UInt16[] check = new UInt16[buf.Length / 2];
+            var check = new UInt16[buf.Length / 2];
             Buffer.BlockCopy(buf, 0, check, 0, buf.Length);
             for ( var i = 0; i < 128; i++)
             {

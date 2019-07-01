@@ -44,7 +44,7 @@ namespace SharpQuake
             trace_t trace;
 
             // try the move
-            Vector3f oldorg = ent.v.origin;
+            var oldorg = ent.v.origin;
             Vector3f neworg;
             MathLib.VectorAdd( ref ent.v.origin, ref move, out neworg );
 
@@ -55,7 +55,7 @@ namespace SharpQuake
                 for( var i = 0; i < 2; i++ )
                 {
                     MathLib.VectorAdd( ref ent.v.origin, ref move, out neworg );
-                    MemoryEdict enemy = ProgToEdict( ent.v.enemy );
+                    var enemy = ProgToEdict( ent.v.enemy );
                     if( i == 0 && enemy != sv.edicts[0] )
                     {
                         var dz = ent.v.origin.z - enemy.v.origin.z;
@@ -87,7 +87,7 @@ namespace SharpQuake
 
             // push down from a step height above the wished position
             neworg.z += STEPSIZE;
-            Vector3f end = neworg;
+            var end = neworg;
             end.z -= STEPSIZE * 2;
 
             trace = Move( ref neworg, ref ent.v.mins, ref ent.v.maxs, ref end, 0, ent );
@@ -181,9 +181,9 @@ RealCheck:
             // the midpoint must be within 16 of the bottom
             start.X = ( mins.x + maxs.x ) * 0.5f;
             start.Y = ( mins.y + maxs.y ) * 0.5f;
-            Vector3 stop = start;
+            var stop = start;
             stop.Z -= 2 * STEPSIZE;
-            trace_t trace = Move( ref start, ref Utilities.ZeroVector, ref Utilities.ZeroVector, ref stop, 1, ent );
+            var trace = Move( ref start, ref Utilities.ZeroVector, ref Utilities.ZeroVector, ref stop, 1, ent );
 
             if( trace.fraction == 1.0 )
                 return false;
@@ -214,13 +214,13 @@ RealCheck:
         /// </summary>
         public static void MoveToGoal()
         {
-            MemoryEdict ent = ProgToEdict( Host.Programs.GlobalStruct.self );
-            MemoryEdict goal = ProgToEdict( ent.v.goalentity );
-            var dist = QBuiltins.GetFloat( ProgramOperatorDef.OFS_PARM0 );
+            var ent = ProgToEdict( Host.Programs.GlobalStruct.self );
+            var goal = ProgToEdict( ent.v.goalentity );
+            var dist = Host.ProgramsBuiltIn.GetFloat( ProgramOperatorDef.OFS_PARM0 );
 
             if( ( ( Int32 ) ent.v.flags & ( EdictFlags.FL_ONGROUND | EdictFlags.FL_FLY | EdictFlags.FL_SWIM ) ) == 0 )
             {
-                QBuiltins.ReturnFloat( 0 );
+                Host.ProgramsBuiltIn.ReturnFloat( 0 );
                 return;
             }
 
@@ -264,7 +264,7 @@ RealCheck:
         private static Boolean StepDirection( MemoryEdict ent, Single yaw, Single dist )
         {
             ent.v.ideal_yaw = yaw;
-            QBuiltins.PF_changeyaw();
+            Host.ProgramsBuiltIn.PF_changeyaw();
 
             yaw = ( Single ) ( yaw * Math.PI * 2.0 / 360 );
             Vector3f move;
@@ -272,7 +272,7 @@ RealCheck:
             move.y = ( Single ) Math.Sin( yaw ) * dist;
             move.z = 0;
 
-            Vector3f oldorigin = ent.v.origin;
+            var oldorigin = ent.v.origin;
             if( MoveStep( ent, ref move, false ) )
             {
                 var delta = ent.v.angles.y - ent.v.ideal_yaw;

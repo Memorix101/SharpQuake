@@ -88,9 +88,9 @@ namespace SharpQuake
             sv.datagram.WriteCoord( org.Y );
             sv.datagram.WriteCoord( org.Z );
 
-            Vector3 max = Vector3.One * 127;
-            Vector3 min = Vector3.One * -128;
-            Vector3 v = Vector3.Clamp( dir * 16, min, max );
+            var max = Vector3.One * 127;
+            var min = Vector3.One * -128;
+            var v = Vector3.Clamp( dir * 16, min, max );
             sv.datagram.WriteChar( ( Int32 ) v.X );
             sv.datagram.WriteChar( ( Int32 ) v.Y );
             sv.datagram.WriteChar( ( Int32 ) v.Z );
@@ -169,16 +169,16 @@ namespace SharpQuake
         /// </summary>
         public static void DropClient( Boolean crash )
         {
-            client_t client = Host.HostClient;
+            var client = Host.HostClient;
 
             if( !crash )
             {
                 // send any final messages (don't check for errors)
-                if( net.CanSendMessage( client.netconnection ) )
+                if( Host.Network.CanSendMessage( client.netconnection ) )
                 {
-                    MessageWriter msg = client.message;
+                    var msg = client.message;
                     msg.WriteByte( protocol.svc_disconnect );
-                    net.SendMessage( client.netconnection, msg );
+                    Host.Network.SendMessage( client.netconnection, msg );
                 }
 
                 if( client.edict != null && client.spawned )
@@ -195,19 +195,19 @@ namespace SharpQuake
             }
 
             // break the net connection
-            net.Close( client.netconnection );
+            Host.Network.Close( client.netconnection );
             client.netconnection = null;
 
             // free the client (the body stays around)
             client.active = false;
             client.name = null;
             client.old_frags = -999999;
-            net.ActiveConnections--;
+            Host.Network.ActiveConnections--;
 
             // send notification to all clients
             for( var i = 0; i < SharpQuake.server.svs.maxclients; i++ )
             {
-                client_t cl = SharpQuake.server.svs.clients[i];
+                var cl = SharpQuake.server.svs.clients[i];
                 if( !cl.active )
                     continue;
 
@@ -271,14 +271,14 @@ namespace SharpQuake
 
                 if( Host.HostClient.message.Length > 0 || Host.HostClient.dropasap )
                 {
-                    if( !net.CanSendMessage( Host.HostClient.netconnection ) )
+                    if( !Host.Network.CanSendMessage( Host.HostClient.netconnection ) )
                         continue;
 
                     if( Host.HostClient.dropasap )
                         DropClient( false );	// went to another level
                     else
                     {
-                        if( net.SendMessage( Host.HostClient.netconnection, Host.HostClient.message ) == -1 )
+                        if( Host.Network.SendMessage( Host.HostClient.netconnection, Host.HostClient.message ) == -1 )
                             DropClient( true );	// if the message couldn't send, kick off
                         Host.HostClient.message.Clear();
                         Host.HostClient.last_message = Host.RealTime;
@@ -338,7 +338,7 @@ namespace SharpQuake
             for( var i = 0; i < svs.maxclients; i++ )
                 if( svs.clients[i].active && svs.clients[i].spawned )
                 {
-                    MessageWriter msg = svs.clients[i].message;
+                    var msg = svs.clients[i].message;
                     msg.WriteByte( protocol.svc_print );
                     msg.WriteString( tmp );
                 }
@@ -354,7 +354,7 @@ namespace SharpQuake
             //
             if( ent.v.dmg_take != 0 || ent.v.dmg_save != 0 )
             {
-                MemoryEdict other = ProgToEdict( ent.v.dmg_inflictor );
+                var other = ProgToEdict( ent.v.dmg_inflictor );
                 msg.WriteByte( protocol.svc_damage );
                 msg.WriteByte( ( Int32 ) ent.v.dmg_save );
                 msg.WriteByte( ( Int32 ) ent.v.dmg_take );
@@ -499,7 +499,7 @@ namespace SharpQuake
             //
             while( true )
             {
-                qsocket_t ret = net.CheckNewConnections();
+                var ret = Host.Network.CheckNewConnections();
                 if( ret == null )
                     break;
 
@@ -516,7 +516,7 @@ namespace SharpQuake
                 svs.clients[i].netconnection = ret;
                 ConnectClient( i );
 
-                net.ActiveConnections++;
+                Host.Network.ActiveConnections++;
             }
         }
 
@@ -548,7 +548,7 @@ namespace SharpQuake
         public static void SpawnServer( String server )
         {
             // let's not have any servers with no name
-            if( String.IsNullOrEmpty( net.HostName ) )
+            if( String.IsNullOrEmpty( Host.Network.HostName ) )
                 CVar.Set( "hostname", "UNNAMED" );
 
             Scr.CenterTimeOff = 0;
@@ -695,7 +695,7 @@ namespace SharpQuake
         {
             for( var i = 1; i < sv.num_edicts; i++ )
             {
-                MemoryEdict ent = sv.edicts[i];
+                var ent = sv.edicts[i];
                 ent.v.effects = ( Int32 ) ent.v.effects & ~EntityEffects.EF_MUZZLEFLASH;
             }
         }
@@ -707,10 +707,10 @@ namespace SharpQuake
         /// </summary>
         private static void SendNop( client_t client )
         {
-            MessageWriter msg = new MessageWriter( 4 );
+            var msg = new MessageWriter( 4 );
             msg.WriteChar( protocol.svc_nop );
 
-            if( net.SendUnreliableMessage( client.netconnection, msg ) == -1 )
+            if( Host.Network.SendUnreliableMessage( client.netconnection, msg ) == -1 )
                 DropClient( true );	// if the message couldn't send, kick off
             client.last_message = Host.RealTime;
         }
@@ -720,7 +720,7 @@ namespace SharpQuake
         /// </summary>
         private static Boolean SendClientDatagram( client_t client )
         {
-            MessageWriter msg = new MessageWriter( QDef.MAX_DATAGRAM ); // Uze todo: make static?
+            var msg = new MessageWriter( QDef.MAX_DATAGRAM ); // Uze todo: make static?
 
             msg.WriteByte( protocol.svc_time );
             msg.WriteFloat( ( Single ) sv.time );
@@ -735,7 +735,7 @@ namespace SharpQuake
                 msg.Write( sv.datagram.Data, 0, sv.datagram.Length );
 
             // send the datagram
-            if( net.SendUnreliableMessage( client.netconnection, msg ) == -1 )
+            if( Host.Network.SendUnreliableMessage( client.netconnection, msg ) == -1 )
             {
                 DropClient( true );// if the message couldn't send, kick off
                 return false;
@@ -750,13 +750,13 @@ namespace SharpQuake
         private static void WriteEntitiesToClient( MemoryEdict clent, MessageWriter msg )
         {
             // find the client's PVS
-            Vector3 org = Utilities.ToVector( ref clent.v.origin ) + Utilities.ToVector( ref clent.v.view_ofs );
-            Byte[] pvs = FatPVS( ref org );
+            var org = Utilities.ToVector( ref clent.v.origin ) + Utilities.ToVector( ref clent.v.view_ofs );
+            var pvs = FatPVS( ref org );
 
             // send over all entities (except the client) that touch the pvs
             for( var e = 1; e < sv.num_edicts; e++ )
             {
-                MemoryEdict ent = sv.edicts[e];
+                var ent = sv.edicts[e];
                 // ignore if not touching a PV leaf
                 if( ent != clent )	// clent is ALLWAYS sent
                 {
@@ -890,15 +890,15 @@ namespace SharpQuake
                 {
                     if( node.contents != ContentsDef.CONTENTS_SOLID )
                     {
-                        Byte[] pvs = Host.Model.LeafPVS( (MemoryLeaf)node, sv.worldmodel );
+                        var pvs = Host.Model.LeafPVS( (MemoryLeaf)node, sv.worldmodel );
                         for( var i = 0; i < _FatBytes; i++ )
                             _FatPvs[i] |= pvs[i];
                     }
                     return;
                 }
 
-                MemoryNode n = (MemoryNode)node;
-                Plane plane = n.plane;
+                var n = (MemoryNode)node;
+                var plane = n.plane;
                 var d = Vector3.Dot( org, plane.normal ) - plane.dist;
                 if( d > 8 )
                     node = n.children[0];
@@ -925,7 +925,7 @@ namespace SharpQuake
                 {
                     for( var j = 0; j < svs.maxclients; j++ )
                     {
-                        client_t client = svs.clients[j];
+                        var client = svs.clients[j];
                         if( !client.active )
                             continue;
 
@@ -940,7 +940,7 @@ namespace SharpQuake
 
             for( var j = 0; j < svs.maxclients; j++ )
             {
-                client_t client = svs.clients[j];
+                var client = svs.clients[j];
                 if( !client.active )
                     continue;
                 client.message.Write( sv.reliable_datagram.Data, 0, sv.reliable_datagram.Length );
@@ -956,17 +956,17 @@ namespace SharpQuake
         /// </summary>
         private static void ConnectClient( Int32 clientnum )
         {
-            client_t client = svs.clients[clientnum];
+            var client = svs.clients[clientnum];
 
             Host.Console.DPrint( "Client {0} connected\n", client.netconnection.address );
 
             var edictnum = clientnum + 1;
-            MemoryEdict ent = EdictNum( edictnum );
+            var ent = EdictNum( edictnum );
 
             // set up the client_t
-            qsocket_t netconnection = client.netconnection;
+            var netconnection = client.netconnection;
 
-            Single[] spawn_parms = new Single[ServerDef.NUM_SPAWN_PARMS];
+            var spawn_parms = new Single[ServerDef.NUM_SPAWN_PARMS];
             if( sv.loadgame )
             {
                 Array.Copy( client.spawn_parms, spawn_parms, spawn_parms.Length );
@@ -1026,7 +1026,7 @@ namespace SharpQuake
         /// </summary>
         private static void SendServerInfo( client_t client )
         {
-            MessageWriter writer = client.message;
+            var writer = client.message;
 
             writer.WriteByte( protocol.svc_print );
             writer.WriteString( String.Format( "{0}\nVERSION {1,4:F2} SERVER ({2} CRC)", ( Char ) 2, QDef.VERSION, Host.Programs.Crc ) );
@@ -1084,11 +1084,11 @@ namespace SharpQuake
         /// </summary>
         private static void SendReconnect()
         {
-            MessageWriter msg = new MessageWriter( 128 );
+            var msg = new MessageWriter( 128 );
 
             msg.WriteChar( protocol.svc_stufftext );
             msg.WriteString( "reconnect\n" );
-            net.SendToAll( msg, 5 );
+            Host.Network.SendToAll( msg, 5 );
 
             if( client.cls.state != cactive_t.ca_dedicated )
                 Host.Command.ExecuteString( "reconnect\n", CommandSource.src_command );
@@ -1102,7 +1102,7 @@ namespace SharpQuake
             for( var entnum = 0; entnum < sv.num_edicts; entnum++ )
             {
                 // get the current server version
-                MemoryEdict svent = EdictNum( entnum );
+                var svent = EdictNum( entnum );
                 if( svent.free )
                     continue;
                 if( entnum > svs.maxclients && svent.v.modelindex == 0 )

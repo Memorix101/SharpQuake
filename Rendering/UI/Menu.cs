@@ -208,7 +208,7 @@ namespace SharpQuake
             // draw left side
             var cx = x;
             var cy = y;
-            GLPic p = Drawer.CachePic( "gfx/box_tl.lmp" );
+            var p = Drawer.CachePic( "gfx/box_tl.lmp" );
             DrawTransPic( cx, cy, p );
             p = Drawer.CachePic( "gfx/box_ml.lmp" );
             for( var n = 0; n < lines; n++ )

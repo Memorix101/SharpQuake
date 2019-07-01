@@ -51,7 +51,7 @@ namespace SharpQuake.Framework
             {
                 fixed ( void* pv = &this.v )
                 {
-                    EVal* a = ( EVal* ) ( ( Int32* ) pv + offset1 );
+                    var a = ( EVal* ) ( ( Int32* ) pv + offset1 );
                     result->_int = a->_int;
                 }
             }
@@ -59,7 +59,7 @@ namespace SharpQuake.Framework
             {
                 fixed ( void* pv = this.fields )
                 {
-                    EVal* a = ( EVal* ) ( ( Int32* ) pv + offset1 );
+                    var a = ( EVal* ) ( ( Int32* ) pv + offset1 );
                     result->_int = a->_int;
                 }
             }
@@ -72,7 +72,7 @@ namespace SharpQuake.Framework
             {
                 fixed ( void* pv = &this.v )
                 {
-                    EVal* a = ( EVal* ) ( ( Int32* ) pv + offset1 );
+                    var a = ( EVal* ) ( ( Int32* ) pv + offset1 );
                     a->_int = value->_int;
                 }
             }
@@ -80,7 +80,7 @@ namespace SharpQuake.Framework
             {
                 fixed ( void* pv = this.fields )
                 {
-                    EVal* a = ( EVal* ) ( ( Int32* ) pv + offset1 );
+                    var a = ( EVal* ) ( ( Int32* ) pv + offset1 );
                     a->_int = value->_int;
                 }
             }
@@ -93,7 +93,7 @@ namespace SharpQuake.Framework
             {
                 fixed ( void* pv = &this.v )
                 {
-                    EVal* a = ( EVal* ) ( ( Int32* ) pv + offset1 );
+                    var a = ( EVal* ) ( ( Int32* ) pv + offset1 );
                     result->vector[0] = a->vector[0];
                     result->vector[1] = a->vector[1];
                     result->vector[2] = a->vector[2];
@@ -103,7 +103,7 @@ namespace SharpQuake.Framework
             {
                 fixed ( void* pf = this.fields )
                 {
-                    EVal* a = ( EVal* ) ( ( Int32* ) pf + offset1 );
+                    var a = ( EVal* ) ( ( Int32* ) pf + offset1 );
                     result->vector[0] = a->vector[0];
                     result->vector[1] = a->vector[1];
                     result->vector[2] = a->vector[2];
@@ -118,7 +118,7 @@ namespace SharpQuake.Framework
             {
                 fixed ( void* pv = &this.v )
                 {
-                    EVal* a = ( EVal* ) ( ( Int32* ) pv + offset1 );
+                    var a = ( EVal* ) ( ( Int32* ) pv + offset1 );
                     a->vector[0] = value->vector[0];
                     a->vector[1] = value->vector[1];
                     a->vector[2] = value->vector[2];
@@ -128,7 +128,7 @@ namespace SharpQuake.Framework
             {
                 fixed ( void* pf = this.fields )
                 {
-                    EVal* a = ( EVal* ) ( ( Int32* ) pf + offset1 );
+                    var a = ( EVal* ) ( ( Int32* ) pf + offset1 );
                     a->vector[0] = value->vector[0];
                     a->vector[1] = value->vector[1];
                     a->vector[2] = value->vector[2];
@@ -143,7 +143,7 @@ namespace SharpQuake.Framework
             {
                 fixed ( void* pv = &this.v )
                 {
-                    EVal* a = ( EVal* ) ( ( Int32* ) pv + offset1 );
+                    var a = ( EVal* ) ( ( Int32* ) pv + offset1 );
                     result = a->_int;
                 }
             }
@@ -151,7 +151,7 @@ namespace SharpQuake.Framework
             {
                 fixed ( void* pv = this.fields )
                 {
-                    EVal* a = ( EVal* ) ( ( Int32* ) pv + offset1 );
+                    var a = ( EVal* ) ( ( Int32* ) pv + offset1 );
                     result = a->_int;
                 }
             }
@@ -166,7 +166,7 @@ namespace SharpQuake.Framework
             {
                 fixed ( void* pv = &this.v )
                 {
-                    EVal* a = ( EVal* ) ( ( Single* ) pv + offset1 );
+                    var a = ( EVal* ) ( ( Single* ) pv + offset1 );
                     result = a->_float;
                 }
             }
@@ -174,7 +174,7 @@ namespace SharpQuake.Framework
             {
                 fixed ( void* pv = this.fields )
                 {
-                    EVal* a = ( EVal* ) ( ( Single* ) pv + offset1 );
+                    var a = ( EVal* ) ( ( Single* ) pv + offset1 );
                     result = a->_float;
                 }
             }
@@ -188,7 +188,7 @@ namespace SharpQuake.Framework
             {
                 fixed ( void* pv = &this.v )
                 {
-                    EVal* a = ( EVal* ) ( ( Single* ) pv + offset1 );
+                    var a = ( EVal* ) ( ( Single* ) pv + offset1 );
                     a->_float = value;
                 }
             }
@@ -196,7 +196,7 @@ namespace SharpQuake.Framework
             {
                 fixed ( void* pv = this.fields )
                 {
-                    EVal* a = ( EVal* ) ( ( Single* ) pv + offset1 );
+                    var a = ( EVal* ) ( ( Single* ) pv + offset1 );
                     a->_float = value;
                 }
             }

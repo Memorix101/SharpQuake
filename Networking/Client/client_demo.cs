@@ -103,16 +103,16 @@ namespace SharpQuake
             name = Path.ChangeExtension( name, ".dem" );
 
             Host.Console.Print( "recording to {0}.\n", name );
-            FileStream fs = FileSystem.OpenWrite( name, true );
+            var fs = FileSystem.OpenWrite( name, true );
             if( fs == null )
             {
                 Host.Console.Print( "ERROR: couldn't open.\n" );
                 return;
             }
-            BinaryWriter writer = new BinaryWriter( fs, Encoding.ASCII );
+            var writer = new BinaryWriter( fs, Encoding.ASCII );
             cls.demofile = new DisposableWrapper<BinaryWriter>( writer, true );
             cls.forcetrack = track;
-            Byte[] tmp = Encoding.ASCII.GetBytes( cls.forcetrack.ToString() );
+            var tmp = Encoding.ASCII.GetBytes( cls.forcetrack.ToString() );
             writer.Write( tmp );
             writer.Write( '\n' );
             cls.demorecording = true;
@@ -134,8 +134,8 @@ namespace SharpQuake
             }
 
             // write a disconnect message to the demo file
-            net.Message.Clear();
-            net.Message.WriteByte( protocol.svc_disconnect );
+            Host.Network.Message.Clear();
+            Host.Network.Message.WriteByte( protocol.svc_disconnect );
             WriteDemoMessage();
 
             // finish up
@@ -191,7 +191,7 @@ namespace SharpQuake
             cls.state = cactive_t.ca_connected;
             cls.forcetrack = 0;
 
-            BinaryReader s = reader.Object;
+            var s = reader.Object;
             Int32 c;
             var neg = false;
             while( true )
@@ -265,7 +265,7 @@ namespace SharpQuake
                 }
 
                 // get the next message
-                BinaryReader reader = ( (DisposableWrapper<BinaryReader>)cls.demofile ).Object;
+                var reader = ( (DisposableWrapper<BinaryReader>)cls.demofile ).Object;
                 var size = EndianHelper.LittleLong( reader.ReadInt32() );
                 if( size > QDef.MAX_MSGLEN )
                     Utilities.Error( "Demo message > MAX_MSGLEN" );
@@ -275,8 +275,8 @@ namespace SharpQuake
                 cl.mviewangles[0].Y = EndianHelper.LittleFloat( reader.ReadSingle() );
                 cl.mviewangles[0].Z = EndianHelper.LittleFloat( reader.ReadSingle() );
 
-                net.Message.FillFrom( reader.BaseStream, size );
-                if( net.Message.Length < size )
+                Host.Network.Message.FillFrom( reader.BaseStream, size );
+                if( Host.Network.Message.Length < size )
                 {
                     StopPlayback();
                     return 0;
@@ -287,13 +287,13 @@ namespace SharpQuake
             Int32 r;
             while( true )
             {
-                r = net.GetMessage( cls.netcon );
+                r = Host.Network.GetMessage( cls.netcon );
 
                 if( r != 1 && r != 2 )
                     return r;
 
                 // discard nop keepalive message
-                if( net.Message.Length == 1 && net.Message.Data[0] == protocol.svc_nop )
+                if( Host.Network.Message.Length == 1 && Host.Network.Message.Data[0] == protocol.svc_nop )
                     Host.Console.Print( "<-- server to client keepalive\n" );
                 else
                     break;
@@ -326,13 +326,13 @@ namespace SharpQuake
         /// </summary>
         private static void WriteDemoMessage()
         {
-            var len = EndianHelper.LittleLong( net.Message.Length );
-            BinaryWriter writer = ( (DisposableWrapper<BinaryWriter>)cls.demofile ).Object;
+            var len = EndianHelper.LittleLong( Host.Network.Message.Length );
+            var writer = ( (DisposableWrapper<BinaryWriter>)cls.demofile ).Object;
             writer.Write( len );
             writer.Write( EndianHelper.LittleFloat( cl.viewangles.X ) );
             writer.Write( EndianHelper.LittleFloat( cl.viewangles.Y ) );
             writer.Write( EndianHelper.LittleFloat( cl.viewangles.Z ) );
-            writer.Write( net.Message.Data, 0, net.Message.Length );
+            writer.Write( Host.Network.Message.Data, 0, Host.Network.Message.Length );
             writer.Flush();
         }
     }

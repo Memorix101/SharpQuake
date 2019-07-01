@@ -146,7 +146,7 @@ namespace SharpQuake
             for ( var i = 0; ; i++ )
             {
                 var pakfile = String.Format( "{0}/PAK{1}.PAK", dir, i );
-                Pak pak = LoadPackFile( pakfile );
+                var pak = LoadPackFile( pakfile );
                 if ( pak == null )
                     break;
 
@@ -158,13 +158,13 @@ namespace SharpQuake
             //
             foreach ( var pk3file in Directory.GetFiles( dir, "*.pk3" ).OrderByDescending( f => f ) )
             {
-                FileStream file = FileSystem.OpenRead( pk3file );
+                var file = FileSystem.OpenRead( pk3file );
 
                 if ( file != null )
                 {
                     file.Dispose( );
 
-                    ZipArchive pk3 = ZipFile.OpenRead( pk3file );
+                    var pk3 = ZipFile.OpenRead( pk3file );
 
                     if ( pk3 == null )
                         break;
@@ -178,7 +178,7 @@ namespace SharpQuake
         public static void Path_f( )
         {
             ConsoleWrapper.Print( "Current search path:\n" );
-            foreach ( searchpath_t sp in _SearchPaths )
+            foreach ( var sp in _SearchPaths )
             {
                 if ( sp.pack != null )
                 {
@@ -212,7 +212,7 @@ namespace SharpQuake
                 if ( !Directory.Exists( dirName ) )
                     Directory.CreateDirectory( dirName );
 
-                Byte[] buf = new Byte[4096];
+                var buf = new Byte[4096];
                 while ( remaining > 0 )
                 {
                     var count = buf.Length;
@@ -239,14 +239,14 @@ namespace SharpQuake
             //
             // search through the path, one element at a time
             //
-            foreach ( searchpath_t sp in _SearchPaths )
+            foreach ( var sp in _SearchPaths )
             {
                 // is the element a pak file?
                 if ( sp.pack != null )
                 {
                     // look through all the pak file elements
-                    Pak pak = sp.pack;
-                    foreach ( MemoryPakFile pfile in pak.files )
+                    var pak = sp.pack;
+                    foreach ( var pfile in pak.files )
                     {
                         if ( pfile.name.Equals( filename ) )
                         {
@@ -254,8 +254,8 @@ namespace SharpQuake
                             ConsoleWrapper.DPrint( "PackFile: {0} : {1}\n", sp.pack.filename, filename );
                             if ( duplicateStream )
                             {
-                                FileStream pfs = ( FileStream ) pak.stream.BaseStream;
-                                FileStream fs = new FileStream( pfs.Name, FileMode.Open, FileAccess.Read, FileShare.Read );
+                                var pfs = ( FileStream ) pak.stream.BaseStream;
+                                var fs = new FileStream( pfs.Name, FileMode.Open, FileAccess.Read, FileShare.Read );
                                 file = new DisposableWrapper<BinaryReader>( new BinaryReader( fs, Encoding.ASCII ), true );
                             }
                             else
@@ -271,7 +271,7 @@ namespace SharpQuake
                 else if ( sp.pk3 != null ) // is the element a pk3 file?
                 {
                     // look through all the pak file elements
-                    ZipArchive pk3 = sp.pk3;
+                    var pk3 = sp.pk3;
 
                     foreach ( var pfile in pk3.Entries )
                     {
@@ -297,7 +297,7 @@ namespace SharpQuake
                     }
 
                     var netpath = sp.filename + "/" + filename;  //sprintf (netpath, "%s/%s",search->filename, filename);
-                    DateTime findtime = FileSystem.GetFileTime( netpath );
+                    var findtime = FileSystem.GetFileTime( netpath );
                     if ( findtime == DateTime.MinValue )
                         continue;
 
@@ -320,14 +320,14 @@ namespace SharpQuake
                             cachepath = _CacheDir + netpath;
                         }
 
-                        DateTime cachetime = FileSystem.GetFileTime( cachepath );
+                        var cachetime = FileSystem.GetFileTime( cachepath );
                         if ( cachetime < findtime )
                             CopyFile( netpath, cachepath );
                         netpath = cachepath;
                     }
 
                     ConsoleWrapper.DPrint( "FindFile: {0}\n", netpath );
-                    FileStream fs = FileSystem.OpenRead( netpath );
+                    var fs = FileSystem.OpenRead( netpath );
                     if ( fs == null )
                     {
                         file = null;
@@ -362,7 +362,7 @@ namespace SharpQuake
             if ( file == null )
                 return null;
 
-            Byte[] result = new Byte[length];
+            var result = new Byte[length];
             using ( file )
             {
                 //Drawer.BeginDisc( );
@@ -387,11 +387,11 @@ namespace SharpQuake
         /// </summary>
         public static Pak LoadPackFile( String packfile )
         {
-            FileStream file = FileSystem.OpenRead( packfile );
+            var file = FileSystem.OpenRead( packfile );
             if ( file == null )
                 return null;
 
-            PakHeader header = Utilities.ReadStructure<PakHeader>( file );
+            var header = Utilities.ReadStructure<PakHeader>( file );
 
             var id = Encoding.ASCII.GetString( header.id );
             if ( id != "PACK" )
@@ -409,20 +409,20 @@ namespace SharpQuake
             //    _IsModified = true;    // not the original file
 
             file.Seek( header.dirofs, SeekOrigin.Begin );
-            Byte[] buf = new Byte[header.dirlen];
+            var buf = new Byte[header.dirlen];
             if ( file.Read( buf, 0, buf.Length ) != buf.Length )
             {
                 Utilities.Error( "{0} buffering failed!", packfile );
             }
-            List<PakFile> info = new List<PakFile>( MAX_FILES_IN_PACK );
-            GCHandle handle = GCHandle.Alloc( buf, GCHandleType.Pinned );
+            var info = new List<PakFile>( MAX_FILES_IN_PACK );
+            var handle = GCHandle.Alloc( buf, GCHandleType.Pinned );
             try
             {
-                IntPtr ptr = handle.AddrOfPinnedObject( );
+                var ptr = handle.AddrOfPinnedObject( );
                 Int32 count = 0, structSize = Marshal.SizeOf( typeof( PakFile ) );
                 while ( count < header.dirlen )
                 {
-                    PakFile tmp = ( PakFile ) Marshal.PtrToStructure( ptr, typeof( PakFile ) );
+                    var tmp = ( PakFile ) Marshal.PtrToStructure( ptr, typeof( PakFile ) );
                     info.Add( tmp );
                     ptr = new IntPtr( ptr.ToInt64( ) + structSize );
                     count += structSize;
@@ -448,17 +448,17 @@ namespace SharpQuake
             buf = null;
 
             // parse the directory
-            MemoryPakFile[] newfiles = new MemoryPakFile[numpackfiles];
+            var newfiles = new MemoryPakFile[numpackfiles];
             for ( var i = 0; i < numpackfiles; i++ )
             {
-                MemoryPakFile pf = new MemoryPakFile( );
+                var pf = new MemoryPakFile( );
                 pf.name = Utilities.GetString( info[i].name );
                 pf.filepos = EndianHelper.LittleLong( info[i].filepos );
                 pf.filelen = EndianHelper.LittleLong( info[i].filelen );
                 newfiles[i] = pf;
             }
 
-            Pak pack = new Pak( packfile, new BinaryReader( file, Encoding.ASCII ), newfiles );
+            var pack = new Pak( packfile, new BinaryReader( file, Encoding.ASCII ), newfiles );
             ConsoleWrapper.Print( "Added packfile {0} ({1} files)\n", packfile, numpackfiles );
             return pack;
         }
@@ -513,7 +513,7 @@ namespace SharpQuake
                 return DateTime.MinValue;
             try
             {
-                DateTime result = File.GetLastWriteTimeUtc( path );
+                var result = File.GetLastWriteTimeUtc( path );
                 if ( result.Year == 1601 )
                     return DateTime.MinValue; // file does not exists
 

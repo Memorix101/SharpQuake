@@ -258,7 +258,7 @@ namespace SharpQuake
         // called every frame by screen
         public static void Draw()
         {
-            VidDef vid = Scr.vid;
+            var vid = Scr.vid;
             if( Scr.ConCurrent == vid.height )
                 return;		// console is full screen
 
@@ -279,7 +279,7 @@ namespace SharpQuake
                     DrawFrags();
             }
 
-            client_state_t cl = client.cl;
+            var cl = client.cl;
             if( _ShowScores || cl.stats[QStatsDef.STAT_HEALTH] <= 0 )
             {
                 DrawPic( 0, 0, _ScoreBar );
@@ -390,7 +390,7 @@ namespace SharpQuake
                 return;
             }
 
-            GLPic pic = Drawer.CachePic( "gfx/complete.lmp" );
+            var pic = Drawer.CachePic( "gfx/complete.lmp" );
             Drawer.DrawPic( 64, 24, pic );
 
             pic = Drawer.CachePic( "gfx/inter.lmp" );
@@ -420,7 +420,7 @@ namespace SharpQuake
         {
             Scr.CopyEverithing = true;
 
-            GLPic pic = Drawer.CachePic( "gfx/finale.lmp" );
+            var pic = Drawer.CachePic( "gfx/finale.lmp" );
             Drawer.DrawTransPic( ( Scr.vid.width - pic.width ) / 2, 16, pic );
         }
 
@@ -451,7 +451,7 @@ namespace SharpQuake
         {
             Int32 flashon;
 
-            client_state_t cl = client.cl;
+            var cl = client.cl;
             if( MainWindow.Common.GameKind == GameKind.Rogue )
             {
                 if( cl.stats[QStatsDef.STAT_ACTIVEWEAPON] >= QItemsDef.RIT_LAVA_NAILGUN )
@@ -664,7 +664,7 @@ namespace SharpQuake
             // draw the text
             var l = _ScoreBoardLines <= 4 ? _ScoreBoardLines : 4;
             Int32 xofs, x = 23;
-            client_state_t cl = client.cl;
+            var cl = client.cl;
 
             if( cl.gametype == protocol.GAME_DEATHMATCH )
                 xofs = 0;
@@ -676,7 +676,7 @@ namespace SharpQuake
             for( var i = 0; i < l; i++ )
             {
                 var k = _FragSort[i];
-                scoreboard_t s = cl.scores[k];
+                var s = cl.scores[k];
                 if( String.IsNullOrEmpty( s.name ) )
                     continue;
 
@@ -749,7 +749,7 @@ namespace SharpQuake
         // Sbar_DrawFace
         private static void DrawFace()
         {
-            client_state_t cl = client.cl;
+            var cl = client.cl;
 
             // PGM 01/19/97 - team color drawing
             // PGM 03/02/97 - fixed so color swatch only appears in CTF modes
@@ -758,7 +758,7 @@ namespace SharpQuake
                 ( Host.TeamPlay > 3 ) &&
                 ( Host.TeamPlay < 7 ) )
             {
-                scoreboard_t s = cl.scores[cl.viewentity - 1];
+                var s = cl.scores[cl.viewentity - 1];
 
                 // draw background
                 var top = s.colors & 0xf0;
@@ -876,7 +876,7 @@ namespace SharpQuake
             for( ; i < _ScoreBoardLines && y < Scr.vid.height - 8; i++ )
             {
                 var k = _FragSort[i];
-                scoreboard_t s = client.cl.scores[k];
+                var s = client.cl.scores[k];
                 if( String.IsNullOrEmpty( s.name ) )
                     continue;
 
@@ -911,7 +911,7 @@ namespace SharpQuake
         // Sbar_SortFrags
         private static void SortFrags()
         {
-            client_state_t cl = client.cl;
+            var cl = client.cl;
 
             // sort by frags
             _ScoreBoardLines = 0;
@@ -956,8 +956,8 @@ namespace SharpQuake
         // Sbar_SoloScoreboard
         private static void SoloScoreboard()
         {
-            StringBuilder sb = new StringBuilder( 80 );
-            client_state_t cl = client.cl;
+            var sb = new StringBuilder( 80 );
+            var cl = client.cl;
 
             sb.AppendFormat( "Monsters:{0,3:d} /{1,3:d}", cl.stats[QStatsDef.STAT_MONSTERS], client.cl.stats[QStatsDef.STAT_TOTALMONSTERS] );
             DrawString( 8, 4, sb.ToString() );
@@ -986,7 +986,7 @@ namespace SharpQuake
             Scr.CopyEverithing = true;
             Scr.FullUpdate = 0;
 
-            GLPic pic = Drawer.CachePic( "gfx/ranking.lmp" );
+            var pic = Drawer.CachePic( "gfx/ranking.lmp" );
             Host.Menu.DrawPic( ( 320 - pic.width ) / 2, 8, pic );
 
             // scores
@@ -1000,7 +1000,7 @@ namespace SharpQuake
             for( var i = 0; i < l; i++ )
             {
                 var k = _FragSort[i];
-                scoreboard_t s = client.cl.scores[k];
+                var s = client.cl.scores[k];
                 if( String.IsNullOrEmpty( s.name ) )
                     continue;
 

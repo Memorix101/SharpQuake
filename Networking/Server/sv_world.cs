@@ -66,7 +66,7 @@ namespace SharpQuake
         {
             InitBoxHull();
 
-            foreach( areanode_t node in _AreaNodes )
+            foreach( var node in _AreaNodes )
                 node.Clear();
             _NumAreaNodes = 0;
 
@@ -142,7 +142,7 @@ namespace SharpQuake
                 return;
 
             // find the first node that the ent's box crosses
-            areanode_t node = _AreaNodes[0];
+            var node = _AreaNodes[0];
             while( true )
             {
                 if( node.axis == -1 )
@@ -189,7 +189,7 @@ namespace SharpQuake
         /// </summary>
         public static trace_t Move( ref Vector3 start, ref Vector3 mins, ref Vector3 maxs, ref Vector3 end, Int32 type, MemoryEdict passedict )
         {
-            moveclip_t clip = new moveclip_t();
+            var clip = new moveclip_t();
 
             // clip to world
             clip.trace = ClipMoveToEntity( sv.edicts[0], ref start, ref mins, ref maxs, ref end );
@@ -248,8 +248,8 @@ namespace SharpQuake
             //
             // find the point distances
             //
-            Int16[] node_children = hull.clipnodes[num].children;
-            Plane plane = hull.planes[hull.clipnodes[num].planenum];
+            var node_children = hull.clipnodes[num].children;
+            var plane = hull.planes[hull.clipnodes[num].planenum];
             Single t1, t2;
 
             if( plane.type < 3 )
@@ -280,7 +280,7 @@ namespace SharpQuake
                 frac = 1;
 
             var midf = p1f + ( p2f - p1f ) * frac;
-            Vector3 mid = p1 + ( p2 - p1 ) * frac;
+            var mid = p1 + ( p2 - p1 ) * frac;
 
             var side = ( t1 < 0 ) ? 1 : 0;
 
@@ -335,7 +335,7 @@ namespace SharpQuake
         /// </summary>
         private static areanode_t CreateAreaNode( Int32 depth, ref Vector3 mins, ref Vector3 maxs )
         {
-            areanode_t anode = _AreaNodes[_NumAreaNodes];
+            var anode = _AreaNodes[_NumAreaNodes];
             _NumAreaNodes++;
 
             anode.trigger_edicts.Clear();
@@ -348,11 +348,11 @@ namespace SharpQuake
                 return anode;
             }
 
-            Vector3 size = maxs - mins;
-            Vector3 mins1 = mins;
-            Vector3 mins2 = mins;
-            Vector3 maxs1 = maxs;
-            Vector3 maxs2 = maxs;
+            var size = maxs - mins;
+            var mins1 = mins;
+            var mins2 = mins;
+            var maxs1 = maxs;
+            var maxs2 = maxs;
 
             if( size.X > size.Y )
             {
@@ -379,7 +379,7 @@ namespace SharpQuake
         /// </summary>
         private static MemoryEdict TestEntityPosition( MemoryEdict ent )
         {
-            trace_t trace = Move( ref ent.v.origin, ref ent.v.mins, ref ent.v.maxs, ref ent.v.origin, 0, ent );
+            var trace = Move( ref ent.v.origin, ref ent.v.mins, ref ent.v.maxs, ref ent.v.origin, 0, ent );
 
             if( trace.startsolid )
                 return sv.edicts[0];
@@ -462,12 +462,12 @@ namespace SharpQuake
                 if( ent.v.movetype != Movetypes.MOVETYPE_PUSH )
                     Utilities.Error( "SOLID_BSP without MOVETYPE_PUSH" );
 
-                Model model = sv.models[( Int32 ) ent.v.modelindex];
+                var model = sv.models[( Int32 ) ent.v.modelindex];
 
                 if( model == null || model.type != ModelType.mod_brush )
                     Utilities.Error( "MOVETYPE_PUSH with a non bsp model" );
 
-                Vector3 size = maxs - mins;
+                var size = maxs - mins;
                 if( size.X < 3 )
                     hull = model.hulls[0];
                 else if( size.X <= 32 )
@@ -482,8 +482,8 @@ namespace SharpQuake
             else
             {
                 // create a temp hull from bounding box sizes
-                Vector3 hullmins = Utilities.ToVector( ref ent.v.mins ) - maxs;
-                Vector3 hullmaxs = Utilities.ToVector( ref ent.v.maxs ) - mins;
+                var hullmins = Utilities.ToVector( ref ent.v.mins ) - maxs;
+                var hullmaxs = Utilities.ToVector( ref ent.v.maxs ) - mins;
                 hull = HullForBox( ref hullmins, ref hullmaxs );
 
                 offset = Utilities.ToVector( ref ent.v.origin );
@@ -507,7 +507,7 @@ namespace SharpQuake
                 if( ent.num_leafs == ProgramDef.MAX_ENT_LEAFS )
                     return;
 
-                MemoryLeaf leaf = (MemoryLeaf)node;
+                var leaf = (MemoryLeaf)node;
                 var leafnum = Array.IndexOf( sv.worldmodel.leafs, leaf ) - 1;
 
                 ent.leafnums[ent.num_leafs] = ( Int16 ) leafnum;
@@ -516,8 +516,8 @@ namespace SharpQuake
             }
 
             // NODE_MIXED
-            MemoryNode n = (MemoryNode)node;
-            Plane splitplane = n.plane;
+            var n = (MemoryNode)node;
+            var splitplane = n.plane;
             var sides = MathLib.BoxOnPlaneSide( ref ent.v.absmin, ref ent.v.absmax, splitplane );
 
             // recurse down the contacted sides
@@ -535,10 +535,10 @@ namespace SharpQuake
         {
             // touch linked edicts
             Link next;
-            for( Link l = node.trigger_edicts.Next; l != node.trigger_edicts; l = next )
+            for( var l = node.trigger_edicts.Next; l != node.trigger_edicts; l = next )
             {
                 next = l.Next;
-                MemoryEdict touch = (MemoryEdict)l.Owner;// EDICT_FROM_AREA(l);
+                var touch = (MemoryEdict)l.Owner;// EDICT_FROM_AREA(l);
                 if( touch == ent )
                     continue;
                 if( touch.v.touch == 0 || touch.v.solid != Solids.SOLID_TRIGGER )
@@ -577,7 +577,7 @@ namespace SharpQuake
         /// </summary>
         private static trace_t ClipMoveToEntity( MemoryEdict ent, ref Vector3 start, ref Vector3 mins, ref Vector3 maxs, ref Vector3 end )
         {
-            trace_t trace = new trace_t();
+            var trace = new trace_t();
             // fill in a default trace
             trace.fraction = 1;
             trace.allsolid = true;
@@ -585,10 +585,10 @@ namespace SharpQuake
 
             // get the clipping hull
             Vector3 offset;
-            BspHull hull = HullForEntity( ent, ref mins, ref maxs, out offset );
+            var hull = HullForEntity( ent, ref mins, ref maxs, out offset );
 
-            Vector3 start_l = start - offset;
-            Vector3 end_l = end - offset;
+            var start_l = start - offset;
+            var end_l = end - offset;
 
             // trace a line through the apropriate clipping hull
             RecursiveHullCheck( hull, hull.firstclipnode, 0, 1, ref start_l, ref end_l, trace );
@@ -623,10 +623,10 @@ namespace SharpQuake
             trace_t trace;
 
             // touch linked edicts
-            for( Link l = node.solid_edicts.Next; l != node.solid_edicts; l = next )
+            for( var l = node.solid_edicts.Next; l != node.solid_edicts; l = next )
             {
                 next = l.Next;
-                MemoryEdict touch = (MemoryEdict)l.Owner;// EDICT_FROM_AREA(l);
+                var touch = (MemoryEdict)l.Owner;// EDICT_FROM_AREA(l);
                 if( touch.v.solid == Solids.SOLID_NOT )
                     continue;
                 if( touch == clip.passedict )
@@ -696,8 +696,8 @@ namespace SharpQuake
                 if( num < hull.firstclipnode || num > hull.lastclipnode )
                     Utilities.Error( "SV_HullPointContents: bad node number" );
 
-                Int16[] node_children = hull.clipnodes[num].children;
-                Plane plane = hull.planes[hull.clipnodes[num].planenum];
+                var node_children = hull.clipnodes[num].children;
+                var plane = hull.planes[hull.clipnodes[num].planenum];
                 Single d;
                 if( plane.type < 3 )
                     d = MathLib.Comp( ref p, plane.type ) - plane.dist;

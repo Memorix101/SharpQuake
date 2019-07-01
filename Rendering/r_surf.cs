@@ -110,7 +110,7 @@ namespace SharpQuake
 
             for( var j = 1; j < QDef.MAX_MODELS; j++ )
             {
-                Model m = client.cl.model_precache[j];
+                var m = client.cl.model_precache[j];
                 if( m == null )
                     break;
 
@@ -138,10 +138,10 @@ namespace SharpQuake
             //
             // upload all lightmaps that were filled
             //
-            GCHandle handle = GCHandle.Alloc( _LightMaps, GCHandleType.Pinned );
+            var handle = GCHandle.Alloc( _LightMaps, GCHandleType.Pinned );
             try
             {
-                IntPtr ptr = handle.AddrOfPinnedObject();
+                var ptr = handle.AddrOfPinnedObject();
                 var lmAddr = ptr.ToInt64();
 
                 for( var i = 0; i < MAX_LIGHTMAPS; i++ )
@@ -194,13 +194,13 @@ namespace SharpQuake
         private static void BuildSurfaceDisplayList( MemorySurface fa )
         {
             // reconstruct the polygon
-            MemoryEdge[] pedges = _CurrentModel.edges;
+            var pedges = _CurrentModel.edges;
             var lnumverts = fa.numedges;
 
             //
             // draw texture
             //
-            GLPoly poly = new GLPoly();
+            var poly = new GLPoly();
             poly.AllocVerts( lnumverts );
             poly.next = fa.polys;
             poly.flags = fa.flags;
@@ -283,9 +283,9 @@ namespace SharpQuake
 
         private static System.Boolean IsCollinear( Single[] prev, Single[] cur, Single[] next )
         {
-            Vector3 v1 = new Vector3( cur[0] - prev[0], cur[1] - prev[1], cur[2] - prev[2] );
+            var v1 = new Vector3( cur[0] - prev[0], cur[1] - prev[1], cur[2] - prev[2] );
             MathLib.Normalize( ref v1 );
-            Vector3 v2 = new Vector3( next[0] - prev[0], next[1] - prev[1], next[2] - prev[2] );
+            var v2 = new Vector3( next[0] - prev[0], next[1] - prev[1], next[2] - prev[2] );
             MathLib.Normalize( ref v2 );
             v1 -= v2;
             return ( ( Math.Abs( v1.X ) <= COLINEAR_EPSILON ) &&
@@ -345,7 +345,7 @@ namespace SharpQuake
             var size = smax * tmax;
 
             var srcOffset = surf.sampleofs;
-            Byte[] lightmap = surf.sample_base;// surf.samples;
+            var lightmap = surf.sample_base;// surf.samples;
 
             // set to full bright if no light data
             if( _FullBright.Value != 0 || client.cl.worldmodel.lightdata == null )
@@ -378,7 +378,7 @@ namespace SharpQuake
             //store:
             var blOffset = 0;
             var destOffset = dest.StartIndex;
-            Byte[] data = dest.Data;
+            var data = dest.Data;
             switch( Drawer.LightMapFormat )
             {
                 case PixelFormat.Rgba:
@@ -426,8 +426,8 @@ namespace SharpQuake
         {
             var smax = ( surf.extents[0] >> 4 ) + 1;
             var tmax = ( surf.extents[1] >> 4 ) + 1;
-            MemoryTextureInfo tex = surf.texinfo;
-            dlight_t[] dlights = client.DLights;
+            var tex = surf.texinfo;
+            var dlights = client.DLights;
 
             for( var lnum = 0; lnum < client.MAX_DLIGHTS; lnum++ )
             {
@@ -442,7 +442,7 @@ namespace SharpQuake
                     continue;
                 minlight = rad - minlight;
 
-                Vector3 impact = dlights[lnum].origin - surf.plane.normal * dist;
+                var impact = dlights[lnum].origin - surf.plane.normal * dist;
 
                 var local0 = Vector3.Dot( impact, tex.vecs[0].Xyz ) + tex.vecs[0].W;
                 var local1 = Vector3.Dot( impact, tex.vecs[1].Xyz ) + tex.vecs[1].W;
@@ -496,7 +496,7 @@ namespace SharpQuake
                 if( _WaterChain == null )
                     return;
 
-                for( MemorySurface s = _WaterChain; s != null; s = s.texturechain )
+                for( var s = _WaterChain; s != null; s = s.texturechain )
                 {
                     Drawer.Bind( s.texinfo.texture.gl_texturenum );
                     EmitWaterPolys( s );
@@ -507,11 +507,11 @@ namespace SharpQuake
             {
                 for( var i = 0; i < client.cl.worldmodel.numtextures; i++ )
                 {
-                    Texture t = client.cl.worldmodel.textures[i];
+                    var t = client.cl.worldmodel.textures[i];
                     if( t == null )
                         continue;
 
-                    MemorySurface s = t.texturechain;
+                    var s = t.texturechain;
                     if( s == null )
                         continue;
 
@@ -561,7 +561,7 @@ namespace SharpQuake
             else
                 vis = Host.Model.LeafPVS( _ViewLeaf, client.cl.worldmodel );
 
-            Model world = client.cl.worldmodel;
+            var world = client.cl.worldmodel;
             for( var i = 0; i < world.numleafs; i++ )
             {
                 if( vis[i >> 3] != 0 & ( 1 << ( i & 7 ) ) != 0 )
@@ -629,7 +629,7 @@ namespace SharpQuake
 
             for( var i = 0; i < MAX_LIGHTMAPS; i++ )
             {
-                GLPoly p = _LightMapPolys[i];
+                var p = _LightMapPolys[i];
                 if( p == null )
                     continue;
 
@@ -646,7 +646,7 @@ namespace SharpQuake
                         GL.Begin( PrimitiveType.Polygon );
                         for( var j = 0; j < p.numverts; j++ )
                         {
-                            Single[] v = p.verts[j];
+                            var v = p.verts[j];
                             GL.TexCoord2( v[5], v[6] );
                             GL.Vertex3( v );
                         }
@@ -680,14 +680,14 @@ namespace SharpQuake
                 }
                 return;
             }
-            Model world = client.cl.worldmodel;
+            var world = client.cl.worldmodel;
             for( var i = 0; i < world.numtextures; i++ )
             {
-                Texture t = world.textures[i];
+                var t = world.textures[i];
                 if( t == null )
                     continue;
 
-                MemorySurface s = t.texturechain;
+                var s = t.texturechain;
                 if( s == null )
                     continue;
 
@@ -723,7 +723,7 @@ namespace SharpQuake
                 return;
             }
 
-            Texture t = TextureAnimation( fa.texinfo.texture );
+            var t = TextureAnimation( fa.texinfo.texture );
             Drawer.Bind( t.gl_texturenum );
 
             if( ( fa.flags & SurfaceDef.SURF_DRAWTURB ) != 0 )
@@ -793,7 +793,7 @@ namespace SharpQuake
             GL.Begin( PrimitiveType.Polygon );
             for( var i = 0; i < p.numverts; i++ )
             {
-                Single[] v = p.verts[i];
+                var v = p.verts[i];
                 GL.TexCoord2( v[3] * scaleX, v[4] * scaleY );
                 GL.Vertex3( v );
             }
@@ -829,8 +829,8 @@ namespace SharpQuake
             // if a leaf node, draw stuff
             if( node.contents < 0 )
             {
-                MemoryLeaf pleaf = (MemoryLeaf)node;
-                MemorySurface[] marks = pleaf.marksurfaces;
+                var pleaf = (MemoryLeaf)node;
+                var marks = pleaf.marksurfaces;
                 var mark = pleaf.firstmarksurface;
                 c = pleaf.nummarksurfaces;
 
@@ -852,10 +852,10 @@ namespace SharpQuake
 
             // node is just a decision point, so go down the apropriate sides
 
-            MemoryNode n = (MemoryNode)node;
+            var n = (MemoryNode)node;
 
             // find which side of the node we are on
-            Plane plane = n.plane;
+            var plane = n.plane;
             Double dot;
 
             switch( plane.type )
@@ -887,7 +887,7 @@ namespace SharpQuake
 
             if( c != 0 )
             {
-                MemorySurface[] surf = client.cl.worldmodel.surfaces;
+                var surf = client.cl.worldmodel.surfaces;
                 Int32 offset = n.firstsurface;
 
                 if( dot < 0 - QDef.BACKFACE_EPSILON )
@@ -945,8 +945,8 @@ namespace SharpQuake
             if( ( s.flags & ( SurfaceDef.SURF_DRAWSKY | SurfaceDef.SURF_DRAWTURB | SurfaceDef.SURF_UNDERWATER ) ) == 0 )
             {
                 RenderDynamicLightmaps( s );
-                GLPoly p = s.polys;
-                Texture t = TextureAnimation( s.texinfo.texture );
+                var p = s.polys;
+                var t = TextureAnimation( s.texinfo.texture );
                 if( vid.glMTexable )
                 {
                     // Binds world to texture env 0
@@ -965,7 +965,7 @@ namespace SharpQuake
                     GL.Begin( PrimitiveType.Polygon );
                     for( i = 0; i < p.numverts; i++ )
                     {
-                        Single[] v = p.verts[i];
+                        var v = p.verts[i];
                         GL.MultiTexCoord2( TextureUnit.Texture0, v[3], v[4] );
                         GL.MultiTexCoord2( TextureUnit.Texture1, v[5], v[6] );
                         GL.Vertex3( v );
@@ -979,7 +979,7 @@ namespace SharpQuake
                     GL.Begin( PrimitiveType.Polygon );
                     for( var i = 0; i < p.numverts; i++ )
                     {
-                        Single[] v = p.verts[i];
+                        var v = p.verts[i];
                         GL.TexCoord2( v[3], v[4] );
                         GL.Vertex3( v );
                     }
@@ -990,7 +990,7 @@ namespace SharpQuake
                     GL.Begin( PrimitiveType.Polygon );
                     for( var i = 0; i < p.numverts; i++ )
                     {
-                        Single[] v = p.verts[i];
+                        var v = p.verts[i];
                         GL.TexCoord2( v[5], v[6] );
                         GL.Vertex3( v );
                     }
@@ -1043,7 +1043,7 @@ namespace SharpQuake
             RenderDynamicLightmaps( s );
             if( vid.glMTexable )
             {
-                Texture t = TextureAnimation( s.texinfo.texture );
+                var t = TextureAnimation( s.texinfo.texture );
                 Drawer.SelectTexture( MTexTarget.TEXTURE0_SGIS );
                 Drawer.Bind( t.gl_texturenum );
                 GL.TexEnv( TextureEnvTarget.TextureEnv, TextureEnvParameter.TextureEnvMode, ( Int32 ) TextureEnvMode.Replace );
@@ -1055,11 +1055,11 @@ namespace SharpQuake
 
                 GL.TexEnv( TextureEnvTarget.TextureEnv, TextureEnvParameter.TextureEnvMode, ( Int32 ) TextureEnvMode.Blend );
                 GL.Begin( PrimitiveType.TriangleFan );
-                GLPoly p = s.polys;
-                Single[] nv = new Single[3];
+                var p = s.polys;
+                var nv = new Single[3];
                 for( i = 0; i < p.numverts; i++ )
                 {
-                    Single[] v = p.verts[i];
+                    var v = p.verts[i];
                     GL.MultiTexCoord2( TextureUnit.Texture0, v[3], v[4] );
                     GL.MultiTexCoord2( TextureUnit.Texture1, v[5], v[6] );
 
@@ -1073,9 +1073,9 @@ namespace SharpQuake
             }
             else
             {
-                GLPoly p = s.polys;
+                var p = s.polys;
 
-                Texture t = TextureAnimation( s.texinfo.texture );
+                var t = TextureAnimation( s.texinfo.texture );
                 Drawer.Bind( t.gl_texturenum );
                 DrawGLWaterPoly( p );
 
@@ -1090,12 +1090,12 @@ namespace SharpQuake
         {
             DisableMultitexture();
 
-            Single[] nv = new Single[3];
+            var nv = new Single[3];
             GL.Begin( PrimitiveType.TriangleFan );
 
             for( var i = 0; i < p.numverts; i++ )
             {
-                Single[] v = p.verts[i];
+                var v = p.verts[i];
                 GL.TexCoord2( v[5], v[6] );
 
                 nv[0] = ( Single ) ( v[0] + 8 * Math.Sin( v[1] * 0.05 + Host.RealTime ) * Math.Sin( v[2] * 0.05 + Host.RealTime ) );
@@ -1111,11 +1111,11 @@ namespace SharpQuake
         {
             DisableMultitexture();
 
-            Single[] nv = new Single[3];
+            var nv = new Single[3];
             GL.Begin( PrimitiveType.TriangleFan );
             for( var i = 0; i < p.numverts; i++ )
             {
-                Single[] v = p.verts[i];
+                var v = p.verts[i];
 
                 GL.TexCoord2( v[3], v[4] );
 
@@ -1131,8 +1131,8 @@ namespace SharpQuake
         private static void CommitLightmap( Int32 i )
         {
             _LightMapModified[i] = false;
-            glRect_t theRect = _LightMapRectChange[i];
-            GCHandle handle = GCHandle.Alloc( _LightMaps, GCHandleType.Pinned );
+            var theRect = _LightMapRectChange[i];
+            var handle = GCHandle.Alloc( _LightMaps, GCHandleType.Pinned );
             try
             {
                 var addr = handle.AddrOfPinnedObject().ToInt64() +
@@ -1227,7 +1227,7 @@ namespace SharpQuake
             _CurrentEntity = e;
             Drawer.CurrentTexture = -1;
 
-            Model clmodel = e.model;
+            var clmodel = e.model;
             var rotated = false;
             Vector3 mins, maxs;
             if( e.angles.X != 0 || e.angles.Y != 0 || e.angles.Z != 0 )
@@ -1256,7 +1256,7 @@ namespace SharpQuake
             _ModelOrg = _RefDef.vieworg - e.origin;
             if( rotated )
             {
-                Vector3 temp = _ModelOrg;
+                var temp = _ModelOrg;
                 Vector3 forward, right, up;
                 MathLib.AngleVectors( ref e.angles, out forward, out right, out up );
                 _ModelOrg.X = Vector3.Dot( temp, forward );
@@ -1283,7 +1283,7 @@ namespace SharpQuake
             e.angles.X = -e.angles.X;	// stupid quake bug
 
             var surfOffset = clmodel.firstmodelsurface;
-            MemorySurface[] psurf = clmodel.surfaces; //[clmodel.firstmodelsurface];
+            var psurf = clmodel.surfaces; //[clmodel.firstmodelsurface];
 
             //
             // draw texture
@@ -1291,7 +1291,7 @@ namespace SharpQuake
             for( var i = 0; i < clmodel.nummodelsurfaces; i++, surfOffset++ )
             {
                 // find which side of the node we are on
-                Plane pplane = psurf[surfOffset].plane;
+                var pplane = psurf[surfOffset].plane;
 
                 var dot = Vector3.Dot( _ModelOrg, pplane.normal ) - pplane.dist;
 

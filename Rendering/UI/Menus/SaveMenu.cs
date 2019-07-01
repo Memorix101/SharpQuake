@@ -54,7 +54,7 @@ namespace SharpQuake
 
         public override void Draw( )
         {
-            GLPic p = Drawer.CachePic( "gfx/p_save.lmp" );
+            var p = Drawer.CachePic( "gfx/p_save.lmp" );
             Host.Menu.DrawPic( ( 320 - p.width ) / 2, 4, p );
 
             for ( var i = 0; i < MAX_SAVEGAMES; i++ )

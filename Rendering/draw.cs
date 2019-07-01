@@ -216,7 +216,7 @@ namespace SharpQuake
             // string into the background before turning
             // it into a texture
             var offset = Host.GfxWad.GetLumpNameOffset( "conchars" );
-            Byte[] draw_chars = Host.GfxWad.Data; // draw_chars
+            var draw_chars = Host.GfxWad.Data; // draw_chars
             for( var i = 0; i < 256 * 64; i++ )
             {
                 if( draw_chars[offset + i] == 0 )
@@ -228,11 +228,11 @@ namespace SharpQuake
             // now turn them into textures
             _CharTexture = LoadTexture( "charset", 128, 128, new ByteArraySegment( draw_chars, offset ), false, true );
 
-            Byte[] buf = FileSystem.LoadFile( "gfx/conback.lmp" );
+            var buf = FileSystem.LoadFile( "gfx/conback.lmp" );
             if( buf == null )
                 Utilities.Error( "Couldn't load gfx/conback.lmp" );
 
-            WadPicHeader cbHeader = Utilities.BytesToStructure<WadPicHeader>( buf, 0 );
+            var cbHeader = Utilities.BytesToStructure<WadPicHeader>( buf, 0 );
             Host.GfxWad.SwapPic( cbHeader );
 
             // hack the version number directly into the pic
@@ -357,9 +357,9 @@ namespace SharpQuake
         public static GLPic PicFromWad( String name )
         {
             var offset = Host.GfxWad.GetLumpNameOffset( name );
-            IntPtr ptr = new IntPtr( Host.GfxWad.DataPointer.ToInt64() + offset );
-            WadPicHeader header = (WadPicHeader)Marshal.PtrToStructure( ptr, typeof( WadPicHeader ) );
-            GLPic gl = new GLPic(); // (glpic_t)Marshal.PtrToStructure(ptr, typeof(glpic_t));
+            var ptr = new IntPtr( Host.GfxWad.DataPointer.ToInt64() + offset );
+            var header = (WadPicHeader)Marshal.PtrToStructure( ptr, typeof( WadPicHeader ) );
+            var gl = new GLPic(); // (glpic_t)Marshal.PtrToStructure(ptr, typeof(glpic_t));
             gl.width = header.width;
             gl.height = header.height;
             offset += Marshal.SizeOf( typeof( WadPicHeader ) );
@@ -433,7 +433,7 @@ namespace SharpQuake
             {
                 for( var i = 0; i < _NumTextures; i++ )
                 {
-                    GLTexture glt = _glTextures[i];
+                    var glt = _glTextures[i];
                     if( glt.identifier == identifier && glt.owner == owner )
                     {
                         if( width != glt.width || height != glt.height )
@@ -445,7 +445,7 @@ namespace SharpQuake
             if( _NumTextures == _glTextures.Length )
                 Utilities.Error( "GL_LoadTexture: no more texture slots available!" );
 
-            GLTexture tex = new GLTexture();
+            var tex = new GLTexture();
             _glTextures[_NumTextures] = tex;
             _NumTextures++;
 
@@ -476,7 +476,7 @@ namespace SharpQuake
             {
                 for ( var i = 0; i < _NumTextures; i++ )
                 {
-                    GLTexture glt = _glTextures[i];
+                    var glt = _glTextures[i];
                     if ( glt.identifier == identifier && glt.owner == owner )
                     {
                         if ( width != glt.width || height != glt.height )
@@ -488,7 +488,7 @@ namespace SharpQuake
             if ( _NumTextures == _glTextures.Length )
                 Utilities.Error( "GL_LoadTexture: no more texture slots available!" );
 
-            GLTexture tex = new GLTexture( );
+            var tex = new GLTexture( );
             _glTextures[_NumTextures] = tex;
             _NumTextures++;
 
@@ -556,7 +556,7 @@ namespace SharpQuake
         {
             for( var i = 0; i < _MenuNumCachePics; i++ )
             {
-                CachePic p = _MenuCachePics[i];
+                var p = _MenuCachePics[i];
                 if( p.name == path )// !strcmp(path, pic->name))
                     return p.pic;
             }
@@ -564,17 +564,17 @@ namespace SharpQuake
             if( _MenuNumCachePics == MAX_CACHED_PICS )
                 Utilities.Error( "menu_numcachepics == MAX_CACHED_PICS" );
 
-            CachePic pic = _MenuCachePics[_MenuNumCachePics];
+            var pic = _MenuCachePics[_MenuNumCachePics];
             _MenuNumCachePics++;
             pic.name = path;
 
             //
             // load the pic from disk
             //
-            Byte[] data = FileSystem.LoadFile( path );
+            var data = FileSystem.LoadFile( path );
             if( data == null )
                 Utilities.Error( "Draw_CachePic: failed to load {0}", path );
-            WadPicHeader header = Utilities.BytesToStructure<WadPicHeader>( data, 0 );
+            var header = Utilities.BytesToStructure<WadPicHeader>( data, 0 );
             Host.GfxWad.SwapPic( header );
 
             var headerSize = Marshal.SizeOf( typeof( WadPicHeader ) );
@@ -588,7 +588,7 @@ namespace SharpQuake
                 //memcpy (menuplyr_pixels, dat->data, dat->width*dat->height);
             }
 
-            GLPic gl = new GLPic();
+            var gl = new GLPic();
             gl.width = header.width;
             gl.height = header.height;
 
@@ -610,7 +610,7 @@ namespace SharpQuake
         {
             GL.Disable( EnableCap.Texture2D );
 
-            Byte[] pal = Host.BasePal;
+            var pal = Host.BasePal;
 
             GL.Color3( pal[c * 3] / 255.0f, pal[c * 3 + 1] / 255.0f, pal[c * 3 + 2] / 255.0f );
             GL.Begin( PrimitiveType.Quads );
@@ -645,7 +645,7 @@ namespace SharpQuake
 
             var c = pic.width * pic.height;
             var destOffset = 0;
-            UInt32[] trans = new UInt32[64 * 64];
+            var trans = new UInt32[64 * 64];
 
             for( var v = 0; v < 64; v++, destOffset += 64 )
             {
@@ -660,7 +660,7 @@ namespace SharpQuake
                 }
             }
 
-            GCHandle handle = GCHandle.Alloc( trans, GCHandleType.Pinned );
+            var handle = GCHandle.Alloc( trans, GCHandleType.Pinned );
             try
             {
                 GL.TexImage2D( TextureTarget.Texture2D, 0, Drawer.AlphaFormat, 64, 64, 0,
@@ -788,7 +788,7 @@ namespace SharpQuake
             // change all the existing mipmap texture objects
             for( i = 0; i < _NumTextures; i++ )
             {
-                GLTexture glt = _glTextures[i];
+                var glt = _glTextures[i];
                 if( glt.mipmap )
                 {
                     Bind( glt.texnum );
@@ -801,7 +801,7 @@ namespace SharpQuake
         {
             Int16 textureCount = 0;
 
-            foreach (GLTexture glTexture in _glTextures)
+            foreach (var glTexture in _glTextures)
             {
                 if (glTexture != null)
                 {
@@ -847,9 +847,9 @@ namespace SharpQuake
         private static void Upload8( ByteArraySegment data, Int32 width, Int32 height, System.Boolean mipmap, System.Boolean alpha )
         {
             var s = width * height;
-            UInt32[] trans = new UInt32[s];
-            UInt32[] table = vid.Table8to24;
-            Byte[] data1 = data.Data;
+            var trans = new UInt32[s];
+            var table = vid.Table8to24;
+            var data1 = data.Data;
             var offset = data.StartIndex;
 
             // if there are no transparent pixels, make it a 3 component
@@ -903,7 +903,7 @@ namespace SharpQuake
             if( scaled_height > _glMaxSize.Value )
                 scaled_height = ( Int32 ) _glMaxSize.Value;
 
-            PixelInternalFormat samples = alpha ? _AlphaFormat : _SolidFormat;
+            var samples = alpha ? _AlphaFormat : _SolidFormat;
             UInt32[] scaled;
 
             _Texels += scaled_width * scaled_height;
@@ -912,7 +912,7 @@ namespace SharpQuake
             {
                 if( !mipmap )
                 {
-                    GCHandle h2 = GCHandle.Alloc( data, GCHandleType.Pinned );
+                    var h2 = GCHandle.Alloc( data, GCHandleType.Pinned );
                     try
                     {
                         GL.TexImage2D( TextureTarget.Texture2D, 0, samples, scaled_width, scaled_height, 0,
@@ -930,13 +930,13 @@ namespace SharpQuake
             else
                 ResampleTexture( data, width, height, out scaled, scaled_width, scaled_height );
 
-            GCHandle h = GCHandle.Alloc( scaled, GCHandleType.Pinned );
+            var h = GCHandle.Alloc( scaled, GCHandleType.Pinned );
             try
             {
-                IntPtr ptr = h.AddrOfPinnedObject();
+                var ptr = h.AddrOfPinnedObject();
                 GL.TexImage2D( TextureTarget.Texture2D, 0, samples, scaled_width, scaled_height, 0,
                     PixelFormat.Rgba, PixelType.UnsignedByte, ptr );
-                ErrorCode err = GL.GetError(); // debug
+                var err = GL.GetError(); // debug
                 if( mipmap )
                 {
                     var miplevel = 0;
@@ -1101,7 +1101,7 @@ Done:
             width >>= 1;
             height >>= 1;
 
-            UInt32[] dest = src;
+            var dest = src;
             var srcOffset = 0;
             var destOffset = 0;
             for( var i = 0; i < height; i++ )

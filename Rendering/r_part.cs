@@ -88,7 +88,7 @@ namespace SharpQuake
         /// </summary>
         public static void RocketTrail( ref Vector3 start, ref Vector3 end, Int32 type )
         {
-            Vector3 vec = end - start;
+            var vec = end - start;
             var len = MathLib.Normalize( ref vec );
             Int32 dec;
             if( type < 128 )
@@ -103,7 +103,7 @@ namespace SharpQuake
             {
                 len -= dec;
 
-                particle_t p = AllocParticle();
+                var p = AllocParticle();
                 if( p == null )
                     return;
 
@@ -187,7 +187,7 @@ namespace SharpQuake
         {
             for( var i = 0; i < 1024; i++ ) // Uze: Why 1024 if MAX_PARTICLES = 2048?
             {
-                particle_t p = AllocParticle();
+                var p = AllocParticle();
                 if( p == null )
                     return;
 
@@ -210,7 +210,7 @@ namespace SharpQuake
         {
             for( var i = 0; i < count; i++ )
             {
-                particle_t p = AllocParticle();
+                var p = AllocParticle();
                 if( p == null )
                     return;
 
@@ -243,12 +243,12 @@ namespace SharpQuake
         /// </summary>
         public static void ParseParticleEffect()
         {
-            Vector3 org = net.Reader.ReadCoords();
-            Vector3 dir = new Vector3( net.Reader.ReadChar() * ONE_OVER_16,
-                net.Reader.ReadChar() * ONE_OVER_16,
-                net.Reader.ReadChar() * ONE_OVER_16 );
-            var count = net.Reader.ReadByte();
-            var color = net.Reader.ReadByte();
+            var org = Host.Network.Reader.ReadCoords();
+            var dir = new Vector3( Host.Network.Reader.ReadChar() * ONE_OVER_16,
+                Host.Network.Reader.ReadChar() * ONE_OVER_16,
+                Host.Network.Reader.ReadChar() * ONE_OVER_16 );
+            var count = Host.Network.Reader.ReadByte();
+            var color = Host.Network.Reader.ReadByte();
 
             if( count == 255 )
                 count = 1024;
@@ -265,7 +265,7 @@ namespace SharpQuake
                 for( var j = -16; j < 16; j += 4 )
                     for( var k = -24; k < 32; k += 4 )
                     {
-                        particle_t p = AllocParticle();
+                        var p = AllocParticle();
                         if( p == null )
                             return;
 
@@ -273,7 +273,7 @@ namespace SharpQuake
                         p.color = 7 + ( MathLib.Random() & 7 );
                         p.type = ptype_t.pt_slowgrav;
 
-                        Vector3 dir = new Vector3( j * 8, i * 8, k * 8 );
+                        var dir = new Vector3( j * 8, i * 8, k * 8 );
 
                         p.org = org + new Vector3( i + ( MathLib.Random() & 3 ), j + ( MathLib.Random() & 3 ), k + ( MathLib.Random() & 3 ) );
 
@@ -294,7 +294,7 @@ namespace SharpQuake
                 for( var j = -16; j < 16; j++ )
                     for( var k = 0; k < 1; k++ )
                     {
-                        particle_t p = AllocParticle();
+                        var p = AllocParticle();
                         if( p == null )
                             return;
 
@@ -324,7 +324,7 @@ namespace SharpQuake
 
             for( var i = 0; i < 512; i++ )
             {
-                particle_t p = AllocParticle();
+                var p = AllocParticle();
                 if( p == null )
                     return;
 
@@ -345,7 +345,7 @@ namespace SharpQuake
         {
             for( var i = 0; i < 1024; i++ )
             {
-                particle_t p = AllocParticle();
+                var p = AllocParticle();
                 if( p == null )
                     return;
 
@@ -395,8 +395,8 @@ namespace SharpQuake
                 var sr = Math.Sin( angle );
                 var cr = Math.Cos( angle );
 
-                Vector3 forward = new Vector3( ( Single ) ( cp * cy ), ( Single ) ( cp * sy ),  -( ( System.Single ) sp ) );
-                particle_t p = AllocParticle();
+                var forward = new Vector3( ( Single ) ( cp * cy ), ( Single ) ( cp * sy ),  -( ( System.Single ) sp ) );
+                var p = AllocParticle();
                 if( p == null )
                     return;
 
@@ -433,7 +433,7 @@ namespace SharpQuake
             _ParticleTexture = Drawer.GenerateTextureNumber();// texture_extension_number++;
             Drawer.Bind( _ParticleTexture );
 
-            Byte[,,] data = new Byte[8, 8, 4];
+            var data = new Byte[8, 8, 4];
             for( var x = 0; x < 8; x++ )
             {
                 for( var y = 0; y < 8; y++ )
@@ -473,8 +473,8 @@ namespace SharpQuake
             GL.TexEnv( TextureEnvTarget.TextureEnv, TextureEnvParameter.TextureEnvMode, ( Int32 ) TextureEnvMode.Modulate );
             GL.Begin( PrimitiveType.Triangles );
 
-            Vector3 up = render.ViewUp * 1.5f;
-            Vector3 right = render.ViewRight * 1.5f;
+            var up = render.ViewUp * 1.5f;
+            var right = render.ViewRight * 1.5f;
             var frametime = ( Single ) ( client.cl.time - client.cl.oldtime );
             var time3 = frametime * 15;
             var time2 = frametime * 10;
@@ -484,7 +484,7 @@ namespace SharpQuake
 
             while( true )
             {
-                particle_t kill = _ActiveParticles;
+                var kill = _ActiveParticles;
                 if( kill != null && kill.die < client.cl.time )
                 {
                     _ActiveParticles = kill.next;
@@ -495,11 +495,11 @@ namespace SharpQuake
                 break;
             }
 
-            for( particle_t p = _ActiveParticles; p != null; p = p.next )
+            for( var p = _ActiveParticles; p != null; p = p.next )
             {
                 while( true )
                 {
-                    particle_t kill = p.next;
+                    var kill = p.next;
                     if( kill != null && kill.die < client.cl.time )
                     {
                         p.next = kill.next;
@@ -523,7 +523,7 @@ namespace SharpQuake
                 GL.TexCoord2( 0f, 0 );
                 GL.Vertex3( p.org );
                 GL.TexCoord2( 1f, 0 );
-                Vector3 v = p.org + up * scale;
+                var v = p.org + up * scale;
                 GL.Vertex3( v );
                 GL.TexCoord2( 0f, 1 );
                 v = p.org + right * scale;
@@ -591,7 +591,7 @@ namespace SharpQuake
             if( _FreeParticles == null )
                 return null;
 
-            particle_t p = _FreeParticles;
+            var p = _FreeParticles;
             _FreeParticles = p.next;
             p.next = _ActiveParticles;
             _ActiveParticles = p;

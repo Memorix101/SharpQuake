@@ -46,7 +46,7 @@ namespace SharpQuake
 
             for( var i = 0; i < client.MAX_DLIGHTS; i++ )
             {
-                dlight_t l = client.DLights[i];
+                var l = client.DLights[i];
                 if( l.die < client.cl.time || l.radius == 0 )
                     continue;
                 render.MarkLights( l, 1 << i, client.cl.worldmodel.nodes[0] );
@@ -61,8 +61,8 @@ namespace SharpQuake
             if( node.contents < 0 )
                 return;
 
-            MemoryNode n = (MemoryNode)node;
-            Plane splitplane = n.plane;
+            var n = (MemoryNode)node;
+            var splitplane = n.plane;
             var dist = Vector3.Dot( light.origin, splitplane.normal ) - splitplane.dist;
 
             if( dist > light.radius )
@@ -79,7 +79,7 @@ namespace SharpQuake
             // mark the polygons
             for( var i = 0; i < n.numsurfaces; i++ )
             {
-                MemorySurface surf = client.cl.worldmodel.surfaces[n.firstsurface + i];
+                var surf = client.cl.worldmodel.surfaces[n.firstsurface + i];
                 if( surf.dlightframe != _DlightFrameCount )
                 {
                     surf.dlightbits = 0;
@@ -113,7 +113,7 @@ namespace SharpQuake
 
             for( var i = 0; i < client.MAX_DLIGHTS; i++ )
             {
-                dlight_t l = client.DLights[i];
+                var l = client.DLights[i];
                 if( l.die < client.cl.time || l.radius == 0 )
                     continue;
 
@@ -159,7 +159,7 @@ namespace SharpQuake
             if( client.cl.worldmodel.lightdata == null )
                 return 255;
 
-            Vector3 end = p;
+            var end = p;
             end.Z -= 2048;
 
             var r = RecursiveLightPoint( client.cl.worldmodel.nodes[0], ref p, ref end );
@@ -174,12 +174,12 @@ namespace SharpQuake
             if( node.contents < 0 )
                 return -1;		// didn't hit anything
 
-            MemoryNode n = (MemoryNode)node;
+            var n = (MemoryNode)node;
 
             // calculate mid point
 
             // FIXME: optimize for axial
-            Plane plane = n.plane;
+            var plane = n.plane;
             var front = Vector3.Dot( start, plane.normal ) - plane.dist;
             var back = Vector3.Dot( end, plane.normal ) - plane.dist;
             var side = front < 0 ? 1 : 0;
@@ -188,7 +188,7 @@ namespace SharpQuake
                 return RecursiveLightPoint( n.children[side], ref start, ref end );
 
             var frac = front / ( front - back );
-            Vector3 mid = start + ( end - start ) * frac;
+            var mid = start + ( end - start ) * frac;
 
             // go down front side
             var r = RecursiveLightPoint( n.children[side], ref start, ref mid );
@@ -202,14 +202,14 @@ namespace SharpQuake
             _LightSpot = mid;
             _LightPlane = plane;
 
-            MemorySurface[] surf = client.cl.worldmodel.surfaces;
+            var surf = client.cl.worldmodel.surfaces;
             Int32 offset = n.firstsurface;
             for( var i = 0; i < n.numsurfaces; i++, offset++ )
             {
                 if( ( surf[offset].flags & SurfaceDef.SURF_DRAWTILED ) != 0 )
                     continue;	// no lightmaps
 
-                MemoryTextureInfo tex = surf[offset].texinfo;
+                var tex = surf[offset].texinfo;
 
                 var s = ( Int32 ) ( Vector3.Dot( mid, tex.vecs[0].Xyz ) + tex.vecs[0].W );
                 var t = ( Int32 ) ( Vector3.Dot( mid, tex.vecs[1].Xyz ) + tex.vecs[1].W );
@@ -229,9 +229,9 @@ namespace SharpQuake
                 ds >>= 4;
                 dt >>= 4;
 
-                Byte[] lightmap = surf[offset].sample_base;
+                var lightmap = surf[offset].sample_base;
                 var lmOffset = surf[offset].sampleofs;
-                Int16[] extents = surf[offset].extents;
+                var extents = surf[offset].extents;
                 r = 0;
                 if( lightmap != null )
                 {
@@ -260,7 +260,7 @@ namespace SharpQuake
         private static void RenderDlight( dlight_t light )
         {
             var rad = light.radius * 0.35f;
-            Vector3 v = light.origin - render.Origin;
+            var v = light.origin - render.Origin;
             if( v.Length < rad )
             {	// view is inside the dlight
                 AddLightBlend( 1, 0.5f, 0, light.radius * 0.0003f );

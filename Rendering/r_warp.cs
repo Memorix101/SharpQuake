@@ -82,18 +82,18 @@ namespace SharpQuake
         /// </summary>
         public static void InitSky( Texture mt )
         {
-            Byte[] src = mt.pixels;
+            var src = mt.pixels;
             var offset = mt.offsets[0];
 
             // make an average value for the back to avoid
             // a fringe on the top level
             const Int32 size = 128 * 128;
-            UInt32[] trans = new UInt32[size];
-            UInt32[] v8to24 = vid.Table8to24;
+            var trans = new UInt32[size];
+            var v8to24 = vid.Table8to24;
             var r = 0;
             var g = 0;
             var b = 0;
-            Union4b rgba = Union4b.Empty;
+            var rgba = Union4b.Empty;
             for( var i = 0; i < 128; i++ )
                 for( var j = 0; j < 128; j++ )
                 {
@@ -148,8 +148,8 @@ namespace SharpQuake
             // convert edges back to a normal polygon
             //
             var numverts = 0;
-            Vector3[] verts = new Vector3[fa.numedges + 1]; // + 1 for wrap case
-            Model loadmodel = Host.Model.Model;
+            var verts = new Vector3[fa.numedges + 1]; // + 1 for wrap case
+            var loadmodel = Host.Model.Model;
             for( var i = 0; i < fa.numedges; i++ )
             {
                 var lindex = loadmodel.surfedges[fa.firstedge + i];
@@ -176,7 +176,7 @@ namespace SharpQuake
             Vector3 mins, maxs;
             BoundPoly( numverts, verts, out mins, out maxs );
 
-            Single[] dist = new Single[64];
+            var dist = new Single[64];
             for( var i = 0; i < 3; i++ )
             {
                 var m = ( MathLib.Comp( ref mins, i ) + MathLib.Comp( ref maxs, i ) ) * 0.5;
@@ -190,8 +190,8 @@ namespace SharpQuake
                 for( var j = 0; j < numverts; j++ )
                     dist[j] = ( Single ) ( MathLib.Comp( ref verts[j], i ) - m );
 
-                Vector3[] front = new Vector3[64];
-                Vector3[] back = new Vector3[64];
+                var front = new Vector3[64];
+                var back = new Vector3[64];
 
                 // cut it
 
@@ -229,7 +229,7 @@ namespace SharpQuake
                 return;
             }
 
-            GLPoly poly = new GLPoly();
+            var poly = new GLPoly();
             poly.next = _WarpFace.polys;
             _WarpFace.polys = poly;
             poly.AllocVerts( numverts );
@@ -263,12 +263,12 @@ namespace SharpQuake
         /// </summary>
         private static void EmitWaterPolys( MemorySurface fa )
         {
-            for( GLPoly p = fa.polys; p != null; p = p.next )
+            for( var p = fa.polys; p != null; p = p.next )
             {
                 GL.Begin( PrimitiveType.Polygon );
                 for( var i = 0; i < p.numverts; i++ )
                 {
-                    Single[] v = p.verts[i];
+                    var v = p.verts[i];
                     var os = v[3];
                     var ot = v[4];
 
@@ -290,13 +290,13 @@ namespace SharpQuake
         /// </summary>
         private static void EmitSkyPolys( MemorySurface fa )
         {
-            for( GLPoly p = fa.polys; p != null; p = p.next )
+            for( var p = fa.polys; p != null; p = p.next )
             {
                 GL.Begin( PrimitiveType.Polygon );
                 for( var i = 0; i < p.numverts; i++ )
                 {
-                    Single[] v = p.verts[i];
-                    Vector3 dir = new Vector3( v[0] - render.Origin.X, v[1] - render.Origin.Y, v[2] - render.Origin.Z );
+                    var v = p.verts[i];
+                    var dir = new Vector3( v[0] - render.Origin.X, v[1] - render.Origin.Y, v[2] - render.Origin.Z );
                     dir.Z *= 3; // flatten the sphere
 
                     dir.Normalize();
@@ -324,7 +324,7 @@ namespace SharpQuake
             _SpeedScale = ( Single ) Host.RealTime * 8;
             _SpeedScale -= ( Int32 ) _SpeedScale & ~127;
 
-            for( MemorySurface fa = s; fa != null; fa = fa.texturechain )
+            for( var fa = s; fa != null; fa = fa.texturechain )
                 EmitSkyPolys( fa );
 
             GL.Enable( EnableCap.Blend );
@@ -332,7 +332,7 @@ namespace SharpQuake
             _SpeedScale = ( Single ) Host.RealTime * 16;
             _SpeedScale -= ( Int32 ) _SpeedScale & ~127;
 
-            for( MemorySurface fa = s; fa != null; fa = fa.texturechain )
+            for( var fa = s; fa != null; fa = fa.texturechain )
                 EmitSkyPolys( fa );
 
             GL.Disable( EnableCap.Blend );

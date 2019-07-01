@@ -37,14 +37,14 @@ namespace SharpQuake
                     snd.LocalSound( "misc/menu1.wav" );
                     _Cursor--;
                     if ( _Cursor < 0 )
-                        _Cursor = net.HostCacheCount - 1;
+                        _Cursor = Host.Network.HostCacheCount - 1;
                     break;
 
                 case KeysDef.K_DOWNARROW:
                 case KeysDef.K_RIGHTARROW:
                     snd.LocalSound( "misc/menu1.wav" );
                     _Cursor++;
-                    if ( _Cursor >= net.HostCacheCount )
+                    if ( _Cursor >= Host.Network.HostCacheCount )
                         _Cursor = 0;
                     break;
 
@@ -54,7 +54,7 @@ namespace SharpQuake
                     Host.Menu.ReturnOnError = true;
                     _Sorted = false;
                     MenuBase.CurrentMenu.Hide( );
-                    Host.CommandBuffer.AddText( String.Format( "connect \"{0}\"\n", net.HostCache[_Cursor].cname ) );
+                    Host.CommandBuffer.AddText( String.Format( "connect \"{0}\"\n", Host.Network.HostCache[_Cursor].cname ) );
                     break;
 
                 default:
@@ -66,23 +66,23 @@ namespace SharpQuake
         {
             if ( !_Sorted )
             {
-                if ( net.HostCacheCount > 1 )
+                if ( Host.Network.HostCacheCount > 1 )
                 {
                     Comparison<hostcache_t> cmp = delegate ( hostcache_t a, hostcache_t b )
                     {
                         return String.Compare( a.cname, b.cname );
                     };
 
-                    Array.Sort( net.HostCache, cmp );
+                    Array.Sort( Host.Network.HostCache, cmp );
                 }
                 _Sorted = true;
             }
 
-            GLPic p = Drawer.CachePic( "gfx/p_multi.lmp" );
+            var p = Drawer.CachePic( "gfx/p_multi.lmp" );
             Host.Menu.DrawPic( ( 320 - p.width ) / 2, 4, p );
-            for ( var n = 0; n < net.HostCacheCount; n++ )
+            for ( var n = 0; n < Host.Network.HostCacheCount; n++ )
             {
-                hostcache_t hc = net.HostCache[n];
+                var hc = Host.Network.HostCache[n];
                 String tmp;
                 if ( hc.maxusers > 0 )
                     tmp = String.Format( "{0,-15} {1,-15} {2:D2}/{3:D2}\n", hc.name, hc.map, hc.users, hc.maxusers );

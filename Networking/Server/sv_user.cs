@@ -98,18 +98,18 @@ namespace SharpQuake
             var angleval = _Player.v.angles.y * Math.PI * 2 / 360;
             var sinval = Math.Sin( angleval );
             var cosval = Math.Cos( angleval );
-            Single[] z = new Single[MAX_FORWARD];
+            var z = new Single[MAX_FORWARD];
             for( var i = 0; i < MAX_FORWARD; i++ )
             {
-                Vector3f top = _Player.v.origin;
+                var top = _Player.v.origin;
                 top.x += ( Single ) ( cosval * ( i + 3 ) * 12 );
                 top.y += ( Single ) ( sinval * ( i + 3 ) * 12 );
                 top.z += _Player.v.view_ofs.z;
 
-                Vector3f bottom = top;
+                var bottom = top;
                 bottom.z -= 160;
 
-                trace_t tr = Move( ref top, ref Utilities.ZeroVector3f, ref Utilities.ZeroVector3f, ref bottom, 1, _Player );
+                var tr = Move( ref top, ref Utilities.ZeroVector3f, ref Utilities.ZeroVector3f, ref bottom, 1, _Player );
                 if( tr.allsolid )
                     return;	// looking at a wall, leave ideal the way is was
 
@@ -153,7 +153,7 @@ namespace SharpQuake
         {
             while( true )
             {
-                var ret = net.GetMessage( Host.HostClient.netconnection );
+                var ret = Host.Network.GetMessage( Host.HostClient.netconnection );
                 if( ret == -1 )
                 {
                     Host.Console.DPrint( "SV_ReadClientMessage: NET_GetMessage failed\n" );
@@ -162,7 +162,7 @@ namespace SharpQuake
                 if( ret == 0 )
                     return true;
 
-                net.Reader.Reset();
+                Host.Network.Reader.Reset();
 
                 var flag = true;
                 while( flag )
@@ -170,13 +170,13 @@ namespace SharpQuake
                     if( !Host.HostClient.active )
                         return false;	// a command caused an error
 
-                    if( net.Reader.IsBadRead )
+                    if( Host.Network.Reader.IsBadRead )
                     {
                         Host.Console.DPrint( "SV_ReadClientMessage: badread\n" );
                         return false;
                     }
 
-                    var cmd = net.Reader.ReadChar();
+                    var cmd = Host.Network.Reader.ReadChar();
                     switch( cmd )
                     {
                         case -1:
@@ -188,7 +188,7 @@ namespace SharpQuake
                             break;
 
                         case protocol.clc_stringcmd:
-                            var s = net.Reader.ReadString();
+                            var s = Host.Network.Reader.ReadString();
                             if( Host.HostClient.privileged )
                                 ret = 2;
                             else
@@ -264,27 +264,27 @@ namespace SharpQuake
         /// </summary>
         private static void ReadClientMove( ref usercmd_t move )
         {
-            client_t client = Host.HostClient;
+            var client = Host.HostClient;
 
             // read ping time
-            client.ping_times[client.num_pings % ServerDef.NUM_PING_TIMES] = ( Single ) ( sv.time - net.Reader.ReadFloat() );
+            client.ping_times[client.num_pings % ServerDef.NUM_PING_TIMES] = ( Single ) ( sv.time - Host.Network.Reader.ReadFloat() );
             client.num_pings++;
 
             // read current angles
-            Vector3 angles = net.Reader.ReadAngles();
+            var angles = Host.Network.Reader.ReadAngles();
             MathLib.Copy( ref angles, out client.edict.v.v_angle );
 
             // read movement
-            move.forwardmove = net.Reader.ReadShort();
-            move.sidemove = net.Reader.ReadShort();
-            move.upmove = net.Reader.ReadShort();
+            move.forwardmove = Host.Network.Reader.ReadShort();
+            move.sidemove = Host.Network.Reader.ReadShort();
+            move.upmove = Host.Network.Reader.ReadShort();
 
             // read buttons
-            var bits = net.Reader.ReadByte();
+            var bits = Host.Network.Reader.ReadByte();
             client.edict.v.button0 = bits & 1;
             client.edict.v.button2 = ( bits & 2 ) >> 1;
 
-            var i = net.Reader.ReadByte();
+            var i = Host.Network.Reader.ReadByte();
             if( i != 0 )
                 client.edict.v.impulse = i;
         }
@@ -316,8 +316,8 @@ namespace SharpQuake
 
             Vector3f v_angle;
             MathLib.VectorAdd( ref _Player.v.v_angle, ref _Player.v.punchangle, out v_angle );
-            Vector3 pang = Utilities.ToVector( ref _Player.v.angles );
-            Vector3 pvel = Utilities.ToVector( ref _Player.v.velocity );
+            var pang = Utilities.ToVector( ref _Player.v.angles );
+            var pvel = Utilities.ToVector( ref _Player.v.velocity );
             _Player.v.angles.z = Host.View.CalcRoll( ref pang, ref pvel ) * 4;
             if( _Player.v.fixangle == 0 )
             {
@@ -344,7 +344,7 @@ namespace SharpQuake
 
         private static void DropPunchAngle()
         {
-            Vector3 v = Utilities.ToVector( ref _Player.v.punchangle );
+            var v = Utilities.ToVector( ref _Player.v.punchangle );
             var len = MathLib.Normalize( ref v ) - 10 * Host.FrameTime;
             if( len < 0 )
                 len = 0;
@@ -374,9 +374,9 @@ namespace SharpQuake
             //
             // user intentions
             //
-            Vector3 pangle = Utilities.ToVector( ref _Player.v.v_angle );
+            var pangle = Utilities.ToVector( ref _Player.v.v_angle );
             MathLib.AngleVectors( ref pangle, out _Forward, out _Right, out _Up );
-            Vector3 wishvel = _Forward * _Cmd.forwardmove + _Right * _Cmd.sidemove;
+            var wishvel = _Forward * _Cmd.forwardmove + _Right * _Cmd.sidemove;
 
             if( _Cmd.forwardmove == 0 && _Cmd.sidemove == 0 && _Cmd.upmove == 0 )
                 wishvel.Z -= 60;		// drift towards bottom
@@ -431,7 +431,7 @@ namespace SharpQuake
         /// </summary>
         private static void AirMove()
         {
-            Vector3 pangles = Utilities.ToVector( ref _Player.v.angles );
+            var pangles = Utilities.ToVector( ref _Player.v.angles );
             MathLib.AngleVectors( ref pangles, out _Forward, out _Right, out _Up );
 
             var fmove = _Cmd.forwardmove;
@@ -441,7 +441,7 @@ namespace SharpQuake
             if( sv.time < _Player.v.teleport_time && fmove < 0 )
                 fmove = 0;
 
-            Vector3 wishvel = _Forward * fmove + _Right * smove;
+            var wishvel = _Forward * fmove + _Right * smove;
 
             if( ( Int32 ) _Player.v.movetype != Movetypes.MOVETYPE_WALK )
                 wishvel.Z = _Cmd.upmove;
@@ -488,7 +488,7 @@ namespace SharpQuake
             start.Z = _Player.v.origin.z + _Player.v.mins.z;
             stop.Z = start.Z - 34;
 
-            trace_t trace = Move( ref start, ref Utilities.ZeroVector, ref Utilities.ZeroVector, ref stop, 1, _Player );
+            var trace = Move( ref start, ref Utilities.ZeroVector, ref Utilities.ZeroVector, ref stop, 1, _Player );
             var friction = _Friction.Value;
             if( trace.fraction == 1.0 )
                 friction *= _EdgeFriction.Value;

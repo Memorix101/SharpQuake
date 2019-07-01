@@ -30,7 +30,7 @@ using SharpQuake.Framework;
 
 namespace SharpQuake
 {
-    public partial class progs
+    public partial class Programs
     {
         private struct gefv_cache
         {
@@ -114,7 +114,7 @@ namespace SharpQuake
             set;
         }
 
-        public progs()
+        public Programs()
         {
             // Temporary workaround - will fix later
             ProgramsWrapper.OnGetString += ( strId ) =>
@@ -157,7 +157,7 @@ namespace SharpQuake
         {
             FreeHandles();
 
-            QBuiltins.ClearState();
+            Host.ProgramsBuiltIn.ClearState();
             _DynamicStrings.Clear();
 
             // flush the non-C variable lookup cache
@@ -166,7 +166,7 @@ namespace SharpQuake
 
             SharpQuake.Framework.Crc.Init( out _Crc );
 
-            Byte[] buf = FileSystem.LoadFile( "progs.dat" );
+            var buf = FileSystem.LoadFile( "progs.dat" );
 
             _Progs = Utilities.BytesToStructure<Program>( buf, 0 );
             if( _Progs == null )
@@ -426,7 +426,7 @@ namespace SharpQuake
                 if( keyname[0] == '_' )
                     continue;
 
-                ProgramDefinition key = FindField( keyname );
+                var key = FindField( keyname );
                 if( key == null )
                 {
                     Host.Console.Print( "'{0}' is not a field\n", keyname );
@@ -464,7 +464,7 @@ namespace SharpQuake
             Host.Console.Print( "\nEDICT {0}:\n", server.NumForEdict( ed ) );
             for( var i = 1; i < _Progs.numfielddefs; i++ )
             {
-                ProgramDefinition d = _FieldDefs[i];
+                var d = _FieldDefs[i];
                 var name = GetString( d.s_name );
 
                 if( name.Length > 2 && name[name.Length - 2] == '_' )
@@ -476,7 +476,7 @@ namespace SharpQuake
                 {
                     fixed ( void* ptr = &ed.v )
                     {
-                        Int32* v = ( Int32* )ptr + offset;
+                        var v = ( Int32* )ptr + offset;
                         if( IsEmptyField( type, v ) )
                             continue;
 
@@ -488,7 +488,7 @@ namespace SharpQuake
                 {
                     fixed ( void* ptr = ed.fields )
                     {
-                        Int32* v = ( Int32* )ptr + offset;
+                        var v = ( Int32* )ptr + offset;
                         if( IsEmptyField( type, v ) )
                             continue;
 
@@ -546,7 +546,7 @@ namespace SharpQuake
         public Int32 NewString( String s )
         {
             var id = AllocString();
-            StringBuilder sb = new StringBuilder( s.Length );
+            var sb = new StringBuilder( s.Length );
             var len = s.Length;
             for( var i = 0; i < len; i++ )
             {
@@ -567,7 +567,7 @@ namespace SharpQuake
 
         public Single GetEdictFieldFloat( MemoryEdict ed, String field, Single defValue = 0 )
         {
-            ProgramDefinition def = CachedSearch( ed, field );
+            var def = CachedSearch( ed, field );
             if( def == null )
                 return defValue;
 
@@ -576,7 +576,7 @@ namespace SharpQuake
 
         public Boolean SetEdictFieldFloat( MemoryEdict ed, String field, Single value )
         {
-            ProgramDefinition def = CachedSearch( ed, field );
+            var def = CachedSearch( ed, field );
             if( def != null )
             {
                 ed.SetFloat( def.ofs, value );
@@ -614,8 +614,8 @@ namespace SharpQuake
             writer.WriteLine( "{" );
             for( var i = 0; i < _Progs.numglobaldefs; i++ )
             {
-                ProgramDefinition def = _GlobalDefs[i];
-                EdictType type = (EdictType)def.type;
+                var def = _GlobalDefs[i];
+                var type = (EdictType)def.type;
                 if( ( def.type & ProgramDef.DEF_SAVEGLOBAL ) == 0 )
                     continue;
 
@@ -648,7 +648,7 @@ namespace SharpQuake
 
             for( var i = 1; i < _Progs.numfielddefs; i++ )
             {
-                ProgramDefinition d = _FieldDefs[i];
+                var d = _FieldDefs[i];
                 var name = GetString( d.s_name );
                 if( name != null && name.Length > 2 && name[name.Length - 2] == '_' )// [strlen(name) - 2] == '_')
                     continue;	// skip _x, _y, _z vars
@@ -659,7 +659,7 @@ namespace SharpQuake
                 {
                     fixed ( void* ptr = &ed.v )
                     {
-                        Int32* v = ( Int32* )ptr + offset1;
+                        var v = ( Int32* )ptr + offset1;
                         if( IsEmptyField( type, v ) )
                             continue;
 
@@ -670,7 +670,7 @@ namespace SharpQuake
                 {
                     fixed ( void* ptr = ed.fields )
                     {
-                        Int32* v = ( Int32* )ptr + offset1;
+                        var v = ( Int32* )ptr + offset1;
                         if( IsEmptyField( type, v ) )
                             continue;
 
@@ -707,7 +707,7 @@ namespace SharpQuake
                 if( Tokeniser.Token.StartsWith( "}" ) )
                     Utilities.Error( "ED_ParseEntity: closing brace without data" );
 
-                ProgramDefinition key = FindGlobal( keyname );
+                var key = FindGlobal( keyname );
                 if( key == null )
                 {
                     Host.Console.Print( "'{0}' is not a global\n", keyname );
@@ -729,15 +729,15 @@ namespace SharpQuake
 
         private void Test5_f()
         {
-            Entity p = client.ViewEntity;
+            var p = client.ViewEntity;
             if( p == null )
                 return;
 
-            OpenTK.Vector3 org = p.origin;
+            var org = p.origin;
 
             for( var i = 0; i < server.sv.edicts.Length; i++ )
             {
-                MemoryEdict ed = server.sv.edicts[i];
+                var ed = server.sv.edicts[i];
 
                 if( ed.free )
                     continue;
@@ -792,7 +792,7 @@ namespace SharpQuake
 
             for( var i = 0; i < server.sv.num_edicts; i++ )
             {
-                MemoryEdict ent = server.EdictNum( i );
+                var ent = server.EdictNum( i );
                 if( ent.free )
                     continue;
                 active++;
@@ -863,7 +863,7 @@ namespace SharpQuake
         /// </summary>
         private unsafe Boolean ParsePair( void* value, ProgramDefinition key, String s )
         {
-            void* d = value;// (void *)((int *)base + key->ofs);
+            var d = value;// (void *)((int *)base + key->ofs);
 
             switch( (EdictType)( key.type & ~ProgramDef.DEF_SAVEGLOBAL ) )
             {
@@ -876,7 +876,7 @@ namespace SharpQuake
                     break;
 
                 case EdictType.ev_vector:
-                    String[] vs = s.Split( ' ' );
+                    var vs = s.Split( ' ' );
                     ( ( Single* )d )[0] = MathLib.atof( vs[0] );
                     ( ( Single* )d )[1] = ( vs.Length > 1 ? MathLib.atof( vs[1] ) : 0 );
                     ( ( Single* )d )[2] = ( vs.Length > 2 ? MathLib.atof( vs[2] ) : 0 );
@@ -1000,12 +1000,12 @@ namespace SharpQuake
                     break;
 
                 case EdictType.ev_function:
-                    ProgramFunction f = _Functions[*( Int32* )val];
+                    var f = _Functions[*( Int32* )val];
                     result = GetString( f.s_name ) + "()";
                     break;
 
                 case EdictType.ev_field:
-                    ProgramDefinition def = FindField( *( Int32* )val );
+                    var def = FindField( *( Int32* )val );
                     result = "." + GetString( def.s_name );
                     break;
 
@@ -1109,12 +1109,12 @@ namespace SharpQuake
                     break;
 
                 case EdictType.ev_function:
-                    ProgramFunction f = _Functions[val->function];
+                    var f = _Functions[val->function];
                     result = GetString( f.s_name );
                     break;
 
                 case EdictType.ev_field:
-                    ProgramDefinition def = FindField( val->_int );
+                    var def = FindField( val->_int );
                     result = GetString( def.s_name );
                     break;
 
@@ -1155,7 +1155,7 @@ namespace SharpQuake
         {
             for( var i = 0; i < _GlobalDefs.Length; i++ )
             {
-                ProgramDefinition def = _GlobalDefs[i];
+                var def = _GlobalDefs[i];
                 if( name == GetString( def.s_name ) )
                     return def;
             }
@@ -1180,8 +1180,8 @@ namespace SharpQuake
         private unsafe String GlobalString( Int32 ofs )
         {
             var line = String.Empty;
-            void* val = Get( ofs );// (void*)&pr_globals[ofs];
-            ProgramDefinition def = GlobalAtOfs( ofs );
+            var val = Get( ofs );// (void*)&pr_globals[ofs];
+            var def = GlobalAtOfs( ofs );
             if( def == null )
                 line = String.Format( "{0}(???)", ofs );
             else
@@ -1201,7 +1201,7 @@ namespace SharpQuake
         private String GlobalStringNoContents( Int32 ofs )
         {
             var line = String.Empty;
-            ProgramDefinition def = GlobalAtOfs( ofs );
+            var def = GlobalAtOfs( ofs );
             if( def == null )
                 line = String.Format( "{0}(???)", ofs );
             else
@@ -1219,7 +1219,7 @@ namespace SharpQuake
         {
             for( var i = 0; i < _GlobalDefs.Length; i++ )
             {
-                ProgramDefinition def = _GlobalDefs[i];
+                var def = _GlobalDefs[i];
                 if( def.ofs == ofs )
                     return def;
             }

@@ -41,7 +41,7 @@ namespace SharpQuake
     internal class net_vcr : INetDriver
     {
         private VcrRecord _Next;
-        private Boolean _IsInitialized;
+        private Boolean _IsInitialised;
 
         #region INetDriver Members
 
@@ -53,11 +53,11 @@ namespace SharpQuake
             }
         }
 
-        public Boolean IsInitialized
+        public Boolean IsInitialised
         {
             get
             {
-                return _IsInitialized;
+                return _IsInitialised;
             }
         }
 
@@ -68,12 +68,12 @@ namespace SharpQuake
             set;
         }
 
-        public void Init( Host host )
+        public void Initialise( Object host )
         {
-            Host = host;
+            Host = ( Host ) host;
 
             _Next = Utilities.ReadStructure<VcrRecord>( Host.VcrReader.BaseStream );
-            _IsInitialized = true;
+            _IsInitialised = true;
         }
 
         public void Listen( Boolean state )
@@ -102,10 +102,10 @@ namespace SharpQuake
                 return null;
             }
 
-            qsocket_t sock = net.NewSocket();
+            var sock = Host.Network.NewSocket();
             sock.driverdata = _Next.session;
 
-            Byte[] buf = new Byte[NetworkDef.NET_NAMELEN];
+            var buf = new Byte[NetworkDef.NET_NAMELEN];
             Host.VcrReader.Read( buf, 0, buf.Length );
             sock.address = Encoding.ASCII.GetString( buf );
 
@@ -127,7 +127,7 @@ namespace SharpQuake
             }
 
             var length = Host.VcrReader.ReadInt32();
-            net.Message.FillFrom( Host.VcrReader.BaseStream, length );
+            Host.Network.Message.FillFrom( Host.VcrReader.BaseStream, length );
 
             ReadNext();
 

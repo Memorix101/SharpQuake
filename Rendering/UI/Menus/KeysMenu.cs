@@ -83,7 +83,7 @@ namespace SharpQuake
                     break;
 
                 case KeysDef.K_ENTER:		// go into bind mode
-                    Int32[] keys = new Int32[2];
+                    var keys = new Int32[2];
                     FindKeysForCommand( _BindNames[_Cursor][0], keys );
                     snd.LocalSound( "misc/menu2.wav" );
                     if ( keys[1] != -1 )
@@ -101,7 +101,7 @@ namespace SharpQuake
 
         public override void Draw( )
         {
-            GLPic p = Drawer.CachePic( "gfx/ttl_cstm.lmp" );
+            var p = Drawer.CachePic( "gfx/ttl_cstm.lmp" );
             Host.Menu.DrawPic( ( 320 - p.width ) / 2, 4, p );
 
             if ( _BindGrab )
@@ -110,7 +110,7 @@ namespace SharpQuake
                 Host.Menu.Print( 18, 32, "Enter to change, backspace to clear" );
 
             // search for known bindings
-            Int32[] keys = new Int32[2];
+            var keys = new Int32[2];
 
             for ( var i = 0; i < _BindNames.Length; i++ )
             {

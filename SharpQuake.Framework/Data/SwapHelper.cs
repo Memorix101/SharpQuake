@@ -32,8 +32,8 @@ namespace SharpQuake.Framework
 
         public static Single FloatSwap( Single f )
         {
-            Byte[] bytes = BitConverter.GetBytes( f );
-            Byte[] bytes2 = new Byte[4];
+            var bytes = BitConverter.GetBytes( f );
+            var bytes2 = new Byte[4];
 
             bytes2[0] = bytes[3];
             bytes2[1] = bytes[2];

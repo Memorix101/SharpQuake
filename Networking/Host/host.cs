@@ -214,13 +214,25 @@ namespace SharpQuake
             private set;
         }
 
-        public progs Programs
+        public Programs Programs
+        {
+            get;
+            private set;
+        }
+
+        public ProgramsBuiltIn ProgramsBuiltIn
         {
             get;
             private set;
         }
 
         public Mod Model
+        {
+            get;
+            private set;
+        }
+
+        public Network Network
         {
             get;
             private set;
@@ -271,8 +283,10 @@ namespace SharpQuake
             Keyboard = new Keyboard( );
             Console = new Con( );
             Menu = new Menu( );
-            Programs = new progs( );
+            Programs = new Programs( );
+            ProgramsBuiltIn = new ProgramsBuiltIn( );
             Model = new Mod( );
+            Network = new Network( );
         }
 
         /// <summary>
@@ -315,7 +329,7 @@ namespace SharpQuake
         }
 
         /// <summary>
-        /// host_old_Error
+        /// host_Error
         /// This shuts down both the client and server
         /// </summary>
         public void Error( String error, params Object[] args )
@@ -324,18 +338,18 @@ namespace SharpQuake
             try
             {
                 if ( _ErrorDepth > 1 )
-                    Utilities.Error( "host_old_Error: recursively entered. " + error, args );
+                    Utilities.Error( "host_Error: recursively entered. " + error, args );
 
                 Scr.EndLoadingPlaque( );		// reenable screen updates
 
                 var message = ( args.Length > 0 ? String.Format( error, args ) : error );
-                Console.Print( "host_old_Error: {0}\n", message );
+                Console.Print( "host_Error: {0}\n", message );
 
                 if ( server.sv.active )
                     ShutdownServer( false );
 
                 if ( client.cls.state == cactive_t.ca_dedicated )
-                    Utilities.Error( "host_old_Error: {0}\n", message );	// dedicated servers exit
+                    Utilities.Error( "host_Error: {0}\n", message );	// dedicated servers exit
 
                 client.Disconnect( );
                 client.cls.demonum = -1;
@@ -367,8 +381,9 @@ namespace SharpQuake
             Console.Initialise( this );
             Menu.Initialise( this );
             Programs.Initialise( this );
+            ProgramsBuiltIn.Initialise( this );
             Model.Initialise( this );
-            net.Init( this );
+            Network.Initialise( this );
             server.Init( this );
 
             //Con.Print("Exe: "__TIME__" "__DATE__"\n");
@@ -461,7 +476,7 @@ namespace SharpQuake
                     Utilities.Error( "Invalid signature in vcr file\n" );
 
                 var argc = VcrReader.ReadInt32( ); // Sys_FileRead(vcrFile, &com_argc, sizeof(int));
-                String[] argv = new String[argc + 1];
+                var argv = new String[argc + 1];
                 argv[0] = parms.argv[0];
 
                 for ( var i = 1; i < argv.Length; i++ )
@@ -496,8 +511,8 @@ namespace SharpQuake
         /// </summary>
         private void FindMaxClients( )
         {
-            server_static_t svs = server.svs;
-            client_static_t cls = client.cls;
+            var svs = server.svs;
+            var cls = client.cls;
 
             svs.maxclients = 1;
 
@@ -591,7 +606,7 @@ namespace SharpQuake
             // process console commands
             CommandBuffer.Execute( );
 
-            net.Poll( );
+            Network.Poll( );
 
             // if running the server locally, make intentions now
             if ( server.sv.active )
@@ -723,14 +738,14 @@ namespace SharpQuake
                     HostClient = server.svs.clients[i];
                     if ( HostClient.active && !HostClient.message.IsEmpty )
                     {
-                        if ( net.CanSendMessage( HostClient.netconnection ) )
+                        if ( Network.CanSendMessage( HostClient.netconnection ) )
                         {
-                            net.SendMessage( HostClient.netconnection, HostClient.message );
+                            Network.SendMessage( HostClient.netconnection, HostClient.message );
                             HostClient.message.Clear( );
                         }
                         else
                         {
-                            net.GetMessage( HostClient.netconnection );
+                            Network.GetMessage( HostClient.netconnection );
                             count++;
                         }
                     }
@@ -741,9 +756,9 @@ namespace SharpQuake
             while ( count > 0 );
 
             // make sure all the clients know we're disconnecting
-            MessageWriter writer = new MessageWriter( 4 );
+            var writer = new MessageWriter( 4 );
             writer.WriteByte( protocol.svc_disconnect );
-            count = net.SendToAll( writer, 5 );
+            count = Network.SendToAll( writer, 5 );
             if ( count != 0 )
                 Console.Print( "Host_ShutdownServer: NET_SendToAll failed for {0} clients\n", count );
 
@@ -785,7 +800,7 @@ namespace SharpQuake
             _TimeCount = 0;
             _TimeTotal = 0;
             var c = 0;
-            foreach ( client_t cl in server.svs.clients )
+            foreach ( var cl in server.svs.clients )
             {
                 if ( cl.active )
                     c++;
@@ -834,7 +849,7 @@ namespace SharpQuake
                 WriteConfiguration( );
 
                 cd_audio.Shutdown( );
-                net.Shutdown( );
+                Network.Shutdown( );
                 snd.Shutdown( );
                 MainWindow.Input.Shutdown( );
 

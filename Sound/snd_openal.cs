@@ -148,7 +148,7 @@ namespace SharpQuake
             AL.GetSource( _Source, ALGetSourcei.BuffersProcessed, out processed );
             if( processed > 0 )
             {
-                Int32[] bufs = AL.SourceUnqueueBuffers( _Source, processed );
+                var bufs = AL.SourceUnqueueBuffers( _Source, processed );
                 foreach( var buffer in bufs )
                 {
                     if( buffer == 0 )
