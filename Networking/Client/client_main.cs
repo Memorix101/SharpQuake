@@ -36,10 +36,8 @@ namespace SharpQuake
         }
 
         // CL_Init
-        public void Initialise( Host host )
+        public void Initialise( )
         {
-            Host = host;
-
             InitInput( Host );
             InitTempEntities();
 
@@ -123,7 +121,7 @@ namespace SharpQuake
             if( cls.demonum == -1 )
                 return;		// don't play demos
 
-            Scr.BeginLoadingPlaque();
+            Host.Screen.BeginLoadingPlaque();
 
             if( String.IsNullOrEmpty( cls.demos[cls.demonum] ) || cls.demonum == ClientDef.MAX_DEMOS )
             {
@@ -292,7 +290,7 @@ namespace SharpQuake
         public void Disconnect()
         {
             // stop sounds (especially looping!)
-            snd.StopAllSounds( true );
+            Host.Sound.StopAllSounds( true );
 
             // bring the console down and fade the colors back to normal
             //	SCR_BringDownConsole ();
@@ -370,7 +368,7 @@ namespace SharpQuake
                 {
                     // empty slot
                     if( ent.forcelink )
-                        render.RemoveEfrags( ent );	// just became empty
+                        Host.RenderContext.RemoveEfrags( ent );	// just became empty
                     continue;
                 }
 
@@ -410,7 +408,7 @@ namespace SharpQuake
                     ent.angles.Y = bobjrotate;
 
                 if( ( ent.effects & EntityEffects.EF_BRIGHTFIELD ) != 0 )
-                    render.EntityParticles( ent );
+                    Host.RenderContext.EntityParticles( ent );
 
                 if( ( ent.effects & EntityEffects.EF_MUZZLEFLASH ) != 0 )
                 {
@@ -441,25 +439,25 @@ namespace SharpQuake
                 }
 
                 if( ( ent.model.flags & EF.EF_GIB ) != 0 )
-                    render.RocketTrail( ref oldorg, ref ent.origin, 2 );
+                    Host.RenderContext.RocketTrail( ref oldorg, ref ent.origin, 2 );
                 else if( ( ent.model.flags & EF.EF_ZOMGIB ) != 0 )
-                    render.RocketTrail( ref oldorg, ref ent.origin, 4 );
+                    Host.RenderContext.RocketTrail( ref oldorg, ref ent.origin, 4 );
                 else if( ( ent.model.flags & EF.EF_TRACER ) != 0 )
-                    render.RocketTrail( ref oldorg, ref ent.origin, 3 );
+                    Host.RenderContext.RocketTrail( ref oldorg, ref ent.origin, 3 );
                 else if( ( ent.model.flags & EF.EF_TRACER2 ) != 0 )
-                    render.RocketTrail( ref oldorg, ref ent.origin, 5 );
+                    Host.RenderContext.RocketTrail( ref oldorg, ref ent.origin, 5 );
                 else if( ( ent.model.flags & EF.EF_ROCKET ) != 0 )
                 {
-                    render.RocketTrail( ref oldorg, ref ent.origin, 0 );
+                    Host.RenderContext.RocketTrail( ref oldorg, ref ent.origin, 0 );
                     var dl = AllocDlight( i );
                     dl.origin = ent.origin;
                     dl.radius = 200;
                     dl.die = ( Single ) cl.time + 0.01f;
                 }
                 else if( ( ent.model.flags & EF.EF_GRENADE ) != 0 )
-                    render.RocketTrail( ref oldorg, ref ent.origin, 1 );
+                    Host.RenderContext.RocketTrail( ref oldorg, ref ent.origin, 1 );
                 else if( ( ent.model.flags & EF.EF_TRACER3 ) != 0 )
-                    render.RocketTrail( ref oldorg, ref ent.origin, 6 );
+                    Host.RenderContext.RocketTrail( ref oldorg, ref ent.origin, 6 );
 
                 ent.forcelink = false;
 
@@ -508,12 +506,12 @@ namespace SharpQuake
                     break;
 
                 case 4:
-                    Scr.EndLoadingPlaque();		// allow normal screen updates
+                    Host.Screen.EndLoadingPlaque();		// allow normal screen updates
                     break;
             }
         }
 
-        /// <summary>
+        /// <summary>  
         /// CL_ClearState
         /// </summary>
         private void ClearState()

@@ -45,7 +45,7 @@ namespace SharpQuake
             if ( _BindGrab )
             {
                 // defining a key
-                snd.LocalSound( "misc/menu1.wav" );
+                Host.Sound.LocalSound( "misc/menu1.wav" );
                 if ( key == KeysDef.K_ESCAPE )
                 {
                     _BindGrab = false;
@@ -68,7 +68,7 @@ namespace SharpQuake
 
                 case KeysDef.K_LEFTARROW:
                 case KeysDef.K_UPARROW:
-                    snd.LocalSound( "misc/menu1.wav" );
+                    Host.Sound.LocalSound( "misc/menu1.wav" );
                     _Cursor--;
                     if ( _Cursor < 0 )
                         _Cursor = _BindNames.Length - 1;
@@ -76,7 +76,7 @@ namespace SharpQuake
 
                 case KeysDef.K_DOWNARROW:
                 case KeysDef.K_RIGHTARROW:
-                    snd.LocalSound( "misc/menu1.wav" );
+                    Host.Sound.LocalSound( "misc/menu1.wav" );
                     _Cursor++;
                     if ( _Cursor >= _BindNames.Length )
                         _Cursor = 0;
@@ -85,7 +85,7 @@ namespace SharpQuake
                 case KeysDef.K_ENTER:		// go into bind mode
                     var keys = new Int32[2];
                     FindKeysForCommand( _BindNames[_Cursor][0], keys );
-                    snd.LocalSound( "misc/menu2.wav" );
+                    Host.Sound.LocalSound( "misc/menu2.wav" );
                     if ( keys[1] != -1 )
                         UnbindCommand( _BindNames[_Cursor][0] );
                     _BindGrab = true;
@@ -93,7 +93,7 @@ namespace SharpQuake
 
                 case KeysDef.K_BACKSPACE:		// delete bindings
                 case KeysDef.K_DEL:				// delete bindings
-                    snd.LocalSound( "misc/menu2.wav" );
+                    Host.Sound.LocalSound( "misc/menu2.wav" );
                     UnbindCommand( _BindNames[_Cursor][0] );
                     break;
             }

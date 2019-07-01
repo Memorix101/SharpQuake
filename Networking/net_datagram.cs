@@ -886,7 +886,7 @@ namespace SharpQuake
             // send the connection request
             Host.Console.Print( "Connecting to " + sendaddr + "\n" );
             Host.Console.Print( "trying...\n" );
-            Scr.UpdateScreen();
+            Host.Screen.UpdateScreen();
             var start_time = Host.Network.Time;
             var ret = 0;
             for( var reps = 0; reps < 3; reps++ )
@@ -916,7 +916,7 @@ namespace SharpQuake
                             Host.Console.Print("wrong reply address\n");
                             Host.Console.Print("Expected: {0}\n", StrAddr(sendaddr));
                             Host.Console.Print("Received: {0}\n", StrAddr(readaddr));
-                            Scr.UpdateScreen();
+                            Host.Screen.UpdateScreen();
 #endif
                             ret = 0;
                             continue;
@@ -953,7 +953,7 @@ namespace SharpQuake
                 if( ret > 0 )
                     break;
                 Host.Console.Print( "still trying...\n" );
-                Scr.UpdateScreen();
+                Host.Screen.UpdateScreen();
                 start_time = Host.Network.SetNetTime();
             }
 

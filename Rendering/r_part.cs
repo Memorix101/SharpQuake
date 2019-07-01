@@ -62,31 +62,31 @@ namespace SharpQuake
             {0,0,0,0,0,0,0,0},
         };
 
-        private static Int32 _NumParticles;
+        private Int32 _NumParticles;
 
         // r_numparticles
-        private static particle_t[] _Particles;
+        private particle_t[] _Particles;
 
-        private static Int32 _ParticleTexture;
+        private Int32 _ParticleTexture;
 
-        private static particle_t _ActiveParticles;
+        private particle_t _ActiveParticles;
 
         // active_particles
-        private static particle_t _FreeParticles;
+        private particle_t _FreeParticles;
 
         // free_particles
-        private static Int32 _TracerCount;
+        private Int32 _TracerCount;
 
-        // static tracercount from RocketTrail()
-        private static Vector3[] _AVelocities = new Vector3[NUMVERTEXNORMALS];
+        // tracercount from RocketTrail()
+        private Vector3[] _AVelocities = new Vector3[NUMVERTEXNORMALS];
 
         // avelocities
-        private static Single _BeamLength = 16;
+        private Single _BeamLength = 16;
 
         /// <summary>
         /// R_RocketTrail
         /// </summary>
-        public static void RocketTrail( ref Vector3 start, ref Vector3 end, Int32 type )
+        public void RocketTrail( ref Vector3 start, ref Vector3 end, Int32 type )
         {
             var vec = end - start;
             var len = MathLib.Normalize( ref vec );
@@ -183,7 +183,7 @@ namespace SharpQuake
         /// <summary>
         /// R_ParticleExplosion
         /// </summary>
-        public static void ParticleExplosion( ref Vector3 org )
+        public void ParticleExplosion( ref Vector3 org )
         {
             for( var i = 0; i < 1024; i++ ) // Uze: Why 1024 if MAX_PARTICLES = 2048?
             {
@@ -206,7 +206,7 @@ namespace SharpQuake
         /// <summary>
         /// R_RunParticleEffect
         /// </summary>
-        public static void RunParticleEffect( ref Vector3 org, ref Vector3 dir, Int32 color, Int32 count )
+        public void RunParticleEffect( ref Vector3 org, ref Vector3 dir, Int32 color, Int32 count )
         {
             for( var i = 0; i < count; i++ )
             {
@@ -241,7 +241,7 @@ namespace SharpQuake
         /// R_ParseParticleEffect
         /// Parse an effect out of the server message
         /// </summary>
-        public static void ParseParticleEffect()
+        public void ParseParticleEffect()
         {
             var org = Host.Network.Reader.ReadCoords();
             var dir = new Vector3( Host.Network.Reader.ReadChar() * ONE_OVER_16,
@@ -259,7 +259,7 @@ namespace SharpQuake
         /// <summary>
         /// R_TeleportSplash
         /// </summary>
-        public static void TeleportSplash( ref Vector3 org )
+        public void TeleportSplash( ref Vector3 org )
         {
             for( var i = -16; i < 16; i += 4 )
                 for( var j = -16; j < 16; j += 4 )
@@ -286,7 +286,7 @@ namespace SharpQuake
         /// <summary>
         /// R_LavaSplash
         /// </summary>
-        public static void LavaSplash( ref Vector3 org )
+        public void LavaSplash( ref Vector3 org )
         {
             Vector3 dir;
 
@@ -318,7 +318,7 @@ namespace SharpQuake
         /// <summary>
         /// R_ParticleExplosion2
         /// </summary>
-        public static void ParticleExplosion( ref Vector3 org, Int32 colorStart, Int32 colorLength )
+        public void ParticleExplosion( ref Vector3 org, Int32 colorStart, Int32 colorLength )
         {
             var colorMod = 0;
 
@@ -341,7 +341,7 @@ namespace SharpQuake
         /// <summary>
         /// R_BlobExplosion
         /// </summary>
-        public static void BlobExplosion( ref Vector3 org )
+        public void BlobExplosion( ref Vector3 org )
         {
             for( var i = 0; i < 1024; i++ )
             {
@@ -369,7 +369,7 @@ namespace SharpQuake
         /// <summary>
         /// R_EntityParticles
         /// </summary>
-        public static void EntityParticles( Entity ent )
+        public void EntityParticles( Entity ent )
         {
             Single dist = 64;
 
@@ -409,7 +409,7 @@ namespace SharpQuake
         }
 
         // R_InitParticles
-        private static void InitParticles()
+        private void InitParticles()
         {
             var i = CommandLine.CheckParm( "-particles" );
             if( i > 0 && i < CommandLine.Argc - 1 )
@@ -428,7 +428,7 @@ namespace SharpQuake
 
         // beamlength
         // R_InitParticleTexture
-        private static void InitParticleTexture()
+        private void InitParticleTexture()
         {
             _ParticleTexture = Host.DrawingContext.GenerateTextureNumber();// texture_extension_number++;
             Host.DrawingContext.Bind( _ParticleTexture );
@@ -453,7 +453,7 @@ namespace SharpQuake
         /// <summary>
         /// R_ClearParticles
         /// </summary>
-        private static void ClearParticles()
+        private void ClearParticles()
         {
             _FreeParticles = _Particles[0];
             _ActiveParticles = null;
@@ -466,15 +466,15 @@ namespace SharpQuake
         /// <summary>
         /// R_DrawParticles
         /// </summary>
-        private static void DrawParticles()
+        private void DrawParticles()
         {
             Host.DrawingContext.Bind( _ParticleTexture );
             GL.Enable( EnableCap.Blend );
             GL.TexEnv( TextureEnvTarget.TextureEnv, TextureEnvParameter.TextureEnvMode, ( Int32 ) TextureEnvMode.Modulate );
             GL.Begin( PrimitiveType.Triangles );
 
-            var up = render.ViewUp * 1.5f;
-            var right = render.ViewRight * 1.5f;
+            var up = ViewUp * 1.5f;
+            var right = ViewRight * 1.5f;
             var frametime = ( Single ) ( Host.Client.cl.time - Host.Client.cl.oldtime );
             var time3 = frametime * 15;
             var time2 = frametime * 10;
@@ -511,7 +511,7 @@ namespace SharpQuake
                 }
 
                 // hack a scale up to keep particles from disapearing
-                var scale = Vector3.Dot( ( p.org - render.Origin ), render.ViewPn );
+                var scale = Vector3.Dot( ( p.org - Origin ), ViewPn );
                 if( scale < 20 )
                     scale = 1;
                 else
@@ -586,7 +586,7 @@ namespace SharpQuake
             GL.TexEnv( TextureEnvTarget.TextureEnv, TextureEnvParameter.TextureEnvMode, ( Int32 ) TextureEnvMode.Replace );
         }
 
-        private static particle_t AllocParticle()
+        private particle_t AllocParticle()
         {
             if( _FreeParticles == null )
                 return null;

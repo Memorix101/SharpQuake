@@ -31,13 +31,13 @@ namespace SharpQuake
 {
     partial class render
     {
-        private static Int32 _DlightFrameCount; // r_dlightframecount
-        private static Plane _LightPlane; // lightplane
+        private Int32 _DlightFrameCount; // r_dlightframecount
+        private Plane _LightPlane; // lightplane
 
         /// <summary>
         /// R_PushDlights
         /// </summary>
-        public static void PushDlights()
+        public void PushDlights()
         {
             if( _glFlashBlend.Value != 0 )
                 return;
@@ -49,14 +49,14 @@ namespace SharpQuake
                 var l = Host.Client.DLights[i];
                 if( l.die < Host.Client.cl.time || l.radius == 0 )
                     continue;
-                render.MarkLights( l, 1 << i, Host.Client.cl.worldmodel.nodes[0] );
+                MarkLights( l, 1 << i, Host.Client.cl.worldmodel.nodes[0] );
             }
         }
 
         /// <summary>
         /// R_MarkLights
         /// </summary>
-        private static void MarkLights( dlight_t light, Int32 bit, MemoryNodeBase node )
+        private void MarkLights( dlight_t light, Int32 bit, MemoryNodeBase node )
         {
             if( node.contents < 0 )
                 return;
@@ -95,7 +95,7 @@ namespace SharpQuake
         /// <summary>
         /// R_RenderDlights
         /// </summary>
-        private static void RenderDlights()
+        private void RenderDlights()
         {
             //int i;
             //dlight_t* l;
@@ -130,7 +130,7 @@ namespace SharpQuake
         /// <summary>
         /// R_AnimateLight
         /// </summary>
-        private static void AnimateLight()
+        private void AnimateLight()
         {
             //
             // light animations
@@ -154,7 +154,7 @@ namespace SharpQuake
         /// <summary>
         /// R_LightPoint
         /// </summary>
-        private static Int32 LightPoint( ref Vector3 p )
+        private Int32 LightPoint( ref Vector3 p )
         {
             if( Host.Client.cl.worldmodel.lightdata == null )
                 return 255;
@@ -169,7 +169,7 @@ namespace SharpQuake
             return r;
         }
 
-        private static Int32 RecursiveLightPoint( MemoryNodeBase node, ref Vector3 start, ref Vector3 end )
+        private Int32 RecursiveLightPoint( MemoryNodeBase node, ref Vector3 start, ref Vector3 end )
         {
             if( node.contents < 0 )
                 return -1;		// didn't hit anything
@@ -257,10 +257,10 @@ namespace SharpQuake
         /// <summary>
         /// R_RenderDlight
         /// </summary>
-        private static void RenderDlight( dlight_t light )
+        private void RenderDlight( dlight_t light )
         {
             var rad = light.radius * 0.35f;
-            var v = light.origin - render.Origin;
+            var v = light.origin - Origin;
             if( v.Length < rad )
             {	// view is inside the dlight
                 AddLightBlend( 1, 0.5f, 0, light.radius * 0.0003f );
@@ -269,19 +269,19 @@ namespace SharpQuake
 
             GL.Begin( PrimitiveType.TriangleFan );
             GL.Color3( 0.2f, 0.1f, 0 );
-            v = light.origin - render.ViewPn * rad;
+            v = light.origin - ViewPn * rad;
             GL.Vertex3( v );
             GL.Color3( 0, 0, 0 );
             for( var i = 16; i >= 0; i-- )
             {
                 var a = i / 16.0 * Math.PI * 2;
-                v = light.origin + render.ViewRight * ( Single ) Math.Cos( a ) * rad + render.ViewUp * ( Single ) Math.Sin( a ) * rad;
+                v = light.origin + ViewRight * ( Single ) Math.Cos( a ) * rad + ViewUp * ( Single ) Math.Sin( a ) * rad;
                 GL.Vertex3( v );
             }
             GL.End();
         }
 
-        private static void AddLightBlend( Single r, Single g, Single b, Single a2 )
+        private void AddLightBlend( Single r, Single g, Single b, Single a2 )
         {
             Host.View.Blend.A += a2 * ( 1 - Host.View.Blend.A );
 

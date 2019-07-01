@@ -126,10 +126,8 @@ namespace SharpQuake
         }
 
         // V_Init
-        public void Initialise( Host host )
+        public void Initialise( )
         {
-            Host = host;
-
             Host.Command.Add( "v_cshift", CShift_f );
             Host.Command.Add( "bf", BonusFlash_f );
             Host.Command.Add( "centerview", StartPitchDrift );
@@ -203,15 +201,15 @@ namespace SharpQuake
             else if( !Host.Client.cl.paused )
                 CalcRefDef();
 
-            render.PushDlights();
+            Host.RenderContext.PushDlights();
 
             if( _LcdX.Value != 0 )
             {
                 //
                 // render two interleaved views
                 //
-                var vid = Scr.vid;
-                var rdef = render.RefDef;
+                var vid = Host.Screen.vid;
+                var rdef = Host.RenderContext.RefDef;
 
                 vid.rowbytes <<= 1;
                 vid.aspect *= 0.5f;
@@ -219,16 +217,16 @@ namespace SharpQuake
                 rdef.viewangles.Y -= _LcdYaw.Value;
                 rdef.vieworg -= _Right * _LcdX.Value;
 
-                render.RenderView();
+                Host.RenderContext.RenderView();
 
                 // ???????? vid.buffer += vid.rowbytes>>1;
 
-                render.PushDlights();
+                Host.RenderContext.PushDlights();
 
                 rdef.viewangles.Y += _LcdYaw.Value * 2;
                 rdef.vieworg += _Right * _LcdX.Value * 2;
 
-                render.RenderView();
+                Host.RenderContext.RenderView();
 
                 // ????????? vid.buffer -= vid.rowbytes>>1;
 
@@ -239,7 +237,7 @@ namespace SharpQuake
             }
             else
             {
-                render.RenderView();
+                Host.RenderContext.RenderView();
             }
         }
 
@@ -551,7 +549,7 @@ namespace SharpQuake
             // view is the weapon model (only visible from inside body)
             var view = Host.Client.ViewEnt;
 
-            var rdef = render.RefDef;
+            var rdef = Host.RenderContext.RefDef;
             rdef.vieworg = ent.origin;
             rdef.viewangles = ent.angles;
             view.model = null;
@@ -577,7 +575,7 @@ namespace SharpQuake
 
             var bob = CalcBob();
 
-            var rdef = render.RefDef;
+            var rdef = Host.RenderContext.RefDef;
             var cl = Host.Client.cl;
 
             // refresh position
@@ -616,7 +614,7 @@ namespace SharpQuake
 
             // fudge position around to keep amount of weapon visible
             // roughly equal with different FOV
-            var viewSize = Scr.ViewSize.Value; // scr_viewsize
+            var viewSize = Host.Screen.ViewSize.Value; // scr_viewsize
 
             if( viewSize == 110 )
                 view.origin.Z += 1;
@@ -629,7 +627,7 @@ namespace SharpQuake
 
             view.model = cl.model_precache[cl.stats[QStatsDef.STAT_WEAPON]];
             view.frame = cl.stats[QStatsDef.STAT_WEAPONFRAME];
-            view.colormap = Scr.vid.colormap;
+            view.colormap = Host.Screen.vid.colormap;
 
             // set up the refresh position
             rdef.viewangles += cl.punchangle;
@@ -666,7 +664,7 @@ namespace SharpQuake
                 ( Single ) ( Math.Sin( time * _IPitchCycle.Value ) * _IPitchLevel.Value ),
                 ( Single ) ( Math.Sin( time * _IYawCycle.Value ) * _IYawLevel.Value ),
                 ( Single ) ( Math.Sin( time * _IRollCycle.Value ) * _IRollLevel.Value ) );
-            render.RefDef.viewangles += v * idleScale;
+            Host.RenderContext.RefDef.viewangles += v * idleScale;
         }
 
         // V_DriftPitch
@@ -764,7 +762,7 @@ namespace SharpQuake
         private void CalcViewRoll()
         {
             var cl = Host.Client.cl;
-            var rdef = render.RefDef;
+            var rdef = Host.RenderContext.RefDef;
             var side = CalcRoll( ref Host.Client.ViewEntity.angles, ref cl.velocity );
             rdef.viewangles.Z += side;
 
@@ -789,7 +787,7 @@ namespace SharpQuake
 
             // absolutely bound refresh reletive to entity clipping hull
             // so the view can never be inside a solid wall
-            var rdef = render.RefDef;
+            var rdef = Host.RenderContext.RefDef;
             if( rdef.vieworg.X < ent.origin.X - 14 )
                 rdef.vieworg.X = ent.origin.X - 14;
             else if( rdef.vieworg.X > ent.origin.X + 14 )
@@ -811,7 +809,7 @@ namespace SharpQuake
         /// </summary>
         private void CalcGunAngle()
         {
-            var rdef = render.RefDef;
+            var rdef = Host.RenderContext.RefDef;
             var yaw = rdef.viewangles.Y;
             var pitch = -rdef.viewangles.X;
 
@@ -915,7 +913,7 @@ namespace SharpQuake
             _OldGammaValue = _Gamma.Value;
 
             BuildGammaTable( _Gamma.Value );
-            Scr.vid.recalc_refdef = true;	// force a surface cache flush
+            Host.Screen.vid.recalc_refdef = true;	// force a surface cache flush
 
             return true;
         }
@@ -927,8 +925,10 @@ namespace SharpQuake
             //	gammaworks = SetDeviceGammaRamp (maindc, ramps);
         }
 
-        public View()
+        public View( Host host )
         {
+            Host = host;
+
             _GammaTable = new Byte[256];
 
             _CShift_empty = new cshift_t( new[] { 130, 80, 50 }, 0 );

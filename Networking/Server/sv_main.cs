@@ -39,10 +39,8 @@ namespace SharpQuake
         }
 
         // SV_Init
-        public void Initialise( Host host )
+        public void Initialise( )
         {
-            Host = host;
-
             for( var i = 0; i < _BoxClipNodes.Length; i++ )
             {
                 _BoxClipNodes[i].children = new Int16[2];
@@ -551,7 +549,7 @@ namespace SharpQuake
             if( String.IsNullOrEmpty( Host.Network.HostName ) )
                 CVar.Set( "hostname", "UNNAMED" );
 
-            Scr.CenterTimeOff = 0;
+            Host.Screen.CenterTimeOff = 0;
 
             Host.Console.DPrint( "SpawnServer: {0}\n", server );
             svs.changelevel_issued = false;		// now safe to issue another

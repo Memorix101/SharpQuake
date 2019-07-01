@@ -29,22 +29,22 @@ namespace SharpQuake
 {
     partial class render
     {
-        private static Entity _AddEnt; // r_addent
-        private static MemoryNode _EfragTopNode; // r_pefragtopnode
-        private static Vector3 _EMins; // r_emins
-        private static Vector3 _EMaxs; // r_emaxs
+        private Entity _AddEnt; // r_addent
+        private MemoryNode _EfragTopNode; // r_pefragtopnode
+        private Vector3 _EMins; // r_emins
+        private Vector3 _EMaxs; // r_emaxs
 
         /// <summary>
         /// efrag_t **lastlink changed to object _LastObj
         /// and may be a reference to entity_t, in wich case assign *lastlink to ((entity_t)_LastObj).efrag
         /// or to efrag_t in wich case assign *lastlink value to ((efrag_t)_LastObj).entnext
         /// </summary>
-        private static System.Object _LastObj; // see comments
+        private System.Object _LastObj; // see comments
 
         /// <summary>
         /// R_AddEfrags
         /// </summary>
-        public static void AddEfrags( Entity ent )
+        public void AddEfrags( Entity ent )
         {
             if( ent.model == null )
                 return;
@@ -64,7 +64,7 @@ namespace SharpQuake
         /// <summary>
         /// R_SplitEntityOnNode
         /// </summary>
-        private static void SplitEntityOnNode( MemoryNodeBase node )
+        private void SplitEntityOnNode( MemoryNodeBase node )
         {
             if( node.contents == ContentsDef.CONTENTS_SOLID )
                 return;
@@ -137,7 +137,7 @@ namespace SharpQuake
         /// R_StoreEfrags
         /// FIXME: a lot of this goes away with edge-based
         /// </summary>
-        private static void StoreEfrags( EFrag ef )
+        private void StoreEfrags( EFrag ef )
         {
             while( ef != null )
             {

@@ -351,7 +351,7 @@ namespace SharpQuake
             ShutdownServer( false );
 
             Keyboard.Destination = KeyDestination.key_game;			// remove console or menu
-            Scr.BeginLoadingPlaque( );
+            Screen.BeginLoadingPlaque( );
 
             Client.cls.mapstring = Command.JoinArgv( ) + "\n";
 
@@ -413,7 +413,7 @@ namespace SharpQuake
         /// </summary>
         private void Reconnect_f( )
         {
-            Scr.BeginLoadingPlaque( );
+            Screen.BeginLoadingPlaque( );
             Client.cls.signon = 0;		// need new connection messages
         }
 

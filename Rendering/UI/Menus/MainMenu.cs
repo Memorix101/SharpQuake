@@ -42,13 +42,13 @@ namespace SharpQuake
                     break;
 
                 case KeysDef.K_DOWNARROW:
-                    snd.LocalSound( "misc/menu1.wav" );
+                    Host.Sound.LocalSound( "misc/menu1.wav" );
                     if ( ++_Cursor >= MAIN_ITEMS )
                         _Cursor = 0;
                     break;
 
                 case KeysDef.K_UPARROW:
-                    snd.LocalSound( "misc/menu1.wav" );
+                    Host.Sound.LocalSound( "misc/menu1.wav" );
                     if ( --_Cursor < 0 )
                         _Cursor = MAIN_ITEMS - 1;
                     break;

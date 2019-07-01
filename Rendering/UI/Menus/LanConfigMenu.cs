@@ -65,14 +65,14 @@ namespace SharpQuake
                     break;
 
                 case KeysDef.K_UPARROW:
-                    snd.LocalSound( "misc/menu1.wav" );
+                    Host.Sound.LocalSound( "misc/menu1.wav" );
                     _Cursor--;
                     if ( _Cursor < 0 )
                         _Cursor = NUM_LANCONFIG_CMDS - 1;
                     break;
 
                 case KeysDef.K_DOWNARROW:
-                    snd.LocalSound( "misc/menu1.wav" );
+                    Host.Sound.LocalSound( "misc/menu1.wav" );
                     _Cursor++;
                     if ( _Cursor >= NUM_LANCONFIG_CMDS )
                         _Cursor = 0;

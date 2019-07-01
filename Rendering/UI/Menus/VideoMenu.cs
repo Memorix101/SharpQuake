@@ -28,7 +28,7 @@ namespace SharpQuake
             switch ( key )
             {
                 case KeysDef.K_ESCAPE:
-                    snd.LocalSound( "misc/menu1.wav" );
+                    Host.Sound.LocalSound( "misc/menu1.wav" );
                     MenuBase.OptionsMenu.Show( Host );
                     break;
 

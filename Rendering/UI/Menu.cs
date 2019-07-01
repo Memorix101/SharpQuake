@@ -50,17 +50,20 @@ namespace SharpQuake
         private Byte[] _TranslationTable = new Byte[256]; //translationTable
 
         // Instances
-        private Host Host
+        public Host Host
         {
             get;
-            set;
+            private set;
+        }
+
+        public Menu( Host host )
+        {
+            Host = host;
         }
 
         // M_Init (void)
-        public void Initialise( Host host )
+        public void Initialise( )
         {
-            Host = host;
-
             Host.Command.Add( "togglemenu", ToggleMenu_f );
             Host.Command.Add( "menu_main", Menu_Main_f );
             Host.Command.Add( "menu_singleplayer", Menu_SinglePlayer_f );
@@ -94,17 +97,17 @@ namespace SharpQuake
 
             if( !_RecursiveDraw )
             {
-                Scr.CopyEverithing = true;
+                Host.Screen.CopyEverithing = true;
 
-                if( Scr.ConCurrent > 0 )
+                if( Host.Screen.ConCurrent > 0 )
                 {
-                    Host.DrawingContext.DrawConsoleBackground( Scr.vid.height );
-                    snd.ExtraUpdate();
+                    Host.DrawingContext.DrawConsoleBackground( Host.Screen.vid.height );
+                    Host.Sound.ExtraUpdate();
                 }
                 else
                     Host.DrawingContext.FadeScreen();
 
-                Scr.FullUpdate = 0;
+                Host.Screen.FullUpdate = 0;
             }
             else
             {
@@ -116,11 +119,11 @@ namespace SharpQuake
 
             if( EnterSound )
             {
-                snd.LocalSound( "misc/menu2.wav" );
+                Host.Sound.LocalSound( "misc/menu2.wav" );
                 EnterSound = false;
             }
 
-            snd.ExtraUpdate();
+            Host.Sound.ExtraUpdate();
         }
 
         /// <summary>
@@ -152,12 +155,12 @@ namespace SharpQuake
 
         public void DrawPic( Int32 x, Int32 y, GLPic pic )
         {
-            Host.DrawingContext.DrawPic( x + ( ( Scr.vid.width - 320 ) >> 1 ), y, pic );
+            Host.DrawingContext.DrawPic( x + ( ( Host.Screen.vid.width - 320 ) >> 1 ), y, pic );
         }
 
         public void DrawTransPic( Int32 x, Int32 y, GLPic pic )
         {
-            Host.DrawingContext.DrawTransPic( x + ( ( Scr.vid.width - 320 ) >> 1 ), y, pic );
+            Host.DrawingContext.DrawTransPic( x + ( ( Host.Screen.vid.width - 320 ) >> 1 ), y, pic );
         }
 
         /// <summary>
@@ -165,7 +168,7 @@ namespace SharpQuake
         /// </summary>
         public void DrawTransPicTranslate( Int32 x, Int32 y, GLPic pic )
         {
-            Host.DrawingContext.TransPicTranslate( x + ( ( Scr.vid.width - 320 ) >> 1 ), y, pic, _TranslationTable );
+            Host.DrawingContext.TransPicTranslate( x + ( ( Host.Screen.vid.width - 320 ) >> 1 ), y, pic, _TranslationTable );
         }
 
         /// <summary>
@@ -185,7 +188,7 @@ namespace SharpQuake
         /// </summary>
         public void DrawCharacter( Int32 cx, Int32 line, Int32 num )
         {
-            Host.DrawingContext.DrawCharacter( cx + ( ( Scr.vid.width - 320 ) >> 1 ), line, num );
+            Host.DrawingContext.DrawCharacter( cx + ( ( Host.Screen.vid.width - 320 ) >> 1 ), line, num );
         }
 
         /// <summary>

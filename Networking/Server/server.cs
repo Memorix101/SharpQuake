@@ -192,8 +192,10 @@ namespace SharpQuake
             return i;
         }
 
-        public server()
+        public server( Host host )
         {
+            Host = host;
+
             _Server = new server_t();
             _ServerStatic = new server_static_t();
         }

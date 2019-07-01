@@ -219,8 +219,9 @@ namespace SharpQuake
         private client_static_t _Static;
         private client_state_t _State;
 
-        public client()
-        {            
+        public client( Host host )
+        {
+            Host = host;
             _Static = new client_static_t();
             _State = new client_state_t();
         }

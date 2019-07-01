@@ -158,14 +158,17 @@ namespace SharpQuake
             set;
         }
 
+        public vid( Host host )
+        {
+            Host = host;
+        }
+
         // VID_Init (unsigned char *palette)
         // Called at startup to set up translation tables, takes 256 8 bit RGB values
         // the palette data will go away after the call, so it must be copied off if
         // the video driver will need it again
-        public void Initialise( Host host, Byte[] palette )
+        public void Initialise( Byte[] palette )
         {
-            Host = host;
-
             if ( _glZTrick == null )
             {
                 _glZTrick = new CVar( "gl_ztrick", "1" );
@@ -270,29 +273,29 @@ namespace SharpQuake
 
             var i2 = CommandLine.CheckParm( "-conwidth" );
             if( i2 > 0 )
-                Scr.vid.conwidth = MathLib.atoi( CommandLine.Argv( i2 + 1 ) );
+                Host.Screen.vid.conwidth = MathLib.atoi( CommandLine.Argv( i2 + 1 ) );
             else
-                Scr.vid.conwidth = 640;
+                Host.Screen.vid.conwidth = 640;
 
-            Scr.vid.conwidth &= 0xfff8; // make it a multiple of eight
+            Host.Screen.vid.conwidth &= 0xfff8; // make it a multiple of eight
 
-            if( Scr.vid.conwidth < 320 )
-                Scr.vid.conwidth = 320;
+            if( Host.Screen.vid.conwidth < 320 )
+                Host.Screen.vid.conwidth = 320;
 
             // pick a conheight that matches with correct aspect
-            Scr.vid.conheight = Scr.vid.conwidth * 3 / 4;
+            Host.Screen.vid.conheight = Host.Screen.vid.conwidth * 3 / 4;
 
             i2 = CommandLine.CheckParm( "-conheight" );
             if( i2 > 0 )
-                Scr.vid.conheight = MathLib.atoi( CommandLine.Argv( i2 + 1 ) );
-            if( Scr.vid.conheight < 200 )
-                Scr.vid.conheight = 200;
+                Host.Screen.vid.conheight = MathLib.atoi( CommandLine.Argv( i2 + 1 ) );
+            if( Host.Screen.vid.conheight < 200 )
+                Host.Screen.vid.conheight = 200;
 
-            Scr.vid.maxwarpwidth = WARP_WIDTH;
-            Scr.vid.maxwarpheight = WARP_HEIGHT;
-            Scr.vid.colormap = Host.ColorMap;
+            Host.Screen.vid.maxwarpwidth = WARP_WIDTH;
+            Host.Screen.vid.maxwarpheight = WARP_HEIGHT;
+            Host.Screen.vid.colormap = Host.ColorMap;
             var v = BitConverter.ToInt32( Host.ColorMap, 2048 );
-            Scr.vid.fullbright = 256 - EndianHelper.LittleLong( v );
+            Host.Screen.vid.fullbright = 256 - EndianHelper.LittleLong( v );
 
             CheckGamma( palette );
             SetPalette( palette );
@@ -343,10 +346,10 @@ namespace SharpQuake
             var mode = _Modes[modenum];
 
             // so Con_Printfs don't mess us up by forcing vid and snd updates
-            var temp = Scr.IsDisabledForLoading;
-            Scr.IsDisabledForLoading = true;
+            var temp = Host.Screen.IsDisabledForLoading;
+            Host.Screen.IsDisabledForLoading = true;
 
-            cd_audio.Pause();
+            Host.CDAudio.Pause();
 
             // Set either the fullscreen or windowed mode
             var dev = MainWindow.DisplayDevice;
@@ -392,7 +395,7 @@ namespace SharpQuake
                 form.WindowBorder = WindowBorder.Hidden;
             }
 
-            var vid = Scr.vid;
+            var vid = Host.Screen.vid;
             if( vid.conheight > dev.Height )
                 vid.conheight = dev.Height;
             if( vid.conwidth > dev.Width )
@@ -403,8 +406,8 @@ namespace SharpQuake
 
             vid.numpages = 2;
 
-            cd_audio.Resume();
-            Scr.IsDisabledForLoading = temp;
+            Host.CDAudio.Resume();
+            Host.Screen.IsDisabledForLoading = temp;
 
             _ModeNum = modenum;
             CVar.Set( "vid_mode", ( Single ) _ModeNum );
@@ -503,10 +506,10 @@ namespace SharpQuake
             Host.Console.Print( "GL_EXTENSIONS: {0}\n", _glExtensions );
 
             if( _glRenderer.StartsWith( "PowerVR", StringComparison.InvariantCultureIgnoreCase ) )
-                Scr.FullSbarDraw = true;
+                Host.Screen.FullSbarDraw = true;
 
             if( _glRenderer.StartsWith( "Permedia", StringComparison.InvariantCultureIgnoreCase ) )
-                Scr.IsPermedia = true;
+                Host.Screen.IsPermedia = true;
 
             CheckTextureExtensions();
             CheckMultiTextureExtensions();

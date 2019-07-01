@@ -23,13 +23,13 @@ namespace SharpQuake
                     break;
 
                 case KeysDef.K_DOWNARROW:
-                    snd.LocalSound( "misc/menu1.wav" );
+                    Host.Sound.LocalSound( "misc/menu1.wav" );
                     if ( ++_Cursor >= SINGLEPLAYER_ITEMS )
                         _Cursor = 0;
                     break;
 
                 case KeysDef.K_UPARROW:
-                    snd.LocalSound( "misc/menu1.wav" );
+                    Host.Sound.LocalSound( "misc/menu1.wav" );
                     if ( --_Cursor < 0 )
                         _Cursor = SINGLEPLAYER_ITEMS - 1;
                     break;
@@ -41,7 +41,7 @@ namespace SharpQuake
                     {
                         case 0:
                             if ( Host.Server.sv.active )
-                                if ( !Scr.ModalMessage( "Are you sure you want to\nstart a new game?\n" ) )
+                                if ( !Host.Screen.ModalMessage( "Are you sure you want to\nstart a new game?\n" ) )
                                     break;
                             Host.Keyboard.Destination = KeyDestination.key_game;
                             if ( Host.Server.sv.active )

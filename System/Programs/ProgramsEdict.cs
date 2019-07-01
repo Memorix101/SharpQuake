@@ -108,14 +108,16 @@ namespace SharpQuake
         private List<String> _DynamicStrings = new List<String>( 512 );
         
         // Instances
-        private Host Host
+        public Host Host
         {
             get;
-            set;
+            private set;
         }
 
-        public Programs()
+        public Programs( Host host )
         {
+            Host = host;
+
             // Temporary workaround - will fix later
             ProgramsWrapper.OnGetString += ( strId ) =>
             {
@@ -124,10 +126,8 @@ namespace SharpQuake
         }
 
         // PR_Init
-        public void Initialise( Host host )
+        public void Initialise( )
         {
-            Host = host;
-
             Host.Command.Add( "edict", PrintEdict_f );
             Host.Command.Add( "edicts", PrintEdicts );
             Host.Command.Add( "edictcount", EdictCount );

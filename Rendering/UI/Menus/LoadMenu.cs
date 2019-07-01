@@ -29,14 +29,14 @@ namespace SharpQuake
                     break;
 
                 case KeysDef.K_ENTER:
-                    snd.LocalSound( "misc/menu2.wav" );
+                    Host.Sound.LocalSound( "misc/menu2.wav" );
                     if ( !_Loadable[_Cursor] )
                         return;
                     MenuBase.CurrentMenu.Hide( );
 
                     // Host_Loadgame_f can't bring up the loading plaque because too much
                     // stack space has been used, so do it now
-                    Scr.BeginLoadingPlaque( );
+                    Host.Screen.BeginLoadingPlaque( );
 
                     // issue the load command
                     Host.CommandBuffer.AddText( String.Format( "load s{0}\n", _Cursor ) );
@@ -44,7 +44,7 @@ namespace SharpQuake
 
                 case KeysDef.K_UPARROW:
                 case KeysDef.K_LEFTARROW:
-                    snd.LocalSound( "misc/menu1.wav" );
+                    Host.Sound.LocalSound( "misc/menu1.wav" );
                     _Cursor--;
                     if ( _Cursor < 0 )
                         _Cursor = MAX_SAVEGAMES - 1;
@@ -52,7 +52,7 @@ namespace SharpQuake
 
                 case KeysDef.K_DOWNARROW:
                 case KeysDef.K_RIGHTARROW:
-                    snd.LocalSound( "misc/menu1.wav" );
+                    Host.Sound.LocalSound( "misc/menu1.wav" );
                     _Cursor++;
                     if ( _Cursor >= MAX_SAVEGAMES )
                         _Cursor = 0;

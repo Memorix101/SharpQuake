@@ -34,7 +34,7 @@ namespace SharpQuake
 
                 case KeysDef.K_UPARROW:
                 case KeysDef.K_LEFTARROW:
-                    snd.LocalSound( "misc/menu1.wav" );
+                    Host.Sound.LocalSound( "misc/menu1.wav" );
                     _Cursor--;
                     if ( _Cursor < 0 )
                         _Cursor = Host.Network.HostCacheCount - 1;
@@ -42,14 +42,14 @@ namespace SharpQuake
 
                 case KeysDef.K_DOWNARROW:
                 case KeysDef.K_RIGHTARROW:
-                    snd.LocalSound( "misc/menu1.wav" );
+                    Host.Sound.LocalSound( "misc/menu1.wav" );
                     _Cursor++;
                     if ( _Cursor >= Host.Network.HostCacheCount )
                         _Cursor = 0;
                     break;
 
                 case KeysDef.K_ENTER:
-                    snd.LocalSound( "misc/menu2.wav" );
+                    Host.Sound.LocalSound( "misc/menu2.wav" );
                     Host.Menu.ReturnMenu = this;
                     Host.Menu.ReturnOnError = true;
                     _Sorted = false;

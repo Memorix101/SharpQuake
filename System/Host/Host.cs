@@ -262,6 +262,36 @@ namespace SharpQuake
             private set;
         }
 
+        public Scr Screen
+        {
+            get;
+            private set;
+        }
+
+        public render RenderContext
+        {
+            get;
+            private set;
+        }
+
+        public snd Sound
+        {
+            get;
+            private set;
+        }
+
+        public cd_audio CDAudio
+        {
+            get;
+            private set;
+        }
+
+        public sbar StatusBar
+        {
+            get;
+            private set;
+        }
+
         private CVar _Sys_TickRate; // = {"sys_ticrate","0.05"};
         private CVar _Developer; // {"developer","0"};
         private CVar _FrameRate;// = {"host_framerate","0"};	// set for slow motion
@@ -293,22 +323,28 @@ namespace SharpQuake
             MainWindow = window;
 
             Cache = new Cache( );
-            CommandBuffer = new CommandBuffer( );
-            Command = new Command( );
-            View = new View( );
-            ChaseView = new ChaseView( );
+            CommandBuffer = new CommandBuffer( this );
+            Command = new Command( this );
+            CVar.Initialise( Command );
+            View = new View( this );
+            ChaseView = new ChaseView( this );
             GfxWad = new Wad( );
-            Keyboard = new Keyboard( );
-            Console = new Con( );
-            Menu = new Menu( );
-            Programs = new Programs( );
-            ProgramsBuiltIn = new ProgramsBuiltIn( );
-            Model = new Mod( );
-            Network = new Network( );
-            Server = new server( );
-            Client = new client( );
-            Video = new vid( );
-            DrawingContext = new Drawer( );
+            Keyboard = new Keyboard( this );
+            Console = new Con( this );
+            Menu = new Menu( this );
+            Programs = new Programs( this );
+            ProgramsBuiltIn = new ProgramsBuiltIn( this );
+            Model = new Mod( this );
+            Network = new Network( this );
+            Server = new server( this );
+            Client = new client( this );
+            Video = new vid( this );
+            DrawingContext = new Drawer( this );
+            Screen = new Scr( this );
+            RenderContext = new render( this );
+            Sound = new snd( this );
+            CDAudio = new cd_audio( this );
+            StatusBar = new sbar( this );
         }
 
         /// <summary>
@@ -362,7 +398,7 @@ namespace SharpQuake
                 if ( _ErrorDepth > 1 )
                     Utilities.Error( "host_Error: recursively entered. " + error, args );
 
-                Scr.EndLoadingPlaque( );		// reenable screen updates
+                Screen.EndLoadingPlaque( );		// reenable screen updates
 
                 var message = ( args.Length > 0 ? String.Format( error, args ) : error );
                 Console.Print( "host_Error: {0}\n", message );
@@ -390,28 +426,27 @@ namespace SharpQuake
 
             Command.SetupWrapper( ); // Temporary workaround - change soon!
             Cache.Initialise( 1024 * 1024 * 512 ); // debug
-            CommandBuffer.Initialise( this );
-            Command.Initialise( this );
-            CVar.Initialise( Command );
-            View.Initialise( this );
+            CommandBuffer.Initialise( );
+            Command.Initialise( );
+            View.Initialise( );
             ChaseView.Initialise( );
             InitialiseVCR( parms );
             MainWindow.Common.Initialise( MainWindow, parms.basedir, parms.argv );
             InitialiseLocal( );
             GfxWad.LoadWadFile( "gfx.wad" );
-            Keyboard.Initialise( this );
-            Console.Initialise( this );
-            Menu.Initialise( this );
-            Programs.Initialise( this );
-            ProgramsBuiltIn.Initialise( this );
-            Model.Initialise( this );
-            Network.Initialise( this );
-            Server.Initialise( this );
+            Keyboard.Initialise( );
+            Console.Initialise( );
+            Menu.Initialise( );
+            Programs.Initialise( );
+            ProgramsBuiltIn.Initialise( );
+            Model.Initialise( );
+            Network.Initialise( );
+            Server.Initialise( );
 
             //Con.Print("Exe: "__TIME__" "__DATE__"\n");
             //Con.Print("%4.1f megabyte heap\n",parms->memsize/ (1024*1024.0));
 
-            render.InitTextures( );		// needed even for dedicated servers
+            RenderContext.InitTextures( );		// needed even for dedicated servers
 
             if ( Client.cls.state != cactive_t.ca_dedicated )
             {
@@ -424,14 +459,14 @@ namespace SharpQuake
 
                 // on non win32, mouse comes before video for security reasons
                 MainWindow.Input.Initialise( this );
-                Video.Initialise( this, BasePal );
-                DrawingContext.Init( this );
-                Scr.Init( this );
-                render.Init( this );
-                snd.Init( this );
-                cd_audio.Init( this );
-                sbar.Init( this );
-                Client.Initialise( this );
+                Video.Initialise( BasePal );
+                DrawingContext.Initialise( );
+                Screen.Initialise( );
+                RenderContext.Initialise( );
+                Sound.Initialise( );
+                CDAudio.Initialise( );
+                StatusBar.Initialise( );
+                Client.Initialise( );
             }
 
             CommandBuffer.InsertText( "exec quake.rc\n" );
@@ -669,7 +704,7 @@ namespace SharpQuake
             if ( _Speeds.Value != 0 )
                 _Time1 = Timer.GetFloatTime( );
 
-            Scr.UpdateScreen( );
+            Screen.UpdateScreen( );
 
             if ( _Speeds.Value != 0 )
                 _Time2 = Timer.GetFloatTime( );
@@ -677,13 +712,13 @@ namespace SharpQuake
             // update audio
             if ( Client.cls.signon == ClientDef.SIGNONS )
             {
-                snd.Update( ref render.Origin, ref render.ViewPn, ref render.ViewRight, ref render.ViewUp );
+                Sound.Update( ref RenderContext.Origin, ref RenderContext.ViewPn, ref RenderContext.ViewRight, ref RenderContext.ViewUp );
                 Client.DecayLights( );
             }
             else
-                snd.Update( ref Utilities.ZeroVector, ref Utilities.ZeroVector, ref Utilities.ZeroVector, ref Utilities.ZeroVector );
+                Sound.Update( ref Utilities.ZeroVector, ref Utilities.ZeroVector, ref Utilities.ZeroVector, ref Utilities.ZeroVector );
 
-            cd_audio.Update( );
+            CDAudio.Update( );
 
             if ( _Speeds.Value != 0 )
             {
@@ -866,13 +901,13 @@ namespace SharpQuake
                     return;
 
                 // keep Con_Printf from trying to update the screen
-                Scr.IsDisabledForLoading = true;
+                Screen.IsDisabledForLoading = true;
 
                 WriteConfiguration( );
 
-                cd_audio.Shutdown( );
+                CDAudio.Shutdown( );
                 Network.Shutdown( );
-                snd.Shutdown( );
+                Sound.Shutdown( );
                 MainWindow.Input.Shutdown( );
 
                 if ( VcrWriter != null )

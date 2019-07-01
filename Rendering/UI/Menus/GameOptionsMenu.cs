@@ -180,14 +180,14 @@ namespace SharpQuake
                     break;
 
                 case KeysDef.K_UPARROW:
-                    snd.LocalSound( "misc/menu1.wav" );
+                    Host.Sound.LocalSound( "misc/menu1.wav" );
                     _Cursor--;
                     if ( _Cursor < 0 )
                         _Cursor = NUM_GAMEOPTIONS - 1;
                     break;
 
                 case KeysDef.K_DOWNARROW:
-                    snd.LocalSound( "misc/menu1.wav" );
+                    Host.Sound.LocalSound( "misc/menu1.wav" );
                     _Cursor++;
                     if ( _Cursor >= NUM_GAMEOPTIONS )
                         _Cursor = 0;
@@ -196,26 +196,26 @@ namespace SharpQuake
                 case KeysDef.K_LEFTARROW:
                     if ( _Cursor == 0 )
                         break;
-                    snd.LocalSound( "misc/menu3.wav" );
+                    Host.Sound.LocalSound( "misc/menu3.wav" );
                     Change( -1 );
                     break;
 
                 case KeysDef.K_RIGHTARROW:
                     if ( _Cursor == 0 )
                         break;
-                    snd.LocalSound( "misc/menu3.wav" );
+                    Host.Sound.LocalSound( "misc/menu3.wav" );
                     Change( 1 );
                     break;
 
                 case KeysDef.K_ENTER:
-                    snd.LocalSound( "misc/menu2.wav" );
+                    Host.Sound.LocalSound( "misc/menu2.wav" );
                     if ( _Cursor == 0 )
                     {
                         if ( Host.Server.IsActive )
                             Host.CommandBuffer.AddText( "disconnect\n" );
                         Host.CommandBuffer.AddText( "listen 0\n" );	// so host_netport will be re-examined
                         Host.CommandBuffer.AddText( String.Format( "maxplayers {0}\n", _MaxPlayers ) );
-                        Scr.BeginLoadingPlaque( );
+                        Host.Screen.BeginLoadingPlaque( );
 
                         if ( MainWindow.Common.GameKind == GameKind.Hipnotic )
                             Host.CommandBuffer.AddText( String.Format( "map {0}\n",

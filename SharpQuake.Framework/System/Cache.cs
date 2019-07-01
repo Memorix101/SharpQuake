@@ -29,6 +29,7 @@ namespace SharpQuake.Framework
             set;
         }
 
+
         // Cache_Init
         public void Initialise( Int32 capacity )
         {

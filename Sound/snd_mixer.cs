@@ -25,16 +25,16 @@ using SharpQuake.Framework;
 
 namespace SharpQuake
 {
-    partial class snd
+    public partial class snd
     {
         private const Int32 PAINTBUFFER_SIZE = 512;
         private const Int16 C8000 = -32768;
 
-        private static Int32[,] _ScaleTable = new Int32[32, 256];
-        private static portable_samplepair_t[] _PaintBuffer = new portable_samplepair_t[PAINTBUFFER_SIZE]; // paintbuffer[PAINTBUFFER_SIZE]
+        private Int32[,] _ScaleTable = new Int32[32, 256];
+        private portable_samplepair_t[] _PaintBuffer = new portable_samplepair_t[PAINTBUFFER_SIZE]; // paintbuffer[PAINTBUFFER_SIZE]
 
         // SND_InitScaletable
-        private static void InitScaletable()
+        private void InitScaletable()
         {
             for( var i = 0; i < 32; i++ )
                 for( var j = 0; j < 256; j++ )
@@ -42,7 +42,7 @@ namespace SharpQuake
         }
 
         // S_PaintChannels
-        private static void PaintChannels( Int32 endtime )
+        private void PaintChannels( Int32 endtime )
         {
             while( _PaintedTime < endtime )
             {
@@ -112,7 +112,7 @@ namespace SharpQuake
         }
 
         // SND_PaintChannelFrom8
-        private static void PaintChannelFrom8( channel_t ch, sfxcache_t sc, Int32 count )
+        private void PaintChannelFrom8( channel_t ch, sfxcache_t sc, Int32 count )
         {
             if( ch.leftvol > 255 )
                 ch.leftvol = 255;
@@ -134,7 +134,7 @@ namespace SharpQuake
         }
 
         // SND_PaintChannelFrom16
-        private static void PaintChannelFrom16( channel_t ch, sfxcache_t sc, Int32 count )
+        private void PaintChannelFrom16( channel_t ch, sfxcache_t sc, Int32 count )
         {
             var leftvol = ch.leftvol;
             var rightvol = ch.rightvol;
@@ -155,7 +155,7 @@ namespace SharpQuake
         }
 
         // S_TransferPaintBuffer
-        private static void TransferPaintBuffer( Int32 endtime )
+        private void TransferPaintBuffer( Int32 endtime )
         {
             if( _shm.samplebits == 16 && _shm.channels == 2 )
             {
@@ -234,7 +234,7 @@ namespace SharpQuake
         }
 
         // S_TransferStereo16
-        private static void TransferStereo16( Int32 endtime )
+        private void TransferStereo16( Int32 endtime )
         {
             var snd_vol = ( Int32 ) ( _Volume.Value * 256 );
             var lpaintedtime = _PaintedTime;

@@ -110,13 +110,16 @@ namespace SharpQuake
         private trivertx_t[][] _PoseVerts = new trivertx_t[ModelDef.MAXALIASFRAMES][]; // poseverts
         private Byte[] _Decompressed = new Byte[BspDef.MAX_MAP_LEAFS / 8]; // static byte decompressed[] from Mod_DecompressVis()
 
+        public Mod( Host host )
+        {
+            Host = host;
+        }
+
         /// <summary>
         /// Mod_Init
         /// </summary>
-        public void Initialise( Host host )
+        public void Initialise( )
         {
-            Host = host;
-
             if ( _glSubDivideSize == null )
             {
                 _glSubDivideSize = new CVar( "gl_subdivide_size", "128", true );
@@ -1043,7 +1046,7 @@ namespace SharpQuake
                 }
 
                 if ( tx.name != null && tx.name.StartsWith( "sky" ) )// !Q_strncmp(mt->name,"sky",3))
-                    render.InitSky( tx );
+                    Host.RenderContext.InitSky( tx );
                 else
                 {
                     if ( tx.rawBitmap == null )
@@ -1246,7 +1249,7 @@ namespace SharpQuake
 
                 if( _LoadModel.textures == null )
                 {
-                    infos[i].texture = render.NoTextureMip;	// checkerboard texture
+                    infos[i].texture = Host.RenderContext.NoTextureMip;	// checkerboard texture
                     infos[i].flags = 0;
                 }
                 else
@@ -1256,7 +1259,7 @@ namespace SharpQuake
                     infos[i].texture = _LoadModel.textures[miptex];
                     if( infos[i].texture == null )
                     {
-                        infos[i].texture = render.NoTextureMip; // texture not found
+                        infos[i].texture = Host.RenderContext.NoTextureMip; // texture not found
                         infos[i].flags = 0;
                     }
                 }
@@ -1318,7 +1321,7 @@ namespace SharpQuake
                     if( dest[surfnum].texinfo.texture.name.StartsWith( "sky" ) )	// sky
                     {
                         dest[surfnum].flags |= ( SurfaceDef.SURF_DRAWSKY | SurfaceDef.SURF_DRAWTILED );
-                        render.SubdivideSurface( dest[surfnum] );	// cut up polygon for warps
+                        Host.RenderContext.SubdivideSurface( dest[surfnum] );	// cut up polygon for warps
                         continue;
                     }
 
@@ -1330,7 +1333,7 @@ namespace SharpQuake
                             dest[surfnum].extents[i] = 16384;
                             dest[surfnum].texturemins[i] = -8192;
                         }
-                        render.SubdivideSurface( dest[surfnum] );	// cut up polygon for warps
+                        Host.RenderContext.SubdivideSurface( dest[surfnum] );	// cut up polygon for warps
                         continue;
                     }
                 }

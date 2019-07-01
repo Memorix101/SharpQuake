@@ -270,8 +270,10 @@ namespace SharpQuake
         // vcrGetMessage
         private VcrRecord2 _VcrSendMessage = new VcrRecord2();
 
-        public Network()
+        public Network( Host host )
         {
+            Host = host;
+
             _SlistSendProcedure = new PollProcedure( null, 0.0, SlistSend, null );
             _SlistPollProcedure = new PollProcedure( null, 0.0, SlistPoll, null );
 
@@ -291,10 +293,8 @@ namespace SharpQuake
 
         // vcrSendMessage
         // NET_Init (void)
-        public void Initialise( Host host )
+        public void Initialise( )
         {
-            Host = host;
-
             for ( var i2 = 0; i2 < _HostCache.Length; i2++ )
                 _HostCache[i2] = new hostcache_t();
 

@@ -70,17 +70,17 @@ namespace SharpQuake
             -1.56072f, -1.3677f, -1.17384f, -0.979285f, -0.784137f, -0.588517f, -0.392541f, -0.19633f
         };
 
-        private static Int32 _SolidSkyTexture; // solidskytexture
-        private static Int32 _AlphaSkyTexture; // alphaskytexture
+        private Int32 _SolidSkyTexture; // solidskytexture
+        private Int32 _AlphaSkyTexture; // alphaskytexture
 
-        private static MemorySurface _WarpFace; // used by SubdivideSurface()
+        private MemorySurface _WarpFace; // used by SubdivideSurface()
 
         /// <summary>
         /// R_InitSky
         /// called at level load
         /// A sky texture is 256*128, with the right side being a masked overlay
         /// </summary>
-        public static void InitSky( Texture mt )
+        public void InitSky( Texture mt )
         {
             var src = mt.pixels;
             var offset = mt.offsets[0];
@@ -140,7 +140,7 @@ namespace SharpQuake
         /// Breaks a polygon up along axial 64 unit boundaries
         /// so that turbulent and sky warps can be done reasonably.
         /// </summary>
-        public static void SubdivideSurface( MemorySurface fa )
+        public void SubdivideSurface( MemorySurface fa )
         {
             _WarpFace = fa;
 
@@ -168,7 +168,7 @@ namespace SharpQuake
         /// <summary>
         /// SubdividePolygon
         /// </summary>
-        private static void SubdividePolygon( Int32 numverts, Vector3[] verts )
+        private void SubdividePolygon( Int32 numverts, Vector3[] verts )
         {
             if( numverts > 60 )
                 Utilities.Error( "numverts = {0}", numverts );
@@ -246,7 +246,7 @@ namespace SharpQuake
         /// <summary>
         /// BoundPoly
         /// </summary>
-        private static void BoundPoly( Int32 numverts, Vector3[] verts, out Vector3 mins, out Vector3 maxs )
+        private void BoundPoly( Int32 numverts, Vector3[] verts, out Vector3 mins, out Vector3 maxs )
         {
             mins = Vector3.One * 9999;
             maxs = Vector3.One * -9999;
@@ -261,7 +261,7 @@ namespace SharpQuake
         /// EmitWaterPolys
         /// Does a water warp on the pre-fragmented glpoly_t chain
         /// </summary>
-        private static void EmitWaterPolys( MemorySurface fa )
+        private void EmitWaterPolys( MemorySurface fa )
         {
             for( var p = fa.polys; p != null; p = p.next )
             {
@@ -288,7 +288,7 @@ namespace SharpQuake
         /// <summary>
         /// EmitSkyPolys
         /// </summary>
-        private static void EmitSkyPolys( MemorySurface fa )
+        private void EmitSkyPolys( MemorySurface fa )
         {
             for( var p = fa.polys; p != null; p = p.next )
             {
@@ -296,7 +296,7 @@ namespace SharpQuake
                 for( var i = 0; i < p.numverts; i++ )
                 {
                     var v = p.verts[i];
-                    var dir = new Vector3( v[0] - render.Origin.X, v[1] - render.Origin.Y, v[2] - render.Origin.Z );
+                    var dir = new Vector3( v[0] - Host.RenderContext.Origin.X, v[1] - Host.RenderContext.Origin.Y, v[2] - Host.RenderContext.Origin.Z );
                     dir.Z *= 3; // flatten the sphere
 
                     dir.Normalize();
@@ -315,7 +315,7 @@ namespace SharpQuake
         /// <summary>
         /// R_DrawSkyChain
         /// </summary>
-        private static void DrawSkyChain( MemorySurface s )
+        private void DrawSkyChain( MemorySurface s )
         {
             DisableMultitexture();
 
@@ -344,7 +344,7 @@ namespace SharpQuake
         /// This will be called for brushmodels, the world
         /// will have them chained together.
         /// </summary>
-        private static void EmitBothSkyLayers( MemorySurface fa )
+        private void EmitBothSkyLayers( MemorySurface fa )
         {
             DisableMultitexture();
 

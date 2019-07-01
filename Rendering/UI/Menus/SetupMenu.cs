@@ -45,14 +45,14 @@ namespace SharpQuake
                     break;
 
                 case KeysDef.K_UPARROW:
-                    snd.LocalSound( "misc/menu1.wav" );
+                    Host.Sound.LocalSound( "misc/menu1.wav" );
                     _Cursor--;
                     if ( _Cursor < 0 )
                         _Cursor = NUM_SETUP_CMDS - 1;
                     break;
 
                 case KeysDef.K_DOWNARROW:
-                    snd.LocalSound( "misc/menu1.wav" );
+                    Host.Sound.LocalSound( "misc/menu1.wav" );
                     _Cursor++;
                     if ( _Cursor >= NUM_SETUP_CMDS )
                         _Cursor = 0;
@@ -61,7 +61,7 @@ namespace SharpQuake
                 case KeysDef.K_LEFTARROW:
                     if ( _Cursor < 2 )
                         return;
-                    snd.LocalSound( "misc/menu3.wav" );
+                    Host.Sound.LocalSound( "misc/menu3.wav" );
                     if ( _Cursor == 2 )
                         _Top = _Top - 1;
                     if ( _Cursor == 3 )
@@ -72,7 +72,7 @@ namespace SharpQuake
                     if ( _Cursor < 2 )
                         return;
                     forward:
-                    snd.LocalSound( "misc/menu3.wav" );
+                    Host.Sound.LocalSound( "misc/menu3.wav" );
                     if ( _Cursor == 2 )
                         _Top = _Top + 1;
                     if ( _Cursor == 3 )

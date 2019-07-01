@@ -102,10 +102,10 @@ namespace SharpQuake
         }
 
         // Instances
-        private Host Host
+        public Host Host
         {
             get;
-            set;
+            private set;
         }
 
         public Int32 LinePos;
@@ -135,6 +135,11 @@ namespace SharpQuake
 
         private StringBuilder _ChatBuffer = new StringBuilder( 32 ); // chat_buffer
         private Boolean _TeamMessage; // qboolean team_message = false;
+
+        public Keyboard( Host host )
+        {
+            Host = host;
+        }
 
         // Key_Event (int key, qboolean down)
         //
@@ -286,10 +291,8 @@ namespace SharpQuake
         }
 
         // Key_Init (void);
-        public void Initialise( Host host )
+        public void Initialise( )
         {
-            Host = host;
-
             for ( var i = 0; i < 32; i++ )
             {
                 _Lines[i] = new Char[KeysDef.MAXCMDLINE];
@@ -570,7 +573,7 @@ namespace SharpQuake
                 _Lines[_EditLine][0] = ']';
                 LinePos = 1;
                 if ( Host.Client.cls.state == cactive_t.ca_disconnected )
-                    Scr.UpdateScreen( );	// force an update, because the command
+                    Host.Screen.UpdateScreen( );	// force an update, because the command
                 // may take some time
                 return;
             }
@@ -668,8 +671,8 @@ namespace SharpQuake
             if ( key == KeysDef.K_PGUP || key == KeysDef.K_MWHEELUP )
             {
                 Host.Console.BackScroll += 2;
-                if ( Host.Console.BackScroll > Host.Console.TotalLines - ( Scr.vid.height >> 3 ) - 1 )
-                    Host.Console.BackScroll = Host.Console.TotalLines - ( Scr.vid.height >> 3 ) - 1;
+                if ( Host.Console.BackScroll > Host.Console.TotalLines - ( Host.Screen.vid.height >> 3 ) - 1 )
+                    Host.Console.BackScroll = Host.Console.TotalLines - ( Host.Screen.vid.height >> 3 ) - 1;
                 return;
             }
 
@@ -683,7 +686,7 @@ namespace SharpQuake
 
             if ( key == KeysDef.K_HOME )
             {
-                Host.Console.BackScroll = Host.Console.TotalLines - ( Scr.vid.height >> 3 ) - 1;
+                Host.Console.BackScroll = Host.Console.TotalLines - ( Host.Screen.vid.height >> 3 ) - 1;
                 return;
             }
 

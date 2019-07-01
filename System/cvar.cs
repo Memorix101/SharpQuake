@@ -30,7 +30,7 @@ using SharpQuake.Framework;
 
 namespace SharpQuake
 {
-    internal class CVar
+    public class CVar
     {
         public static CVar First
         {

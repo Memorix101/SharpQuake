@@ -45,13 +45,13 @@ namespace SharpQuake
         // CL_InitTEnts
         private void InitTempEntities()
         {
-            _SfxWizHit = snd.PrecacheSound( "wizard/hit.wav" );
-            _SfxKnigtHit = snd.PrecacheSound( "hknight/hit.wav" );
-            _SfxTink1 = snd.PrecacheSound( "weapons/tink1.wav" );
-            _SfxRic1 = snd.PrecacheSound( "weapons/ric1.wav" );
-            _SfxRic2 = snd.PrecacheSound( "weapons/ric2.wav" );
-            _SfxRic3 = snd.PrecacheSound( "weapons/ric3.wav" );
-            _SfxRExp3 = snd.PrecacheSound( "weapons/r_exp3.wav" );
+            _SfxWizHit = Host.Sound.PrecacheSound( "wizard/hit.wav" );
+            _SfxKnigtHit = Host.Sound.PrecacheSound( "hknight/hit.wav" );
+            _SfxTink1 = Host.Sound.PrecacheSound( "weapons/tink1.wav" );
+            _SfxRic1 = Host.Sound.PrecacheSound( "weapons/ric1.wav" );
+            _SfxRic2 = Host.Sound.PrecacheSound( "weapons/ric2.wav" );
+            _SfxRic3 = Host.Sound.PrecacheSound( "weapons/ric3.wav" );
+            _SfxRExp3 = Host.Sound.PrecacheSound( "weapons/r_exp3.wav" );
 
             for( var i = 0; i < _TempEntities.Length; i++ )
                 _TempEntities[i] = new Entity();
@@ -141,7 +141,7 @@ namespace SharpQuake
             _VisEdicts[NumVisEdicts] = ent;
             NumVisEdicts++;
 
-            ent.colormap = Scr.vid.colormap;
+            ent.colormap = Host.Screen.vid.colormap;
 
             return ent;
         }
@@ -158,14 +158,14 @@ namespace SharpQuake
             {
                 case protocol.TE_WIZSPIKE:			// spike hitting wall
                     pos = Host.Network.Reader.ReadCoords();
-                    render.RunParticleEffect( ref pos, ref Utilities.ZeroVector, 20, 30 );
-                    snd.StartSound( -1, 0, _SfxWizHit, ref pos, 1, 1 );
+                    Host.RenderContext.RunParticleEffect( ref pos, ref Utilities.ZeroVector, 20, 30 );
+                    Host.Sound.StartSound( -1, 0, _SfxWizHit, ref pos, 1, 1 );
                     break;
 
                 case protocol.TE_KNIGHTSPIKE:			// spike hitting wall
                     pos = Host.Network.Reader.ReadCoords();
-                    render.RunParticleEffect( ref pos, ref Utilities.ZeroVector, 226, 20 );
-                    snd.StartSound( -1, 0, _SfxKnigtHit, ref pos, 1, 1 );
+                    Host.RenderContext.RunParticleEffect( ref pos, ref Utilities.ZeroVector, 226, 20 );
+                    Host.Sound.StartSound( -1, 0, _SfxKnigtHit, ref pos, 1, 1 );
                     break;
 
                 case protocol.TE_SPIKE:			// spike hitting wall
@@ -173,60 +173,60 @@ namespace SharpQuake
 #if GLTEST
                     Test_Spawn (pos);
 #else
-                    render.RunParticleEffect( ref pos, ref Utilities.ZeroVector, 0, 10 );
+                    Host.RenderContext.RunParticleEffect( ref pos, ref Utilities.ZeroVector, 0, 10 );
 #endif
                     if( ( MathLib.Random() % 5 ) != 0 )
-                        snd.StartSound( -1, 0, _SfxTink1, ref pos, 1, 1 );
+                        Host.Sound.StartSound( -1, 0, _SfxTink1, ref pos, 1, 1 );
                     else
                     {
                         var rnd = MathLib.Random() & 3;
                         if( rnd == 1 )
-                            snd.StartSound( -1, 0, _SfxRic1, ref pos, 1, 1 );
+                            Host.Sound.StartSound( -1, 0, _SfxRic1, ref pos, 1, 1 );
                         else if( rnd == 2 )
-                            snd.StartSound( -1, 0, _SfxRic2, ref pos, 1, 1 );
+                            Host.Sound.StartSound( -1, 0, _SfxRic2, ref pos, 1, 1 );
                         else
-                            snd.StartSound( -1, 0, _SfxRic3, ref pos, 1, 1 );
+                            Host.Sound.StartSound( -1, 0, _SfxRic3, ref pos, 1, 1 );
                     }
                     break;
 
                 case protocol.TE_SUPERSPIKE:			// super spike hitting wall
                     pos = Host.Network.Reader.ReadCoords();
-                    render.RunParticleEffect( ref pos, ref Utilities.ZeroVector, 0, 20 );
+                    Host.RenderContext.RunParticleEffect( ref pos, ref Utilities.ZeroVector, 0, 20 );
 
                     if( ( MathLib.Random() % 5 ) != 0 )
-                        snd.StartSound( -1, 0, _SfxTink1, ref pos, 1, 1 );
+                        Host.Sound.StartSound( -1, 0, _SfxTink1, ref pos, 1, 1 );
                     else
                     {
                         var rnd = MathLib.Random() & 3;
                         if( rnd == 1 )
-                            snd.StartSound( -1, 0, _SfxRic1, ref pos, 1, 1 );
+                            Host.Sound.StartSound( -1, 0, _SfxRic1, ref pos, 1, 1 );
                         else if( rnd == 2 )
-                            snd.StartSound( -1, 0, _SfxRic2, ref pos, 1, 1 );
+                            Host.Sound.StartSound( -1, 0, _SfxRic2, ref pos, 1, 1 );
                         else
-                            snd.StartSound( -1, 0, _SfxRic3, ref pos, 1, 1 );
+                            Host.Sound.StartSound( -1, 0, _SfxRic3, ref pos, 1, 1 );
                     }
                     break;
 
                 case protocol.TE_GUNSHOT:			// bullet hitting wall
                     pos = Host.Network.Reader.ReadCoords();
-                    render.RunParticleEffect( ref pos, ref Utilities.ZeroVector, 0, 20 );
+                    Host.RenderContext.RunParticleEffect( ref pos, ref Utilities.ZeroVector, 0, 20 );
                     break;
 
                 case protocol.TE_EXPLOSION:			// rocket explosion
                     pos = Host.Network.Reader.ReadCoords();
-                    render.ParticleExplosion( ref pos );
+                    Host.RenderContext.ParticleExplosion( ref pos );
                     dl = AllocDlight( 0 );
                     dl.origin = pos;
                     dl.radius = 350;
                     dl.die = ( Single ) cl.time + 0.5f;
                     dl.decay = 300;
-                    snd.StartSound( -1, 0, _SfxRExp3, ref pos, 1, 1 );
+                    Host.Sound.StartSound( -1, 0, _SfxRExp3, ref pos, 1, 1 );
                     break;
 
                 case protocol.TE_TAREXPLOSION:			// tarbaby explosion
                     pos = Host.Network.Reader.ReadCoords();
-                    render.BlobExplosion( ref pos );
-                    snd.StartSound( -1, 0, _SfxRExp3, ref pos, 1, 1 );
+                    Host.RenderContext.BlobExplosion( ref pos );
+                    Host.Sound.StartSound( -1, 0, _SfxRExp3, ref pos, 1, 1 );
                     break;
 
                 case protocol.TE_LIGHTNING1:				// lightning bolts
@@ -249,25 +249,25 @@ namespace SharpQuake
 
                 case protocol.TE_LAVASPLASH:
                     pos = Host.Network.Reader.ReadCoords();
-                    render.LavaSplash( ref pos );
+                    Host.RenderContext.LavaSplash( ref pos );
                     break;
 
                 case protocol.TE_TELEPORT:
                     pos = Host.Network.Reader.ReadCoords();
-                    render.TeleportSplash( ref pos );
+                    Host.RenderContext.TeleportSplash( ref pos );
                     break;
 
                 case protocol.TE_EXPLOSION2:				// color mapped explosion
                     pos = Host.Network.Reader.ReadCoords();
                     var colorStart = Host.Network.Reader.ReadByte();
                     var colorLength = Host.Network.Reader.ReadByte();
-                    render.ParticleExplosion( ref pos, colorStart, colorLength );
+                    Host.RenderContext.ParticleExplosion( ref pos, colorStart, colorLength );
                     dl = AllocDlight( 0 );
                     dl.origin = pos;
                     dl.radius = 350;
                     dl.die = ( Single ) cl.time + 0.5f;
                     dl.decay = 300;
-                    snd.StartSound( -1, 0, _SfxRExp3, ref pos, 1, 1 );
+                    Host.Sound.StartSound( -1, 0, _SfxRExp3, ref pos, 1, 1 );
                     break;
 
                 default:

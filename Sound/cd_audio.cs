@@ -34,47 +34,50 @@ namespace SharpQuake
     /// CDAudio_functions
     /// </summary>
 
-    internal static class cd_audio
+    public class cd_audio
     {
 #if _WINDOWS
-        private static ICDAudioController _Controller = new CDAudioWinController();
+        private ICDAudioController _Controller;
 #else
-        static NullCDAudioController _Controller = new NullCDAudioController();
+        NullCDAudioController _Controller;
 #endif
 
         // CHANGE
-        private static Host Host
+        private Host Host
         {
             get;
             set;
         }
 
+        public cd_audio( Host host )
+        {
+            Host = host;
+            _Controller = new NullCDAudioController( Host );
+        }
         /// <summary>
         /// CDAudio_Init
         /// </summary>
-        public static Boolean Init( Host host )
+        public Boolean Initialise( )
         {
-            Host = host;
-
             if (Host.Client.cls.state == cactive_t.ca_dedicated)
                 return false;
 
             if (CommandLine.HasParam("-nocdaudio"))
                 return false;
 
-            _Controller.Init();
+            _Controller.Initialise( );
 
-            if (_Controller.IsInitialized)
+            if (_Controller.IsInitialised)
             {
                 Host.Command.Add("cd", CD_f);
                 Host.Console.Print("CD Audio (Fallback) Initialized\n");
             }
 
-            return _Controller.IsInitialized;
+            return _Controller.IsInitialised;
         }
 
         // CDAudio_Play(byte track, qboolean looping)
-        public static void Play( Byte track, Boolean looping )
+        public void Play( Byte track, Boolean looping )
         {
             _Controller.Play(track, looping);
 #if DEBUG
@@ -83,36 +86,36 @@ namespace SharpQuake
         }
 
         // CDAudio_Stop
-        public static void Stop()
+        public void Stop()
         {
             _Controller.Stop();
         }
 
         // CDAudio_Pause
-        public static void Pause()
+        public void Pause()
         {
             _Controller.Pause();
         }
 
         // CDAudio_Resume
-        public static void Resume()
+        public void Resume()
         {
             _Controller.Resume();
         }
 
         // CDAudio_Shutdown
-        public static void Shutdown()
+        public void Shutdown()
         {
             _Controller.Shutdown();
         }
 
         // CDAudio_Update
-        public static void Update()
+        public void Update()
         {
             _Controller.Update();
         }
 
-        private static void CD_f()
+        private void CD_f()
         {
             if ( Host.Command.Argc < 2 )
                 return;
@@ -247,14 +250,21 @@ namespace SharpQuake
         Int32 sampleRate;
         TimeSpan totalTime;
 
-        public NullCDAudioController()
+        private Host Host
         {
-            _Remap = new Byte[100];
+            get;
+            set;
+        }
+
+        public NullCDAudioController( Host host )
+        {
+            Host = host;
+               _Remap = new Byte[100];
         }
 
         #region ICDAudioController Members
 
-        public Boolean IsInitialized
+        public Boolean IsInitialised
         {
             get
             {
@@ -342,10 +352,10 @@ namespace SharpQuake
             }
         }
 
-        public void Init()
+        public void Initialise()
         {
             streamer = new OggStreamer(441000);
-            _Volume = snd.BgmVolume;
+            _Volume = Host.Sound.BgmVolume;
 
             if (Directory.Exists( String.Format("{0}/{1}/music/", QuakeParameter.globalbasedir, QuakeParameter.globalgameid)) == false)
             {
@@ -453,7 +463,7 @@ namespace SharpQuake
                 _isPlaying = true;
             }*/
 
-            _Volume = snd.BgmVolume;
+            _Volume = Host.Sound.BgmVolume;
             oggStream.Volume = _Volume;
         }
 

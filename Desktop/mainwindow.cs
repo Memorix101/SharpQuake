@@ -126,9 +126,9 @@ namespace SharpQuake
             base.OnFocusedChanged( e );
 
             if ( this.Focused )
-                snd.UnblockSound( );
+                Host.Sound.UnblockSound( );
             else
-                snd.BlockSound( );
+                Host.Sound.BlockSound( );
         }
 
         protected override void OnClosing( System.ComponentModel.CancelEventArgs e )
@@ -176,8 +176,8 @@ namespace SharpQuake
         {
             try
             {
-                if ( this.WindowState == OpenTK.WindowState.Minimized || Scr.BlockDrawing )
-                    Scr.SkipUpdate = true;	// no point in bothering to draw
+                if ( this.WindowState == OpenTK.WindowState.Minimized || Host.Screen.BlockDrawing )
+                    Host.Screen.SkipUpdate = true;	// no point in bothering to draw
 
                 _Swatch.Stop( );
                 var ts = _Swatch.Elapsed.TotalSeconds;

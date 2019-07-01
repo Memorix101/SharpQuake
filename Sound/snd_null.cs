@@ -26,7 +26,7 @@ namespace SharpQuake
     {
         #region ISoundController Members
 
-        public System.Boolean IsInitialized
+        public System.Boolean IsInitialised
         {
             get
             {
@@ -34,11 +34,19 @@ namespace SharpQuake
             }
         }
 
+        public Host Host
+        {
+            get;
+            private set;
+        }
+
         public void Initialise( object host )
         {
-            snd.shm.channels = 2;
-            snd.shm.samplebits = 16;
-            snd.shm.speed = 11025;
+            Host = ( Host ) host;
+
+            Host.Sound.shm.channels = 2;
+            Host.Sound.shm.samplebits = 16;
+            Host.Sound.shm.speed = 11025;
         }
 
         public void Shutdown()
@@ -51,7 +59,7 @@ namespace SharpQuake
 
         public System.Byte[] LockBuffer()
         {
-            return snd.shm.buffer;
+            return Host.Sound.shm.buffer;
         }
 
         public void UnlockBuffer( System.Int32 bytes )

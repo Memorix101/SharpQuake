@@ -189,10 +189,8 @@ namespace SharpQuake
         }
 
         // Draw_Init
-        public void Init( Host host )
+        public void Initialise( )
         {
-            Host = host;
-
             for ( var i = 0; i < _MenuCachePics.Length; i++ )
                 _MenuCachePics[i] = new CachePic();
 
@@ -250,8 +248,8 @@ namespace SharpQuake
             SetTextureFilters( TextureMinFilter.Nearest, TextureMagFilter.Nearest );
 
             _ConBack.texnum = LoadTexture( "conback", _ConBack.width, _ConBack.height, new ByteArraySegment( buf, ncdataIndex ), false, false );
-            _ConBack.width = Scr.vid.width;
-            _ConBack.height = Scr.vid.height;
+            _ConBack.width = Host.Screen.vid.width;
+            _ConBack.height = Host.Screen.vid.height;
 
             // save a texture slot for translated picture
             _TranslateTexture = _TextureExtensionNumber++;
@@ -320,7 +318,7 @@ namespace SharpQuake
             if( _Disc != null )
             {
                 GL.DrawBuffer( DrawBufferMode.Front );
-                DrawPic( Scr.vid.width - 24, 0, _Disc );
+                DrawPic( Host.Screen.vid.width - 24, 0, _Disc );
                 GL.DrawBuffer( DrawBufferMode.Back );
             }
         }
@@ -411,16 +409,16 @@ namespace SharpQuake
             GL.Begin( PrimitiveType.Quads );
 
             GL.Vertex2( 0f, 0f );
-            GL.Vertex2( Scr.vid.width, 0f );
-            GL.Vertex2( ( Single ) Scr.vid.width, ( Single ) Scr.vid.height );
-            GL.Vertex2( 0f, Scr.vid.height );
+            GL.Vertex2( Host.Screen.vid.width, 0f );
+            GL.Vertex2( ( Single ) Host.Screen.vid.width, ( Single ) Host.Screen.vid.height );
+            GL.Vertex2( 0f, Host.Screen.vid.height );
 
             GL.End();
             GL.Color4( 1f, 1f, 1f, 1f );
             GL.Enable( EnableCap.Texture2D );
             GL.Disable( EnableCap.Blend );
 
-            sbar.Changed();
+            Host.StatusBar.Changed();
         }
 
         /// <summary>
@@ -626,8 +624,8 @@ namespace SharpQuake
         // Draw_TransPic
         public void DrawTransPic( Int32 x, Int32 y, GLPic pic )
         {
-            if( x < 0 || ( UInt32 ) ( x + pic.width ) > Scr.vid.width ||
-                y < 0 || ( UInt32 ) ( y + pic.height ) > Scr.vid.height )
+            if( x < 0 || ( UInt32 ) ( x + pic.width ) > Host.Screen.vid.width ||
+                y < 0 || ( UInt32 ) ( y + pic.height ) > Host.Screen.vid.height )
             {
                 Utilities.Error( "Draw_TransPic: bad coordinates" );
             }
@@ -689,12 +687,12 @@ namespace SharpQuake
         // Draw_ConsoleBackground
         public void DrawConsoleBackground( Int32 lines )
         {
-            var y = ( Scr.vid.height * 3 ) >> 2;
+            var y = ( Host.Screen.vid.height * 3 ) >> 2;
 
             if( lines > y )
-                DrawPic( 0, lines - Scr.vid.height, _ConBack );
+                DrawPic( 0, lines - Host.Screen.vid.height, _ConBack );
             else
-                DrawAlphaPic( 0, lines - Scr.vid.height, _ConBack, ( Single ) ( 1.2 * lines ) / y );
+                DrawAlphaPic( 0, lines - Host.Screen.vid.height, _ConBack, ( Single ) ( 1.2 * lines ) / y );
         }
 
         // Draw_AlphaPic
@@ -1195,8 +1193,10 @@ Done:
 
         // menu_numcachepics
         // menuplyr_pixels
-        public Drawer()
+        public Drawer( Host host )
         {
+            Host = host;
+
             _ScrapAllocated = new Int32[MAX_SCRAPS][]; //[MAX_SCRAPS][BLOCK_WIDTH];
             for( var i = 0; i < _ScrapAllocated.GetLength( 0 ); i++ )
             {

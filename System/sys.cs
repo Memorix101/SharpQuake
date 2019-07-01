@@ -35,7 +35,7 @@ namespace SharpQuake
         /// </summary>
         public static void SendKeyEvents()
         {
-            Scr.SkipUpdate = false;
+            MainWindow.Instance.Host.Screen.SkipUpdate = false;
             MainWindow.Instance.ProcessEvents();
         }
 

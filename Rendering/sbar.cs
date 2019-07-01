@@ -34,9 +34,9 @@ namespace SharpQuake
     /// <summary>
     /// Sbar_functions
     /// </summary>
-    internal static class sbar
+    public class sbar
     {
-        public static Int32 Lines
+        public Int32 Lines
         {
             get; set;
         }
@@ -44,74 +44,77 @@ namespace SharpQuake
         public const Int32 SBAR_HEIGHT = 24;
 
         private const Int32 STAT_MINUS = 10;
-        private static Int32 _Updates; // sb_updates		// if >= vid.numpages, no update needed
-        private static Boolean _ShowScores; // sb_showscores
+        private Int32 _Updates; // sb_updates		// if >= vid.numpages, no update needed
+        private Boolean _ShowScores; // sb_showscores
 
         // num frame for '-' stats digit
 
-        private static GLPic[,] _Nums = new GLPic[2, 11];
-        private static GLPic _Colon;
-        private static GLPic _Slash;
-        private static GLPic _IBar;
-        private static GLPic _SBar;
-        private static GLPic _ScoreBar;
+        private GLPic[,] _Nums = new GLPic[2, 11];
+        private GLPic _Colon;
+        private GLPic _Slash;
+        private GLPic _IBar;
+        private GLPic _SBar;
+        private GLPic _ScoreBar;
 
-        private static GLPic[,] _Weapons = new GLPic[7, 8];   // 0 is active, 1 is owned, 2-5 are flashes
-        private static GLPic[] _Ammo = new GLPic[4];
-        private static GLPic[] _Sigil = new GLPic[4];
-        private static GLPic[] _Armor = new GLPic[3];
-        private static GLPic[] _Items = new GLPic[32];
+        private GLPic[,] _Weapons = new GLPic[7, 8];   // 0 is active, 1 is owned, 2-5 are flashes
+        private GLPic[] _Ammo = new GLPic[4];
+        private GLPic[] _Sigil = new GLPic[4];
+        private GLPic[] _Armor = new GLPic[3];
+        private GLPic[] _Items = new GLPic[32];
 
-        private static GLPic[,] _Faces = new GLPic[7, 2];        // 0 is gibbed, 1 is dead, 2-6 are alive
+        private GLPic[,] _Faces = new GLPic[7, 2];        // 0 is gibbed, 1 is dead, 2-6 are alive
 
         // 0 is static, 1 is temporary animation
-        private static GLPic _FaceInvis;
+        private GLPic _FaceInvis;
 
-        private static GLPic _FaceQuad;
-        private static GLPic _FaceInvuln;
-        private static GLPic _FaceInvisInvuln;
+        private GLPic _FaceQuad;
+        private GLPic _FaceInvuln;
+        private GLPic _FaceInvisInvuln;
 
-        private static GLPic[] _RInvBar = new GLPic[2];
-        private static GLPic[] _RWeapons = new GLPic[5];
-        private static GLPic[] _RItems = new GLPic[2];
-        private static GLPic[] _RAmmo = new GLPic[3];
-        private static GLPic _RTeamBord;		// PGM 01/19/97 - team color border
+        private GLPic[] _RInvBar = new GLPic[2];
+        private GLPic[] _RWeapons = new GLPic[5];
+        private GLPic[] _RItems = new GLPic[2];
+        private GLPic[] _RAmmo = new GLPic[3];
+        private GLPic _RTeamBord;		// PGM 01/19/97 - team color border
 
         //MED 01/04/97 added two more weapons + 3 alternates for grenade launcher
-        private static GLPic[,] _HWeapons = new GLPic[7, 5];   // 0 is active, 1 is owned, 2-5 are flashes
+        private GLPic[,] _HWeapons = new GLPic[7, 5];   // 0 is active, 1 is owned, 2-5 are flashes
 
         //MED 01/04/97 added array to simplify weapon parsing
-        private static Int32[] _HipWeapons = new Int32[]
+        private Int32[] _HipWeapons = new Int32[]
         {
             QItemsDef.HIT_LASER_CANNON_BIT, QItemsDef.HIT_MJOLNIR_BIT, 4, QItemsDef.HIT_PROXIMITY_GUN_BIT
         };
 
         //MED 01/04/97 added hipnotic items array
-        private static GLPic[] _HItems = new GLPic[2];
+        private GLPic[] _HItems = new GLPic[2];
 
-        private static Int32[] _FragSort = new Int32[QDef.MAX_SCOREBOARD];
-        private static String[] _ScoreBoardText = new String[QDef.MAX_SCOREBOARD];
-        private static Int32[] _ScoreBoardTop = new Int32[QDef.MAX_SCOREBOARD];
-        private static Int32[] _ScoreBoardBottom = new Int32[QDef.MAX_SCOREBOARD];
-        private static Int32[] _ScoreBoardCount = new Int32[QDef.MAX_SCOREBOARD];
-        private static Int32 _ScoreBoardLines;
+        private Int32[] _FragSort = new Int32[QDef.MAX_SCOREBOARD];
+        private String[] _ScoreBoardText = new String[QDef.MAX_SCOREBOARD];
+        private Int32[] _ScoreBoardTop = new Int32[QDef.MAX_SCOREBOARD];
+        private Int32[] _ScoreBoardBottom = new Int32[QDef.MAX_SCOREBOARD];
+        private Int32[] _ScoreBoardCount = new Int32[QDef.MAX_SCOREBOARD];
+        private Int32 _ScoreBoardLines;
 
         // CHANGE
-        private static Host Host
+        private Host Host
         {
             get;
             set;
         }
         // sb_lines scan lines to draw
 
-        // Sbar_Init
-        public static void Init( Host host )
+        public sbar( Host host )
         {
             Host = host;
+        }
 
-            for( var i = 0; i < 10; i++ )
+        // Sbar_Init
+        public void Initialise( )
+        {
+            for ( var i = 0; i < 10; i++ )
             {
-                var str = i.ToString();
+                var str = i.ToString( );
                 _Nums[0, i] = Host.DrawingContext.PicFromWad( "num_" + str );
                 _Nums[1, i] = Host.DrawingContext.PicFromWad( "anum_" + str );
             }
@@ -138,9 +141,9 @@ namespace SharpQuake
             _Weapons[1, 5] = Host.DrawingContext.PicFromWad( "inv2_srlaunch" );
             _Weapons[1, 6] = Host.DrawingContext.PicFromWad( "inv2_lightng" );
 
-            for( var i = 0; i < 5; i++ )
+            for ( var i = 0; i < 5; i++ )
             {
-                var s = "inva" + ( i + 1 ).ToString();
+                var s = "inva" + ( i + 1 ).ToString( );
                 _Weapons[2 + i, 0] = Host.DrawingContext.PicFromWad( s + "_shotgun" );
                 _Weapons[2 + i, 1] = Host.DrawingContext.PicFromWad( s + "_sshotgun" );
                 _Weapons[2 + i, 2] = Host.DrawingContext.PicFromWad( s + "_nailgun" );
@@ -195,7 +198,7 @@ namespace SharpQuake
             _ScoreBar = Host.DrawingContext.PicFromWad( "scorebar" );
 
             //MED 01/04/97 added new hipnotic weapons
-            if( MainWindow.Common.GameKind == GameKind.Hipnotic )
+            if ( MainWindow.Common.GameKind == GameKind.Hipnotic )
             {
                 _HWeapons[0, 0] = Host.DrawingContext.PicFromWad( "inv_laser" );
                 _HWeapons[0, 1] = Host.DrawingContext.PicFromWad( "inv_mjolnir" );
@@ -209,9 +212,9 @@ namespace SharpQuake
                 _HWeapons[1, 3] = Host.DrawingContext.PicFromWad( "inv2_prox_gren" );
                 _HWeapons[1, 4] = Host.DrawingContext.PicFromWad( "inv2_prox" );
 
-                for( var i = 0; i < 5; i++ )
+                for ( var i = 0; i < 5; i++ )
                 {
-                    var s = "inva" + ( i + 1 ).ToString();
+                    var s = "inva" + ( i + 1 ).ToString( );
                     _HWeapons[2 + i, 0] = Host.DrawingContext.PicFromWad( s + "_laser" );
                     _HWeapons[2 + i, 1] = Host.DrawingContext.PicFromWad( s + "_mjolnir" );
                     _HWeapons[2 + i, 2] = Host.DrawingContext.PicFromWad( s + "_gren_prox" );
@@ -223,7 +226,7 @@ namespace SharpQuake
                 _HItems[1] = Host.DrawingContext.PicFromWad( "sb_eshld" );
             }
 
-            if( MainWindow.Common.GameKind == GameKind.Rogue )
+            if ( MainWindow.Common.GameKind == GameKind.Rogue )
             {
                 _RInvBar[0] = Host.DrawingContext.PicFromWad( "r_invbar1" );
                 _RInvBar[1] = Host.DrawingContext.PicFromWad( "r_invbar2" );
@@ -249,129 +252,132 @@ namespace SharpQuake
 
         // Sbar_Changed
         // call whenever any of the client stats represented on the sbar changes
-        public static void Changed()
+        public void Changed( )
         {
             _Updates = 0;	// update next frame
         }
 
         // Sbar_Draw
         // called every frame by screen
-        public static void Draw()
+        public void Draw( )
         {
-            var vid = Scr.vid;
-            if( Scr.ConCurrent == vid.height )
-                return;		// console is full screen
-
-            if( _Updates >= vid.numpages )
+            if ( Host == null )
                 return;
 
-            Scr.CopyEverithing = true;
+            var vid = Host.Screen.vid;
+            if ( Host.Screen.ConCurrent == vid.height )
+                return;		// console is full screen
+
+            if ( _Updates >= vid.numpages )
+                return;
+
+            Host.Screen.CopyEverithing = true;
 
             _Updates++;
 
-            if( sbar.Lines > 0 && vid.width > 320 )
-                Host.DrawingContext.TileClear( 0, vid.height - sbar.Lines, vid.width, sbar.Lines );
+            if ( Lines > 0 && vid.width > 320 )
+                Host.DrawingContext.TileClear( 0, vid.height - Lines, vid.width, Lines );
 
-            if( sbar.Lines > 24 )
+            if ( Lines > 24 )
             {
-                DrawInventory();
-                if( Host.Client.cl.maxclients != 1 )
-                    DrawFrags();
+                DrawInventory( );
+                if ( Host.Client.cl.maxclients != 1 )
+                    DrawFrags( );
             }
 
             var cl = Host.Client.cl;
-            if( _ShowScores || cl.stats[QStatsDef.STAT_HEALTH] <= 0 )
+            if ( _ShowScores || cl.stats[QStatsDef.STAT_HEALTH] <= 0 )
             {
                 DrawPic( 0, 0, _ScoreBar );
-                DrawScoreboard();
+                DrawScoreboard( );
                 _Updates = 0;
             }
-            else if( sbar.Lines > 0 )
+            else if ( Lines > 0 )
             {
                 DrawPic( 0, 0, _SBar );
 
                 // keys (hipnotic only)
                 //MED 01/04/97 moved keys here so they would not be overwritten
-                if( MainWindow.Common.GameKind == GameKind.Hipnotic )
+                if ( MainWindow.Common.GameKind == GameKind.Hipnotic )
                 {
-                    if( cl.HasItems( QItemsDef.IT_KEY1 ) )
+                    if ( cl.HasItems( QItemsDef.IT_KEY1 ) )
                         DrawPic( 209, 3, _Items[0] );
-                    if( cl.HasItems( QItemsDef.IT_KEY2 ) )
+                    if ( cl.HasItems( QItemsDef.IT_KEY2 ) )
                         DrawPic( 209, 12, _Items[1] );
                 }
                 // armor
-                if( cl.HasItems( QItemsDef.IT_INVULNERABILITY ) )
+                if ( cl.HasItems( QItemsDef.IT_INVULNERABILITY ) )
                 {
                     DrawNum( 24, 0, 666, 3, 1 );
                     DrawPic( 0, 0, Host.DrawingContext.Disc );
                 }
                 else
                 {
-                    if( MainWindow.Common.GameKind == GameKind.Rogue )
+                    if ( MainWindow.Common.GameKind == GameKind.Rogue )
                     {
                         DrawNum( 24, 0, cl.stats[QStatsDef.STAT_ARMOR], 3, cl.stats[QStatsDef.STAT_ARMOR] <= 25 ? 1 : 0 ); // uze: corrected color param
-                        if( cl.HasItems( QItemsDef.RIT_ARMOR3 ) )
+                        if ( cl.HasItems( QItemsDef.RIT_ARMOR3 ) )
                             DrawPic( 0, 0, _Armor[2] );
-                        else if( cl.HasItems( QItemsDef.RIT_ARMOR2 ) )
+                        else if ( cl.HasItems( QItemsDef.RIT_ARMOR2 ) )
                             DrawPic( 0, 0, _Armor[1] );
-                        else if( cl.HasItems( QItemsDef.RIT_ARMOR1 ) )
+                        else if ( cl.HasItems( QItemsDef.RIT_ARMOR1 ) )
                             DrawPic( 0, 0, _Armor[0] );
                     }
                     else
                     {
                         DrawNum( 24, 0, cl.stats[QStatsDef.STAT_ARMOR], 3, cl.stats[QStatsDef.STAT_ARMOR] <= 25 ? 1 : 0 );
-                        if( cl.HasItems( QItemsDef.IT_ARMOR3 ) )
+                        if ( cl.HasItems( QItemsDef.IT_ARMOR3 ) )
                             DrawPic( 0, 0, _Armor[2] );
-                        else if( cl.HasItems( QItemsDef.IT_ARMOR2 ) )
+                        else if ( cl.HasItems( QItemsDef.IT_ARMOR2 ) )
                             DrawPic( 0, 0, _Armor[1] );
-                        else if( cl.HasItems( QItemsDef.IT_ARMOR1 ) )
+                        else if ( cl.HasItems( QItemsDef.IT_ARMOR1 ) )
                             DrawPic( 0, 0, _Armor[0] );
                     }
                 }
 
                 // face
-                DrawFace();
+                DrawFace( );
 
                 // health
                 DrawNum( 136, 0, cl.stats[QStatsDef.STAT_HEALTH], 3, cl.stats[QStatsDef.STAT_HEALTH] <= 25 ? 1 : 0 );
 
                 // ammo icon
-                if( MainWindow.Common.GameKind == GameKind.Rogue )
+                if ( MainWindow.Common.GameKind == GameKind.Rogue )
                 {
-                    if( cl.HasItems( QItemsDef.RIT_SHELLS ) )
+                    if ( cl.HasItems( QItemsDef.RIT_SHELLS ) )
                         DrawPic( 224, 0, _Ammo[0] );
-                    else if( cl.HasItems( QItemsDef.RIT_NAILS ) )
+                    else if ( cl.HasItems( QItemsDef.RIT_NAILS ) )
                         DrawPic( 224, 0, _Ammo[1] );
-                    else if( cl.HasItems( QItemsDef.RIT_ROCKETS ) )
+                    else if ( cl.HasItems( QItemsDef.RIT_ROCKETS ) )
                         DrawPic( 224, 0, _Ammo[2] );
-                    else if( cl.HasItems( QItemsDef.RIT_CELLS ) )
+                    else if ( cl.HasItems( QItemsDef.RIT_CELLS ) )
                         DrawPic( 224, 0, _Ammo[3] );
-                    else if( cl.HasItems( QItemsDef.RIT_LAVA_NAILS ) )
+                    else if ( cl.HasItems( QItemsDef.RIT_LAVA_NAILS ) )
                         DrawPic( 224, 0, _RAmmo[0] );
-                    else if( cl.HasItems( QItemsDef.RIT_PLASMA_AMMO ) )
+                    else if ( cl.HasItems( QItemsDef.RIT_PLASMA_AMMO ) )
                         DrawPic( 224, 0, _RAmmo[1] );
-                    else if( cl.HasItems( QItemsDef.RIT_MULTI_ROCKETS ) )
+                    else if ( cl.HasItems( QItemsDef.RIT_MULTI_ROCKETS ) )
                         DrawPic( 224, 0, _RAmmo[2] );
                 }
                 else
                 {
-                    if( cl.HasItems( QItemsDef.IT_SHELLS ) )
+                    if ( cl.HasItems( QItemsDef.IT_SHELLS ) )
                         DrawPic( 224, 0, _Ammo[0] );
-                    else if( cl.HasItems( QItemsDef.IT_NAILS ) )
+                    else if ( cl.HasItems( QItemsDef.IT_NAILS ) )
                         DrawPic( 224, 0, _Ammo[1] );
-                    else if( cl.HasItems( QItemsDef.IT_ROCKETS ) )
+                    else if ( cl.HasItems( QItemsDef.IT_ROCKETS ) )
                         DrawPic( 224, 0, _Ammo[2] );
-                    else if( cl.HasItems( QItemsDef.IT_CELLS ) )
+                    else if ( cl.HasItems( QItemsDef.IT_CELLS ) )
                         DrawPic( 224, 0, _Ammo[3] );
                 }
 
                 DrawNum( 248, 0, cl.stats[QStatsDef.STAT_AMMO], 3, cl.stats[QStatsDef.STAT_AMMO] <= 10 ? 1 : 0 );
             }
 
-            if( vid.width > 320 )
+            if ( vid.width > 320 )
             {
-                if( Host.Client.cl.gametype == protocol.GAME_DEATHMATCH )
-                    MiniDeathmatchOverlay();
+                if ( Host.Client.cl.gametype == protocol.GAME_DEATHMATCH )
+                    MiniDeathmatchOverlay( );
             }
         }
 
@@ -379,14 +385,14 @@ namespace SharpQuake
         /// Sbar_IntermissionOverlay
         /// called each frame after the level has been completed
         /// </summary>
-        public static void IntermissionOverlay()
+        public void IntermissionOverlay( )
         {
-            Scr.CopyEverithing = true;
-            Scr.FullUpdate = 0;
+            Host.Screen.CopyEverithing = true;
+            Host.Screen.FullUpdate = 0;
 
-            if( Host.Client.cl.gametype == protocol.GAME_DEATHMATCH )
+            if ( Host.Client.cl.gametype == protocol.GAME_DEATHMATCH )
             {
-                sbar.DeathmatchOverlay();
+                DeathmatchOverlay( );
                 return;
             }
 
@@ -416,29 +422,29 @@ namespace SharpQuake
         /// <summary>
         /// Sbar_FinaleOverlay
         /// </summary>
-        public static void FinaleOverlay()
+        public void FinaleOverlay( )
         {
-            Scr.CopyEverithing = true;
+            Host.Screen.CopyEverithing = true;
 
             var pic = Host.DrawingContext.CachePic( "gfx/finale.lmp" );
-            Host.DrawingContext.DrawTransPic( ( Scr.vid.width - pic.width ) / 2, 16, pic );
+            Host.DrawingContext.DrawTransPic( ( Host.Screen.vid.width - pic.width ) / 2, 16, pic );
         }
 
         /// <summary>
         /// Sbar_IntermissionNumber
         /// </summary>
-        private static void IntermissionNumber( Int32 x, Int32 y, Int32 num, Int32 digits, Int32 color )
+        private void IntermissionNumber( Int32 x, Int32 y, Int32 num, Int32 digits, Int32 color )
         {
-            var str = num.ToString();
-            if( str.Length > digits )
+            var str = num.ToString( );
+            if ( str.Length > digits )
             {
                 str = str.Remove( 0, str.Length - digits );
             }
 
-            if( str.Length < digits )
+            if ( str.Length < digits )
                 x += ( digits - str.Length ) * 24;
 
-            for( var i = 0; i < str.Length; i++ )
+            for ( var i = 0; i < str.Length; i++ )
             {
                 var frame = ( str[i] == '-' ? STAT_MINUS : str[i] - '0' );
                 Host.DrawingContext.DrawTransPic( x, y, _Nums[color, frame] );
@@ -447,14 +453,14 @@ namespace SharpQuake
         }
 
         // Sbar_DrawInventory
-        private static void DrawInventory()
+        private void DrawInventory( )
         {
             Int32 flashon;
 
             var cl = Host.Client.cl;
-            if( MainWindow.Common.GameKind == GameKind.Rogue )
+            if ( MainWindow.Common.GameKind == GameKind.Rogue )
             {
-                if( cl.stats[QStatsDef.STAT_ACTIVEWEAPON] >= QItemsDef.RIT_LAVA_NAILGUN )
+                if ( cl.stats[QStatsDef.STAT_ACTIVEWEAPON] >= QItemsDef.RIT_LAVA_NAILGUN )
                     DrawPic( 0, -24, _RInvBar[0] );
                 else
                     DrawPic( 0, -24, _RInvBar[1] );
@@ -463,15 +469,15 @@ namespace SharpQuake
                 DrawPic( 0, -24, _IBar );
 
             // weapons
-            for( var i = 0; i < 7; i++ )
+            for ( var i = 0; i < 7; i++ )
             {
-                if( cl.HasItems( QItemsDef.IT_SHOTGUN << i ) )
+                if ( cl.HasItems( QItemsDef.IT_SHOTGUN << i ) )
                 {
                     var time = cl.item_gettime[i];
                     flashon = ( Int32 ) ( ( cl.time - time ) * 10 );
-                    if( flashon >= 10 )
+                    if ( flashon >= 10 )
                     {
-                        if( cl.stats[QStatsDef.STAT_ACTIVEWEAPON] == ( QItemsDef.IT_SHOTGUN << i ) )
+                        if ( cl.stats[QStatsDef.STAT_ACTIVEWEAPON] == ( QItemsDef.IT_SHOTGUN << i ) )
                             flashon = 1;
                         else
                             flashon = 0;
@@ -481,25 +487,25 @@ namespace SharpQuake
 
                     DrawPic( i * 24, -16, _Weapons[flashon, i] );
 
-                    if( flashon > 1 )
+                    if ( flashon > 1 )
                         _Updates = 0; // force update to remove flash
                 }
             }
 
             // MED 01/04/97
             // hipnotic weapons
-            if( MainWindow.Common.GameKind == GameKind.Hipnotic )
+            if ( MainWindow.Common.GameKind == GameKind.Hipnotic )
             {
                 var grenadeflashing = 0;
-                for( var i = 0; i < 4; i++ )
+                for ( var i = 0; i < 4; i++ )
                 {
-                    if( cl.HasItems( 1 << _HipWeapons[i] ) )
+                    if ( cl.HasItems( 1 << _HipWeapons[i] ) )
                     {
                         var time = cl.item_gettime[_HipWeapons[i]];
                         flashon = ( Int32 ) ( ( cl.time - time ) * 10 );
-                        if( flashon >= 10 )
+                        if ( flashon >= 10 )
                         {
-                            if( cl.stats[QStatsDef.STAT_ACTIVEWEAPON] == ( 1 << _HipWeapons[i] ) )
+                            if ( cl.stats[QStatsDef.STAT_ACTIVEWEAPON] == ( 1 << _HipWeapons[i] ) )
                                 flashon = 1;
                             else
                                 flashon = 0;
@@ -508,26 +514,26 @@ namespace SharpQuake
                             flashon = ( flashon % 5 ) + 2;
 
                         // check grenade launcher
-                        if( i == 2 )
+                        if ( i == 2 )
                         {
-                            if( cl.HasItems( QItemsDef.HIT_PROXIMITY_GUN ) )
+                            if ( cl.HasItems( QItemsDef.HIT_PROXIMITY_GUN ) )
                             {
-                                if( flashon > 0 )
+                                if ( flashon > 0 )
                                 {
                                     grenadeflashing = 1;
                                     DrawPic( 96, -16, _HWeapons[flashon, 2] );
                                 }
                             }
                         }
-                        else if( i == 3 )
+                        else if ( i == 3 )
                         {
-                            if( cl.HasItems( QItemsDef.IT_SHOTGUN << 4 ) )
+                            if ( cl.HasItems( QItemsDef.IT_SHOTGUN << 4 ) )
                             {
-                                if( flashon > 0 && grenadeflashing == 0 )
+                                if ( flashon > 0 && grenadeflashing == 0 )
                                 {
                                     DrawPic( 96, -16, _HWeapons[flashon, 3] );
                                 }
-                                else if( grenadeflashing == 0 )
+                                else if ( grenadeflashing == 0 )
                                 {
                                     DrawPic( 96, -16, _HWeapons[0, 3] );
                                 }
@@ -537,68 +543,68 @@ namespace SharpQuake
                         }
                         else
                             DrawPic( 176 + ( i * 24 ), -16, _HWeapons[flashon, i] );
-                        if( flashon > 1 )
+                        if ( flashon > 1 )
                             _Updates = 0; // force update to remove flash
                     }
                 }
             }
 
-            if( MainWindow.Common.GameKind == GameKind.Rogue )
+            if ( MainWindow.Common.GameKind == GameKind.Rogue )
             {
                 // check for powered up weapon.
-                if( cl.stats[QStatsDef.STAT_ACTIVEWEAPON] >= QItemsDef.RIT_LAVA_NAILGUN )
-                    for( var i = 0; i < 5; i++ )
-                        if( cl.stats[QStatsDef.STAT_ACTIVEWEAPON] == ( QItemsDef.RIT_LAVA_NAILGUN << i ) )
+                if ( cl.stats[QStatsDef.STAT_ACTIVEWEAPON] >= QItemsDef.RIT_LAVA_NAILGUN )
+                    for ( var i = 0; i < 5; i++ )
+                        if ( cl.stats[QStatsDef.STAT_ACTIVEWEAPON] == ( QItemsDef.RIT_LAVA_NAILGUN << i ) )
                             DrawPic( ( i + 2 ) * 24, -16, _RWeapons[i] );
             }
 
             // ammo counts
-            for( var i = 0; i < 4; i++ )
+            for ( var i = 0; i < 4; i++ )
             {
-                var num = cl.stats[QStatsDef.STAT_SHELLS + i].ToString().PadLeft( 3 );
+                var num = cl.stats[QStatsDef.STAT_SHELLS + i].ToString( ).PadLeft( 3 );
                 //sprintf(num, "%3i", cl.stats[QStats.STAT_SHELLS + i]);
-                if( num[0] != ' ' )
+                if ( num[0] != ' ' )
                     DrawCharacter( ( 6 * i + 1 ) * 8 - 2, -24, 18 + num[0] - '0' );
-                if( num[1] != ' ' )
+                if ( num[1] != ' ' )
                     DrawCharacter( ( 6 * i + 2 ) * 8 - 2, -24, 18 + num[1] - '0' );
-                if( num[2] != ' ' )
+                if ( num[2] != ' ' )
                     DrawCharacter( ( 6 * i + 3 ) * 8 - 2, -24, 18 + num[2] - '0' );
             }
 
             flashon = 0;
             // items
-            for( var i = 0; i < 6; i++ )
+            for ( var i = 0; i < 6; i++ )
             {
-                if( cl.HasItems( 1 << ( 17 + i ) ) )
+                if ( cl.HasItems( 1 << ( 17 + i ) ) )
                 {
                     var time = cl.item_gettime[17 + i];
-                    if( time > 0 && time > cl.time - 2 && flashon > 0 )
+                    if ( time > 0 && time > cl.time - 2 && flashon > 0 )
                     {  // flash frame
                         _Updates = 0;
                     }
                     else
                     {
                         //MED 01/04/97 changed keys
-                        if( MainWindow.Common.GameKind != GameKind.Hipnotic || ( i > 1 ) )
+                        if ( MainWindow.Common.GameKind != GameKind.Hipnotic || ( i > 1 ) )
                         {
                             DrawPic( 192 + i * 16, -16, _Items[i] );
                         }
                     }
-                    if( time > 0 && time > cl.time - 2 )
+                    if ( time > 0 && time > cl.time - 2 )
                         _Updates = 0;
                 }
             }
 
             //MED 01/04/97 added hipnotic items
             // hipnotic items
-            if( MainWindow.Common.GameKind == GameKind.Hipnotic )
+            if ( MainWindow.Common.GameKind == GameKind.Hipnotic )
             {
-                for( var i = 0; i < 2; i++ )
+                for ( var i = 0; i < 2; i++ )
                 {
-                    if( cl.HasItems( 1 << ( 24 + i ) ) )
+                    if ( cl.HasItems( 1 << ( 24 + i ) ) )
                     {
                         var time = cl.item_gettime[24 + i];
-                        if( time > 0 && time > cl.time - 2 && flashon > 0 )
+                        if ( time > 0 && time > cl.time - 2 && flashon > 0 )
                         {  // flash frame
                             _Updates = 0;
                         }
@@ -606,22 +612,22 @@ namespace SharpQuake
                         {
                             DrawPic( 288 + i * 16, -16, _HItems[i] );
                         }
-                        if( time > 0 && time > cl.time - 2 )
+                        if ( time > 0 && time > cl.time - 2 )
                             _Updates = 0;
                     }
                 }
             }
 
-            if( MainWindow.Common.GameKind == GameKind.Rogue )
+            if ( MainWindow.Common.GameKind == GameKind.Rogue )
             {
                 // new rogue items
-                for( var i = 0; i < 2; i++ )
+                for ( var i = 0; i < 2; i++ )
                 {
-                    if( cl.HasItems( 1 << ( 29 + i ) ) )
+                    if ( cl.HasItems( 1 << ( 29 + i ) ) )
                     {
                         var time = cl.item_gettime[29 + i];
 
-                        if( time > 0 && time > cl.time - 2 && flashon > 0 )
+                        if ( time > 0 && time > cl.time - 2 && flashon > 0 )
                         {	// flash frame
                             _Updates = 0;
                         }
@@ -630,7 +636,7 @@ namespace SharpQuake
                             DrawPic( 288 + i * 16, -16, _RItems[i] );
                         }
 
-                        if( time > 0 && time > cl.time - 2 )
+                        if ( time > 0 && time > cl.time - 2 )
                             _Updates = 0;
                     }
                 }
@@ -638,18 +644,18 @@ namespace SharpQuake
             else
             {
                 // sigils
-                for( var i = 0; i < 4; i++ )
+                for ( var i = 0; i < 4; i++ )
                 {
-                    if( cl.HasItems( 1 << ( 28 + i ) ) )
+                    if ( cl.HasItems( 1 << ( 28 + i ) ) )
                     {
                         var time = cl.item_gettime[28 + i];
-                        if( time > 0 && time > cl.time - 2 && flashon > 0 )
+                        if ( time > 0 && time > cl.time - 2 && flashon > 0 )
                         {	// flash frame
                             _Updates = 0;
                         }
                         else
                             DrawPic( 320 - 32 + i * 8, -16, _Sigil[i] );
-                        if( time > 0 && time > cl.time - 2 )
+                        if ( time > 0 && time > cl.time - 2 )
                             _Updates = 0;
                     }
                 }
@@ -657,27 +663,27 @@ namespace SharpQuake
         }
 
         // Sbar_DrawFrags
-        private static void DrawFrags()
+        private void DrawFrags( )
         {
-            SortFrags();
+            SortFrags( );
 
             // draw the text
             var l = _ScoreBoardLines <= 4 ? _ScoreBoardLines : 4;
             Int32 xofs, x = 23;
             var cl = Host.Client.cl;
 
-            if( cl.gametype == protocol.GAME_DEATHMATCH )
+            if ( cl.gametype == protocol.GAME_DEATHMATCH )
                 xofs = 0;
             else
-                xofs = ( Scr.vid.width - 320 ) >> 1;
+                xofs = ( Host.Screen.vid.width - 320 ) >> 1;
 
-            var y = Scr.vid.height - SBAR_HEIGHT - 23;
+            var y = Host.Screen.vid.height - SBAR_HEIGHT - 23;
 
-            for( var i = 0; i < l; i++ )
+            for ( var i = 0; i < l; i++ )
             {
                 var k = _FragSort[i];
                 var s = cl.scores[k];
-                if( String.IsNullOrEmpty( s.name ) )
+                if ( String.IsNullOrEmpty( s.name ) )
                     continue;
 
                 // draw background
@@ -691,14 +697,14 @@ namespace SharpQuake
 
                 // draw number
                 var f = s.frags;
-                var num = f.ToString().PadLeft( 3 );
+                var num = f.ToString( ).PadLeft( 3 );
                 //sprintf(num, "%3i", f);
 
                 DrawCharacter( ( x + 1 ) * 8, -24, num[0] );
                 DrawCharacter( ( x + 2 ) * 8, -24, num[1] );
                 DrawCharacter( ( x + 3 ) * 8, -24, num[2] );
 
-                if( k == cl.viewentity - 1 )
+                if ( k == cl.viewentity - 1 )
                 {
                     DrawCharacter( x * 8 + 2, -24, 16 );
                     DrawCharacter( ( x + 4 ) * 8 - 4, -24, 17 );
@@ -708,35 +714,35 @@ namespace SharpQuake
         }
 
         // Sbar_DrawPic
-        private static void DrawPic( Int32 x, Int32 y, GLPic pic )
+        private void DrawPic( Int32 x, Int32 y, GLPic pic )
         {
-            if( Host.Client.cl.gametype == protocol.GAME_DEATHMATCH )
-                Host.DrawingContext.DrawPic( x, y + ( Scr.vid.height - SBAR_HEIGHT ), pic );
+            if ( Host.Client.cl.gametype == protocol.GAME_DEATHMATCH )
+                Host.DrawingContext.DrawPic( x, y + ( Host.Screen.vid.height - SBAR_HEIGHT ), pic );
             else
-                Host.DrawingContext.DrawPic( x + ( ( Scr.vid.width - 320 ) >> 1 ), y + ( Scr.vid.height - SBAR_HEIGHT ), pic );
+                Host.DrawingContext.DrawPic( x + ( ( Host.Screen.vid.width - 320 ) >> 1 ), y + ( Host.Screen.vid.height - SBAR_HEIGHT ), pic );
         }
 
         // Sbar_DrawScoreboard
-        private static void DrawScoreboard()
+        private void DrawScoreboard( )
         {
-            SoloScoreboard();
-            if( Host.Client.cl.gametype == protocol.GAME_DEATHMATCH )
-                DeathmatchOverlay();
+            SoloScoreboard( );
+            if ( Host.Client.cl.gametype == protocol.GAME_DEATHMATCH )
+                DeathmatchOverlay( );
         }
 
         // Sbar_DrawNum
-        private static void DrawNum( Int32 x, Int32 y, Int32 num, Int32 digits, Int32 color )
+        private void DrawNum( Int32 x, Int32 y, Int32 num, Int32 digits, Int32 color )
         {
-            var str = num.ToString();// int l = Sbar_itoa(num, str);
+            var str = num.ToString( );// int l = Sbar_itoa(num, str);
 
-            if( str.Length > digits )
+            if ( str.Length > digits )
                 str = str.Remove( str.Length - digits );
-            if( str.Length < digits )
+            if ( str.Length < digits )
                 x += ( digits - str.Length ) * 24;
 
-            for( Int32 i = 0, frame; i < str.Length; i++ )
+            for ( Int32 i = 0, frame; i < str.Length; i++ )
             {
-                if( str[i] == '-' )
+                if ( str[i] == '-' )
                     frame = STAT_MINUS;
                 else
                     frame = str[i] - '0';
@@ -747,13 +753,13 @@ namespace SharpQuake
         }
 
         // Sbar_DrawFace
-        private static void DrawFace()
+        private void DrawFace( )
         {
             var cl = Host.Client.cl;
 
             // PGM 01/19/97 - team color drawing
             // PGM 03/02/97 - fixed so color swatch only appears in CTF modes
-            if( MainWindow.Common.GameKind == GameKind.Rogue &&
+            if ( MainWindow.Common.GameKind == GameKind.Rogue &&
                 ( Host.Client.cl.maxclients != 1 ) &&
                 ( Host.TeamPlay > 3 ) &&
                 ( Host.TeamPlay < 7 ) )
@@ -767,24 +773,24 @@ namespace SharpQuake
                 bottom = ColorForMap( bottom );
 
                 Int32 xofs;
-                if( cl.gametype == protocol.GAME_DEATHMATCH )
+                if ( cl.gametype == protocol.GAME_DEATHMATCH )
                     xofs = 113;
                 else
-                    xofs = ( ( Scr.vid.width - 320 ) >> 1 ) + 113;
+                    xofs = ( ( Host.Screen.vid.width - 320 ) >> 1 ) + 113;
 
                 DrawPic( 112, 0, _RTeamBord );
-                Host.DrawingContext.Fill( xofs, Scr.vid.height - SBAR_HEIGHT + 3, 22, 9, top );
-                Host.DrawingContext.Fill( xofs, Scr.vid.height - SBAR_HEIGHT + 12, 22, 9, bottom );
+                Host.DrawingContext.Fill( xofs, Host.Screen.vid.height - SBAR_HEIGHT + 3, 22, 9, top );
+                Host.DrawingContext.Fill( xofs, Host.Screen.vid.height - SBAR_HEIGHT + 12, 22, 9, bottom );
 
                 // draw number
-                var num = s.frags.ToString().PadLeft( 3 );
-                if( top == 8 )
+                var num = s.frags.ToString( ).PadLeft( 3 );
+                if ( top == 8 )
                 {
-                    if( num[0] != ' ' )
+                    if ( num[0] != ' ' )
                         DrawCharacter( 109, 3, 18 + num[0] - '0' );
-                    if( num[1] != ' ' )
+                    if ( num[1] != ' ' )
                         DrawCharacter( 116, 3, 18 + num[1] - '0' );
-                    if( num[2] != ' ' )
+                    if ( num[2] != ' ' )
                         DrawCharacter( 123, 3, 18 + num[2] - '0' );
                 }
                 else
@@ -800,33 +806,33 @@ namespace SharpQuake
 
             Int32 f, anim;
 
-            if( cl.HasItems( QItemsDef.IT_INVISIBILITY | QItemsDef.IT_INVULNERABILITY ) )
+            if ( cl.HasItems( QItemsDef.IT_INVISIBILITY | QItemsDef.IT_INVULNERABILITY ) )
             {
                 DrawPic( 112, 0, _FaceInvisInvuln );
                 return;
             }
-            if( cl.HasItems( QItemsDef.IT_QUAD ) )
+            if ( cl.HasItems( QItemsDef.IT_QUAD ) )
             {
                 DrawPic( 112, 0, _FaceQuad );
                 return;
             }
-            if( cl.HasItems( QItemsDef.IT_INVISIBILITY ) )
+            if ( cl.HasItems( QItemsDef.IT_INVISIBILITY ) )
             {
                 DrawPic( 112, 0, _FaceInvis );
                 return;
             }
-            if( cl.HasItems( QItemsDef.IT_INVULNERABILITY ) )
+            if ( cl.HasItems( QItemsDef.IT_INVULNERABILITY ) )
             {
                 DrawPic( 112, 0, _FaceInvuln );
                 return;
             }
 
-            if( cl.stats[QStatsDef.STAT_HEALTH] >= 100 )
+            if ( cl.stats[QStatsDef.STAT_HEALTH] >= 100 )
                 f = 4;
             else
                 f = cl.stats[QStatsDef.STAT_HEALTH] / 20;
 
-            if( cl.time <= cl.faceanimtime )
+            if ( cl.time <= cl.faceanimtime )
             {
                 anim = 1;
                 _Updates = 0; // make sure the anim gets drawn over
@@ -838,46 +844,46 @@ namespace SharpQuake
         }
 
         // Sbar_DeathmatchOverlay
-        private static void MiniDeathmatchOverlay()
+        private void MiniDeathmatchOverlay( )
         {
-            if( Scr.vid.width < 512 || sbar.Lines == 0 )
+            if ( Host.Screen.vid.width < 512 || Lines == 0 )
                 return;
 
-            Scr.CopyEverithing = true;
-            Scr.FullUpdate = 0;
+            Host.Screen.CopyEverithing = true;
+            Host.Screen.FullUpdate = 0;
 
             // scores
-            SortFrags();
+            SortFrags( );
 
             // draw the text
             var l = _ScoreBoardLines;
-            var y = Scr.vid.height - sbar.Lines;
-            var numlines = sbar.Lines / 8;
-            if( numlines < 3 )
+            var y = Host.Screen.vid.height - Lines;
+            var numlines = Lines / 8;
+            if ( numlines < 3 )
                 return;
 
             //find us
             Int32 i;
-            for( i = 0; i < _ScoreBoardLines; i++ )
-                if( _FragSort[i] == Host.Client.cl.viewentity - 1 )
+            for ( i = 0; i < _ScoreBoardLines; i++ )
+                if ( _FragSort[i] == Host.Client.cl.viewentity - 1 )
                     break;
 
-            if( i == _ScoreBoardLines ) // we're not there
+            if ( i == _ScoreBoardLines ) // we're not there
                 i = 0;
             else // figure out start
                 i = i - numlines / 2;
 
-            if( i > _ScoreBoardLines - numlines )
+            if ( i > _ScoreBoardLines - numlines )
                 i = _ScoreBoardLines - numlines;
-            if( i < 0 )
+            if ( i < 0 )
                 i = 0;
 
             var x = 324;
-            for( ; i < _ScoreBoardLines && y < Scr.vid.height - 8; i++ )
+            for ( ; i < _ScoreBoardLines && y < Host.Screen.vid.height - 8; i++ )
             {
                 var k = _FragSort[i];
                 var s = Host.Client.cl.scores[k];
-                if( String.IsNullOrEmpty( s.name ) )
+                if ( String.IsNullOrEmpty( s.name ) )
                     continue;
 
                 // draw background
@@ -890,12 +896,12 @@ namespace SharpQuake
                 Host.DrawingContext.Fill( x, y + 4, 40, 4, bottom );
 
                 // draw number
-                var num = s.frags.ToString().PadLeft( 3 );
+                var num = s.frags.ToString( ).PadLeft( 3 );
                 Host.DrawingContext.DrawCharacter( x + 8, y, num[0] );
                 Host.DrawingContext.DrawCharacter( x + 16, y, num[1] );
                 Host.DrawingContext.DrawCharacter( x + 24, y, num[2] );
 
-                if( k == Host.Client.cl.viewentity - 1 )
+                if ( k == Host.Client.cl.viewentity - 1 )
                 {
                     Host.DrawingContext.DrawCharacter( x, y, 16 );
                     Host.DrawingContext.DrawCharacter( x + 32, y, 17 );
@@ -909,25 +915,25 @@ namespace SharpQuake
         }
 
         // Sbar_SortFrags
-        private static void SortFrags()
+        private void SortFrags( )
         {
             var cl = Host.Client.cl;
 
             // sort by frags
             _ScoreBoardLines = 0;
-            for( var i = 0; i < cl.maxclients; i++ )
+            for ( var i = 0; i < cl.maxclients; i++ )
             {
-                if( !String.IsNullOrEmpty( cl.scores[i].name ) )
+                if ( !String.IsNullOrEmpty( cl.scores[i].name ) )
                 {
                     _FragSort[_ScoreBoardLines] = i;
                     _ScoreBoardLines++;
                 }
             }
 
-            for( var i = 0; i < _ScoreBoardLines; i++ )
+            for ( var i = 0; i < _ScoreBoardLines; i++ )
             {
-                for( var j = 0; j < _ScoreBoardLines - 1 - i; j++ )
-                    if( cl.scores[_FragSort[j]].frags < cl.scores[_FragSort[j + 1]].frags )
+                for ( var j = 0; j < _ScoreBoardLines - 1 - i; j++ )
+                    if ( cl.scores[_FragSort[j]].frags < cl.scores[_FragSort[j + 1]].frags )
                     {
                         var k = _FragSort[j];
                         _FragSort[j] = _FragSort[j + 1];
@@ -939,32 +945,32 @@ namespace SharpQuake
         // Sbar_DrawCharacter
         //
         // Draws one solid graphics character
-        private static void DrawCharacter( Int32 x, Int32 y, Int32 num )
+        private void DrawCharacter( Int32 x, Int32 y, Int32 num )
         {
-            if( Host.Client.cl.gametype == protocol.GAME_DEATHMATCH )
-                Host.DrawingContext.DrawCharacter( x + 4, y + Scr.vid.height - SBAR_HEIGHT, num );
+            if ( Host.Client.cl.gametype == protocol.GAME_DEATHMATCH )
+                Host.DrawingContext.DrawCharacter( x + 4, y + Host.Screen.vid.height - SBAR_HEIGHT, num );
             else
-                Host.DrawingContext.DrawCharacter( x + ( ( Scr.vid.width - 320 ) >> 1 ) + 4, y + Scr.vid.height - SBAR_HEIGHT, num );
+                Host.DrawingContext.DrawCharacter( x + ( ( Host.Screen.vid.width - 320 ) >> 1 ) + 4, y + Host.Screen.vid.height - SBAR_HEIGHT, num );
         }
 
         // Sbar_ColorForMap
-        private static Int32 ColorForMap( Int32 m )
+        private Int32 ColorForMap( Int32 m )
         {
             return m < 128 ? m + 8 : m + 8;
         }
 
         // Sbar_SoloScoreboard
-        private static void SoloScoreboard()
+        private void SoloScoreboard( )
         {
             var sb = new StringBuilder( 80 );
             var cl = Host.Client.cl;
 
             sb.AppendFormat( "Monsters:{0,3:d} /{1,3:d}", cl.stats[QStatsDef.STAT_MONSTERS], Host.Client.cl.stats[QStatsDef.STAT_TOTALMONSTERS] );
-            DrawString( 8, 4, sb.ToString() );
+            DrawString( 8, 4, sb.ToString( ) );
 
             sb.Length = 0;
             sb.AppendFormat( "Secrets :{0,3:d} /{1,3:d}", cl.stats[QStatsDef.STAT_SECRETS], cl.stats[QStatsDef.STAT_TOTALSECRETS] );
-            DrawString( 8, 12, sb.ToString() );
+            DrawString( 8, 12, sb.ToString( ) );
 
             // time
             var minutes = ( Int32 ) ( cl.time / 60.0 );
@@ -973,7 +979,7 @@ namespace SharpQuake
             var units = seconds - 10 * tens;
             sb.Length = 0;
             sb.AppendFormat( "Time :{0,3}:{1}{2}", minutes, tens, units );
-            DrawString( 184, 4, sb.ToString() );
+            DrawString( 184, 4, sb.ToString( ) );
 
             // draw level name
             var l = cl.levelname.Length;
@@ -981,27 +987,27 @@ namespace SharpQuake
         }
 
         // Sbar_DeathmatchOverlay
-        private static void DeathmatchOverlay()
+        private void DeathmatchOverlay( )
         {
-            Scr.CopyEverithing = true;
-            Scr.FullUpdate = 0;
+            Host.Screen.CopyEverithing = true;
+            Host.Screen.FullUpdate = 0;
 
             var pic = Host.DrawingContext.CachePic( "gfx/ranking.lmp" );
             Host.Menu.DrawPic( ( 320 - pic.width ) / 2, 8, pic );
 
             // scores
-            SortFrags();
+            SortFrags( );
 
             // draw the text
             var l = _ScoreBoardLines;
 
-            var x = 80 + ( ( Scr.vid.width - 320 ) >> 1 );
+            var x = 80 + ( ( Host.Screen.vid.width - 320 ) >> 1 );
             var y = 40;
-            for( var i = 0; i < l; i++ )
+            for ( var i = 0; i < l; i++ )
             {
                 var k = _FragSort[i];
                 var s = Host.Client.cl.scores[k];
-                if( String.IsNullOrEmpty( s.name ) )
+                if ( String.IsNullOrEmpty( s.name ) )
                     continue;
 
                 // draw background
@@ -1014,13 +1020,13 @@ namespace SharpQuake
                 Host.DrawingContext.Fill( x, y + 4, 40, 4, bottom );
 
                 // draw number
-                var num = s.frags.ToString().PadLeft( 3 );
+                var num = s.frags.ToString( ).PadLeft( 3 );
 
                 Host.DrawingContext.DrawCharacter( x + 8, y, num[0] );
                 Host.DrawingContext.DrawCharacter( x + 16, y, num[1] );
                 Host.DrawingContext.DrawCharacter( x + 24, y, num[2] );
 
-                if( k == Host.Client.cl.viewentity - 1 )
+                if ( k == Host.Client.cl.viewentity - 1 )
                     Host.DrawingContext.DrawCharacter( x - 8, y, 12 );
 
                 // draw name
@@ -1031,29 +1037,29 @@ namespace SharpQuake
         }
 
         // Sbar_DrawTransPic
-        private static void DrawTransPic( Int32 x, Int32 y, GLPic pic )
+        private void DrawTransPic( Int32 x, Int32 y, GLPic pic )
         {
-            if( Host.Client.cl.gametype == protocol.GAME_DEATHMATCH )
-                Host.DrawingContext.DrawTransPic( x, y + ( Scr.vid.height - SBAR_HEIGHT ), pic );
+            if ( Host.Client.cl.gametype == protocol.GAME_DEATHMATCH )
+                Host.DrawingContext.DrawTransPic( x, y + ( Host.Screen.vid.height - SBAR_HEIGHT ), pic );
             else
-                Host.DrawingContext.DrawTransPic( x + ( ( Scr.vid.width - 320 ) >> 1 ), y + ( Scr.vid.height - SBAR_HEIGHT ), pic );
+                Host.DrawingContext.DrawTransPic( x + ( ( Host.Screen.vid.width - 320 ) >> 1 ), y + ( Host.Screen.vid.height - SBAR_HEIGHT ), pic );
         }
 
         // Sbar_DrawString
-        private static void DrawString( Int32 x, Int32 y, String str )
+        private void DrawString( Int32 x, Int32 y, String str )
         {
-            if( Host.Client.cl.gametype == protocol.GAME_DEATHMATCH )
-                Host.DrawingContext.DrawString( x, y + Scr.vid.height - SBAR_HEIGHT, str );
+            if ( Host.Client.cl.gametype == protocol.GAME_DEATHMATCH )
+                Host.DrawingContext.DrawString( x, y + Host.Screen.vid.height - SBAR_HEIGHT, str );
             else
-                Host.DrawingContext.DrawString( x + ( ( Scr.vid.width - 320 ) >> 1 ), y + Scr.vid.height - SBAR_HEIGHT, str );
+                Host.DrawingContext.DrawString( x + ( ( Host.Screen.vid.width - 320 ) >> 1 ), y + Host.Screen.vid.height - SBAR_HEIGHT, str );
         }
 
         // Sbar_ShowScores
         //
         // Tab key down
-        private static void ShowScores()
+        private void ShowScores( )
         {
-            if( _ShowScores )
+            if ( _ShowScores )
                 return;
             _ShowScores = true;
             _Updates = 0;
@@ -1062,7 +1068,7 @@ namespace SharpQuake
         // Sbar_DontShowScores
         //
         // Tab key up
-        private static void DontShowScores()
+        private void DontShowScores( )
         {
             _ShowScores = false;
             _Updates = 0;

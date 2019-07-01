@@ -97,13 +97,13 @@ namespace SharpQuake
             set;
         }
 
-        public ProgramsBuiltIn( )
-        {
-        }
-
-        public void Initialise( Host host )
+        public ProgramsBuiltIn( Host host )
         {
             Host = host;
+        }
+
+        public void Initialise( )
+        {
             _Builtin = new builtin_t[]
             {
                 PF_Fixme,

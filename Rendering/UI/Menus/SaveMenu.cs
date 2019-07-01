@@ -36,7 +36,7 @@ namespace SharpQuake
 
                 case KeysDef.K_UPARROW:
                 case KeysDef.K_LEFTARROW:
-                    snd.LocalSound( "misc/menu1.wav" );
+                    Host.Sound.LocalSound( "misc/menu1.wav" );
                     _Cursor--;
                     if ( _Cursor < 0 )
                         _Cursor = MAX_SAVEGAMES - 1;
@@ -44,7 +44,7 @@ namespace SharpQuake
 
                 case KeysDef.K_DOWNARROW:
                 case KeysDef.K_RIGHTARROW:
-                    snd.LocalSound( "misc/menu1.wav" );
+                    Host.Sound.LocalSound( "misc/menu1.wav" );
                     _Cursor++;
                     if ( _Cursor >= MAX_SAVEGAMES )
                         _Cursor = 0;

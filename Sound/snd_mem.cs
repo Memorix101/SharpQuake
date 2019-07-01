@@ -28,10 +28,10 @@ using SharpQuake.Framework;
 
 namespace SharpQuake
 {
-    partial class snd
+    public partial class snd
     {
         // GetWavinfo
-        private static wavinfo_t GetWavInfo( String name, Byte[] wav )
+        private wavinfo_t GetWavInfo( String name, Byte[] wav )
         {
             var info = new wavinfo_t();
 
@@ -128,7 +128,7 @@ namespace SharpQuake
         }
 
         // ResampleSfx
-        private static void ResampleSfx( sfx_t sfx, Int32 inrate, Int32 inwidth, ByteArraySegment data )
+        private void ResampleSfx( sfx_t sfx, Int32 inrate, Int32 inwidth, ByteArraySegment data )
         {
             var sc = (sfxcache_t) Host.Cache.Check( sfx.cache );
             if( sc == null )

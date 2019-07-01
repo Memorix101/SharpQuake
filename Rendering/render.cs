@@ -35,9 +35,9 @@ namespace SharpQuake
     /// <summary>
     /// R_functions
     /// </summary>
-    static partial class render
+    public partial class render
     {
-        public static refdef_t RefDef
+        public refdef_t RefDef
         {
             get
             {
@@ -45,7 +45,7 @@ namespace SharpQuake
             }
         }
 
-        public static System.Boolean CacheTrash
+        public System.Boolean CacheTrash
         {
             get
             {
@@ -53,7 +53,7 @@ namespace SharpQuake
             }
         }
 
-        public static Texture NoTextureMip
+        public Texture NoTextureMip
         {
             get
             {
@@ -68,16 +68,16 @@ namespace SharpQuake
         //
         // view origin
         //
-        public static Vector3 ViewUp;
+        public Vector3 ViewUp;
 
         // vup
-        public static Vector3 ViewPn;
+        public Vector3 ViewPn;
 
         // vpn
-        public static Vector3 ViewRight;
+        public Vector3 ViewRight;
 
         // vright
-        public static Vector3 Origin;
+        public Vector3 Origin;
 
         private const Single ONE_OVER_16 = 1.0f / 16.0f;
 
@@ -86,89 +86,93 @@ namespace SharpQuake
         private const Int32 BLOCK_WIDTH = 128;
         private const Int32 BLOCK_HEIGHT = 128;
 
-        private static refdef_t _RefDef = new refdef_t(); // refdef_t	r_refdef;
-        private static Texture _NoTextureMip; // r_notexture_mip
+        private refdef_t _RefDef = new refdef_t(); // refdef_t	r_refdef;
+        private Texture _NoTextureMip; // r_notexture_mip
 
-        private static CVar _NoRefresh;// = { "r_norefresh", "0" };
-        private static CVar _DrawEntities;// = { "r_drawentities", "1" };
-        private static CVar _DrawViewModel;// = { "r_drawviewmodel", "1" };
-        private static CVar _Speeds;// = { "r_speeds", "0" };
-        private static CVar _FullBright;// = { "r_fullbright", "0" };
-        private static CVar _LightMap;// = { "r_lightmap", "0" };
-        private static CVar _Shadows;// = { "r_shadows", "0" };
-        private static CVar _MirrorAlpha;// = { "r_mirroralpha", "1" };
-        private static CVar _WaterAlpha;// = { "r_wateralpha", "1" };
-        private static CVar _Dynamic;// = { "r_dynamic", "1" };
-        private static CVar _NoVis;// = { "r_novis", "0" };
+        private CVar _NoRefresh;// = { "r_norefresh", "0" };
+        private CVar _DrawEntities;// = { "r_drawentities", "1" };
+        private CVar _DrawViewModel;// = { "r_drawviewmodel", "1" };
+        private CVar _Speeds;// = { "r_speeds", "0" };
+        private CVar _FullBright;// = { "r_fullbright", "0" };
+        private CVar _LightMap;// = { "r_lightmap", "0" };
+        private CVar _Shadows;// = { "r_shadows", "0" };
+        private CVar _MirrorAlpha;// = { "r_mirroralpha", "1" };
+        private CVar _WaterAlpha;// = { "r_wateralpha", "1" };
+        private CVar _Dynamic;// = { "r_dynamic", "1" };
+        private CVar _NoVis;// = { "r_novis", "0" };
 
-        private static CVar _glFinish;// = { "gl_finish", "0" };
-        private static CVar _glClear;// = { "gl_clear", "0" };
-        private static CVar _glCull;// = { "gl_cull", "1" };
-        private static CVar _glTexSort;// = { "gl_texsort", "1" };
-        private static CVar _glSmoothModels;// = { "gl_smoothmodels", "1" };
-        private static CVar _glAffineModels;// = { "gl_affinemodels", "0" };
-        private static CVar _glPolyBlend;// = { "gl_polyblend", "1" };
-        private static CVar _glFlashBlend;// = { "gl_flashblend", "1" };
-        private static CVar _glPlayerMip;// = { "gl_playermip", "0" };
-        private static CVar _glNoColors;// = { "gl_nocolors", "0" };
-        private static CVar _glKeepTJunctions;// = { "gl_keeptjunctions", "0" };
-        private static CVar _glReportTJunctions;// = { "gl_reporttjunctions", "0" };
-        private static CVar _glDoubleEyes;// = { "gl_doubleeys", "1" };
+        private CVar _glFinish;// = { "gl_finish", "0" };
+        private CVar _glClear;// = { "gl_clear", "0" };
+        private CVar _glCull;// = { "gl_cull", "1" };
+        private CVar _glTexSort;// = { "gl_texsort", "1" };
+        private CVar _glSmoothModels;// = { "gl_smoothmodels", "1" };
+        private CVar _glAffineModels;// = { "gl_affinemodels", "0" };
+        private CVar _glPolyBlend;// = { "gl_polyblend", "1" };
+        private CVar _glFlashBlend;// = { "gl_flashblend", "1" };
+        private CVar _glPlayerMip;// = { "gl_playermip", "0" };
+        private CVar _glNoColors;// = { "gl_nocolors", "0" };
+        private CVar _glKeepTJunctions;// = { "gl_keeptjunctions", "0" };
+        private CVar _glReportTJunctions;// = { "gl_reporttjunctions", "0" };
+        private CVar _glDoubleEyes;// = { "gl_doubleeys", "1" };
 
-        private static Int32 _PlayerTextures; // playertextures	// up to 16 color translated skins
-        private static System.Boolean _CacheThrash; // r_cache_thrash	// compatability
+        private Int32 _PlayerTextures; // playertextures	// up to 16 color translated skins
+        private System.Boolean _CacheThrash; // r_cache_thrash	// compatability
 
         // r_origin
 
-        private static Int32[] _LightStyleValue = new Int32[256]; // d_lightstylevalue  // 8.8 fraction of base light value
-        private static Entity _WorldEntity = new Entity(); // r_worldentity
-        private static Entity _CurrentEntity; // currententity
+        private Int32[] _LightStyleValue = new Int32[256]; // d_lightstylevalue  // 8.8 fraction of base light value
+        private Entity _WorldEntity = new Entity(); // r_worldentity
+        private Entity _CurrentEntity; // currententity
 
-        private static MemoryLeaf _ViewLeaf; // r_viewleaf
-        private static MemoryLeaf _OldViewLeaf; // r_oldviewleaf
+        private MemoryLeaf _ViewLeaf; // r_viewleaf
+        private MemoryLeaf _OldViewLeaf; // r_oldviewleaf
 
-        private static Int32 _SkyTextureNum; // skytexturenum
-        private static Int32 _MirrorTextureNum; // mirrortexturenum	// quake texturenum, not gltexturenum
+        private Int32 _SkyTextureNum; // skytexturenum
+        private Int32 _MirrorTextureNum; // mirrortexturenum	// quake texturenum, not gltexturenum
 
-        private static Int32[,] _Allocated = new Int32[MAX_LIGHTMAPS, BLOCK_WIDTH]; // allocated
+        private Int32[,] _Allocated = new Int32[MAX_LIGHTMAPS, BLOCK_WIDTH]; // allocated
 
-        private static Int32 _VisFrameCount; // r_visframecount	// bumped when going to a new PVS
-        private static Int32 _FrameCount; // r_framecount		// used for dlight push checking
-        private static System.Boolean _MTexEnabled; // mtexenabled
-        private static Int32 _BrushPolys; // c_brush_polys
-        private static Int32 _AliasPolys; // c_alias_polys
-        private static System.Boolean _IsMirror; // mirror
-        private static Plane _MirrorPlane; // mirror_plane
-        private static Single _glDepthMin; // gldepthmin
-        private static Single _glDepthMax; // gldepthmax
-        private static Int32 _TrickFrame; // static int trickframe from R_Clear()
-        private static Plane[] _Frustum = new Plane[4]; // frustum
-        private static System.Boolean _IsEnvMap = false; // envmap	// true during envmap command capture
-        private static Matrix4 _WorldMatrix; // r_world_matrix
-        private static Matrix4 _BaseWorldMatrix; // r_base_world_matrix
-        private static Vector3 _ModelOrg; // modelorg
-        private static Vector3 _EntOrigin; // r_entorigin
-        private static Single _SpeedScale; // speedscale		// for top sky and bottom sky
-        private static Single _ShadeLight; // shadelight
-        private static Single _AmbientLight; // ambientlight
-        private static Single[] _ShadeDots = anorm_dots.Values[0]; // shadedots
-        private static Vector3 _ShadeVector; // shadevector
-        private static Int32 _LastPoseNum; // lastposenum
-        private static Vector3 _LightSpot; // lightspot
+        private Int32 _VisFrameCount; // r_visframecount	// bumped when going to a new PVS
+        private Int32 _FrameCount; // r_framecount		// used for dlight push checking
+        private System.Boolean _MTexEnabled; // mtexenabled
+        private Int32 _BrushPolys; // c_brush_polys
+        private Int32 _AliasPolys; // c_alias_polys
+        private System.Boolean _IsMirror; // mirror
+        private Plane _MirrorPlane; // mirror_plane
+        private Single _glDepthMin; // gldepthmin
+        private Single _glDepthMax; // gldepthmax
+        private Int32 _TrickFrame; // int trickframe from R_Clear()
+        private Plane[] _Frustum = new Plane[4]; // frustum
+        private System.Boolean _IsEnvMap = false; // envmap	// true during envmap command capture
+        private Matrix4 _WorldMatrix; // r_world_matrix
+        private Matrix4 _BaseWorldMatrix; // r_base_world_matrix
+        private Vector3 _ModelOrg; // modelorg
+        private Vector3 _EntOrigin; // r_entorigin
+        private Single _SpeedScale; // speedscale		// for top sky and bottom sky
+        private Single _ShadeLight; // shadelight
+        private Single _AmbientLight; // ambientlight
+        private Single[] _ShadeDots = anorm_dots.Values[0]; // shadedots
+        private Vector3 _ShadeVector; // shadevector
+        private Int32 _LastPoseNum; // lastposenum
+        private Vector3 _LightSpot; // lightspot
 
         // CHANGE
-        private static Host Host
+        private Host Host
         {
             get;
             set;
         }
+
+        public render( Host host )
+        {
+            Host = host;
+        }
+
         /// <summary>
         /// R_Init
         /// </summary>
-        public static void Init( Host host )
+        public void Initialise( )
         {
-            Host = host;
-
             for( var i = 0; i < _Frustum.Length; i++ )
                 _Frustum[i] = new Plane();
 
@@ -216,7 +220,7 @@ namespace SharpQuake
         }
 
         // R_InitTextures
-        public static void InitTextures()
+        public void InitTextures()
         {
             // create a simple checkerboard texture for the default
             _NoTextureMip = new Texture();
@@ -252,7 +256,7 @@ namespace SharpQuake
         /// R_RenderView
         /// r_refdef must be set before the first call
         /// </summary>
-        public static void RenderView()
+        public void RenderView()
         {
             if( _NoRefresh.Value != 0 )
                 return;
@@ -298,7 +302,7 @@ namespace SharpQuake
         /// R_RemoveEfrags
         /// Call when removing an object from the world or moving it to another position
         /// </summary>
-        public static void RemoveEfrags( Entity ent )
+        public void RemoveEfrags( Entity ent )
         {
             var ef = ent.efrag;
 
@@ -335,7 +339,7 @@ namespace SharpQuake
         /// R_TranslatePlayerSkin
         /// Translates a skin texture by the per-player color lookup
         /// </summary>
-        public static void TranslatePlayerSkin( Int32 playernum )
+        public void TranslatePlayerSkin( Int32 playernum )
         {
             DisableMultitexture();
 
@@ -440,7 +444,7 @@ namespace SharpQuake
         /// <summary>
         /// GL_DisableMultitexture
         /// </summary>
-        public static void DisableMultitexture()
+        public void DisableMultitexture()
         {
             if( _MTexEnabled )
             {
@@ -453,7 +457,7 @@ namespace SharpQuake
         /// <summary>
         /// GL_EnableMultitexture
         /// </summary>
-        public static void EnableMultitexture()
+        public void EnableMultitexture()
         {
             if( Host.Video.glMTexable )
             {
@@ -466,7 +470,7 @@ namespace SharpQuake
         /// <summary>
         /// R_NewMap
         /// </summary>
-        public static void NewMap()
+        public void NewMap()
         {
             for( var i = 0; i < 256; i++ )
                 _LightStyleValue[i] = 264;		// normal light value
@@ -506,7 +510,7 @@ namespace SharpQuake
         /// <summary>
         /// R_PolyBlend
         /// </summary>
-        private static void PolyBlend()
+        private void PolyBlend()
         {
             if( _glPolyBlend.Value == 0 )
                 return;
@@ -542,7 +546,7 @@ namespace SharpQuake
         /// <summary>
         /// R_Mirror
         /// </summary>
-        private static void Mirror()
+        private void Mirror()
         {
             if( !_IsMirror )
                 return;
@@ -552,11 +556,11 @@ namespace SharpQuake
             var d = Vector3.Dot( _RefDef.vieworg, _MirrorPlane.normal ) - _MirrorPlane.dist;
             _RefDef.vieworg += _MirrorPlane.normal * -2 * d;
 
-            d = Vector3.Dot( render.ViewPn, _MirrorPlane.normal );
-            render.ViewPn += _MirrorPlane.normal * -2 * d;
+            d = Vector3.Dot( ViewPn, _MirrorPlane.normal );
+            ViewPn += _MirrorPlane.normal * -2 * d;
 
-            _RefDef.viewangles = new Vector3( ( Single ) ( Math.Asin( render.ViewPn.Z ) / Math.PI * 180.0 ),
-                ( Single ) ( Math.Atan2( render.ViewPn.Y, render.ViewPn.X ) / Math.PI * 180.0 ),
+            _RefDef.viewangles = new Vector3( ( Single ) ( Math.Asin( ViewPn.Z ) / Math.PI * 180.0 ),
+                ( Single ) ( Math.Atan2( ViewPn.Y, ViewPn.X ) / Math.PI * 180.0 ),
                 -_RefDef.viewangles.Z );
 
             var ent = Host.Client.ViewEntity;
@@ -603,7 +607,7 @@ namespace SharpQuake
         /// <summary>
         /// R_DrawViewModel
         /// </summary>
-        private static void DrawViewModel()
+        private void DrawViewModel()
         {
             if( _DrawViewModel.Value == 0 )
                 return;
@@ -659,7 +663,7 @@ namespace SharpQuake
         /// R_RenderScene
         /// r_refdef must be set before the first call
         /// </summary>
-        private static void RenderScene()
+        private void RenderScene()
         {
             SetupFrame();
 
@@ -669,9 +673,9 @@ namespace SharpQuake
 
             MarkLeaves();	// done here so we know if we're in water
 
-            DrawWorld();		// adds static entities to the list
+            DrawWorld();		// adds entities to the list
 
-            snd.ExtraUpdate();	// don't let sound get messed up if going slow
+            Host.Sound.ExtraUpdate();	// don't let sound get messed up if going slow
 
             DrawEntitiesOnList();
 
@@ -689,7 +693,7 @@ namespace SharpQuake
         /// <summary>
         /// R_DrawEntitiesOnList
         /// </summary>
-        private static void DrawEntitiesOnList()
+        private void DrawEntitiesOnList()
         {
             if( _DrawEntities.Value == 0 )
                 return;
@@ -730,7 +734,7 @@ namespace SharpQuake
         /// <summary>
         /// R_DrawSpriteModel
         /// </summary>
-        private static void DrawSpriteModel( Entity e )
+        private void DrawSpriteModel( Entity e )
         {
             // don't even bother culling, because it's just a single
             // polygon without a surface cache
@@ -745,8 +749,8 @@ namespace SharpQuake
             }
             else
             {	// normal sprite
-                up = render.ViewUp;// vup;
-                right = render.ViewRight;// vright;
+                up = ViewUp;// vup;
+                right = ViewRight;// vright;
             }
 
             GL.Color3( 1f, 1, 1 );
@@ -781,7 +785,7 @@ namespace SharpQuake
         /// <summary>
         /// R_GetSpriteFrame
         /// </summary>
-        private static mspriteframe_t GetSpriteFrame( Entity currententity )
+        private mspriteframe_t GetSpriteFrame( Entity currententity )
         {
             var psprite = (msprite_t)currententity.model.cache.data;
             var frame = currententity.frame;
@@ -823,7 +827,7 @@ namespace SharpQuake
         /// <summary>
         /// R_DrawAliasModel
         /// </summary>
-        private static void DrawAliasModel( Entity e )
+        private void DrawAliasModel( Entity e )
         {
             var clmodel = _CurrentEntity.model;
             var mins = _CurrentEntity.origin + clmodel.mins;
@@ -833,7 +837,7 @@ namespace SharpQuake
                 return;
 
             _EntOrigin = _CurrentEntity.origin;
-            _ModelOrg = render.Origin - _EntOrigin;
+            _ModelOrg = Origin - _EntOrigin;
 
             //
             // get lighting information
@@ -919,7 +923,7 @@ namespace SharpQuake
 
             // we can't dynamically colormap textures, so they are cached
             // seperately for the players.  Heads are just uncolored.
-            if( _CurrentEntity.colormap != Scr.vid.colormap && _glNoColors.Value == 0 && playernum >= 1 )
+            if( _CurrentEntity.colormap != Host.Screen.vid.colormap && _glNoColors.Value == 0 && playernum >= 1 )
             {
                 Host.DrawingContext.Bind( _PlayerTextures - 1 + playernum );
             }
@@ -960,7 +964,7 @@ namespace SharpQuake
         /// <summary>
         /// GL_DrawAliasShadow
         /// </summary>
-        private static void DrawAliasShadow( aliashdr_t paliashdr, Int32 posenum )
+        private void DrawAliasShadow( aliashdr_t paliashdr, Int32 posenum )
         {
             var lheight = _CurrentEntity.origin.Z - _LightSpot.Z;
             Single height = 0;
@@ -1015,7 +1019,7 @@ namespace SharpQuake
         /// <summary>
         /// R_SetupAliasFrame
         /// </summary>
-        private static void SetupAliasFrame( Int32 frame, aliashdr_t paliashdr )
+        private void SetupAliasFrame( Int32 frame, aliashdr_t paliashdr )
         {
             if( ( frame >= paliashdr.numframes ) || ( frame < 0 ) )
             {
@@ -1038,7 +1042,7 @@ namespace SharpQuake
         /// <summary>
         /// GL_DrawAliasFrame
         /// </summary>
-        private static void DrawAliasFrame( aliashdr_t paliashdr, Int32 posenum )
+        private void DrawAliasFrame( aliashdr_t paliashdr, Int32 posenum )
         {
             _LastPoseNum = posenum;
 
@@ -1084,7 +1088,7 @@ namespace SharpQuake
         /// <summary>
         /// R_RotateForEntity
         /// </summary>
-        private static void RotateForEntity( Entity e )
+        private void RotateForEntity( Entity e )
         {
             GL.Translate( e.origin );
 
@@ -1096,26 +1100,26 @@ namespace SharpQuake
         /// <summary>
         /// R_SetupGL
         /// </summary>
-        private static void SetupGL()
+        private void SetupGL()
         {
             //
             // set up viewpoint
             //
             GL.MatrixMode( MatrixMode.Projection );
             GL.LoadIdentity();
-            var x = _RefDef.vrect.x * Scr.glWidth / Scr.vid.width;
-            var x2 = ( _RefDef.vrect.x + _RefDef.vrect.width ) * Scr.glWidth / Scr.vid.width;
-            var y = ( Scr.vid.height - _RefDef.vrect.y ) * Scr.glHeight / Scr.vid.height;
-            var y2 = ( Scr.vid.height - ( _RefDef.vrect.y + _RefDef.vrect.height ) ) * Scr.glHeight / Scr.vid.height;
+            var x = _RefDef.vrect.x * Host.Screen.glWidth / Host.Screen.vid.width;
+            var x2 = ( _RefDef.vrect.x + _RefDef.vrect.width ) * Host.Screen.glWidth / Host.Screen.vid.width;
+            var y = ( Host.Screen.vid.height - _RefDef.vrect.y ) * Host.Screen.glHeight / Host.Screen.vid.height;
+            var y2 = ( Host.Screen.vid.height - ( _RefDef.vrect.y + _RefDef.vrect.height ) ) * Host.Screen.glHeight / Host.Screen.vid.height;
 
             // fudge around because of frac screen scale
             if( x > 0 )
                 x--;
-            if( x2 < Scr.glWidth )
+            if( x2 < Host.Screen.glWidth )
                 x2++;
             if( y2 < 0 )
                 y2--;
-            if( y < Scr.glHeight )
+            if( y < Host.Screen.glHeight )
                 y++;
 
             var w = x2 - x;
@@ -1127,7 +1131,7 @@ namespace SharpQuake
                 w = h = 256;
             }
 
-            GL.Viewport( Scr.glX + x, Scr.glY + y2, w, h );
+            GL.Viewport( Host.Screen.glX + x, Host.Screen.glY + y2, w, h );
             var screenaspect = ( Single ) _RefDef.vrect.width / _RefDef.vrect.height;
             MYgluPerspective( _RefDef.fov_y, screenaspect, 4, 4096 );
 
@@ -1167,7 +1171,7 @@ namespace SharpQuake
             GL.Enable( EnableCap.DepthTest );
         }
 
-        private static void MYgluPerspective( Double fovy, Double aspect, Double zNear, Double zFar )
+        private void MYgluPerspective( Double fovy, Double aspect, Double zNear, Double zFar )
         {
             var ymax = zNear * Math.Tan( fovy * Math.PI / 360.0 );
             var ymin = -ymax;
@@ -1181,38 +1185,38 @@ namespace SharpQuake
         /// <summary>
         /// R_SetFrustum
         /// </summary>
-        private static void SetFrustum()
+        private void SetFrustum()
         {
             if( _RefDef.fov_x == 90 )
             {
                 // front side is visible
-                _Frustum[0].normal = render.ViewPn + render.ViewRight;
-                _Frustum[1].normal = render.ViewPn - render.ViewRight;
+                _Frustum[0].normal = ViewPn + ViewRight;
+                _Frustum[1].normal = ViewPn - ViewRight;
 
-                _Frustum[2].normal = render.ViewPn + render.ViewUp;
-                _Frustum[3].normal = render.ViewPn - render.ViewUp;
+                _Frustum[2].normal = ViewPn + ViewUp;
+                _Frustum[3].normal = ViewPn - ViewUp;
             }
             else
             {
                 // rotate VPN right by FOV_X/2 degrees
-                MathLib.RotatePointAroundVector( out _Frustum[0].normal, ref render.ViewUp, ref render.ViewPn, -( 90 - _RefDef.fov_x / 2 ) );
+                MathLib.RotatePointAroundVector( out _Frustum[0].normal, ref ViewUp, ref ViewPn, -( 90 - _RefDef.fov_x / 2 ) );
                 // rotate VPN left by FOV_X/2 degrees
-                MathLib.RotatePointAroundVector( out _Frustum[1].normal, ref render.ViewUp, ref render.ViewPn, 90 - _RefDef.fov_x / 2 );
+                MathLib.RotatePointAroundVector( out _Frustum[1].normal, ref ViewUp, ref ViewPn, 90 - _RefDef.fov_x / 2 );
                 // rotate VPN up by FOV_X/2 degrees
-                MathLib.RotatePointAroundVector( out _Frustum[2].normal, ref render.ViewRight, ref render.ViewPn, 90 - _RefDef.fov_y / 2 );
+                MathLib.RotatePointAroundVector( out _Frustum[2].normal, ref ViewRight, ref ViewPn, 90 - _RefDef.fov_y / 2 );
                 // rotate VPN down by FOV_X/2 degrees
-                MathLib.RotatePointAroundVector( out _Frustum[3].normal, ref render.ViewRight, ref render.ViewPn, -( 90 - _RefDef.fov_y / 2 ) );
+                MathLib.RotatePointAroundVector( out _Frustum[3].normal, ref ViewRight, ref ViewPn, -( 90 - _RefDef.fov_y / 2 ) );
             }
 
             for( var i = 0; i < 4; i++ )
             {
                 _Frustum[i].type = PlaneDef.PLANE_ANYZ;
-                _Frustum[i].dist = Vector3.Dot( render.Origin, _Frustum[i].normal );
+                _Frustum[i].dist = Vector3.Dot( Origin, _Frustum[i].normal );
                 _Frustum[i].signbits = ( Byte ) SignbitsForPlane( _Frustum[i] );
             }
         }
 
-        private static Int32 SignbitsForPlane( Plane p )
+        private Int32 SignbitsForPlane( Plane p )
         {
             // for fast box on planeside test
             var bits = 0;
@@ -1228,7 +1232,7 @@ namespace SharpQuake
         /// <summary>
         /// R_SetupFrame
         /// </summary>
-        private static void SetupFrame()
+        private void SetupFrame()
         {
             // don't allow cheats in multiplayer
             if( Host.Client.cl.maxclients > 1 )
@@ -1239,13 +1243,13 @@ namespace SharpQuake
             _FrameCount++;
 
             // build the transformation matrix for the given view angles
-            render.Origin = _RefDef.vieworg;
+            Origin = _RefDef.vieworg;
 
             MathLib.AngleVectors( ref _RefDef.viewangles, out ViewPn, out ViewRight, out ViewUp );
 
             // current viewleaf
             _OldViewLeaf = _ViewLeaf;
-            _ViewLeaf = Host.Model.PointInLeaf( ref render.Origin, Host.Client.cl.worldmodel );
+            _ViewLeaf = Host.Model.PointInLeaf( ref Origin, Host.Client.cl.worldmodel );
 
             Host.View.SetContentsColor( _ViewLeaf.contents );
             Host.View.CalcBlend();
@@ -1258,7 +1262,7 @@ namespace SharpQuake
         /// <summary>
         /// R_Clear
         /// </summary>
-        private static void Clear()
+        private void Clear()
         {
             if( _MirrorAlpha.Value != 1.0 )
             {
@@ -1295,7 +1299,7 @@ namespace SharpQuake
                 {
                     GL.Clear( ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit );
                     // Uze
-                    sbar.Changed();
+                    Host.StatusBar.Changed();
                 }
                 else
                     GL.Clear( ClearBufferMask.DepthBufferBit );
@@ -1312,7 +1316,7 @@ namespace SharpQuake
         /// R_TimeRefresh_f
         /// For program optimization
         /// </summary>
-        private static void TimeRefresh_f()
+        private void TimeRefresh_f()
         {
             //GL.DrawBuffer(DrawBufferMode.Front);
             GL.Finish();
@@ -1331,14 +1335,14 @@ namespace SharpQuake
             Host.Console.Print( "{0:F} seconds ({1:F1} fps)\n", time, 128 / time );
 
             //GL.DrawBuffer(DrawBufferMode.Back);
-            Scr.EndRendering();
+            Host.Screen.EndRendering();
         }
 
         /// <summary>
         /// R_CullBox
         /// Returns true if the box is completely outside the frustom
         /// </summary>
-        private static System.Boolean CullBox( ref Vector3 mins, ref Vector3 maxs )
+        private System.Boolean CullBox( ref Vector3 mins, ref Vector3 maxs )
         {
             for( var i = 0; i < 4; i++ )
             {
@@ -1354,7 +1358,7 @@ namespace SharpQuake
     
 
     // !!! if this is changed, it must be changed in asm_draw.h too !!!
-    internal class refdef_t
+    public class refdef_t
     {
         public VRect vrect;				// subwindow in video for refresh
         public Vector3 vieworg;

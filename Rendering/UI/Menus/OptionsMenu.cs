@@ -65,14 +65,14 @@ namespace SharpQuake
                     return;
 
                 case KeysDef.K_UPARROW:
-                    snd.LocalSound( "misc/menu1.wav" );
+                    Host.Sound.LocalSound( "misc/menu1.wav" );
                     _Cursor--;
                     if ( _Cursor < 0 )
                         _Cursor = OPTIONS_ITEMS - 1;
                     break;
 
                 case KeysDef.K_DOWNARROW:
-                    snd.LocalSound( "misc/menu1.wav" );
+                    Host.Sound.LocalSound( "misc/menu1.wav" );
                     _Cursor++;
                     if ( _Cursor >= OPTIONS_ITEMS )
                         _Cursor = 0;
@@ -125,7 +125,7 @@ namespace SharpQuake
             Host.Menu.Print( 16, 48, "     Reset to defaults" );
 
             Host.Menu.Print( 16, 56, "           Screen size" );
-            var r = ( Scr.ViewSize.Value - 30 ) / ( 120 - 30 );
+            var r = ( Host.Screen.ViewSize.Value - 30 ) / ( 120 - 30 );
             Host.Menu.DrawSlider( 220, 56, r );
 
             Host.Menu.Print( 16, 64, "            Brightness" );
@@ -137,11 +137,11 @@ namespace SharpQuake
             Host.Menu.DrawSlider( 220, 72, r );
 
             Host.Menu.Print( 16, 80, "       CD Music Volume" );
-            r = snd.BgmVolume;
+            r = Host.Sound.BgmVolume;
             Host.Menu.DrawSlider( 220, 80, r );
 
             Host.Menu.Print( 16, 88, "          Sound Volume" );
-            r = snd.Volume;
+            r = Host.Sound.Volume;
             Host.Menu.DrawSlider( 220, 88, r );
 
             Host.Menu.Print( 16, 96, "            Always Run" );
@@ -176,13 +176,13 @@ namespace SharpQuake
         /// </summary>
         private void AdjustSliders( Int32 dir )
         {
-            snd.LocalSound( "misc/menu3.wav" );
+            Host.Sound.LocalSound( "misc/menu3.wav" );
             Single value;
 
             switch ( _Cursor )
             {
                 case 3:	// screen size
-                    value = Scr.ViewSize.Value + dir * 10;
+                    value = Host.Screen.ViewSize.Value + dir * 10;
                     if ( value < 30 )
                         value = 30;
                     if ( value > 120 )
@@ -209,7 +209,7 @@ namespace SharpQuake
                     break;
 
                 case 6:	// music volume
-                    value = snd.BgmVolume + dir * 0.1f; ///_BgmVolumeCoeff;
+                    value = Host.Sound.BgmVolume + dir * 0.1f; ///_BgmVolumeCoeff;
                     if ( value < 0 )
                         value = 0;
                     if ( value > 1 )
@@ -218,7 +218,7 @@ namespace SharpQuake
                     break;
 
                 case 7:	// sfx volume
-                    value = snd.Volume + dir * 0.1f;
+                    value = Host.Sound.Volume + dir * 0.1f;
                     if ( value < 0 )
                         value = 0;
                     if ( value > 1 )

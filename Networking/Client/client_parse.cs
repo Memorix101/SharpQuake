@@ -159,7 +159,7 @@ namespace SharpQuake
                         break;
 
                     case protocol.svc_centerprint:
-                        Scr.CenterPrint( Host.Network.Reader.ReadString() );
+                        Host.Screen.CenterPrint( Host.Network.Reader.ReadString() );
                         break;
 
                     case protocol.svc_stufftext:
@@ -172,7 +172,7 @@ namespace SharpQuake
 
                     case protocol.svc_serverinfo:
                         ParseServerInfo();
-                        Scr.vid.recalc_refdef = true;	// leave intermission full screen
+                        Host.Screen.vid.recalc_refdef = true;	// leave intermission full screen
                         break;
 
                     case protocol.svc_setangle:
@@ -198,11 +198,11 @@ namespace SharpQuake
 
                     case protocol.svc_stopsound:
                         i = Host.Network.Reader.ReadShort();
-                        snd.StopSound( i >> 3, i & 7 );
+                        Host.Sound.StopSound( i >> 3, i & 7 );
                         break;
 
                     case protocol.svc_updatename:
-                        sbar.Changed();
+                        Host.StatusBar.Changed();
                         i = Host.Network.Reader.ReadByte();
                         if( i >= cl.maxclients )
                             Host.Error( "CL_ParseServerMessage: svc_updatename > MAX_SCOREBOARD" );
@@ -210,7 +210,7 @@ namespace SharpQuake
                         break;
 
                     case protocol.svc_updatefrags:
-                        sbar.Changed();
+                        Host.StatusBar.Changed();
                         i = Host.Network.Reader.ReadByte();
                         if( i >= cl.maxclients )
                             Host.Error( "CL_ParseServerMessage: svc_updatefrags > MAX_SCOREBOARD" );
@@ -218,7 +218,7 @@ namespace SharpQuake
                         break;
 
                     case protocol.svc_updatecolors:
-                        sbar.Changed();
+                        Host.StatusBar.Changed();
                         i = Host.Network.Reader.ReadByte();
                         if( i >= cl.maxclients )
                             Host.Error( "CL_ParseServerMessage: svc_updatecolors > MAX_SCOREBOARD" );
@@ -227,7 +227,7 @@ namespace SharpQuake
                         break;
 
                     case protocol.svc_particle:
-                        render.ParseParticleEffect();
+                        Host.RenderContext.ParseParticleEffect();
                         break;
 
                     case protocol.svc_spawnbaseline:
@@ -250,11 +250,11 @@ namespace SharpQuake
 
                         if( cl.paused )
                         {
-                            cd_audio.Pause();
+                            Host.CDAudio.Pause();
                         }
                         else
                         {
-                            cd_audio.Resume();
+                            Host.CDAudio.Resume();
                         }
                     }
                     break;
@@ -290,29 +290,29 @@ namespace SharpQuake
                         cl.cdtrack = Host.Network.Reader.ReadByte();
                         cl.looptrack = Host.Network.Reader.ReadByte();
                         if( ( cls.demoplayback || cls.demorecording ) && ( cls.forcetrack != -1 ) )
-                            cd_audio.Play( ( Byte ) cls.forcetrack, true );
+                            Host.CDAudio.Play( ( Byte ) cls.forcetrack, true );
                         else
-                            cd_audio.Play( ( Byte ) cl.cdtrack, true );
+                            Host.CDAudio.Play( ( Byte ) cl.cdtrack, true );
                         break;
 
                     case protocol.svc_intermission:
                         cl.intermission = 1;
                         cl.completed_time = ( Int32 ) cl.time;
-                        Scr.vid.recalc_refdef = true;	// go to full screen
+                        Host.Screen.vid.recalc_refdef = true;	// go to full screen
                         break;
 
                     case protocol.svc_finale:
                         cl.intermission = 2;
                         cl.completed_time = ( Int32 ) cl.time;
-                        Scr.vid.recalc_refdef = true;	// go to full screen
-                        Scr.CenterPrint( Host.Network.Reader.ReadString() );
+                        Host.Screen.vid.recalc_refdef = true;	// go to full screen
+                        Host.Screen.CenterPrint( Host.Network.Reader.ReadString() );
                         break;
 
                     case protocol.svc_cutscene:
                         cl.intermission = 3;
                         cl.completed_time = ( Int32 ) cl.time;
-                        Scr.vid.recalc_refdef = true;	// go to full screen
-                        Scr.CenterPrint( Host.Network.Reader.ReadString() );
+                        Host.Screen.vid.recalc_refdef = true;	// go to full screen
+                        Host.Screen.CenterPrint( Host.Network.Reader.ReadString() );
                         break;
 
                     case protocol.svc_sellscreen:
@@ -396,7 +396,7 @@ namespace SharpQuake
                     forcelink = true;	// hack to make null model players work
 
                 if( num > 0 && num <= cl.maxclients )
-                    render.TranslatePlayerSkin( num - 1 );
+                    Host.RenderContext.TranslatePlayerSkin( num - 1 );
             }
 
             if( ( bits & protocol.U_FRAME ) != 0 )
@@ -409,7 +409,7 @@ namespace SharpQuake
             else
                 i = ent.baseline.colormap;
             if( i == 0 )
-                ent.colormap = Scr.vid.colormap;
+                ent.colormap = Host.Screen.vid.colormap;
             else
             {
                 if( i > cl.maxclients )
@@ -426,7 +426,7 @@ namespace SharpQuake
             {
                 ent.skinnum = skin;
                 if( num > 0 && num <= cl.maxclients )
-                    render.TranslatePlayerSkin( num - 1 );
+                    Host.RenderContext.TranslatePlayerSkin( num - 1 );
             }
 
             if( ( bits & protocol.U_EFFECTS ) != 0 )
@@ -512,7 +512,7 @@ namespace SharpQuake
 
             if( cl.items != i2 )
             {	// set flash times
-                sbar.Changed();
+                Host.StatusBar.Changed();
                 for( var j = 0; j < 32; j++ )
                     if( ( i2 & ( 1 << j ) ) != 0 && ( cl.items & ( 1 << j ) ) == 0 )
                         cl.item_gettime[j] = ( Single ) cl.time;
@@ -534,7 +534,7 @@ namespace SharpQuake
             if( cl.stats[QStatsDef.STAT_ARMOR] != i2 )
             {
                 cl.stats[QStatsDef.STAT_ARMOR] = i2;
-                sbar.Changed();
+                Host.StatusBar.Changed();
             }
 
             if( ( bits & protocol.SU_WEAPON ) != 0 )
@@ -544,21 +544,21 @@ namespace SharpQuake
             if( cl.stats[QStatsDef.STAT_WEAPON] != i2 )
             {
                 cl.stats[QStatsDef.STAT_WEAPON] = i2;
-                sbar.Changed();
+                Host.StatusBar.Changed();
             }
 
             i2 = Host.Network.Reader.ReadShort();
             if( cl.stats[QStatsDef.STAT_HEALTH] != i2 )
             {
                 cl.stats[QStatsDef.STAT_HEALTH] = i2;
-                sbar.Changed();
+                Host.StatusBar.Changed();
             }
 
             i2 = Host.Network.Reader.ReadByte();
             if( cl.stats[QStatsDef.STAT_AMMO] != i2 )
             {
                 cl.stats[QStatsDef.STAT_AMMO] = i2;
-                sbar.Changed();
+                Host.StatusBar.Changed();
             }
 
             for( i2 = 0; i2 < 4; i2++ )
@@ -567,7 +567,7 @@ namespace SharpQuake
                 if( cl.stats[QStatsDef.STAT_SHELLS + i2] != j )
                 {
                     cl.stats[QStatsDef.STAT_SHELLS + i2] = j;
-                    sbar.Changed();
+                    Host.StatusBar.Changed();
                 }
             }
 
@@ -579,7 +579,7 @@ namespace SharpQuake
                 if( cl.stats[QStatsDef.STAT_ACTIVEWEAPON] != i2 )
                 {
                     cl.stats[QStatsDef.STAT_ACTIVEWEAPON] = i2;
-                    sbar.Changed();
+                    Host.StatusBar.Changed();
                 }
             }
             else
@@ -587,7 +587,7 @@ namespace SharpQuake
                 if( cl.stats[QStatsDef.STAT_ACTIVEWEAPON] != ( 1 << i2 ) )
                 {
                     cl.stats[QStatsDef.STAT_ACTIVEWEAPON] = ( 1 << i2 );
-                    sbar.Changed();
+                    Host.StatusBar.Changed();
                 }
             }
         }
@@ -674,7 +674,7 @@ namespace SharpQuake
                     return;
                 }
                 sound_precache[numsounds] = str;
-                snd.TouchSound( str );
+                Host.Sound.TouchSound( str );
             }
 
             //
@@ -691,18 +691,18 @@ namespace SharpQuake
                 KeepaliveMessage();
             }
 
-            snd.BeginPrecaching();
+            Host.Sound.BeginPrecaching();
             for( i = 1; i < numsounds; i++ )
             {
-                cl.sound_precache[i] = snd.PrecacheSound( sound_precache[i] );
+                cl.sound_precache[i] = Host.Sound.PrecacheSound( sound_precache[i] );
                 KeepaliveMessage();
             }
-            snd.EndPrecaching();
+            Host.Sound.EndPrecaching();
 
             // local state
             _Entities[0].model = cl.worldmodel = cl.model_precache[1];
 
-            render.NewMap();
+            Host.RenderContext.NewMap();
 
             Host.NoClipAngleHack = false; // noclip is turned off at start
 
@@ -736,7 +736,7 @@ namespace SharpQuake
                 Host.Error( "CL_ParseStartSoundPacket: ent = {0}", ent );
 
             var pos = Host.Network.Reader.ReadCoords();
-            snd.StartSound( ent, channel, cl.sound_precache[sound_num], ref pos, volume / 255.0f, attenuation );
+            Host.Sound.StartSound( ent, channel, cl.sound_precache[sound_num], ref pos, volume / 255.0f, attenuation );
         }
 
         // CL_NewTranslation
@@ -746,13 +746,13 @@ namespace SharpQuake
                 Utilities.Error( "CL_NewTranslation: slot > cl.maxclients" );
 
             var dest = cl.scores[slot].translations;
-            var source = Scr.vid.colormap;
+            var source = Host.Screen.vid.colormap;
             Array.Copy( source, dest, dest.Length );
 
             var top = cl.scores[slot].colors & 0xf0;
             var bottom = ( cl.scores[slot].colors & 15 ) << 4;
 
-            render.TranslatePlayerSkin( slot );
+            Host.RenderContext.TranslatePlayerSkin( slot );
 
             for( Int32 i = 0, offset = 0; i < vid.VID_GRADES; i++ )//, dest += 256, source+=256)
             {
@@ -787,7 +787,7 @@ namespace SharpQuake
                     Host.Error( "CL_EntityNum: %i is an invalid number", num );
                 while( cl.num_entities <= num )
                 {
-                    _Entities[cl.num_entities].colormap = Scr.vid.colormap;
+                    _Entities[cl.num_entities].colormap = Host.Screen.vid.colormap;
                     cl.num_entities++;
                 }
             }
@@ -829,12 +829,12 @@ namespace SharpQuake
             // copy it to the current state
             ent.model = cl.model_precache[ent.baseline.modelindex];
             ent.frame = ent.baseline.frame;
-            ent.colormap = Scr.vid.colormap;
+            ent.colormap = Host.Screen.vid.colormap;
             ent.skinnum = ent.baseline.skin;
             ent.effects = ent.baseline.effects;
             ent.origin = Utilities.ToVector( ref ent.baseline.origin );
             ent.angles = Utilities.ToVector( ref ent.baseline.angles );
-            render.AddEfrags( ent );
+            Host.RenderContext.AddEfrags( ent );
         }
 
         /// <summary>
@@ -847,7 +847,7 @@ namespace SharpQuake
             var vol = Host.Network.Reader.ReadByte();
             var atten = Host.Network.Reader.ReadByte();
 
-            snd.StaticSound( cl.sound_precache[sound_num], ref org, vol, atten );
+            Host.Sound.StaticSound( cl.sound_precache[sound_num], ref org, vol, atten );
         }
 
         /// <summary>

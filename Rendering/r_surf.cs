@@ -30,7 +30,7 @@ using SharpQuake.Framework;
 
 namespace SharpQuake
 {
-    internal struct glRect_t
+    public struct glRect_t
     {
         public Byte l,t,w,h;
     }
@@ -39,28 +39,28 @@ namespace SharpQuake
     {
         private const Double COLINEAR_EPSILON = 0.001;
 
-        private static Int32 _LightMapTextures; // lightmap_textures
-        private static Int32 _LightMapBytes; // lightmap_bytes		// 1, 2, or 4
-        private static MemoryVertex[] _CurrentVertBase; // r_pcurrentvertbase
-        private static Model _CurrentModel; // currentmodel
-        private static System.Boolean[] _LightMapModified = new System.Boolean[MAX_LIGHTMAPS]; // lightmap_modified
-        private static GLPoly[] _LightMapPolys = new GLPoly[MAX_LIGHTMAPS]; // lightmap_polys
-        private static glRect_t[] _LightMapRectChange = new glRect_t[MAX_LIGHTMAPS]; // lightmap_rectchange
-        private static UInt32[] _BlockLights = new UInt32[18 * 18]; // blocklights
-        private static Int32 _ColinElim; // nColinElim
-        private static MemorySurface _SkyChain; // skychain
-        private static MemorySurface _WaterChain; // waterchain
-        private static Entity _TempEnt = new Entity(); // for DrawWorld
+        private Int32 _LightMapTextures; // lightmap_textures
+        private Int32 _LightMapBytes; // lightmap_bytes		// 1, 2, or 4
+        private MemoryVertex[] _CurrentVertBase; // r_pcurrentvertbase
+        private Model _CurrentModel; // currentmodel
+        private System.Boolean[] _LightMapModified = new System.Boolean[MAX_LIGHTMAPS]; // lightmap_modified
+        private GLPoly[] _LightMapPolys = new GLPoly[MAX_LIGHTMAPS]; // lightmap_polys
+        private glRect_t[] _LightMapRectChange = new glRect_t[MAX_LIGHTMAPS]; // lightmap_rectchange
+        private UInt32[] _BlockLights = new UInt32[18 * 18]; // blocklights
+        private Int32 _ColinElim; // nColinElim
+        private MemorySurface _SkyChain; // skychain
+        private MemorySurface _WaterChain; // waterchain
+        private Entity _TempEnt = new Entity(); // for DrawWorld
 
         // the lightmap texture data needs to be kept in
         // main memory so texsubimage can update properly
-        private static Byte[] _LightMaps = new Byte[4 * MAX_LIGHTMAPS * BLOCK_WIDTH * BLOCK_HEIGHT]; // lightmaps
+        private Byte[] _LightMaps = new Byte[4 * MAX_LIGHTMAPS * BLOCK_WIDTH * BLOCK_HEIGHT]; // lightmaps
 
         /// <summary>
         /// GL_BuildLightmaps
         /// Builds the lightmap texture with all the surfaces from all brush models
         /// </summary>
-        private static void BuildLightMaps()
+        private void BuildLightMaps()
         {
             Array.Clear( _Allocated, 0, _Allocated.Length );
             //memset (allocated, 0, sizeof(allocated));
@@ -73,7 +73,7 @@ namespace SharpQuake
             Host.DrawingContext.LightMapFormat = PixelFormat.Luminance;// GL_LUMINANCE;
 
             // default differently on the Permedia
-            if( Scr.IsPermedia )
+            if( Host.Screen.IsPermedia )
                 Host.DrawingContext.LightMapFormat = PixelFormat.Rgba;
 
             if( CommandLine.HasParam( "-lm_1" ) )
@@ -174,7 +174,7 @@ namespace SharpQuake
         /// <summary>
         /// GL_CreateSurfaceLightmap
         /// </summary>
-        private static void CreateSurfaceLightmap( MemorySurface surf )
+        private void CreateSurfaceLightmap( MemorySurface surf )
         {
             if( ( surf.flags & ( SurfaceDef.SURF_DRAWSKY | SurfaceDef.SURF_DRAWTURB ) ) != 0 )
                 return;
@@ -191,7 +191,7 @@ namespace SharpQuake
         /// <summary>
         /// BuildSurfaceDisplayList
         /// </summary>
-        private static void BuildSurfaceDisplayList( MemorySurface fa )
+        private void BuildSurfaceDisplayList( MemorySurface fa )
         {
             // reconstruct the polygon
             var pedges = _CurrentModel.edges;
@@ -281,7 +281,7 @@ namespace SharpQuake
             poly.numverts = lnumverts;
         }
 
-        private static System.Boolean IsCollinear( Single[] prev, Single[] cur, Single[] next )
+        private System.Boolean IsCollinear( Single[] prev, Single[] cur, Single[] next )
         {
             var v1 = new Vector3( cur[0] - prev[0], cur[1] - prev[1], cur[2] - prev[2] );
             MathLib.Normalize( ref v1 );
@@ -294,7 +294,7 @@ namespace SharpQuake
         }
 
         // returns a texture number and the position inside it
-        private static Int32 AllocBlock( Int32 w, Int32 h, ref Int32 x, ref Int32 y )
+        private Int32 AllocBlock( Int32 w, Int32 h, ref Int32 x, ref Int32 y )
         {
             for( var texnum = 0; texnum < MAX_LIGHTMAPS; texnum++ )
             {
@@ -336,7 +336,7 @@ namespace SharpQuake
         /// R_BuildLightMap
         /// Combine and scale multiple lightmaps into the 8.8 format in blocklights
         /// </summary>
-        private static void BuildLightMap( MemorySurface surf, ByteArraySegment dest, Int32 stride )
+        private void BuildLightMap( MemorySurface surf, ByteArraySegment dest, Int32 stride )
         {
             surf.cached_dlight = ( surf.dlightframe == _FrameCount );
 
@@ -422,7 +422,7 @@ namespace SharpQuake
         /// <summary>
         /// R_AddDynamicLights
         /// </summary>
-        private static void AddDynamicLights( MemorySurface surf )
+        private void AddDynamicLights( MemorySurface surf )
         {
             var smax = ( surf.extents[0] >> 4 ) + 1;
             var tmax = ( surf.extents[1] >> 4 ) + 1;
@@ -474,7 +474,7 @@ namespace SharpQuake
         /// <summary>
         /// R_DrawWaterSurfaces
         /// </summary>
-        private static void DrawWaterSurfaces()
+        private void DrawWaterSurfaces()
         {
             if( _WaterAlpha.Value == 1.0f && _glTexSort.Value != 0 )
                 return;
@@ -540,7 +540,7 @@ namespace SharpQuake
         /// <summary>
         /// R_MarkLeaves
         /// </summary>
-        private static void MarkLeaves()
+        private void MarkLeaves()
         {
             if( _OldViewLeaf == _ViewLeaf && _NoVis.Value == 0 )
                 return;
@@ -581,7 +581,7 @@ namespace SharpQuake
         /// <summary>
         /// R_DrawWorld
         /// </summary>
-        private static void DrawWorld()
+        private void DrawWorld()
         {
             _TempEnt.Clear();
             _TempEnt.model = Host.Client.cl.worldmodel;
@@ -604,7 +604,7 @@ namespace SharpQuake
         /// <summary>
         /// R_BlendLightmaps
         /// </summary>
-        private static void BlendLightmaps()
+        private void BlendLightmaps()
         {
             if( _FullBright.Value != 0 )
                 return;
@@ -667,7 +667,7 @@ namespace SharpQuake
             GL.DepthMask( true ); // back to normal Z buffering
         }
 
-        private static void DrawTextureChains()
+        private void DrawTextureChains()
         {
             if( _glTexSort.Value == 0 )
             {
@@ -713,7 +713,7 @@ namespace SharpQuake
         /// <summary>
         /// R_RenderBrushPoly
         /// </summary>
-        private static void RenderBrushPoly( MemorySurface fa )
+        private void RenderBrushPoly( MemorySurface fa )
         {
             _BrushPolys++;
 
@@ -766,7 +766,7 @@ namespace SharpQuake
             }
         }
 
-        private static void UpdateRect( MemorySurface fa, ref glRect_t theRect )
+        private void UpdateRect( MemorySurface fa, ref glRect_t theRect )
         {
             if( fa.light_t < theRect.t )
             {
@@ -788,7 +788,7 @@ namespace SharpQuake
                 theRect.h = ( Byte ) ( ( fa.light_t - theRect.t ) + tmax );
         }
 
-        private static void DrawGLPoly( GLPoly p, Single scaleX = 1f, Single scaleY = 1f )
+        private void DrawGLPoly( GLPoly p, Single scaleX = 1f, Single scaleY = 1f )
         {
             GL.Begin( PrimitiveType.Polygon );
             for( var i = 0; i < p.numverts; i++ )
@@ -803,7 +803,7 @@ namespace SharpQuake
         /// <summary>
         /// R_MirrorChain
         /// </summary>
-        private static void MirrorChain( MemorySurface s )
+        private void MirrorChain( MemorySurface s )
         {
             if( _IsMirror )
                 return;
@@ -814,7 +814,7 @@ namespace SharpQuake
         /// <summary>
         /// R_RecursiveWorldNode
         /// </summary>
-        private static void RecursiveWorldNode( MemoryNodeBase node )
+        private void RecursiveWorldNode( MemoryNodeBase node )
         {
             if( node.contents == ContentsDef.CONTENTS_SOLID )
                 return;		// solid
@@ -937,7 +937,7 @@ namespace SharpQuake
         /// Systems that have fast state and texture changes can
         /// just do everything as it passes with no need to sort
         /// </summary>
-        private static void DrawSequentialPoly( MemorySurface s )
+        private void DrawSequentialPoly( MemorySurface s )
         {
             //
             // normal lightmaped poly
@@ -1086,7 +1086,7 @@ namespace SharpQuake
             }
         }
 
-        private static void DrawGLWaterPolyLightmap( GLPoly p )
+        private void DrawGLWaterPolyLightmap( GLPoly p )
         {
             DisableMultitexture();
 
@@ -1107,7 +1107,7 @@ namespace SharpQuake
             GL.End();
         }
 
-        private static void DrawGLWaterPoly( GLPoly p )
+        private void DrawGLWaterPoly( GLPoly p )
         {
             DisableMultitexture();
 
@@ -1128,7 +1128,7 @@ namespace SharpQuake
             GL.End();
         }
 
-        private static void CommitLightmap( Int32 i )
+        private void CommitLightmap( Int32 i )
         {
             _LightMapModified[i] = false;
             var theRect = _LightMapRectChange[i];
@@ -1156,7 +1156,7 @@ namespace SharpQuake
         /// R_TextureAnimation
         /// Returns the proper texture for a given time and base texture
         /// </summary>
-        private static Texture TextureAnimation( Texture t )
+        private Texture TextureAnimation( Texture t )
         {
             if( _CurrentEntity.frame != 0 )
             {
@@ -1185,7 +1185,7 @@ namespace SharpQuake
         /// R_RenderDynamicLightmaps
         /// Multitexture
         /// </summary>
-        private static void RenderDynamicLightmaps( MemorySurface fa )
+        private void RenderDynamicLightmaps( MemorySurface fa )
         {
             _BrushPolys++;
 
@@ -1222,7 +1222,7 @@ namespace SharpQuake
         /// <summary>
         /// R_DrawBrushModel
         /// </summary>
-        private static void DrawBrushModel( Entity e )
+        private void DrawBrushModel( Entity e )
         {
             _CurrentEntity = e;
             Host.DrawingContext.CurrentTexture = -1;

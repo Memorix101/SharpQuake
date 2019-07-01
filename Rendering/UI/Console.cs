@@ -100,10 +100,15 @@ namespace SharpQuake
         private Single _CursorSpeed = 4; // con_cursorspeed
         private FileStream _Log;
 
+        public Con( Host host )
+        {
+            Host = host;
+        }
+
         // Con_CheckResize (void)
         public void CheckResize()
         {
-            var width = ( Scr.vid.width >> 3 ) - 2;
+            var width = ( Host.Screen.vid.width >> 3 ) - 2;
             if( width == _LineWidth )
                 return;
 
@@ -158,11 +163,10 @@ namespace SharpQuake
         }
 
         // Con_Init (void)
-        public void Initialise( Host host )
+        public void Initialise( )
         {
-            Host = host;
-
             _DebugLog = ( CommandLine.CheckParm( "-condebug" ) > 0 );
+
             if( _DebugLog )
             {
                 var path = Path.Combine( FileSystem.GameDir, LOG_FILE_NAME );
@@ -266,8 +270,8 @@ namespace SharpQuake
             Print( msg );
 
             // update the screen if the console is displayed
-            if( Host.Client.cls.signon != ClientDef.SIGNONS && !Scr.IsDisabledForLoading )
-                Scr.UpdateScreen();
+            if( Host.Client.cls.signon != ClientDef.SIGNONS && !Host.Screen.IsDisabledForLoading )
+                Host.Screen.UpdateScreen();
         }
 
         public void Shutdown()
@@ -296,10 +300,10 @@ namespace SharpQuake
         // Okay to call even when the screen can't be updated
         public void SafePrint( String fmt, params Object[] args )
         {
-            var temp = Scr.IsDisabledForLoading;
-            Scr.IsDisabledForLoading = true;
+            var temp = Host.Screen.IsDisabledForLoading;
+            Host.Screen.IsDisabledForLoading = true;
             Print( fmt, args );
-            Scr.IsDisabledForLoading = temp;
+            Host.Screen.IsDisabledForLoading = temp;
         }
 
         /// <summary>
@@ -321,8 +325,8 @@ namespace SharpQuake
 
                 var textOffset = ( i % _TotalLines ) * _LineWidth;
 
-                Scr.ClearNotify = 0;
-                Scr.CopyTop = true;
+                Host.Screen.ClearNotify = 0;
+                Host.Screen.CopyTop = true;
 
                 for( var x = 0; x < _LineWidth; x++ )
                     Host.DrawingContext.DrawCharacter( ( x + 1 ) << 3, v, _Text[textOffset + x] );
@@ -332,8 +336,8 @@ namespace SharpQuake
 
             if( Host.Keyboard.Destination == KeyDestination.key_message )
             {
-                Scr.ClearNotify = 0;
-                Scr.CopyTop = true;
+                Host.Screen.ClearNotify = 0;
+                Host.Screen.CopyTop = true;
 
                 var x = 0;
 
@@ -379,7 +383,7 @@ namespace SharpQuake
             else
                 Host.Keyboard.Destination = KeyDestination.key_console;
 
-            Scr.EndLoadingPlaque();
+            Host.Screen.EndLoadingPlaque();
             Array.Clear( _Times, 0, _Times.Length );
         }
 
@@ -412,7 +416,7 @@ namespace SharpQuake
             if( txt.StartsWith( ( ( Char ) 1 ).ToString() ) )// [0] == 1)
             {
                 mask = 128;	// go to colored text
-                snd.LocalSound( "misc/talk.wav" ); // play talk wav
+                Host.Sound.LocalSound( "misc/talk.wav" ); // play talk wav
                 offset++;
             }
             else if( txt.StartsWith( ( ( Char ) 2 ).ToString() ) ) //txt[0] == 2)

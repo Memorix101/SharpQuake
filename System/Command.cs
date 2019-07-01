@@ -93,9 +93,8 @@ namespace SharpQuake
             private set;
         }
 
-        public void Initialise( Host host )
+        public void Initialise( )
         {
-            Host = host;
             //
             // register our commands
             //
@@ -408,8 +407,10 @@ namespace SharpQuake
             _Aliases[name] = sb.ToString();
         }
 
-        public Command()
+        public Command( Host host )
         {
+            Host = host;
+
             _Aliases = new Dictionary<String, String>();
             _Functions = new Dictionary<String, XCommand>();
         }

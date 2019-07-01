@@ -28,9 +28,8 @@ namespace SharpQuake
 
         // Cbuf_Init()
         // allocates an initial text buffer that will grow as needed
-        public void Initialise( Host host )
+        public void Initialise( )
         {
-            Host = host;
             // nothing to do
         }
 
@@ -130,8 +129,10 @@ namespace SharpQuake
             _Wait = true;
         }
 
-        public CommandBuffer( )
+        public CommandBuffer( Host host )
         {
+            Host = host;
+
             _Buf = new StringBuilder( 8192 ); // space for commands and script files
         }
     }
