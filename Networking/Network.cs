@@ -343,10 +343,10 @@ namespace SharpQuake
             }
             HostPort = _DefHostPort;
 
-            if( CommandLine.HasParam( "-listen" ) || client.cls.state == cactive_t.ca_dedicated )
+            if( CommandLine.HasParam( "-listen" ) || Host.Client.cls.state == cactive_t.ca_dedicated )
                 _IsListening = true;
-            var numsockets = server.svs.maxclientslimit;
-            if( client.cls.state != cactive_t.ca_dedicated )
+            var numsockets = Host.Server.svs.maxclientslimit;
+            if( Host.Client.cls.state != cactive_t.ca_dedicated )
                 numsockets++;
 
             _FreeSockets = new List<qsocket_t>( numsockets );
@@ -742,9 +742,9 @@ JustDoIt:
             var state2 = new Boolean[QDef.MAX_SCOREBOARD];
 
             var count = 0;
-            for( var i = 0; i < server.svs.maxclients; i++ )
+            for( var i = 0; i < Host.Server.svs.maxclients; i++ )
             {
-                Host.HostClient = server.svs.clients[i];
+                Host.HostClient = Host.Server.svs.clients[i];
                 if( Host.HostClient.netconnection == null )
                     continue;
 
@@ -772,9 +772,9 @@ JustDoIt:
             while( count > 0 )
             {
                 count = 0;
-                for( var i = 0; i < server.svs.maxclients; i++ )
+                for( var i = 0; i < Host.Server.svs.maxclients; i++ )
                 {
-                    Host.HostClient = server.svs.clients[i];
+                    Host.HostClient = Host.Server.svs.clients[i];
                     if( !state1[i] )
                     {
                         if( CanSendMessage( Host.HostClient.netconnection ) )
@@ -900,7 +900,7 @@ JustDoIt:
             if( _FreeSockets.Count == 0 )
                 return null;
 
-            if( ActiveConnections >= server.svs.maxclients )
+            if( ActiveConnections >= Host.Server.svs.maxclients )
                 return null;
 
             // get one from free list
@@ -1012,11 +1012,11 @@ JustDoIt:
         {
             if( Host.Command.Argc != 2 )
             {
-                Host.Console.Print( "\"maxplayers\" is \"%u\"\n", server.svs.maxclients );
+                Host.Console.Print( "\"maxplayers\" is \"%u\"\n", Host.Server.svs.maxclients );
                 return;
             }
 
-            if( server.sv.active )
+            if( Host.Server.sv.active )
             {
                 Host.Console.Print( "maxplayers can not be changed while a server is running.\n" );
                 return;
@@ -1025,9 +1025,9 @@ JustDoIt:
             var n = MathLib.atoi( Host.Command.Argv( 1 ) );
             if( n < 1 )
                 n = 1;
-            if( n > server.svs.maxclientslimit )
+            if( n > Host.Server.svs.maxclientslimit )
             {
-                n = server.svs.maxclientslimit;
+                n = Host.Server.svs.maxclientslimit;
                 Host.Console.Print( "\"maxplayers\" set to \"{0}\"\n", n );
             }
 
@@ -1037,7 +1037,7 @@ JustDoIt:
             if( n > 1 && !_IsListening )
                 Host.CommandBuffer.AddText( "listen 1\n" );
 
-            server.svs.maxclients = n;
+            Host.Server.svs.maxclients = n;
             if( n == 1 )
                 CVar.Set( "deathmatch", "0" );
             else

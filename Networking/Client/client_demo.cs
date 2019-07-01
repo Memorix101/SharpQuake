@@ -34,7 +34,7 @@ namespace SharpQuake
         ///
         /// Called when a demo file runs out, or the user starts a game
         /// </summary>
-        public static void StopPlayback()
+        public void StopPlayback()
         {
             if( !cls.demoplayback )
                 return;
@@ -55,7 +55,7 @@ namespace SharpQuake
         /// CL_Record_f
         /// record <demoname> <map> [cd track]
         /// </summary>
-        private static void Record_f()
+        private void Record_f()
         {
             if( Host.Command.Source != CommandSource.src_command )
                 return;
@@ -122,7 +122,7 @@ namespace SharpQuake
         /// CL_Stop_f
         /// stop recording a demo
         /// </summary>
-        private static void Stop_f()
+        private void Stop_f()
         {
             if( Host.Command.Source != CommandSource.src_command )
                 return;
@@ -151,7 +151,7 @@ namespace SharpQuake
         // CL_PlayDemo_f
         //
         // play [demoname]
-        private static void PlayDemo_f()
+        private void PlayDemo_f()
         {
             if( Host.Command.Source != CommandSource.src_command )
                 return;
@@ -165,7 +165,7 @@ namespace SharpQuake
             //
             // disconnect from server
             //
-            client.Disconnect();
+            Disconnect();
 
             //
             // open the demo file
@@ -216,7 +216,7 @@ namespace SharpQuake
         /// CL_TimeDemo_f
         /// timedemo [demoname]
         /// </summary>
-        private static void TimeDemo_f()
+        private void TimeDemo_f()
         {
             if( Host.Command.Source != CommandSource.src_command )
                 return;
@@ -241,12 +241,12 @@ namespace SharpQuake
         /// Handles recording and playback of demos, on top of NET_ code
         /// </summary>
         /// <returns></returns>
-        private static Int32 GetMessage()
+        private Int32 GetMessage()
         {
             if( cls.demoplayback )
             {
                 // decide if it is time to grab the next message
-                if( cls.signon == SIGNONS )	// allways grab until fully connected
+                if( cls.signon == ClientDef.SIGNONS )	// allways grab until fully connected
                 {
                     if( cls.timedemo )
                     {
@@ -308,7 +308,7 @@ namespace SharpQuake
         /// <summary>
         /// CL_FinishTimeDemo
         /// </summary>
-        private static void FinishTimeDemo()
+        private void FinishTimeDemo()
         {
             cls.timedemo = false;
 
@@ -324,7 +324,7 @@ namespace SharpQuake
         /// CL_WriteDemoMessage
         /// Dumps the current net message, prefixed by the length and view angles
         /// </summary>
-        private static void WriteDemoMessage()
+        private void WriteDemoMessage()
         {
             var len = EndianHelper.LittleLong( Host.Network.Message.Length );
             var writer = ( (DisposableWrapper<BinaryWriter>)cls.demofile ).Object;

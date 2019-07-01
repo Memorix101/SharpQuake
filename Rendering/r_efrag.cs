@@ -57,7 +57,7 @@ namespace SharpQuake
             _EMins = ent.origin + entmodel.mins;
             _EMaxs = ent.origin + entmodel.maxs;
 
-            SplitEntityOnNode( client.cl.worldmodel.nodes[0] );
+            SplitEntityOnNode( Host.Client.cl.worldmodel.nodes[0] );
             ent.topnode = _EfragTopNode;
         }
 
@@ -78,13 +78,13 @@ namespace SharpQuake
                 var leaf = (MemoryLeaf)( System.Object ) node;
 
                 // grab an efrag off the free list
-                var ef = client.cl.free_efrags;
+                var ef = Host.Client.cl.free_efrags;
                 if( ef == null )
                 {
                     Host.Console.Print( "Too many efrags!\n" );
                     return;	// no free fragments...
                 }
-                client.cl.free_efrags = client.cl.free_efrags.entnext;
+                Host.Client.cl.free_efrags = Host.Client.cl.free_efrags.entnext;
 
                 ef.entity = _AddEnt;
 
@@ -149,9 +149,9 @@ namespace SharpQuake
                     case ModelType.mod_alias:
                     case ModelType.mod_brush:
                     case ModelType.mod_sprite:
-                        if( ( pent.visframe != _FrameCount ) && ( client.NumVisEdicts < client.MAX_VISEDICTS ) )
+                        if( ( pent.visframe != _FrameCount ) && ( Host.Client.NumVisEdicts < ClientDef.MAX_VISEDICTS ) )
                         {
-                            client.VisEdicts[client.NumVisEdicts++] = pent;
+                            Host.Client.VisEdicts[Host.Client.NumVisEdicts++] = pent;
 
                             // mark that we've recorded this entity for this frame
                             pent.visframe = _FrameCount;

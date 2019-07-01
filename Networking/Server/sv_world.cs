@@ -45,24 +45,24 @@ namespace SharpQuake
 
         private const Int32 AREA_NODES = 32;
 
-        private static areanode_t[] _AreaNodes = new areanode_t[AREA_NODES];
+        private areanode_t[] _AreaNodes = new areanode_t[AREA_NODES];
 
         // sv_areanodes
-        private static Int32 _NumAreaNodes;
+        private Int32 _NumAreaNodes;
 
         // sv_numareanodes
-        private static BspHull _BoxHull = new BspHull();
+        private BspHull _BoxHull = new BspHull();
 
         // box_hull
-        private static BspClipNode[] _BoxClipNodes = new BspClipNode[6];
+        private BspClipNode[] _BoxClipNodes = new BspClipNode[6];
 
-        private static Plane[] _BoxPlanes = new Plane[6];
+        private Plane[] _BoxPlanes = new Plane[6];
 
         /// <summary>
         /// SV_ClearWorld
         /// called after the world model has been loaded, before linking any entities
         /// </summary>
-        public static void ClearWorld()
+        public void ClearWorld()
         {
             InitBoxHull();
 
@@ -79,7 +79,7 @@ namespace SharpQuake
         /// so it doesn't clip against itself
         /// flags ent->v.modified
         /// </summary>
-        public static void UnlinkEdict( MemoryEdict ent )
+        public void UnlinkEdict( MemoryEdict ent )
         {
             if( ent.area.Prev == null )
                 return;		// not linked in anywhere
@@ -96,7 +96,7 @@ namespace SharpQuake
         /// sets ent->v.absmin and ent->v.absmax
         /// if touchtriggers, calls prog functions for the intersected triggers
         /// </summary>
-        public static void LinkEdict( MemoryEdict ent, Boolean touch_triggers )
+        public void LinkEdict( MemoryEdict ent, Boolean touch_triggers )
         {
             if( ent.area.Prev != null )
                 UnlinkEdict( ent );	// unlink from old position
@@ -170,7 +170,7 @@ namespace SharpQuake
         /// <summary>
         /// SV_PointContents
         /// </summary>
-        public static Int32 PointContents( ref Vector3 p )
+        public Int32 PointContents( ref Vector3 p )
         {
             var cont = HullPointContents( sv.worldmodel.hulls[0], 0, ref p );
             if( cont <= ContentsDef.CONTENTS_CURRENT_0 && cont >= ContentsDef.CONTENTS_CURRENT_DOWN )
@@ -187,7 +187,7 @@ namespace SharpQuake
         /// shouldn't be considered solid objects
         /// passedict is explicitly excluded from clipping checks (normally NULL)
         /// </summary>
-        public static trace_t Move( ref Vector3 start, ref Vector3 mins, ref Vector3 maxs, ref Vector3 end, Int32 type, MemoryEdict passedict )
+        public trace_t Move( ref Vector3 start, ref Vector3 mins, ref Vector3 maxs, ref Vector3 end, Int32 type, MemoryEdict passedict )
         {
             var clip = new moveclip_t();
 
@@ -224,7 +224,7 @@ namespace SharpQuake
         /// <summary>
         /// SV_RecursiveHullCheck
         /// </summary>
-        public static Boolean RecursiveHullCheck( BspHull hull, Int32 num, Single p1f, Single p2f, ref Vector3 p1, ref Vector3 p2, trace_t trace )
+        public Boolean RecursiveHullCheck( BspHull hull, Int32 num, Single p1f, Single p2f, ref Vector3 p1, ref Vector3 p2, trace_t trace )
         {
             // check for empty
             if( num < 0 )
@@ -333,7 +333,7 @@ namespace SharpQuake
         /// <summary>
         /// SV_CreateAreaNode
         /// </summary>
-        private static areanode_t CreateAreaNode( Int32 depth, ref Vector3 mins, ref Vector3 maxs )
+        private areanode_t CreateAreaNode( Int32 depth, ref Vector3 mins, ref Vector3 maxs )
         {
             var anode = _AreaNodes[_NumAreaNodes];
             _NumAreaNodes++;
@@ -377,7 +377,7 @@ namespace SharpQuake
         /// SV_TestEntityPosition
         /// This could be a lot more efficient...
         /// </summary>
-        private static MemoryEdict TestEntityPosition( MemoryEdict ent )
+        private MemoryEdict TestEntityPosition( MemoryEdict ent )
         {
             var trace = Move( ref ent.v.origin, ref ent.v.mins, ref ent.v.maxs, ref ent.v.origin, 0, ent );
 
@@ -392,7 +392,7 @@ namespace SharpQuake
         /// Set up the planes and clipnodes so that the six floats of a bounding box
         /// can just be stored out and get a proper hull_t structure.
         /// </summary>
-        private static void InitBoxHull()
+        private void InitBoxHull()
         {
             _BoxHull.clipnodes = _BoxClipNodes;
             _BoxHull.planes = _BoxPlanes;
@@ -434,7 +434,7 @@ namespace SharpQuake
         //
         // To keep everything totally uniform, bounding boxes are turned into small
         // BSP trees instead of being compared directly.
-        private static BspHull HullForBox( ref Vector3 mins, ref Vector3 maxs )
+        private BspHull HullForBox( ref Vector3 mins, ref Vector3 maxs )
         {
             _BoxPlanes[0].dist = maxs.X;
             _BoxPlanes[1].dist = mins.X;
@@ -452,7 +452,7 @@ namespace SharpQuake
         /// Offset is filled in to contain the adjustment that must be added to the
         /// testing object's origin to get a point to use with the returned hull.
         /// </summary>
-        private static BspHull HullForEntity( MemoryEdict ent, ref Vector3 mins, ref Vector3 maxs, out Vector3 offset )
+        private BspHull HullForEntity( MemoryEdict ent, ref Vector3 mins, ref Vector3 maxs, out Vector3 offset )
         {
             BspHull hull = null;
 
@@ -495,7 +495,7 @@ namespace SharpQuake
         /// <summary>
         /// SV_FindTouchedLeafs
         /// </summary>
-        private static void FindTouchedLeafs( MemoryEdict ent, MemoryNodeBase node )
+        private void FindTouchedLeafs( MemoryEdict ent, MemoryNodeBase node )
         {
             if( node.contents == ContentsDef.CONTENTS_SOLID )
                 return;
@@ -531,7 +531,7 @@ namespace SharpQuake
         /// <summary>
         /// SV_TouchLinks
         /// </summary>
-        private static void TouchLinks( MemoryEdict ent, areanode_t node )
+        private void TouchLinks( MemoryEdict ent, areanode_t node )
         {
             // touch linked edicts
             Link next;
@@ -575,7 +575,7 @@ namespace SharpQuake
         /// Handles selection or creation of a clipping hull, and offseting (and
         /// eventually rotation) of the end points
         /// </summary>
-        private static trace_t ClipMoveToEntity( MemoryEdict ent, ref Vector3 start, ref Vector3 mins, ref Vector3 maxs, ref Vector3 end )
+        private trace_t ClipMoveToEntity( MemoryEdict ent, ref Vector3 start, ref Vector3 mins, ref Vector3 maxs, ref Vector3 end )
         {
             var trace = new trace_t();
             // fill in a default trace
@@ -607,7 +607,7 @@ namespace SharpQuake
         /// <summary>
         /// SV_MoveBounds
         /// </summary>
-        private static void MoveBounds( ref Vector3 start, ref Vector3 mins, ref Vector3 maxs, ref Vector3 end, out Vector3 boxmins, out Vector3 boxmaxs )
+        private void MoveBounds( ref Vector3 start, ref Vector3 mins, ref Vector3 maxs, ref Vector3 end, out Vector3 boxmins, out Vector3 boxmaxs )
         {
             boxmins = Vector3.ComponentMin( start, end ) + mins - Vector3.One;
             boxmaxs = Vector3.ComponentMax( start, end ) + maxs + Vector3.One;
@@ -617,7 +617,7 @@ namespace SharpQuake
         /// SV_ClipToLinks
         /// Mins and maxs enclose the entire area swept by the move
         /// </summary>
-        private static void ClipToLinks( areanode_t node, moveclip_t clip )
+        private void ClipToLinks( areanode_t node, moveclip_t clip )
         {
             Link next;
             trace_t trace;
@@ -689,7 +689,7 @@ namespace SharpQuake
         /// <summary>
         /// SV_HullPointContents
         /// </summary>
-        private static Int32 HullPointContents( BspHull hull, Int32 num, ref Vector3 p )
+        private Int32 HullPointContents( BspHull hull, Int32 num, ref Vector3 p )
         {
             while( num >= 0 )
             {

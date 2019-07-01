@@ -174,7 +174,7 @@ namespace SharpQuake
         {
             KeyUp( ref MLookBtn );
 
-            if( ( MLookBtn.state & 1 ) == 0 && client.LookSpring )
+            if( ( MLookBtn.state & 1 ) == 0 && Host.Client.LookSpring )
                 Host.View.StartPitchDrift();
         }
 
@@ -337,7 +337,7 @@ namespace SharpQuake
     partial class client
     {
         // CL_SendMove
-        public static void SendMove( ref usercmd_t cmd )
+        public void SendMove( ref usercmd_t cmd )
         {
             cl.cmd = cmd; // cl.cmd = *cmd - struct copying!!!
 
@@ -397,7 +397,7 @@ namespace SharpQuake
         }
 
         // CL_InitInput
-        private static void InitInput( Host host )
+        private void InitInput( Host host )
         {
             client_input.Init( host );
         }
@@ -406,9 +406,9 @@ namespace SharpQuake
         /// CL_BaseMove
         /// Send the intended movement message to the server
         /// </summary>
-        private static void BaseMove( ref usercmd_t cmd )
+        private void BaseMove( ref usercmd_t cmd )
         {
-            if( cls.signon != SIGNONS )
+            if( cls.signon != ClientDef.SIGNONS )
                 return;
 
             AdjustAngles();
@@ -447,7 +447,7 @@ namespace SharpQuake
         // CL_AdjustAngles
         //
         // Moves the local angle positions
-        private static void AdjustAngles()
+        private void AdjustAngles()
         {
             var speed = ( Single ) Host.FrameTime;
 
@@ -494,7 +494,7 @@ namespace SharpQuake
         // 0.5 if it was pressed and held
         // 0 if held then released, and
         // 1.0 if held for the entire time
-        private static Single KeyState( ref kbutton_t key )
+        private Single KeyState( ref kbutton_t key )
         {
             var impulsedown = ( key.state & 2 ) != 0;
             var impulseup = ( key.state & 4 ) != 0;

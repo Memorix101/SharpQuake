@@ -56,7 +56,7 @@ namespace SharpQuake
         {
             Host = host;
 
-            if (client.cls.state == cactive_t.ca_dedicated)
+            if (Host.Client.cls.state == cactive_t.ca_dedicated)
                 return false;
 
             if (CommandLine.HasParam("-nocdaudio"))

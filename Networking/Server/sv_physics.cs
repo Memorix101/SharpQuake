@@ -35,7 +35,7 @@ namespace SharpQuake
         /// <summary>
         /// SV_Physics
         /// </summary>
-        public static void Physics()
+        public void Physics()
         {
             // let the progs know that a new frame has started
             Host.Programs.GlobalStruct.self = EdictToProg( sv.edicts[0] );
@@ -101,7 +101,7 @@ namespace SharpQuake
         /// SV_Physics_Toss
         /// Toss, bounce, and fly movement.  When onground, do nothing.
         /// </summary>
-        private static void Physics_Toss( MemoryEdict ent )
+        private void Physics_Toss( MemoryEdict ent )
         {
             // regular thinking
             if( !RunThink( ent ) )
@@ -159,7 +159,7 @@ namespace SharpQuake
         /// Slide off of the impacting object
         /// returns the blocked flags (1 = floor, 2 = step / wall)
         /// </summary>
-        private static Int32 ClipVelocity( ref Vector3f src, ref Vector3 normal, out Vector3f dest, Single overbounce )
+        private Int32 ClipVelocity( ref Vector3f src, ref Vector3 normal, out Vector3f dest, Single overbounce )
         {
             var blocked = 0;
             if( normal.Z > 0 )
@@ -187,7 +187,7 @@ namespace SharpQuake
         /// PushEntity
         /// Does not change the entities velocity at all
         /// </summary>
-        private static trace_t PushEntity( MemoryEdict ent, ref Vector3f push )
+        private trace_t PushEntity( MemoryEdict ent, ref Vector3f push )
         {
             Vector3f end;
             MathLib.VectorAdd( ref ent.v.origin, ref push, out end );
@@ -213,7 +213,7 @@ namespace SharpQuake
         /// <summary>
         /// SV_CheckWaterTransition
         /// </summary>
-        private static void CheckWaterTransition( MemoryEdict ent )
+        private void CheckWaterTransition( MemoryEdict ent )
         {
             var org = Utilities.ToVector( ref ent.v.origin );
             var cont = PointContents( ref org );
@@ -251,7 +251,7 @@ namespace SharpQuake
         /// <summary>
         /// SV_AddGravity
         /// </summary>
-        private static void AddGravity( MemoryEdict ent )
+        private void AddGravity( MemoryEdict ent )
         {
             var val = Host.Programs.GetEdictFieldFloat( ent, "gravity" );
             if( val == 0 )
@@ -262,7 +262,7 @@ namespace SharpQuake
         /// <summary>
         /// SV_Physics_Step
         /// </summary>
-        private static void Physics_Step( MemoryEdict ent )
+        private void Physics_Step( MemoryEdict ent )
         {
             Boolean hitsound;
 
@@ -296,7 +296,7 @@ namespace SharpQuake
         /// SV_Physics_Noclip
         /// A moving object that doesn't obey physics
         /// </summary>
-        private static void Physics_Noclip( MemoryEdict ent )
+        private void Physics_Noclip( MemoryEdict ent )
         {
             // regular thinking
             if( !RunThink( ent ) )
@@ -311,7 +311,7 @@ namespace SharpQuake
         /// SV_Physics_None
         /// Non moving objects can only think
         /// </summary>
-        private static void Physics_None( MemoryEdict ent )
+        private void Physics_None( MemoryEdict ent )
         {
             // regular thinking
             RunThink( ent );
@@ -320,7 +320,7 @@ namespace SharpQuake
         /// <summary>
         /// SV_Physics_Pusher
         /// </summary>
-        private static void Physics_Pusher( MemoryEdict ent )
+        private void Physics_Pusher( MemoryEdict ent )
         {
             var oldltime = ent.v.ltime;
             var thinktime = ent.v.nextthink;
@@ -355,7 +355,7 @@ namespace SharpQuake
         /// SV_Physics_Client
         /// Player character actions
         /// </summary>
-        private static void Physics_Client( MemoryEdict ent, Int32 num )
+        private void Physics_Client( MemoryEdict ent, Int32 num )
         {
             if( !svs.clients[num - 1].active )
                 return;		// unconnected slot
@@ -428,7 +428,7 @@ namespace SharpQuake
         /// SV_WalkMove
         /// Only used by players
         /// </summary>
-        private static void WalkMove( MemoryEdict ent )
+        private void WalkMove( MemoryEdict ent )
         {
             //
             // do a regular slide move unless it looks like you ran into a step
@@ -523,7 +523,7 @@ namespace SharpQuake
         ///
         /// This is a hack, but in the interest of good gameplay...
         /// </summary>
-        private static Int32 TryUnstick( MemoryEdict ent, ref Vector3f oldvel )
+        private Int32 TryUnstick( MemoryEdict ent, ref Vector3f oldvel )
         {
             var oldorg = ent.v.origin;
             var dir = Utilities.ZeroVector3f;
@@ -599,7 +599,7 @@ namespace SharpQuake
         /// <summary>
         /// SV_WallFriction
         /// </summary>
-        private static void WallFriction( MemoryEdict ent, trace_t trace )
+        private void WallFriction( MemoryEdict ent, trace_t trace )
         {
             Vector3 forward, right, up, vangle = Utilities.ToVector( ref ent.v.v_angle );
             MathLib.AngleVectors( ref vangle, out forward, out right, out up );
@@ -624,7 +624,7 @@ namespace SharpQuake
         /// This is a big hack to try and fix the rare case of getting stuck in the world
         /// clipping hull.
         /// </summary>
-        private static void CheckStuck( MemoryEdict ent )
+        private void CheckStuck( MemoryEdict ent )
         {
             if( TestEntityPosition( ent ) == null )
             {
@@ -663,7 +663,7 @@ namespace SharpQuake
         /// <summary>
         /// SV_CheckWater
         /// </summary>
-        private static Boolean CheckWater( MemoryEdict ent )
+        private Boolean CheckWater( MemoryEdict ent )
         {
             Vector3 point;
             point.X = ent.v.origin.x;
@@ -699,7 +699,7 @@ namespace SharpQuake
         /// in a frame.  Not used for pushmove objects, because they must be exact.
         /// Returns false if the entity removed itself.
         /// </summary>
-        private static Boolean RunThink( MemoryEdict ent )
+        private Boolean RunThink( MemoryEdict ent )
         {
             Single thinktime;
 
@@ -724,7 +724,7 @@ namespace SharpQuake
         /// <summary>
         /// SV_CheckVelocity
         /// </summary>
-        private static void CheckVelocity( MemoryEdict ent )
+        private void CheckVelocity( MemoryEdict ent )
         {
             //
             // bound velocity
@@ -753,7 +753,7 @@ namespace SharpQuake
         /// 4 = dead stop
         /// If steptrace is not NULL, the trace of any vertical wall hit will be stored
         /// </summary>
-        private static Int32 FlyMove( MemoryEdict ent, Single time, trace_t steptrace )
+        private Int32 FlyMove( MemoryEdict ent, Single time, trace_t steptrace )
         {
             var original_velocity = ent.v.velocity;
             var primal_velocity = ent.v.velocity;
@@ -882,7 +882,7 @@ namespace SharpQuake
             return blocked;
         }
 
-        private static trace_t Move( ref Vector3f start, ref Vector3f mins, ref Vector3f maxs, ref Vector3f end, Int32 type, MemoryEdict passedict )
+        private trace_t Move( ref Vector3f start, ref Vector3f mins, ref Vector3f maxs, ref Vector3f end, Int32 type, MemoryEdict passedict )
         {
             Vector3 vstart, vmins, vmaxs, vend;
             MathLib.Copy( ref start, out vstart );
@@ -896,7 +896,7 @@ namespace SharpQuake
         /// SV_Impact
         /// Two entities have touched, so run their touch functions
         /// </summary>
-        private static void Impact( MemoryEdict e1, MemoryEdict e2 )
+        private void Impact( MemoryEdict e1, MemoryEdict e2 )
         {
             var old_self = Host.Programs.GlobalStruct.self;
             var old_other = Host.Programs.GlobalStruct.other;
@@ -923,7 +923,7 @@ namespace SharpQuake
         /// <summary>
         /// SV_PushMove
         /// </summary>
-        private static void PushMove( MemoryEdict pusher, Single movetime )
+        private void PushMove( MemoryEdict pusher, Single movetime )
         {
             if( pusher.v.velocity.IsEmpty )
             {

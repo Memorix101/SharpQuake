@@ -11,11 +11,11 @@ namespace SharpQuake
     {
         public override void Show( Host host )
         {
-            if ( !server.sv.active )
+            if ( !Host.Server.sv.active )
                 return;
-            if ( client.cl.intermission != 0 )
+            if ( Host.Client.cl.intermission != 0 )
                 return;
-            if ( server.svs.maxclients != 1 )
+            if ( Host.Server.svs.maxclients != 1 )
                 return;
 
             base.Show( host );

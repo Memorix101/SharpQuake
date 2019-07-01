@@ -245,16 +245,16 @@ namespace SharpQuake
         // Sends the entire command line over to the server
         public void ForwardToServer()
         {
-            if( client.cls.state != cactive_t.ca_connected )
+            if( Host.Client.cls.state != cactive_t.ca_connected )
             {
                 Host.Console.Print( "Can't \"{0}\", not connected\n", Host.Command.Argv( 0 ) );
                 return;
             }
 
-            if( client.cls.demoplayback )
+            if( Host.Client.cls.demoplayback )
                 return;		// not really connected
 
-            var writer = client.cls.message;
+            var writer = Host.Client.cls.message;
             writer.WriteByte( protocol.clc_stringcmd );
             if( !Host.Command.Argv( 0 ).Equals( "cmd" ) )
             {

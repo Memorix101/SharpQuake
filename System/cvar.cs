@@ -251,9 +251,9 @@ namespace SharpQuake
             _String = value;
             _Value = MathLib.atof( _String );
 
-            if( IsServer && server.sv.active )
+            if( IsServer && CommandInstance.Host.Server.sv.active )
             {
-                server.BroadcastPrint( "\"{0}\" changed to \"{1}\"\n", _Name, _String );
+                CommandInstance.Host.Server.BroadcastPrint( "\"{0}\" changed to \"{1}\"\n", _Name, _String );
             }
         }
 

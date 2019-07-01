@@ -108,7 +108,7 @@ namespace SharpQuake
                     return;
 
                 p.vel = Vector3.Zero;
-                p.die = ( Single ) client.cl.time + 2;
+                p.die = ( Single ) Host.Client.cl.time + 2;
 
                 switch( type )
                 {
@@ -137,7 +137,7 @@ namespace SharpQuake
 
                     case 3:
                     case 5:	// tracer
-                        p.die = ( Single ) client.cl.time + 0.5f;
+                        p.die = ( Single ) Host.Client.cl.time + 0.5f;
                         p.type = ptype_t.pt_static;
                         if( type == 3 )
                             p.color = 52 + ( ( _TracerCount & 4 ) << 1 );
@@ -170,7 +170,7 @@ namespace SharpQuake
                     case 6:	// voor trail
                         p.color = 9 * 16 + 8 + ( MathLib.Random() & 3 );
                         p.type = ptype_t.pt_static;
-                        p.die = ( Single ) client.cl.time + 0.3f;
+                        p.die = ( Single ) Host.Client.cl.time + 0.3f;
                         p.org = new Vector3( start.X + ( ( MathLib.Random() % 15 ) - 8 ),
                             start.Y + ( ( MathLib.Random() % 15 ) - 8 ), start.Z + ( ( MathLib.Random() % 15 ) - 8 ) );
                         break;
@@ -191,7 +191,7 @@ namespace SharpQuake
                 if( p == null )
                     return;
 
-                p.die = ( Single ) client.cl.time + 5;
+                p.die = ( Single ) Host.Client.cl.time + 5;
                 p.color = _Ramp1[0];
                 p.ramp = MathLib.Random() & 3;
                 if( ( i & 1 ) != 0 )
@@ -216,7 +216,7 @@ namespace SharpQuake
 
                 if( count == 1024 )
                 {	// rocket explosion
-                    p.die = ( Single ) client.cl.time + 5;
+                    p.die = ( Single ) Host.Client.cl.time + 5;
                     p.color = _Ramp1[0];
                     p.ramp = MathLib.Random() & 3;
                     if( ( i & 1 ) != 0 )
@@ -228,7 +228,7 @@ namespace SharpQuake
                 }
                 else
                 {
-                    p.die = ( Single ) client.cl.time + 0.1f * ( MathLib.Random() % 5 );
+                    p.die = ( Single ) Host.Client.cl.time + 0.1f * ( MathLib.Random() % 5 );
                     p.color = ( color & ~7 ) + ( MathLib.Random() & 7 );
                     p.type = ptype_t.pt_slowgrav;
                     p.org = org + new Vector3( ( MathLib.Random() & 15 ) - 8, ( MathLib.Random() & 15 ) - 8, ( MathLib.Random() & 15 ) - 8 );
@@ -269,7 +269,7 @@ namespace SharpQuake
                         if( p == null )
                             return;
 
-                        p.die = ( Single ) ( client.cl.time + 0.2 + ( MathLib.Random() & 7 ) * 0.02 );
+                        p.die = ( Single ) ( Host.Client.cl.time + 0.2 + ( MathLib.Random() & 7 ) * 0.02 );
                         p.color = 7 + ( MathLib.Random() & 7 );
                         p.type = ptype_t.pt_slowgrav;
 
@@ -298,7 +298,7 @@ namespace SharpQuake
                         if( p == null )
                             return;
 
-                        p.die = ( Single ) ( client.cl.time + 2 + ( MathLib.Random() & 31 ) * 0.02 );
+                        p.die = ( Single ) ( Host.Client.cl.time + 2 + ( MathLib.Random() & 31 ) * 0.02 );
                         p.color = 224 + ( MathLib.Random() & 7 );
                         p.type = ptype_t.pt_slowgrav;
 
@@ -328,7 +328,7 @@ namespace SharpQuake
                 if( p == null )
                     return;
 
-                p.die = ( Single ) ( client.cl.time + 0.3 );
+                p.die = ( Single ) ( Host.Client.cl.time + 0.3 );
                 p.color = colorStart + ( colorMod % colorLength );
                 colorMod++;
 
@@ -349,7 +349,7 @@ namespace SharpQuake
                 if( p == null )
                     return;
 
-                p.die = ( Single ) ( client.cl.time + 1 + ( MathLib.Random() & 8 ) * 0.05 );
+                p.die = ( Single ) ( Host.Client.cl.time + 1 + ( MathLib.Random() & 8 ) * 0.05 );
 
                 if( ( i & 1 ) != 0 )
                 {
@@ -385,13 +385,13 @@ namespace SharpQuake
 
             for( var i = 0; i < NUMVERTEXNORMALS; i++ )
             {
-                var angle = client.cl.time * _AVelocities[i].X;
+                var angle = Host.Client.cl.time * _AVelocities[i].X;
                 var sy = Math.Sin( angle );
                 var cy = Math.Cos( angle );
-                angle = client.cl.time * _AVelocities[i].Y;
+                angle = Host.Client.cl.time * _AVelocities[i].Y;
                 var sp = Math.Sin( angle );
                 var cp = Math.Cos( angle );
-                angle = client.cl.time * _AVelocities[i].Z;
+                angle = Host.Client.cl.time * _AVelocities[i].Z;
                 var sr = Math.Sin( angle );
                 var cr = Math.Cos( angle );
 
@@ -400,7 +400,7 @@ namespace SharpQuake
                 if( p == null )
                     return;
 
-                p.die = ( Single ) ( client.cl.time + 0.01 );
+                p.die = ( Single ) ( Host.Client.cl.time + 0.01 );
                 p.color = 0x6f;
                 p.type = ptype_t.pt_explode;
 
@@ -475,17 +475,17 @@ namespace SharpQuake
 
             var up = render.ViewUp * 1.5f;
             var right = render.ViewRight * 1.5f;
-            var frametime = ( Single ) ( client.cl.time - client.cl.oldtime );
+            var frametime = ( Single ) ( Host.Client.cl.time - Host.Client.cl.oldtime );
             var time3 = frametime * 15;
             var time2 = frametime * 10;
             var time1 = frametime * 5;
-            var grav = frametime * server.Gravity * 0.05f;
+            var grav = frametime * Host.Server.Gravity * 0.05f;
             var dvel = 4 * frametime;
 
             while( true )
             {
                 var kill = _ActiveParticles;
-                if( kill != null && kill.die < client.cl.time )
+                if( kill != null && kill.die < Host.Client.cl.time )
                 {
                     _ActiveParticles = kill.next;
                     kill.next = _FreeParticles;
@@ -500,7 +500,7 @@ namespace SharpQuake
                 while( true )
                 {
                     var kill = p.next;
-                    if( kill != null && kill.die < client.cl.time )
+                    if( kill != null && kill.die < Host.Client.cl.time )
                     {
                         p.next = kill.next;
                         kill.next = _FreeParticles;

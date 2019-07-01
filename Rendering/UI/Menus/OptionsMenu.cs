@@ -133,7 +133,7 @@ namespace SharpQuake
             Host.Menu.DrawSlider( 220, 64, r );
 
             Host.Menu.Print( 16, 72, "           Mouse Speed" );
-            r = ( client.Sensitivity - 1 ) / 10;
+            r = ( Host.Client.Sensitivity - 1 ) / 10;
             Host.Menu.DrawSlider( 220, 72, r );
 
             Host.Menu.Print( 16, 80, "       CD Music Volume" );
@@ -145,16 +145,16 @@ namespace SharpQuake
             Host.Menu.DrawSlider( 220, 88, r );
 
             Host.Menu.Print( 16, 96, "            Always Run" );
-            Host.Menu.DrawCheckbox( 220, 96, client.ForwardSpeed > 200 );
+            Host.Menu.DrawCheckbox( 220, 96, Host.Client.ForwardSpeed > 200 );
 
             Host.Menu.Print( 16, 104, "          Invert Mouse" );
-            Host.Menu.DrawCheckbox( 220, 104, client.MPitch < 0 );
+            Host.Menu.DrawCheckbox( 220, 104, Host.Client.MPitch < 0 );
 
             Host.Menu.Print( 16, 112, "            Lookspring" );
-            Host.Menu.DrawCheckbox( 220, 112, client.LookSpring );
+            Host.Menu.DrawCheckbox( 220, 112, Host.Client.LookSpring );
 
             Host.Menu.Print( 16, 120, "            Lookstrafe" );
-            Host.Menu.DrawCheckbox( 220, 120, client.LookStrafe );
+            Host.Menu.DrawCheckbox( 220, 120, Host.Client.LookStrafe );
 
             /*if( VideoMenu != null )
                 Host.Menu.Print( 16, 128, "         Video Options" );*/
@@ -200,7 +200,7 @@ namespace SharpQuake
                     break;
 
                 case 5:	// mouse speed
-                    value = client.Sensitivity + dir * 0.5f;
+                    value = Host.Client.Sensitivity + dir * 0.5f;
                     if ( value < 1 )
                         value = 1;
                     if ( value > 11 )
@@ -227,7 +227,7 @@ namespace SharpQuake
                     break;
 
                 case 8:	// allways run
-                    if ( client.ForwardSpeed > 200 )
+                    if ( Host.Client.ForwardSpeed > 200 )
                     {
                         CVar.Set( "cl_forwardspeed", 200f );
                         CVar.Set( "cl_backspeed", 200f );
@@ -240,15 +240,15 @@ namespace SharpQuake
                     break;
 
                 case 9:	// invert mouse
-                    CVar.Set( "m_pitch", -client.MPitch );
+                    CVar.Set( "m_pitch", -Host.Client.MPitch );
                     break;
 
                 case 10:	// lookspring
-                    CVar.Set( "lookspring", !client.LookSpring ? 1f : 0f );
+                    CVar.Set( "lookspring", !Host.Client.LookSpring ? 1f : 0f );
                     break;
 
                 case 11:	// lookstrafe
-                    CVar.Set( "lookstrafe", !client.LookStrafe ? 1f : 0f );
+                    CVar.Set( "lookstrafe", !Host.Client.LookStrafe ? 1f : 0f );
                     break;
 
 #if _WIN32

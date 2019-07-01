@@ -28,15 +28,15 @@ namespace SharpQuake
 {
     partial class client
     {
-        // CHANGE
-        private static Host Host
+        // Instance
+        public Host Host
         {
             get;
-            set;
+            private set;
         }
 
         // CL_Init
-        public static void Init( Host host )
+        public void Initialise( Host host )
         {
             Host = host;
 
@@ -92,7 +92,7 @@ namespace SharpQuake
         /// <summary>
         /// CL_EstablishConnection
         /// </summary>
-        public static void EstablishConnection( String host )
+        public void EstablishConnection( String host )
         {
             if( cls.state == cactive_t.ca_dedicated )
                 return;
@@ -118,14 +118,14 @@ namespace SharpQuake
         ///
         /// Called to play the next demo in the demo loop
         /// </summary>
-        public static void NextDemo()
+        public void NextDemo()
         {
             if( cls.demonum == -1 )
                 return;		// don't play demos
 
             Scr.BeginLoadingPlaque();
 
-            if( String.IsNullOrEmpty( cls.demos[cls.demonum] ) || cls.demonum == MAX_DEMOS )
+            if( String.IsNullOrEmpty( cls.demos[cls.demonum] ) || cls.demonum == ClientDef.MAX_DEMOS )
             {
                 cls.demonum = 0;
                 if( String.IsNullOrEmpty( cls.demos[cls.demonum] ) )
@@ -143,14 +143,14 @@ namespace SharpQuake
         /// <summary>
         /// CL_AllocDlight
         /// </summary>
-        public static dlight_t AllocDlight( Int32 key )
+        public dlight_t AllocDlight( Int32 key )
         {
             dlight_t dl;
 
             // first look for an exact key match
             if( key != 0 )
             {
-                for( var i = 0; i < MAX_DLIGHTS; i++ )
+                for( var i = 0; i < ClientDef.MAX_DLIGHTS; i++ )
                 {
                     dl = _DLights[i];
                     if( dl.key == key )
@@ -164,7 +164,7 @@ namespace SharpQuake
 
             // then look for anything else
             //dl = cl_dlights;
-            for( var i = 0; i < MAX_DLIGHTS; i++ )
+            for( var i = 0; i < ClientDef.MAX_DLIGHTS; i++ )
             {
                 dl = _DLights[i];
                 if( dl.die < cl.time )
@@ -184,11 +184,11 @@ namespace SharpQuake
         /// <summary>
         /// CL_DecayLights
         /// </summary>
-        public static void DecayLights()
+        public void DecayLights()
         {
             var time = ( Single ) ( cl.time - cl.oldtime );
 
-            for( var i = 0; i < MAX_DLIGHTS; i++ )
+            for( var i = 0; i < ClientDef.MAX_DLIGHTS; i++ )
             {
                 var dl = _DLights[i];
                 if( dl.die < cl.time || dl.radius == 0 )
@@ -201,20 +201,20 @@ namespace SharpQuake
         }
 
         // CL_Disconnect_f
-        public static void Disconnect_f()
+        public void Disconnect_f()
         {
             Disconnect();
-            if( server.IsActive )
+            if( Host.Server.IsActive )
                 Host.ShutdownServer( false );
         }
 
         // CL_SendCmd
-        public static void SendCmd()
+        public void SendCmd()
         {
             if( cls.state != cactive_t.ca_connected )
                 return;
 
-            if( cls.signon == SIGNONS )
+            if( cls.signon == ClientDef.SIGNONS )
             {
                 var cmd = new usercmd_t();
 
@@ -225,7 +225,7 @@ namespace SharpQuake
                 MainWindow.Input.Move( cmd );
 
                 // send the unreliable message
-                client.SendMove( ref cmd );
+                Host.Client.SendMove( ref cmd );
             }
 
             if( cls.demoplayback )
@@ -253,7 +253,7 @@ namespace SharpQuake
         // CL_ReadFromServer
         //
         // Read all incoming data from the server
-        public static Int32 ReadFromServer()
+        public Int32 ReadFromServer()
         {
             cl.oldtime = cl.time;
             cl.time += Host.FrameTime;
@@ -289,7 +289,7 @@ namespace SharpQuake
         /// Sends a disconnect message to the server
         /// This is also called on Host_Error, so it shouldn't cause any errors
         /// </summary>
-        public static void Disconnect()
+        public void Disconnect()
         {
             // stop sounds (especially looping!)
             snd.StopAllSounds( true );
@@ -313,7 +313,7 @@ namespace SharpQuake
                 Host.Network.Close( cls.netcon );
 
                 cls.state = cactive_t.ca_disconnected;
-                if( server.sv.active )
+                if( Host.Server.sv.active )
                     Host.ShutdownServer( false );
             }
 
@@ -322,7 +322,7 @@ namespace SharpQuake
         }
 
         // CL_PrintEntities_f
-        private static void PrintEntities_f()
+        private void PrintEntities_f()
         {
             for( var i = 0; i < _State.num_entities; i++ )
             {
@@ -340,7 +340,7 @@ namespace SharpQuake
         /// <summary>
         /// CL_RelinkEntities
         /// </summary>
-        private static void RelinkEntities()
+        private void RelinkEntities()
         {
             // determine partial update time
             var frac = LerpPoint();
@@ -466,7 +466,7 @@ namespace SharpQuake
                 if( i == cl.viewentity && !Host.ChaseView.IsActive )
                     continue;
 
-                if( NumVisEdicts < MAX_VISEDICTS )
+                if( NumVisEdicts < ClientDef.MAX_VISEDICTS )
                 {
                     _VisEdicts[NumVisEdicts] = ent;
                     NumVisEdicts++;
@@ -479,7 +479,7 @@ namespace SharpQuake
         ///
         /// An svc_signonnum has been received, perform a client side setup
         /// </summary>
-        private static void SignonReply()
+        private void SignonReply()
         {
             Host.Console.DPrint( "CL_SignonReply: {0}\n", cls.signon );
 
@@ -516,9 +516,9 @@ namespace SharpQuake
         /// <summary>
         /// CL_ClearState
         /// </summary>
-        private static void ClearState()
+        private void ClearState()
         {
-            if( !server.sv.active )
+            if( !Host.Server.sv.active )
                 Host.ClearMemory();
 
             // wipe the entire cl structure
@@ -547,9 +547,9 @@ namespace SharpQuake
             // allocate the efrags and chain together into a free list
             //
             cl.free_efrags = _EFrags[0];// cl_efrags;
-            for( var i = 0; i < MAX_EFRAGS - 1; i++ )
+            for( var i = 0; i < ClientDef.MAX_EFRAGS - 1; i++ )
                 _EFrags[i].entnext = _EFrags[i + 1];
-            _EFrags[MAX_EFRAGS - 1].entnext = null;
+            _EFrags[ClientDef.MAX_EFRAGS - 1].entnext = null;
         }
 
         /// <summary>
@@ -557,10 +557,10 @@ namespace SharpQuake
         /// Determines the fraction between the last two messages that the objects
         /// should be put at.
         /// </summary>
-        private static Single LerpPoint()
+        private Single LerpPoint()
         {
             var f = cl.mtime[0] - cl.mtime[1];
-            if( f == 0 || _NoLerp.Value != 0 || cls.timedemo || server.IsActive )
+            if( f == 0 || _NoLerp.Value != 0 || cls.timedemo || Host.Server.IsActive )
             {
                 cl.time = cl.mtime[0];
                 return 1;

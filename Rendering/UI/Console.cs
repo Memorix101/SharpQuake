@@ -259,14 +259,14 @@ namespace SharpQuake
             if( !_IsInitialized )
                 return;
 
-            if( client.cls.state == cactive_t.ca_dedicated )
+            if( Host.Client.cls.state == cactive_t.ca_dedicated )
                 return;		// no graphics mode
 
             // write it to the scrollable buffer
             Print( msg );
 
             // update the screen if the console is displayed
-            if( client.cls.signon != client.SIGNONS && !Scr.IsDisabledForLoading )
+            if( Host.Client.cls.signon != ClientDef.SIGNONS && !Scr.IsDisabledForLoading )
                 Scr.UpdateScreen();
         }
 
@@ -365,7 +365,7 @@ namespace SharpQuake
         {
             if( Host.Keyboard.Destination == KeyDestination.key_console )
             {
-                if( client.cls.state == cactive_t.ca_connected )
+                if( Host.Client.cls.state == cactive_t.ca_connected )
                 {
                     Host.Keyboard.Destination = KeyDestination.key_game;
                     Host.Keyboard.Lines[Host.Keyboard.EditLine][1] = '\0';	// clear any typing

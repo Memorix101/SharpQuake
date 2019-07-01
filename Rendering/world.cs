@@ -27,7 +27,7 @@ using SharpQuake.Framework;
 
 namespace SharpQuake
 {
-    internal struct plane_t
+    public struct plane_t
     {
         public Vector3 normal;
         public System.Single dist;
@@ -40,7 +40,7 @@ namespace SharpQuake
         public const System.Int32 MOVE_MISSILE = 2;
     }
 
-    internal class trace_t
+    public class trace_t
     {
         public System.Boolean allsolid;	// if true, plane is not valid
         public System.Boolean startsolid;	// if true, the initial point was in a solid area

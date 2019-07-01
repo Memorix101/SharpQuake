@@ -126,7 +126,7 @@
     <Compile Include="Rendering\mesh.cs" />
     <Compile Include="Rendering\model.cs" />
     <Compile Include="Rendering\m_types.cs" />
-    <Compile Include="Networking\net.cs" />
+    <Compile Include="Networking\Network.cs" />
     <Compile Include="Networking\net_datagram.cs" />
     <Compile Include="Networking\net_loop.cs" />
     <Compile Include="Networking\net_tcp_ip.cs" />

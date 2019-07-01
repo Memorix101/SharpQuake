@@ -39,7 +39,7 @@ namespace SharpQuake
         /// possible, no move is done, false is returned, and
         /// pr_global_struct.trace_normal is set to the normal of the blocking wall
         /// </summary>
-        public static Boolean MoveStep( MemoryEdict ent, ref Vector3f move, Boolean relink )
+        public Boolean MoveStep( MemoryEdict ent, ref Vector3f move, Boolean relink )
         {
             trace_t trace;
 
@@ -149,7 +149,7 @@ namespace SharpQuake
         /// <summary>
         /// SV_CheckBottom
         /// </summary>
-        public static Boolean CheckBottom( MemoryEdict ent )
+        public Boolean CheckBottom( MemoryEdict ent )
         {
             Vector3f mins, maxs;
             MathLib.VectorAdd( ref ent.v.origin, ref ent.v.mins, out mins );
@@ -212,7 +212,7 @@ RealCheck:
         /// <summary>
         /// SV_MoveToGoal
         /// </summary>
-        public static void MoveToGoal()
+        public void MoveToGoal()
         {
             var ent = ProgToEdict( Host.Programs.GlobalStruct.self );
             var goal = ProgToEdict( ent.v.goalentity );
@@ -238,7 +238,7 @@ RealCheck:
         /// <summary>
         /// SV_CloseEnough
         /// </summary>
-        private static Boolean CloseEnough( MemoryEdict ent, MemoryEdict goal, Single dist )
+        private Boolean CloseEnough( MemoryEdict ent, MemoryEdict goal, Single dist )
         {
             if( goal.v.absmin.x > ent.v.absmax.x + dist )
                 return false;
@@ -261,7 +261,7 @@ RealCheck:
         /// SV_StepDirection
         /// Turns to the movement direction, and walks the current distance if facing it.
         /// </summary>
-        private static Boolean StepDirection( MemoryEdict ent, Single yaw, Single dist )
+        private Boolean StepDirection( MemoryEdict ent, Single yaw, Single dist )
         {
             ent.v.ideal_yaw = yaw;
             Host.ProgramsBuiltIn.PF_changeyaw();
@@ -292,7 +292,7 @@ RealCheck:
         /// <summary>
         /// SV_NewChaseDir
         /// </summary>
-        private static void NewChaseDir( MemoryEdict actor, MemoryEdict enemy, Single dist )
+        private void NewChaseDir( MemoryEdict actor, MemoryEdict enemy, Single dist )
         {
             var olddir = MathLib.AngleMod( ( Int32 ) ( actor.v.ideal_yaw / 45 ) * 45 );
             var turnaround = MathLib.AngleMod( olddir - 180 );
@@ -373,7 +373,7 @@ RealCheck:
         /// <summary>
         /// SV_FixCheckBottom
         /// </summary>
-        private static void FixCheckBottom( MemoryEdict ent )
+        private void FixCheckBottom( MemoryEdict ent )
         {
             ent.v.flags = ( Int32 ) ent.v.flags | EdictFlags.FL_PARTIALGROUND;
         }

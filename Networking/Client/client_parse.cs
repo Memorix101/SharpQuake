@@ -78,14 +78,14 @@ namespace SharpQuake
             "svc_cutscene"
         };
 
-        private static Int32[] _BitCounts = new Int32[16]; // bitcounts
-        private static Object _MsgState; // used by KeepaliveMessage function
-        private static Single _LastMsg; // static float lastmsg from CL_KeepaliveMessage
+        private Int32[] _BitCounts = new Int32[16]; // bitcounts
+        private Object _MsgState; // used by KeepaliveMessage function
+        private Single _LastMsg; // static float lastmsg from CL_KeepaliveMessage
 
         /// <summary>
         /// CL_ParseServerMessage
         /// </summary>
-        private static void ParseServerMessage()
+        private void ParseServerMessage()
         {
             //
             // if recording demos, copy the message out
@@ -322,7 +322,7 @@ namespace SharpQuake
             }
         }
 
-        private static void ShowNet( String s )
+        private void ShowNet( String s )
         {
             if( _ShowNet.Value == 2 )
                 Host.Console.Print( "{0,3}:{1}\n", Host.Network.Reader.Position - 1, s );
@@ -335,14 +335,14 @@ namespace SharpQuake
         /// If an entities model or origin changes from frame to frame, it must be
         /// relinked.  Other attributes can change without relinking.
         /// </summary>
-        private static void ParseUpdate( Int32 bits )
+        private void ParseUpdate( Int32 bits )
         {
             Int32 i;
 
-            if( cls.signon == SIGNONS - 1 )
+            if( cls.signon == ClientDef.SIGNONS - 1 )
             {
                 // first update is the final signon stage
-                cls.signon = SIGNONS;
+                cls.signon = ClientDef.SIGNONS;
                 SignonReply();
             }
 
@@ -482,7 +482,7 @@ namespace SharpQuake
         /// CL_ParseClientdata
         /// Server information pertaining to this client only
         /// </summary>
-        private static void ParseClientData( Int32 bits )
+        private void ParseClientData( Int32 bits )
         {
             if( ( bits & protocol.SU_VIEWHEIGHT ) != 0 )
                 cl.viewheight = Host.Network.Reader.ReadChar();
@@ -595,7 +595,7 @@ namespace SharpQuake
         /// <summary>
         /// CL_ParseServerInfo
         /// </summary>
-        private static void ParseServerInfo()
+        private void ParseServerInfo()
         {
             Host.Console.DPrint( "Serverinfo packet received.\n" );
 
@@ -710,7 +710,7 @@ namespace SharpQuake
         }
 
         // CL_ParseStartSoundPacket
-        private static void ParseStartSoundPacket()
+        private void ParseStartSoundPacket()
         {
             var field_mask = Host.Network.Reader.ReadByte();
             Int32 volume;
@@ -740,7 +740,7 @@ namespace SharpQuake
         }
 
         // CL_NewTranslation
-        private static void NewTranslation( Int32 slot )
+        private void NewTranslation( Int32 slot )
         {
             if( slot > cl.maxclients )
                 Utilities.Error( "CL_NewTranslation: slot > cl.maxclients" );
@@ -779,7 +779,7 @@ namespace SharpQuake
         /// </summary>
         /// <param name="num"></param>
         /// <returns></returns>
-        private static Entity EntityNum( Int32 num )
+        private Entity EntityNum( Int32 num )
         {
             if( num >= cl.num_entities )
             {
@@ -799,7 +799,7 @@ namespace SharpQuake
         /// CL_ParseBaseline
         /// </summary>
         /// <param name="ent"></param>
-        private static void ParseBaseline( Entity ent )
+        private void ParseBaseline( Entity ent )
         {
             ent.baseline.modelindex = Host.Network.Reader.ReadByte();
             ent.baseline.frame = Host.Network.Reader.ReadByte();
@@ -816,10 +816,10 @@ namespace SharpQuake
         /// <summary>
         /// CL_ParseStatic
         /// </summary>
-        private static void ParseStatic()
+        private void ParseStatic()
         {
             var i = cl.num_statics;
-            if( i >= MAX_STATIC_ENTITIES )
+            if( i >= ClientDef.MAX_STATIC_ENTITIES )
                 Host.Error( "Too many static entities" );
 
             var ent = _StaticEntities[i];
@@ -840,7 +840,7 @@ namespace SharpQuake
         /// <summary>
         /// CL_ParseStaticSound
         /// </summary>
-        private static void ParseStaticSound()
+        private void ParseStaticSound()
         {
             var org = Host.Network.Reader.ReadCoords();
             var sound_num = Host.Network.Reader.ReadByte();
@@ -855,9 +855,9 @@ namespace SharpQuake
         /// When the client is taking a long time to load stuff, send keepalive messages
         /// so the server doesn't disconnect.
         /// </summary>
-        private static void KeepaliveMessage()
+        private void KeepaliveMessage()
         {
-            if( server.IsActive )
+            if( Host.Server.IsActive )
                 return;	// no need if server is local
             if( cls.demoplayback )
                 return;

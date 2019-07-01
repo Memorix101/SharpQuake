@@ -61,7 +61,7 @@ namespace SharpQuake
         {
             Host = ( Host ) host;
 
-            if( client.cls.state == cactive_t.ca_dedicated )
+            if( Host.Client.cls.state == cactive_t.ca_dedicated )
                 return;// -1;
 
             _IsInitialised = true;
@@ -74,7 +74,7 @@ namespace SharpQuake
 
         public void SearchForHosts( Boolean xmit )
         {
-            if( !server.sv.active )
+            if( !Host.Server.sv.active )
                 return;
 
             Host.Network.HostCacheCount = 1;
@@ -83,9 +83,9 @@ namespace SharpQuake
             else
                 Host.Network.HostCache[0].name = Host.Network.HostName;
 
-            Host.Network.HostCache[0].map = server.sv.name;
+            Host.Network.HostCache[0].map = Host.Server.sv.name;
             Host.Network.HostCache[0].users = Host.Network.ActiveConnections;
-            Host.Network.HostCache[0].maxusers = server.svs.maxclients;
+            Host.Network.HostCache[0].maxusers = Host.Server.svs.maxclients;
             Host.Network.HostCache[0].driver = Host.Network.DriverLevel;
             Host.Network.HostCache[0].cname = "local";
         }

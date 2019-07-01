@@ -44,12 +44,12 @@ namespace SharpQuake
 
             _DlightFrameCount = _FrameCount + 1;	// because the count hasn't advanced yet for this frame
 
-            for( var i = 0; i < client.MAX_DLIGHTS; i++ )
+            for( var i = 0; i < ClientDef.MAX_DLIGHTS; i++ )
             {
-                var l = client.DLights[i];
-                if( l.die < client.cl.time || l.radius == 0 )
+                var l = Host.Client.DLights[i];
+                if( l.die < Host.Client.cl.time || l.radius == 0 )
                     continue;
-                render.MarkLights( l, 1 << i, client.cl.worldmodel.nodes[0] );
+                render.MarkLights( l, 1 << i, Host.Client.cl.worldmodel.nodes[0] );
             }
         }
 
@@ -79,7 +79,7 @@ namespace SharpQuake
             // mark the polygons
             for( var i = 0; i < n.numsurfaces; i++ )
             {
-                var surf = client.cl.worldmodel.surfaces[n.firstsurface + i];
+                var surf = Host.Client.cl.worldmodel.surfaces[n.firstsurface + i];
                 if( surf.dlightframe != _DlightFrameCount )
                 {
                     surf.dlightbits = 0;
@@ -111,10 +111,10 @@ namespace SharpQuake
             GL.Enable( EnableCap.Blend );
             GL.BlendFunc( BlendingFactor.One, BlendingFactor.One );
 
-            for( var i = 0; i < client.MAX_DLIGHTS; i++ )
+            for( var i = 0; i < ClientDef.MAX_DLIGHTS; i++ )
             {
-                var l = client.DLights[i];
-                if( l.die < client.cl.time || l.radius == 0 )
+                var l = Host.Client.DLights[i];
+                if( l.die < Host.Client.cl.time || l.radius == 0 )
                     continue;
 
                 RenderDlight( l );
@@ -135,15 +135,15 @@ namespace SharpQuake
             //
             // light animations
             // 'm' is normal light, 'a' is no light, 'z' is double bright
-            var i = ( Int32 ) ( client.cl.time * 10 );
+            var i = ( Int32 ) ( Host.Client.cl.time * 10 );
             for( var j = 0; j < QDef.MAX_LIGHTSTYLES; j++ )
             {
-                if( String.IsNullOrEmpty( client.LightStyle[j].map ) )
+                if( String.IsNullOrEmpty( Host.Client.LightStyle[j].map ) )
                 {
                     _LightStyleValue[j] = 256;
                     continue;
                 }
-                var map = client.LightStyle[j].map;
+                var map = Host.Client.LightStyle[j].map;
                 var k = i % map.Length;
                 k = map[k] - 'a';
                 k = k * 22;
@@ -156,13 +156,13 @@ namespace SharpQuake
         /// </summary>
         private static Int32 LightPoint( ref Vector3 p )
         {
-            if( client.cl.worldmodel.lightdata == null )
+            if( Host.Client.cl.worldmodel.lightdata == null )
                 return 255;
 
             var end = p;
             end.Z -= 2048;
 
-            var r = RecursiveLightPoint( client.cl.worldmodel.nodes[0], ref p, ref end );
+            var r = RecursiveLightPoint( Host.Client.cl.worldmodel.nodes[0], ref p, ref end );
             if( r == -1 )
                 r = 0;
 
@@ -202,7 +202,7 @@ namespace SharpQuake
             _LightSpot = mid;
             _LightPlane = plane;
 
-            var surf = client.cl.worldmodel.surfaces;
+            var surf = Host.Client.cl.worldmodel.surfaces;
             Int32 offset = n.firstsurface;
             for( var i = 0; i < n.numsurfaces; i++, offset++ )
             {

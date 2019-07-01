@@ -245,20 +245,20 @@ namespace SharpQuake
             _OldMouse.X = mx;
             _OldMouse.Y = my;
 
-            _Mouse *= client.Sensitivity;
+            _Mouse *= Host.Client.Sensitivity;
 
             // add mouse X/Y movement to cmd
-            if( client_input.StrafeBtn.IsDown || ( client.LookStrafe && client_input.MLookBtn.IsDown ) )
-                cmd.sidemove += client.MSide * _Mouse.X;
+            if( client_input.StrafeBtn.IsDown || ( Host.Client.LookStrafe && client_input.MLookBtn.IsDown ) )
+                cmd.sidemove += Host.Client.MSide * _Mouse.X;
             else
-                client.cl.viewangles.Y -= client.MYaw * _Mouse.X;
+                Host.Client.cl.viewangles.Y -= Host.Client.MYaw * _Mouse.X;
 
             Host.View.StopPitchDrift();
 
-            client.cl.viewangles.X += client.MPitch * _Mouse.Y;
+            Host.Client.cl.viewangles.X += Host.Client.MPitch * _Mouse.Y;
 
             // modernized to always use mouse look
-            client.cl.viewangles.X = MathHelper.Clamp( client.cl.viewangles.X, -70, 80 );
+            Host.Client.cl.viewangles.X = MathHelper.Clamp( Host.Client.cl.viewangles.X, -70, 80 );
 
             // if the mouse has moved, force it to the center, so there's room to move
             if( mx != 0 || my != 0 )

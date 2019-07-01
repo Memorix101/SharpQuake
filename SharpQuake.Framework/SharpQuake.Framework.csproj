@@ -58,6 +58,7 @@
     <Compile Include="Definitions\Bsp\ModelDef.cs" />
     <Compile Include="Definitions\Bsp\PlaneDef.cs" />
     <Compile Include="Definitions\Bsp\SideDef.cs" />
+    <Compile Include="Definitions\ClientDef.cs" />
     <Compile Include="Definitions\HostDef.cs" />
     <Compile Include="Definitions\KeysDef.cs" />
     <Compile Include="Definitions\NetworkDef.cs" />
@@ -98,7 +99,11 @@
     <Compile Include="Networking\INetDriver.cs" />
     <Compile Include="Networking\INetLanDriver.cs" />
     <Compile Include="Networking\NetworkWrapper.cs" />
+    <Compile Include="Networking\PacketHeader.cs" />
     <Compile Include="Networking\QuakeSocket.cs" />
+    <Compile Include="Networking\Server\AreaNode.cs" />
+    <Compile Include="Networking\Server\Server.cs" />
+    <Compile Include="Networking\Server\ServerStatic.cs" />
     <Compile Include="Rendering\EFrag.cs" />
     <Compile Include="Rendering\Entity.cs" />
     <Compile Include="Rendering\EntityEffects.cs" />

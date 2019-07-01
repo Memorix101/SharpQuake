@@ -110,7 +110,7 @@ namespace SharpQuake
 
             for( var j = 1; j < QDef.MAX_MODELS; j++ )
             {
-                var m = client.cl.model_precache[j];
+                var m = Host.Client.cl.model_precache[j];
                 if( m == null )
                     break;
 
@@ -348,7 +348,7 @@ namespace SharpQuake
             var lightmap = surf.sample_base;// surf.samples;
 
             // set to full bright if no light data
-            if( _FullBright.Value != 0 || client.cl.worldmodel.lightdata == null )
+            if( _FullBright.Value != 0 || Host.Client.cl.worldmodel.lightdata == null )
             {
                 for( var i = 0; i < size; i++ )
                     _BlockLights[i] = 255 * 256;
@@ -427,9 +427,9 @@ namespace SharpQuake
             var smax = ( surf.extents[0] >> 4 ) + 1;
             var tmax = ( surf.extents[1] >> 4 ) + 1;
             var tex = surf.texinfo;
-            var dlights = client.DLights;
+            var dlights = Host.Client.DLights;
 
-            for( var lnum = 0; lnum < client.MAX_DLIGHTS; lnum++ )
+            for( var lnum = 0; lnum < ClientDef.MAX_DLIGHTS; lnum++ )
             {
                 if( ( surf.dlightbits & ( 1 << lnum ) ) == 0 )
                     continue;		// not lit by this light
@@ -505,9 +505,9 @@ namespace SharpQuake
             }
             else
             {
-                for( var i = 0; i < client.cl.worldmodel.numtextures; i++ )
+                for( var i = 0; i < Host.Client.cl.worldmodel.numtextures; i++ )
                 {
-                    var t = client.cl.worldmodel.textures[i];
+                    var t = Host.Client.cl.worldmodel.textures[i];
                     if( t == null )
                         continue;
 
@@ -559,9 +559,9 @@ namespace SharpQuake
                 //memset(solid, 0xff, (cl.worldmodel->numleafs + 7) >> 3);
             }
             else
-                vis = Host.Model.LeafPVS( _ViewLeaf, client.cl.worldmodel );
+                vis = Host.Model.LeafPVS( _ViewLeaf, Host.Client.cl.worldmodel );
 
-            var world = client.cl.worldmodel;
+            var world = Host.Client.cl.worldmodel;
             for( var i = 0; i < world.numleafs; i++ )
             {
                 if( vis[i >> 3] != 0 & ( 1 << ( i & 7 ) ) != 0 )
@@ -584,7 +584,7 @@ namespace SharpQuake
         private static void DrawWorld()
         {
             _TempEnt.Clear();
-            _TempEnt.model = client.cl.worldmodel;
+            _TempEnt.model = Host.Client.cl.worldmodel;
 
             _ModelOrg = _RefDef.vieworg;
             _CurrentEntity = _TempEnt;
@@ -680,7 +680,7 @@ namespace SharpQuake
                 }
                 return;
             }
-            var world = client.cl.worldmodel;
+            var world = Host.Client.cl.worldmodel;
             for( var i = 0; i < world.numtextures; i++ )
             {
                 var t = world.textures[i];
@@ -887,7 +887,7 @@ namespace SharpQuake
 
             if( c != 0 )
             {
-                var surf = client.cl.worldmodel.surfaces;
+                var surf = Host.Client.cl.worldmodel.surfaces;
                 Int32 offset = n.firstsurface;
 
                 if( dot < 0 - QDef.BACKFACE_EPSILON )
@@ -907,7 +907,7 @@ namespace SharpQuake
                     // if sorting by texture, just store it out
                     if( _glTexSort.Value != 0 )
                     {
-                        if( !_IsMirror || surf[offset].texinfo.texture != client.cl.worldmodel.textures[_MirrorTextureNum] )
+                        if( !_IsMirror || surf[offset].texinfo.texture != Host.Client.cl.worldmodel.textures[_MirrorTextureNum] )
                         {
                             surf[offset].texturechain = surf[offset].texinfo.texture.texturechain;
                             surf[offset].texinfo.texture.texturechain = surf[offset];
@@ -1167,7 +1167,7 @@ namespace SharpQuake
             if( t.anim_total == 0 )
                 return t;
 
-            var reletive = ( Int32 ) ( client.cl.time * 10 ) % t.anim_total;
+            var reletive = ( Int32 ) ( Host.Client.cl.time * 10 ) % t.anim_total;
             var count = 0;
             while( t.anim_min > reletive || t.anim_max <= reletive )
             {
@@ -1268,12 +1268,12 @@ namespace SharpQuake
             // instanced model
             if( clmodel.firstmodelsurface != 0 && _glFlashBlend.Value == 0 )
             {
-                for( var k = 0; k < client.MAX_DLIGHTS; k++ )
+                for( var k = 0; k < ClientDef.MAX_DLIGHTS; k++ )
                 {
-                    if( ( client.DLights[k].die < client.cl.time ) || ( client.DLights[k].radius == 0 ) )
+                    if( ( Host.Client.DLights[k].die < Host.Client.cl.time ) || ( Host.Client.DLights[k].radius == 0 ) )
                         continue;
 
-                    MarkLights( client.DLights[k], 1 << k, clmodel.nodes[clmodel.hulls[0].firstclipnode] );
+                    MarkLights( Host.Client.DLights[k], 1 << k, clmodel.nodes[clmodel.hulls[0].firstclipnode] );
                 }
             }
 

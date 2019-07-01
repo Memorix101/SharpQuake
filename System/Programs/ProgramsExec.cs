@@ -153,7 +153,7 @@ namespace SharpQuake
             if( fnum < 1 || fnum >= _Functions.Length )
             {
                 if( GlobalStruct.self != 0 )
-                    Print( server.ProgToEdict( GlobalStruct.self ) );
+                    Print( Host.Server.ProgToEdict( GlobalStruct.self ) );
                 Host.Error( "PR_ExecuteProgram: NULL function" );
             }
 
@@ -283,7 +283,7 @@ namespace SharpQuake
                         break;
 
                     case ProgramOperator.OP_NOT_ENT:
-                        c->_float = ( server.ProgToEdict( a->edict ) == server.sv.edicts[0] ) ? 1 : 0;
+                        c->_float = ( Host.Server.ProgToEdict( a->edict ) == Host.Server.sv.edicts[0] ) ? 1 : 0;
                         break;
 
                     case ProgramOperator.OP_EQ_F:
@@ -358,8 +358,8 @@ namespace SharpQuake
                         break;
 
                     case ProgramOperator.OP_ADDRESS:
-                        ed = server.ProgToEdict( a->edict );
-                        if( ed == server.sv.edicts[0] && server.IsActive )
+                        ed = Host.Server.ProgToEdict( a->edict );
+                        if( ed == Host.Server.sv.edicts[0] && Host.Server.IsActive )
                             RunError( "assignment to world entity" );
                         c->_int = MakeAddr( a->edict, b->_int );
                         break;
@@ -369,12 +369,12 @@ namespace SharpQuake
                     case ProgramOperator.OP_LOAD_ENT:
                     case ProgramOperator.OP_LOAD_S:
                     case ProgramOperator.OP_LOAD_FNC:
-                        ed = server.ProgToEdict( a->edict );
+                        ed = Host.Server.ProgToEdict( a->edict );
                         ed.LoadInt( b->_int, c );
                         break;
 
                     case ProgramOperator.OP_LOAD_V:
-                        ed = server.ProgToEdict( a->edict );
+                        ed = Host.Server.ProgToEdict( a->edict );
                         ed.LoadVector( b->_int, c );
                         break;
 
@@ -434,7 +434,7 @@ namespace SharpQuake
                         break;
 
                     case ProgramOperator.OP_STATE:
-                        ed = server.ProgToEdict( GlobalStruct.self );
+                        ed = Host.Server.ProgToEdict( GlobalStruct.self );
 #if FPS_20
                         ed->v.nextthink = pr_global_struct->time + 0.05;
 #else
@@ -473,7 +473,7 @@ namespace SharpQuake
         {
             var prog = ( addr >> 16 ) & 0xFFFF;
             ofs = addr & 0xFFFF;
-            return server.ProgToEdict( prog );
+            return Host.Server.ProgToEdict( prog );
         }
 
         // PR_Profile_f

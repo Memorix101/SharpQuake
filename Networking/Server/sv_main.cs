@@ -28,18 +28,18 @@ namespace SharpQuake
 {
     partial class server
     {
-        private static Int32 _FatBytes; // fatbytes
-        private static Byte[] _FatPvs = new Byte[BspDef.MAX_MAP_LEAFS / 8]; // fatpvs
+        private Int32 _FatBytes; // fatbytes
+        private Byte[] _FatPvs = new Byte[BspDef.MAX_MAP_LEAFS / 8]; // fatpvs
 
-        // CHANGE
-        private static Host Host
+        // Instances
+        private Host Host
         {
             get;
             set;
         }
 
         // SV_Init
-        public static void Init( Host host )
+        public void Initialise( Host host )
         {
             Host = host;
 
@@ -78,7 +78,7 @@ namespace SharpQuake
         /// SV_StartParticle
         /// Make sure the event gets sent to all clients
         /// </summary>
-        public static void StartParticle( ref Vector3 org, ref Vector3 dir, Int32 color, Int32 count )
+        public void StartParticle( ref Vector3 org, ref Vector3 dir, Int32 color, Int32 count )
         {
             if( sv.datagram.Length > QDef.MAX_DATAGRAM - 16 )
                 return;
@@ -109,7 +109,7 @@ namespace SharpQuake
         /// An attenuation of 0 will play full volume everywhere in the level.
         /// Larger attenuations will drop off.  (max 4 attenuation)
         /// </summary>
-        public static void StartSound( MemoryEdict entity, Int32 channel, String sample, Int32 volume, Single attenuation )
+        public void StartSound( MemoryEdict entity, Int32 channel, String sample, Int32 volume, Single attenuation )
         {
             if( volume < 0 || volume > 255 )
                 Utilities.Error( "SV_StartSound: volume = {0}", volume );
@@ -167,7 +167,7 @@ namespace SharpQuake
         /// Called when the player is getting totally kicked off the host
         /// if (crash = true), don't bother sending signofs
         /// </summary>
-        public static void DropClient( Boolean crash )
+        public void DropClient( Boolean crash )
         {
             var client = Host.HostClient;
 
@@ -205,9 +205,9 @@ namespace SharpQuake
             Host.Network.ActiveConnections--;
 
             // send notification to all clients
-            for( var i = 0; i < SharpQuake.server.svs.maxclients; i++ )
+            for( var i = 0; i < svs.maxclients; i++ )
             {
-                var cl = SharpQuake.server.svs.clients[i];
+                var cl = svs.clients[i];
                 if( !cl.active )
                     continue;
 
@@ -226,7 +226,7 @@ namespace SharpQuake
         /// <summary>
         /// SV_SendClientMessages
         /// </summary>
-        public static void SendClientMessages()
+        public void SendClientMessages()
         {
             // update frags, names, etc
             UpdateToReliableMessages();
@@ -294,7 +294,7 @@ namespace SharpQuake
         /// <summary>
         /// SV_ClearDatagram
         /// </summary>
-        public static void ClearDatagram()
+        public void ClearDatagram()
         {
             sv.datagram.Clear();
         }
@@ -302,7 +302,7 @@ namespace SharpQuake
         /// <summary>
         /// SV_ModelIndex
         /// </summary>
-        public static Int32 ModelIndex( String name )
+        public Int32 ModelIndex( String name )
         {
             if( String.IsNullOrEmpty( name ) )
                 return 0;
@@ -322,7 +322,7 @@ namespace SharpQuake
         /// Sends text across to be displayed
         /// FIXME: make this just a stuffed echo?
         /// </summary>
-        public static void ClientPrint( String fmt, params Object[] args )
+        public void ClientPrint( String fmt, params Object[] args )
         {
             var tmp = String.Format( fmt, args );
             Host.HostClient.message.WriteByte( protocol.svc_print );
@@ -332,7 +332,7 @@ namespace SharpQuake
         /// <summary>
         /// SV_BroadcastPrint
         /// </summary>
-        public static void BroadcastPrint( String fmt, params Object[] args )
+        public void BroadcastPrint( String fmt, params Object[] args )
         {
             var tmp = args.Length > 0 ? String.Format( fmt, args ) : fmt;
             for( var i = 0; i < svs.maxclients; i++ )
@@ -347,7 +347,7 @@ namespace SharpQuake
         /// <summary>
         /// SV_WriteClientdataToMessage
         /// </summary>
-        public static void WriteClientDataToMessage( MemoryEdict ent, MessageWriter msg )
+        public void WriteClientDataToMessage( MemoryEdict ent, MessageWriter msg )
         {
             //
             // send a damage message
@@ -492,7 +492,7 @@ namespace SharpQuake
         /// <summary>
         /// SV_CheckForNewClients
         /// </summary>
-        public static void CheckForNewClients()
+        public void CheckForNewClients()
         {
             //
             // check for new connections
@@ -525,13 +525,13 @@ namespace SharpQuake
         /// Grabs the current state of each client for saving across the
         /// transition to another level
         /// </summary>
-        public static void SaveSpawnparms()
+        public void SaveSpawnparms()
         {
-            SharpQuake.server.svs.serverflags = ( Int32 ) Host.Programs.GlobalStruct.serverflags;
+            svs.serverflags = ( Int32 ) Host.Programs.GlobalStruct.serverflags;
 
             for( var i = 0; i < svs.maxclients; i++ )
             {
-                Host.HostClient = SharpQuake.server.svs.clients[i];
+                Host.HostClient = svs.clients[i];
                 if( !Host.HostClient.active )
                     continue;
 
@@ -545,7 +545,7 @@ namespace SharpQuake
         /// <summary>
         /// SV_SpawnServer
         /// </summary>
-        public static void SpawnServer( String server )
+        public void SpawnServer( String server )
         {
             // let's not have any servers with no name
             if( String.IsNullOrEmpty( Host.Network.HostName ) )
@@ -691,7 +691,7 @@ namespace SharpQuake
         /// <summary>
         /// SV_CleanupEnts
         /// </summary>
-        private static void CleanupEnts()
+        private void CleanupEnts()
         {
             for( var i = 1; i < sv.num_edicts; i++ )
             {
@@ -705,7 +705,7 @@ namespace SharpQuake
         /// Send a nop message without trashing or sending the accumulated client
         /// message buffer
         /// </summary>
-        private static void SendNop( client_t client )
+        private void SendNop( client_t client )
         {
             var msg = new MessageWriter( 4 );
             msg.WriteChar( protocol.svc_nop );
@@ -718,7 +718,7 @@ namespace SharpQuake
         /// <summary>
         /// SV_SendClientDatagram
         /// </summary>
-        private static Boolean SendClientDatagram( client_t client )
+        private Boolean SendClientDatagram( client_t client )
         {
             var msg = new MessageWriter( QDef.MAX_DATAGRAM ); // Uze todo: make static?
 
@@ -747,7 +747,7 @@ namespace SharpQuake
         /// <summary>
         /// SV_WriteEntitiesToClient
         /// </summary>
-        private static void WriteEntitiesToClient( MemoryEdict clent, MessageWriter msg )
+        private void WriteEntitiesToClient( MemoryEdict clent, MessageWriter msg )
         {
             // find the client's PVS
             var org = Utilities.ToVector( ref clent.v.origin ) + Utilities.ToVector( ref clent.v.view_ofs );
@@ -866,7 +866,7 @@ namespace SharpQuake
         /// Calculates a PVS that is the inclusive or of all leafs within 8 pixels of the
         /// given point.
         /// </summary>
-        private static Byte[] FatPVS( ref Vector3 org )
+        private Byte[] FatPVS( ref Vector3 org )
         {
             _FatBytes = ( sv.worldmodel.numleafs + 31 ) >> 3;
             Array.Clear( _FatPvs, 0, _FatPvs.Length );
@@ -881,7 +881,7 @@ namespace SharpQuake
         /// entity that should be visible to not show up, especially when the bob
         /// crosses a waterline.
         /// </summary>
-        private static void AddToFatPVS( ref Vector3 org, MemoryNodeBase node )
+        private void AddToFatPVS( ref Vector3 org, MemoryNodeBase node )
         {
             while( true )
             {
@@ -915,7 +915,7 @@ namespace SharpQuake
         /// <summary>
         /// SV_UpdateToReliableMessages
         /// </summary>
-        private static void UpdateToReliableMessages()
+        private void UpdateToReliableMessages()
         {
             // check for changes to be sent over the reliable streams
             for( var i = 0; i < svs.maxclients; i++ )
@@ -954,7 +954,7 @@ namespace SharpQuake
         /// Initializes a client_t for a new net connection.  This will only be called
         /// once for a player each game, not once for each level change.
         /// </summary>
-        private static void ConnectClient( Int32 clientnum )
+        private void ConnectClient( Int32 clientnum )
         {
             var client = svs.clients[clientnum];
 
@@ -996,7 +996,7 @@ namespace SharpQuake
             SendServerInfo( client );
         }
 
-        private static void AssignGlobalSpawnparams( client_t client )
+        private void AssignGlobalSpawnparams( client_t client )
         {
             client.spawn_parms[0] = Host.Programs.GlobalStruct.parm1;
             client.spawn_parms[1] = Host.Programs.GlobalStruct.parm2;
@@ -1024,7 +1024,7 @@ namespace SharpQuake
         /// Sends the first message from the server to a connected client.
         /// This will be sent on the initial connection and upon each server load.
         /// </summary>
-        private static void SendServerInfo( client_t client )
+        private void SendServerInfo( client_t client )
         {
             var writer = client.message;
 
@@ -1082,7 +1082,7 @@ namespace SharpQuake
         /// SV_SendReconnect
         /// Tell all the clients that the server is changing levels
         /// </summary>
-        private static void SendReconnect()
+        private void SendReconnect()
         {
             var msg = new MessageWriter( 128 );
 
@@ -1090,14 +1090,14 @@ namespace SharpQuake
             msg.WriteString( "reconnect\n" );
             Host.Network.SendToAll( msg, 5 );
 
-            if( client.cls.state != cactive_t.ca_dedicated )
+            if( Host.Client.cls.state != cactive_t.ca_dedicated )
                 Host.Command.ExecuteString( "reconnect\n", CommandSource.src_command );
         }
 
         /// <summary>
         /// SV_CreateBaseline
         /// </summary>
-        private static void CreateBaseline()
+        private void CreateBaseline()
         {
             for( var entnum = 0; entnum < sv.num_edicts; entnum++ )
             {

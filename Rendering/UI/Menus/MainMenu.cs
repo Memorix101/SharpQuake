@@ -19,8 +19,8 @@ namespace SharpQuake
         {
             if ( host.Keyboard.Destination != KeyDestination.key_menu )
             {
-                _SaveDemoNum = client.cls.demonum;
-                client.cls.demonum = -1;
+                _SaveDemoNum = host.Client.cls.demonum;
+                host.Client.cls.demonum = -1;
             }
 
             base.Show( host );
@@ -36,9 +36,9 @@ namespace SharpQuake
                 case KeysDef.K_ESCAPE:
                     //Host.Keyboard.Destination = keydest_t.key_game;
                     MenuBase.CurrentMenu.Hide( );
-                    client.cls.demonum = _SaveDemoNum;
-                    if ( client.cls.demonum != -1 && !client.cls.demoplayback && client.cls.state != cactive_t.ca_connected )
-                        client.NextDemo( );
+                    Host.Client.cls.demonum = _SaveDemoNum;
+                    if ( Host.Client.cls.demonum != -1 && !Host.Client.cls.demoplayback && Host.Client.cls.state != cactive_t.ca_connected )
+                        Host.Client.NextDemo( );
                     break;
 
                 case KeysDef.K_DOWNARROW:

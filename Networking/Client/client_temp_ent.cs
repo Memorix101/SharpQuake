@@ -30,20 +30,20 @@ namespace SharpQuake
 {
     partial class client
     {
-        private static Int32 _NumTempEntities; // num_temp_entities
-        private static Entity[] _TempEntities = new Entity[MAX_TEMP_ENTITIES]; // cl_temp_entities[MAX_TEMP_ENTITIES]
-        private static beam_t[] _Beams = new beam_t[MAX_BEAMS]; // cl_beams[MAX_BEAMS]
+        private Int32 _NumTempEntities; // num_temp_entities
+        private Entity[] _TempEntities = new Entity[ClientDef.MAX_TEMP_ENTITIES]; // cl_temp_entities[MAX_TEMP_ENTITIES]
+        private beam_t[] _Beams = new beam_t[ClientDef.MAX_BEAMS]; // cl_beams[MAX_BEAMS]
 
-        private static sfx_t _SfxWizHit; // cl_sfx_wizhit
-        private static sfx_t _SfxKnigtHit; // cl_sfx_knighthit
-        private static sfx_t _SfxTink1; // cl_sfx_tink1
-        private static sfx_t _SfxRic1; // cl_sfx_ric1
-        private static sfx_t _SfxRic2; // cl_sfx_ric2
-        private static sfx_t _SfxRic3; // cl_sfx_ric3
-        private static sfx_t _SfxRExp3; // cl_sfx_r_exp3
+        private sfx_t _SfxWizHit; // cl_sfx_wizhit
+        private sfx_t _SfxKnigtHit; // cl_sfx_knighthit
+        private sfx_t _SfxTink1; // cl_sfx_tink1
+        private sfx_t _SfxRic1; // cl_sfx_ric1
+        private sfx_t _SfxRic2; // cl_sfx_ric2
+        private sfx_t _SfxRic3; // cl_sfx_ric3
+        private sfx_t _SfxRExp3; // cl_sfx_r_exp3
 
         // CL_InitTEnts
-        private static void InitTempEntities()
+        private void InitTempEntities()
         {
             _SfxWizHit = snd.PrecacheSound( "wizard/hit.wav" );
             _SfxKnigtHit = snd.PrecacheSound( "hknight/hit.wav" );
@@ -61,12 +61,12 @@ namespace SharpQuake
         }
 
         // CL_UpdateTEnts
-        private static void UpdateTempEntities()
+        private void UpdateTempEntities()
         {
             _NumTempEntities = 0;
 
             // update lightning
-            for( var i = 0; i < MAX_BEAMS; i++ )
+            for( var i = 0; i < ClientDef.MAX_BEAMS; i++ )
             {
                 var b = _Beams[i];
                 if( b.model == null || b.endtime < cl.time )
@@ -129,11 +129,11 @@ namespace SharpQuake
         /// <summary>
         /// CL_NewTempEntity
         /// </summary>
-        private static Entity NewTempEntity()
+        private Entity NewTempEntity()
         {
-            if( NumVisEdicts == MAX_VISEDICTS )
+            if( NumVisEdicts == ClientDef.MAX_VISEDICTS )
                 return null;
-            if( _NumTempEntities == MAX_TEMP_ENTITIES )
+            if( _NumTempEntities == ClientDef.MAX_TEMP_ENTITIES )
                 return null;
 
             var ent = _TempEntities[_NumTempEntities];
@@ -149,7 +149,7 @@ namespace SharpQuake
         /// <summary>
         /// CL_ParseTEnt
         /// </summary>
-        private static void ParseTempEntity()
+        private void ParseTempEntity()
         {
             Vector3 pos;
             dlight_t dl;
@@ -218,7 +218,7 @@ namespace SharpQuake
                     dl = AllocDlight( 0 );
                     dl.origin = pos;
                     dl.radius = 350;
-                    dl.die = ( Single ) client.cl.time + 0.5f;
+                    dl.die = ( Single ) cl.time + 0.5f;
                     dl.decay = 300;
                     snd.StartSound( -1, 0, _SfxRExp3, ref pos, 1, 1 );
                     break;
@@ -279,7 +279,7 @@ namespace SharpQuake
         /// <summary>
         /// CL_ParseBeam
         /// </summary>
-        private static void ParseBeam( Model m )
+        private void ParseBeam( Model m )
         {
             var ent = Host.Network.Reader.ReadShort();
 
@@ -287,7 +287,7 @@ namespace SharpQuake
             var end = Host.Network.Reader.ReadCoords();
 
             // override any beam with the same entity
-            for( var i = 0; i < MAX_BEAMS; i++ )
+            for( var i = 0; i < ClientDef.MAX_BEAMS; i++ )
             {
                 var b = _Beams[i];
                 if( b.entity == ent )
@@ -302,7 +302,7 @@ namespace SharpQuake
             }
 
             // find a free beam
-            for( var i = 0; i < MAX_BEAMS; i++ )
+            for( var i = 0; i < ClientDef.MAX_BEAMS; i++ )
             {
                 var b = _Beams[i];
                 if( b.model == null || b.endtime < cl.time )

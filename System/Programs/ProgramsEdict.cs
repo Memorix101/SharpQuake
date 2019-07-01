@@ -261,8 +261,8 @@ namespace SharpQuake
         // For debugging, prints all the entities in the current server
         public void PrintEdicts()
         {
-            Host.Console.Print( "{0} entities\n", server.sv.num_edicts );
-            for( var i = 0; i < server.sv.num_edicts; i++ )
+            Host.Console.Print( "{0} entities\n", Host.Server.sv.num_edicts );
+            for( var i = 0; i < Host.Server.sv.num_edicts; i++ )
                 PrintNum( i );
         }
 
@@ -301,7 +301,7 @@ namespace SharpQuake
         {
             MemoryEdict ent = null;
             var inhibit = 0;
-            Host.Programs.GlobalStruct.time = ( Single ) server.sv.time;
+            Host.Programs.GlobalStruct.time = ( Single ) Host.Server.sv.time;
 
             // parse ents
             while( true )
@@ -315,9 +315,9 @@ namespace SharpQuake
                     Utilities.Error( "ED_LoadFromFile: found {0} when expecting {", Tokeniser.Token );
 
                 if( ent == null )
-                    ent = server.EdictNum( 0 );
+                    ent = Host.Server.EdictNum( 0 );
                 else
-                    ent = server.AllocEdict();
+                    ent = Host.Server.AllocEdict();
                 data = ParseEdict( data, ent );
 
                 // remove things from different skill levels or deathmatch
@@ -325,7 +325,7 @@ namespace SharpQuake
                 {
                     if( ( ( Int32 ) ent.v.spawnflags & SpawnFlags.SPAWNFLAG_NOT_DEATHMATCH ) != 0 )
                     {
-                        server.FreeEdict( ent );
+                        Host.Server.FreeEdict( ent );
                         inhibit++;
                         continue;
                     }
@@ -334,7 +334,7 @@ namespace SharpQuake
                     ( Host.CurrentSkill == 1 && ( ( Int32 ) ent.v.spawnflags & SpawnFlags.SPAWNFLAG_NOT_MEDIUM ) != 0 ) ||
                     ( Host.CurrentSkill >= 2 && ( ( Int32 ) ent.v.spawnflags & SpawnFlags.SPAWNFLAG_NOT_HARD ) != 0 ) )
                 {
-                    server.FreeEdict( ent );
+                    Host.Server.FreeEdict( ent );
                     inhibit++;
                     continue;
                 }
@@ -346,7 +346,7 @@ namespace SharpQuake
                 {
                     Host.Console.Print( "No classname for:\n" );
                     Print( ent );
-                    server.FreeEdict( ent );
+                    Host.Server.FreeEdict( ent );
                     continue;
                 }
 
@@ -356,11 +356,11 @@ namespace SharpQuake
                 {
                     Host.Console.Print( "No spawn function for:\n" );
                     Print( ent );
-                    server.FreeEdict( ent );
+                    Host.Server.FreeEdict( ent );
                     continue;
                 }
 
-                GlobalStruct.self = server.EdictToProg( ent );
+                GlobalStruct.self = Host.Server.EdictToProg( ent );
                 Execute( func );
             }
 
@@ -378,7 +378,7 @@ namespace SharpQuake
             var init = false;
 
             // clear it
-            if( ent != server.sv.edicts[0] )	// hack
+            if( ent != Host.Server.sv.edicts[0] )	// hack
                 ent.Clear();
 
             // go through all the dictionary pairs
@@ -461,7 +461,7 @@ namespace SharpQuake
                 return;
             }
 
-            Host.Console.Print( "\nEDICT {0}:\n", server.NumForEdict( ed ) );
+            Host.Console.Print( "\nEDICT {0}:\n", Host.Server.NumForEdict( ed ) );
             for( var i = 1; i < _Progs.numfielddefs; i++ )
             {
                 var d = _FieldDefs[i];
@@ -724,20 +724,20 @@ namespace SharpQuake
         /// </summary>
         public void PrintNum( Int32 ent )
         {
-            Print( server.EdictNum( ent ) );
+            Print( Host.Server.EdictNum( ent ) );
         }
 
         private void Test5_f()
         {
-            var p = client.ViewEntity;
+            var p = Host.Client.ViewEntity;
             if( p == null )
                 return;
 
             var org = p.origin;
 
-            for( var i = 0; i < server.sv.edicts.Length; i++ )
+            for( var i = 0; i < Host.Server.sv.edicts.Length; i++ )
             {
-                var ed = server.sv.edicts[i];
+                var ed = Host.Server.sv.edicts[i];
 
                 if( ed.free )
                     continue;
@@ -775,7 +775,7 @@ namespace SharpQuake
         private void PrintEdict_f()
         {
             var i = MathLib.atoi( Host.Command.Argv( 1 ) );
-            if( i >= server.sv.num_edicts )
+            if( i >= Host.Server.sv.num_edicts )
             {
                 Host.Console.Print( "Bad edict number\n" );
                 return;
@@ -790,9 +790,9 @@ namespace SharpQuake
         {
             Int32 active = 0, models = 0, solid = 0, step = 0;
 
-            for( var i = 0; i < server.sv.num_edicts; i++ )
+            for( var i = 0; i < Host.Server.sv.num_edicts; i++ )
             {
-                var ent = server.EdictNum( i );
+                var ent = Host.Server.EdictNum( i );
                 if( ent.free )
                     continue;
                 active++;
@@ -804,7 +804,7 @@ namespace SharpQuake
                     step++;
             }
 
-            Host.Console.Print( "num_edicts:{0}\n", server.sv.num_edicts );
+            Host.Console.Print( "num_edicts:{0}\n", Host.Server.sv.num_edicts );
             Host.Console.Print( "active    :{0}\n", active );
             Host.Console.Print( "view      :{0}\n", models );
             Host.Console.Print( "touch     :{0}\n", solid );
@@ -883,7 +883,7 @@ namespace SharpQuake
                     break;
 
                 case EdictType.ev_entity:
-                    *( Int32* )d = server.EdictToProg( server.EdictNum( MathLib.atoi( s ) ) );
+                    *( Int32* )d = Host.Server.EdictToProg( Host.Server.EdictNum( MathLib.atoi( s ) ) );
                     break;
 
                 case EdictType.ev_field:
@@ -996,7 +996,7 @@ namespace SharpQuake
                     break;
 
                 case EdictType.ev_entity:
-                    result = "entity " + server.NumForEdict( server.ProgToEdict( *( Int32* )val ) );
+                    result = "entity " + Host.Server.NumForEdict( Host.Server.ProgToEdict( *( Int32* )val ) );
                     break;
 
                 case EdictType.ev_function:
@@ -1105,7 +1105,7 @@ namespace SharpQuake
                     break;
 
                 case EdictType.ev_entity:
-                    result = server.NumForEdict( server.ProgToEdict( val->edict ) ).ToString();
+                    result = Host.Server.NumForEdict( Host.Server.ProgToEdict( val->edict ) ).ToString();
                     break;
 
                 case EdictType.ev_function:

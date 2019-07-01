@@ -28,7 +28,7 @@ namespace SharpQuake
 {
     partial class server
     {
-        public static MemoryEdict Player
+        public MemoryEdict Player
         {
             get
             {
@@ -38,27 +38,27 @@ namespace SharpQuake
 
         private const Int32 MAX_FORWARD = 6;
 
-        private static MemoryEdict _Player; // sv_player
-        private static Boolean _OnGround; // onground
+        private MemoryEdict _Player; // sv_player
+        private Boolean _OnGround; // onground
 
         // world
         //static v3f angles - this must be a reference to _Player.v.angles
         //static v3f origin  - this must be a reference to _Player.v.origin
         //static Vector3 velocity - this must be a reference to _Player.v.velocity
 
-        private static usercmd_t _Cmd; // cmd
+        private usercmd_t _Cmd; // cmd
 
-        private static Vector3 _Forward; // forward
-        private static Vector3 _Right; // right
-        private static Vector3 _Up; // up
+        private Vector3 _Forward; // forward
+        private Vector3 _Right; // right
+        private Vector3 _Up; // up
 
-        private static Vector3 _WishDir; // wishdir
-        private static Single _WishSpeed; // wishspeed
+        private Vector3 _WishDir; // wishdir
+        private Single _WishSpeed; // wishspeed
 
         /// <summary>
         /// SV_RunClients
         /// </summary>
-        public static void RunClients()
+        public void RunClients()
         {
             for( var i = 0; i < svs.maxclients; i++ )
             {
@@ -90,7 +90,7 @@ namespace SharpQuake
         /// <summary>
         /// SV_SetIdealPitch
         /// </summary>
-        public static void SetIdealPitch()
+        public void SetIdealPitch()
         {
             if( ( ( Int32 ) _Player.v.flags & EdictFlags.FL_ONGROUND ) == 0 )
                 return;
@@ -149,7 +149,7 @@ namespace SharpQuake
         /// SV_ReadClientMessage
         /// Returns false if the client should be killed
         /// </summary>
-        private static Boolean ReadClientMessage()
+        private Boolean ReadClientMessage()
         {
             while( true )
             {
@@ -262,7 +262,7 @@ namespace SharpQuake
         /// <summary>
         /// SV_ReadClientMove
         /// </summary>
-        private static void ReadClientMove( ref usercmd_t move )
+        private void ReadClientMove( ref usercmd_t move )
         {
             var client = Host.HostClient;
 
@@ -294,7 +294,7 @@ namespace SharpQuake
         /// the move fields specify an intended velocity in pix/sec
         /// the angle fields specify an exact angular motion in degrees
         /// </summary>
-        private static void ClientThink()
+        private void ClientThink()
         {
             if( _Player.v.movetype == Movetypes.MOVETYPE_NONE )
                 return;
@@ -342,7 +342,7 @@ namespace SharpQuake
             AirMove();
         }
 
-        private static void DropPunchAngle()
+        private void DropPunchAngle()
         {
             var v = Utilities.ToVector( ref _Player.v.punchangle );
             var len = MathLib.Normalize( ref v ) - 10 * Host.FrameTime;
@@ -355,7 +355,7 @@ namespace SharpQuake
         /// <summary>
         /// SV_WaterJump
         /// </summary>
-        private static void WaterJump()
+        private void WaterJump()
         {
             if( sv.time > _Player.v.teleport_time || _Player.v.waterlevel == 0 )
             {
@@ -369,7 +369,7 @@ namespace SharpQuake
         /// <summary>
         /// SV_WaterMove
         /// </summary>
-        private static void WaterMove()
+        private void WaterMove()
         {
             //
             // user intentions
@@ -429,7 +429,7 @@ namespace SharpQuake
         /// <summary>
         /// SV_AirMove
         /// </summary>
-        private static void AirMove()
+        private void AirMove()
         {
             var pangles = Utilities.ToVector( ref _Player.v.angles );
             MathLib.AngleVectors( ref pangles, out _Forward, out _Right, out _Up );
@@ -475,7 +475,7 @@ namespace SharpQuake
         /// <summary>
         /// SV_UserFriction
         /// </summary>
-        private static void UserFriction()
+        private void UserFriction()
         {
             var speed = MathLib.LengthXY( ref _Player.v.velocity );
             if( speed == 0 )
@@ -507,7 +507,7 @@ namespace SharpQuake
         /// <summary>
         /// SV_Accelerate
         /// </summary>
-        private static void Accelerate()
+        private void Accelerate()
         {
             var currentspeed = Vector3.Dot( Utilities.ToVector( ref _Player.v.velocity ), _WishDir );
             var addspeed = _WishSpeed - currentspeed;
@@ -526,7 +526,7 @@ namespace SharpQuake
         /// <summary>
         /// SV_AirAccelerate
         /// </summary>
-        private static void AirAccelerate( Vector3 wishveloc )
+        private void AirAccelerate( Vector3 wishveloc )
         {
             var wishspd = MathLib.Normalize( ref wishveloc );
             if( wishspd > 30 )

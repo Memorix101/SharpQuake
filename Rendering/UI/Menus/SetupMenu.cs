@@ -28,10 +28,10 @@ namespace SharpQuake
         /// </summary>
         public override void Show( Host host )
         {
-            _MyName = client.Name;
+            _MyName = Host.Client.Name;
             _HostName = Host.Network.HostName;
-            _Top = _OldTop = ( ( Int32 ) client.Color ) >> 4;
-            _Bottom = _OldBottom = ( ( Int32 ) client.Color ) & 15;
+            _Top = _OldTop = ( ( Int32 ) Host.Client.Color ) >> 4;
+            _Bottom = _OldBottom = ( ( Int32 ) Host.Client.Color ) & 15;
 
             base.Show( host );
         }
@@ -87,7 +87,7 @@ namespace SharpQuake
                         goto forward;
 
                     // _Cursor == 4 (OK)
-                    if ( _MyName != client.Name )
+                    if ( _MyName != Host.Client.Name )
                         Host.CommandBuffer.AddText( String.Format( "name \"{0}\"\n", _MyName ) );
                     if ( Host.Network.HostName != _HostName )
                         CVar.Set( "hostname", _HostName );

@@ -257,7 +257,7 @@ namespace SharpQuake
             if( _NoRefresh.Value != 0 )
                 return;
 
-            if( _WorldEntity.model == null || client.cl.worldmodel == null )
+            if( _WorldEntity.model == null || Host.Client.cl.worldmodel == null )
                 Utilities.Error( "R_RenderView: NULL worldmodel" );
 
             Double time1 = 0;
@@ -324,8 +324,8 @@ namespace SharpQuake
                 ef = ef.entnext;
 
                 // put it on the free list
-                old.entnext = client.cl.free_efrags;
-                client.cl.free_efrags = old;
+                old.entnext = Host.Client.cl.free_efrags;
+                Host.Client.cl.free_efrags = old;
             }
 
             ent.efrag = null;
@@ -339,8 +339,8 @@ namespace SharpQuake
         {
             DisableMultitexture();
 
-            var top = client.cl.scores[playernum].colors & 0xf0;
-            var bottom = ( client.cl.scores[playernum].colors & 15 ) << 4;
+            var top = Host.Client.cl.scores[playernum].colors & 0xf0;
+            var bottom = ( Host.Client.cl.scores[playernum].colors & 15 ) << 4;
 
             var translate = new Byte[256];
             for( var i = 0; i < 256; i++ )
@@ -362,7 +362,7 @@ namespace SharpQuake
             //
             // locate the original skin pixels
             //
-            _CurrentEntity = client.Entities[1 + playernum];
+            _CurrentEntity = Host.Client.Entities[1 + playernum];
             var model = _CurrentEntity.model;
             if( model == null )
                 return;		// player doesn't have a model yet
@@ -472,12 +472,12 @@ namespace SharpQuake
                 _LightStyleValue[i] = 264;		// normal light value
 
             _WorldEntity.Clear();
-            _WorldEntity.model = client.cl.worldmodel;
+            _WorldEntity.model = Host.Client.cl.worldmodel;
 
             // clear out efrags in case the level hasn't been reloaded
             // FIXME: is this one short?
-            for( var i = 0; i < client.cl.worldmodel.numleafs; i++ )
-                client.cl.worldmodel.leafs[i].efrags = null;
+            for( var i = 0; i < Host.Client.cl.worldmodel.numleafs; i++ )
+                Host.Client.cl.worldmodel.leafs[i].efrags = null;
 
             _ViewLeaf = null;
             ClearParticles();
@@ -487,7 +487,7 @@ namespace SharpQuake
             // identify sky texture
             _SkyTextureNum = -1;
             _MirrorTextureNum = -1;
-            var world = client.cl.worldmodel;
+            var world = Host.Client.cl.worldmodel;
             for( var i = 0; i < world.numtextures; i++ )
             {
                 if( world.textures[i] == null )
@@ -559,11 +559,11 @@ namespace SharpQuake
                 ( Single ) ( Math.Atan2( render.ViewPn.Y, render.ViewPn.X ) / Math.PI * 180.0 ),
                 -_RefDef.viewangles.Z );
 
-            var ent = client.ViewEntity;
-            if( client.NumVisEdicts < client.MAX_VISEDICTS )
+            var ent = Host.Client.ViewEntity;
+            if( Host.Client.NumVisEdicts < ClientDef.MAX_VISEDICTS )
             {
-                client.VisEdicts[client.NumVisEdicts] = ent;
-                client.NumVisEdicts++;
+                Host.Client.VisEdicts[Host.Client.NumVisEdicts] = ent;
+                Host.Client.NumVisEdicts++;
             }
 
             _glDepthMin = 0.5f;
@@ -592,10 +592,10 @@ namespace SharpQuake
             GL.LoadMatrix( ref _BaseWorldMatrix );
 
             GL.Color4( 1, 1, 1, _MirrorAlpha.Value );
-            var s = client.cl.worldmodel.textures[_MirrorTextureNum].texturechain;
+            var s = Host.Client.cl.worldmodel.textures[_MirrorTextureNum].texturechain;
             for( ; s != null; s = s.texturechain )
                 RenderBrushPoly( s );
-            client.cl.worldmodel.textures[_MirrorTextureNum].texturechain = null;
+            Host.Client.cl.worldmodel.textures[_MirrorTextureNum].texturechain = null;
             GL.Disable( EnableCap.Blend );
             GL.Color4( 1f, 1, 1, 1 );
         }
@@ -617,13 +617,13 @@ namespace SharpQuake
             if( _DrawEntities.Value == 0 )
                 return;
 
-            if( client.cl.HasItems( QItemsDef.IT_INVISIBILITY ) )
+            if( Host.Client.cl.HasItems( QItemsDef.IT_INVISIBILITY ) )
                 return;
 
-            if( client.cl.stats[QStatsDef.STAT_HEALTH] <= 0 )
+            if( Host.Client.cl.stats[QStatsDef.STAT_HEALTH] <= 0 )
                 return;
 
-            _CurrentEntity = client.ViewEnt;
+            _CurrentEntity = Host.Client.ViewEnt;
             if( _CurrentEntity.model == null )
                 return;
 
@@ -635,12 +635,12 @@ namespace SharpQuake
             _ShadeLight = j;
 
             // add dynamic lights
-            for( var lnum = 0; lnum < client.MAX_DLIGHTS; lnum++ )
+            for( var lnum = 0; lnum < ClientDef.MAX_DLIGHTS; lnum++ )
             {
-                var dl = client.DLights[lnum];
+                var dl = Host.Client.DLights[lnum];
                 if( dl.radius == 0 )
                     continue;
-                if( dl.die < client.cl.time )
+                if( dl.die < Host.Client.cl.time )
                     continue;
 
                 var dist = _CurrentEntity.origin - dl.origin;
@@ -695,9 +695,9 @@ namespace SharpQuake
                 return;
 
             // draw sprites seperately, because of alpha blending
-            for( var i = 0; i < client.NumVisEdicts; i++ )
+            for( var i = 0; i < Host.Client.NumVisEdicts; i++ )
             {
-                _CurrentEntity = client.VisEdicts[i];
+                _CurrentEntity = Host.Client.VisEdicts[i];
 
                 switch( _CurrentEntity.model.type )
                 {
@@ -714,9 +714,9 @@ namespace SharpQuake
                 }
             }
 
-            for( var i = 0; i < client.NumVisEdicts; i++ )
+            for( var i = 0; i < Host.Client.NumVisEdicts; i++ )
             {
-                _CurrentEntity = client.VisEdicts[i];
+                _CurrentEntity = Host.Client.VisEdicts[i];
 
                 switch( _CurrentEntity.model.type )
                 {
@@ -803,7 +803,7 @@ namespace SharpQuake
                 var pintervals = pspritegroup.intervals;
                 var numframes = pspritegroup.numframes;
                 var fullinterval = pintervals[numframes - 1];
-                var time = ( Single ) client.cl.time + currententity.syncbase;
+                var time = ( Single ) Host.Client.cl.time + currententity.syncbase;
 
                 // when loading in Mod_LoadSpriteGroup, we guaranteed all interval values
                 // are positive, so we don't have to worry about division by 0
@@ -842,15 +842,15 @@ namespace SharpQuake
             _AmbientLight = _ShadeLight = LightPoint( ref _CurrentEntity.origin );
 
             // allways give the gun some light
-            if( e == client.cl.viewent && _AmbientLight < 24 )
+            if( e == Host.Client.cl.viewent && _AmbientLight < 24 )
                 _AmbientLight = _ShadeLight = 24;
 
-            for( var lnum = 0; lnum < client.MAX_DLIGHTS; lnum++ )
+            for( var lnum = 0; lnum < ClientDef.MAX_DLIGHTS; lnum++ )
             {
-                if( client.DLights[lnum].die >= client.cl.time )
+                if( Host.Client.DLights[lnum].die >= Host.Client.cl.time )
                 {
-                    var dist = _CurrentEntity.origin - client.DLights[lnum].origin;
-                    var add = client.DLights[lnum].radius - dist.Length;
+                    var dist = _CurrentEntity.origin - Host.Client.DLights[lnum].origin;
+                    var add = Host.Client.DLights[lnum].radius - dist.Length;
                     if( add > 0 )
                     {
                         _AmbientLight += add;
@@ -867,7 +867,7 @@ namespace SharpQuake
                 _ShadeLight = 192 - _AmbientLight;
 
             // ZOID: never allow players to go totally black
-            var playernum = Array.IndexOf( client.Entities, _CurrentEntity, 0, client.cl.maxclients );
+            var playernum = Array.IndexOf( Host.Client.Entities, _CurrentEntity, 0, Host.Client.cl.maxclients );
             if( playernum >= 1 )// && i <= cl.maxclients)
                 if( _AmbientLight < 8 )
                     _AmbientLight = _ShadeLight = 8;
@@ -914,7 +914,7 @@ namespace SharpQuake
                 GL.Scale( paliashdr.scale );
             }
 
-            var anim = ( Int32 ) ( client.cl.time * 10 ) & 3;
+            var anim = ( Int32 ) ( Host.Client.cl.time * 10 ) & 3;
             Drawer.Bind( paliashdr.gl_texturenum[_CurrentEntity.skinnum, anim] );
 
             // we can't dynamically colormap textures, so they are cached
@@ -1029,7 +1029,7 @@ namespace SharpQuake
             if( numposes > 1 )
             {
                 var interval = paliashdr.frames[frame].interval;
-                pose += ( Int32 ) ( client.cl.time / interval ) % numposes;
+                pose += ( Int32 ) ( Host.Client.cl.time / interval ) % numposes;
             }
 
             DrawAliasFrame( paliashdr, pose );
@@ -1231,7 +1231,7 @@ namespace SharpQuake
         private static void SetupFrame()
         {
             // don't allow cheats in multiplayer
-            if( client.cl.maxclients > 1 )
+            if( Host.Client.cl.maxclients > 1 )
                 CVar.Set( "r_fullbright", "0" );
 
             AnimateLight();
@@ -1245,7 +1245,7 @@ namespace SharpQuake
 
             // current viewleaf
             _OldViewLeaf = _ViewLeaf;
-            _ViewLeaf = Host.Model.PointInLeaf( ref render.Origin, client.cl.worldmodel );
+            _ViewLeaf = Host.Model.PointInLeaf( ref render.Origin, Host.Client.cl.worldmodel );
 
             Host.View.SetContentsColor( _ViewLeaf.contents );
             Host.View.CalcBlend();

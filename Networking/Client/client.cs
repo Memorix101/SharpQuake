@@ -28,13 +28,13 @@ using SharpQuake.Framework;
 
 namespace SharpQuake
 {
-    internal struct lightstyle_t
+    public struct lightstyle_t
     {
         //public int length;
         public String map; // [MAX_STYLESTRING];
     }
 
-    internal enum cactive_t
+    public enum cactive_t
     {
         ca_dedicated, 		// a dedicated server with no ability to start a client
         ca_disconnected, 	// full screen console with no connection
@@ -60,9 +60,9 @@ namespace SharpQuake
         public Int32 state;			// low bit is down state
     }
 
-    static partial class client
+    public partial class client
     {
-        public static client_static_t cls
+        public client_static_t cls
         {
             get
             {
@@ -70,7 +70,7 @@ namespace SharpQuake
             }
         }
 
-        public static client_state_t cl
+        public client_state_t cl
         {
             get
             {
@@ -78,7 +78,7 @@ namespace SharpQuake
             }
         }
 
-        public static Entity[] Entities
+        public Entity[] Entities
         {
             get
             {
@@ -90,7 +90,7 @@ namespace SharpQuake
         /// cl_entities[cl.viewentity]
         /// Player model (visible when out of body)
         /// </summary>
-        public static Entity ViewEntity
+        public Entity ViewEntity
         {
             get
             {
@@ -102,7 +102,7 @@ namespace SharpQuake
         /// cl.viewent
         /// Weapon model (only visible from inside body)
         /// </summary>
-        public static Entity ViewEnt
+        public Entity ViewEnt
         {
             get
             {
@@ -110,7 +110,7 @@ namespace SharpQuake
             }
         }
 
-        public static Single ForwardSpeed
+        public Single ForwardSpeed
         {
             get
             {
@@ -118,7 +118,7 @@ namespace SharpQuake
             }
         }
 
-        public static Boolean LookSpring
+        public Boolean LookSpring
         {
             get
             {
@@ -126,7 +126,7 @@ namespace SharpQuake
             }
         }
 
-        public static Boolean LookStrafe
+        public Boolean LookStrafe
         {
             get
             {
@@ -134,7 +134,7 @@ namespace SharpQuake
             }
         }
 
-        public static dlight_t[] DLights
+        public dlight_t[] DLights
         {
             get
             {
@@ -142,7 +142,7 @@ namespace SharpQuake
             }
         }
 
-        public static lightstyle_t[] LightStyle
+        public lightstyle_t[] LightStyle
         {
             get
             {
@@ -150,7 +150,7 @@ namespace SharpQuake
             }
         }
 
-        public static Entity[] VisEdicts
+        public Entity[] VisEdicts
         {
             get
             {
@@ -158,7 +158,7 @@ namespace SharpQuake
             }
         }
 
-        public static Single Sensitivity
+        public Single Sensitivity
         {
             get
             {
@@ -166,7 +166,7 @@ namespace SharpQuake
             }
         }
 
-        public static Single MSide
+        public Single MSide
         {
             get
             {
@@ -174,7 +174,7 @@ namespace SharpQuake
             }
         }
 
-        public static Single MYaw
+        public Single MYaw
         {
             get
             {
@@ -182,7 +182,7 @@ namespace SharpQuake
             }
         }
 
-        public static Single MPitch
+        public Single MPitch
         {
             get
             {
@@ -190,7 +190,7 @@ namespace SharpQuake
             }
         }
 
-        public static Single MForward
+        public Single MForward
         {
             get
             {
@@ -198,7 +198,7 @@ namespace SharpQuake
             }
         }
 
-        public static String Name
+        public String Name
         {
             get
             {
@@ -206,58 +206,53 @@ namespace SharpQuake
             }
         }
 
-        public static Single Color
+        public Single Color
         {
             get
             {
                 return _Color.Value;
             }
         }
+                
+        public Int32 NumVisEdicts;
 
-        public const Int32 SIGNONS = 4;	// signon messages to receive before connected
-        public const Int32 MAX_DLIGHTS = 32;
-        public const Int32 MAX_BEAMS = 24;
-        public const Int32 MAX_EFRAGS = 640;
-        public const Int32 MAX_MAPSTRING = 2048;
-        public const Int32 MAX_DEMOS = 8;
-        public const Int32 MAX_DEMONAME = 16;
-        public const Int32 MAX_VISEDICTS = 256;
+        private client_static_t _Static;
+        private client_state_t _State;
 
-        public static Int32 NumVisEdicts;
-        private const Int32 MAX_TEMP_ENTITIES = 64;	// lightning bolts, etc
-        private const Int32 MAX_STATIC_ENTITIES = 128;			// torches, etc
+        public client()
+        {            
+            _Static = new client_static_t();
+            _State = new client_state_t();
+        }
 
-        private static client_static_t _Static = new client_static_t();
-        private static client_state_t _State = new client_state_t();
+        private EFrag[] _EFrags = new EFrag[ClientDef.MAX_EFRAGS]; // cl_efrags
+        private Entity[] _Entities = new Entity[QDef.MAX_EDICTS]; // cl_entities
+        private Entity[] _StaticEntities = new Entity[ClientDef.MAX_STATIC_ENTITIES]; // cl_static_entities
+        private lightstyle_t[] _LightStyle = new lightstyle_t[QDef.MAX_LIGHTSTYLES]; // cl_lightstyle
+        private dlight_t[] _DLights = new dlight_t[ClientDef.MAX_DLIGHTS]; // cl_dlights
 
-        private static EFrag[] _EFrags = new EFrag[MAX_EFRAGS]; // cl_efrags
-        private static Entity[] _Entities = new Entity[QDef.MAX_EDICTS]; // cl_entities
-        private static Entity[] _StaticEntities = new Entity[MAX_STATIC_ENTITIES]; // cl_static_entities
-        private static lightstyle_t[] _LightStyle = new lightstyle_t[QDef.MAX_LIGHTSTYLES]; // cl_lightstyle
-        private static dlight_t[] _DLights = new dlight_t[MAX_DLIGHTS]; // cl_dlights
-
-        private static CVar _Name;// = { "_cl_name", "player", true };
-        private static CVar _Color;// = { "_cl_color", "0", true };
-        private static CVar _ShowNet;// = { "cl_shownet", "0" };	// can be 0, 1, or 2
-        private static CVar _NoLerp;// = { "cl_nolerp", "0" };
-        private static CVar _LookSpring;// = { "lookspring", "0", true };
-        private static CVar _LookStrafe;// = { "lookstrafe", "0", true };
-        private static CVar _Sensitivity;// = { "sensitivity", "3", true };
-        private static CVar _MPitch;// = { "m_pitch", "0.022", true };
-        private static CVar _MYaw;// = { "m_yaw", "0.022", true };
-        private static CVar _MForward;// = { "m_forward", "1", true };
-        private static CVar _MSide;// = { "m_side", "0.8", true };
-        private static CVar _UpSpeed;// = { "cl_upspeed", "200" };
-        private static CVar _ForwardSpeed;// = { "cl_forwardspeed", "200", true };
-        private static CVar _BackSpeed;// = { "cl_backspeed", "200", true };
-        private static CVar _SideSpeed;// = { "cl_sidespeed", "350" };
-        private static CVar _MoveSpeedKey;// = { "cl_movespeedkey", "2.0" };
-        private static CVar _YawSpeed;// = { "cl_yawspeed", "140" };
-        private static CVar _PitchSpeed;// = { "cl_pitchspeed", "150" };
-        private static CVar _AngleSpeedKey;// = { "cl_anglespeedkey", "1.5" };
+        private CVar _Name;// = { "_cl_name", "player", true };
+        private CVar _Color;// = { "_cl_color", "0", true };
+        private CVar _ShowNet;// = { "cl_shownet", "0" };	// can be 0, 1, or 2
+        private CVar _NoLerp;// = { "cl_nolerp", "0" };
+        private CVar _LookSpring;// = { "lookspring", "0", true };
+        private CVar _LookStrafe;// = { "lookstrafe", "0", true };
+        private CVar _Sensitivity;// = { "sensitivity", "3", true };
+        private CVar _MPitch;// = { "m_pitch", "0.022", true };
+        private CVar _MYaw;// = { "m_yaw", "0.022", true };
+        private CVar _MForward;// = { "m_forward", "1", true };
+        private CVar _MSide;// = { "m_side", "0.8", true };
+        private CVar _UpSpeed;// = { "cl_upspeed", "200" };
+        private CVar _ForwardSpeed;// = { "cl_forwardspeed", "200", true };
+        private CVar _BackSpeed;// = { "cl_backspeed", "200", true };
+        private CVar _SideSpeed;// = { "cl_sidespeed", "350" };
+        private CVar _MoveSpeedKey;// = { "cl_movespeedkey", "2.0" };
+        private CVar _YawSpeed;// = { "cl_yawspeed", "140" };
+        private CVar _PitchSpeed;// = { "cl_pitchspeed", "150" };
+        private CVar _AngleSpeedKey;// = { "cl_anglespeedkey", "1.5" };
 
         // cl_numvisedicts
-        private static Entity[] _VisEdicts = new Entity[MAX_VISEDICTS]; // cl_visedicts[MAX_VISEDICTS]
+        private Entity[] _VisEdicts = new Entity[ClientDef.MAX_VISEDICTS]; // cl_visedicts[MAX_VISEDICTS]
     }
 
     // lightstyle_t;
@@ -271,7 +266,7 @@ namespace SharpQuake
         public const Int32 NUM_CSHIFTS = 4;
     }
 
-    internal class scoreboard_t
+    public class scoreboard_t
     {
         public String name; //[MAX_SCOREBOARDNAME];
 
@@ -287,7 +282,7 @@ namespace SharpQuake
         }
     } // scoreboard_t;
 
-    internal class cshift_t
+    public class cshift_t
     {
         public Int32[] destcolor; // [3];
         public Int32 percent;		// 0-256
@@ -316,7 +311,7 @@ namespace SharpQuake
         }
     } // cshift_t;
 
-    internal class dlight_t
+    public class dlight_t
     {
         public Vector3 origin;
         public Single radius;
@@ -359,7 +354,7 @@ namespace SharpQuake
     // the client_static_t structure is persistant through an arbitrary number
     // of server connections
     //
-    internal class client_static_t
+    public class client_static_t
     {
         public cactive_t state;
 
@@ -393,7 +388,7 @@ namespace SharpQuake
 
         public client_static_t()
         {
-            this.demos = new String[client.MAX_DEMOS];
+            this.demos = new String[ClientDef.MAX_DEMOS];
             this.message = new MessageWriter( 1024 ); // like in Client_Init()
         }
     } // client_static_t;
@@ -402,7 +397,7 @@ namespace SharpQuake
     // the client_state_t structure is wiped completely at every
     // server signon
     //
-    internal class client_state_t
+    public class client_state_t
     {
         public Int32 movemessages;	// since connecting to this server
 

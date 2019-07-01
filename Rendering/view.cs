@@ -188,19 +188,19 @@ namespace SharpQuake
                 return;
 
             // don't allow cheats in multiplayer
-            if( client.cl.maxclients > 1 )
+            if( Host.Client.cl.maxclients > 1 )
             {
                 CVar.Set( "scr_ofsx", "0" );
                 CVar.Set( "scr_ofsy", "0" );
                 CVar.Set( "scr_ofsz", "0" );
             }
 
-            if( client.cl.intermission > 0 )
+            if( Host.Client.cl.intermission > 0 )
             {
                 // intermission / finale rendering
                 CalcIntermissionRefDef();
             }
-            else if( !client.cl.paused )
+            else if( !Host.Client.cl.paused )
                 CalcRefDef();
 
             render.PushDlights();
@@ -270,7 +270,7 @@ namespace SharpQuake
 
             var isnew = false;
 
-            var cl = client.cl;
+            var cl = Host.Client.cl;
             for( var i = 0; i < ColorShift.NUM_CSHIFTS; i++ )
             {
                 if( cl.cshifts[i].percent != cl.prev_cshifts[i].percent )
@@ -348,7 +348,7 @@ namespace SharpQuake
         // V_StartPitchDrift
         public void StartPitchDrift()
         {
-            var cl = client.cl;
+            var cl = Host.Client.cl;
             if( cl.laststop == cl.time )
             {
                 return; // something else is keeping it from drifting
@@ -364,7 +364,7 @@ namespace SharpQuake
         // V_StopPitchDrift
         public void StopPitchDrift()
         {
-            var cl = client.cl;
+            var cl = Host.Client.cl;
             cl.laststop = cl.time;
             cl.nodrift = true;
             cl.pitchvel = 0;
@@ -380,7 +380,7 @@ namespace SharpQuake
             Single b = 0;
             Single a = 0;
 
-            var cshifts = client.cl.cshifts;
+            var cshifts = Host.Client.cl.cshifts;
 
             if( _glCShiftPercent.Value != 0 )
             {
@@ -421,7 +421,7 @@ namespace SharpQuake
             if( count < 10 )
                 count = 10;
 
-            var cl = client.cl;
+            var cl = Host.Client.cl;
             cl.faceanimtime = ( Single ) cl.time + 0.2f; // put sbar face into pain frame
 
             cl.cshifts[ColorShift.CSHIFT_DAMAGE].percent += ( Int32 ) ( 3 * count );
@@ -452,7 +452,7 @@ namespace SharpQuake
             //
             // calculate view angle kicks
             //
-            var ent = client.Entities[cl.viewentity];
+            var ent = Host.Client.Entities[cl.viewentity];
 
             from -= ent.origin; //  VectorSubtract (from, ent->origin, from);
             MathLib.Normalize( ref from );
@@ -480,19 +480,19 @@ namespace SharpQuake
             {
                 case ContentsDef.CONTENTS_EMPTY:
                 case ContentsDef.CONTENTS_SOLID:
-                    client.cl.cshifts[ColorShift.CSHIFT_CONTENTS] = _CShift_empty;
+                    Host.Client.cl.cshifts[ColorShift.CSHIFT_CONTENTS] = _CShift_empty;
                     break;
 
                 case ContentsDef.CONTENTS_LAVA:
-                    client.cl.cshifts[ColorShift.CSHIFT_CONTENTS] = _CShift_lava;
+                    Host.Client.cl.cshifts[ColorShift.CSHIFT_CONTENTS] = _CShift_lava;
                     break;
 
                 case ContentsDef.CONTENTS_SLIME:
-                    client.cl.cshifts[ColorShift.CSHIFT_CONTENTS] = _CShift_slime;
+                    Host.Client.cl.cshifts[ColorShift.CSHIFT_CONTENTS] = _CShift_slime;
                     break;
 
                 default:
-                    client.cl.cshifts[ColorShift.CSHIFT_CONTENTS] = _CShift_water;
+                    Host.Client.cl.cshifts[ColorShift.CSHIFT_CONTENTS] = _CShift_water;
                     break;
             }
         }
@@ -535,7 +535,7 @@ namespace SharpQuake
         // When you run over an item, the server sends this command
         private void BonusFlash_f()
         {
-            var cl = client.cl;
+            var cl = Host.Client.cl;
             cl.cshifts[ColorShift.CSHIFT_BONUS].destcolor[0] = 215;
             cl.cshifts[ColorShift.CSHIFT_BONUS].destcolor[1] = 186;
             cl.cshifts[ColorShift.CSHIFT_BONUS].destcolor[2] = 69;
@@ -546,10 +546,10 @@ namespace SharpQuake
         private void CalcIntermissionRefDef()
         {
             // ent is the player model (visible when out of body)
-            var ent = client.ViewEntity;
+            var ent = Host.Client.ViewEntity;
 
             // view is the weapon model (only visible from inside body)
-            var view = client.ViewEnt;
+            var view = Host.Client.ViewEnt;
 
             var rdef = render.RefDef;
             rdef.vieworg = ent.origin;
@@ -566,19 +566,19 @@ namespace SharpQuake
             DriftPitch();
 
             // ent is the player model (visible when out of body)
-            var ent = client.ViewEntity;
+            var ent = Host.Client.ViewEntity;
             // view is the weapon model (only visible from inside body)
-            var view = client.ViewEnt;
+            var view = Host.Client.ViewEnt;
 
             // transform the view offset by the model's matrix to get the offset from
             // model origin for the view
-            ent.angles.Y = client.cl.viewangles.Y;	// the model should face the view dir
-            ent.angles.X = -client.cl.viewangles.X;	// the model should face the view dir
+            ent.angles.Y = Host.Client.cl.viewangles.Y;	// the model should face the view dir
+            ent.angles.X = -Host.Client.cl.viewangles.X;	// the model should face the view dir
 
             var bob = CalcBob();
 
             var rdef = render.RefDef;
-            var cl = client.cl;
+            var cl = Host.Client.cl;
 
             // refresh position
             rdef.vieworg = ent.origin;
@@ -661,7 +661,7 @@ namespace SharpQuake
         // Idle swaying
         private void AddIdle( Single idleScale )
         {
-            var time = client.cl.time;
+            var time = Host.Client.cl.time;
             var v = new Vector3(
                 ( Single ) ( Math.Sin( time * _IPitchCycle.Value ) * _IPitchLevel.Value ),
                 ( Single ) ( Math.Sin( time * _IYawCycle.Value ) * _IYawLevel.Value ),
@@ -680,8 +680,8 @@ namespace SharpQuake
         // lookspring is non 0, or when
         private void DriftPitch()
         {
-            var cl = client.cl;
-            if( Host.NoClipAngleHack || !cl.onground || client.cls.demoplayback )
+            var cl = Host.Client.cl;
+            if( Host.NoClipAngleHack || !cl.onground || Host.Client.cls.demoplayback )
             {
                 cl.driftmove = 0;
                 cl.pitchvel = 0;
@@ -691,7 +691,7 @@ namespace SharpQuake
             // don't count small mouse motion
             if( cl.nodrift )
             {
-                if( Math.Abs( cl.cmd.forwardmove ) < client.ForwardSpeed )
+                if( Math.Abs( cl.cmd.forwardmove ) < Host.Client.ForwardSpeed )
                     cl.driftmove = 0;
                 else
                     cl.driftmove += ( Single ) Host.FrameTime;
@@ -736,7 +736,7 @@ namespace SharpQuake
         // V_CalcBob
         private Single CalcBob()
         {
-            var cl = client.cl;
+            var cl = Host.Client.cl;
             var bobCycle = _ClBobCycle.Value;
             var bobUp = _ClBobUp.Value;
             var cycle = ( Single ) ( cl.time - ( Int32 ) ( cl.time / bobCycle ) * bobCycle );
@@ -763,9 +763,9 @@ namespace SharpQuake
         // Roll is induced by movement and damage
         private void CalcViewRoll()
         {
-            var cl = client.cl;
+            var cl = Host.Client.cl;
             var rdef = render.RefDef;
-            var side = CalcRoll( ref client.ViewEntity.angles, ref cl.velocity );
+            var side = CalcRoll( ref Host.Client.ViewEntity.angles, ref cl.velocity );
             rdef.viewangles.Z += side;
 
             if( _DmgTime > 0 )
@@ -785,7 +785,7 @@ namespace SharpQuake
         // V_BoundOffsets
         private void BoundOffsets()
         {
-            var ent = client.ViewEntity;
+            var ent = Host.Client.ViewEntity;
 
             // absolutely bound refresh reletive to entity clipping hull
             // so the view can never be inside a solid wall
@@ -851,7 +851,7 @@ namespace SharpQuake
             _OldYaw = yaw;
             _OldPitch = pitch;
 
-            var cl = client.cl;
+            var cl = Host.Client.cl;
             cl.viewent.angles.Y = rdef.viewangles.Y + yaw;
             cl.viewent.angles.X = -( rdef.viewangles.X + pitch );
 
@@ -873,7 +873,7 @@ namespace SharpQuake
         // V_CalcPowerupCshift
         private void CalcPowerupCshift()
         {
-            var cl = client.cl;
+            var cl = Host.Client.cl;
             if( cl.HasItems( QItemsDef.IT_QUAD ) )
             {
                 cl.cshifts[ColorShift.CSHIFT_POWERUP].destcolor[0] = 0;

@@ -40,11 +40,11 @@ namespace SharpQuake
                     switch ( _Cursor )
                     {
                         case 0:
-                            if ( server.sv.active )
+                            if ( Host.Server.sv.active )
                                 if ( !Scr.ModalMessage( "Are you sure you want to\nstart a new game?\n" ) )
                                     break;
                             Host.Keyboard.Destination = KeyDestination.key_game;
-                            if ( server.sv.active )
+                            if ( Host.Server.sv.active )
                                 Host.CommandBuffer.AddText( "disconnect\n" );
                             Host.CommandBuffer.AddText( "maxplayers 1\n" );
                             Host.CommandBuffer.AddText( "map start\n" );

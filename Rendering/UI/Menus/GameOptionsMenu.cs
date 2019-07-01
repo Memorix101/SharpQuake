@@ -166,9 +166,9 @@ namespace SharpQuake
             base.Show( host );
 
             if ( _MaxPlayers == 0 )
-                _MaxPlayers = server.svs.maxclients;
+                _MaxPlayers = Host.Server.svs.maxclients;
             if ( _MaxPlayers < 2 )
-                _MaxPlayers = server.svs.maxclientslimit;
+                _MaxPlayers = Host.Server.svs.maxclientslimit;
         }
 
         public override void KeyEvent( Int32 key )
@@ -211,7 +211,7 @@ namespace SharpQuake
                     snd.LocalSound( "misc/menu2.wav" );
                     if ( _Cursor == 0 )
                     {
-                        if ( server.IsActive )
+                        if ( Host.Server.IsActive )
                             Host.CommandBuffer.AddText( "disconnect\n" );
                         Host.CommandBuffer.AddText( "listen 0\n" );	// so host_netport will be re-examined
                         Host.CommandBuffer.AddText( String.Format( "maxplayers {0}\n", _MaxPlayers ) );
@@ -418,9 +418,9 @@ namespace SharpQuake
             {
                 case 1:
                     _MaxPlayers += dir;
-                    if ( _MaxPlayers > server.svs.maxclientslimit )
+                    if ( _MaxPlayers > Host.Server.svs.maxclientslimit )
                     {
-                        _MaxPlayers = server.svs.maxclientslimit;
+                        _MaxPlayers = Host.Server.svs.maxclientslimit;
                         _ServerInfoMessage = true;
                         _ServerInfoMessageTime = Host.RealTime;
                     }

@@ -30,15 +30,6 @@ namespace SharpQuake
 {
     internal class net_datagram : INetDriver
     {
-        [StructLayout( LayoutKind.Sequential, Pack = 1 )]
-        private struct PacketHeader
-        {
-            public Int32 length;
-            public Int32 sequence;
-
-            public static Int32 SizeInBytes = Marshal.SizeOf(typeof(PacketHeader));
-        }
-
         public static net_datagram Instance
         {
             get
@@ -279,9 +270,9 @@ namespace SharpQuake
                 var newaddr = acceptsock.LocalEndPoint; //dfunc.GetSocketAddr(acceptsock, &newaddr);
                 Host.Network.Message.WriteString( newaddr.ToString() ); // dfunc.AddrToString(&newaddr));
                 Host.Network.Message.WriteString( Host.Network.HostName );
-                Host.Network.Message.WriteString( server.sv.name );
+                Host.Network.Message.WriteString( Host.Server.sv.name );
                 Host.Network.Message.WriteByte( Host.Network.ActiveConnections );
-                Host.Network.Message.WriteByte( server.svs.maxclients );
+                Host.Network.Message.WriteByte( Host.Server.svs.maxclients );
                 Host.Network.Message.WriteByte( NetworkDef.NET_PROTOCOL_VERSION );
                 Utilities.WriteInt( Host.Network.Message.Data, 0, EndianHelper.BigLong( NetFlags.NETFLAG_CTL |
                     ( Host.Network.Message.Length & NetFlags.NETFLAG_LENGTH_MASK ) ) );
@@ -295,9 +286,9 @@ namespace SharpQuake
                 var playerNumber = Host.Network.Reader.ReadByte();
                 Int32 clientNumber, activeNumber = -1;
                 client_t client = null;
-                for( clientNumber = 0; clientNumber < server.svs.maxclients; clientNumber++ )
+                for( clientNumber = 0; clientNumber < Host.Server.svs.maxclients; clientNumber++ )
                 {
-                    client = server.svs.clients[clientNumber];
+                    client = Host.Server.svs.clients[clientNumber];
                     if( client.active )
                     {
                         activeNumber++;
@@ -305,7 +296,7 @@ namespace SharpQuake
                             break;
                     }
                 }
-                if( clientNumber == server.svs.maxclients )
+                if( clientNumber == Host.Server.svs.maxclients )
                     return null;
 
                 Host.Network.Message.Clear();

@@ -497,7 +497,7 @@ namespace SharpQuake
                 Host.Console.Print( "S_LocalSound: can't cache {0}\n", sound );
                 return;
             }
-            StartSound( client.cl.viewentity, -1, sfx, ref Utilities.ZeroVector, 1, 1 );
+            StartSound( Host.Client.cl.viewentity, -1, sfx, ref Utilities.ZeroVector, 1, 1 );
         }
 
         // S_Startup
@@ -639,7 +639,7 @@ namespace SharpQuake
         private static void Spatialize( channel_t ch )
         {
             // anything coming from the view entity will allways be full volume
-            if( ch.entnum == client.cl.viewentity )
+            if( ch.entnum == Host.Client.cl.viewentity )
             {
                 ch.leftvol = ch.master_vol;
                 ch.rightvol = ch.master_vol;
@@ -742,7 +742,7 @@ namespace SharpQuake
                 }
 
                 // don't let monster sounds override player sounds
-                if( _Channels[ch_idx].entnum == client.cl.viewentity && entnum != client.cl.viewentity && _Channels[ch_idx].sfx != null )
+                if( _Channels[ch_idx].entnum == Host.Client.cl.viewentity && entnum != Host.Client.cl.viewentity && _Channels[ch_idx].sfx != null )
                     continue;
 
                 if( _Channels[ch_idx].end - _PaintedTime < life_left )
@@ -768,10 +768,10 @@ namespace SharpQuake
                 return;
 
             // calc ambient sound levels
-            if( client.cl.worldmodel == null )
+            if( Host.Client.cl.worldmodel == null )
                 return;
 
-            var l = Host.Model.PointInLeaf( ref _ListenerOrigin, client.cl.worldmodel );
+            var l = Host.Model.PointInLeaf( ref _ListenerOrigin, Host.Client.cl.worldmodel );
             if( l == null || _AmbientLevel.Value == 0 )
             {
                 for( var i = 0; i < AmbientDef.NUM_AMBIENTS; i++ )
@@ -858,7 +858,7 @@ namespace SharpQuake
 
     // portable_samplepair_t;
 
-    internal class sfx_t
+    public class sfx_t
     {
         public String name; // char[MAX_QPATH];
         public CacheUser cache; // cache_user_t
