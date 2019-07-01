@@ -214,7 +214,7 @@ RealCheck:
         /// </summary>
         public static void MoveToGoal()
         {
-            MemoryEdict ent = ProgToEdict( progs.GlobalStruct.self );
+            MemoryEdict ent = ProgToEdict( Host.Programs.GlobalStruct.self );
             MemoryEdict goal = ProgToEdict( ent.v.goalentity );
             var dist = QBuiltins.GetFloat( ProgramOperatorDef.OFS_PARM0 );
 

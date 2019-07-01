@@ -656,7 +656,7 @@ namespace SharpQuake
                     return;
                 }
                 model_precache[nummodels] = str;
-                Mod.TouchModel( str );
+                Host.Model.TouchModel( str );
             }
 
             // precache sounds
@@ -682,7 +682,7 @@ namespace SharpQuake
             //
             for( i = 1; i < nummodels; i++ )
             {
-                cl.model_precache[i] = Mod.ForName( model_precache[i], false );
+                cl.model_precache[i] = Host.Model.ForName( model_precache[i], false );
                 if( cl.model_precache[i] == null )
                 {
                     Host.Console.Print( "Model {0} not found\n", model_precache[i] );

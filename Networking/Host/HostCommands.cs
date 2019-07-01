@@ -67,7 +67,7 @@ namespace SharpQuake
             Command.Add( "viewnext", Viewnext_f );
             Command.Add( "viewprev", Viewprev_f );
 
-            Command.Add( "mcache", Mod.Print );
+            Command.Add( "mcache", Model.Print );
         }
 
         // Host_Viewmodel_f
@@ -77,7 +77,7 @@ namespace SharpQuake
             if ( e == null )
                 return;
 
-            Model m = Mod.ForName( Command.Argv( 1 ), false );
+            Model m = Model.ForName( Command.Argv( 1 ), false );
             if ( m == null )
             {
                 Console.Print( "Can't load {0}\n", Command.Argv( 1 ) );
@@ -108,7 +108,7 @@ namespace SharpQuake
 
         private void PrintFrameName( Model m, Int32 frame )
         {
-            aliashdr_t hdr = Mod.GetExtraData( m );
+            aliashdr_t hdr = Model.GetExtraData( m );
             if ( hdr == null )
                 return;
 
@@ -224,7 +224,7 @@ namespace SharpQuake
                 return;
             }
 
-            if ( progs.GlobalStruct.deathmatch != 0 && !HostClient.privileged )
+            if ( Programs.GlobalStruct.deathmatch != 0 && !HostClient.privileged )
                 return;
 
             server.Player.v.flags = ( Int32 ) server.Player.v.flags ^ EdictFlags.FL_GODMODE;
@@ -245,7 +245,7 @@ namespace SharpQuake
                 return;
             }
 
-            if ( progs.GlobalStruct.deathmatch != 0 && !HostClient.privileged )
+            if ( Programs.GlobalStruct.deathmatch != 0 && !HostClient.privileged )
                 return;
 
             server.Player.v.flags = ( Int32 ) server.Player.v.flags ^ EdictFlags.FL_NOTARGET;
@@ -266,7 +266,7 @@ namespace SharpQuake
                 return;
             }
 
-            if ( progs.GlobalStruct.deathmatch > 0 && !HostClient.privileged )
+            if ( Programs.GlobalStruct.deathmatch > 0 && !HostClient.privileged )
                 return;
 
             if ( server.Player.v.movetype != Movetypes.MOVETYPE_NOCLIP )
@@ -295,7 +295,7 @@ namespace SharpQuake
                 return;
             }
 
-            if ( progs.GlobalStruct.deathmatch > 0 && !HostClient.privileged )
+            if ( Programs.GlobalStruct.deathmatch > 0 && !HostClient.privileged )
                 return;
 
             if ( server.Player.v.movetype != Movetypes.MOVETYPE_FLY )
@@ -535,10 +535,10 @@ namespace SharpQuake
                         writer.WriteLine( "m" );
                 }
 
-                progs.WriteGlobals( writer );
+                Programs.WriteGlobals( writer );
                 for ( var i = 0; i < server.sv.num_edicts; i++ )
                 {
-                    progs.WriteEdict( writer, server.EdictNum( i ) );
+                    Programs.WriteEdict( writer, server.EdictNum( i ) );
                     writer.Flush( );
                 }
             }
@@ -644,14 +644,14 @@ namespace SharpQuake
                         if ( entnum == -1 )
                         {
                             // parse the global vars
-                            progs.ParseGlobals( data );
+                            Programs.ParseGlobals( data );
                         }
                         else
                         {
                             // parse an edict
                             MemoryEdict ent = server.EdictNum( entnum );
                             ent.Clear( );
-                            progs.ParseEdict( data, ent );
+                            Programs.ParseEdict( data, ent );
 
                             // link it into the bsp tree
                             if ( !ent.free )
@@ -710,7 +710,7 @@ namespace SharpQuake
                     Console.Print( "{0} renamed to {1}\n", HostClient.name, newName );
 
             HostClient.name = newName;
-            HostClient.edict.v.netname = progs.NewString( newName );
+            HostClient.edict.v.netname = Programs.NewString( newName );
 
             // send notification to all clients
             MessageWriter msg = server.sv.reliable_datagram;
@@ -893,9 +893,9 @@ namespace SharpQuake
                 return;
             }
 
-            progs.GlobalStruct.time = ( Single ) server.sv.time;
-            progs.GlobalStruct.self = server.EdictToProg( server.Player );
-            progs.Execute( progs.GlobalStruct.ClientKill );
+            Programs.GlobalStruct.time = ( Single ) server.sv.time;
+            Programs.GlobalStruct.self = server.EdictToProg( server.Player );
+            Programs.Execute( Programs.GlobalStruct.ClientKill );
         }
 
         /// <summary>
@@ -916,11 +916,11 @@ namespace SharpQuake
 
                 if ( server.sv.paused )
                 {
-                    server.BroadcastPrint( "{0} paused the game\n", progs.GetString( server.Player.v.netname ) );
+                    server.BroadcastPrint( "{0} paused the game\n", Programs.GetString( server.Player.v.netname ) );
                 }
                 else
                 {
-                    server.BroadcastPrint( "{0} unpaused the game\n", progs.GetString( server.Player.v.netname ) );
+                    server.BroadcastPrint( "{0} unpaused the game\n", Programs.GetString( server.Player.v.netname ) );
                 }
 
                 // send notification to all clients
@@ -984,24 +984,24 @@ namespace SharpQuake
                 // set up the edict
                 ent = HostClient.edict;
 
-                ent.Clear( ); //memset(&ent.v, 0, progs.entityfields * 4);
+                ent.Clear( ); //memset(&ent.v, 0, Programs.entityfields * 4);
                 ent.v.colormap = server.NumForEdict( ent );
                 ent.v.team = ( HostClient.colors & 15 ) + 1;
-                ent.v.netname = progs.NewString( HostClient.name );
+                ent.v.netname = Programs.NewString( HostClient.name );
 
                 // copy spawn parms out of the client_t
-                progs.GlobalStruct.SetParams( HostClient.spawn_parms );
+                Programs.GlobalStruct.SetParams( HostClient.spawn_parms );
 
                 // call the spawn function
 
-                progs.GlobalStruct.time = ( Single ) server.sv.time;
-                progs.GlobalStruct.self = server.EdictToProg( server.Player );
-                progs.Execute( progs.GlobalStruct.ClientConnect );
+                Programs.GlobalStruct.time = ( Single ) server.sv.time;
+                Programs.GlobalStruct.self = server.EdictToProg( server.Player );
+                Programs.Execute( Programs.GlobalStruct.ClientConnect );
 
                 if ( ( Timer.GetFloatTime( ) - HostClient.netconnection.connecttime ) <= server.sv.time )
                     Console.DPrint( "{0} entered the game\n", HostClient.name );
 
-                progs.Execute( progs.GlobalStruct.PutClientInServer );
+                Programs.Execute( Programs.GlobalStruct.PutClientInServer );
             }
 
             // send all current names, colors, and frag counts
@@ -1039,19 +1039,19 @@ namespace SharpQuake
             //
             msg.WriteByte( protocol.svc_updatestat );
             msg.WriteByte( QStatsDef.STAT_TOTALSECRETS );
-            msg.WriteLong( ( Int32 ) progs.GlobalStruct.total_secrets );
+            msg.WriteLong( ( Int32 ) Programs.GlobalStruct.total_secrets );
 
             msg.WriteByte( protocol.svc_updatestat );
             msg.WriteByte( QStatsDef.STAT_TOTALMONSTERS );
-            msg.WriteLong( ( Int32 ) progs.GlobalStruct.total_monsters );
+            msg.WriteLong( ( Int32 ) Programs.GlobalStruct.total_monsters );
 
             msg.WriteByte( protocol.svc_updatestat );
             msg.WriteByte( QStatsDef.STAT_SECRETS );
-            msg.WriteLong( ( Int32 ) progs.GlobalStruct.found_secrets );
+            msg.WriteLong( ( Int32 ) Programs.GlobalStruct.found_secrets );
 
             msg.WriteByte( protocol.svc_updatestat );
             msg.WriteByte( QStatsDef.STAT_MONSTERS );
-            msg.WriteLong( ( Int32 ) progs.GlobalStruct.killed_monsters );
+            msg.WriteLong( ( Int32 ) Programs.GlobalStruct.killed_monsters );
 
             //
             // send a fixangle
@@ -1098,7 +1098,7 @@ namespace SharpQuake
                     return;
                 }
             }
-            else if ( progs.GlobalStruct.deathmatch != 0 && !HostClient.privileged )
+            else if ( Programs.GlobalStruct.deathmatch != 0 && !HostClient.privileged )
                 return;
 
             client_t save = HostClient;
@@ -1175,7 +1175,7 @@ namespace SharpQuake
                 return;
             }
 
-            if ( progs.GlobalStruct.deathmatch != 0 && !HostClient.privileged )
+            if ( Programs.GlobalStruct.deathmatch != 0 && !HostClient.privileged )
                 return;
 
             var t = Command.Argv( 1 );
@@ -1223,7 +1223,7 @@ namespace SharpQuake
 
                 case 's':
                     if ( MainWindow.Common.GameKind == GameKind.Rogue )
-                        progs.SetEdictFieldFloat( server.Player, "ammo_shells1", v );
+                        Programs.SetEdictFieldFloat( server.Player, "ammo_shells1", v );
 
                     server.Player.v.ammo_shells = v;
                     break;
@@ -1231,7 +1231,7 @@ namespace SharpQuake
                 case 'n':
                     if ( MainWindow.Common.GameKind == GameKind.Rogue )
                     {
-                        if ( progs.SetEdictFieldFloat( server.Player, "ammo_nails1", v ) )
+                        if ( Programs.SetEdictFieldFloat( server.Player, "ammo_nails1", v ) )
                             if ( server.Player.v.weapon <= QItemsDef.IT_LIGHTNING )
                                 server.Player.v.ammo_nails = v;
                     }
@@ -1242,7 +1242,7 @@ namespace SharpQuake
                 case 'l':
                     if ( MainWindow.Common.GameKind == GameKind.Rogue )
                     {
-                        if ( progs.SetEdictFieldFloat( server.Player, "ammo_lava_nails", v ) )
+                        if ( Programs.SetEdictFieldFloat( server.Player, "ammo_lava_nails", v ) )
                             if ( server.Player.v.weapon > QItemsDef.IT_LIGHTNING )
                                 server.Player.v.ammo_nails = v;
                     }
@@ -1251,7 +1251,7 @@ namespace SharpQuake
                 case 'r':
                     if ( MainWindow.Common.GameKind == GameKind.Rogue )
                     {
-                        if ( progs.SetEdictFieldFloat( server.Player, "ammo_rockets1", v ) )
+                        if ( Programs.SetEdictFieldFloat( server.Player, "ammo_rockets1", v ) )
                             if ( server.Player.v.weapon <= QItemsDef.IT_LIGHTNING )
                                 server.Player.v.ammo_rockets = v;
                     }
@@ -1264,7 +1264,7 @@ namespace SharpQuake
                 case 'm':
                     if ( MainWindow.Common.GameKind == GameKind.Rogue )
                     {
-                        if ( progs.SetEdictFieldFloat( server.Player, "ammo_multi_rockets", v ) )
+                        if ( Programs.SetEdictFieldFloat( server.Player, "ammo_multi_rockets", v ) )
                             if ( server.Player.v.weapon > QItemsDef.IT_LIGHTNING )
                                 server.Player.v.ammo_rockets = v;
                     }
@@ -1277,7 +1277,7 @@ namespace SharpQuake
                 case 'c':
                     if ( MainWindow.Common.GameKind == GameKind.Rogue )
                     {
-                        if ( progs.SetEdictFieldFloat( server.Player, "ammo_cells1", v ) )
+                        if ( Programs.SetEdictFieldFloat( server.Player, "ammo_cells1", v ) )
                             if ( server.Player.v.weapon <= QItemsDef.IT_LIGHTNING )
                                 server.Player.v.ammo_cells = v;
                     }
@@ -1290,7 +1290,7 @@ namespace SharpQuake
                 case 'p':
                     if ( MainWindow.Common.GameKind == GameKind.Rogue )
                     {
-                        if ( progs.SetEdictFieldFloat( server.Player, "ammo_plasma", v ) )
+                        if ( Programs.SetEdictFieldFloat( server.Player, "ammo_plasma", v ) )
                             if ( server.Player.v.weapon > QItemsDef.IT_LIGHTNING )
                                 server.Player.v.ammo_cells = v;
                     }
@@ -1303,7 +1303,7 @@ namespace SharpQuake
             for ( var i = 0; i < server.sv.num_edicts; i++ )
             {
                 MemoryEdict e = server.EdictNum( i );
-                if ( progs.GetString( e.v.classname ) == "viewthing" )
+                if ( Programs.GetString( e.v.classname ) == "viewthing" )
                     return e;
             }
             Console.Print( "No viewthing on map\n" );

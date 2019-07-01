@@ -87,6 +87,7 @@
     <Compile Include="IO\Pak\MemoryPakFile.cs" />
     <Compile Include="IO\Programs\Program.cs" />
     <Compile Include="IO\Programs\ProgramOperator.cs" />
+    <Compile Include="IO\Programs\ProgramStack.cs" />
     <Compile Include="IO\Programs\ProgramsWrapper.cs" />
     <Compile Include="IO\Wad\Wad.cs" />
     <Compile Include="IO\Wad\WadInfo.cs" />

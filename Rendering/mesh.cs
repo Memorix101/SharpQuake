@@ -121,7 +121,7 @@ namespace SharpQuake
             _AliasHdr.commands = cmds; // in bytes??? // (byte*)cmds - (byte*)paliashdr;
             Buffer.BlockCopy( _Commands, 0, cmds, 0, _NumCommands * 4 ); //memcpy (cmds, commands, numcommands * 4);
 
-            trivertx_t[][] poseverts = Mod.PoseVerts;
+            trivertx_t[][] poseverts = MainWindow.Instance.Host.Model.PoseVerts;
             trivertx_t[] verts = new trivertx_t[_AliasHdr.numposes * _AliasHdr.poseverts]; // Hunk_Alloc (paliashdr->numposes * paliashdr->poseverts * sizeof(trivertx_t) );
             _AliasHdr.posedata = verts; // (byte*)verts - (byte*)paliashdr;
             var offset = 0;
@@ -146,8 +146,8 @@ namespace SharpQuake
             //
             // build tristrips
             //
-            stvert_t[] stverts = Mod.STVerts;
-            dtriangle_t[] triangles = Mod.Triangles;
+            stvert_t[] stverts = MainWindow.Instance.Host.Model.STVerts;
+            dtriangle_t[] triangles = MainWindow.Instance.Host.Model.Triangles;
             _NumOrder = 0;
             _NumCommands = 0;
             Array.Clear( _Used, 0, _Used.Length ); // memset (used, 0, sizeof(used));
@@ -222,7 +222,7 @@ namespace SharpQuake
         {
             _Used[starttri] = 2;
 
-            dtriangle_t[] triangles = Mod.Triangles;
+            dtriangle_t[] triangles = MainWindow.Instance.Host.Model.Triangles;
 
             Int32[] vidx = triangles[starttri].vertindex; //last = &triangles[starttri];
             _StripVerts[0] = vidx[( startv ) % 3];
@@ -286,7 +286,7 @@ done:
         {
             _Used[starttri] = 2;
 
-            dtriangle_t[] triangles = Mod.Triangles;
+            dtriangle_t[] triangles = MainWindow.Instance.Host.Model.Triangles;
             //last = &triangles[starttri];
 
             Int32[] vidx = triangles[starttri].vertindex;

@@ -548,16 +548,16 @@ namespace SharpQuake
                     ent.v.absmax.y < touch.v.absmin.y || ent.v.absmax.z < touch.v.absmin.z )
                     continue;
 
-                var old_self = progs.GlobalStruct.self;
-                var old_other = progs.GlobalStruct.other;
+                var old_self = Host.Programs.GlobalStruct.self;
+                var old_other = Host.Programs.GlobalStruct.other;
 
-                progs.GlobalStruct.self = EdictToProg( touch );
-                progs.GlobalStruct.other = EdictToProg( ent );
-                progs.GlobalStruct.time = ( Single ) sv.time;
-                progs.Execute( touch.v.touch );
+                Host.Programs.GlobalStruct.self = EdictToProg( touch );
+                Host.Programs.GlobalStruct.other = EdictToProg( ent );
+                Host.Programs.GlobalStruct.time = ( Single ) sv.time;
+                Host.Programs.Execute( touch.v.touch );
 
-                progs.GlobalStruct.self = old_self;
-                progs.GlobalStruct.other = old_other;
+                Host.Programs.GlobalStruct.self = old_self;
+                Host.Programs.GlobalStruct.other = old_other;
             }
 
             // recurse down both sides

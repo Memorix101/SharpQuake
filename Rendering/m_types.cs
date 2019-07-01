@@ -80,7 +80,7 @@ namespace SharpQuake
     } // msprite_t;
 
 
-    struct maliasframedesc_t
+    public struct maliasframedesc_t
     {
         public Int32 firstpose;
         public Int32 numposes;
@@ -100,7 +100,7 @@ namespace SharpQuake
     } //maliasframedesc_t;
 
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
-    class aliashdr_t
+    public class aliashdr_t
     {
         public Int32 ident;
         public Int32 version;
@@ -220,7 +220,7 @@ namespace SharpQuake
     // TODO: could be shorts
 
     [StructLayout(LayoutKind.Sequential, Pack=1)]
-    struct stvert_t
+    public struct stvert_t
     {
         public Int32 onseam;
         public Int32 s;
@@ -230,7 +230,7 @@ namespace SharpQuake
     } // stvert_t;
 
     [StructLayout(LayoutKind.Sequential)]
-    struct dtriangle_t
+    public struct dtriangle_t
     {
         public Int32 facesfront;
         [MarshalAs(UnmanagedType.ByValArray, ArraySubType = UnmanagedType.I4, SizeConst = 3)]
@@ -243,7 +243,7 @@ namespace SharpQuake
     // load this data
 
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
-    struct trivertx_t
+    public struct trivertx_t
     {
         [MarshalAs(UnmanagedType.ByValArray, SizeConst = 3)]
         public Byte[] v; // [3];

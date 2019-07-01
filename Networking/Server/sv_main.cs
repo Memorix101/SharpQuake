@@ -185,10 +185,10 @@ namespace SharpQuake
                 {
                     // call the prog function for removing a client
                     // this will set the body to a dead frame, among other things
-                    var saveSelf = progs.GlobalStruct.self;
-                    progs.GlobalStruct.self = EdictToProg( client.edict );
-                    progs.Execute( progs.GlobalStruct.ClientDisconnect );
-                    progs.GlobalStruct.self = saveSelf;
+                    var saveSelf = Host.Programs.GlobalStruct.self;
+                    Host.Programs.GlobalStruct.self = EdictToProg( client.edict );
+                    Host.Programs.Execute( Host.Programs.GlobalStruct.ClientDisconnect );
+                    Host.Programs.GlobalStruct.self = saveSelf;
                 }
 
                 Host.Console.DPrint( "Client {0} removed\n", client.name );
@@ -391,12 +391,12 @@ namespace SharpQuake
 
             // stuff the sigil bits into the high bits of items for sbar, or else
             // mix in items2
-            var val = progs.GetEdictFieldFloat( ent, "items2", 0 );
+            var val = Host.Programs.GetEdictFieldFloat( ent, "items2", 0 );
             Int32 items;
             if( val != 0 )
                 items = ( Int32 ) ent.v.items | ( ( Int32 ) val << 23 );
             else
-                items = ( Int32 ) ent.v.items | ( ( Int32 ) progs.GlobalStruct.serverflags << 28 );
+                items = ( Int32 ) ent.v.items | ( ( Int32 ) Host.Programs.GlobalStruct.serverflags << 28 );
 
             bits |= protocol.SU_ITEMS;
 
@@ -463,7 +463,7 @@ namespace SharpQuake
             if( ( bits & protocol.SU_ARMOR ) != 0 )
                 msg.WriteByte( ( Int32 ) ent.v.armorvalue );
             if( ( bits & protocol.SU_WEAPON ) != 0 )
-                msg.WriteByte( ModelIndex( progs.GetString( ent.v.weaponmodel ) ) );
+                msg.WriteByte( ModelIndex( Host.Programs.GetString( ent.v.weaponmodel ) ) );
 
             msg.WriteShort( ( Int32 ) ent.v.health );
             msg.WriteByte( ( Int32 ) ent.v.currentammo );
@@ -527,7 +527,7 @@ namespace SharpQuake
         /// </summary>
         public static void SaveSpawnparms()
         {
-            SharpQuake.server.svs.serverflags = ( Int32 ) progs.GlobalStruct.serverflags;
+            SharpQuake.server.svs.serverflags = ( Int32 ) Host.Programs.GlobalStruct.serverflags;
 
             for( var i = 0; i < svs.maxclients; i++ )
             {
@@ -536,8 +536,8 @@ namespace SharpQuake
                     continue;
 
                 // call the progs to get default spawn parms for the new client
-                progs.GlobalStruct.self = EdictToProg( Host.HostClient.edict );
-                progs.Execute( progs.GlobalStruct.SetChangeParms );
+                Host.Programs.GlobalStruct.self = EdictToProg( Host.HostClient.edict );
+                Host.Programs.Execute( Host.Programs.GlobalStruct.SetChangeParms );
                 AssignGlobalSpawnparams( Host.HostClient );
             }
         }
@@ -588,7 +588,7 @@ namespace SharpQuake
             sv.name = server;
 
             // load progs to get entity field count
-            progs.LoadProgs();
+            Host.Programs.LoadProgs();
 
             // allocate server memory
             sv.max_edicts = QDef.MAX_EDICTS;
@@ -612,7 +612,7 @@ namespace SharpQuake
             sv.paused = false;
             sv.time = 1.0;
             sv.modelname = String.Format( "maps/{0}.bsp", server );
-            sv.worldmodel = Mod.ForName( sv.modelname, false );
+            sv.worldmodel = Host.Model.ForName( sv.modelname, false );
             if( sv.worldmodel == null )
             {
                 Host.Console.Print( "Couldn't spawn server {0}\n", sv.modelname );
@@ -633,7 +633,7 @@ namespace SharpQuake
             for( var i = 1; i < sv.worldmodel.numsubmodels; i++ )
             {
                 sv.model_precache[1 + i] = _LocalModels[i];
-                sv.models[i + 1] = Mod.ForName( _LocalModels[i], false );
+                sv.models[i + 1] = Host.Model.ForName( _LocalModels[i], false );
             }
 
             //
@@ -641,27 +641,27 @@ namespace SharpQuake
             //
             ent = EdictNum( 0 );
             ent.Clear();
-            ent.v.model = progs.StringOffset( sv.worldmodel.name );
+            ent.v.model = Host.Programs.StringOffset( sv.worldmodel.name );
             if( ent.v.model == -1 )
             {
-                ent.v.model = progs.NewString( sv.worldmodel.name );
+                ent.v.model = Host.Programs.NewString( sv.worldmodel.name );
             }
             ent.v.modelindex = 1;		// world model
             ent.v.solid = Solids.SOLID_BSP;
             ent.v.movetype = Movetypes.MOVETYPE_PUSH;
 
             if( Host.IsCoop )
-                progs.GlobalStruct.coop = 1; //coop.value;
+                Host.Programs.GlobalStruct.coop = 1; //coop.value;
             else
-                progs.GlobalStruct.deathmatch = Host.Deathmatch;
+                Host.Programs.GlobalStruct.deathmatch = Host.Deathmatch;
 
-            var offset = progs.NewString( sv.name );
-            progs.GlobalStruct.mapname = offset;
+            var offset = Host.Programs.NewString( sv.name );
+            Host.Programs.GlobalStruct.mapname = offset;
 
             // serverflags are for cross level information (sigils)
-            progs.GlobalStruct.serverflags = svs.serverflags;
+            Host.Programs.GlobalStruct.serverflags = svs.serverflags;
 
-            progs.LoadFromFile( sv.worldmodel.entities );
+            Host.Programs.LoadFromFile( sv.worldmodel.entities );
 
             sv.active = true;
 
@@ -761,7 +761,7 @@ namespace SharpQuake
                 if( ent != clent )	// clent is ALLWAYS sent
                 {
                     // ignore ents without visible models
-                    var mname = progs.GetString( ent.v.model );
+                    var mname = Host.Programs.GetString( ent.v.model );
                     if( String.IsNullOrEmpty( mname ) )
                         continue;
 
@@ -890,7 +890,7 @@ namespace SharpQuake
                 {
                     if( node.contents != ContentsDef.CONTENTS_SOLID )
                     {
-                        Byte[] pvs = Mod.LeafPVS( (MemoryLeaf)node, sv.worldmodel );
+                        Byte[] pvs = Host.Model.LeafPVS( (MemoryLeaf)node, sv.worldmodel );
                         for( var i = 0; i < _FatBytes; i++ )
                             _FatPvs[i] |= pvs[i];
                     }
@@ -988,7 +988,7 @@ namespace SharpQuake
             else
             {
                 // call the progs to get default spawn parms for the new client
-                progs.Execute( progs.GlobalStruct.SetNewParms );
+                Host.Programs.Execute( Host.Programs.GlobalStruct.SetNewParms );
 
                 AssignGlobalSpawnparams( client );
             }
@@ -998,25 +998,25 @@ namespace SharpQuake
 
         private static void AssignGlobalSpawnparams( client_t client )
         {
-            client.spawn_parms[0] = progs.GlobalStruct.parm1;
-            client.spawn_parms[1] = progs.GlobalStruct.parm2;
-            client.spawn_parms[2] = progs.GlobalStruct.parm3;
-            client.spawn_parms[3] = progs.GlobalStruct.parm4;
+            client.spawn_parms[0] = Host.Programs.GlobalStruct.parm1;
+            client.spawn_parms[1] = Host.Programs.GlobalStruct.parm2;
+            client.spawn_parms[2] = Host.Programs.GlobalStruct.parm3;
+            client.spawn_parms[3] = Host.Programs.GlobalStruct.parm4;
 
-            client.spawn_parms[4] = progs.GlobalStruct.parm5;
-            client.spawn_parms[5] = progs.GlobalStruct.parm6;
-            client.spawn_parms[6] = progs.GlobalStruct.parm7;
-            client.spawn_parms[7] = progs.GlobalStruct.parm8;
+            client.spawn_parms[4] = Host.Programs.GlobalStruct.parm5;
+            client.spawn_parms[5] = Host.Programs.GlobalStruct.parm6;
+            client.spawn_parms[6] = Host.Programs.GlobalStruct.parm7;
+            client.spawn_parms[7] = Host.Programs.GlobalStruct.parm8;
 
-            client.spawn_parms[8] = progs.GlobalStruct.parm9;
-            client.spawn_parms[9] = progs.GlobalStruct.parm10;
-            client.spawn_parms[10] = progs.GlobalStruct.parm11;
-            client.spawn_parms[11] = progs.GlobalStruct.parm12;
+            client.spawn_parms[8] = Host.Programs.GlobalStruct.parm9;
+            client.spawn_parms[9] = Host.Programs.GlobalStruct.parm10;
+            client.spawn_parms[10] = Host.Programs.GlobalStruct.parm11;
+            client.spawn_parms[11] = Host.Programs.GlobalStruct.parm12;
 
-            client.spawn_parms[12] = progs.GlobalStruct.parm13;
-            client.spawn_parms[13] = progs.GlobalStruct.parm14;
-            client.spawn_parms[14] = progs.GlobalStruct.parm15;
-            client.spawn_parms[15] = progs.GlobalStruct.parm16;
+            client.spawn_parms[12] = Host.Programs.GlobalStruct.parm13;
+            client.spawn_parms[13] = Host.Programs.GlobalStruct.parm14;
+            client.spawn_parms[14] = Host.Programs.GlobalStruct.parm15;
+            client.spawn_parms[15] = Host.Programs.GlobalStruct.parm16;
         }
 
         /// <summary>
@@ -1029,7 +1029,7 @@ namespace SharpQuake
             MessageWriter writer = client.message;
 
             writer.WriteByte( protocol.svc_print );
-            writer.WriteString( String.Format( "{0}\nVERSION {1,4:F2} SERVER ({2} CRC)", ( Char ) 2, QDef.VERSION, progs.Crc ) );
+            writer.WriteString( String.Format( "{0}\nVERSION {1,4:F2} SERVER ({2} CRC)", ( Char ) 2, QDef.VERSION, Host.Programs.Crc ) );
 
             writer.WriteByte( protocol.svc_serverinfo );
             writer.WriteLong( protocol.PROTOCOL_VERSION );
@@ -1040,7 +1040,7 @@ namespace SharpQuake
             else
                 writer.WriteByte( protocol.GAME_COOP );
 
-            var message = progs.GetString( sv.edicts[0].v.message );
+            var message = Host.Programs.GetString( sv.edicts[0].v.message );
 
             writer.WriteString( message );
 
@@ -1123,7 +1123,7 @@ namespace SharpQuake
                 else
                 {
                     svent.baseline.colormap = 0;
-                    svent.baseline.modelindex = ModelIndex( progs.GetString( svent.v.model ) );
+                    svent.baseline.modelindex = ModelIndex( Host.Programs.GetString( svent.v.model ) );
                 }
 
                 //

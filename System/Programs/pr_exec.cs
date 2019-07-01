@@ -25,15 +25,9 @@ using SharpQuake.Framework;
 
 namespace SharpQuake
 {
-    partial class progs
+    public partial class progs
     {
-        private struct prstack_t
-        {
-            public Int32 s;
-            public ProgramFunction f;
-        } // prstack_t;
-
-        public static Int32 Argc
+        public Int32 Argc
         {
             get
             {
@@ -41,9 +35,9 @@ namespace SharpQuake
             }
         }
 
-        public static Boolean Trace;
+        public Boolean Trace;
 
-        public static ProgramFunction xFunction;
+        public ProgramFunction xFunction;
 
         private const Int32 MAX_STACK_DEPTH = 32;
 
@@ -139,27 +133,27 @@ namespace SharpQuake
         };
 
         // pr_trace
-        private static prstack_t[] _Stack = new prstack_t[MAX_STACK_DEPTH]; // pr_stack
+        private ProgramStack[] _Stack = new ProgramStack[MAX_STACK_DEPTH]; // pr_stack
 
-        private static Int32 _Depth; // pr_depth
+        private Int32 _Depth; // pr_depth
 
-        private static Int32[] _LocalStack = new Int32[LOCALSTACK_SIZE]; // localstack
-        private static Int32 _LocalStackUsed; // localstack_used
+        private Int32[] _LocalStack = new Int32[LOCALSTACK_SIZE]; // localstack
+        private Int32 _LocalStackUsed; // localstack_used
 
         // pr_xfunction
-        private static Int32 _xStatement; // pr_xstatement
+        private Int32 _xStatement; // pr_xstatement
 
-        private static Int32 _Argc; // pr_argc
+        private Int32 _Argc; // pr_argc
 
         /// <summary>
         /// PR_ExecuteProgram
         /// </summary>
-        public unsafe static void Execute( Int32 fnum )
+        public unsafe void Execute( Int32 fnum )
         {
             if( fnum < 1 || fnum >= _Functions.Length )
             {
-                if( progs.GlobalStruct.self != 0 )
-                    Print( server.ProgToEdict( progs.GlobalStruct.self ) );
+                if( GlobalStruct.self != 0 )
+                    Print( server.ProgToEdict( GlobalStruct.self ) );
                 Host.Error( "PR_ExecuteProgram: NULL function" );
             }
 
@@ -440,11 +434,11 @@ namespace SharpQuake
                         break;
 
                     case ProgramOperator.OP_STATE:
-                        ed = server.ProgToEdict( progs.GlobalStruct.self );
+                        ed = server.ProgToEdict( GlobalStruct.self );
 #if FPS_20
                         ed->v.nextthink = pr_global_struct->time + 0.05;
 #else
-                        ed.v.nextthink = progs.GlobalStruct.time + 0.1f;
+                        ed.v.nextthink = GlobalStruct.time + 0.1f;
 #endif
                         if( a->_float != ed.v.frame )
                         {
@@ -464,7 +458,7 @@ namespace SharpQuake
         /// PR_RunError
         /// Aborts the currently executing function
         /// </summary>
-        public static void RunError( String fmt, params Object[] args )
+        public void RunError( String fmt, params Object[] args )
         {
             PrintStatement( ref _Statements[_xStatement] );
             StackTrace();
@@ -475,7 +469,7 @@ namespace SharpQuake
             Host.Error( "Program error" );
         }
 
-        public static MemoryEdict EdictFromAddr( Int32 addr, out Int32 ofs )
+        public MemoryEdict EdictFromAddr( Int32 addr, out Int32 ofs )
         {
             var prog = ( addr >> 16 ) & 0xFFFF;
             ofs = addr & 0xFFFF;
@@ -483,7 +477,7 @@ namespace SharpQuake
         }
 
         // PR_Profile_f
-        private static void Profile_f()
+        private void Profile_f()
         {
             if( _Functions == null )
                 return;
@@ -517,7 +511,7 @@ namespace SharpQuake
         /// PR_EnterFunction
         /// Returns the new program statement counter
         /// </summary>
-        private static unsafe Int32 EnterFunction( ProgramFunction f )
+        private unsafe Int32 EnterFunction( ProgramFunction f )
         {
             _Stack[_Depth].s = _xStatement;
             _Stack[_Depth].f = xFunction;
@@ -552,7 +546,7 @@ namespace SharpQuake
         /// <summary>
         /// PR_StackTrace
         /// </summary>
-        private static void StackTrace()
+        private void StackTrace()
         {
             if( _Depth == 0 )
             {
@@ -560,7 +554,7 @@ namespace SharpQuake
                 return;
             }
 
-            _Stack[_Depth].f = progs.xFunction;
+            _Stack[_Depth].f = Host.Programs.xFunction;
             for( var i = _Depth; i >= 0; i-- )
             {
                 ProgramFunction f = _Stack[i].f;
@@ -577,7 +571,7 @@ namespace SharpQuake
         /// <summary>
         /// PR_PrintStatement
         /// </summary>
-        private static void PrintStatement( ref Statement s )
+        private void PrintStatement( ref Statement s )
         {
             if( s.op < OpNames.Length )
             {
@@ -611,7 +605,7 @@ namespace SharpQuake
         /// <summary>
         /// PR_LeaveFunction
         /// </summary>
-        private static Int32 LeaveFunction()
+        private Int32 LeaveFunction()
         {
             if( _Depth <= 0 )
                 Utilities.Error( "prog stack underflow" );
@@ -635,7 +629,7 @@ namespace SharpQuake
             return _Stack[_Depth].s;
         }
 
-        private static Int32 MakeAddr( Int32 prog, Int32 offset )
+        private Int32 MakeAddr( Int32 prog, Int32 offset )
         {
             return ( ( prog & 0xFFFF ) << 16 ) + ( offset & 0xFFFF );
         }

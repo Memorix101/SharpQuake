@@ -38,10 +38,10 @@ namespace SharpQuake
         public static void Physics()
         {
             // let the progs know that a new frame has started
-            progs.GlobalStruct.self = EdictToProg( sv.edicts[0] );
-            progs.GlobalStruct.other = progs.GlobalStruct.self;
-            progs.GlobalStruct.time = ( Single ) sv.time;
-            progs.Execute( progs.GlobalStruct.StartFrame );
+            Host.Programs.GlobalStruct.self = EdictToProg( sv.edicts[0] );
+            Host.Programs.GlobalStruct.other = Host.Programs.GlobalStruct.self;
+            Host.Programs.GlobalStruct.time = ( Single ) sv.time;
+            Host.Programs.Execute( Host.Programs.GlobalStruct.StartFrame );
 
             //
             // treat each object in turn
@@ -52,7 +52,7 @@ namespace SharpQuake
                 if( ent.free )
                     continue;
 
-                if( progs.GlobalStruct.force_retouch != 0 )
+                if( Host.Programs.GlobalStruct.force_retouch != 0 )
                 {
                     LinkEdict( ent, true );	// force retouch even for stationary
                 }
@@ -91,8 +91,8 @@ namespace SharpQuake
                     }
             }
 
-            if( progs.GlobalStruct.force_retouch != 0 )
-                progs.GlobalStruct.force_retouch -= 1;
+            if( Host.Programs.GlobalStruct.force_retouch != 0 )
+                Host.Programs.GlobalStruct.force_retouch -= 1;
 
             sv.time += Host.FrameTime;
         }
@@ -253,7 +253,7 @@ namespace SharpQuake
         /// </summary>
         private static void AddGravity( MemoryEdict ent )
         {
-            var val = progs.GetEdictFieldFloat( ent, "gravity" );
+            var val = Host.Programs.GetEdictFieldFloat( ent, "gravity" );
             if( val == 0 )
                 val = 1;
             ent.v.velocity.z -= ( Single ) ( val * _Gravity.Value * Host.FrameTime );
@@ -342,10 +342,10 @@ namespace SharpQuake
             if( thinktime > oldltime && thinktime <= ent.v.ltime )
             {
                 ent.v.nextthink = 0;
-                progs.GlobalStruct.time = ( Single ) sv.time;
-                progs.GlobalStruct.self = EdictToProg( ent );
-                progs.GlobalStruct.other = EdictToProg( sv.edicts[0] );
-                progs.Execute( ent.v.think );
+                Host.Programs.GlobalStruct.time = ( Single ) sv.time;
+                Host.Programs.GlobalStruct.self = EdictToProg( ent );
+                Host.Programs.GlobalStruct.other = EdictToProg( sv.edicts[0] );
+                Host.Programs.Execute( ent.v.think );
                 if( ent.free )
                     return;
             }
@@ -363,9 +363,9 @@ namespace SharpQuake
             //
             // call standard client pre-think
             //
-            progs.GlobalStruct.time = ( Single ) sv.time;
-            progs.GlobalStruct.self = EdictToProg( ent );
-            progs.Execute( progs.GlobalStruct.PlayerPreThink );
+            Host.Programs.GlobalStruct.time = ( Single ) sv.time;
+            Host.Programs.GlobalStruct.self = EdictToProg( ent );
+            Host.Programs.Execute( Host.Programs.GlobalStruct.PlayerPreThink );
 
             //
             // do a move
@@ -419,9 +419,9 @@ namespace SharpQuake
             //
             LinkEdict( ent, true );
 
-            progs.GlobalStruct.time = ( Single ) sv.time;
-            progs.GlobalStruct.self = EdictToProg( ent );
-            progs.Execute( progs.GlobalStruct.PlayerPostThink );
+            Host.Programs.GlobalStruct.time = ( Single ) sv.time;
+            Host.Programs.GlobalStruct.self = EdictToProg( ent );
+            Host.Programs.Execute( Host.Programs.GlobalStruct.PlayerPostThink );
         }
 
         /// <summary>
@@ -713,10 +713,10 @@ namespace SharpQuake
             // it is possible to start that way
             // by a trigger with a local time.
             ent.v.nextthink = 0;
-            progs.GlobalStruct.time = thinktime;
-            progs.GlobalStruct.self = EdictToProg( ent );
-            progs.GlobalStruct.other = EdictToProg( sv.edicts[0] );
-            progs.Execute( ent.v.think );
+            Host.Programs.GlobalStruct.time = thinktime;
+            Host.Programs.GlobalStruct.self = EdictToProg( ent );
+            Host.Programs.GlobalStruct.other = EdictToProg( sv.edicts[0] );
+            Host.Programs.Execute( ent.v.think );
 
             return !ent.free;
         }
@@ -731,12 +731,12 @@ namespace SharpQuake
             //
             if( MathLib.CheckNaN( ref ent.v.velocity, 0 ) )
             {
-                Host.Console.Print( "Got a NaN velocity on {0}\n", progs.GetString( ent.v.classname ) );
+                Host.Console.Print( "Got a NaN velocity on {0}\n", Host.Programs.GetString( ent.v.classname ) );
             }
 
             if( MathLib.CheckNaN( ref ent.v.origin, 0 ) )
             {
-                Host.Console.Print( "Got a NaN origin on {0}\n", progs.GetString( ent.v.classname ) );
+                Host.Console.Print( "Got a NaN origin on {0}\n", Host.Programs.GetString( ent.v.classname ) );
             }
 
             Vector3 max = Vector3.One * _MaxVelocity.Value;
@@ -898,26 +898,26 @@ namespace SharpQuake
         /// </summary>
         private static void Impact( MemoryEdict e1, MemoryEdict e2 )
         {
-            var old_self = progs.GlobalStruct.self;
-            var old_other = progs.GlobalStruct.other;
+            var old_self = Host.Programs.GlobalStruct.self;
+            var old_other = Host.Programs.GlobalStruct.other;
 
-            progs.GlobalStruct.time = ( Single ) sv.time;
+            Host.Programs.GlobalStruct.time = ( Single ) sv.time;
             if( e1.v.touch != 0 && e1.v.solid != Solids.SOLID_NOT )
             {
-                progs.GlobalStruct.self = EdictToProg( e1 );
-                progs.GlobalStruct.other = EdictToProg( e2 );
-                progs.Execute( e1.v.touch );
+                Host.Programs.GlobalStruct.self = EdictToProg( e1 );
+                Host.Programs.GlobalStruct.other = EdictToProg( e2 );
+                Host.Programs.Execute( e1.v.touch );
             }
 
             if( e2.v.touch != 0 && e2.v.solid != Solids.SOLID_NOT )
             {
-                progs.GlobalStruct.self = EdictToProg( e2 );
-                progs.GlobalStruct.other = EdictToProg( e1 );
-                progs.Execute( e2.v.touch );
+                Host.Programs.GlobalStruct.self = EdictToProg( e2 );
+                Host.Programs.GlobalStruct.other = EdictToProg( e1 );
+                Host.Programs.Execute( e2.v.touch );
             }
 
-            progs.GlobalStruct.self = old_self;
-            progs.GlobalStruct.other = old_other;
+            Host.Programs.GlobalStruct.self = old_self;
+            Host.Programs.GlobalStruct.other = old_other;
         }
 
         /// <summary>
@@ -1012,9 +1012,9 @@ namespace SharpQuake
                     // otherwise, just stay in place until the obstacle is gone
                     if( pusher.v.blocked != 0 )
                     {
-                        progs.GlobalStruct.self = EdictToProg( pusher );
-                        progs.GlobalStruct.other = EdictToProg( check );
-                        progs.Execute( pusher.v.blocked );
+                        Host.Programs.GlobalStruct.self = EdictToProg( pusher );
+                        Host.Programs.GlobalStruct.other = EdictToProg( check );
+                        Host.Programs.Execute( pusher.v.blocked );
                     }
 
                     // move back any entities we already moved

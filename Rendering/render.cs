@@ -369,7 +369,7 @@ namespace SharpQuake
             if( model.type != ModelType.mod_alias )
                 return; // only translate skins on alias models
 
-            aliashdr_t paliashdr = Mod.GetExtraData( model );
+            aliashdr_t paliashdr = Host.Model.GetExtraData( model );
             var s = paliashdr.skinwidth * paliashdr.skinheight;
             if( ( s & 3 ) != 0 )
                 Utilities.Error( "R_TranslateSkin: s&3" );
@@ -888,7 +888,7 @@ namespace SharpQuake
             //
             // locate the proper data
             //
-            aliashdr_t paliashdr = Mod.GetExtraData( _CurrentEntity.model );
+            aliashdr_t paliashdr = Host.Model.GetExtraData( _CurrentEntity.model );
 
             _AliasPolys += paliashdr.numtris;
 
@@ -1245,7 +1245,7 @@ namespace SharpQuake
 
             // current viewleaf
             _OldViewLeaf = _ViewLeaf;
-            _ViewLeaf = Mod.PointInLeaf( ref render.Origin, client.cl.worldmodel );
+            _ViewLeaf = Host.Model.PointInLeaf( ref render.Origin, client.cl.worldmodel );
 
             Host.View.SetContentsColor( _ViewLeaf.contents );
             Host.View.CalcBlend();

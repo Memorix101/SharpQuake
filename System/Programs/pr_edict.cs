@@ -30,7 +30,7 @@ using SharpQuake.Framework;
 
 namespace SharpQuake
 {
-    partial class progs
+    public partial class progs
     {
         private struct gefv_cache
         {
@@ -38,7 +38,7 @@ namespace SharpQuake
             public String field;// char	field[MAX_FIELD_LEN];
         }
 
-        public static Int32 EdictSize
+        public Int32 EdictSize
         {
             get
             {
@@ -47,7 +47,7 @@ namespace SharpQuake
         }
 
         //static StringBuilder _AddedStrings = new StringBuilder(4096);
-        public static Int64 GlobalStructAddr
+        public Int64 GlobalStructAddr
         {
             get
             {
@@ -55,7 +55,7 @@ namespace SharpQuake
             }
         }
 
-        public static Int32 Crc
+        public Int32 Crc
         {
             get
             {
@@ -63,51 +63,58 @@ namespace SharpQuake
             }
         }
 
-        public static GlobalVariables GlobalStruct;
+        public GlobalVariables GlobalStruct;
         private const Int32 MAX_FIELD_LEN = 64;
         private const Int32 GEFV_CACHESIZE = 2;
 
         //gefv_cache;
 
-        private static gefv_cache[] _gefvCache = new gefv_cache[GEFV_CACHESIZE]; // gefvCache
-        private static Int32 _gefvPos;
+        private gefv_cache[] _gefvCache = new gefv_cache[GEFV_CACHESIZE]; // gefvCache
+        private Int32 _gefvPos;
 
-        private static Int32[] _TypeSize = new Int32[8] // type_size
+        private Int32[] _TypeSize = new Int32[8] // type_size
         {
             1, sizeof(Int32)/4, 1, 3, 1, 1, sizeof(Int32)/4, IntPtr.Size/4
         };
 
-        private static CVar _NoMonsters;// = { "nomonsters", "0" };
-        private static CVar _GameCfg;// = { "gamecfg", "0" };
-        private static CVar _Scratch1;// = { "scratch1", "0" };
-        private static CVar _Scratch2;// = { "scratch2", "0" };
-        private static CVar _Scratch3;// = { "scratch3", "0" };
-        private static CVar _Scratch4;// = { "scratch4", "0" };
-        private static CVar _SavedGameCfg;// = { "savedgamecfg", "0", true };
-        private static CVar _Saved1;// = { "saved1", "0", true };
-        private static CVar _Saved2;// = { "saved2", "0", true };
-        private static CVar _Saved3;// = { "saved3", "0", true };
-        private static CVar _Saved4;// = { "saved4", "0", true };
+        private CVar _NoMonsters;// = { "nomonsters", "0" };
+        private CVar _GameCfg;// = { "gamecfg", "0" };
+        private CVar _Scratch1;// = { "scratch1", "0" };
+        private CVar _Scratch2;// = { "scratch2", "0" };
+        private CVar _Scratch3;// = { "scratch3", "0" };
+        private CVar _Scratch4;// = { "scratch4", "0" };
+        private CVar _SavedGameCfg;// = { "savedgamecfg", "0", true };
+        private CVar _Saved1;// = { "saved1", "0", true };
+        private CVar _Saved2;// = { "saved2", "0", true };
+        private CVar _Saved3;// = { "saved3", "0", true };
+        private CVar _Saved4;// = { "saved4", "0", true };
 
-        private static Program _Progs; // progs
-        private static ProgramFunction[] _Functions; // pr_functions
-        private static String _Strings; // pr_strings
-        private static ProgramDefinition[] _FieldDefs; // pr_fielddefs
-        private static ProgramDefinition[] _GlobalDefs; // pr_globaldefs
-        private static Statement[] _Statements; // pr_statements
+        private Program _Progs; // progs
+        private ProgramFunction[] _Functions; // pr_functions
+        private String _Strings; // pr_strings
+        private ProgramDefinition[] _FieldDefs; // pr_fielddefs
+        private ProgramDefinition[] _GlobalDefs; // pr_globaldefs
+        private Statement[] _Statements; // pr_statements
 
         // pr_global_struct
-        private static Single[] _Globals; // Added by Uze: all data after globalvars_t (numglobals * 4 - globalvars_t.SizeInBytes)
+        private Single[] _Globals; // Added by Uze: all data after globalvars_t (numglobals * 4 - globalvars_t.SizeInBytes)
 
-        private static Int32 _EdictSize; // pr_edict_size	// in bytes
-        private static UInt16 _Crc; // pr_crc
-        private static GCHandle _HGlobalStruct;
-        private static GCHandle _HGlobals;
-        private static Int64 _GlobalStructAddr;
-        private static Int64 _GlobalsAddr;
-        private static List<String> _DynamicStrings = new List<String>( 512 );
+        private Int32 _EdictSize; // pr_edict_size	// in bytes
+        private UInt16 _Crc; // pr_crc
+        private GCHandle _HGlobalStruct;
+        private GCHandle _HGlobals;
+        private Int64 _GlobalStructAddr;
+        private Int64 _GlobalsAddr;
+        private List<String> _DynamicStrings = new List<String>( 512 );
+        
+        // Instances
+        private Host Host
+        {
+            get;
+            set;
+        }
 
-        static progs()
+        public progs()
         {
             // Temporary workaround - will fix later
             ProgramsWrapper.OnGetString += ( strId ) =>
@@ -116,15 +123,8 @@ namespace SharpQuake
             };
         }
 
-        // CHANGE
-        private static Host Host
-        {
-            get;
-            set;
-        }
-
         // PR_Init
-        public static void Init( Host host )
+        public void Initialise( Host host )
         {
             Host = host;
 
@@ -153,7 +153,7 @@ namespace SharpQuake
         /// <summary>
         /// PR_LoadProgs
         /// </summary>
-        public static void LoadProgs()
+        public void LoadProgs()
         {
             FreeHandles();
 
@@ -170,7 +170,7 @@ namespace SharpQuake
 
             _Progs = Utilities.BytesToStructure<Program>( buf, 0 );
             if( _Progs == null )
-                Utilities.Error( "PR_LoadProgs: couldn't load progs.dat" );
+                Utilities.Error( "PR_LoadProgs: couldn't load Host.Programs.dat" );
             Host.Console.DPrint( "Programs occupy {0}K.\n", buf.Length / 1024 );
 
             for( var i = 0; i < buf.Length; i++ )
@@ -252,21 +252,21 @@ namespace SharpQuake
             _HGlobals = GCHandle.Alloc( _Globals, GCHandleType.Pinned );
             _GlobalsAddr = _HGlobals.AddrOfPinnedObject().ToInt64();
 
-            _HGlobalStruct = GCHandle.Alloc( progs.GlobalStruct, GCHandleType.Pinned );
+            _HGlobalStruct = GCHandle.Alloc( Host.Programs.GlobalStruct, GCHandleType.Pinned );
             _GlobalStructAddr = _HGlobalStruct.AddrOfPinnedObject().ToInt64();
         }
 
         // ED_PrintEdicts
         //
         // For debugging, prints all the entities in the current server
-        public static void PrintEdicts()
+        public void PrintEdicts()
         {
             Host.Console.Print( "{0} entities\n", server.sv.num_edicts );
             for( var i = 0; i < server.sv.num_edicts; i++ )
                 PrintNum( i );
         }
 
-        public static Int32 StringOffset( String value )
+        public Int32 StringOffset( String value )
         {
             var tmp = '\0' + value + '\0';
             var offset = _Strings.IndexOf( tmp, StringComparison.Ordinal );
@@ -297,11 +297,11 @@ namespace SharpQuake
         /// Used for both fresh maps and savegame loads.  A fresh map would also need
         /// to call ED_CallSpawnFunctions () to let the objects initialize themselves.
         /// </summary>
-        public static void LoadFromFile( String data )
+        public void LoadFromFile( String data )
         {
             MemoryEdict ent = null;
             var inhibit = 0;
-            progs.GlobalStruct.time = ( Single ) server.sv.time;
+            Host.Programs.GlobalStruct.time = ( Single ) server.sv.time;
 
             // parse ents
             while( true )
@@ -360,7 +360,7 @@ namespace SharpQuake
                     continue;
                 }
 
-                progs.GlobalStruct.self = server.EdictToProg( ent );
+                GlobalStruct.self = server.EdictToProg( ent );
                 Execute( func );
             }
 
@@ -373,7 +373,7 @@ namespace SharpQuake
         /// ed should be a properly initialized empty edict.
         /// Used for initial level load and for savegames.
         /// </summary>
-        public static String ParseEdict( String data, MemoryEdict ent )
+        public String ParseEdict( String data, MemoryEdict ent )
         {
             var init = false;
 
@@ -453,7 +453,7 @@ namespace SharpQuake
         /// ED_Print
         /// For debugging
         /// </summary>
-        public unsafe static void Print( MemoryEdict ed )
+        public unsafe void Print( MemoryEdict ed )
         {
             if( ed.free )
             {
@@ -499,7 +499,7 @@ namespace SharpQuake
             }
         }
 
-        public static String GetString( Int32 strId )
+        public String GetString( Int32 strId )
         {
             Int32 offset;
             if( IsStaticString( strId, out offset ) )
@@ -524,7 +524,7 @@ namespace SharpQuake
             return String.Empty;
         }
 
-        public static Boolean SameName( Int32 name1, String name2 )
+        public Boolean SameName( Int32 name1, String name2 )
         {
             var offset = name1;
             if( offset + name2.Length > _Strings.Length )
@@ -543,7 +543,7 @@ namespace SharpQuake
         /// <summary>
         /// Like ED_NewString but returns string id (string_t)
         /// </summary>
-        public static Int32 NewString( String s )
+        public Int32 NewString( String s )
         {
             var id = AllocString();
             StringBuilder sb = new StringBuilder( s.Length );
@@ -565,7 +565,7 @@ namespace SharpQuake
             return id;
         }
 
-        public static Single GetEdictFieldFloat( MemoryEdict ed, String field, Single defValue = 0 )
+        public Single GetEdictFieldFloat( MemoryEdict ed, String field, Single defValue = 0 )
         {
             ProgramDefinition def = CachedSearch( ed, field );
             if( def == null )
@@ -574,7 +574,7 @@ namespace SharpQuake
             return ed.GetFloat( def.ofs );
         }
 
-        public static Boolean SetEdictFieldFloat( MemoryEdict ed, String field, Single value )
+        public Boolean SetEdictFieldFloat( MemoryEdict ed, String field, Single value )
         {
             ProgramDefinition def = CachedSearch( ed, field );
             if( def != null )
@@ -585,14 +585,14 @@ namespace SharpQuake
             return false;
         }
 
-        public static Int32 AllocString()
+        public Int32 AllocString()
         {
             var id = _DynamicStrings.Count;
             _DynamicStrings.Add( String.Empty );
             return MakeStingId( id, false );
         }
 
-        public static void SetString( Int32 id, String value )
+        public void SetString( Int32 id, String value )
         {
             Int32 offset;
             if( IsStaticString( id, out offset ) )
@@ -609,7 +609,7 @@ namespace SharpQuake
         /// <summary>
         /// ED_WriteGlobals
         /// </summary>
-        public unsafe static void WriteGlobals( StreamWriter writer )
+        public unsafe void WriteGlobals( StreamWriter writer )
         {
             writer.WriteLine( "{" );
             for( var i = 0; i < _Progs.numglobaldefs; i++ )
@@ -636,7 +636,7 @@ namespace SharpQuake
         /// <summary>
         /// ED_Write
         /// </summary>
-        public unsafe static void WriteEdict( StreamWriter writer, MemoryEdict ed )
+        public unsafe void WriteEdict( StreamWriter writer, MemoryEdict ed )
         {
             writer.WriteLine( "{" );
 
@@ -685,7 +685,7 @@ namespace SharpQuake
         /// <summary>
         /// ED_ParseGlobals
         /// </summary>
-        public static void ParseGlobals( String data )
+        public void ParseGlobals( String data )
         {
             while( true )
             {
@@ -722,12 +722,12 @@ namespace SharpQuake
         /// <summary>
         /// ED_PrintNum
         /// </summary>
-        public static void PrintNum( Int32 ent )
+        public void PrintNum( Int32 ent )
         {
             Print( server.EdictNum( ent ) );
         }
 
-        private static void Test5_f()
+        private void Test5_f()
         {
             Entity p = client.ViewEntity;
             if( p == null )
@@ -754,7 +754,7 @@ namespace SharpQuake
             }
         }
 
-        private static void FreeHandles()
+        private void FreeHandles()
         {
             if( _HGlobals.IsAllocated )
             {
@@ -772,7 +772,7 @@ namespace SharpQuake
         /// ED_PrintEdict_f
         /// For debugging, prints a single edict
         /// </summary>
-        private static void PrintEdict_f()
+        private void PrintEdict_f()
         {
             var i = MathLib.atoi( Host.Command.Argv( 1 ) );
             if( i >= server.sv.num_edicts )
@@ -780,13 +780,13 @@ namespace SharpQuake
                 Host.Console.Print( "Bad edict number\n" );
                 return;
             }
-            progs.PrintNum( i );
+            Host.Programs.PrintNum( i );
         }
 
         // ED_Count
         //
         // For debugging
-        private static void EdictCount()
+        private void EdictCount()
         {
             Int32 active = 0, models = 0, solid = 0, step = 0;
 
@@ -814,7 +814,7 @@ namespace SharpQuake
         /// <summary>
         /// ED_FindFunction
         /// </summary>
-        private static ProgramFunction FindFunction( String name )
+        private ProgramFunction FindFunction( String name )
         {
             var i = IndexOfFunction( name );
             if( i != -1 )
@@ -823,7 +823,7 @@ namespace SharpQuake
             return null;
         }
 
-        private static Int32 IndexOfFunction( String name )
+        private Int32 IndexOfFunction( String name )
         {
             for( var i = 0; i < _Functions.Length; i++ )
             {
@@ -839,7 +839,7 @@ namespace SharpQuake
         /// to choose between thistwo parts.
         /// Warning: Key offset is in integers not bytes!
         /// </summary>
-        private static unsafe Boolean ParsePair( MemoryEdict ent, ProgramDefinition key, String s )
+        private unsafe Boolean ParsePair( MemoryEdict ent, ProgramDefinition key, String s )
         {
             Int32 offset1;
             if( ent.IsV( key.ofs, out offset1 ) )
@@ -861,7 +861,7 @@ namespace SharpQuake
         /// Can parse either fields or globals returns false if error
         /// Uze: Warning! value pointer is already with correct offset (value = base + key.ofs)!
         /// </summary>
-        private static unsafe Boolean ParsePair( void* value, ProgramDefinition key, String s )
+        private unsafe Boolean ParsePair( void* value, ProgramDefinition key, String s )
         {
             void* d = value;// (void *)((int *)base + key->ofs);
 
@@ -912,7 +912,7 @@ namespace SharpQuake
             return true;
         }
 
-        private static Int32 IndexOfField( String name )
+        private Int32 IndexOfField( String name )
         {
             for( var i = 0; i < _FieldDefs.Length; i++ )
             {
@@ -926,7 +926,7 @@ namespace SharpQuake
         /// Returns true if ofs is inside GlobalStruct or false if ofs is in _Globals
         /// Out parameter offset is set to correct offset inside either GlobalStruct or _Globals
         /// </summary>
-        private static Boolean IsGlobalStruct( Int32 ofs, out Int32 offset )
+        private Boolean IsGlobalStruct( Int32 ofs, out Int32 offset )
         {
             if( ofs < GlobalVariables.SizeInBytes >> 2 )
             {
@@ -942,7 +942,7 @@ namespace SharpQuake
         /// But globals are split too, so we must check offset and choose
         /// GlobalStruct or _Globals
         /// </summary>
-        private static unsafe void* Get( Int32 offset )
+        private unsafe void* Get( Int32 offset )
         {
             Int32 offset1;
             if( IsGlobalStruct( offset, out offset1 ) )
@@ -952,7 +952,7 @@ namespace SharpQuake
             return ( Int32* )_GlobalsAddr + offset1;
         }
 
-        private static unsafe void Set( Int32 offset, Int32 value )
+        private unsafe void Set( Int32 offset, Int32 value )
         {
             if( offset < GlobalVariables.SizeInBytes >> 2 )
             {
@@ -964,7 +964,7 @@ namespace SharpQuake
             }
         }
 
-        private static unsafe Int32 GetInt32( Int32 offset )
+        private unsafe Int32 GetInt32( Int32 offset )
         {
             return *( ( Int32* )Get( offset ) );
         }
@@ -972,7 +972,7 @@ namespace SharpQuake
         /// <summary>
         /// ED_FindField
         /// </summary>
-        private static ProgramDefinition FindField( String name )
+        private ProgramDefinition FindField( String name )
         {
             var i = IndexOfField( name );
             if( i != -1 )
@@ -984,7 +984,7 @@ namespace SharpQuake
         /// <summary>
         /// PR_ValueString
         /// </summary>
-        private static unsafe String ValueString( EdictType type, void* val )
+        private unsafe String ValueString( EdictType type, void* val )
         {
             String result;
             type &= (EdictType)~ProgramDef.DEF_SAVEGLOBAL;
@@ -1034,7 +1034,7 @@ namespace SharpQuake
             return result;
         }
 
-        private static Int32 IndexOfField( Int32 ofs )
+        private Int32 IndexOfField( Int32 ofs )
         {
             for( var i = 0; i < _FieldDefs.Length; i++ )
             {
@@ -1047,7 +1047,7 @@ namespace SharpQuake
         /// <summary>
         /// ED_FieldAtOfs
         /// </summary>
-        private static ProgramDefinition FindField( Int32 ofs )
+        private ProgramDefinition FindField( Int32 ofs )
         {
             var i = IndexOfField( ofs );
             if( i != -1 )
@@ -1056,7 +1056,7 @@ namespace SharpQuake
             return null;
         }
 
-        private static ProgramDefinition CachedSearch( MemoryEdict ed, String field )
+        private ProgramDefinition CachedSearch( MemoryEdict ed, String field )
         {
             ProgramDefinition def = null;
             for( var i = 0; i < GEFV_CACHESIZE; i++ )
@@ -1077,12 +1077,12 @@ namespace SharpQuake
             return def;
         }
 
-        private static Int32 MakeStingId( Int32 index, Boolean isStatic )
+        private Int32 MakeStingId( Int32 index, Boolean isStatic )
         {
             return ( ( isStatic ? 0 : 1 ) << 24 ) + ( index & 0xFFFFFF );
         }
 
-        private static Boolean IsStaticString( Int32 stringId, out Int32 offset )
+        private Boolean IsStaticString( Int32 stringId, out Int32 offset )
         {
             offset = stringId & 0xFFFFFF;
             return ( ( stringId >> 24 ) & 1 ) == 0;
@@ -1093,7 +1093,7 @@ namespace SharpQuake
         /// Returns a string describing *data in a type specific manner
         /// Easier to parse than PR_ValueString
         /// </summary>
-        private static unsafe String UglyValueString( EdictType type, EVal* val )
+        private unsafe String UglyValueString( EdictType type, EVal* val )
         {
             type &= (EdictType)~ProgramDef.DEF_SAVEGLOBAL;
             String result;
@@ -1139,7 +1139,7 @@ namespace SharpQuake
             return result;
         }
 
-        private static unsafe Boolean IsEmptyField( Int32 type, Int32* v )
+        private unsafe Boolean IsEmptyField( Int32 type, Int32* v )
         {
             for( var j = 0; j < _TypeSize[type]; j++ )
                 if( v[j] != 0 )
@@ -1151,7 +1151,7 @@ namespace SharpQuake
         /// <summary>
         /// ED_FindGlobal
         /// </summary>
-        private static ProgramDefinition FindGlobal( String name )
+        private ProgramDefinition FindGlobal( String name )
         {
             for( var i = 0; i < _GlobalDefs.Length; i++ )
             {
@@ -1162,7 +1162,7 @@ namespace SharpQuake
             return null;
         }
 
-        private static unsafe Boolean ParseGlobalPair( ProgramDefinition key, String value )
+        private unsafe Boolean ParseGlobalPair( ProgramDefinition key, String value )
         {
             Int32 offset;
             if( IsGlobalStruct( key.ofs, out offset ) )
@@ -1177,7 +1177,7 @@ namespace SharpQuake
         /// Returns a string with a description and the contents of a global,
         /// padded to 20 field width
         /// </summary>
-        private static unsafe String GlobalString( Int32 ofs )
+        private unsafe String GlobalString( Int32 ofs )
         {
             var line = String.Empty;
             void* val = Get( ofs );// (void*)&pr_globals[ofs];
@@ -1198,7 +1198,7 @@ namespace SharpQuake
         /// <summary>
         /// PR_GlobalStringNoContents
         /// </summary>
-        private static String GlobalStringNoContents( Int32 ofs )
+        private String GlobalStringNoContents( Int32 ofs )
         {
             var line = String.Empty;
             ProgramDefinition def = GlobalAtOfs( ofs );
@@ -1215,7 +1215,7 @@ namespace SharpQuake
         /// <summary>
         /// ED_GlobalAtOfs
         /// </summary>
-        private static ProgramDefinition GlobalAtOfs( Int32 ofs )
+        private ProgramDefinition GlobalAtOfs( Int32 ofs )
         {
             for( var i = 0; i < _GlobalDefs.Length; i++ )
             {

@@ -149,7 +149,7 @@ namespace SharpQuake
             //
             var numverts = 0;
             Vector3[] verts = new Vector3[fa.numedges + 1]; // + 1 for wrap case
-            Model loadmodel = Mod.Model;
+            Model loadmodel = Host.Model.Model;
             for( var i = 0; i < fa.numedges; i++ )
             {
                 var lindex = loadmodel.surfedges[fa.firstedge + i];
@@ -180,7 +180,7 @@ namespace SharpQuake
             for( var i = 0; i < 3; i++ )
             {
                 var m = ( MathLib.Comp( ref mins, i ) + MathLib.Comp( ref maxs, i ) ) * 0.5;
-                m = Mod.SubdivideSize * Math.Floor( m / Mod.SubdivideSize + 0.5 );
+                m = Host.Model.SubdivideSize * Math.Floor( m / Host.Model.SubdivideSize + 0.5 );
                 if( MathLib.Comp( ref maxs, i ) - m < 8 )
                     continue;
 

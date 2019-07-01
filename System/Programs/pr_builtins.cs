@@ -53,10 +53,10 @@ namespace SharpQuake
                         return server.sv.datagram;
 
                     case MSG_ONE:
-                        MemoryEdict ent = server.ProgToEdict( progs.GlobalStruct.msg_entity );
+                        MemoryEdict ent = server.ProgToEdict( Host.Programs.GlobalStruct.msg_entity );
                         var entnum = server.NumForEdict( ent );
                         if( entnum < 1 || entnum > server.svs.maxclients )
-                            progs.RunError( "WriteDest: not a client" );
+                            Host.Programs.RunError( "WriteDest: not a client" );
                         return server.svs.clients[entnum - 1].message;
 
                     case MSG_ALL:
@@ -66,7 +66,7 @@ namespace SharpQuake
                         return server.sv.signon;
 
                     default:
-                        progs.RunError( "WriteDest: bad destination" );
+                        Host.Programs.RunError( "WriteDest: bad destination" );
                         break;
                 }
 
@@ -194,7 +194,7 @@ namespace SharpQuake
         }
 
         /// <summary>
-        /// Called by Progs.LoadProgs()
+        /// Called by Host.Programs.LoadProgs()
         /// </summary>
         public static void ClearState()
         {
@@ -215,7 +215,7 @@ namespace SharpQuake
         /// </summary>
         public static unsafe void ReturnInt( Int32 value )
         {
-            Int32* ptr = ( Int32* )progs.GlobalStructAddr;
+            Int32* ptr = ( Int32* )Host.Programs.GlobalStructAddr;
             ptr[ProgramOperatorDef.OFS_RETURN] = value;
         }
 
@@ -224,7 +224,7 @@ namespace SharpQuake
         /// </summary>
         public static unsafe void ReturnFloat( Single value )
         {
-            Single* ptr = ( Single* )progs.GlobalStructAddr;
+            Single* ptr = ( Single* )Host.Programs.GlobalStructAddr;
             ptr[ProgramOperatorDef.OFS_RETURN] = value;
         }
 
@@ -233,7 +233,7 @@ namespace SharpQuake
         /// </summary>
         public static unsafe void ReturnVector( ref Vector3f value )
         {
-            Single* ptr = ( Single* )progs.GlobalStructAddr;
+            Single* ptr = ( Single* )Host.Programs.GlobalStructAddr;
             ptr[ProgramOperatorDef.OFS_RETURN + 0] = value.x;
             ptr[ProgramOperatorDef.OFS_RETURN + 1] = value.y;
             ptr[ProgramOperatorDef.OFS_RETURN + 2] = value.z;
@@ -244,7 +244,7 @@ namespace SharpQuake
         /// </summary>
         public static unsafe void ReturnVector( ref Vector3 value )
         {
-            Single* ptr = ( Single* )progs.GlobalStructAddr;
+            Single* ptr = ( Single* )Host.Programs.GlobalStructAddr;
             ptr[ProgramOperatorDef.OFS_RETURN + 0] = value.X;
             ptr[ProgramOperatorDef.OFS_RETURN + 1] = value.Y;
             ptr[ProgramOperatorDef.OFS_RETURN + 2] = value.Z;
@@ -255,8 +255,8 @@ namespace SharpQuake
         /// </summary>
         public static unsafe String GetString( Int32 parm )
         {
-            Int32* ptr = ( Int32* )progs.GlobalStructAddr;
-            return progs.GetString( ptr[parm] );
+            Int32* ptr = ( Int32* )Host.Programs.GlobalStructAddr;
+            return Host.Programs.GetString( ptr[parm] );
         }
 
         /// <summary>
@@ -264,7 +264,7 @@ namespace SharpQuake
         /// </summary>
         public static unsafe Int32 GetInt( Int32 parm )
         {
-            Int32* ptr = ( Int32* )progs.GlobalStructAddr;
+            Int32* ptr = ( Int32* )Host.Programs.GlobalStructAddr;
             return ptr[parm];
         }
 
@@ -273,7 +273,7 @@ namespace SharpQuake
         /// </summary>
         public static unsafe Single GetFloat( Int32 parm )
         {
-            Single* ptr = ( Single* )progs.GlobalStructAddr;
+            Single* ptr = ( Single* )Host.Programs.GlobalStructAddr;
             return ptr[parm];
         }
 
@@ -282,7 +282,7 @@ namespace SharpQuake
         /// </summary>
         public static unsafe Single* GetVector( Int32 parm )
         {
-            Single* ptr = ( Single* )progs.GlobalStructAddr;
+            Single* ptr = ( Single* )Host.Programs.GlobalStructAddr;
             return &ptr[parm];
         }
 
@@ -291,14 +291,14 @@ namespace SharpQuake
         /// </summary>
         public static unsafe MemoryEdict GetEdict( Int32 parm )
         {
-            Int32* ptr = ( Int32* )progs.GlobalStructAddr;
+            Int32* ptr = ( Int32* )Host.Programs.GlobalStructAddr;
             MemoryEdict ed = server.ProgToEdict( ptr[parm] );
             return ed;
         }
 
         public static void PF_changeyaw()
         {
-            MemoryEdict ent = server.ProgToEdict( progs.GlobalStruct.self );
+            MemoryEdict ent = server.ProgToEdict( Host.Programs.GlobalStruct.self );
             var current = MathLib.AngleMod( ent.v.angles.y );
             var ideal = ent.v.ideal_yaw;
             var speed = ent.v.yaw_speed;
@@ -335,11 +335,11 @@ namespace SharpQuake
         {
             if( _TempString == -1 )
             {
-                _TempString = progs.NewString( value );
+                _TempString = Host.Programs.NewString( value );
             }
             else
             {
-                progs.SetString( _TempString, value );
+                Host.Programs.SetString( _TempString, value );
             }
             return _TempString;
         }
@@ -347,7 +347,7 @@ namespace SharpQuake
         private static String PF_VarString( Int32 first )
         {
             StringBuilder sb = new StringBuilder( 256 );
-            for( var i = first; i < progs.Argc; i++ )
+            for( var i = first; i < Host.Programs.Argc; i++ )
             {
                 sb.Append( GetString( ProgramOperatorDef.OFS_PARM0 + i * 3 ) );
             }
@@ -378,9 +378,9 @@ namespace SharpQuake
         {
             var s = PF_VarString( 0 );
             Host.Console.Print( "======SERVER ERROR in {0}:\n{1}\n",
-                progs.GetString( progs.xFunction.s_name ), s );
-            MemoryEdict ed = server.ProgToEdict( progs.GlobalStruct.self );
-            progs.Print( ed );
+                Host.Programs.GetString( Host.Programs.xFunction.s_name ), s );
+            MemoryEdict ed = server.ProgToEdict( Host.Programs.GlobalStruct.self );
+            Host.Programs.Print( ed );
             Host.Error( "Program error" );
         }
 
@@ -399,9 +399,9 @@ namespace SharpQuake
         {
             var s = PF_VarString( 0 );
             Host.Console.Print( "======OBJECT ERROR in {0}:\n{1}\n",
-                GetString( progs.xFunction.s_name ), s );
-            MemoryEdict ed = server.ProgToEdict( progs.GlobalStruct.self );
-            progs.Print( ed );
+                GetString( Host.Programs.xFunction.s_name ), s );
+            MemoryEdict ed = server.ProgToEdict( Host.Programs.GlobalStruct.self );
+            Host.Programs.Print( ed );
             server.FreeEdict( ed );
             Host.Error( "Program error" );
         }
@@ -421,9 +421,9 @@ namespace SharpQuake
             Vector3 a = new Vector3( av[0], av[1], av[2] );
             Vector3 fw, right, up;
             MathLib.AngleVectors( ref a, out fw, out right, out up );
-            MathLib.Copy( ref fw, out progs.GlobalStruct.v_forward );
-            MathLib.Copy( ref right, out progs.GlobalStruct.v_right );
-            MathLib.Copy( ref up, out progs.GlobalStruct.v_up );
+            MathLib.Copy( ref fw, out Host.Programs.GlobalStruct.v_forward );
+            MathLib.Copy( ref right, out Host.Programs.GlobalStruct.v_right );
+            MathLib.Copy( ref up, out Host.Programs.GlobalStruct.v_up );
         }
 
         /// <summary>
@@ -445,7 +445,7 @@ namespace SharpQuake
         private static void SetMinMaxSize( MemoryEdict e, ref Vector3 min, ref Vector3 max, Boolean rotate )
         {
             if( min.X > max.X || min.Y > max.Y || min.Z > max.Z )
-                progs.RunError( "backwards mins/maxs" );
+                Host.Programs.RunError( "backwards mins/maxs" );
 
             rotate = false;		// FIXME: implement rotation properly again
 
@@ -542,7 +542,7 @@ namespace SharpQuake
         {
             MemoryEdict e = GetEdict( ProgramOperatorDef.OFS_PARM0 );
             var m_idx = GetInt( ProgramOperatorDef.OFS_PARM1 );
-            var m = progs.GetString( m_idx );
+            var m = Host.Programs.GetString( m_idx );
 
             // check to see if model was properly precached
             for( var i = 0; i < server.sv.model_precache.Length; i++ )
@@ -568,7 +568,7 @@ namespace SharpQuake
                 }
             }
 
-            progs.RunError( "no precache: {0}\n", m );
+            Host.Programs.RunError( "no precache: {0}\n", m );
         }
 
         /*
@@ -869,18 +869,18 @@ namespace SharpQuake
             Copy( v2, out vec2 );
             trace_t trace = server.Move( ref vec1, ref Utilities.ZeroVector, ref Utilities.ZeroVector, ref vec2, nomonsters, ent );
 
-            progs.GlobalStruct.trace_allsolid = trace.allsolid ? 1 : 0;
-            progs.GlobalStruct.trace_startsolid = trace.startsolid ? 1 : 0;
-            progs.GlobalStruct.trace_fraction = trace.fraction;
-            progs.GlobalStruct.trace_inwater = trace.inwater ? 1 : 0;
-            progs.GlobalStruct.trace_inopen = trace.inopen ? 1 : 0;
-            MathLib.Copy( ref trace.endpos, out progs.GlobalStruct.trace_endpos );
-            MathLib.Copy( ref trace.plane.normal, out progs.GlobalStruct.trace_plane_normal );
-            progs.GlobalStruct.trace_plane_dist = trace.plane.dist;
+            Host.Programs.GlobalStruct.trace_allsolid = trace.allsolid ? 1 : 0;
+            Host.Programs.GlobalStruct.trace_startsolid = trace.startsolid ? 1 : 0;
+            Host.Programs.GlobalStruct.trace_fraction = trace.fraction;
+            Host.Programs.GlobalStruct.trace_inwater = trace.inwater ? 1 : 0;
+            Host.Programs.GlobalStruct.trace_inopen = trace.inopen ? 1 : 0;
+            MathLib.Copy( ref trace.endpos, out Host.Programs.GlobalStruct.trace_endpos );
+            MathLib.Copy( ref trace.plane.normal, out Host.Programs.GlobalStruct.trace_plane_normal );
+            Host.Programs.GlobalStruct.trace_plane_dist = trace.plane.dist;
             if( trace.ent != null )
-                progs.GlobalStruct.trace_ent = server.EdictToProg( trace.ent );
+                Host.Programs.GlobalStruct.trace_ent = server.EdictToProg( trace.ent );
             else
-                progs.GlobalStruct.trace_ent = server.EdictToProg( server.sv.edicts[0] );
+                Host.Programs.GlobalStruct.trace_ent = server.EdictToProg( server.sv.edicts[0] );
         }
 
         /*
@@ -935,8 +935,8 @@ namespace SharpQuake
 
             // get the PVS for the entity
             Vector3 org = Utilities.ToVector( ref ent.v.origin ) + Utilities.ToVector( ref ent.v.view_ofs );
-            MemoryLeaf leaf = Mod.PointInLeaf( ref org, server.sv.worldmodel );
-            Byte[] pvs = Mod.LeafPVS( leaf, server.sv.worldmodel );
+            MemoryLeaf leaf = Host.Model.PointInLeaf( ref org, server.sv.worldmodel );
+            Byte[] pvs = Host.Model.LeafPVS( leaf, server.sv.worldmodel );
             Buffer.BlockCopy( pvs, 0, _CheckPvs, 0, pvs.Length );
 
             return i;
@@ -972,9 +972,9 @@ namespace SharpQuake
             }
 
             // if current entity can't possibly see the check entity, return 0
-            MemoryEdict self = server.ProgToEdict( progs.GlobalStruct.self );
+            MemoryEdict self = server.ProgToEdict( Host.Programs.GlobalStruct.self );
             Vector3 view = Utilities.ToVector( ref self.v.origin ) + Utilities.ToVector( ref self.v.view_ofs );
-            MemoryLeaf leaf = Mod.PointInLeaf( ref view, server.sv.worldmodel );
+            MemoryLeaf leaf = Host.Model.PointInLeaf( ref view, server.sv.worldmodel );
             var l = Array.IndexOf( server.sv.worldmodel.leafs, leaf ) - 1;
             if( ( l < 0 ) || ( _CheckPvs[l >> 3] & ( 1 << ( l & 7 ) ) ) == 0 )
             {
@@ -999,7 +999,7 @@ namespace SharpQuake
         {
             var entnum = server.NumForEdict( GetEdict( ProgramOperatorDef.OFS_PARM0 ) );
             if( entnum < 1 || entnum > server.svs.maxclients )
-                progs.RunError( "Parm 0 not a client" );
+                Host.Programs.RunError( "Parm 0 not a client" );
             var str = GetString( ProgramOperatorDef.OFS_PARM1 );
 
             client_t old = Host.HostClient;
@@ -1143,14 +1143,14 @@ namespace SharpQuake
             var f = GetInt( ProgramOperatorDef.OFS_PARM1 );
             var s = GetString( ProgramOperatorDef.OFS_PARM2 );
             if( s == null )
-                progs.RunError( "PF_Find: bad search string" );
+                Host.Programs.RunError( "PF_Find: bad search string" );
 
             for( e++; e < server.sv.num_edicts; e++ )
             {
                 MemoryEdict ed = server.EdictNum( e );
                 if( ed.free )
                     continue;
-                var t = progs.GetString( ed.GetInt( f ) ); // E_STRING(ed, f);
+                var t = Host.Programs.GetString( ed.GetInt( f ) ); // E_STRING(ed, f);
                 if( String.IsNullOrEmpty( t ) )
                     continue;
                 if( t == s )
@@ -1166,7 +1166,7 @@ namespace SharpQuake
         private static void CheckEmptyString( String s )
         {
             if( s == null || s.Length == 0 || s[0] <= ' ' )
-                progs.RunError( "Bad string" );
+                Host.Programs.RunError( "Bad string" );
         }
 
         private static void PF_precache_file()
@@ -1178,7 +1178,7 @@ namespace SharpQuake
         private static void PF_precache_sound()
         {
             if( !server.IsLoading )
-                progs.RunError( "PF_Precache_*: Precache can only be done in spawn functions" );
+                Host.Programs.RunError( "PF_Precache_*: Precache can only be done in spawn functions" );
 
             var s = GetString( ProgramOperatorDef.OFS_PARM0 );
             ReturnInt( GetInt( ProgramOperatorDef.OFS_PARM0 ) ); //  G_INT(OFS_RETURN) = G_INT(OFS_PARM0);
@@ -1194,13 +1194,13 @@ namespace SharpQuake
                 if( server.sv.sound_precache[i] == s )
                     return;
             }
-            progs.RunError( "PF_precache_sound: overflow" );
+            Host.Programs.RunError( "PF_precache_sound: overflow" );
         }
 
         private static void PF_precache_model()
         {
             if( !server.IsLoading )
-                progs.RunError( "PF_Precache_*: Precache can only be done in spawn functions" );
+                Host.Programs.RunError( "PF_Precache_*: Precache can only be done in spawn functions" );
 
             var s = GetString( ProgramOperatorDef.OFS_PARM0 );
             ReturnInt( GetInt( ProgramOperatorDef.OFS_PARM0 ) ); //G_INT(OFS_RETURN) = G_INT(OFS_PARM0);
@@ -1211,33 +1211,33 @@ namespace SharpQuake
                 if( server.sv.model_precache[i] == null )
                 {
                     server.sv.model_precache[i] = s;
-                    server.sv.models[i] = Mod.ForName( s, true );
+                    server.sv.models[i] = Host.Model.ForName( s, true );
                     return;
                 }
                 if( server.sv.model_precache[i] == s )
                     return;
             }
-            progs.RunError( "PF_precache_model: overflow" );
+            Host.Programs.RunError( "PF_precache_model: overflow" );
         }
 
         private static void PF_coredump()
         {
-            progs.PrintEdicts();
+            Host.Programs.PrintEdicts();
         }
 
         private static void PF_traceon()
         {
-            progs.Trace = true;
+            Host.Programs.Trace = true;
         }
 
         private static void PF_traceoff()
         {
-            progs.Trace = false;
+            Host.Programs.Trace = false;
         }
 
         private static void PF_eprint()
         {
-            progs.PrintNum( server.NumForEdict( GetEdict( ProgramOperatorDef.OFS_PARM0 ) ) );
+            Host.Programs.PrintNum( server.NumForEdict( GetEdict( ProgramOperatorDef.OFS_PARM0 ) ) );
         }
 
         /// <summary>
@@ -1246,7 +1246,7 @@ namespace SharpQuake
         /// </summary>
         private static void PF_walkmove()
         {
-            MemoryEdict ent = server.ProgToEdict( progs.GlobalStruct.self );
+            MemoryEdict ent = server.ProgToEdict( Host.Programs.GlobalStruct.self );
             var yaw = GetFloat( ProgramOperatorDef.OFS_PARM0 );
             var dist = GetFloat( ProgramOperatorDef.OFS_PARM1 );
 
@@ -1264,14 +1264,14 @@ namespace SharpQuake
             move.z = 0;
 
             // save program state, because SV_movestep may call other progs
-            ProgramFunction oldf = progs.xFunction;
-            var oldself = progs.GlobalStruct.self;
+            ProgramFunction oldf = Host.Programs.xFunction;
+            var oldself = Host.Programs.GlobalStruct.self;
 
             ReturnFloat( server.MoveStep( ent, ref move, true ) ? 1 : 0 );
 
             // restore program state
-            progs.xFunction = oldf;
-            progs.GlobalStruct.self = oldself;
+            Host.Programs.xFunction = oldf;
+            Host.Programs.GlobalStruct.self = oldself;
         }
 
         /*
@@ -1284,7 +1284,7 @@ namespace SharpQuake
 
         private static void PF_droptofloor()
         {
-            MemoryEdict ent = server.ProgToEdict( progs.GlobalStruct.self );
+            MemoryEdict ent = server.ProgToEdict( Host.Programs.GlobalStruct.self );
 
             Vector3 org, mins, maxs;
             MathLib.Copy( ref ent.v.origin, out org );
@@ -1425,13 +1425,13 @@ namespace SharpQuake
 
             // try sending a trace straight
             Vector3 dir;
-            MathLib.Copy( ref progs.GlobalStruct.v_forward, out dir );
+            MathLib.Copy( ref Host.Programs.GlobalStruct.v_forward, out dir );
             Vector3 end = start + dir * 2048;
             trace_t tr = server.Move( ref start, ref Utilities.ZeroVector, ref Utilities.ZeroVector, ref end, 0, ent );
             if( tr.ent != null && tr.ent.v.takedamage == Damages.DAMAGE_AIM &&
                 ( Host.TeamPlay == 0 || ent.v.team <= 0 || ent.v.team != tr.ent.v.team ) )
             {
-                ReturnVector( ref progs.GlobalStruct.v_forward );
+                ReturnVector( ref Host.Programs.GlobalStruct.v_forward );
                 return;
             }
 
@@ -1457,7 +1457,7 @@ namespace SharpQuake
 
                 dir = end - start;
                 MathLib.Normalize( ref dir );
-                var dist = Vector3.Dot( dir, Utilities.ToVector( ref progs.GlobalStruct.v_forward ) );
+                var dist = Vector3.Dot( dir, Utilities.ToVector( ref Host.Programs.GlobalStruct.v_forward ) );
                 if( dist < bestdist )
                     continue;	// to far to turn
                 tr = server.Move( ref start, ref Utilities.ZeroVector, ref Utilities.ZeroVector, ref end, 0, ent );
@@ -1472,8 +1472,8 @@ namespace SharpQuake
             {
                 Vector3f dir2, end2;
                 MathLib.VectorSubtract( ref bestent.v.origin, ref ent.v.origin, out dir2 );
-                var dist = MathLib.DotProduct( ref dir2, ref progs.GlobalStruct.v_forward );
-                MathLib.VectorScale( ref progs.GlobalStruct.v_forward, dist, out end2 );
+                var dist = MathLib.DotProduct( ref dir2, ref Host.Programs.GlobalStruct.v_forward );
+                MathLib.VectorScale( ref Host.Programs.GlobalStruct.v_forward, dist, out end2 );
                 end2.z = dir2.z;
                 MathLib.Normalize( ref end2 );
                 ReturnVector( ref end2 );
@@ -1538,7 +1538,7 @@ namespace SharpQuake
             MessageWriter msg = server.sv.signon;
 
             msg.WriteByte( protocol.svc_spawnstatic );
-            msg.WriteByte( server.ModelIndex( progs.GetString( ent.v.model ) ) );
+            msg.WriteByte( server.ModelIndex( Host.Programs.GetString( ent.v.model ) ) );
             msg.WriteByte( ( Int32 ) ent.v.frame );
             msg.WriteByte( ( Int32 ) ent.v.colormap );
             msg.WriteByte( ( Int32 ) ent.v.skin );
@@ -1563,12 +1563,12 @@ namespace SharpQuake
             MemoryEdict ent = GetEdict( ProgramOperatorDef.OFS_PARM0 );
             var i = server.NumForEdict( ent );
             if( i < 1 || i > server.svs.maxclients )
-                progs.RunError( "Entity is not a client" );
+                Host.Programs.RunError( "Entity is not a client" );
 
             // copy spawn parms out of the client_t
             client_t client = server.svs.clients[i - 1];
 
-            progs.GlobalStruct.SetParams( client.spawn_parms );
+            Host.Programs.GlobalStruct.SetParams( client.spawn_parms );
         }
 
         /*
@@ -1591,7 +1591,7 @@ namespace SharpQuake
 
         private static void PF_Fixme()
         {
-            progs.RunError( "unimplemented bulitin" );
+            Host.Programs.RunError( "unimplemented bulitin" );
         }
     }
 }

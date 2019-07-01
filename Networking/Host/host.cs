@@ -214,6 +214,18 @@ namespace SharpQuake
             private set;
         }
 
+        public progs Programs
+        {
+            get;
+            private set;
+        }
+
+        public Mod Model
+        {
+            get;
+            private set;
+        }
+
         //private Server Server
         //{
         //    get;
@@ -259,6 +271,8 @@ namespace SharpQuake
             Keyboard = new Keyboard( );
             Console = new Con( );
             Menu = new Menu( );
+            Programs = new progs( );
+            Model = new Mod( );
         }
 
         /// <summary>
@@ -267,7 +281,7 @@ namespace SharpQuake
         public void ServerFrame( )
         {
             // run the world state
-            progs.GlobalStruct.frametime = ( Single ) FrameTime;
+            Programs.GlobalStruct.frametime = ( Single ) FrameTime;
 
             // set the time and clear the general datagram
             server.ClearDatagram( );
@@ -294,7 +308,7 @@ namespace SharpQuake
         {
             Console.DPrint( "Clearing memory\n" );
 
-            Mod.ClearAll( );
+            Model.ClearAll( );
             client.cls.signon = 0;
             server.sv.Clear( );
             client.cl.Clear( );
@@ -352,8 +366,8 @@ namespace SharpQuake
             Keyboard.Initialise( this );
             Console.Initialise( this );
             Menu.Initialise( this );
-            progs.Init( this );
-            Mod.Init( Cache );
+            Programs.Initialise( this );
+            Model.Initialise( this );
             net.Init( this );
             server.Init( this );
 

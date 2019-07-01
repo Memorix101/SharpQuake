@@ -559,7 +559,7 @@ namespace SharpQuake
                 //memset(solid, 0xff, (cl.worldmodel->numleafs + 7) >> 3);
             }
             else
-                vis = Mod.LeafPVS( _ViewLeaf, client.cl.worldmodel );
+                vis = Host.Model.LeafPVS( _ViewLeaf, client.cl.worldmodel );
 
             Model world = client.cl.worldmodel;
             for( var i = 0; i < world.numleafs; i++ )
