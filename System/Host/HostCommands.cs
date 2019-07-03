@@ -11,6 +11,21 @@ namespace SharpQuake
 {
     public partial class Host
     {
+        public UInt32 FPSCounter = 0;
+        public UInt32 FPS = 0;
+        public DateTime LastFPSUpdate;
+
+        public Boolean ShowFPS
+        {
+            get;
+            private set;
+        }
+
+        public void ShowFPS_f( )
+        {
+            ShowFPS = !ShowFPS;
+        }
+
         /// <summary>
         /// Host_Quit_f
         /// </summary>
@@ -21,10 +36,10 @@ namespace SharpQuake
                 MenuBase.QuitMenu.Show( this );
                 return;
             }
+
             Client.Disconnect( );
             ShutdownServer( false );
             sys.Quit( );
-            Dispose( );
         }
 
         // Host_InitCommands
@@ -68,6 +83,9 @@ namespace SharpQuake
             Command.Add( "viewprev", Viewprev_f );
 
             Command.Add( "mcache", Model.Print );
+
+            // New
+            Command.Add( "showfps", ShowFPS_f );
         }
 
         // Host_Viewmodel_f

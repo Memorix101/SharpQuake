@@ -807,7 +807,7 @@ namespace SharpQuake
         // S_Update_
         private void Update( )
         {
-            if ( !_SoundStarted || ( _SoundBlocked > 0 ) )
+            if ( !_SoundStarted || ( _SoundBlocked > 0 ) || _shm == null )
                 return;
 
             // Updates DMA time

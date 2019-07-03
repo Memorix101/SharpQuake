@@ -147,6 +147,12 @@ namespace SharpQuake
             set;
         }
 
+        public Boolean IsDisposing
+        {
+            get;
+            private set;
+        }
+
         // Instances
         public MainWindow MainWindow
         {
@@ -769,71 +775,6 @@ namespace SharpQuake
             throw new EndGameException( );  //longjmp (host_old_abortserver, 1);
         }
 
-        /// <summary>
-        /// Host_ShutdownServer
-        /// This only happens at the end of a game, not between levels
-        /// </summary>
-        public void ShutdownServer( Boolean crash )
-        {
-            if ( !Server.IsActive )
-                return;
-
-            Server.sv.active = false;
-
-            // stop all client sounds immediately
-            if ( Client.cls.state == cactive_t.ca_connected )
-                Client.Disconnect( );
-
-            // flush any pending messages - like the score!!!
-            var start = Timer.GetFloatTime( );
-            Int32 count;
-            do
-            {
-                count = 0;
-                for ( var i = 0; i < Server.svs.maxclients; i++ )
-                {
-                    HostClient = Server.svs.clients[i];
-                    if ( HostClient.active && !HostClient.message.IsEmpty )
-                    {
-                        if ( Network.CanSendMessage( HostClient.netconnection ) )
-                        {
-                            Network.SendMessage( HostClient.netconnection, HostClient.message );
-                            HostClient.message.Clear( );
-                        }
-                        else
-                        {
-                            Network.GetMessage( HostClient.netconnection );
-                            count++;
-                        }
-                    }
-                }
-                if ( ( Timer.GetFloatTime( ) - start ) > 3.0 )
-                    break;
-            }
-            while ( count > 0 );
-
-            // make sure all the clients know we're disconnecting
-            var writer = new MessageWriter( 4 );
-            writer.WriteByte( protocol.svc_disconnect );
-            count = Network.SendToAll( writer, 5 );
-            if ( count != 0 )
-                Console.Print( "Host_ShutdownServer: NET_SendToAll failed for {0} clients\n", count );
-
-            for ( var i = 0; i < Server.svs.maxclients; i++ )
-            {
-                HostClient = Server.svs.clients[i];
-                if ( HostClient.active )
-                    Server.DropClient( crash );
-            }
-
-            //
-            // clear structures
-            //
-            Server.sv.Clear( );
-            for ( var i = 0; i < Server.svs.clients.Length; i++ )
-                Server.svs.clients[i].Clear( );
-        }
-
         // Host_Frame
         public void Frame( Double time )
         {
@@ -890,10 +831,80 @@ namespace SharpQuake
         }
 
         /// <summary>
+        /// Host_ShutdownServer
+        /// This only happens at the end of a game, not between levels
+        /// </summary>
+        public void ShutdownServer( Boolean crash )
+        {
+            if ( !Server.IsActive )
+                return;
+
+            Server.sv.active = false;
+
+            // stop all client sounds immediately
+            if ( Client.cls.state == cactive_t.ca_connected )
+                Client.Disconnect( );
+
+            // flush any pending messages - like the score!!!
+            var start = Timer.GetFloatTime( );
+            Int32 count;
+            do
+            {
+                count = 0;
+                for ( var i = 0; i < Server.svs.maxclients; i++ )
+                {
+                    HostClient = Server.svs.clients[i];
+                    if ( HostClient.active && !HostClient.message.IsEmpty )
+                    {
+                        if ( Network.CanSendMessage( HostClient.netconnection ) )
+                        {
+                            Network.SendMessage( HostClient.netconnection, HostClient.message );
+                            HostClient.message.Clear( );
+                        }
+                        else
+                        {
+                            Network.GetMessage( HostClient.netconnection );
+                            count++;
+                        }
+                    }
+                }
+                if ( ( Timer.GetFloatTime( ) - start ) > 3.0 )
+                    break;
+            }
+            while ( count > 0 );
+
+            // make sure all the clients know we're disconnecting
+            var writer = new MessageWriter( 4 );
+            writer.WriteByte( protocol.svc_disconnect );
+            count = Network.SendToAll( writer, 5 );
+
+            if ( count != 0 )
+                Console.Print( "Host_ShutdownServer: NET_SendToAll failed for {0} clients\n", count );
+
+            for ( var i = 0; i < Server.svs.maxclients; i++ )
+            {
+                HostClient = Server.svs.clients[i];
+
+                if ( HostClient.active )
+                    Server.DropClient( crash );
+            }
+
+            //
+            // clear structures
+            //
+            Server.sv.Clear( );
+
+            for ( var i = 0; i < Server.svs.clients.Length; i++ )
+                Server.svs.clients[i].Clear( );
+        }
+
+        /// <summary>
         /// Host_Shutdown
         /// </summary>
-        public void Shutdown( )
+        public void Dispose( )
         {
+            IsDisposing = true;
+
             _ShutdownDepth++;
             try
             {
@@ -935,14 +946,8 @@ namespace SharpQuake
                 _ShutdownDepth--;
 
                 // Hack to close process property
-                Environment.Exit( 0 );
+               // Environment.Exit( 0 );
             }
-        }
-
-        public void Dispose( )
-        {
-            ShutdownServer( false );
-            Shutdown( );
         }
     }
 }

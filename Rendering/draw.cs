@@ -511,7 +511,8 @@ namespace SharpQuake
         // Draws one 8*8 graphics character with 0 being transparent.
         // It can be clipped to the top of the screen to allow the console to be
         // smoothly scrolled off.
-        public void DrawCharacter( Int32 x, Int32 y, Int32 num )
+        // Vertex color modification has no effect currently
+        public void DrawCharacter( Int32 x, Int32 y, Int32 num, System.Drawing.Color? color = null )
         {
             if( num == 32 )
                 return;		// space
@@ -531,6 +532,12 @@ namespace SharpQuake
             Bind( _CharTexture );
 
             GL.Begin( PrimitiveType.Quads );
+
+            if ( color.HasValue )
+                GL.Color3( color.Value );
+            else
+                GL.Color3( 1f, 1f, 1f );
+
             GL.TexCoord2( fcol, frow );
             GL.Vertex2( x, y );
             GL.TexCoord2( fcol + size, frow );
@@ -540,13 +547,15 @@ namespace SharpQuake
             GL.TexCoord2( fcol, frow + size );
             GL.Vertex2( x, y + 8 );
             GL.End();
+
+            GL.Color3( 1f, 1f, 1f );
         }
 
         // Draw_String
-        public void DrawString( Int32 x, Int32 y, String str )
+        public void DrawString( Int32 x, Int32 y, String str, System.Drawing.Color? color = null )
         {
             for( var i = 0; i < str.Length; i++, x += 8 )
-                DrawCharacter( x, y, str[i] );
+                DrawCharacter( x, y, str[i], color );
         }
 
         // Draw_CachePic

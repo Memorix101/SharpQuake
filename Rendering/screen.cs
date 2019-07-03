@@ -202,7 +202,7 @@ namespace SharpQuake
             _InUpdate = true;
             try
             {
-                if( MainWindow.Instance != null && !MainWindow.Instance.IsDisposed)
+                if( MainWindow.Instance != null && !MainWindow.Instance.IsDisposing)
                 {
                     if( (MainWindow.Instance.VSync == VSyncMode.On ) != Host.Video.Wait )
                         MainWindow.Instance.VSync = (Host.Video.Wait ? VSyncMode.On : VSyncMode.Off );
@@ -297,6 +297,19 @@ namespace SharpQuake
                     Host.Menu.Draw();
                 }
 
+                if ( Host.ShowFPS )
+                {
+                    if ( DateTime.Now.Subtract( Host.LastFPSUpdate ).TotalSeconds >= 1 )
+                    {
+                        Host.FPS = Host.FPSCounter;
+                        Host.FPSCounter = 0;
+                        Host.LastFPSUpdate = DateTime.Now;
+                    }
+
+                    Host.FPSCounter++;
+
+                    Host.DrawingContext.DrawString( 640 - 16 - 10, 10, $"{Host.FPS}", System.Drawing.Color.Yellow );
+                }
                 Host.View.UpdatePalette();
                 EndRendering();
             }
@@ -311,7 +324,7 @@ namespace SharpQuake
         /// </summary>
         public void EndRendering()
         {
-            if ( MainWindow.Instance == null || MainWindow.Instance.IsDisposed )
+            if ( MainWindow.Instance == null || MainWindow.Instance.IsDisposing )
                 return;
 
             var form = MainWindow.Instance;
@@ -519,7 +532,7 @@ namespace SharpQuake
         /// </summary>
         private void BeginRendering()
         {
-            if ( MainWindow.Instance == null || MainWindow.Instance.IsDisposed )
+            if ( MainWindow.Instance == null || MainWindow.Instance.IsDisposing )
                 return;
 
             glX = 0;

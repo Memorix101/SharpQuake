@@ -115,7 +115,7 @@ namespace SharpQuake
         private Int32 _MouseBtnState;
         private Stopwatch _Swatch;
 
-        public new Boolean IsDisposed
+        public Boolean IsDisposing
         {
             get;
             private set;
@@ -176,14 +176,13 @@ namespace SharpQuake
         {
             try
             {
-                if ( this.WindowState == OpenTK.WindowState.Minimized || Host.Screen.BlockDrawing )
+                if ( this.WindowState == OpenTK.WindowState.Minimized || Host.Screen.BlockDrawing || Host.IsDisposing )
                     Host.Screen.SkipUpdate = true;	// no point in bothering to draw
 
                 _Swatch.Stop( );
                 var ts = _Swatch.Elapsed.TotalSeconds;
                 _Swatch.Reset( );
                 _Swatch.Start( );
-                //host.Frame(ts);
                 Host.Frame( ts );
             }
             catch ( EndGameException )
@@ -233,7 +232,7 @@ namespace SharpQuake
         {
             try
             {
-                Instance.Host.Shutdown( );
+                Instance.Dispose( );
             }
             catch ( Exception ex )
             {
@@ -254,7 +253,10 @@ namespace SharpQuake
             Instance.CursorVisible = true;
             SDL.SDL_ShowSimpleMessageBox( SDL.SDL_MessageBoxFlags.SDL_MESSAGEBOX_ERROR, "Fatal error!", ex.Message, IntPtr.Zero ); //MessageBox.Show(ex.Message);
             SafeShutdown( );
-        }
+            
+        } 
+        
+        
 
         [STAThread]
         private static Int32 Main( String[] args )
@@ -299,14 +301,9 @@ namespace SharpQuake
             using ( var form = MainWindow.CreateInstance( size, mode, false ) )
             {
                 form.Host.Console.DPrint( "Host.Init\n" );
-
                 form.Host.Initialise( parms );
-
-                //host.Init(parms);
                 Instance.CursorVisible = false; //Hides mouse cursor during main menu on start up
                 form.Run( );
-
-                form.Host.Shutdown( );
             }
             // host.Shutdown();
 #if !DEBUG
@@ -403,7 +400,7 @@ namespace SharpQuake
 
         public override void Dispose( )
         {
-            IsDisposed = true;
+            IsDisposing = true;
 
             Host.Dispose( );
 

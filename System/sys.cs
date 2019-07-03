@@ -57,6 +57,9 @@ namespace SharpQuake
                 MainWindow.Instance.ConfirmExit = false;
                 MainWindow.Instance.Exit();
                 MainWindow.Instance.Dispose();
+
+                // Temp fix
+                Environment.Exit( 0 );
             }
         }
     }
