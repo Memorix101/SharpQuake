@@ -184,10 +184,10 @@ namespace SharpQuake
                             ret = 1;
                             break;
 
-                        case protocol.clc_nop:
+                        case ProtocolDef.clc_nop:
                             break;
 
-                        case protocol.clc_stringcmd:
+                        case ProtocolDef.clc_stringcmd:
                             var s = Host.Network.Reader.ReadString();
                             if( Host.HostClient.privileged )
                                 ret = 2;
@@ -239,10 +239,10 @@ namespace SharpQuake
                                 Host.Console.DPrint( "{0} tried to {1}\n", Host.HostClient.name, s );
                             break;
 
-                        case protocol.clc_disconnect:
+                        case ProtocolDef.clc_disconnect:
                             return false;
 
-                        case protocol.clc_move:
+                        case ProtocolDef.clc_move:
                             ReadClientMove( ref Host.HostClient.cmd );
                             break;
 

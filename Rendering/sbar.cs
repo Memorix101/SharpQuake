@@ -376,7 +376,7 @@ namespace SharpQuake
 
             if ( vid.width > 320 )
             {
-                if ( Host.Client.cl.gametype == protocol.GAME_DEATHMATCH )
+                if ( Host.Client.cl.gametype == ProtocolDef.GAME_DEATHMATCH )
                     MiniDeathmatchOverlay( );
             }
         }
@@ -390,7 +390,7 @@ namespace SharpQuake
             Host.Screen.CopyEverithing = true;
             Host.Screen.FullUpdate = 0;
 
-            if ( Host.Client.cl.gametype == protocol.GAME_DEATHMATCH )
+            if ( Host.Client.cl.gametype == ProtocolDef.GAME_DEATHMATCH )
             {
                 DeathmatchOverlay( );
                 return;
@@ -672,7 +672,7 @@ namespace SharpQuake
             Int32 xofs, x = 23;
             var cl = Host.Client.cl;
 
-            if ( cl.gametype == protocol.GAME_DEATHMATCH )
+            if ( cl.gametype == ProtocolDef.GAME_DEATHMATCH )
                 xofs = 0;
             else
                 xofs = ( Host.Screen.vid.width - 320 ) >> 1;
@@ -716,7 +716,7 @@ namespace SharpQuake
         // Sbar_DrawPic
         private void DrawPic( Int32 x, Int32 y, GLPic pic )
         {
-            if ( Host.Client.cl.gametype == protocol.GAME_DEATHMATCH )
+            if ( Host.Client.cl.gametype == ProtocolDef.GAME_DEATHMATCH )
                 Host.DrawingContext.DrawPic( x, y + ( Host.Screen.vid.height - SBAR_HEIGHT ), pic );
             else
                 Host.DrawingContext.DrawPic( x + ( ( Host.Screen.vid.width - 320 ) >> 1 ), y + ( Host.Screen.vid.height - SBAR_HEIGHT ), pic );
@@ -726,7 +726,7 @@ namespace SharpQuake
         private void DrawScoreboard( )
         {
             SoloScoreboard( );
-            if ( Host.Client.cl.gametype == protocol.GAME_DEATHMATCH )
+            if ( Host.Client.cl.gametype == ProtocolDef.GAME_DEATHMATCH )
                 DeathmatchOverlay( );
         }
 
@@ -773,7 +773,7 @@ namespace SharpQuake
                 bottom = ColorForMap( bottom );
 
                 Int32 xofs;
-                if ( cl.gametype == protocol.GAME_DEATHMATCH )
+                if ( cl.gametype == ProtocolDef.GAME_DEATHMATCH )
                     xofs = 113;
                 else
                     xofs = ( ( Host.Screen.vid.width - 320 ) >> 1 ) + 113;
@@ -947,7 +947,7 @@ namespace SharpQuake
         // Draws one solid graphics character
         private void DrawCharacter( Int32 x, Int32 y, Int32 num )
         {
-            if ( Host.Client.cl.gametype == protocol.GAME_DEATHMATCH )
+            if ( Host.Client.cl.gametype == ProtocolDef.GAME_DEATHMATCH )
                 Host.DrawingContext.DrawCharacter( x + 4, y + Host.Screen.vid.height - SBAR_HEIGHT, num );
             else
                 Host.DrawingContext.DrawCharacter( x + ( ( Host.Screen.vid.width - 320 ) >> 1 ) + 4, y + Host.Screen.vid.height - SBAR_HEIGHT, num );
@@ -1039,7 +1039,7 @@ namespace SharpQuake
         // Sbar_DrawTransPic
         private void DrawTransPic( Int32 x, Int32 y, GLPic pic )
         {
-            if ( Host.Client.cl.gametype == protocol.GAME_DEATHMATCH )
+            if ( Host.Client.cl.gametype == ProtocolDef.GAME_DEATHMATCH )
                 Host.DrawingContext.DrawTransPic( x, y + ( Host.Screen.vid.height - SBAR_HEIGHT ), pic );
             else
                 Host.DrawingContext.DrawTransPic( x + ( ( Host.Screen.vid.width - 320 ) >> 1 ), y + ( Host.Screen.vid.height - SBAR_HEIGHT ), pic );
@@ -1048,7 +1048,7 @@ namespace SharpQuake
         // Sbar_DrawString
         private void DrawString( Int32 x, Int32 y, String str )
         {
-            if ( Host.Client.cl.gametype == protocol.GAME_DEATHMATCH )
+            if ( Host.Client.cl.gametype == ProtocolDef.GAME_DEATHMATCH )
                 Host.DrawingContext.DrawString( x, y + Host.Screen.vid.height - SBAR_HEIGHT, str );
             else
                 Host.DrawingContext.DrawString( x + ( ( Host.Screen.vid.width - 320 ) >> 1 ), y + Host.Screen.vid.height - SBAR_HEIGHT, str );

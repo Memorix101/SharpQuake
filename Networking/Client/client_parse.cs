@@ -131,77 +131,77 @@ namespace SharpQuake
                         Host.Error( "CL_ParseServerMessage: Illegible server message\n" );
                         break;
 
-                    case protocol.svc_nop:
+                    case ProtocolDef.svc_nop:
                         break;
 
-                    case protocol.svc_time:
+                    case ProtocolDef.svc_time:
                         cl.mtime[1] = cl.mtime[0];
                         cl.mtime[0] = Host.Network.Reader.ReadFloat();
                         break;
 
-                    case protocol.svc_clientdata:
+                    case ProtocolDef.svc_clientdata:
                         i = Host.Network.Reader.ReadShort();
                         ParseClientData( i );
                         break;
 
-                    case protocol.svc_version:
+                    case ProtocolDef.svc_version:
                         i = Host.Network.Reader.ReadLong();
-                        if( i != protocol.PROTOCOL_VERSION )
-                            Host.Error( "CL_ParseServerMessage: Server is protocol {0} instead of {1}\n", i, protocol.PROTOCOL_VERSION );
+                        if( i != ProtocolDef.PROTOCOL_VERSION )
+                            Host.Error( "CL_ParseServerMessage: Server is protocol {0} instead of {1}\n", i, ProtocolDef.PROTOCOL_VERSION );
                         break;
 
-                    case protocol.svc_disconnect:
+                    case ProtocolDef.svc_disconnect:
                         Host.EndGame( "Server disconnected\n" );
                         break;
 
-                    case protocol.svc_print:
+                    case ProtocolDef.svc_print:
                         Host.Console.Print( Host.Network.Reader.ReadString() );
                         break;
 
-                    case protocol.svc_centerprint:
+                    case ProtocolDef.svc_centerprint:
                         Host.Screen.CenterPrint( Host.Network.Reader.ReadString() );
                         break;
 
-                    case protocol.svc_stufftext:
+                    case ProtocolDef.svc_stufftext:
                         Host.CommandBuffer.AddText( Host.Network.Reader.ReadString() );
                         break;
 
-                    case protocol.svc_damage:
+                    case ProtocolDef.svc_damage:
                         Host.View.ParseDamage();
                         break;
 
-                    case protocol.svc_serverinfo:
+                    case ProtocolDef.svc_serverinfo:
                         ParseServerInfo();
                         Host.Screen.vid.recalc_refdef = true;	// leave intermission full screen
                         break;
 
-                    case protocol.svc_setangle:
+                    case ProtocolDef.svc_setangle:
                         cl.viewangles.X = Host.Network.Reader.ReadAngle();
                         cl.viewangles.Y = Host.Network.Reader.ReadAngle();
                         cl.viewangles.Z = Host.Network.Reader.ReadAngle();
                         break;
 
-                    case protocol.svc_setview:
+                    case ProtocolDef.svc_setview:
                         cl.viewentity = Host.Network.Reader.ReadShort();
                         break;
 
-                    case protocol.svc_lightstyle:
+                    case ProtocolDef.svc_lightstyle:
                         i = Host.Network.Reader.ReadByte();
                         if( i >= QDef.MAX_LIGHTSTYLES )
                             Utilities.Error( "svc_lightstyle > MAX_LIGHTSTYLES" );
                         _LightStyle[i].map = Host.Network.Reader.ReadString();
                         break;
 
-                    case protocol.svc_sound:
+                    case ProtocolDef.svc_sound:
                         ParseStartSoundPacket();
                         break;
 
-                    case protocol.svc_stopsound:
+                    case ProtocolDef.svc_stopsound:
                         i = Host.Network.Reader.ReadShort();
                         Host.Sound.StopSound( i >> 3, i & 7 );
                         break;
 
-                    case protocol.svc_updatename:
+                    case ProtocolDef.svc_updatename:
                         Host.StatusBar.Changed();
                         i = Host.Network.Reader.ReadByte();
                         if( i >= cl.maxclients )
@@ -209,7 +209,7 @@ namespace SharpQuake
                         cl.scores[i].name = Host.Network.Reader.ReadString();
                         break;
 
-                    case protocol.svc_updatefrags:
+                    case ProtocolDef.svc_updatefrags:
                         Host.StatusBar.Changed();
                         i = Host.Network.Reader.ReadByte();
                         if( i >= cl.maxclients )
@@ -217,7 +217,7 @@ namespace SharpQuake
                         cl.scores[i].frags = Host.Network.Reader.ReadShort();
                         break;
 
-                    case protocol.svc_updatecolors:
+                    case ProtocolDef.svc_updatecolors:
                         Host.StatusBar.Changed();
                         i = Host.Network.Reader.ReadByte();
                         if( i >= cl.maxclients )
@@ -226,25 +226,25 @@ namespace SharpQuake
                         NewTranslation( i );
                         break;
 
-                    case protocol.svc_particle:
+                    case ProtocolDef.svc_particle:
                         Host.RenderContext.ParseParticleEffect();
                         break;
 
-                    case protocol.svc_spawnbaseline:
+                    case ProtocolDef.svc_spawnbaseline:
                         i = Host.Network.Reader.ReadShort();
                         // must use CL_EntityNum() to force cl.num_entities up
                         ParseBaseline( EntityNum( i ) );
                         break;
 
-                    case protocol.svc_spawnstatic:
+                    case ProtocolDef.svc_spawnstatic:
                         ParseStatic();
                         break;
 
-                    case protocol.svc_temp_entity:
+                    case ProtocolDef.svc_temp_entity:
                         ParseTempEntity();
                         break;
 
-                    case protocol.svc_setpause:
+                    case ProtocolDef.svc_setpause:
                     {
                         cl.paused = Host.Network.Reader.ReadByte() != 0;
 
@@ -259,7 +259,7 @@ namespace SharpQuake
                     }
                     break;
 
-                    case protocol.svc_signonnum:
+                    case ProtocolDef.svc_signonnum:
                         i = Host.Network.Reader.ReadByte();
                         if( i <= cls.signon )
                             Host.Error( "Received signon {0} when at {1}", i, cls.signon );
@@ -267,26 +267,26 @@ namespace SharpQuake
                         SignonReply();
                         break;
 
-                    case protocol.svc_killedmonster:
+                    case ProtocolDef.svc_killedmonster:
                         cl.stats[QStatsDef.STAT_MONSTERS]++;
                         break;
 
-                    case protocol.svc_foundsecret:
+                    case ProtocolDef.svc_foundsecret:
                         cl.stats[QStatsDef.STAT_SECRETS]++;
                         break;
 
-                    case protocol.svc_updatestat:
+                    case ProtocolDef.svc_updatestat:
                         i = Host.Network.Reader.ReadByte();
                         if( i < 0 || i >= QStatsDef.MAX_CL_STATS )
                             Utilities.Error( "svc_updatestat: {0} is invalid", i );
                         cl.stats[i] = Host.Network.Reader.ReadLong();
                         break;
 
-                    case protocol.svc_spawnstaticsound:
+                    case ProtocolDef.svc_spawnstaticsound:
                         ParseStaticSound();
                         break;
 
-                    case protocol.svc_cdtrack:
+                    case ProtocolDef.svc_cdtrack:
                         cl.cdtrack = Host.Network.Reader.ReadByte();
                         cl.looptrack = Host.Network.Reader.ReadByte();
                         if( ( cls.demoplayback || cls.demorecording ) && ( cls.forcetrack != -1 ) )
@@ -295,27 +295,27 @@ namespace SharpQuake
                             Host.CDAudio.Play( ( Byte ) cl.cdtrack, true );
                         break;
 
-                    case protocol.svc_intermission:
+                    case ProtocolDef.svc_intermission:
                         cl.intermission = 1;
                         cl.completed_time = ( Int32 ) cl.time;
                         Host.Screen.vid.recalc_refdef = true;	// go to full screen
                         break;
 
-                    case protocol.svc_finale:
+                    case ProtocolDef.svc_finale:
                         cl.intermission = 2;
                         cl.completed_time = ( Int32 ) cl.time;
                         Host.Screen.vid.recalc_refdef = true;	// go to full screen
                         Host.Screen.CenterPrint( Host.Network.Reader.ReadString() );
                         break;
 
-                    case protocol.svc_cutscene:
+                    case ProtocolDef.svc_cutscene:
                         cl.intermission = 3;
                         cl.completed_time = ( Int32 ) cl.time;
                         Host.Screen.vid.recalc_refdef = true;	// go to full screen
                         Host.Screen.CenterPrint( Host.Network.Reader.ReadString() );
                         break;
 
-                    case protocol.svc_sellscreen:
+                    case ProtocolDef.svc_sellscreen:
                         Host.Command.ExecuteString( "help", CommandSource.src_command );
                         break;
                 }
@@ -346,7 +346,7 @@ namespace SharpQuake
                 SignonReply();
             }
 
-            if( ( bits & protocol.U_MOREBITS ) != 0 )
+            if( ( bits & ProtocolDef.U_MOREBITS ) != 0 )
             {
                 i = Host.Network.Reader.ReadByte();
                 bits |= ( i << 8 );
@@ -354,7 +354,7 @@ namespace SharpQuake
 
             Int32 num;
 
-            if( ( bits & protocol.U_LONGENTITY ) != 0 )
+            if( ( bits & ProtocolDef.U_LONGENTITY ) != 0 )
                 num = Host.Network.Reader.ReadShort();
             else
                 num = Host.Network.Reader.ReadByte();
@@ -370,7 +370,7 @@ namespace SharpQuake
 
             ent.msgtime = cl.mtime[0];
             Int32 modnum;
-            if( ( bits & protocol.U_MODEL ) != 0 )
+            if( ( bits & ProtocolDef.U_MODEL ) != 0 )
             {
                 modnum = Host.Network.Reader.ReadByte();
                 if( modnum >= QDef.MAX_MODELS )
@@ -399,12 +399,12 @@ namespace SharpQuake
                     Host.RenderContext.TranslatePlayerSkin( num - 1 );
             }
 
-            if( ( bits & protocol.U_FRAME ) != 0 )
+            if( ( bits & ProtocolDef.U_FRAME ) != 0 )
                 ent.frame = Host.Network.Reader.ReadByte();
             else
                 ent.frame = ent.baseline.frame;
 
-            if( ( bits & protocol.U_COLORMAP ) != 0 )
+            if( ( bits & ProtocolDef.U_COLORMAP ) != 0 )
                 i = Host.Network.Reader.ReadByte();
             else
                 i = ent.baseline.colormap;
@@ -418,7 +418,7 @@ namespace SharpQuake
             }
 
             Int32 skin;
-            if( ( bits & protocol.U_SKIN ) != 0 )
+            if( ( bits & ProtocolDef.U_SKIN ) != 0 )
                 skin = Host.Network.Reader.ReadByte();
             else
                 skin = ent.baseline.skin;
@@ -429,7 +429,7 @@ namespace SharpQuake
                     Host.RenderContext.TranslatePlayerSkin( num - 1 );
             }
 
-            if( ( bits & protocol.U_EFFECTS ) != 0 )
+            if( ( bits & ProtocolDef.U_EFFECTS ) != 0 )
                 ent.effects = Host.Network.Reader.ReadByte();
             else
                 ent.effects = ent.baseline.effects;
@@ -438,34 +438,34 @@ namespace SharpQuake
             ent.msg_origins[1] = ent.msg_origins[0];
             ent.msg_angles[1] = ent.msg_angles[0];
 
-            if( ( bits & protocol.U_ORIGIN1 ) != 0 )
+            if( ( bits & ProtocolDef.U_ORIGIN1 ) != 0 )
                 ent.msg_origins[0].X = Host.Network.Reader.ReadCoord();
             else
                 ent.msg_origins[0].X = ent.baseline.origin.x;
-            if( ( bits & protocol.U_ANGLE1 ) != 0 )
+            if( ( bits & ProtocolDef.U_ANGLE1 ) != 0 )
                 ent.msg_angles[0].X = Host.Network.Reader.ReadAngle();
             else
                 ent.msg_angles[0].X = ent.baseline.angles.x;
 
-            if( ( bits & protocol.U_ORIGIN2 ) != 0 )
+            if( ( bits & ProtocolDef.U_ORIGIN2 ) != 0 )
                 ent.msg_origins[0].Y = Host.Network.Reader.ReadCoord();
             else
                 ent.msg_origins[0].Y = ent.baseline.origin.y;
-            if( ( bits & protocol.U_ANGLE2 ) != 0 )
+            if( ( bits & ProtocolDef.U_ANGLE2 ) != 0 )
                 ent.msg_angles[0].Y = Host.Network.Reader.ReadAngle();
             else
                 ent.msg_angles[0].Y = ent.baseline.angles.y;
 
-            if( ( bits & protocol.U_ORIGIN3 ) != 0 )
+            if( ( bits & ProtocolDef.U_ORIGIN3 ) != 0 )
                 ent.msg_origins[0].Z = Host.Network.Reader.ReadCoord();
             else
                 ent.msg_origins[0].Z = ent.baseline.origin.z;
-            if( ( bits & protocol.U_ANGLE3 ) != 0 )
+            if( ( bits & ProtocolDef.U_ANGLE3 ) != 0 )
                 ent.msg_angles[0].Z = Host.Network.Reader.ReadAngle();
             else
                 ent.msg_angles[0].Z = ent.baseline.angles.z;
 
-            if( ( bits & protocol.U_NOLERP ) != 0 )
+            if( ( bits & ProtocolDef.U_NOLERP ) != 0 )
                 ent.forcelink = true;
 
             if( forcelink )
@@ -484,12 +484,12 @@ namespace SharpQuake
         /// </summary>
         private void ParseClientData( Int32 bits )
         {
-            if( ( bits & protocol.SU_VIEWHEIGHT ) != 0 )
+            if( ( bits & ProtocolDef.SU_VIEWHEIGHT ) != 0 )
                 cl.viewheight = Host.Network.Reader.ReadChar();
             else
-                cl.viewheight = protocol.DEFAULT_VIEWHEIGHT;
+                cl.viewheight = ProtocolDef.DEFAULT_VIEWHEIGHT;
 
-            if( ( bits & protocol.SU_IDEALPITCH ) != 0 )
+            if( ( bits & ProtocolDef.SU_IDEALPITCH ) != 0 )
                 cl.idealpitch = Host.Network.Reader.ReadChar();
             else
                 cl.idealpitch = 0;
@@ -497,11 +497,11 @@ namespace SharpQuake
             cl.mvelocity[1] = cl.mvelocity[0];
             for( var i = 0; i < 3; i++ )
             {
-                if( ( bits & ( protocol.SU_PUNCH1 << i ) ) != 0 )
+                if( ( bits & ( ProtocolDef.SU_PUNCH1 << i ) ) != 0 )
                     MathLib.SetComp( ref cl.punchangle, i, Host.Network.Reader.ReadChar() );
                 else
                     MathLib.SetComp( ref cl.punchangle, i, 0 );
-                if( ( bits & ( protocol.SU_VELOCITY1 << i ) ) != 0 )
+                if( ( bits & ( ProtocolDef.SU_VELOCITY1 << i ) ) != 0 )
                     MathLib.SetComp( ref cl.mvelocity[0], i, Host.Network.Reader.ReadChar() * 16 );
                 else
                     MathLib.SetComp( ref cl.mvelocity[0], i, 0 );
@@ -519,15 +519,15 @@ namespace SharpQuake
                 cl.items = i2;
             }
 
-            cl.onground = ( bits & protocol.SU_ONGROUND ) != 0;
-            cl.inwater = ( bits & protocol.SU_INWATER ) != 0;
+            cl.onground = ( bits & ProtocolDef.SU_ONGROUND ) != 0;
+            cl.inwater = ( bits & ProtocolDef.SU_INWATER ) != 0;
 
-            if( ( bits & protocol.SU_WEAPONFRAME ) != 0 )
+            if( ( bits & ProtocolDef.SU_WEAPONFRAME ) != 0 )
                 cl.stats[QStatsDef.STAT_WEAPONFRAME] = Host.Network.Reader.ReadByte();
             else
                 cl.stats[QStatsDef.STAT_WEAPONFRAME] = 0;
 
-            if( ( bits & protocol.SU_ARMOR ) != 0 )
+            if( ( bits & ProtocolDef.SU_ARMOR ) != 0 )
                 i2 = Host.Network.Reader.ReadByte();
             else
                 i2 = 0;
@@ -537,7 +537,7 @@ namespace SharpQuake
                 Host.StatusBar.Changed();
             }
 
-            if( ( bits & protocol.SU_WEAPON ) != 0 )
+            if( ( bits & ProtocolDef.SU_WEAPON ) != 0 )
                 i2 = Host.Network.Reader.ReadByte();
             else
                 i2 = 0;
@@ -606,9 +606,9 @@ namespace SharpQuake
 
             // parse protocol version number
             var i = Host.Network.Reader.ReadLong();
-            if( i != protocol.PROTOCOL_VERSION )
+            if( i != ProtocolDef.PROTOCOL_VERSION )
             {
-                Host.Console.Print( "Server returned version {0}, not {1}", i, protocol.PROTOCOL_VERSION );
+                Host.Console.Print( "Server returned version {0}, not {1}", i, ProtocolDef.PROTOCOL_VERSION );
                 return;
             }
 
@@ -716,12 +716,12 @@ namespace SharpQuake
             Int32 volume;
             Single attenuation;
 
-            if( ( field_mask & protocol.SND_VOLUME ) != 0 )
+            if( ( field_mask & ProtocolDef.SND_VOLUME ) != 0 )
                 volume = Host.Network.Reader.ReadByte();
             else
                 volume = snd.DEFAULT_SOUND_PACKET_VOLUME;
 
-            if( ( field_mask & protocol.SND_ATTENUATION ) != 0 )
+            if( ( field_mask & ProtocolDef.SND_ATTENUATION ) != 0 )
                 attenuation = Host.Network.Reader.ReadByte() / 64.0f;
             else
                 attenuation = snd.DEFAULT_SOUND_PACKET_ATTENUATION;
@@ -883,7 +883,7 @@ namespace SharpQuake
                         break;
 
                     case 2:
-                        if( Host.Network.Reader.ReadByte() != protocol.svc_nop )
+                        if( Host.Network.Reader.ReadByte() != ProtocolDef.svc_nop )
                             Host.Error( "CL_KeepaliveMessage: datagram wasn't a nop" );
                         break;
                 }
@@ -901,7 +901,7 @@ namespace SharpQuake
             // write out a nop
             Host.Console.Print( "--> client to server keepalive\n" );
 
-            cls.message.WriteByte( protocol.clc_nop );
+            cls.message.WriteByte( ProtocolDef.clc_nop );
             Host.Network.SendMessage( cls.netcon, cls.message );
             cls.message.Clear();
         }

@@ -157,9 +157,26 @@ namespace SharpQuake
             if( CommandLine.HasParam( "-nolan" ) )
                 return;
 
-            foreach( var driver in Host.Network.LanDrivers )
+            foreach ( var driver in Host.Network.LanDrivers )
             {
-                driver.Init( Host );
+                if ( driver is net_tcp_ip )
+                {
+                    var tcpIP = ( ( net_tcp_ip ) driver );
+
+                    tcpIP.HostName = CVar.GetString( "hostname" );
+                    tcpIP.HostPort = Host.Network.HostPort;
+                }
+
+                driver.Initialise( );
+
+                if ( driver is net_tcp_ip )
+                {
+                    var tcpIP = ( ( net_tcp_ip ) driver );
+
+                    Host.Network.MyTcpIpAddress = tcpIP.HostAddress;
+
+                    CVar.Set( "hostname", tcpIP.HostName );
+                }
             }
 
 #if BAN_TEST
@@ -178,7 +195,7 @@ namespace SharpQuake
         {
             foreach( var drv in Host.Network.LanDrivers )
             {
-                if( drv.IsInitialized )
+                if( drv.IsInitialised )
                     drv.Listen( state );
             }
         }
@@ -192,7 +209,7 @@ namespace SharpQuake
             {
                 if( Host.Network.HostCacheCount == NetworkDef.HOSTCACHESIZE )
                     break;
-                if( Host.Network.LanDrivers[Host.Network.LanDriverLevel].IsInitialized )
+                if( Host.Network.LanDrivers[Host.Network.LanDriverLevel].IsInitialised )
                     InternalSearchForHosts( xmit );
             }
         }
@@ -205,7 +222,7 @@ namespace SharpQuake
             qsocket_t ret = null;
 
             for( Host.Network.LanDriverLevel = 0; Host.Network.LanDriverLevel < Host.Network.LanDrivers.Length; Host.Network.LanDriverLevel++ )
-                if( Host.Network.LanDrivers[Host.Network.LanDriverLevel].IsInitialized )
+                if( Host.Network.LanDrivers[Host.Network.LanDriverLevel].IsInitialised )
                 {
                     ret = InternalConnect( host );
                     if( ret != null )
@@ -222,7 +239,7 @@ namespace SharpQuake
             qsocket_t ret = null;
 
             for( Host.Network.LanDriverLevel = 0; Host.Network.LanDriverLevel < Host.Network.LanDrivers.Length; Host.Network.LanDriverLevel++ )
-                if( Host.Network.LanDriver.IsInitialized )
+                if( Host.Network.LanDriver.IsInitialised )
                 {
                     ret = InternalCheckNewConnections();
                     if( ret != null )
@@ -744,8 +761,8 @@ namespace SharpQuake
             //
             foreach( var driver in Host.Network.LanDrivers )
             {
-                if( driver.IsInitialized )
-                    driver.Shutdown();
+                if( driver.IsInitialised )
+                    driver.Dispose();
             }
 
             _IsInitialised = false;

@@ -732,7 +732,7 @@ namespace SharpQuake
 
             // send notification to all clients
             var msg = Server.sv.reliable_datagram;
-            msg.WriteByte( protocol.svc_updatename );
+            msg.WriteByte( ProtocolDef.svc_updatename );
             msg.WriteByte( ClientNum );
             msg.WriteString( newName );
         }
@@ -889,7 +889,7 @@ namespace SharpQuake
 
             // send notification to all clients
             var msg = Server.sv.reliable_datagram;
-            msg.WriteByte( protocol.svc_updatecolors );
+            msg.WriteByte( ProtocolDef.svc_updatecolors );
             msg.WriteByte( ClientNum );
             msg.WriteByte( HostClient.colors );
         }
@@ -942,7 +942,7 @@ namespace SharpQuake
                 }
 
                 // send notification to all clients
-                Server.sv.reliable_datagram.WriteByte( protocol.svc_setpause );
+                Server.sv.reliable_datagram.WriteByte( ProtocolDef.svc_setpause );
                 Server.sv.reliable_datagram.WriteByte( Server.sv.paused ? 1 : 0 );
             }
         }
@@ -966,7 +966,7 @@ namespace SharpQuake
 
             var msg = HostClient.message;
             msg.Write( Server.sv.signon.Data, 0, Server.sv.signon.Length );
-            msg.WriteByte( protocol.svc_signonnum );
+            msg.WriteByte( ProtocolDef.svc_signonnum );
             msg.WriteByte( 2 );
             HostClient.sendsignon = true;
         }
@@ -1027,19 +1027,19 @@ namespace SharpQuake
             msg.Clear( );
 
             // send time of update
-            msg.WriteByte( protocol.svc_time );
+            msg.WriteByte( ProtocolDef.svc_time );
             msg.WriteFloat( ( Single ) Server.sv.time );
 
             for ( var i = 0; i < Server.svs.maxclients; i++ )
             {
                 var client = Server.svs.clients[i];
-                msg.WriteByte( protocol.svc_updatename );
+                msg.WriteByte( ProtocolDef.svc_updatename );
                 msg.WriteByte( i );
                 msg.WriteString( client.name );
-                msg.WriteByte( protocol.svc_updatefrags );
+                msg.WriteByte( ProtocolDef.svc_updatefrags );
                 msg.WriteByte( i );
                 msg.WriteShort( client.old_frags );
-                msg.WriteByte( protocol.svc_updatecolors );
+                msg.WriteByte( ProtocolDef.svc_updatecolors );
                 msg.WriteByte( i );
                 msg.WriteByte( client.colors );
             }
@@ -1047,7 +1047,7 @@ namespace SharpQuake
             // send all current light styles
             for ( var i = 0; i < QDef.MAX_LIGHTSTYLES; i++ )
             {
-                msg.WriteByte( protocol.svc_lightstyle );
+                msg.WriteByte( ProtocolDef.svc_lightstyle );
                 msg.WriteByte( ( Char ) i );
                 msg.WriteString( Server.sv.lightstyles[i] );
             }
@@ -1055,19 +1055,19 @@ namespace SharpQuake
             //
             // send some stats
             //
-            msg.WriteByte( protocol.svc_updatestat );
+            msg.WriteByte( ProtocolDef.svc_updatestat );
             msg.WriteByte( QStatsDef.STAT_TOTALSECRETS );
             msg.WriteLong( ( Int32 ) Programs.GlobalStruct.total_secrets );
 
-            msg.WriteByte( protocol.svc_updatestat );
+            msg.WriteByte( ProtocolDef.svc_updatestat );
             msg.WriteByte( QStatsDef.STAT_TOTALMONSTERS );
             msg.WriteLong( ( Int32 ) Programs.GlobalStruct.total_monsters );
 
-            msg.WriteByte( protocol.svc_updatestat );
+            msg.WriteByte( ProtocolDef.svc_updatestat );
             msg.WriteByte( QStatsDef.STAT_SECRETS );
             msg.WriteLong( ( Int32 ) Programs.GlobalStruct.found_secrets );
 
-            msg.WriteByte( protocol.svc_updatestat );
+            msg.WriteByte( ProtocolDef.svc_updatestat );
             msg.WriteByte( QStatsDef.STAT_MONSTERS );
             msg.WriteLong( ( Int32 ) Programs.GlobalStruct.killed_monsters );
 
@@ -1078,14 +1078,14 @@ namespace SharpQuake
             // and it won't happen if the game was just loaded, so you wind up
             // with a permanent head tilt
             ent = Server.EdictNum( 1 + ClientNum );
-            msg.WriteByte( protocol.svc_setangle );
+            msg.WriteByte( ProtocolDef.svc_setangle );
             msg.WriteAngle( ent.v.angles.x );
             msg.WriteAngle( ent.v.angles.y );
             msg.WriteAngle( 0 );
 
             Server.WriteClientDataToMessage( Server.Player, HostClient.message );
 
-            msg.WriteByte( protocol.svc_signonnum );
+            msg.WriteByte( ProtocolDef.svc_signonnum );
             msg.WriteByte( 3 );
             HostClient.sendsignon = true;
         }

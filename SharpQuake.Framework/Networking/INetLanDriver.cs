@@ -16,7 +16,7 @@ namespace SharpQuake.Framework
             get;
         }
 
-        Boolean IsInitialized
+        Boolean IsInitialised
         {
             get;
         }
@@ -26,9 +26,9 @@ namespace SharpQuake.Framework
             get;
         }
 
-        Boolean Init( Object host );
+        Boolean Initialise( );
 
-        void Shutdown( );
+        void Dispose( );
 
         void Listen( Boolean state );
 

@@ -537,8 +537,8 @@ namespace SharpQuake
             var header = Utilities.BytesToStructure<BspHeader>( buffer, 0 );
 
             var i = EndianHelper.LittleLong( header.version );
-            if( i != BspDef.BSPVERSION )
-                Utilities.Error( "Mod_LoadBrushModel: {0} has wrong version number ({1} should be {2})", mod.name, i, BspDef.BSPVERSION );
+            if( i != BspDef.Q1_BSPVERSION && i != BspDef.HL_BSPVERSION )
+                Utilities.Error( "Mod_LoadBrushModel: {0} has wrong version number ({1} should be {2})", mod.name, i, BspDef.Q1_BSPVERSION );
 
             header.version = i;
 
@@ -1031,8 +1031,13 @@ namespace SharpQuake
                     tx.height = mt.height;
                     tx.scaleX = 1f;
                     tx.scaleY = 1f;
+
+                    if ( mt.offsets[0] == 0 )
+                        continue;
+
                     for ( var j = 0; j < BspDef.MIPLEVELS; j++ )
                         tx.offsets[j] = ( Int32 ) mt.offsets[j] - BspMipTex.SizeInBytes;
+
                     // the pixels immediately follow the structures
                     tx.pixels = new Byte[pixels];
     #warning BlockCopy tries to copy data over the bounds of _ModBase if certain mods are loaded. Needs proof fix!

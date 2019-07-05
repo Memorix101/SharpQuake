@@ -305,7 +305,7 @@ namespace SharpQuake
 
                 Host.Console.DPrint( "Sending clc_disconnect\n" );
                 cls.message.Clear();
-                cls.message.WriteByte( protocol.clc_disconnect );
+                cls.message.WriteByte( ProtocolDef.clc_disconnect );
                 Host.Network.SendUnreliableMessage( cls.netcon, cls.message );
                 cls.message.Clear();
                 Host.Network.Close( cls.netcon );
@@ -484,23 +484,23 @@ namespace SharpQuake
             switch( cls.signon )
             {
                 case 1:
-                    cls.message.WriteByte( protocol.clc_stringcmd );
+                    cls.message.WriteByte( ProtocolDef.clc_stringcmd );
                     cls.message.WriteString( "prespawn" );
                     break;
 
                 case 2:
-                    cls.message.WriteByte( protocol.clc_stringcmd );
+                    cls.message.WriteByte( ProtocolDef.clc_stringcmd );
                     cls.message.WriteString( String.Format( "name \"{0}\"\n", _Name.String ) );
 
-                    cls.message.WriteByte( protocol.clc_stringcmd );
+                    cls.message.WriteByte( ProtocolDef.clc_stringcmd );
                     cls.message.WriteString( String.Format( "color {0} {1}\n", ( ( Int32 ) _Color.Value ) >> 4, ( ( Int32 ) _Color.Value ) & 15 ) );
 
-                    cls.message.WriteByte( protocol.clc_stringcmd );
+                    cls.message.WriteByte( ProtocolDef.clc_stringcmd );
                     cls.message.WriteString( "spawn " + cls.spawnparms );
                     break;
 
                 case 3:
-                    cls.message.WriteByte( protocol.clc_stringcmd );
+                    cls.message.WriteByte( ProtocolDef.clc_stringcmd );
                     cls.message.WriteString( "begin" );
                     Host.Cache.Report();	// print remaining memory
                     break;

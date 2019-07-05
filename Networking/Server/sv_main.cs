@@ -81,7 +81,7 @@ namespace SharpQuake
             if( sv.datagram.Length > QDef.MAX_DATAGRAM - 16 )
                 return;
 
-            sv.datagram.WriteByte( protocol.svc_particle );
+            sv.datagram.WriteByte( ProtocolDef.svc_particle );
             sv.datagram.WriteCoord( org.X );
             sv.datagram.WriteCoord( org.Y );
             sv.datagram.WriteCoord( org.Z );
@@ -139,16 +139,16 @@ namespace SharpQuake
 
             var field_mask = 0;
             if( volume != snd.DEFAULT_SOUND_PACKET_VOLUME )
-                field_mask |= protocol.SND_VOLUME;
+                field_mask |= ProtocolDef.SND_VOLUME;
             if( attenuation != snd.DEFAULT_SOUND_PACKET_ATTENUATION )
-                field_mask |= protocol.SND_ATTENUATION;
+                field_mask |= ProtocolDef.SND_ATTENUATION;
 
             // directed messages go only to the entity the are targeted on
-            sv.datagram.WriteByte( protocol.svc_sound );
+            sv.datagram.WriteByte( ProtocolDef.svc_sound );
             sv.datagram.WriteByte( field_mask );
-            if( ( field_mask & protocol.SND_VOLUME ) != 0 )
+            if( ( field_mask & ProtocolDef.SND_VOLUME ) != 0 )
                 sv.datagram.WriteByte( volume );
-            if( ( field_mask & protocol.SND_ATTENUATION ) != 0 )
+            if( ( field_mask & ProtocolDef.SND_ATTENUATION ) != 0 )
                 sv.datagram.WriteByte( ( Int32 ) ( attenuation * 64 ) );
             sv.datagram.WriteShort( channel );
             sv.datagram.WriteByte( sound_num );
@@ -175,7 +175,7 @@ namespace SharpQuake
                 if( Host.Network.CanSendMessage( client.netconnection ) )
                 {
                     var msg = client.message;
-                    msg.WriteByte( protocol.svc_disconnect );
+                    msg.WriteByte( ProtocolDef.svc_disconnect );
                     Host.Network.SendMessage( client.netconnection, msg );
                 }
 
@@ -209,13 +209,13 @@ namespace SharpQuake
                 if( !cl.active )
                     continue;
 
-                cl.message.WriteByte(protocol.svc_updatename );
+                cl.message.WriteByte(ProtocolDef.svc_updatename );
                 cl.message.WriteByte( Host.ClientNum );
                 cl.message.WriteString( "" );
-                cl.message.WriteByte(protocol.svc_updatefrags );
+                cl.message.WriteByte(ProtocolDef.svc_updatefrags );
                 cl.message.WriteByte( Host.ClientNum );
                 cl.message.WriteShort( 0 );
-                cl.message.WriteByte(protocol.svc_updatecolors );
+                cl.message.WriteByte(ProtocolDef.svc_updatecolors );
                 cl.message.WriteByte( Host.ClientNum );
                 cl.message.WriteByte( 0 );
             }
@@ -323,7 +323,7 @@ namespace SharpQuake
         public void ClientPrint( String fmt, params Object[] args )
         {
             var tmp = String.Format( fmt, args );
-            Host.HostClient.message.WriteByte( protocol.svc_print );
+            Host.HostClient.message.WriteByte( ProtocolDef.svc_print );
             Host.HostClient.message.WriteString( tmp );
         }
 
@@ -337,7 +337,7 @@ namespace SharpQuake
                 if( svs.clients[i].active && svs.clients[i].spawned )
                 {
                     var msg = svs.clients[i].message;
-                    msg.WriteByte( protocol.svc_print );
+                    msg.WriteByte( ProtocolDef.svc_print );
                     msg.WriteString( tmp );
                 }
         }
@@ -353,7 +353,7 @@ namespace SharpQuake
             if( ent.v.dmg_take != 0 || ent.v.dmg_save != 0 )
             {
                 var other = ProgToEdict( ent.v.dmg_inflictor );
-                msg.WriteByte( protocol.svc_damage );
+                msg.WriteByte( ProtocolDef.svc_damage );
                 msg.WriteByte( ( Int32 ) ent.v.dmg_save );
                 msg.WriteByte( ( Int32 ) ent.v.dmg_take );
                 msg.WriteCoord( other.v.origin.x + 0.5f * ( other.v.mins.x + other.v.maxs.x ) );
@@ -372,7 +372,7 @@ namespace SharpQuake
             // a fixangle might get lost in a dropped packet.  Oh well.
             if( ent.v.fixangle != 0 )
             {
-                msg.WriteByte( protocol.svc_setangle );
+                msg.WriteByte( ProtocolDef.svc_setangle );
                 msg.WriteAngle( ent.v.angles.x );
                 msg.WriteAngle( ent.v.angles.y );
                 msg.WriteAngle( ent.v.angles.z );
@@ -381,11 +381,11 @@ namespace SharpQuake
 
             var bits = 0;
 
-            if( ent.v.view_ofs.z != protocol.DEFAULT_VIEWHEIGHT )
-                bits |= protocol.SU_VIEWHEIGHT;
+            if( ent.v.view_ofs.z != ProtocolDef.DEFAULT_VIEWHEIGHT )
+                bits |= ProtocolDef.SU_VIEWHEIGHT;
 
             if( ent.v.idealpitch != 0 )
-                bits |= protocol.SU_IDEALPITCH;
+                bits |= ProtocolDef.SU_IDEALPITCH;
 
             // stuff the sigil bits into the high bits of items for sbar, or else
             // mix in items2
@@ -396,71 +396,71 @@ namespace SharpQuake
             else
                 items = ( Int32 ) ent.v.items | ( ( Int32 ) Host.Programs.GlobalStruct.serverflags << 28 );
 
-            bits |= protocol.SU_ITEMS;
+            bits |= ProtocolDef.SU_ITEMS;
 
             if( ( ( Int32 ) ent.v.flags & EdictFlags.FL_ONGROUND ) != 0 )
-                bits |= protocol.SU_ONGROUND;
+                bits |= ProtocolDef.SU_ONGROUND;
 
             if( ent.v.waterlevel >= 2 )
-                bits |= protocol.SU_INWATER;
+                bits |= ProtocolDef.SU_INWATER;
 
             if( ent.v.punchangle.x != 0 )
-                bits |= protocol.SU_PUNCH1;
+                bits |= ProtocolDef.SU_PUNCH1;
             if( ent.v.punchangle.y != 0 )
-                bits |= protocol.SU_PUNCH2;
+                bits |= ProtocolDef.SU_PUNCH2;
             if( ent.v.punchangle.z != 0 )
-                bits |= protocol.SU_PUNCH3;
+                bits |= ProtocolDef.SU_PUNCH3;
 
             if( ent.v.velocity.x != 0 )
-                bits |= protocol.SU_VELOCITY1;
+                bits |= ProtocolDef.SU_VELOCITY1;
             if( ent.v.velocity.y != 0 )
-                bits |= protocol.SU_VELOCITY2;
+                bits |= ProtocolDef.SU_VELOCITY2;
             if( ent.v.velocity.z != 0 )
-                bits |= protocol.SU_VELOCITY3;
+                bits |= ProtocolDef.SU_VELOCITY3;
 
             if( ent.v.weaponframe != 0 )
-                bits |= protocol.SU_WEAPONFRAME;
+                bits |= ProtocolDef.SU_WEAPONFRAME;
 
             if( ent.v.armorvalue != 0 )
-                bits |= protocol.SU_ARMOR;
+                bits |= ProtocolDef.SU_ARMOR;
 
             //	if (ent.v.weapon)
-            bits |= protocol.SU_WEAPON;
+            bits |= ProtocolDef.SU_WEAPON;
 
             // send the data
 
-            msg.WriteByte( protocol.svc_clientdata );
+            msg.WriteByte( ProtocolDef.svc_clientdata );
             msg.WriteShort( bits );
 
-            if( ( bits & protocol.SU_VIEWHEIGHT ) != 0 )
+            if( ( bits & ProtocolDef.SU_VIEWHEIGHT ) != 0 )
                 msg.WriteChar( ( Int32 ) ent.v.view_ofs.z );
 
-            if( ( bits & protocol.SU_IDEALPITCH ) != 0 )
+            if( ( bits & ProtocolDef.SU_IDEALPITCH ) != 0 )
                 msg.WriteChar( ( Int32 ) ent.v.idealpitch );
 
-            if( ( bits & protocol.SU_PUNCH1 ) != 0 )
+            if( ( bits & ProtocolDef.SU_PUNCH1 ) != 0 )
                 msg.WriteChar( ( Int32 ) ent.v.punchangle.x );
-            if( ( bits & protocol.SU_VELOCITY1 ) != 0 )
+            if( ( bits & ProtocolDef.SU_VELOCITY1 ) != 0 )
                 msg.WriteChar( ( Int32 ) ( ent.v.velocity.x / 16 ) );
 
-            if( ( bits & protocol.SU_PUNCH2 ) != 0 )
+            if( ( bits & ProtocolDef.SU_PUNCH2 ) != 0 )
                 msg.WriteChar( ( Int32 ) ent.v.punchangle.y );
-            if( ( bits & protocol.SU_VELOCITY2 ) != 0 )
+            if( ( bits & ProtocolDef.SU_VELOCITY2 ) != 0 )
                 msg.WriteChar( ( Int32 ) ( ent.v.velocity.y / 16 ) );
 
-            if( ( bits & protocol.SU_PUNCH3 ) != 0 )
+            if( ( bits & ProtocolDef.SU_PUNCH3 ) != 0 )
                 msg.WriteChar( ( Int32 ) ent.v.punchangle.z );
-            if( ( bits & protocol.SU_VELOCITY3 ) != 0 )
+            if( ( bits & ProtocolDef.SU_VELOCITY3 ) != 0 )
                 msg.WriteChar( ( Int32 ) ( ent.v.velocity.z / 16 ) );
 
             // always sent
             msg.WriteLong( items );
 
-            if( ( bits & protocol.SU_WEAPONFRAME ) != 0 )
+            if( ( bits & ProtocolDef.SU_WEAPONFRAME ) != 0 )
                 msg.WriteByte( ( Int32 ) ent.v.weaponframe );
-            if( ( bits & protocol.SU_ARMOR ) != 0 )
+            if( ( bits & ProtocolDef.SU_ARMOR ) != 0 )
                 msg.WriteByte( ( Int32 ) ent.v.armorvalue );
-            if( ( bits & protocol.SU_WEAPON ) != 0 )
+            if( ( bits & ProtocolDef.SU_WEAPON ) != 0 )
                 msg.WriteByte( ModelIndex( Host.Programs.GetString( ent.v.weaponmodel ) ) );
 
             msg.WriteShort( ( Int32 ) ent.v.health );
@@ -706,7 +706,7 @@ namespace SharpQuake
         private void SendNop( client_t client )
         {
             var msg = new MessageWriter( 4 );
-            msg.WriteChar( protocol.svc_nop );
+            msg.WriteChar( ProtocolDef.svc_nop );
 
             if( Host.Network.SendUnreliableMessage( client.netconnection, msg ) == -1 )
                 DropClient( true );	// if the message couldn't send, kick off
@@ -720,7 +720,7 @@ namespace SharpQuake
         {
             var msg = new MessageWriter( QDef.MAX_DATAGRAM ); // Uze todo: make static?
 
-            msg.WriteByte( protocol.svc_time );
+            msg.WriteByte( ProtocolDef.svc_time );
             msg.WriteFloat( ( Single ) sv.time );
 
             // add the client specific data to the datagram
@@ -783,78 +783,78 @@ namespace SharpQuake
                 Vector3f miss;
                 MathLib.VectorSubtract( ref ent.v.origin, ref ent.baseline.origin, out miss );
                 if( miss.x < -0.1f || miss.x > 0.1f )
-                    bits |= protocol.U_ORIGIN1;
+                    bits |= ProtocolDef.U_ORIGIN1;
                 if( miss.y < -0.1f || miss.y > 0.1f )
-                    bits |= protocol.U_ORIGIN2;
+                    bits |= ProtocolDef.U_ORIGIN2;
                 if( miss.z < -0.1f || miss.z > 0.1f )
-                    bits |= protocol.U_ORIGIN3;
+                    bits |= ProtocolDef.U_ORIGIN3;
 
                 if( ent.v.angles.x != ent.baseline.angles.x )
-                    bits |= protocol.U_ANGLE1;
+                    bits |= ProtocolDef.U_ANGLE1;
 
                 if( ent.v.angles.y != ent.baseline.angles.y )
-                    bits |= protocol.U_ANGLE2;
+                    bits |= ProtocolDef.U_ANGLE2;
 
                 if( ent.v.angles.z != ent.baseline.angles.z )
-                    bits |= protocol.U_ANGLE3;
+                    bits |= ProtocolDef.U_ANGLE3;
 
                 if( ent.v.movetype == Movetypes.MOVETYPE_STEP )
-                    bits |= protocol.U_NOLERP;	// don't mess up the step animation
+                    bits |= ProtocolDef.U_NOLERP;	// don't mess up the step animation
 
                 if( ent.baseline.colormap != ent.v.colormap )
-                    bits |= protocol.U_COLORMAP;
+                    bits |= ProtocolDef.U_COLORMAP;
 
                 if( ent.baseline.skin != ent.v.skin )
-                    bits |= protocol.U_SKIN;
+                    bits |= ProtocolDef.U_SKIN;
 
                 if( ent.baseline.frame != ent.v.frame )
-                    bits |= protocol.U_FRAME;
+                    bits |= ProtocolDef.U_FRAME;
 
                 if( ent.baseline.effects != ent.v.effects )
-                    bits |= protocol.U_EFFECTS;
+                    bits |= ProtocolDef.U_EFFECTS;
 
                 if( ent.baseline.modelindex != ent.v.modelindex )
-                    bits |= protocol.U_MODEL;
+                    bits |= ProtocolDef.U_MODEL;
 
                 if( e >= 256 )
-                    bits |= protocol.U_LONGENTITY;
+                    bits |= ProtocolDef.U_LONGENTITY;
 
                 if( bits >= 256 )
-                    bits |= protocol.U_MOREBITS;
+                    bits |= ProtocolDef.U_MOREBITS;
 
                 //
                 // write the message
                 //
-                msg.WriteByte( bits | protocol.U_SIGNAL );
+                msg.WriteByte( bits | ProtocolDef.U_SIGNAL );
 
-                if( ( bits & protocol.U_MOREBITS ) != 0 )
+                if( ( bits & ProtocolDef.U_MOREBITS ) != 0 )
                     msg.WriteByte( bits >> 8 );
-                if( ( bits & protocol.U_LONGENTITY ) != 0 )
+                if( ( bits & ProtocolDef.U_LONGENTITY ) != 0 )
                     msg.WriteShort( e );
                 else
                     msg.WriteByte( e );
 
-                if( ( bits & protocol.U_MODEL ) != 0 )
+                if( ( bits & ProtocolDef.U_MODEL ) != 0 )
                     msg.WriteByte( ( Int32 ) ent.v.modelindex );
-                if( ( bits & protocol.U_FRAME ) != 0 )
+                if( ( bits & ProtocolDef.U_FRAME ) != 0 )
                     msg.WriteByte( ( Int32 ) ent.v.frame );
-                if( ( bits & protocol.U_COLORMAP ) != 0 )
+                if( ( bits & ProtocolDef.U_COLORMAP ) != 0 )
                     msg.WriteByte( ( Int32 ) ent.v.colormap );
-                if( ( bits & protocol.U_SKIN ) != 0 )
+                if( ( bits & ProtocolDef.U_SKIN ) != 0 )
                     msg.WriteByte( ( Int32 ) ent.v.skin );
-                if( ( bits & protocol.U_EFFECTS ) != 0 )
+                if( ( bits & ProtocolDef.U_EFFECTS ) != 0 )
                     msg.WriteByte( ( Int32 ) ent.v.effects );
-                if( ( bits & protocol.U_ORIGIN1 ) != 0 )
+                if( ( bits & ProtocolDef.U_ORIGIN1 ) != 0 )
                     msg.WriteCoord( ent.v.origin.x );
-                if( ( bits & protocol.U_ANGLE1 ) != 0 )
+                if( ( bits & ProtocolDef.U_ANGLE1 ) != 0 )
                     msg.WriteAngle( ent.v.angles.x );
-                if( ( bits & protocol.U_ORIGIN2 ) != 0 )
+                if( ( bits & ProtocolDef.U_ORIGIN2 ) != 0 )
                     msg.WriteCoord( ent.v.origin.y );
-                if( ( bits & protocol.U_ANGLE2 ) != 0 )
+                if( ( bits & ProtocolDef.U_ANGLE2 ) != 0 )
                     msg.WriteAngle( ent.v.angles.y );
-                if( ( bits & protocol.U_ORIGIN3 ) != 0 )
+                if( ( bits & ProtocolDef.U_ORIGIN3 ) != 0 )
                     msg.WriteCoord( ent.v.origin.z );
-                if( ( bits & protocol.U_ANGLE3 ) != 0 )
+                if( ( bits & ProtocolDef.U_ANGLE3 ) != 0 )
                     msg.WriteAngle( ent.v.angles.z );
             }
         }
@@ -927,7 +927,7 @@ namespace SharpQuake
                         if( !client.active )
                             continue;
 
-                        client.message.WriteByte( protocol.svc_updatefrags );
+                        client.message.WriteByte( ProtocolDef.svc_updatefrags );
                         client.message.WriteByte( i );
                         client.message.WriteShort( ( Int32 ) Host.HostClient.edict.v.frags );
                     }
@@ -1026,17 +1026,17 @@ namespace SharpQuake
         {
             var writer = client.message;
 
-            writer.WriteByte( protocol.svc_print );
+            writer.WriteByte( ProtocolDef.svc_print );
             writer.WriteString( String.Format( "{0}\nVERSION {1,4:F2} SERVER ({2} CRC)", ( Char ) 2, QDef.VERSION, Host.Programs.Crc ) );
 
-            writer.WriteByte( protocol.svc_serverinfo );
-            writer.WriteLong( protocol.PROTOCOL_VERSION );
+            writer.WriteByte( ProtocolDef.svc_serverinfo );
+            writer.WriteLong( ProtocolDef.PROTOCOL_VERSION );
             writer.WriteByte( svs.maxclients );
 
             if( !Host.IsCoop && Host.Deathmatch != 0 )
-                writer.WriteByte( protocol.GAME_DEATHMATCH );
+                writer.WriteByte( ProtocolDef.GAME_DEATHMATCH );
             else
-                writer.WriteByte( protocol.GAME_COOP );
+                writer.WriteByte( ProtocolDef.GAME_COOP );
 
             var message = Host.Programs.GetString( sv.edicts[0].v.message );
 
@@ -1061,15 +1061,15 @@ namespace SharpQuake
             writer.WriteByte( 0 );
 
             // send music
-            writer.WriteByte( protocol.svc_cdtrack );
+            writer.WriteByte( ProtocolDef.svc_cdtrack );
             writer.WriteByte( ( Int32 ) sv.edicts[0].v.sounds );
             writer.WriteByte( ( Int32 ) sv.edicts[0].v.sounds );
 
             // set view
-            writer.WriteByte( protocol.svc_setview );
+            writer.WriteByte( ProtocolDef.svc_setview );
             writer.WriteShort( NumForEdict( client.edict ) );
 
-            writer.WriteByte( protocol.svc_signonnum );
+            writer.WriteByte( ProtocolDef.svc_signonnum );
             writer.WriteByte( 1 );
 
             client.sendsignon = true;
@@ -1084,7 +1084,7 @@ namespace SharpQuake
         {
             var msg = new MessageWriter( 128 );
 
-            msg.WriteChar( protocol.svc_stufftext );
+            msg.WriteChar( ProtocolDef.svc_stufftext );
             msg.WriteString( "reconnect\n" );
             Host.Network.SendToAll( msg, 5 );
 
@@ -1127,7 +1127,7 @@ namespace SharpQuake
                 //
                 // add to the message
                 //
-                sv.signon.WriteByte( protocol.svc_spawnbaseline );
+                sv.signon.WriteByte( ProtocolDef.svc_spawnbaseline );
                 sv.signon.WriteShort( entnum );
 
                 sv.signon.WriteByte( svent.baseline.modelindex );

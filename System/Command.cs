@@ -254,7 +254,7 @@ namespace SharpQuake
                 return;		// not really connected
 
             var writer = Host.Client.cls.message;
-            writer.WriteByte( protocol.clc_stringcmd );
+            writer.WriteByte( ProtocolDef.clc_stringcmd );
             if( !Host.Command.Argv( 0 ).Equals( "cmd" ) )
             {
                 writer.Print( Host.Command.Argv( 0 ) + " " );

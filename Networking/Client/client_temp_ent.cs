@@ -156,19 +156,19 @@ namespace SharpQuake
             var type = Host.Network.Reader.ReadByte();
             switch( type )
             {
-                case protocol.TE_WIZSPIKE:			// spike hitting wall
+                case ProtocolDef.TE_WIZSPIKE:			// spike hitting wall
                     pos = Host.Network.Reader.ReadCoords();
                     Host.RenderContext.RunParticleEffect( ref pos, ref Utilities.ZeroVector, 20, 30 );
                     Host.Sound.StartSound( -1, 0, _SfxWizHit, ref pos, 1, 1 );
                     break;
 
-                case protocol.TE_KNIGHTSPIKE:			// spike hitting wall
+                case ProtocolDef.TE_KNIGHTSPIKE:			// spike hitting wall
                     pos = Host.Network.Reader.ReadCoords();
                     Host.RenderContext.RunParticleEffect( ref pos, ref Utilities.ZeroVector, 226, 20 );
                     Host.Sound.StartSound( -1, 0, _SfxKnigtHit, ref pos, 1, 1 );
                     break;
 
-                case protocol.TE_SPIKE:			// spike hitting wall
+                case ProtocolDef.TE_SPIKE:			// spike hitting wall
                     pos = Host.Network.Reader.ReadCoords();
 #if GLTEST
                     Test_Spawn (pos);
@@ -189,7 +189,7 @@ namespace SharpQuake
                     }
                     break;
 
-                case protocol.TE_SUPERSPIKE:			// super spike hitting wall
+                case ProtocolDef.TE_SUPERSPIKE:			// super spike hitting wall
                     pos = Host.Network.Reader.ReadCoords();
                     Host.RenderContext.RunParticleEffect( ref pos, ref Utilities.ZeroVector, 0, 20 );
 
@@ -207,12 +207,12 @@ namespace SharpQuake
                     }
                     break;
 
-                case protocol.TE_GUNSHOT:			// bullet hitting wall
+                case ProtocolDef.TE_GUNSHOT:			// bullet hitting wall
                     pos = Host.Network.Reader.ReadCoords();
                     Host.RenderContext.RunParticleEffect( ref pos, ref Utilities.ZeroVector, 0, 20 );
                     break;
 
-                case protocol.TE_EXPLOSION:			// rocket explosion
+                case ProtocolDef.TE_EXPLOSION:			// rocket explosion
                     pos = Host.Network.Reader.ReadCoords();
                     Host.RenderContext.ParticleExplosion( ref pos );
                     dl = AllocDlight( 0 );
@@ -223,41 +223,41 @@ namespace SharpQuake
                     Host.Sound.StartSound( -1, 0, _SfxRExp3, ref pos, 1, 1 );
                     break;
 
-                case protocol.TE_TAREXPLOSION:			// tarbaby explosion
+                case ProtocolDef.TE_TAREXPLOSION:			// tarbaby explosion
                     pos = Host.Network.Reader.ReadCoords();
                     Host.RenderContext.BlobExplosion( ref pos );
                     Host.Sound.StartSound( -1, 0, _SfxRExp3, ref pos, 1, 1 );
                     break;
 
-                case protocol.TE_LIGHTNING1:				// lightning bolts
+                case ProtocolDef.TE_LIGHTNING1:				// lightning bolts
                     ParseBeam( Host.Model.ForName( "progs/bolt.mdl", true ) );
                     break;
 
-                case protocol.TE_LIGHTNING2:				// lightning bolts
+                case ProtocolDef.TE_LIGHTNING2:				// lightning bolts
                     ParseBeam( Host.Model.ForName( "progs/bolt2.mdl", true ) );
                     break;
 
-                case protocol.TE_LIGHTNING3:				// lightning bolts
+                case ProtocolDef.TE_LIGHTNING3:				// lightning bolts
                     ParseBeam( Host.Model.ForName( "progs/bolt3.mdl", true ) );
                     break;
 
                 // PGM 01/21/97
-                case protocol.TE_BEAM:				// grappling hook beam
+                case ProtocolDef.TE_BEAM:				// grappling hook beam
                     ParseBeam( Host.Model.ForName( "progs/beam.mdl", true ) );
                     break;
                 // PGM 01/21/97
 
-                case protocol.TE_LAVASPLASH:
+                case ProtocolDef.TE_LAVASPLASH:
                     pos = Host.Network.Reader.ReadCoords();
                     Host.RenderContext.LavaSplash( ref pos );
                     break;
 
-                case protocol.TE_TELEPORT:
+                case ProtocolDef.TE_TELEPORT:
                     pos = Host.Network.Reader.ReadCoords();
                     Host.RenderContext.TeleportSplash( ref pos );
                     break;
 
-                case protocol.TE_EXPLOSION2:				// color mapped explosion
+                case ProtocolDef.TE_EXPLOSION2:				// color mapped explosion
                     pos = Host.Network.Reader.ReadCoords();
                     var colorStart = Host.Network.Reader.ReadByte();
                     var colorLength = Host.Network.Reader.ReadByte();

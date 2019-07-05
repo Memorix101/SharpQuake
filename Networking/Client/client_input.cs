@@ -346,7 +346,7 @@ namespace SharpQuake
             //
             // send the movement message
             //
-            msg.WriteByte( protocol.clc_move );
+            msg.WriteByte( ProtocolDef.clc_move );
 
             msg.WriteFloat( ( Single ) cl.mtime[0] );	// so server can get ping times
 

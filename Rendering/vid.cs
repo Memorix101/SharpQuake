@@ -401,7 +401,11 @@ namespace SharpQuake
             if( vid.conwidth > dev.Width )
                 vid.conwidth = dev.Width;
 
-            vid.width = vid.conwidth;
+            // Support any aspect ratio by converting the virtual coordinate system
+            var aspectRatio = Host.MainWindow.ClientSize.Width / ( Double ) Host.MainWindow.ClientSize.Height;
+            var width = ( Int32 ) ( vid.conheight * aspectRatio );
+
+            vid.width = width; // vid.conwidth
             vid.height = vid.conheight;
 
             vid.numpages = 2;

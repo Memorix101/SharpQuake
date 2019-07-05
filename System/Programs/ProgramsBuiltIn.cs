@@ -613,7 +613,7 @@ namespace SharpQuake
 
             var client = Host.Server.svs.clients[entnum - 1];
 
-            client.message.WriteChar( protocol.svc_print );
+            client.message.WriteChar( ProtocolDef.svc_print );
             client.message.WriteString( s );
         }
 
@@ -640,7 +640,7 @@ namespace SharpQuake
 
             var client = Host.Server.svs.clients[entnum - 1];
 
-            client.message.WriteChar( protocol.svc_centerprint );
+            client.message.WriteChar( ProtocolDef.svc_centerprint );
             client.message.WriteString( s );
         }
 
@@ -796,7 +796,7 @@ namespace SharpQuake
                     // add an svc_spawnambient command to the level signon packet
                     var msg = Host.Server.sv.signon;
 
-                    msg.WriteByte( protocol.svc_spawnstaticsound );
+                    msg.WriteByte( ProtocolDef.svc_spawnstaticsound );
                     for ( var i2 = 0; i2 < 3; i2++ )
                         msg.WriteCoord( pos[i2] );
 
@@ -1340,7 +1340,7 @@ namespace SharpQuake
                 var client = Host.Server.svs.clients[j];
                 if ( client.active || client.spawned )
                 {
-                    client.message.WriteChar( protocol.svc_lightstyle );
+                    client.message.WriteChar( ProtocolDef.svc_lightstyle );
                     client.message.WriteChar( style );
                     client.message.WriteString( val );
                 }
@@ -1545,7 +1545,7 @@ namespace SharpQuake
             var ent = GetEdict( ProgramOperatorDef.OFS_PARM0 );
             var msg = Host.Server.sv.signon;
 
-            msg.WriteByte( protocol.svc_spawnstatic );
+            msg.WriteByte( ProtocolDef.svc_spawnstatic );
             msg.WriteByte( Host.Server.ModelIndex( Host.Programs.GetString( ent.v.model ) ) );
             msg.WriteByte( ( Int32 ) ent.v.frame );
             msg.WriteByte( ( Int32 ) ent.v.colormap );

@@ -13,7 +13,7 @@ namespace SharpQuake.Framework
         public const System.Int32 MAX_MAP_HULLS = 4;
 
         public const System.Int32 MAX_MAP_MODELS = 256;
-        public const System.Int32 MAX_MAP_BRUSHES = 4096;
+        public const System.Int32 MAX_MAP_BRUSHES = 32768; // 4096
         public const System.Int32 MAX_MAP_ENTITIES = 1024;
         public const System.Int32 MAX_MAP_ENTSTRING = 65536;
 
@@ -41,7 +41,9 @@ namespace SharpQuake.Framework
 
         public const System.Int32 MAXLIGHTMAPS = 4;
 
-        public const System.Int32 BSPVERSION = 29;
+        public const System.Int32 Q1_BSPVERSION = 29;
+        public const System.Int32 HL_BSPVERSION = 30;
+
         public const System.Int32 TOOLVERSION = 2;
 
         public const System.Int32 HEADER_LUMPS = 15;

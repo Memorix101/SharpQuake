@@ -489,7 +489,7 @@ namespace SharpQuake
         public void ClientCommands( String fmt, params Object[] args )
         {
             var tmp = String.Format( fmt, args );
-            HostClient.message.WriteByte( protocol.svc_stufftext );
+            HostClient.message.WriteByte( ProtocolDef.svc_stufftext );
             HostClient.message.WriteString( tmp );
         }
 
@@ -875,7 +875,7 @@ namespace SharpQuake
 
             // make sure all the clients know we're disconnecting
             var writer = new MessageWriter( 4 );
-            writer.WriteByte( protocol.svc_disconnect );
+            writer.WriteByte( ProtocolDef.svc_disconnect );
             count = Network.SendToAll( writer, 5 );
 
             if ( count != 0 )

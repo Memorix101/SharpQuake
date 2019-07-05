@@ -31,6 +31,25 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x86'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\x86\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <DebugType>full</DebugType>
+    <PlatformTarget>x86</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x86'">
+    <OutputPath>bin\x86\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <Optimize>true</Optimize>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>x86</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="OpenTK, Version=3.0.1.0, Culture=neutral, PublicKeyToken=bad199fe84eb3df4, processorArchitecture=MSIL">
       <HintPath>..\packages\OpenTK.3.0.1\lib\net20\OpenTK.dll</HintPath>
@@ -64,6 +83,7 @@
     <Compile Include="Definitions\NetworkDef.cs" />
     <Compile Include="Definitions\ProgDef.cs" />
     <Compile Include="Definitions\ProgramOperatorDef.cs" />
+    <Compile Include="Definitions\ProtocolDef.cs" />
     <Compile Include="Definitions\QItemsDef.cs" />
     <Compile Include="Definitions\QStatsDef.cs" />
     <Compile Include="Definitions\ServerDef.cs" />
@@ -99,6 +119,7 @@
     <Compile Include="Networking\INetDriver.cs" />
     <Compile Include="Networking\INetLanDriver.cs" />
     <Compile Include="Networking\NetworkWrapper.cs" />
+    <Compile Include="Networking\net_tcp_ip.cs" />
     <Compile Include="Networking\PacketHeader.cs" />
     <Compile Include="Networking\QuakeSocket.cs" />
     <Compile Include="Networking\Server\AreaNode.cs" />
@@ -175,6 +196,9 @@
     <None Include="OpenTK.dll.config" />
     <None Include="packages.config" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Folder Include="IO\Bsp\HL\" />
+    <Folder Include="IO\Messaging\" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

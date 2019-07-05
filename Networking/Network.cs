@@ -130,7 +130,7 @@ namespace SharpQuake
         {
             get
             {
-                return net_tcp_ip.Instance.IsInitialized;
+                return net_tcp_ip.Instance.IsInitialised;
             }
         }
 

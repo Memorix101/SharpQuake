@@ -135,7 +135,7 @@ namespace SharpQuake
 
             // write a disconnect message to the demo file
             Host.Network.Message.Clear();
-            Host.Network.Message.WriteByte( protocol.svc_disconnect );
+            Host.Network.Message.WriteByte( ProtocolDef.svc_disconnect );
             WriteDemoMessage();
 
             // finish up
@@ -293,7 +293,7 @@ namespace SharpQuake
                     return r;
 
                 // discard nop keepalive message
-                if( Host.Network.Message.Length == 1 && Host.Network.Message.Data[0] == protocol.svc_nop )
+                if( Host.Network.Message.Length == 1 && Host.Network.Message.Data[0] == ProtocolDef.svc_nop )
                     Host.Console.Print( "<-- server to client keepalive\n" );
                 else
                     break;

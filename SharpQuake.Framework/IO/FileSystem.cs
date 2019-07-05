@@ -54,9 +54,7 @@ namespace SharpQuake
             }
 
             if ( !String.IsNullOrEmpty( basedir ) )
-            {
-                basedir.TrimEnd( '\\', '/' );
-            }
+                basedir = basedir.TrimEnd( '\\', '/' );
 
             //
             // -cachedir <path>
