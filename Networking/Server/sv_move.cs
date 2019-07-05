@@ -1,6 +1,8 @@
 /// <copyright>
 ///
-/// Rewritten in C# by Yury Kiselev, 2010.
+/// SharpQuakeEvolved changes by optimus-code, 2019
+/// 
+/// Based on SharpQuake Rewritten in C# by Yury Kiselev, 2010.
 ///
 /// Copyright (C) 1996-1997 Id Software, Inc.
 ///

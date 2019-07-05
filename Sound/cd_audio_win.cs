@@ -1,6 +1,8 @@
 /// <copyright>
 ///
-/// Rewritten in C# by Yury Kiselev, 2010.
+/// SharpQuakeEvolved changes by optimus-code, 2019
+/// 
+/// Based on SharpQuake Rewritten in C# by Yury Kiselev, 2010.
 ///
 /// Copyright (C) 1996-1997 Id Software, Inc.
 ///
@@ -213,7 +215,7 @@ namespace SharpQuake
             _Form = new NotifyForm( this );
         }
 
-        #region ICDAudioController Members
+#region ICDAudioController Members
 
         public bool IsInitialized
         {
@@ -555,7 +557,7 @@ namespace SharpQuake
                 Con.DPrint( "MCI_SET_DOOR_OPEN failed ({0})\n", ret );
         }
 
-        #endregion ICDAudioController Members
+#endregion ICDAudioController Members
     }
 
     internal class NotifyForm : Form
