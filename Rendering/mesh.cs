@@ -26,6 +26,8 @@ using System;
 using System.IO;
 using System.Text;
 using SharpQuake.Framework;
+using SharpQuake.Framework.IO;
+using SharpQuake.Game.Rendering.Models;
 
 // gl_mesh.c
 

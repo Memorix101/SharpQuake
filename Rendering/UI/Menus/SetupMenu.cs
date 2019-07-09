@@ -25,9 +25,11 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 using SharpQuake.Framework;
+using SharpQuake.Framework.IO;
 
 namespace SharpQuake
 {
@@ -46,16 +48,17 @@ namespace SharpQuake
         private Int32 _OldBottom; // setup_oldbottom
         private Int32 _Top; // setup_top
         private Int32 _Bottom; // setup_bottom
+        private Boolean hasPlayPixels;
 
         /// <summary>
         /// M_Menu_Setup_f
         /// </summary>
         public override void Show( Host host )
         {
-            _MyName = Host.Client.Name;
-            _HostName = Host.Network.HostName;
-            _Top = _OldTop = ( ( Int32 ) Host.Client.Color ) >> 4;
-            _Bottom = _OldBottom = ( ( Int32 ) Host.Client.Color ) & 15;
+            _MyName = host.Client.Name;
+            _HostName = host.Network.HostName;
+            _Top = _OldTop = ( ( Int32 ) host.Client.Color ) >> 4;
+            _Bottom = _OldBottom = ( ( Int32 ) host.Client.Color ) & 15;
 
             base.Show( host );
         }
@@ -169,9 +172,9 @@ namespace SharpQuake
 
         public override void Draw( )
         {
-            Host.Menu.DrawTransPic( 16, 4, Host.DrawingContext.CachePic( "gfx/qplaque.lmp" ) );
-            var p = Host.DrawingContext.CachePic( "gfx/p_multi.lmp" );
-            Host.Menu.DrawPic( ( 320 - p.width ) / 2, 4, p );
+            Host.Menu.DrawTransPic( 16, 4, Host.DrawingContext.CachePic( "gfx/qplaque.lmp", "GL_NEAREST" ) );
+            var p = Host.DrawingContext.CachePic( "gfx/p_multi.lmp", "GL_NEAREST" );
+            Host.Menu.DrawPic( ( 320 - p.Width ) / 2, 4, p );
 
             Host.Menu.Print( 64, 40, "Hostname" );
             Host.Menu.DrawTextBox( 160, 32, 16, 1 );
@@ -187,9 +190,26 @@ namespace SharpQuake
             Host.Menu.DrawTextBox( 64, 140 - 8, 14, 1 );
             Host.Menu.Print( 72, 140, "Accept Changes" );
 
-            p = Host.DrawingContext.CachePic( "gfx/bigbox.lmp" );
+            p = Host.DrawingContext.CachePic( "gfx/bigbox.lmp", "GL_NEAREST" );
             Host.Menu.DrawTransPic( 160, 64, p );
-            p = Host.DrawingContext.CachePic( "gfx/menuplyr.lmp" );
+            p = Host.DrawingContext.CachePic( "gfx/menuplyr.lmp", "GL_NEAREST", true );
+            
+            if ( !hasPlayPixels && p != null )
+            {
+                // HACK HACK HACK --- we need to keep the bytes for
+                // the translatable player picture just for the menu
+                // configuration dialog
+
+                var headerSize = Marshal.SizeOf( typeof( WadPicHeader ) );
+                var data = FileSystem.LoadFile( p.Identifier );
+                Host.DrawingContext._MenuPlayerPixelWidth = p.Texture.Desc.Width;
+                Host.DrawingContext._MenuPlayerPixelHeight = p.Texture.Desc.Height;
+                Buffer.BlockCopy( data, headerSize, Host.DrawingContext._MenuPlayerPixels, 0, p.Texture.Desc.Width * p.Texture.Desc.Height );
+                //memcpy (menuplyr_pixels, dat->data, dat->width*dat->height);
+                
+                hasPlayPixels = true;
+            }
+
             Host.Menu.BuildTranslationTable( _Top * 16, _Bottom * 16 );
             Host.Menu.DrawTransPicTranslate( 172, 72, p );
 

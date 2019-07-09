@@ -23,9 +23,10 @@
 /// </copyright>
 
 using System;
-using OpenTK;
 using OpenTK.Graphics.OpenGL;
 using SharpQuake.Framework;
+using SharpQuake.Framework.Mathematics;
+using SharpQuake.Game.Rendering.Memory;
 
 // gr_rlights.c
 
@@ -107,7 +108,7 @@ namespace SharpQuake
 
             _DlightFrameCount = _FrameCount + 1;	// because the count hasn't advanced yet for this frame
 
-            GL.DepthMask( false );
+            Host.Video.Device.SetZWrite( false );
             GL.Disable( EnableCap.Texture2D );
             GL.ShadeModel( ShadingModel.Smooth );
             GL.Enable( EnableCap.Blend );
@@ -126,7 +127,7 @@ namespace SharpQuake
             GL.Disable( EnableCap.Blend );
             GL.Enable( EnableCap.Texture2D );
             GL.BlendFunc( BlendingFactor.SrcAlpha, BlendingFactor.OneMinusSrcAlpha );
-            GL.DepthMask( true );
+            Host.Video.Device.SetZWrite( true );
         }
 
         /// <summary>
@@ -272,13 +273,13 @@ namespace SharpQuake
             GL.Begin( PrimitiveType.TriangleFan );
             GL.Color3( 0.2f, 0.1f, 0 );
             v = light.origin - ViewPn * rad;
-            GL.Vertex3( v );
+            GL.Vertex3( v.X, v.Y, v.Z );
             GL.Color3( 0, 0, 0 );
             for( var i = 16; i >= 0; i-- )
             {
                 var a = i / 16.0 * Math.PI * 2;
                 v = light.origin + ViewRight * ( Single ) Math.Cos( a ) * rad + ViewUp * ( Single ) Math.Sin( a ) * rad;
-                GL.Vertex3( v );
+                GL.Vertex3( v.X, v.Y, v.Z );
             }
             GL.End();
         }

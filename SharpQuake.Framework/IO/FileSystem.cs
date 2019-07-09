@@ -29,10 +29,8 @@ using System.IO.Compression;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
-using System.Threading.Tasks;
-using SharpQuake.Framework;
 
-namespace SharpQuake
+namespace SharpQuake.Framework.IO
 {
     public static class FileSystem
     {
@@ -40,7 +38,7 @@ namespace SharpQuake
 
         private static String _CacheDir; // com_cachedir[MAX_OSPATH];
         private static String _GameDir; // com_gamedir[MAX_OSPATH];
-        private static List<searchpath_t> _SearchPaths; // searchpath_t    *com_searchpaths;
+        private static List<SearchPath> _SearchPaths; // searchpath_t    *com_searchpaths;
         public static Boolean _StaticRegistered; // static_registered
         private static Char[] _Slashes = new Char[] { '/', '\\' };
         public static Boolean _IsModified; // com_modified
@@ -55,7 +53,7 @@ namespace SharpQuake
 
         static FileSystem( )
         {
-            _SearchPaths = new List<searchpath_t>( );
+            _SearchPaths = new List<SearchPath>( );
         }
 
         // COM_InitFilesystem
@@ -144,7 +142,7 @@ namespace SharpQuake
                     if ( String.IsNullOrEmpty( CommandLine._Argv[i] ) || CommandLine._Argv[i][0] == '+' || CommandLine._Argv[i][0] == '-' )
                         break;
 
-                    _SearchPaths.Insert( 0, new searchpath_t( CommandLine._Argv[i] ) );
+                    _SearchPaths.Insert( 0, new SearchPath( CommandLine._Argv[i] ) );
                 }
             }
         }
@@ -160,7 +158,7 @@ namespace SharpQuake
             //
             // add the directory to the search path
             //
-            _SearchPaths.Insert( 0, new searchpath_t( dir ) );
+            _SearchPaths.Insert( 0, new SearchPath( dir ) );
 
             //
             // add any pak files in the format pak0.pak pak1.pak, ...
@@ -172,7 +170,7 @@ namespace SharpQuake
                 if ( pak == null )
                     break;
 
-                _SearchPaths.Insert( 0, new searchpath_t( pak ) );
+                _SearchPaths.Insert( 0, new SearchPath( pak ) );
             }
 
             //
@@ -191,7 +189,7 @@ namespace SharpQuake
                     if ( pk3 == null )
                         break;
 
-                    _SearchPaths.Insert( 0, new searchpath_t( pk3 ) );
+                    _SearchPaths.Insert( 0, new SearchPath( pk3 ) );
                 }
             }
         }

@@ -25,6 +25,7 @@
 using System;
 using OpenTK;
 using SharpQuake.Framework;
+using SharpQuake.Game.Networking.Server;
 
 namespace SharpQuake
 {

@@ -23,8 +23,10 @@
 /// </copyright>
 
 using System;
-using OpenTK;
 using SharpQuake.Framework;
+using SharpQuake.Game.Rendering.Models;
+using SharpQuake.Game.World;
+using SharpQuake.Framework.Mathematics;
 
 // client.h
 
@@ -281,7 +283,7 @@ namespace SharpQuake
 
         public scoreboard_t()
         {
-            this.translations = new Byte[vid.VID_GRADES * 256];
+            this.translations = new Byte[Vid.VID_GRADES * 256];
         }
     } // scoreboard_t;
 

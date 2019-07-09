@@ -29,16 +29,16 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace SharpQuake.Framework
+namespace SharpQuake.Framework.IO
 {
-    internal class searchpath_t
+    public class SearchPath
     {
         public String filename; // char[MAX_OSPATH];
         public Pak pack; // only one of filename / pack will be used
         public ZipArchive pk3;
         public String pk3filename;
 
-        public searchpath_t( String path )
+        public SearchPath( String path )
         {
             if ( path.EndsWith( ".PAK" ) )
             {
@@ -57,12 +57,12 @@ namespace SharpQuake.Framework
                 this.filename = path;
         }
 
-        public searchpath_t( Pak pak )
+        public SearchPath( Pak pak )
         {
             this.pack = pak;
         }
 
-        public searchpath_t( ZipArchive archive )
+        public SearchPath( ZipArchive archive )
         {
             this.pk3 = archive;
         }

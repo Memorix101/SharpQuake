@@ -23,12 +23,11 @@
 /// </copyright>
 
 using System;
-using System.Collections.Generic;
-using System.Drawing;
 using System.IO;
-using OpenTK;
-using OpenTK.Graphics.OpenGL;
 using SharpQuake.Framework;
+using SharpQuake.Framework.IO;
+using SharpQuake.Renderer;
+using SharpQuake.Renderer.OpenGL;
 
 // vid.h -- video driver defs
 
@@ -37,13 +36,13 @@ namespace SharpQuake
     /// <summary>
     /// Vid_functions
     /// </summary>
-    public class vid
+    public class Vid
     {
         public UInt16[] Table8to16
         {
             get
             {
-                return _8to16table;
+                return Device.Palette.Table8to16;//_8to16table;
             }
         }
 
@@ -51,7 +50,7 @@ namespace SharpQuake
         {
             get
             {
-                return _8to24table;
+                return Device.Palette.Table8to24;//_8to24table;
             }
         }
 
@@ -59,15 +58,7 @@ namespace SharpQuake
         {
             get
             {
-                return _15to8table;
-            }
-        }
-
-        public System.Boolean glMTexable
-        {
-            get
-            {
-                return _glMTexable;
+                return Device.Palette.Table15to8;//_15to8table;
             }
         }
 
@@ -95,19 +86,11 @@ namespace SharpQuake
             }
         }
 
-        public VidMode[] Modes
-        {
-            get
-            {
-                return _Modes;
-            }
-        }
-
         public Int32 ModeNum
         {
             get
             {
-                return _ModeNum;
+                return Device.ChosenMode;//_ModeNum;
             }
         }
 
@@ -116,13 +99,7 @@ namespace SharpQuake
         public const Int32 VID_ROW_SIZE = 3;
         private const Int32 WARP_WIDTH = 320;
         private const Int32 WARP_HEIGHT = 200;
-        private UInt16[] _8to16table = new UInt16[256]; // d_8to16table[256]
-        private UInt32[] _8to24table = new UInt32[256]; // d_8to24table[256]
-        private Byte[] _15to8table = new Byte[65536]; // d_15to8table[65536]
-
-        private VidMode[] _Modes;
-        private Int32 _ModeNum; // vid_modenum
-
+        
         private CVar _glZTrick;// = { "gl_ztrick", "1" };
         private CVar _Mode;// = { "vid_mode", "0", false };
 
@@ -140,29 +117,32 @@ namespace SharpQuake
         private CVar _StretchBy2;// = { "vid_stretch_by_2", "1", true };
         private CVar _WindowedMouse;// = { "_windowed_mouse", "1", true };
 
-        private System.Boolean _Windowed; // windowed
+        private System.Boolean _Windowed
+        {
+            get
+            {
+                return !Device.Desc.IsFullScreen;
+            }
+        }
 
-        //private bool _IsInitialized; // vid_initialized
-        private Single _Gamma = 1.0f; // vid_gamma
-
-        private Int32 _DefModeNum;
-        private System.Boolean _glMTexable = false; // gl_mtexable
-
-        private String _glVendor; // gl_vendor
-        private String _glRenderer; // gl_renderer
-        private String _glVersion; // gl_version
-        private String _glExtensions; // gl_extensions
-
-        // CHANGE
+        // Instances
         private Host Host
         {
             get;
             set;
         }
 
-        public vid( Host host )
+        public BaseDevice Device
+        {
+            get;
+            private set;
+        }
+
+        public Vid( Host host )
         {
             Host = host;
+
+            Device = new GLDevice( Host.MainWindow, MainWindow.DisplayDevice );
         }
 
         // VID_Init (unsigned char *palette)
@@ -191,139 +171,96 @@ namespace SharpQuake
             Host.Command.Add( "vid_describemode", DescribeMode_f );
             Host.Command.Add( "vid_describemodes", DescribeModes_f );
 
-            var dev = MainWindow.DisplayDevice;
+            Device.Initialise( palette );
 
-            // Enumerate available modes, skip 8 bpp modes, and group by refresh rates
-            var tmp = new List<VidMode>( dev.AvailableResolutions.Count );
-            foreach( var res in dev.AvailableResolutions )
-            {
-                if( res.BitsPerPixel <= 8 )
-                    continue;
+            UpdateConsole( );
+            UpdateScreen( );
 
-                Predicate<VidMode> SameMode = delegate ( VidMode m )
-                {
-                    return ( m.width == res.Width && m.height == res.Height && m.bpp == res.BitsPerPixel );
-                };
-                if( tmp.Exists( SameMode ) )
-                    continue;
+            // Moved from SetMode
 
-                var mode = new VidMode();
-                mode.width = res.Width;
-                mode.height = res.Height;
-                mode.bpp = res.BitsPerPixel;
-                mode.refreshRate = res.RefreshRate;
-                tmp.Add( mode );
-            }
-            _Modes = tmp.ToArray();
+            // so Con_Printfs don't mess us up by forcing vid and snd updates
+            var temp = Host.Screen.IsDisabledForLoading;
+            Host.Screen.IsDisabledForLoading = true;
+            Host.CDAudio.Pause( );
 
-            var mode1 = new VidMode();
-            mode1.width = dev.Width;
-            mode1.height = dev.Height;
-            mode1.bpp = dev.BitsPerPixel;
-            mode1.refreshRate = dev.RefreshRate;
-            mode1.fullScreen = true;
+            Device.SetMode( Device.ChosenMode, palette );
 
-            Int32 width = dev.Width, height = dev.Height;
-            var i = CommandLine.CheckParm( "-width" );
-            if( i > 0 && i < CommandLine.Argc - 1 )
-            {
-                width = MathLib.atoi( CommandLine.Argv( i + 1 ) );
+            var vid = Host.Screen.vid;
 
-                foreach( var res in dev.AvailableResolutions )
-                {
-                    if( res.Width == width )
-                    {
-                        height = res.Height;
-                        break;
-                    }
-                }
-            }
+            UpdateConsole( false );
 
-            i = CommandLine.CheckParm( "-height" );
-            if( i > 0 && i < CommandLine.Argc - 1 )
-                height = MathLib.atoi( CommandLine.Argv( i + 1 ) );
+            vid.width = Device.Desc.Width; // vid.conwidth
+            vid.height = Device.Desc.Height;
+            vid.numpages = 2;
 
-            mode1.width = width;
-            mode1.height = height;
+            Host.CDAudio.Resume( );
+            Host.Screen.IsDisabledForLoading = temp;
 
-            if( CommandLine.HasParam( "-window" ) )
-            {
-                _Windowed = true;
-            }
-            else
-            {
-                _Windowed = false;
+            CVar.Set( "vid_mode", ( Single ) Device.ChosenMode );
 
-                if( CommandLine.HasParam( "-current" ) )
-                {
-                    mode1.width = dev.Width;
-                    mode1.height = dev.Height;
-                }
-                else
-                {
-                    var bpp = mode1.bpp;
-                    i = CommandLine.CheckParm( "-bpp" );
-                    if( i > 0 && i < CommandLine.Argc - 1 )
-                    {
-                        bpp = MathLib.atoi( CommandLine.Argv( i + 1 ) );
-                    }
-                    mode1.bpp = bpp;
-                }
-            }
+            // fix the leftover Alt from any Alt-Tab or the like that switched us away
+            ClearAllStates( );
 
-            //_IsInitialized = true;
+            Host.Console.SafePrint( "Video mode {0} initialized.\n", Device.GetModeDescription( Device.ChosenMode ) );
 
-            var i2 = CommandLine.CheckParm( "-conwidth" );
-            if( i2 > 0 )
-                Host.Screen.vid.conwidth = MathLib.atoi( CommandLine.Argv( i2 + 1 ) );
-            else
-                Host.Screen.vid.conwidth = 640;
+            vid.recalc_refdef = true;
 
-            Host.Screen.vid.conwidth &= 0xfff8; // make it a multiple of eight
+            if ( Device.Desc.Renderer.StartsWith( "PowerVR", StringComparison.InvariantCultureIgnoreCase ) )
+                Host.Screen.FullSbarDraw = true;
 
-            if( Host.Screen.vid.conwidth < 320 )
-                Host.Screen.vid.conwidth = 320;
+            if ( Device.Desc.Renderer.StartsWith( "Permedia", StringComparison.InvariantCultureIgnoreCase ) )
+                Host.Screen.IsPermedia = true;
 
-            // pick a conheight that matches with correct aspect
-            Host.Screen.vid.conheight = Host.Screen.vid.conwidth * 3 / 4;
+            CheckTextureExtensions( );
 
-            i2 = CommandLine.CheckParm( "-conheight" );
-            if( i2 > 0 )
-                Host.Screen.vid.conheight = MathLib.atoi( CommandLine.Argv( i2 + 1 ) );
-            if( Host.Screen.vid.conheight < 200 )
-                Host.Screen.vid.conheight = 200;
+            Directory.CreateDirectory( Path.Combine( FileSystem.GameDir, "glquake" ) );
+        }
 
+        private void UpdateScreen()
+        {
             Host.Screen.vid.maxwarpwidth = WARP_WIDTH;
             Host.Screen.vid.maxwarpheight = WARP_HEIGHT;
             Host.Screen.vid.colormap = Host.ColorMap;
             var v = BitConverter.ToInt32( Host.ColorMap, 2048 );
             Host.Screen.vid.fullbright = 256 - EndianHelper.LittleLong( v );
+        }
 
-            CheckGamma( palette );
-            SetPalette( palette );
+        private void UpdateConsole( System.Boolean isInitialStage = true )
+        {
+            var vid = Host.Screen.vid;
 
-            mode1.fullScreen = !_Windowed;
-
-            _DefModeNum = -1;
-            for( i = 0; i < _Modes.Length; i++ )
+            if ( isInitialStage )
             {
-                var m = _Modes[i];
-                if( m.width != mode1.width || m.height != mode1.height )
-                    continue;
+                var i2 = CommandLine.CheckParm( "-conwidth" );
 
-                _DefModeNum = i;
+                if ( i2 > 0 )
+                    vid.conwidth = MathLib.atoi( CommandLine.Argv( i2 + 1 ) );
+                else
+                    vid.conwidth = 640;
 
-                if( m.bpp == mode1.bpp && m.refreshRate == mode1.refreshRate )
-                    break;
+                vid.conwidth &= 0xfff8; // make it a multiple of eight
+
+                if ( vid.conwidth < 320 )
+                    vid.conwidth = 320;
+
+                // pick a conheight that matches with correct aspect
+                vid.conheight = vid.conwidth * 3 / 4;
+
+                i2 = CommandLine.CheckParm( "-conheight" );
+
+                if ( i2 > 0 )
+                    vid.conheight = MathLib.atoi( CommandLine.Argv( i2 + 1 ) );
+
+                if ( vid.conheight < 200 )
+                    vid.conheight = 200;
             }
-            if( _DefModeNum == -1 )
-                _DefModeNum = 0;
-
-            SetMode( _DefModeNum, palette );
-
-            InitOpenGL();
-
-            Directory.CreateDirectory( Path.Combine( FileSystem.GameDir, "glquake" ) );
+            else
+            {
+                if ( vid.conheight > Device.Desc.Height )
+                    vid.conheight = Device.Desc.Height;
+                if ( vid.conwidth > Device.Desc.Width )
+                    vid.conwidth = Device.Desc.Width;
+            }
         }
 
         /// <summary>
@@ -332,215 +269,24 @@ namespace SharpQuake
         /// </summary>
         public void Shutdown()
         {
+            Device.Dispose( );
             //_IsInitialized = false;
         }
 
-        // VID_SetMode (int modenum, unsigned char *palette)
-        // sets the mode; only used by the Quake engine for resetting to mode 0 (the
-        // base mode) on memory allocation failures
-        public void SetMode( Int32 modenum, Byte[] palette )
-        {
-            if( modenum < 0 || modenum >= _Modes.Length )
-            {
-                Utilities.Error( "Bad video mode\n" );
-            }
-
-            var mode = _Modes[modenum];
-
-            // so Con_Printfs don't mess us up by forcing vid and snd updates
-            var temp = Host.Screen.IsDisabledForLoading;
-            Host.Screen.IsDisabledForLoading = true;
-
-            Host.CDAudio.Pause();
-
-            // Set either the fullscreen or windowed mode
-            var dev = MainWindow.DisplayDevice;
-            var form = MainWindow.Instance;
-            if( _Windowed )
-            {
-                try
-                {
-                    dev.ChangeResolution(mode.width, mode.height, mode.bpp, mode.refreshRate);
-                }
-                catch (Exception ex)
-                {
-                    Utilities.Error("Couldn't set video mode: " + ex.Message);
-                }
-                form.WindowState = WindowState.Normal;
-                form.WindowBorder = WindowBorder.Fixed;
-
-                /*form.WindowState = WindowState.Normal;
-                form.WindowBorder = WindowBorder.Fixed;
-                form.Location = new Point( ( mode.width - form.Width ) / 2, ( mode.height - form.Height ) / 2 );
-                if( _WindowedMouse.Value != 0 && Key.Destination == keydest_t.key_game )
-                {
-                    Input.ActivateMouse();
-                    Input.HideMouse();
-                }
-                else
-                {
-                    Input.DeactivateMouse();
-                    Input.ShowMouse();
-                }*/
-            }
-            else
-            {
-                try
-                {
-                    dev.ChangeResolution( mode.width, mode.height, mode.bpp, mode.refreshRate );
-                }
-                catch( Exception ex )
-                {
-                    Utilities.Error( "Couldn't set video mode: " + ex.Message );
-                }
-                form.WindowState = WindowState.Fullscreen;
-                form.WindowBorder = WindowBorder.Hidden;
-            }
-
-            var vid = Host.Screen.vid;
-            if( vid.conheight > dev.Height )
-                vid.conheight = dev.Height;
-            if( vid.conwidth > dev.Width )
-                vid.conwidth = dev.Width;
-
-            // Support any aspect ratio by converting the virtual coordinate system
-            var aspectRatio = Host.MainWindow.ClientSize.Width / ( Double ) Host.MainWindow.ClientSize.Height;
-            var width = ( Int32 ) ( vid.conheight * aspectRatio );
-
-            vid.width = width; // vid.conwidth
-            vid.height = vid.conheight;
-
-            vid.numpages = 2;
-
-            Host.CDAudio.Resume();
-            Host.Screen.IsDisabledForLoading = temp;
-
-            _ModeNum = modenum;
-            CVar.Set( "vid_mode", ( Single ) _ModeNum );
-
-            // fix the leftover Alt from any Alt-Tab or the like that switched us away
-            ClearAllStates();
-
-            Host.Console.SafePrint( "Video mode {0} initialized.\n", GetModeDescription( _ModeNum ) );
-
-            SetPalette( palette );
-
-            vid.recalc_refdef = true;
-        }
 
         /// <summary>
         /// VID_GetModeDescription
         /// </summary>
         public String GetModeDescription( Int32 mode )
         {
-            if( mode < 0 || mode >= _Modes.Length )
-                return String.Empty;
-
-            var m = _Modes[mode];
-            return String.Format( "{0}x{1}x{2} {3}", m.width, m.height, m.bpp, _Windowed ? "windowed" : "fullscreen" );
-        }
-
-        /// <summary>
-        /// VID_SetPalette
-        /// called at startup and after any gamma correction
-        /// </summary>
-        public void SetPalette( Byte[] palette )
-        {
-            //
-            // 8 8 8 encoding
-            //
-            var offset = 0;
-            var pal = palette;
-            var table = _8to24table;
-            for( var i = 0; i < table.Length; i++ )
-            {
-                UInt32 r = pal[offset + 0];
-                UInt32 g = pal[offset + 1];
-                UInt32 b = pal[offset + 2];
-
-                table[i] = ( ( UInt32 ) 0xff << 24 ) + ( r << 0 ) + ( g << 8 ) + ( b << 16 );
-                offset += 3;
-            }
-
-            table[255] &= 0xffffff;	// 255 is transparent
-
-            // JACK: 3D distance calcs - k is last closest, l is the distance.
-            // FIXME: Precalculate this and cache to disk.
-            var val = Union4b.Empty;
-            for( UInt32 i = 0; i < ( 1 << 15 ); i++ )
-            {
-                // Maps
-                // 000000000000000
-                // 000000000011111 = Red  = 0x1F
-                // 000001111100000 = Blue = 0x03E0
-                // 111110000000000 = Grn  = 0x7C00
-                var r = ( ( ( i & 0x1F ) << 3 ) + 4 );
-                var g = ( ( ( i & 0x03E0 ) >> 2 ) + 4 );
-                var b = ( ( ( i & 0x7C00 ) >> 7 ) + 4 );
-                UInt32 k = 0;
-                UInt32 l = 10000 * 10000;
-                for( UInt32 v = 0; v < 256; v++ )
-                {
-                    val.ui0 = _8to24table[v];
-                    var r1 = r - val.b0;
-                    var g1 = g - val.b1;
-                    var b1 = b - val.b2;
-                    var j = ( r1 * r1 ) + ( g1 * g1 ) + ( b1 * b1 );
-                    if( j < l )
-                    {
-                        k = v;
-                        l = j;
-                    }
-                }
-                _15to8table[i] = ( Byte ) k;
-            }
-        }
-
-        /// <summary>
-        /// GL_Init
-        /// </summary>
-        private void InitOpenGL()
-        {
-            _glVendor = GL.GetString( StringName.Vendor );
-            Host.Console.Print( "GL_VENDOR: {0}\n", _glVendor );
-            _glRenderer = GL.GetString( StringName.Renderer );
-            Host.Console.Print( "GL_RENDERER: {0}\n", _glRenderer );
-
-            _glVersion = GL.GetString( StringName.Version );
-            Host.Console.Print( "GL_VERSION: {0}\n", _glVersion );
-            _glExtensions = GL.GetString( StringName.Extensions );
-            Host.Console.Print( "GL_EXTENSIONS: {0}\n", _glExtensions );
-
-            if( _glRenderer.StartsWith( "PowerVR", StringComparison.InvariantCultureIgnoreCase ) )
-                Host.Screen.FullSbarDraw = true;
-
-            if( _glRenderer.StartsWith( "Permedia", StringComparison.InvariantCultureIgnoreCase ) )
-                Host.Screen.IsPermedia = true;
-
-            CheckTextureExtensions();
-            CheckMultiTextureExtensions();
-
-            GL.ClearColor( 1, 0, 0, 0 );
-            GL.CullFace( CullFaceMode.Front );
-            GL.Enable( EnableCap.Texture2D );
-
-            GL.Enable( EnableCap.AlphaTest );
-            GL.AlphaFunc( AlphaFunction.Greater, 0.666f );
-
-            GL.PolygonMode( MaterialFace.FrontAndBack, PolygonMode.Fill );
-            GL.ShadeModel( ShadingModel.Flat );
-
-            Host.DrawingContext.SetTextureFilters( TextureMinFilter.Nearest, TextureMagFilter.Nearest );
-            GL.TexParameter( TextureTarget.Texture2D, TextureParameterName.TextureWrapS, ( Int32 ) TextureWrapMode.Repeat );
-            GL.TexParameter( TextureTarget.Texture2D, TextureParameterName.TextureWrapT, ( Int32 ) TextureWrapMode.Repeat );
-            GL.BlendFunc( BlendingFactor.SrcAlpha, BlendingFactor.OneMinusSrcAlpha );
-            GL.TexEnv( TextureEnvTarget.TextureEnv, TextureEnvParameter.TextureEnvMode, ( Int32 ) TextureEnvMode.Replace );
+            return Device.GetModeDescription( mode );
         }
 
         // VID_NumModes_f
         private void NumModes_f()
         {
-            var nummodes = _Modes.Length;
+            var nummodes = Device.AvailableModes.Length;
+
             if( nummodes == 1 )
                 Host.Console.Print( "{0} video mode is available\n", nummodes );
             else
@@ -550,7 +296,7 @@ namespace SharpQuake
         // VID_DescribeCurrentMode_f
         private void DescribeCurrentMode_f()
         {
-            Host.Console.Print( "{0}\n", GetExtModeDescription( _ModeNum ) );
+            Host.Console.Print( "{0}\n", GetModeDescription( Device.ChosenMode ) );
         }
 
         // VID_DescribeMode_f
@@ -558,48 +304,15 @@ namespace SharpQuake
         {
             var modenum = MathLib.atoi( Host.Command.Argv( 1 ) );
 
-            Host.Console.Print( "{0}\n", GetExtModeDescription( modenum ) );
+            Host.Console.Print( "{0}\n", GetModeDescription( modenum ) );
         }
 
         // VID_DescribeModes_f
         private void DescribeModes_f()
         {
-            for( var i = 0; i < _Modes.Length; i++ )
+            for( var i = 0; i < Device.AvailableModes.Length; i++ )
             {
-                Host.Console.Print( "{0}:{1}\n", i, GetExtModeDescription( i ) );
-            }
-        }
-
-        private String GetExtModeDescription( Int32 mode )
-        {
-            return GetModeDescription( mode );
-        }
-
-        // Check_Gamma
-        private void CheckGamma( Byte[] pal )
-        {
-            var i = CommandLine.CheckParm( "-gamma" );
-            if( i == 0 )
-            {
-                var renderer = GL.GetString( StringName.Renderer );
-                var vendor = GL.GetString( StringName.Vendor );
-                if( renderer.Contains( "Voodoo" ) || vendor.Contains( "3Dfx" ) )
-                    _Gamma = 1;
-                else
-                    _Gamma = 0.7f; // default to 0.7 on non-3dfx hardware
-            }
-            else
-                _Gamma = Single.Parse( CommandLine.Argv( i + 1 ) );
-
-            for( i = 0; i < pal.Length; i++ )
-            {
-                var f = Math.Pow( ( pal[i] + 1 ) / 256.0, _Gamma );
-                var inf = f * 255 + 0.5;
-                if( inf < 0 )
-                    inf = 0;
-                if( inf > 255 )
-                    inf = 255;
-                pal[i] = ( Byte ) inf;
+                Host.Console.Print( "{0}:{1}\n", i, GetModeDescription( i ) );
             }
         }
 
@@ -624,19 +337,7 @@ namespace SharpQuake
             const String TEXTURE_EXT_STRING = "GL_EXT_texture_object";
 
             // check for texture extension
-            var texture_ext = _glExtensions.Contains( TEXTURE_EXT_STRING );
-        }
-
-        /// <summary>
-        /// CheckMultiTextureExtensions
-        /// </summary>
-        private void CheckMultiTextureExtensions()
-        {
-            if( _glExtensions.Contains( "GL_SGIS_multitexture " ) && !CommandLine.HasParam( "-nomtex" ) )
-            {
-                Host.Console.Print( "Multitexture extensions found.\n" );
-                _glMTexable = true;
-            }
+            var texture_ext = Device.Desc.Extensions.Contains( TEXTURE_EXT_STRING );
         }
     }
 }

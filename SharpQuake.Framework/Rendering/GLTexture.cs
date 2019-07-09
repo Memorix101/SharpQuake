@@ -30,7 +30,7 @@ using System.Threading.Tasks;
 
 namespace SharpQuake.Framework
 {
-    public class GLTexture
+    public class GLTexture_t
     {
         public Int32 texnum;
         public String owner;

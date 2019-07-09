@@ -23,9 +23,13 @@
 /// </copyright>
 
 using System;
-using OpenTK;
+using System.Linq;
+using System.Collections.Generic;
 using OpenTK.Graphics.OpenGL;
 using SharpQuake.Framework;
+using SharpQuake.Framework.Mathematics;
+using SharpQuake.Game.World;
+using SharpQuake.Renderer.Textures;
 
 // r_part.c
 
@@ -69,7 +73,7 @@ namespace SharpQuake
         // r_numparticles
         private particle_t[] _Particles;
 
-        private Int32 _ParticleTexture;
+        private BaseTexture ParticleTexture;
 
         private particle_t _ActiveParticles;
 
@@ -246,9 +250,9 @@ namespace SharpQuake
         public void ParseParticleEffect()
         {
             var org = Host.Network.Reader.ReadCoords();
-            var dir = new Vector3( Host.Network.Reader.ReadChar() * ONE_OVER_16,
-                Host.Network.Reader.ReadChar() * ONE_OVER_16,
-                Host.Network.Reader.ReadChar() * ONE_OVER_16 );
+            var dir = new Vector3( Host.Network.Reader.ReadChar() * RenderDef.ONE_OVER_16,
+                Host.Network.Reader.ReadChar() * RenderDef.ONE_OVER_16,
+                Host.Network.Reader.ReadChar() * RenderDef.ONE_OVER_16 );
             var count = Host.Network.Reader.ReadByte();
             var color = Host.Network.Reader.ReadByte();
 
@@ -432,23 +436,24 @@ namespace SharpQuake
         // R_InitParticleTexture
         private void InitParticleTexture()
         {
-            _ParticleTexture = Host.DrawingContext.GenerateTextureNumber();// texture_extension_number++;
-            Host.DrawingContext.Bind( _ParticleTexture );
+            var data = new Byte[8 * 8 * 4];
+            var i = 0;
 
-            var data = new Byte[8, 8, 4];
             for( var x = 0; x < 8; x++ )
             {
-                for( var y = 0; y < 8; y++ )
+                for( var y = 0; y < 8; y++, i+=4 )
                 {
-                    data[y, x, 0] = 255;
-                    data[y, x, 1] = 255;
-                    data[y, x, 2] = 255;
-                    data[y, x, 3] = ( Byte ) ( _DotTexture[x, y] * 255 );
+                    data[i] = 255;
+                    data[i + 1] = 255;
+                    data[i + 2] = 255;
+                    data[i + 3] = ( Byte ) ( _DotTexture[x, y] * 255 );
                 }
             }
-            GL.TexImage2D( TextureTarget.Texture2D, 0, Host.DrawingContext.AlphaFormat, 8, 8, 0, PixelFormat.Rgba, PixelType.UnsignedByte, data );
-            GL.TexEnv( TextureEnvTarget.TextureEnv, TextureEnvParameter.TextureEnvMode, ( Int32 ) TextureEnvMode.Modulate );
-            Host.DrawingContext.SetTextureFilters( TextureMinFilter.Linear, TextureMagFilter.Linear );
+
+            var uintData = new UInt32[data.Length / 4];
+            System.Buffer.BlockCopy( data, 0, uintData, 0, data.Length );
+
+            ParticleTexture = BaseTexture.FromBuffer( Host.Video.Device, "_Particles", uintData, 8, 8, false, true, "GL_LINEAR", "GL_MODULATE" );
         }
 
         // particletexture	// little dot for particles
@@ -470,10 +475,7 @@ namespace SharpQuake
         /// </summary>
         private void DrawParticles()
         {
-            Host.DrawingContext.Bind( _ParticleTexture );
-            GL.Enable( EnableCap.Blend );
-            GL.TexEnv( TextureEnvTarget.TextureEnv, TextureEnvParameter.TextureEnvMode, ( Int32 ) TextureEnvMode.Modulate );
-            GL.Begin( PrimitiveType.Triangles );
+            Host.Video.Device.Graphics.BeginParticles( ParticleTexture );
 
             var up = ViewUp * 1.5f;
             var right = ViewRight * 1.5f;
@@ -519,17 +521,7 @@ namespace SharpQuake
                 else
                     scale = 1 + scale * 0.004f;
 
-                // Uze todo: check if this is correct
-                var color = Host.Video.Table8to24[( Byte ) p.color];
-                GL.Color4( ( Byte ) ( color & 0xff ), ( Byte ) ( ( color >> 8 ) & 0xff ), ( Byte ) ( ( color >> 16 ) & 0xff ), ( Byte ) ( ( color >> 24 ) & 0xff ) );
-                GL.TexCoord2( 0f, 0 );
-                GL.Vertex3( p.org );
-                GL.TexCoord2( 1f, 0 );
-                var v = p.org + up * scale;
-                GL.Vertex3( v );
-                GL.TexCoord2( 0f, 1 );
-                v = p.org + right * scale;
-                GL.Vertex3( v );
+                Host.Video.Device.Graphics.DrawParticle( p.color, up, right, p.org, scale );
 
                 p.org += p.vel * frametime;
 
@@ -583,9 +575,7 @@ namespace SharpQuake
                         break;
                 }
             }
-            GL.End();
-            GL.Disable( EnableCap.Blend );
-            GL.TexEnv( TextureEnvTarget.TextureEnv, TextureEnvParameter.TextureEnvMode, ( Int32 ) TextureEnvMode.Replace );
+            Host.Video.Device.Graphics.EndParticles( );
         }
 
         private particle_t AllocParticle()

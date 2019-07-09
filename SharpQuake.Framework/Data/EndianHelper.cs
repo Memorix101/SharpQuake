@@ -27,7 +27,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using OpenTK;
+using SharpQuake.Framework.Mathematics;
 
 namespace SharpQuake.Framework
 {
@@ -112,6 +112,13 @@ namespace SharpQuake.Framework
                 _Converter.LittleFloat( src[offset + 1] ),
                 _Converter.LittleFloat( src[offset + 2] ),
                 _Converter.LittleFloat( src[offset + 3] ) );
+        }
+
+        // SwapPic (qpic_t *pic)
+        public static void SwapPic( WadPicHeader pic )
+        {
+            pic.width = LittleLong( pic.width );
+            pic.height = LittleLong( pic.height );
         }
 
     }

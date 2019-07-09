@@ -26,6 +26,7 @@ using System;
 using System.IO;
 using System.Text;
 using SharpQuake.Framework;
+using SharpQuake.Framework.IO;
 
 namespace SharpQuake
 {

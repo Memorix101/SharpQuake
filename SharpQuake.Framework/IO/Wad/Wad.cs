@@ -27,7 +27,7 @@ using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using System.Text;
 
-namespace SharpQuake.Framework
+namespace SharpQuake.Framework.IO
 {
     /// <summary>
     /// W_functions
@@ -104,7 +104,7 @@ namespace SharpQuake.Framework
                 {
                     ptr = new IntPtr( _DataPtr.ToInt64() + lump.filepos );
                     var pic = (WadPicHeader)Marshal.PtrToStructure( ptr, typeof( WadPicHeader ) );
-                    SwapPic( pic );
+                    EndianHelper.SwapPic( pic );
                     Marshal.StructureToPtr( pic, ptr, true );
                 }
                 _Lumps.Add( Encoding.ASCII.GetString( lump.name ).TrimEnd( '\0' ).ToLower(), lump );
@@ -132,13 +132,6 @@ namespace SharpQuake.Framework
         public Int32 GetLumpNameOffset( String name )
         {
             return GetLumpInfo( name ).filepos; // GetLumpInfo() never returns null
-        }
-
-        // SwapPic (qpic_t *pic)
-        public void SwapPic( WadPicHeader pic )
-        {
-            pic.width = EndianHelper.LittleLong( pic.width );
-            pic.height = EndianHelper.LittleLong( pic.height );
         }
     }
 }

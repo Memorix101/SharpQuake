@@ -102,8 +102,8 @@ namespace SharpQuake
                 _Sorted = true;
             }
 
-            var p = Host.DrawingContext.CachePic( "gfx/p_multi.lmp" );
-            Host.Menu.DrawPic( ( 320 - p.width ) / 2, 4, p );
+            var p = Host.DrawingContext.CachePic( "gfx/p_multi.lmp", "GL_NEAREST" );
+            Host.Menu.DrawPic( ( 320 - p.Width ) / 2, 4, p );
             for ( var n = 0; n < Host.Network.HostCacheCount; n++ )
             {
                 var hc = Host.Network.HostCache[n];

@@ -23,8 +23,8 @@
 /// </copyright>
 
 using System;
-using OpenTK;
 using SharpQuake.Framework;
+using SharpQuake.Framework.Mathematics;
 
 // chase.c -- chase camera code
 

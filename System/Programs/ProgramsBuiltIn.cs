@@ -24,8 +24,8 @@
 
 using System;
 using System.Text;
-using OpenTK;
 using SharpQuake.Framework;
+using SharpQuake.Framework.Mathematics;
 
 // pr_cmds.c
 

@@ -25,6 +25,7 @@
 using System;
 using System.Text;
 using SharpQuake.Framework;
+using SharpQuake.Renderer.Textures;
 
 // sbar.h
 
@@ -51,36 +52,38 @@ namespace SharpQuake
 
         // num frame for '-' stats digit
 
-        private GLPic[,] _Nums = new GLPic[2, 11];
-        private GLPic _Colon;
-        private GLPic _Slash;
-        private GLPic _IBar;
-        private GLPic _SBar;
-        private GLPic _ScoreBar;
+        private BasePicture[,] Numbers = new BasePicture[2, 11];
 
-        private GLPic[,] _Weapons = new GLPic[7, 8];   // 0 is active, 1 is owned, 2-5 are flashes
-        private GLPic[] _Ammo = new GLPic[4];
-        private GLPic[] _Sigil = new GLPic[4];
-        private GLPic[] _Armor = new GLPic[3];
-        private GLPic[] _Items = new GLPic[32];
+        private BasePicture Colon;
+        private BasePicture Slash;
+        private BasePicture IBar;
+        private BasePicture SBar;
+        private BasePicture ScoreBar;
 
-        private GLPic[,] _Faces = new GLPic[7, 2];        // 0 is gibbed, 1 is dead, 2-6 are alive
+        private BasePicture[,] Weapons = new BasePicture[7, 8];   // 0 is active, 1 is owned, 2-5 are flashes
+        private BasePicture[] Ammo = new BasePicture[4];
+        private BasePicture[] Sigil = new BasePicture[4];
+        private BasePicture[] Armour = new BasePicture[3];
+        private BasePicture[] Items = new BasePicture[32];
+
+        private BasePicture[,] Faces = new BasePicture[7, 2];        // 0 is gibbed, 1 is dead, 2-6 are alive
 
         // 0 is static, 1 is temporary animation
-        private GLPic _FaceInvis;
 
-        private GLPic _FaceQuad;
-        private GLPic _FaceInvuln;
-        private GLPic _FaceInvisInvuln;
+        private BasePicture FaceInvis;
 
-        private GLPic[] _RInvBar = new GLPic[2];
-        private GLPic[] _RWeapons = new GLPic[5];
-        private GLPic[] _RItems = new GLPic[2];
-        private GLPic[] _RAmmo = new GLPic[3];
-        private GLPic _RTeamBord;		// PGM 01/19/97 - team color border
+        private BasePicture FaceQuad;
+        private BasePicture FaceInvuln;
+        private BasePicture FaceInvisInvuln;
+
+        private BasePicture[] RInvBar = new BasePicture[2];
+        private BasePicture[] RWeapons = new BasePicture[5];
+        private BasePicture[] RItems = new BasePicture[2];
+        private BasePicture[] RAmmo = new BasePicture[3];
+        private BasePicture RTeamBord;      // PGM 01/19/97 - team color border
 
         //MED 01/04/97 added two more weapons + 3 alternates for grenade launcher
-        private GLPic[,] _HWeapons = new GLPic[7, 5];   // 0 is active, 1 is owned, 2-5 are flashes
+        private BasePicture[,] HWeapons = new BasePicture[7, 5];   // 0 is active, 1 is owned, 2-5 are flashes
 
         //MED 01/04/97 added array to simplify weapon parsing
         private Int32[] _HipWeapons = new Int32[]
@@ -89,7 +92,7 @@ namespace SharpQuake
         };
 
         //MED 01/04/97 added hipnotic items array
-        private GLPic[] _HItems = new GLPic[2];
+        private BasePicture[] HItems = new BasePicture[2];
 
         private Int32[] _FragSort = new Int32[QDef.MAX_SCOREBOARD];
         private String[] _ScoreBoardText = new String[QDef.MAX_SCOREBOARD];
@@ -117,138 +120,140 @@ namespace SharpQuake
             for ( var i = 0; i < 10; i++ )
             {
                 var str = i.ToString( );
-                _Nums[0, i] = Host.DrawingContext.PicFromWad( "num_" + str );
-                _Nums[1, i] = Host.DrawingContext.PicFromWad( "anum_" + str );
+
+                Numbers[0, i] = BasePicture.FromWad( Host.Video.Device, Host.GfxWad, "num_" + str, "GL_NEAREST" );
+                Numbers[1, i] = BasePicture.FromWad( Host.Video.Device, Host.GfxWad, "anum_" + str, "GL_NEAREST" );
             }
 
-            _Nums[0, 10] = Host.DrawingContext.PicFromWad( "num_minus" );
-            _Nums[1, 10] = Host.DrawingContext.PicFromWad( "anum_minus" );
+            Numbers[0, 10] = BasePicture.FromWad( Host.Video.Device, Host.GfxWad, "num_minus", "GL_NEAREST" );
+            Numbers[1, 10] = BasePicture.FromWad( Host.Video.Device, Host.GfxWad, "anum_minus", "GL_NEAREST" );
 
-            _Colon = Host.DrawingContext.PicFromWad( "num_colon" );
-            _Slash = Host.DrawingContext.PicFromWad( "num_slash" );
+            Colon = BasePicture.FromWad( Host.Video.Device, Host.GfxWad, "num_colon", "GL_NEAREST" );
+            Slash = BasePicture.FromWad( Host.Video.Device, Host.GfxWad, "num_slash", "GL_NEAREST" );
 
-            _Weapons[0, 0] = Host.DrawingContext.PicFromWad( "inv_shotgun" );
-            _Weapons[0, 1] = Host.DrawingContext.PicFromWad( "inv_sshotgun" );
-            _Weapons[0, 2] = Host.DrawingContext.PicFromWad( "inv_nailgun" );
-            _Weapons[0, 3] = Host.DrawingContext.PicFromWad( "inv_snailgun" );
-            _Weapons[0, 4] = Host.DrawingContext.PicFromWad( "inv_rlaunch" );
-            _Weapons[0, 5] = Host.DrawingContext.PicFromWad( "inv_srlaunch" );
-            _Weapons[0, 6] = Host.DrawingContext.PicFromWad( "inv_lightng" );
+            Weapons[0, 0] = BasePicture.FromWad( Host.Video.Device, Host.GfxWad, "inv_shotgun", "GL_LINEAR" );
+            Weapons[0, 1] = BasePicture.FromWad( Host.Video.Device, Host.GfxWad, "inv_sshotgun", "GL_LINEAR" );
+            Weapons[0, 2] = BasePicture.FromWad( Host.Video.Device, Host.GfxWad, "inv_nailgun", "GL_LINEAR" );
+            Weapons[0, 3] = BasePicture.FromWad( Host.Video.Device, Host.GfxWad, "inv_snailgun", "GL_LINEAR" );
+            Weapons[0, 4] = BasePicture.FromWad( Host.Video.Device, Host.GfxWad, "inv_rlaunch", "GL_LINEAR" );
+            Weapons[0, 5] = BasePicture.FromWad( Host.Video.Device, Host.GfxWad, "inv_srlaunch", "GL_LINEAR" );
+            Weapons[0, 6] = BasePicture.FromWad( Host.Video.Device, Host.GfxWad, "inv_lightng", "GL_LINEAR" );
 
-            _Weapons[1, 0] = Host.DrawingContext.PicFromWad( "inv2_shotgun" );
-            _Weapons[1, 1] = Host.DrawingContext.PicFromWad( "inv2_sshotgun" );
-            _Weapons[1, 2] = Host.DrawingContext.PicFromWad( "inv2_nailgun" );
-            _Weapons[1, 3] = Host.DrawingContext.PicFromWad( "inv2_snailgun" );
-            _Weapons[1, 4] = Host.DrawingContext.PicFromWad( "inv2_rlaunch" );
-            _Weapons[1, 5] = Host.DrawingContext.PicFromWad( "inv2_srlaunch" );
-            _Weapons[1, 6] = Host.DrawingContext.PicFromWad( "inv2_lightng" );
+            Weapons[1, 0] = BasePicture.FromWad( Host.Video.Device, Host.GfxWad, "inv2_shotgun", "GL_LINEAR" );
+            Weapons[1, 1] = BasePicture.FromWad( Host.Video.Device, Host.GfxWad, "inv2_sshotgun", "GL_LINEAR" );
+            Weapons[1, 2] = BasePicture.FromWad( Host.Video.Device, Host.GfxWad, "inv2_nailgun", "GL_LINEAR" );
+            Weapons[1, 3] = BasePicture.FromWad( Host.Video.Device, Host.GfxWad, "inv2_snailgun", "GL_LINEAR" );
+            Weapons[1, 4] = BasePicture.FromWad( Host.Video.Device, Host.GfxWad, "inv2_rlaunch", "GL_LINEAR" );
+            Weapons[1, 5] = BasePicture.FromWad( Host.Video.Device, Host.GfxWad, "inv2_srlaunch", "GL_LINEAR" );
+            Weapons[1, 6] = BasePicture.FromWad( Host.Video.Device, Host.GfxWad, "inv2_lightng", "GL_LINEAR" );
 
             for ( var i = 0; i < 5; i++ )
             {
                 var s = "inva" + ( i + 1 ).ToString( );
-                _Weapons[2 + i, 0] = Host.DrawingContext.PicFromWad( s + "_shotgun" );
-                _Weapons[2 + i, 1] = Host.DrawingContext.PicFromWad( s + "_sshotgun" );
-                _Weapons[2 + i, 2] = Host.DrawingContext.PicFromWad( s + "_nailgun" );
-                _Weapons[2 + i, 3] = Host.DrawingContext.PicFromWad( s + "_snailgun" );
-                _Weapons[2 + i, 4] = Host.DrawingContext.PicFromWad( s + "_rlaunch" );
-                _Weapons[2 + i, 5] = Host.DrawingContext.PicFromWad( s + "_srlaunch" );
-                _Weapons[2 + i, 6] = Host.DrawingContext.PicFromWad( s + "_lightng" );
+
+                Weapons[2 + i, 0] = BasePicture.FromWad( Host.Video.Device, Host.GfxWad, s + "_shotgun", "GL_LINEAR" );
+                Weapons[2 + i, 1] = BasePicture.FromWad( Host.Video.Device, Host.GfxWad, s + "_sshotgun", "GL_LINEAR" );
+                Weapons[2 + i, 2] = BasePicture.FromWad( Host.Video.Device, Host.GfxWad, s + "_nailgun", "GL_LINEAR" );
+                Weapons[2 + i, 3] = BasePicture.FromWad( Host.Video.Device, Host.GfxWad, s + "_snailgun", "GL_LINEAR" );
+                Weapons[2 + i, 4] = BasePicture.FromWad( Host.Video.Device, Host.GfxWad, s + "_rlaunch", "GL_LINEAR" );
+                Weapons[2 + i, 5] = BasePicture.FromWad( Host.Video.Device, Host.GfxWad, s + "_srlaunch", "GL_LINEAR" );
+                Weapons[2 + i, 6] = BasePicture.FromWad( Host.Video.Device, Host.GfxWad, s + "_lightng", "GL_LINEAR" );
             }
 
-            _Ammo[0] = Host.DrawingContext.PicFromWad( "sb_shells" );
-            _Ammo[1] = Host.DrawingContext.PicFromWad( "sb_nails" );
-            _Ammo[2] = Host.DrawingContext.PicFromWad( "sb_rocket" );
-            _Ammo[3] = Host.DrawingContext.PicFromWad( "sb_cells" );
+            Ammo[0] = BasePicture.FromWad( Host.Video.Device, Host.GfxWad, "sb_shells", "GL_LINEAR" );
+            Ammo[1] = BasePicture.FromWad( Host.Video.Device, Host.GfxWad, "sb_nails", "GL_LINEAR" );
+            Ammo[2] = BasePicture.FromWad( Host.Video.Device, Host.GfxWad, "sb_rocket", "GL_LINEAR" );
+            Ammo[3] = BasePicture.FromWad( Host.Video.Device, Host.GfxWad, "sb_cells", "GL_LINEAR" );
 
-            _Armor[0] = Host.DrawingContext.PicFromWad( "sb_armor1" );
-            _Armor[1] = Host.DrawingContext.PicFromWad( "sb_armor2" );
-            _Armor[2] = Host.DrawingContext.PicFromWad( "sb_armor3" );
+            Armour[0] = BasePicture.FromWad( Host.Video.Device, Host.GfxWad, "sb_armor1", "GL_LINEAR" );
+            Armour[1] = BasePicture.FromWad( Host.Video.Device, Host.GfxWad, "sb_armor2", "GL_LINEAR" );
+            Armour[2] = BasePicture.FromWad( Host.Video.Device, Host.GfxWad, "sb_armor3", "GL_LINEAR" );
 
-            _Items[0] = Host.DrawingContext.PicFromWad( "sb_key1" );
-            _Items[1] = Host.DrawingContext.PicFromWad( "sb_key2" );
-            _Items[2] = Host.DrawingContext.PicFromWad( "sb_invis" );
-            _Items[3] = Host.DrawingContext.PicFromWad( "sb_invuln" );
-            _Items[4] = Host.DrawingContext.PicFromWad( "sb_suit" );
-            _Items[5] = Host.DrawingContext.PicFromWad( "sb_quad" );
+            Items[0] = BasePicture.FromWad( Host.Video.Device, Host.GfxWad, "sb_key1", "GL_LINEAR" );
+            Items[1] = BasePicture.FromWad( Host.Video.Device, Host.GfxWad, "sb_key2", "GL_LINEAR" );
+            Items[2] = BasePicture.FromWad( Host.Video.Device, Host.GfxWad, "sb_invis", "GL_LINEAR" );
+            Items[3] = BasePicture.FromWad( Host.Video.Device, Host.GfxWad, "sb_invuln", "GL_LINEAR" );
+            Items[4] = BasePicture.FromWad( Host.Video.Device, Host.GfxWad, "sb_suit", "GL_LINEAR" );
+            Items[5] = BasePicture.FromWad( Host.Video.Device, Host.GfxWad, "sb_quad", "GL_LINEAR" );
 
-            _Sigil[0] = Host.DrawingContext.PicFromWad( "sb_sigil1" );
-            _Sigil[1] = Host.DrawingContext.PicFromWad( "sb_sigil2" );
-            _Sigil[2] = Host.DrawingContext.PicFromWad( "sb_sigil3" );
-            _Sigil[3] = Host.DrawingContext.PicFromWad( "sb_sigil4" );
+            Sigil[0] = BasePicture.FromWad( Host.Video.Device, Host.GfxWad, "sb_sigil1", "GL_LINEAR" );
+            Sigil[1] = BasePicture.FromWad( Host.Video.Device, Host.GfxWad, "sb_sigil2", "GL_LINEAR" );
+            Sigil[2] = BasePicture.FromWad( Host.Video.Device, Host.GfxWad, "sb_sigil3", "GL_LINEAR" );
+            Sigil[3] = BasePicture.FromWad( Host.Video.Device, Host.GfxWad, "sb_sigil4", "GL_LINEAR" );
 
-            _Faces[4, 0] = Host.DrawingContext.PicFromWad( "face1" );
-            _Faces[4, 1] = Host.DrawingContext.PicFromWad( "face_p1" );
-            _Faces[3, 0] = Host.DrawingContext.PicFromWad( "face2" );
-            _Faces[3, 1] = Host.DrawingContext.PicFromWad( "face_p2" );
-            _Faces[2, 0] = Host.DrawingContext.PicFromWad( "face3" );
-            _Faces[2, 1] = Host.DrawingContext.PicFromWad( "face_p3" );
-            _Faces[1, 0] = Host.DrawingContext.PicFromWad( "face4" );
-            _Faces[1, 1] = Host.DrawingContext.PicFromWad( "face_p4" );
-            _Faces[0, 0] = Host.DrawingContext.PicFromWad( "face5" );
-            _Faces[0, 1] = Host.DrawingContext.PicFromWad( "face_p5" );
+            Faces[4, 0] = BasePicture.FromWad( Host.Video.Device, Host.GfxWad, "face1", "GL_NEAREST" );
+            Faces[4, 1] = BasePicture.FromWad( Host.Video.Device, Host.GfxWad, "face_p1", "GL_NEAREST" );
+            Faces[3, 0] = BasePicture.FromWad( Host.Video.Device, Host.GfxWad, "face2", "GL_NEAREST" );
+            Faces[3, 1] = BasePicture.FromWad( Host.Video.Device, Host.GfxWad, "face_p2", "GL_NEAREST" );
+            Faces[2, 0] = BasePicture.FromWad( Host.Video.Device, Host.GfxWad, "face3", "GL_NEAREST" );
+            Faces[2, 1] = BasePicture.FromWad( Host.Video.Device, Host.GfxWad, "face_p3", "GL_NEAREST" );
+            Faces[1, 0] = BasePicture.FromWad( Host.Video.Device, Host.GfxWad, "face4", "GL_NEAREST" );
+            Faces[1, 1] = BasePicture.FromWad( Host.Video.Device, Host.GfxWad, "face_p4", "GL_NEAREST" );
+            Faces[0, 0] = BasePicture.FromWad( Host.Video.Device, Host.GfxWad, "face5", "GL_NEAREST" );
+            Faces[0, 1] = BasePicture.FromWad( Host.Video.Device, Host.GfxWad, "face_p5", "GL_NEAREST" );
 
-            _FaceInvis = Host.DrawingContext.PicFromWad( "face_invis" );
-            _FaceInvuln = Host.DrawingContext.PicFromWad( "face_invul2" );
-            _FaceInvisInvuln = Host.DrawingContext.PicFromWad( "face_inv2" );
-            _FaceQuad = Host.DrawingContext.PicFromWad( "face_quad" );
+            FaceInvis = BasePicture.FromWad( Host.Video.Device, Host.GfxWad, "face_invis", "GL_NEAREST" );
+            FaceInvuln = BasePicture.FromWad( Host.Video.Device, Host.GfxWad, "face_invul2", "GL_NEAREST" );
+            FaceInvisInvuln = BasePicture.FromWad( Host.Video.Device, Host.GfxWad, "face_inv2", "GL_NEAREST" );
+            FaceQuad = BasePicture.FromWad( Host.Video.Device, Host.GfxWad, "face_quad", "GL_NEAREST" );
 
             Host.Command.Add( "+showscores", ShowScores );
             Host.Command.Add( "-showscores", DontShowScores );
 
-            _SBar = Host.DrawingContext.PicFromWad( "sbar" );
-            _IBar = Host.DrawingContext.PicFromWad( "ibar" );
-            _ScoreBar = Host.DrawingContext.PicFromWad( "scorebar" );
+            SBar = BasePicture.FromWad( Host.Video.Device, Host.GfxWad, "sbar", "GL_NEAREST" );
+            IBar = BasePicture.FromWad( Host.Video.Device, Host.GfxWad, "ibar", "GL_NEAREST" );
+            ScoreBar = BasePicture.FromWad( Host.Video.Device, Host.GfxWad, "scorebar", "GL_LINEAR" );
 
             //MED 01/04/97 added new hipnotic weapons
             if ( MainWindow.Common.GameKind == GameKind.Hipnotic )
             {
-                _HWeapons[0, 0] = Host.DrawingContext.PicFromWad( "inv_laser" );
-                _HWeapons[0, 1] = Host.DrawingContext.PicFromWad( "inv_mjolnir" );
-                _HWeapons[0, 2] = Host.DrawingContext.PicFromWad( "inv_gren_prox" );
-                _HWeapons[0, 3] = Host.DrawingContext.PicFromWad( "inv_prox_gren" );
-                _HWeapons[0, 4] = Host.DrawingContext.PicFromWad( "inv_prox" );
+                HWeapons[0, 0] = BasePicture.FromWad( Host.Video.Device, Host.GfxWad, "inv_laser", "GL_LINEAR" );
+                HWeapons[0, 1] = BasePicture.FromWad( Host.Video.Device, Host.GfxWad, "inv_mjolnir", "GL_LINEAR" );
+                HWeapons[0, 2] = BasePicture.FromWad( Host.Video.Device, Host.GfxWad, "inv_gren_prox", "GL_LINEAR" );
+                HWeapons[0, 3] = BasePicture.FromWad( Host.Video.Device, Host.GfxWad, "inv_prox_gren", "GL_LINEAR" );
+                HWeapons[0, 4] = BasePicture.FromWad( Host.Video.Device, Host.GfxWad, "inv_prox", "GL_LINEAR" );
 
-                _HWeapons[1, 0] = Host.DrawingContext.PicFromWad( "inv2_laser" );
-                _HWeapons[1, 1] = Host.DrawingContext.PicFromWad( "inv2_mjolnir" );
-                _HWeapons[1, 2] = Host.DrawingContext.PicFromWad( "inv2_gren_prox" );
-                _HWeapons[1, 3] = Host.DrawingContext.PicFromWad( "inv2_prox_gren" );
-                _HWeapons[1, 4] = Host.DrawingContext.PicFromWad( "inv2_prox" );
+                HWeapons[1, 0] = BasePicture.FromWad( Host.Video.Device, Host.GfxWad, "inv2_laser", "GL_LINEAR" );
+                HWeapons[1, 1] = BasePicture.FromWad( Host.Video.Device, Host.GfxWad, "inv2_mjolnir", "GL_LINEAR" );
+                HWeapons[1, 2] = BasePicture.FromWad( Host.Video.Device, Host.GfxWad, "inv2_gren_prox", "GL_LINEAR" );
+                HWeapons[1, 3] = BasePicture.FromWad( Host.Video.Device, Host.GfxWad, "inv2_prox_gren", "GL_LINEAR" );
+                HWeapons[1, 4] = BasePicture.FromWad( Host.Video.Device, Host.GfxWad, "inv2_prox", "GL_LINEAR" );
 
                 for ( var i = 0; i < 5; i++ )
                 {
                     var s = "inva" + ( i + 1 ).ToString( );
-                    _HWeapons[2 + i, 0] = Host.DrawingContext.PicFromWad( s + "_laser" );
-                    _HWeapons[2 + i, 1] = Host.DrawingContext.PicFromWad( s + "_mjolnir" );
-                    _HWeapons[2 + i, 2] = Host.DrawingContext.PicFromWad( s + "_gren_prox" );
-                    _HWeapons[2 + i, 3] = Host.DrawingContext.PicFromWad( s + "_prox_gren" );
-                    _HWeapons[2 + i, 4] = Host.DrawingContext.PicFromWad( s + "_prox" );
+                    HWeapons[2 + i, 0] = BasePicture.FromWad( Host.Video.Device, Host.GfxWad, s + "_laser", "GL_LINEAR" );
+                    HWeapons[2 + i, 1] = BasePicture.FromWad( Host.Video.Device, Host.GfxWad, s + "_mjolnir", "GL_LINEAR" );
+                    HWeapons[2 + i, 2] = BasePicture.FromWad( Host.Video.Device, Host.GfxWad, s + "_gren_prox", "GL_LINEAR" );
+                    HWeapons[2 + i, 3] = BasePicture.FromWad( Host.Video.Device, Host.GfxWad, s + "_prox_gren", "GL_LINEAR" );
+                    HWeapons[2 + i, 4] = BasePicture.FromWad( Host.Video.Device, Host.GfxWad, s + "_prox", "GL_LINEAR" );
                 }
 
-                _HItems[0] = Host.DrawingContext.PicFromWad( "sb_wsuit" );
-                _HItems[1] = Host.DrawingContext.PicFromWad( "sb_eshld" );
+                HItems[0] = BasePicture.FromWad( Host.Video.Device, Host.GfxWad, "sb_wsuit", "GL_LINEAR" );
+                HItems[1] = BasePicture.FromWad( Host.Video.Device, Host.GfxWad, "sb_eshld", "GL_LINEAR" );
             }
 
             if ( MainWindow.Common.GameKind == GameKind.Rogue )
             {
-                _RInvBar[0] = Host.DrawingContext.PicFromWad( "r_invbar1" );
-                _RInvBar[1] = Host.DrawingContext.PicFromWad( "r_invbar2" );
+                RInvBar[0] = BasePicture.FromWad( Host.Video.Device, Host.GfxWad, "r_invbar1", "GL_LINEAR" );
+                RInvBar[1] = BasePicture.FromWad( Host.Video.Device, Host.GfxWad, "r_invbar2", "GL_LINEAR" );
 
-                _RWeapons[0] = Host.DrawingContext.PicFromWad( "r_lava" );
-                _RWeapons[1] = Host.DrawingContext.PicFromWad( "r_superlava" );
-                _RWeapons[2] = Host.DrawingContext.PicFromWad( "r_gren" );
-                _RWeapons[3] = Host.DrawingContext.PicFromWad( "r_multirock" );
-                _RWeapons[4] = Host.DrawingContext.PicFromWad( "r_plasma" );
+                RWeapons[0] = BasePicture.FromWad( Host.Video.Device, Host.GfxWad, "r_lava", "GL_LINEAR" );
+                RWeapons[1] = BasePicture.FromWad( Host.Video.Device, Host.GfxWad, "r_superlava", "GL_LINEAR" );
+                RWeapons[2] = BasePicture.FromWad( Host.Video.Device, Host.GfxWad, "r_gren", "GL_LINEAR" );
+                RWeapons[3] = BasePicture.FromWad( Host.Video.Device, Host.GfxWad, "r_multirock", "GL_LINEAR" );
+                RWeapons[4] = BasePicture.FromWad( Host.Video.Device, Host.GfxWad, "r_plasma", "GL_LINEAR" );
 
-                _RItems[0] = Host.DrawingContext.PicFromWad( "r_shield1" );
-                _RItems[1] = Host.DrawingContext.PicFromWad( "r_agrav1" );
+                RItems[0] = BasePicture.FromWad( Host.Video.Device, Host.GfxWad, "r_shield1", "GL_LINEAR" );
+                RItems[1] = BasePicture.FromWad( Host.Video.Device, Host.GfxWad, "r_agrav1", "GL_LINEAR" );
 
                 // PGM 01/19/97 - team color border
-                _RTeamBord = Host.DrawingContext.PicFromWad( "r_teambord" );
+                RTeamBord = BasePicture.FromWad( Host.Video.Device, Host.GfxWad, "r_teambord", "GL_LINEAR" );
                 // PGM 01/19/97 - team color border
 
-                _RAmmo[0] = Host.DrawingContext.PicFromWad( "r_ammolava" );
-                _RAmmo[1] = Host.DrawingContext.PicFromWad( "r_ammomulti" );
-                _RAmmo[2] = Host.DrawingContext.PicFromWad( "r_ammoplasma" );
+                RAmmo[0] = BasePicture.FromWad( Host.Video.Device, Host.GfxWad, "r_ammolava", "GL_LINEAR" );
+                RAmmo[1] = BasePicture.FromWad( Host.Video.Device, Host.GfxWad, "r_ammomulti", "GL_LINEAR" );
+                RAmmo[2] = BasePicture.FromWad( Host.Video.Device, Host.GfxWad, "r_ammoplasma", "GL_LINEAR" );
             }
         }
 
@@ -290,28 +295,28 @@ namespace SharpQuake
             var cl = Host.Client.cl;
             if ( _ShowScores || cl.stats[QStatsDef.STAT_HEALTH] <= 0 )
             {
-                DrawPic( 0, 0, _ScoreBar );
+                DrawPic( 0, 0, ScoreBar );
                 DrawScoreboard( );
                 _Updates = 0;
             }
             else if ( Lines > 0 )
             {
-                DrawPic( 0, 0, _SBar );
+                DrawPic( 0, 0, SBar );
 
                 // keys (hipnotic only)
                 //MED 01/04/97 moved keys here so they would not be overwritten
                 if ( MainWindow.Common.GameKind == GameKind.Hipnotic )
                 {
                     if ( cl.HasItems( QItemsDef.IT_KEY1 ) )
-                        DrawPic( 209, 3, _Items[0] );
+                        DrawPic( 209, 3, Items[0] );
                     if ( cl.HasItems( QItemsDef.IT_KEY2 ) )
-                        DrawPic( 209, 12, _Items[1] );
+                        DrawPic( 209, 12, Items[1] );
                 }
                 // armor
                 if ( cl.HasItems( QItemsDef.IT_INVULNERABILITY ) )
                 {
                     DrawNum( 24, 0, 666, 3, 1 );
-                    DrawPic( 0, 0, Host.DrawingContext.Disc );
+                    Host.Video.Device.Graphics.DrawPicture( Host.DrawingContext.Disc, 0, 0 );
                 }
                 else
                 {
@@ -319,21 +324,21 @@ namespace SharpQuake
                     {
                         DrawNum( 24, 0, cl.stats[QStatsDef.STAT_ARMOR], 3, cl.stats[QStatsDef.STAT_ARMOR] <= 25 ? 1 : 0 ); // uze: corrected color param
                         if ( cl.HasItems( QItemsDef.RIT_ARMOR3 ) )
-                            DrawPic( 0, 0, _Armor[2] );
+                            DrawPic( 0, 0, Armour[2] );
                         else if ( cl.HasItems( QItemsDef.RIT_ARMOR2 ) )
-                            DrawPic( 0, 0, _Armor[1] );
+                            DrawPic( 0, 0, Armour[1] );
                         else if ( cl.HasItems( QItemsDef.RIT_ARMOR1 ) )
-                            DrawPic( 0, 0, _Armor[0] );
+                            DrawPic( 0, 0, Armour[0] );
                     }
                     else
                     {
                         DrawNum( 24, 0, cl.stats[QStatsDef.STAT_ARMOR], 3, cl.stats[QStatsDef.STAT_ARMOR] <= 25 ? 1 : 0 );
                         if ( cl.HasItems( QItemsDef.IT_ARMOR3 ) )
-                            DrawPic( 0, 0, _Armor[2] );
+                            DrawPic( 0, 0, Armour[2] );
                         else if ( cl.HasItems( QItemsDef.IT_ARMOR2 ) )
-                            DrawPic( 0, 0, _Armor[1] );
+                            DrawPic( 0, 0, Armour[1] );
                         else if ( cl.HasItems( QItemsDef.IT_ARMOR1 ) )
-                            DrawPic( 0, 0, _Armor[0] );
+                            DrawPic( 0, 0, Armour[0] );
                     }
                 }
 
@@ -347,30 +352,30 @@ namespace SharpQuake
                 if ( MainWindow.Common.GameKind == GameKind.Rogue )
                 {
                     if ( cl.HasItems( QItemsDef.RIT_SHELLS ) )
-                        DrawPic( 224, 0, _Ammo[0] );
+                        DrawPic( 224, 0, Ammo[0] );
                     else if ( cl.HasItems( QItemsDef.RIT_NAILS ) )
-                        DrawPic( 224, 0, _Ammo[1] );
+                        DrawPic( 224, 0, Ammo[1] );
                     else if ( cl.HasItems( QItemsDef.RIT_ROCKETS ) )
-                        DrawPic( 224, 0, _Ammo[2] );
+                        DrawPic( 224, 0, Ammo[2] );
                     else if ( cl.HasItems( QItemsDef.RIT_CELLS ) )
-                        DrawPic( 224, 0, _Ammo[3] );
+                        DrawPic( 224, 0, Ammo[3] );
                     else if ( cl.HasItems( QItemsDef.RIT_LAVA_NAILS ) )
-                        DrawPic( 224, 0, _RAmmo[0] );
+                        DrawPic( 224, 0, RAmmo[0] );
                     else if ( cl.HasItems( QItemsDef.RIT_PLASMA_AMMO ) )
-                        DrawPic( 224, 0, _RAmmo[1] );
+                        DrawPic( 224, 0, RAmmo[1] );
                     else if ( cl.HasItems( QItemsDef.RIT_MULTI_ROCKETS ) )
-                        DrawPic( 224, 0, _RAmmo[2] );
+                        DrawPic( 224, 0, RAmmo[2] );
                 }
                 else
                 {
                     if ( cl.HasItems( QItemsDef.IT_SHELLS ) )
-                        DrawPic( 224, 0, _Ammo[0] );
+                        DrawPic( 224, 0, Ammo[0] );
                     else if ( cl.HasItems( QItemsDef.IT_NAILS ) )
-                        DrawPic( 224, 0, _Ammo[1] );
+                        DrawPic( 224, 0, Ammo[1] );
                     else if ( cl.HasItems( QItemsDef.IT_ROCKETS ) )
-                        DrawPic( 224, 0, _Ammo[2] );
+                        DrawPic( 224, 0, Ammo[2] );
                     else if ( cl.HasItems( QItemsDef.IT_CELLS ) )
-                        DrawPic( 224, 0, _Ammo[3] );
+                        DrawPic( 224, 0, Ammo[3] );
                 }
 
                 DrawNum( 248, 0, cl.stats[QStatsDef.STAT_AMMO], 3, cl.stats[QStatsDef.STAT_AMMO] <= 10 ? 1 : 0 );
@@ -398,26 +403,28 @@ namespace SharpQuake
                 return;
             }
 
-            var pic = Host.DrawingContext.CachePic( "gfx/complete.lmp" );
-            Host.DrawingContext.DrawPic( 64, 24, pic );
+            var pic = Host.DrawingContext.CachePic( "gfx/complete.lmp", "GL_LINEAR" );
+            Host.Video.Device.Graphics.DrawPicture( pic, 64, 24 );
 
-            pic = Host.DrawingContext.CachePic( "gfx/inter.lmp" );
-            Host.DrawingContext.DrawTransPic( 0, 56, pic );
+            pic = Host.DrawingContext.CachePic( "gfx/inter.lmp", "GL_LINEAR" );
+            Host.Video.Device.Graphics.DrawPicture( pic, 0, 56, hasAlpha: true );
 
             // time
             var dig = Host.Client.cl.completed_time / 60;
             IntermissionNumber( 160, 64, dig, 3, 0 );
             var num = Host.Client.cl.completed_time - dig * 60;
-            Host.DrawingContext.DrawTransPic( 234, 64, _Colon );
-            Host.DrawingContext.DrawTransPic( 246, 64, _Nums[0, num / 10] );
-            Host.DrawingContext.DrawTransPic( 266, 64, _Nums[0, num % 10] );
+
+            Host.Video.Device.Graphics.DrawPicture( Colon, 234, 64, hasAlpha: true );
+
+            Host.Video.Device.Graphics.DrawPicture( Numbers[0, num / 10], 246, 64, hasAlpha: true );
+            Host.Video.Device.Graphics.DrawPicture( Numbers[0, num % 10], 266, 64, hasAlpha: true );
 
             IntermissionNumber( 160, 104, Host.Client.cl.stats[QStatsDef.STAT_SECRETS], 3, 0 );
-            Host.DrawingContext.DrawTransPic( 232, 104, _Slash );
+            Host.Video.Device.Graphics.DrawPicture( Slash, 232, 104, hasAlpha: true );
             IntermissionNumber( 240, 104, Host.Client.cl.stats[QStatsDef.STAT_TOTALSECRETS], 3, 0 );
 
             IntermissionNumber( 160, 144, Host.Client.cl.stats[QStatsDef.STAT_MONSTERS], 3, 0 );
-            Host.DrawingContext.DrawTransPic( 232, 144, _Slash );
+            Host.Video.Device.Graphics.DrawPicture( Slash, 232, 144, hasAlpha: true );
             IntermissionNumber( 240, 144, Host.Client.cl.stats[QStatsDef.STAT_TOTALMONSTERS], 3, 0 );
         }
 
@@ -428,8 +435,8 @@ namespace SharpQuake
         {
             Host.Screen.CopyEverithing = true;
 
-            var pic = Host.DrawingContext.CachePic( "gfx/finale.lmp" );
-            Host.DrawingContext.DrawTransPic( ( Host.Screen.vid.width - pic.width ) / 2, 16, pic );
+            var pic = Host.DrawingContext.CachePic( "gfx/finale.lmp", "GL_LINEAR" );
+            Host.Video.Device.Graphics.DrawPicture( pic, ( Host.Screen.vid.width - pic.Width ) / 2, 16, hasAlpha: true );
         }
 
         /// <summary>
@@ -449,7 +456,10 @@ namespace SharpQuake
             for ( var i = 0; i < str.Length; i++ )
             {
                 var frame = ( str[i] == '-' ? STAT_MINUS : str[i] - '0' );
-                Host.DrawingContext.DrawTransPic( x, y, _Nums[color, frame] );
+
+                Host.Video.Device.Graphics.DrawPicture( Numbers[color, frame], x, y, hasAlpha: true );
+
+                //Host.DrawingContext.DrawTransPic( x, y, _Nums[color, frame] );
                 x += 24;
             }
         }
@@ -463,12 +473,12 @@ namespace SharpQuake
             if ( MainWindow.Common.GameKind == GameKind.Rogue )
             {
                 if ( cl.stats[QStatsDef.STAT_ACTIVEWEAPON] >= QItemsDef.RIT_LAVA_NAILGUN )
-                    DrawPic( 0, -24, _RInvBar[0] );
+                    DrawPic( 0, -24, RInvBar[0] );
                 else
-                    DrawPic( 0, -24, _RInvBar[1] );
+                    DrawPic( 0, -24, RInvBar[1] );
             }
             else
-                DrawPic( 0, -24, _IBar );
+                DrawPic( 0, -24, IBar );
 
             // weapons
             for ( var i = 0; i < 7; i++ )
@@ -487,7 +497,7 @@ namespace SharpQuake
                     else
                         flashon = ( flashon % 5 ) + 2;
 
-                    DrawPic( i * 24, -16, _Weapons[flashon, i] );
+                    DrawPic( i * 24, -16, Weapons[flashon, i] );
 
                     if ( flashon > 1 )
                         _Updates = 0; // force update to remove flash
@@ -523,7 +533,7 @@ namespace SharpQuake
                                 if ( flashon > 0 )
                                 {
                                     grenadeflashing = 1;
-                                    DrawPic( 96, -16, _HWeapons[flashon, 2] );
+                                    DrawPic( 96, -16, HWeapons[flashon, 2] );
                                 }
                             }
                         }
@@ -533,18 +543,18 @@ namespace SharpQuake
                             {
                                 if ( flashon > 0 && grenadeflashing == 0 )
                                 {
-                                    DrawPic( 96, -16, _HWeapons[flashon, 3] );
+                                    DrawPic( 96, -16, HWeapons[flashon, 3] );
                                 }
                                 else if ( grenadeflashing == 0 )
                                 {
-                                    DrawPic( 96, -16, _HWeapons[0, 3] );
+                                    DrawPic( 96, -16, HWeapons[0, 3] );
                                 }
                             }
                             else
-                                DrawPic( 96, -16, _HWeapons[flashon, 4] );
+                                DrawPic( 96, -16, HWeapons[flashon, 4] );
                         }
                         else
-                            DrawPic( 176 + ( i * 24 ), -16, _HWeapons[flashon, i] );
+                            DrawPic( 176 + ( i * 24 ), -16, HWeapons[flashon, i] );
                         if ( flashon > 1 )
                             _Updates = 0; // force update to remove flash
                     }
@@ -557,7 +567,7 @@ namespace SharpQuake
                 if ( cl.stats[QStatsDef.STAT_ACTIVEWEAPON] >= QItemsDef.RIT_LAVA_NAILGUN )
                     for ( var i = 0; i < 5; i++ )
                         if ( cl.stats[QStatsDef.STAT_ACTIVEWEAPON] == ( QItemsDef.RIT_LAVA_NAILGUN << i ) )
-                            DrawPic( ( i + 2 ) * 24, -16, _RWeapons[i] );
+                            DrawPic( ( i + 2 ) * 24, -16, RWeapons[i] );
             }
 
             // ammo counts
@@ -589,7 +599,7 @@ namespace SharpQuake
                         //MED 01/04/97 changed keys
                         if ( MainWindow.Common.GameKind != GameKind.Hipnotic || ( i > 1 ) )
                         {
-                            DrawPic( 192 + i * 16, -16, _Items[i] );
+                            DrawPic( 192 + i * 16, -16, Items[i] );
                         }
                     }
                     if ( time > 0 && time > cl.time - 2 )
@@ -612,7 +622,7 @@ namespace SharpQuake
                         }
                         else
                         {
-                            DrawPic( 288 + i * 16, -16, _HItems[i] );
+                            DrawPic( 288 + i * 16, -16, HItems[i] );
                         }
                         if ( time > 0 && time > cl.time - 2 )
                             _Updates = 0;
@@ -635,7 +645,7 @@ namespace SharpQuake
                         }
                         else
                         {
-                            DrawPic( 288 + i * 16, -16, _RItems[i] );
+                            DrawPic( 288 + i * 16, -16, RItems[i] );
                         }
 
                         if ( time > 0 && time > cl.time - 2 )
@@ -656,7 +666,7 @@ namespace SharpQuake
                             _Updates = 0;
                         }
                         else
-                            DrawPic( 320 - 32 + i * 8, -16, _Sigil[i] );
+                            DrawPic( 320 - 32 + i * 8, -16, Sigil[i] );
                         if ( time > 0 && time > cl.time - 2 )
                             _Updates = 0;
                     }
@@ -694,8 +704,8 @@ namespace SharpQuake
                 top = ColorForMap( top );
                 bottom = ColorForMap( bottom );
 
-                Host.DrawingContext.Fill( xofs + x * 8 + 10, y, 28, 4, top );
-                Host.DrawingContext.Fill( xofs + x * 8 + 10, y + 4, 28, 3, bottom );
+                Host.Video.Device.Graphics.FillUsingPalette( xofs + x * 8 + 10, y, 28, 4, top );
+                Host.Video.Device.Graphics.FillUsingPalette( xofs + x * 8 + 10, y + 4, 28, 3, bottom );
 
                 // draw number
                 var f = s.frags;
@@ -716,12 +726,12 @@ namespace SharpQuake
         }
 
         // Sbar_DrawPic
-        private void DrawPic( Int32 x, Int32 y, GLPic pic )
+        private void DrawPic( Int32 x, Int32 y, BasePicture pic )
         {
             if ( Host.Client.cl.gametype == ProtocolDef.GAME_DEATHMATCH )
-                Host.DrawingContext.DrawPic( x, y + ( Host.Screen.vid.height - SBAR_HEIGHT ), pic );
+                Host.Video.Device.Graphics.DrawPicture( pic, x, y + ( Host.Screen.vid.height - SBAR_HEIGHT ) );
             else
-                Host.DrawingContext.DrawPic( x + ( ( Host.Screen.vid.width - 320 ) >> 1 ), y + ( Host.Screen.vid.height - SBAR_HEIGHT ), pic );
+                Host.Video.Device.Graphics.DrawPicture( pic, x + ( ( Host.Screen.vid.width - 320 ) >> 1 ), y + ( Host.Screen.vid.height - SBAR_HEIGHT ) );
         }
 
         // Sbar_DrawScoreboard
@@ -749,7 +759,7 @@ namespace SharpQuake
                 else
                     frame = str[i] - '0';
 
-                DrawTransPic( x, y, _Nums[color, frame] );
+                DrawTransPic( x, y, Numbers[color, frame] );
                 x += 24;
             }
         }
@@ -780,9 +790,9 @@ namespace SharpQuake
                 else
                     xofs = ( ( Host.Screen.vid.width - 320 ) >> 1 ) + 113;
 
-                DrawPic( 112, 0, _RTeamBord );
-                Host.DrawingContext.Fill( xofs, Host.Screen.vid.height - SBAR_HEIGHT + 3, 22, 9, top );
-                Host.DrawingContext.Fill( xofs, Host.Screen.vid.height - SBAR_HEIGHT + 12, 22, 9, bottom );
+                DrawPic( 112, 0, RTeamBord );
+                Host.Video.Device.Graphics.FillUsingPalette( xofs, Host.Screen.vid.height - SBAR_HEIGHT + 3, 22, 9, top );
+                Host.Video.Device.Graphics.FillUsingPalette( xofs, Host.Screen.vid.height - SBAR_HEIGHT + 12, 22, 9, bottom );
 
                 // draw number
                 var num = s.frags.ToString( ).PadLeft( 3 );
@@ -810,22 +820,22 @@ namespace SharpQuake
 
             if ( cl.HasItems( QItemsDef.IT_INVISIBILITY | QItemsDef.IT_INVULNERABILITY ) )
             {
-                DrawPic( 112, 0, _FaceInvisInvuln );
+                DrawPic( 112, 0, FaceInvisInvuln );
                 return;
             }
             if ( cl.HasItems( QItemsDef.IT_QUAD ) )
             {
-                DrawPic( 112, 0, _FaceQuad );
+                DrawPic( 112, 0, FaceQuad );
                 return;
             }
             if ( cl.HasItems( QItemsDef.IT_INVISIBILITY ) )
             {
-                DrawPic( 112, 0, _FaceInvis );
+                DrawPic( 112, 0, FaceInvis );
                 return;
             }
             if ( cl.HasItems( QItemsDef.IT_INVULNERABILITY ) )
             {
-                DrawPic( 112, 0, _FaceInvuln );
+                DrawPic( 112, 0, FaceInvuln );
                 return;
             }
 
@@ -842,7 +852,7 @@ namespace SharpQuake
             else
                 anim = 0;
 
-            DrawPic( 112, 0, _Faces[f, anim] );
+            DrawPic( 112, 0, Faces[f, anim] );
         }
 
         // Sbar_DeathmatchOverlay
@@ -894,8 +904,8 @@ namespace SharpQuake
                 top = ColorForMap( top );
                 bottom = ColorForMap( bottom );
 
-                Host.DrawingContext.Fill( x, y + 1, 40, 3, top );
-                Host.DrawingContext.Fill( x, y + 4, 40, 4, bottom );
+                Host.Video.Device.Graphics.FillUsingPalette( x, y + 1, 40, 3, top );
+                Host.Video.Device.Graphics.FillUsingPalette( x, y + 4, 40, 4, bottom );
 
                 // draw number
                 var num = s.frags.ToString( ).PadLeft( 3 );
@@ -994,8 +1004,8 @@ namespace SharpQuake
             Host.Screen.CopyEverithing = true;
             Host.Screen.FullUpdate = 0;
 
-            var pic = Host.DrawingContext.CachePic( "gfx/ranking.lmp" );
-            Host.Menu.DrawPic( ( 320 - pic.width ) / 2, 8, pic );
+            var pic = Host.DrawingContext.CachePic( "gfx/ranking.lmp", "GL_LINEAR" );
+            Host.Video.Device.Graphics.DrawPicture( pic, ( 320 - pic.Width ) / 2, 8 );
 
             // scores
             SortFrags( );
@@ -1018,8 +1028,8 @@ namespace SharpQuake
                 top = ColorForMap( top );
                 bottom = ColorForMap( bottom );
 
-                Host.DrawingContext.Fill( x, y, 40, 4, top );
-                Host.DrawingContext.Fill( x, y + 4, 40, 4, bottom );
+                Host.Video.Device.Graphics.FillUsingPalette( x, y, 40, 4, top );
+                Host.Video.Device.Graphics.FillUsingPalette( x, y + 4, 40, 4, bottom );
 
                 // draw number
                 var num = s.frags.ToString( ).PadLeft( 3 );
@@ -1039,12 +1049,12 @@ namespace SharpQuake
         }
 
         // Sbar_DrawTransPic
-        private void DrawTransPic( Int32 x, Int32 y, GLPic pic )
+        private void DrawTransPic( Int32 x, Int32 y, BasePicture picture )
         {
             if ( Host.Client.cl.gametype == ProtocolDef.GAME_DEATHMATCH )
-                Host.DrawingContext.DrawTransPic( x, y + ( Host.Screen.vid.height - SBAR_HEIGHT ), pic );
+                Host.Video.Device.Graphics.DrawPicture( picture, x, y + ( Host.Screen.vid.height - SBAR_HEIGHT ), hasAlpha: true );
             else
-                Host.DrawingContext.DrawTransPic( x + ( ( Host.Screen.vid.width - 320 ) >> 1 ), y + ( Host.Screen.vid.height - SBAR_HEIGHT ), pic );
+                Host.Video.Device.Graphics.DrawPicture( picture, x + ( ( Host.Screen.vid.width - 320 ) >> 1 ), y + ( Host.Screen.vid.height - SBAR_HEIGHT ), hasAlpha: true );
         }
 
         // Sbar_DrawString

@@ -29,6 +29,8 @@ using System.IO;
 using System.Runtime.InteropServices;
 using System.Text;
 using SharpQuake.Framework;
+using SharpQuake.Framework.IO;
+using SharpQuake.Framework.Mathematics;
 
 namespace SharpQuake
 {
@@ -744,7 +746,7 @@ namespace SharpQuake
                 if( ed.free )
                     continue;
 
-                OpenTK.Vector3 vmin, vmax;
+                Vector3 vmin, vmax;
                 MathLib.Copy( ref ed.v.absmax, out vmax );
                 MathLib.Copy( ref ed.v.absmin, out vmin );
 

@@ -26,6 +26,7 @@ using System;
 using System.IO;
 using System.Text;
 using SharpQuake.Framework;
+using SharpQuake.Renderer.Textures;
 
 // menu.h
 // menu.c
@@ -155,20 +156,20 @@ namespace SharpQuake
             }
         }
 
-        public void DrawPic( Int32 x, Int32 y, GLPic pic )
+        public void DrawPic( Int32 x, Int32 y, BasePicture pic )
         {
-            Host.DrawingContext.DrawPic( x + ( ( Host.Screen.vid.width - 320 ) >> 1 ), y, pic );
+            Host.Video.Device.Graphics.DrawPicture( pic, x + ( ( Host.Screen.vid.width - 320 ) >> 1 ), y );
         }
 
-        public void DrawTransPic( Int32 x, Int32 y, GLPic pic )
+        public void DrawTransPic( Int32 x, Int32 y, BasePicture pic )
         {
-            Host.DrawingContext.DrawTransPic( x + ( ( Host.Screen.vid.width - 320 ) >> 1 ), y, pic );
+            Host.Video.Device.Graphics.DrawPicture( pic, x + ( ( Host.Screen.vid.width - 320 ) >> 1 ), y, hasAlpha: true );
         }
 
         /// <summary>
         /// M_DrawTransPicTranslate
         /// </summary>
-        public void DrawTransPicTranslate( Int32 x, Int32 y, GLPic pic )
+        public void DrawTransPicTranslate( Int32 x, Int32 y, BasePicture pic )
         {
             Host.DrawingContext.TransPicTranslate( x + ( ( Host.Screen.vid.width - 320 ) >> 1 ), y, pic, _TranslationTable );
         }
@@ -213,15 +214,15 @@ namespace SharpQuake
             // draw left side
             var cx = x;
             var cy = y;
-            var p = Host.DrawingContext.CachePic( "gfx/box_tl.lmp" );
+            var p = Host.DrawingContext.CachePic( "gfx/box_tl.lmp", "GL_NEAREST" );
             DrawTransPic( cx, cy, p );
-            p = Host.DrawingContext.CachePic( "gfx/box_ml.lmp" );
+            p = Host.DrawingContext.CachePic( "gfx/box_ml.lmp", "GL_NEAREST" );
             for( var n = 0; n < lines; n++ )
             {
                 cy += 8;
                 DrawTransPic( cx, cy, p );
             }
-            p = Host.DrawingContext.CachePic( "gfx/box_bl.lmp" );
+            p = Host.DrawingContext.CachePic( "gfx/box_bl.lmp", "GL_NEAREST" );
             DrawTransPic( cx, cy + 8, p );
 
             // draw middle
@@ -229,17 +230,17 @@ namespace SharpQuake
             while( width > 0 )
             {
                 cy = y;
-                p = Host.DrawingContext.CachePic( "gfx/box_tm.lmp" );
+                p = Host.DrawingContext.CachePic( "gfx/box_tm.lmp", "GL_NEAREST" );
                 DrawTransPic( cx, cy, p );
-                p = Host.DrawingContext.CachePic( "gfx/box_mm.lmp" );
+                p = Host.DrawingContext.CachePic( "gfx/box_mm.lmp", "GL_NEAREST" );
                 for( var n = 0; n < lines; n++ )
                 {
                     cy += 8;
                     if( n == 1 )
-                        p = Host.DrawingContext.CachePic( "gfx/box_mm2.lmp" );
+                        p = Host.DrawingContext.CachePic( "gfx/box_mm2.lmp", "GL_NEAREST" );
                     DrawTransPic( cx, cy, p );
                 }
-                p = Host.DrawingContext.CachePic( "gfx/box_bm.lmp" );
+                p = Host.DrawingContext.CachePic( "gfx/box_bm.lmp", "GL_NEAREST" );
                 DrawTransPic( cx, cy + 8, p );
                 width -= 2;
                 cx += 16;
@@ -247,15 +248,15 @@ namespace SharpQuake
 
             // draw right side
             cy = y;
-            p = Host.DrawingContext.CachePic( "gfx/box_tr.lmp" );
+            p = Host.DrawingContext.CachePic( "gfx/box_tr.lmp", "GL_NEAREST" );
             DrawTransPic( cx, cy, p );
-            p = Host.DrawingContext.CachePic( "gfx/box_mr.lmp" );
+            p = Host.DrawingContext.CachePic( "gfx/box_mr.lmp", "GL_NEAREST" );
             for( var n = 0; n < lines; n++ )
             {
                 cy += 8;
                 DrawTransPic( cx, cy, p );
             }
-            p = Host.DrawingContext.CachePic( "gfx/box_br.lmp" );
+            p = Host.DrawingContext.CachePic( "gfx/box_br.lmp", "GL_NEAREST" );
             DrawTransPic( cx, cy + 8, p );
         }
 

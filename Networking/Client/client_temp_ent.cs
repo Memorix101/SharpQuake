@@ -23,8 +23,10 @@
 /// </copyright>
 
 using System;
-using OpenTK;
 using SharpQuake.Framework;
+using SharpQuake.Framework.Mathematics;
+using SharpQuake.Game.Rendering.Models;
+using SharpQuake.Game.World;
 
 // cl_tent.c
 

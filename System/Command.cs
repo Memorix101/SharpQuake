@@ -26,6 +26,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using SharpQuake.Framework;
+using SharpQuake.Framework.IO;
 
 // cmd.h -- Command buffer and command execution
 

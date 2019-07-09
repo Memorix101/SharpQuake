@@ -23,9 +23,11 @@
 /// </copyright>
 
 using System;
-using OpenTK;
-using OpenTK.Graphics.OpenGL;
 using SharpQuake.Framework;
+using SharpQuake.Framework.Mathematics;
+using SharpQuake.Game.Rendering.Memory;
+using SharpQuake.Game.Rendering.Textures;
+using SharpQuake.Renderer.Textures;
 
 // gl_warp.c
 
@@ -71,18 +73,27 @@ namespace SharpQuake
             -3.06147f, -2.87916f, -2.69512f, -2.50945f, -2.32228f, -2.1337f, -1.94384f, -1.75281f,
             -1.56072f, -1.3677f, -1.17384f, -0.979285f, -0.784137f, -0.588517f, -0.392541f, -0.19633f
         };
-
-        private Int32 _SolidSkyTexture; // solidskytexture
-        private Int32 _AlphaSkyTexture; // alphaskytexture
-
+               
         private MemorySurface _WarpFace; // used by SubdivideSurface()
+
+        private BaseTexture SolidSkyTexture
+        {
+            get;
+            set;
+        }
+
+        private BaseTexture AlphaSkyTexture
+        {
+            get;
+            set;
+        }
 
         /// <summary>
         /// R_InitSky
         /// called at level load
         /// A sky texture is 256*128, with the right side being a masked overlay
         /// </summary>
-        public void InitSky( Texture mt )
+        public void InitSky( ModelTexture mt )
         {
             var src = mt.pixels;
             var offset = mt.offsets[0];
@@ -114,13 +125,9 @@ namespace SharpQuake
 
             var transpix = rgba.ui0;
 
-            if( _SolidSkyTexture == 0 )
-                _SolidSkyTexture = Host.DrawingContext.GenerateTextureNumber();
-            Host.DrawingContext.Bind( _SolidSkyTexture );
-            GL.TexImage2D( TextureTarget.Texture2D, 0, Host.DrawingContext.SolidFormat, 128, 128, 0, PixelFormat.Rgba, PixelType.UnsignedByte, trans );
-            Host.DrawingContext.SetTextureFilters( TextureMinFilter.Linear, TextureMagFilter.Linear );
+            SolidSkyTexture = BaseTexture.FromBuffer( Host.Video.Device, "_SolidSkyTexture", trans, 128, 128, false, false, "GL_LINEAR" );
 
-            for( var i = 0; i < 128; i++ )
+            for ( var i = 0; i < 128; i++ )
                 for( var j = 0; j < 128; j++ )
                 {
                     Int32 p = src[offset + i * 256 + j];
@@ -130,11 +137,7 @@ namespace SharpQuake
                         trans[( i * 128 ) + j] = v8to24[p];
                 }
 
-            if( _AlphaSkyTexture == 0 )
-                _AlphaSkyTexture = Host.DrawingContext.GenerateTextureNumber();
-            Host.DrawingContext.Bind( _AlphaSkyTexture );
-            GL.TexImage2D( TextureTarget.Texture2D, 0, Host.DrawingContext.AlphaFormat, 128, 128, 0, PixelFormat.Rgba, PixelType.UnsignedByte, trans );
-            Host.DrawingContext.SetTextureFilters( TextureMinFilter.Linear, TextureMagFilter.Linear );
+            AlphaSkyTexture = BaseTexture.FromBuffer( Host.Video.Device, "_AlphaSkyTexture", trans, 128, 128, false, true, "GL_LINEAR" );
         }
 
         /// <summary>
@@ -265,53 +268,7 @@ namespace SharpQuake
         /// </summary>
         private void EmitWaterPolys( MemorySurface fa )
         {
-            for( var p = fa.polys; p != null; p = p.next )
-            {
-                GL.Begin( PrimitiveType.Polygon );
-                for( var i = 0; i < p.numverts; i++ )
-                {
-                    var v = p.verts[i];
-                    var os = v[3];
-                    var ot = v[4];
-
-                    var s = os + _TurbSin[( Int32 ) ( ( ot * 0.125 + Host.RealTime ) * TURBSCALE ) & 255];
-                    s *= ( 1.0f / 64 );
-
-                    var t = ot + _TurbSin[( Int32 ) ( ( os * 0.125 + Host.RealTime ) * TURBSCALE ) & 255];
-                    t *= ( 1.0f / 64 );
-
-                    GL.TexCoord2( s, t );
-                    GL.Vertex3( v );
-                }
-                GL.End();
-            }
-        }
-
-        /// <summary>
-        /// EmitSkyPolys
-        /// </summary>
-        private void EmitSkyPolys( MemorySurface fa )
-        {
-            for( var p = fa.polys; p != null; p = p.next )
-            {
-                GL.Begin( PrimitiveType.Polygon );
-                for( var i = 0; i < p.numverts; i++ )
-                {
-                    var v = p.verts[i];
-                    var dir = new Vector3( v[0] - Host.RenderContext.Origin.X, v[1] - Host.RenderContext.Origin.Y, v[2] - Host.RenderContext.Origin.Z );
-                    dir.Z *= 3; // flatten the sphere
-
-                    dir.Normalize();
-                    dir *= 6 * 63;
-
-                    var s = ( _SpeedScale + dir.X ) / 128.0f;
-                    var t = ( _SpeedScale + dir.Y ) / 128.0f;
-
-                    GL.TexCoord2( s, t );
-                    GL.Vertex3( v );
-                }
-                GL.End();
-            }
+            Host.Video.Device.Graphics.EmitWaterPolys( ref _TurbSin, Host.RealTime, TURBSCALE, fa.polys );
         }
 
         /// <summary>
@@ -319,25 +276,23 @@ namespace SharpQuake
         /// </summary>
         private void DrawSkyChain( MemorySurface s )
         {
-            DisableMultitexture();
+            Host.Video.Device.DisableMultitexture();
+
+            SolidSkyTexture.Bind( );
 
             // used when gl_texsort is on
-            Host.DrawingContext.Bind( _SolidSkyTexture );
             _SpeedScale = ( Single ) Host.RealTime * 8;
             _SpeedScale -= ( Int32 ) _SpeedScale & ~127;
 
             for( var fa = s; fa != null; fa = fa.texturechain )
-                EmitSkyPolys( fa );
+                Host.Video.Device.Graphics.EmitSkyPolys( fa.polys, Host.RenderContext.Origin, _SpeedScale );
 
-            GL.Enable( EnableCap.Blend );
-            Host.DrawingContext.Bind( _AlphaSkyTexture );
+            AlphaSkyTexture.Bind( );
             _SpeedScale = ( Single ) Host.RealTime * 16;
             _SpeedScale -= ( Int32 ) _SpeedScale & ~127;
 
             for( var fa = s; fa != null; fa = fa.texturechain )
-                EmitSkyPolys( fa );
-
-            GL.Disable( EnableCap.Blend );
+                Host.Video.Device.Graphics.EmitSkyPolys( fa.polys, Host.RenderContext.Origin, _SpeedScale, true );
         }
 
         /// <summary>
@@ -348,22 +303,19 @@ namespace SharpQuake
         /// </summary>
         private void EmitBothSkyLayers( MemorySurface fa )
         {
-            DisableMultitexture();
+            Host.Video.Device.DisableMultitexture();
 
-            Host.DrawingContext.Bind( _SolidSkyTexture );
+            SolidSkyTexture.Bind( );
             _SpeedScale = ( Single ) Host.RealTime * 8;
             _SpeedScale -= ( Int32 ) _SpeedScale & ~127;
 
-            EmitSkyPolys( fa );
+            Host.Video.Device.Graphics.EmitSkyPolys( fa.polys, Host.RenderContext.Origin, _SpeedScale );
 
-            GL.Enable( EnableCap.Blend );
-            Host.DrawingContext.Bind( _AlphaSkyTexture );
+            AlphaSkyTexture.Bind( );
             _SpeedScale = ( Single ) Host.RealTime * 16;
             _SpeedScale -= ( Int32 ) _SpeedScale & ~127;
 
-            EmitSkyPolys( fa );
-
-            GL.Disable( EnableCap.Blend );
+            Host.Video.Device.Graphics.EmitSkyPolys( fa.polys, Host.RenderContext.Origin, _SpeedScale, true );
         }
     }
 }

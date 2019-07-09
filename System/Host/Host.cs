@@ -30,6 +30,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using SharpQuake.Framework;
+using SharpQuake.Framework.IO;
 
 namespace SharpQuake
 {
@@ -280,7 +281,7 @@ namespace SharpQuake
             private set;
         }
 
-        public vid Video
+        public Vid Video
         {
             get;
             private set;
@@ -368,7 +369,7 @@ namespace SharpQuake
             Network = new Network( this );
             Server = new server( this );
             Client = new client( this );
-            Video = new vid( this );
+            Video = new Vid( this );
             DrawingContext = new Drawer( this );
             Screen = new Scr( this );
             RenderContext = new render( this );

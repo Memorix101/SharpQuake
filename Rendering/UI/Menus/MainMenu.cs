@@ -108,14 +108,14 @@ namespace SharpQuake
 
         public override void Draw( )
         {
-            Host.Menu.DrawTransPic( 16, 4, Host.DrawingContext.CachePic( "gfx/qplaque.lmp" ) );
-            var p = Host.DrawingContext.CachePic( "gfx/ttl_main.lmp" );
-            Host.Menu.DrawPic( ( 320 - p.width ) / 2, 4, p );
-            Host.Menu.DrawTransPic( 72, 32, Host.DrawingContext.CachePic( "gfx/mainmenu.lmp" ) );
-
+            Host.Menu.DrawTransPic( 16, 4, Host.DrawingContext.CachePic( "gfx/qplaque.lmp", "GL_NEAREST" ) );
+            var p = Host.DrawingContext.CachePic( "gfx/ttl_main.lmp", "GL_NEAREST" );
+            Host.Menu.DrawPic( ( 320 - p.Width ) / 2, 4, p );
+            Host.Menu.DrawTransPic(72, 32, Host.DrawingContext.CachePic( "gfx/mainmenu.lmp", "GL_NEAREST" ) );
+            
             var f = ( Int32 ) ( Host.Time * 10 ) % 6;
 
-            Host.Menu.DrawTransPic( 54, 32 + _Cursor * 20, Host.DrawingContext.CachePic( String.Format( "gfx/menudot{0}.lmp", f + 1 ) ) );
+            Host.Menu.DrawTransPic( 54, 32 + _Cursor * 20, Host.DrawingContext.CachePic( String.Format( "gfx/menudot{0}.lmp", f + 1 ), "GL_NEAREST" ) );
         }
     }
 }

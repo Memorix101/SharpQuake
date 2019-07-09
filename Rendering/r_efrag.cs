@@ -22,8 +22,11 @@
 /// Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 /// </copyright>
 
-using OpenTK;
 using SharpQuake.Framework;
+using SharpQuake.Framework.Mathematics;
+using SharpQuake.Game.Rendering.Memory;
+using SharpQuake.Game.Rendering.Models;
+using SharpQuake.Game.World;
 
 // gl_refrag.c
 

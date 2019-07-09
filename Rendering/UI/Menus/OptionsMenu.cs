@@ -140,9 +140,9 @@ namespace SharpQuake
 
         public override void Draw( )
         {
-            Host.Menu.DrawTransPic( 16, 4, Host.DrawingContext.CachePic( "gfx/qplaque.lmp" ) );
-            var p = Host.DrawingContext.CachePic( "gfx/p_option.lmp" );
-            Host.Menu.DrawPic( ( 320 - p.width ) / 2, 4, p );
+            Host.Menu.DrawTransPic( 16, 4, Host.DrawingContext.CachePic( "gfx/qplaque.lmp", "GL_NEAREST" ) );
+            var p = Host.DrawingContext.CachePic( "gfx/p_option.lmp", "GL_NEAREST" );
+            Host.Menu.DrawPic( ( 320 - p.Width ) / 2, 4, p );
 
             Host.Menu.Print( 16, 32, "    Customize controls" );
             Host.Menu.Print( 16, 40, "         Go to console" );

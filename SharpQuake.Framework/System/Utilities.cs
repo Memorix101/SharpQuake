@@ -33,8 +33,7 @@ using System.Net.Sockets;
 using System.Runtime.InteropServices;
 using System.Text;
 using global::SharpQuake.Framework;
-using OpenTK;
-
+using SharpQuake.Framework.Mathematics;
 //
 // Source: common.h + common.c
 //

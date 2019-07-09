@@ -25,7 +25,6 @@
 //define	PARANOID			// speed sapping error checking
 
 using System;
-using System.Security.Cryptography.X509Certificates;
 // quakedef.h
 
 namespace SharpQuake.Framework
@@ -33,7 +32,7 @@ namespace SharpQuake.Framework
     public static class QDef
     {
         public const Single VERSION = 1.09f;
-        public const Single CSQUAKE_VERSION = 1.20f;
+        public const Single CSQUAKE_VERSION = 1.50f;
         public const Single GLQUAKE_VERSION = 1.00f;
         public const Single D3DQUAKE_VERSION = 0.01f;
         public const Single WINQUAKE_VERSION = 0.996f;

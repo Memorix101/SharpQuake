@@ -24,8 +24,9 @@
 
 using System;
 using System.Runtime.InteropServices;
-using OpenTK;
 using SharpQuake.Framework;
+using SharpQuake.Framework.IO;
+using SharpQuake.Framework.Mathematics;
 
 // sound.h -- client sound i/o functions
 

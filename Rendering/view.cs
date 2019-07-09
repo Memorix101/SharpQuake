@@ -23,8 +23,7 @@
 /// </copyright>
 
 using System;
-using OpenTK;
-using OpenTK.Graphics;
+using SharpQuake.Framework.Mathematics;
 using SharpQuake.Framework;
 
 // view.h

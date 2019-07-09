@@ -25,6 +25,8 @@
 using System;
 using OpenTK;
 using SharpQuake.Framework;
+using SharpQuake.Game.Rendering.Models;
+using SharpQuake.Game.World;
 
 // cl_parse.c
 
@@ -756,7 +758,7 @@ namespace SharpQuake
 
             Host.RenderContext.TranslatePlayerSkin( slot );
 
-            for( Int32 i = 0, offset = 0; i < vid.VID_GRADES; i++ )//, dest += 256, source+=256)
+            for( Int32 i = 0, offset = 0; i < Vid.VID_GRADES; i++ )//, dest += 256, source+=256)
             {
                 if( top < 128 )	// the artists made some backwards ranges.  sigh.
                     Buffer.BlockCopy( source, offset + top, dest, offset + render.TOP_RANGE, 16 );  //memcpy (dest + Render.TOP_RANGE, source + top, 16);

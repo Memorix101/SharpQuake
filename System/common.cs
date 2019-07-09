@@ -34,6 +34,7 @@ using System.Runtime.InteropServices;
 using System.Text;
 using OpenTK;
 using SharpQuake.Framework;
+using SharpQuake.Framework.IO;
 
 //
 // Source: common.h + common.c

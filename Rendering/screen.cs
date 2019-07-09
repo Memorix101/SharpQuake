@@ -23,11 +23,8 @@
 /// </copyright>
 
 using System;
-using System.Drawing;
-using System.IO;
-using OpenTK;
-using OpenTK.Graphics.OpenGL;
 using SharpQuake.Framework;
+using SharpQuake.Renderer.Textures;
 
 // screen.h
 // gl_screen.c
@@ -76,8 +73,29 @@ namespace SharpQuake
         }
 
         public System.Boolean IsDisabledForLoading;
-        public System.Boolean BlockDrawing = false;
-        public System.Boolean SkipUpdate;
+        public System.Boolean BlockDrawing
+        {
+            get
+            {
+                return Host.Video.Device.BlockDrawing;
+            }
+            set
+            {
+                Host.Video.Device.BlockDrawing = value;
+            }
+        }
+
+        public System.Boolean SkipUpdate
+        {
+            get
+            {
+                return Host.Video.Device.SkipUpdate;
+            }
+            set
+            {
+                Host.Video.Device.SkipUpdate = value;
+            }
+        }
 
         // scr_skipupdate
         public System.Boolean FullSbarDraw;
@@ -110,9 +128,9 @@ namespace SharpQuake
         private System.Boolean _IsInitialized;
 
         private System.Boolean _InUpdate;
-        private GLPic _Ram;
-        private GLPic _Net;
-        private GLPic _Turtle;
+        private BasePicture Ram;
+        private BasePicture Net;
+        private BasePicture Turtle;
         private Int32 _TurtleCount; // count from SCR_DrawTurtle()
         private System.Boolean _CopyEverything;
 
@@ -180,9 +198,9 @@ namespace SharpQuake
             Host.Command.Add( "sizeup", SizeUp_f );
             Host.Command.Add( "sizedown", SizeDown_f );
 
-            _Ram = Host.DrawingContext.PicFromWad( "ram" );
-            _Net = Host.DrawingContext.PicFromWad( "net" );
-            _Turtle = Host.DrawingContext.PicFromWad( "turtle" );
+            Ram = BasePicture.FromWad( Host.Video.Device, Host.GfxWad,"ram", "GL_LINEAR" );
+            Net = BasePicture.FromWad( Host.Video.Device, Host.GfxWad,"net", "GL_LINEAR" );
+            Turtle = BasePicture.FromWad( Host.Video.Device, Host.GfxWad,"turtle", "GL_LINEAR" );
 
             if( CommandLine.HasParam( "-fullsbar" ) )
                 FullSbarDraw = true;
@@ -206,8 +224,8 @@ namespace SharpQuake
             {
                 if( MainWindow.Instance != null && !MainWindow.Instance.IsDisposing)
                 {
-                    if( (MainWindow.Instance.VSync == VSyncMode.On ) != Host.Video.Wait )
-                        MainWindow.Instance.VSync = (Host.Video.Wait ? VSyncMode.On : VSyncMode.Off );
+                    if( (MainWindow.Instance.VSync == OpenTK.VSyncMode.On ) != Host.Video.Wait )
+                        MainWindow.Instance.VSync = (Host.Video.Wait ? OpenTK.VSyncMode.On : OpenTK.VSyncMode.Off );
                 }
 
                 _VidDef.numpages = 2 + ( Int32 ) _glTripleBuffer.Value;
@@ -256,7 +274,8 @@ namespace SharpQuake
 
                 Host.View.RenderView();
 
-                Set2D();
+                Host.Video.Device.Begin2DScene( );
+                //Set2D();
 
                 //
                 // draw any areas not covered by the refresh
@@ -310,8 +329,10 @@ namespace SharpQuake
 
                     Host.FPSCounter++;
 
-                    Host.DrawingContext.DrawString( 640 - 16 - 10, 10, $"{Host.FPS}", System.Drawing.Color.Yellow );
+                    Host.DrawingContext.DrawString( Host.Screen.vid.width - 16 - 10, 10, $"{Host.FPS}", System.Drawing.Color.Yellow );
                 }
+                Host.Video.Device.End2DScene( );
+
                 Host.View.UpdatePalette();
                 EndRendering();
             }
@@ -333,8 +354,10 @@ namespace SharpQuake
             if( form == null )
                 return;
 
-            if( !SkipUpdate || BlockDrawing )
-                form.SwapBuffers();
+            Host.Video?.Device?.EndScene( );
+
+            //if( !SkipUpdate || BlockDrawing )
+            //    form.SwapBuffers();
 
             // handle the mouse state
             if( !Host.Video.WindowedMouse )
@@ -475,58 +498,7 @@ namespace SharpQuake
         // SCR_ScreenShot_f
         private void ScreenShot_f()
         {
-            //
-            // find a file name to save it to
-            //
-            String path = null;
-            Int32 i;
-            for( i = 0; i <= 999; i++ )
-            {
-                path = Path.Combine( FileSystem.GameDir, String.Format( "quake{0:D3}.tga", i ) );
-                if( FileSystem.GetFileTime( path ) == DateTime.MinValue )
-                    break;	// file doesn't exist
-            }
-            if( i == 100 )
-            {
-                Host.Console.Print( "SCR_ScreenShot_f: Couldn't create a file\n" );
-                return;
-            }
-
-            var fs = FileSystem.OpenWrite( path, true );
-            if( fs == null )
-            {
-                Host.Console.Print( "SCR_ScreenShot_f: Couldn't create a file\n" );
-                return;
-            }
-            using( var writer = new BinaryWriter( fs ) )
-            {
-                // Write tga header (18 bytes)
-                writer.Write( ( UInt16 ) 0 );
-                writer.Write( ( Byte ) 2 ); //buffer[2] = 2; uncompressed type
-                writer.Write( ( Byte ) 0 );
-                writer.Write( ( UInt32 ) 0 );
-                writer.Write( ( UInt32 ) 0 );
-                writer.Write( ( Byte ) ( glWidth & 0xff ) );
-                writer.Write( ( Byte ) ( glWidth >> 8 ) );
-                writer.Write( ( Byte ) ( glHeight & 0xff ) );
-                writer.Write( ( Byte ) ( glHeight >> 8 ) );
-                writer.Write( ( Byte ) 24 ); // pixel size
-                writer.Write( ( UInt16 ) 0 );
-
-                var buffer = new Byte[glWidth * glHeight * 3];
-                GL.ReadPixels( glX, glY, glWidth, glHeight, PixelFormat.Rgb, PixelType.UnsignedByte, buffer );
-
-                // swap 012 to 102
-                var c = glWidth * glHeight * 3;
-                for( i = 0; i < c; i += 3 )
-                {
-                    var temp = buffer[i + 0];
-                    buffer[i + 0] = buffer[i + 1];
-                    buffer[i + 1] = temp;
-                }
-                writer.Write( buffer, 0, buffer.Length );
-            }
-            Host.Console.Print( "Wrote {0}\n", Path.GetFileName( path ) );
+            Host.Video.Device.ScreenShot( out var path );
         }
 
         /// <summary>
@@ -542,13 +514,15 @@ namespace SharpQuake
             glWidth = 0;
             glHeight = 0;
 
-            INativeWindow window = MainWindow.Instance;
+            OpenTK.INativeWindow window = MainWindow.Instance;
             if( window != null )
             {
                 var size = window.ClientSize;
                 glWidth = size.Width;
                 glHeight = size.Height;
             }
+
+            Host.Video?.Device?.BeginScene( );
         }
 
         // SCR_CalcRefdef
@@ -753,8 +727,8 @@ namespace SharpQuake
             if( !_DrawLoading )
                 return;
 
-            var pic = Host.DrawingContext.CachePic( "gfx/loading.lmp" );
-            Host.DrawingContext.DrawPic( ( vid.width - pic.width ) / 2, ( vid.height - 48 - pic.height ) / 2, pic );
+            var pic = Host.DrawingContext.CachePic( "gfx/loading.lmp", "GL_LINEAR" );
+            Host.Video.Device.Graphics.DrawPicture( pic, ( vid.width - pic.Width ) / 2, ( vid.height - 48 - pic.Height ) / 2 );
         }
 
         // SCR_CheckDrawCenterString
@@ -783,7 +757,7 @@ namespace SharpQuake
             if( !Host.RenderContext.CacheTrash )
                 return;
 
-            Host.DrawingContext.DrawPic( _VRect.x + 32, _VRect.y, _Ram );
+            Host.Video.Device.Graphics.DrawPicture( Ram, _VRect.x + 32, _VRect.y );
         }
 
         // SCR_DrawTurtle
@@ -804,7 +778,7 @@ namespace SharpQuake
             if( _TurtleCount < 3 )
                 return;
 
-            Host.DrawingContext.DrawPic( _VRect.x, _VRect.y, _Turtle );
+            Host.Video.Device.Graphics.DrawPicture( Turtle, _VRect.x, _VRect.y );
         }
 
         // SCR_DrawNet
@@ -815,7 +789,7 @@ namespace SharpQuake
             if( Host.Client.cls.demoplayback )
                 return;
 
-            Host.DrawingContext.DrawPic( _VRect.x + 64, _VRect.y, _Net );
+            Host.Video.Device.Graphics.DrawPicture( Net, _VRect.x + 64, _VRect.y );
         }
 
         // DrawPause
@@ -827,8 +801,8 @@ namespace SharpQuake
             if( !Host.Client.cl.paused )
                 return;
 
-            var pic = Host.DrawingContext.CachePic( "gfx/pause.lmp" );
-            Host.DrawingContext.DrawPic( ( vid.width - pic.width ) / 2, ( vid.height - 48 - pic.height ) / 2, pic );
+            var pic = Host.DrawingContext.CachePic( "gfx/pause.lmp", "GL_NEAREST" );
+            Host.Video.Device.Graphics.DrawPicture( pic, ( vid.width - pic.Width ) / 2, ( vid.height - 48 - pic.Height ) / 2 );
         }
 
         // SCR_DrawConsole

@@ -63,20 +63,20 @@ namespace SharpQuake
 
         public override void Draw( )
         {
-            var p = Host.DrawingContext.CachePic( "gfx/vidmodes.lmp" );
-            Host.Menu.DrawPic( ( 320 - p.width ) / 2, 4, p );
+            var p = Host.DrawingContext.CachePic( "gfx/vidmodes.lmp", "GL_NEAREST" );
+            Host.Menu.DrawPic( ( 320 - p.Width ) / 2, 4, p );
 
             _WModes = 0;
-            var lnummodes = Host.Video.Modes.Length;
+            var lnummodes = Host.Video.Device.AvailableModes.Length;
 
             for ( var i = 1; ( i < lnummodes ) && ( _WModes < MAX_MODEDESCS ); i++ )
             {
-                var m = Host.Video.Modes[i];
+                var m = Host.Video.Device.AvailableModes[i];
 
                 var k = _WModes;
 
                 _ModeDescs[k].modenum = i;
-                _ModeDescs[k].desc = String.Format( "{0}x{1}x{2}", m.width, m.height, m.bpp );
+                _ModeDescs[k].desc = String.Format( "{0}x{1}x{2}", m.Width, m.Height, m.BitsPerPixel );
                 _ModeDescs[k].iscur = false;
 
                 if ( i == Host.Video.ModeNum )
@@ -101,7 +101,7 @@ namespace SharpQuake
 
                     column += 13 * 8;
 
-                    if ( ( i % vid.VID_ROW_SIZE ) == ( vid.VID_ROW_SIZE - 1 ) )
+                    if ( ( i % Vid.VID_ROW_SIZE ) == ( Vid.VID_ROW_SIZE - 1 ) )
                     {
                         column = 8;
                         row += 8;

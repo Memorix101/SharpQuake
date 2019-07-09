@@ -24,9 +24,16 @@
 
 using System;
 using System.Runtime.InteropServices;
-using OpenTK;
 using OpenTK.Graphics.OpenGL;
 using SharpQuake.Framework;
+using SharpQuake.Framework.Mathematics;
+using SharpQuake.Game.Rendering.Memory;
+using SharpQuake.Game.Rendering.Models;
+using SharpQuake.Game.Rendering.Textures;
+using SharpQuake.Game.World;
+using SharpQuake.Renderer;
+using SharpQuake.Renderer.Models;
+using SharpQuake.Renderer.Textures;
 
 // refresh.h -- public interface to refresh functions
 // gl_rmisc.c
@@ -55,7 +62,7 @@ namespace SharpQuake
             }
         }
 
-        public Texture NoTextureMip
+        public ModelTexture NoTextureMip
         {
             get
             {
@@ -81,15 +88,8 @@ namespace SharpQuake
         // vright
         public Vector3 Origin;
 
-        private const Single ONE_OVER_16 = 1.0f / 16.0f;
-
-        private const Int32 MAX_LIGHTMAPS = 64;
-
-        private const Int32 BLOCK_WIDTH = 128;
-        private const Int32 BLOCK_HEIGHT = 128;
-
-        private refdef_t _RefDef = new refdef_t(); // refdef_t	r_refdef;
-        private Texture _NoTextureMip; // r_notexture_mip
+        private refdef_t _RefDef = new refdef_t( ); // refdef_t	r_refdef;
+        private ModelTexture _NoTextureMip; // r_notexture_mip
 
         private CVar _NoRefresh;// = { "r_norefresh", "0" };
         private CVar _DrawEntities;// = { "r_drawentities", "1" };
@@ -98,7 +98,7 @@ namespace SharpQuake
         private CVar _FullBright;// = { "r_fullbright", "0" };
         private CVar _LightMap;// = { "r_lightmap", "0" };
         private CVar _Shadows;// = { "r_shadows", "0" };
-        private CVar _MirrorAlpha;// = { "r_mirroralpha", "1" };
+        //private CVar _MirrorAlpha;// = { "r_mirroralpha", "1" };
         private CVar _WaterAlpha;// = { "r_wateralpha", "1" };
         private CVar _Dynamic;// = { "r_dynamic", "1" };
         private CVar _NoVis;// = { "r_novis", "0" };
@@ -118,36 +118,57 @@ namespace SharpQuake
         private CVar _glDoubleEyes;// = { "gl_doubleeys", "1" };
 
         private Int32 _PlayerTextures; // playertextures	// up to 16 color translated skins
+        private BaseTexture[] PlayerTextures;
         private System.Boolean _CacheThrash; // r_cache_thrash	// compatability
 
         // r_origin
 
         private Int32[] _LightStyleValue = new Int32[256]; // d_lightstylevalue  // 8.8 fraction of base light value
-        private Entity _WorldEntity = new Entity(); // r_worldentity
+        private Entity _WorldEntity = new Entity( ); // r_worldentity
         private Entity _CurrentEntity; // currententity
 
         private MemoryLeaf _ViewLeaf; // r_viewleaf
         private MemoryLeaf _OldViewLeaf; // r_oldviewleaf
 
         private Int32 _SkyTextureNum; // skytexturenum
-        private Int32 _MirrorTextureNum; // mirrortexturenum	// quake texturenum, not gltexturenum
-
-        private Int32[,] _Allocated = new Int32[MAX_LIGHTMAPS, BLOCK_WIDTH]; // allocated
+        //private Int32 _MirrorTextureNum; // mirrortexturenum	// quake texturenum, not gltexturenum
 
         private Int32 _VisFrameCount; // r_visframecount	// bumped when going to a new PVS
         private Int32 _FrameCount; // r_framecount		// used for dlight push checking
-        private System.Boolean _MTexEnabled; // mtexenabled
         private Int32 _BrushPolys; // c_brush_polys
         private Int32 _AliasPolys; // c_alias_polys
-        private System.Boolean _IsMirror; // mirror
-        private Plane _MirrorPlane; // mirror_plane
-        private Single _glDepthMin; // gldepthmin
-        private Single _glDepthMax; // gldepthmax
-        private Int32 _TrickFrame; // int trickframe from R_Clear()
+        //private System.Boolean _IsMirror; // mirror
+        //private Plane _MirrorPlane; // mirror_plane
+
+        // Temporarily turn into property until GL stripped out of this project
+        private Single _glDepthMin
+        {
+            get
+            {
+                return Host.Video.Device.Desc.DepthMinimum;
+            }
+            set
+            {
+                Host.Video.Device.Desc.DepthMinimum = value;
+            }
+        }
+
+        private Single _glDepthMax
+        {
+            get
+            {
+                return Host.Video.Device.Desc.DepthMaximum;
+            }
+            set
+            {
+                Host.Video.Device.Desc.DepthMaximum = value;
+            }
+        }
+
         private Plane[] _Frustum = new Plane[4]; // frustum
         private System.Boolean _IsEnvMap = false; // envmap	// true during envmap command capture
-        private Matrix4 _WorldMatrix; // r_world_matrix
-        private Matrix4 _BaseWorldMatrix; // r_base_world_matrix
+        private OpenTK.Matrix4 _WorldMatrix; // r_world_matrix
+        private OpenTK.Matrix4 _BaseWorldMatrix; // r_base_world_matrix
         private Vector3 _ModelOrg; // modelorg
         private Vector3 _EntOrigin; // r_entorigin
         private Single _SpeedScale; // speedscale		// for top sky and bottom sky
@@ -175,14 +196,14 @@ namespace SharpQuake
         /// </summary>
         public void Initialise( )
         {
-            for( var i = 0; i < _Frustum.Length; i++ )
-                _Frustum[i] = new Plane();
+            for ( var i = 0; i < _Frustum.Length; i++ )
+                _Frustum[i] = new Plane( );
 
             Host.Command.Add( "timerefresh", TimeRefresh_f );
             //Cmd.Add("envmap", Envmap_f);
             //Cmd.Add("pointfile", ReadPointFile_f);
 
-            if( _NoRefresh == null )
+            if ( _NoRefresh == null )
             {
                 _NoRefresh = new CVar( "r_norefresh", "0" );
                 _DrawEntities = new CVar( "r_drawentities", "1" );
@@ -191,7 +212,7 @@ namespace SharpQuake
                 _FullBright = new CVar( "r_fullbright", "0" );
                 _LightMap = new CVar( "r_lightmap", "0" );
                 _Shadows = new CVar( "r_shadows", "0" );
-                _MirrorAlpha = new CVar( "r_mirroralpha", "1" );
+                //_MirrorAlpha = new CVar( "r_mirroralpha", "1" );
                 _WaterAlpha = new CVar( "r_wateralpha", "1" );
                 _Dynamic = new CVar( "r_dynamic", "1" );
                 _NoVis = new CVar( "r_novis", "0" );
@@ -211,21 +232,27 @@ namespace SharpQuake
                 _glDoubleEyes = new CVar( "gl_doubleeys", "1" );
             }
 
-            if( Host.Video.glMTexable )
+            if ( Host.Video.Device.Desc.SupportsMultiTexture )
                 CVar.Set( "gl_texsort", 0.0f );
 
-            InitParticles();
-            InitParticleTexture();
+            InitParticles( );
+            InitParticleTexture( );
 
             // reserve 16 textures
-            _PlayerTextures = Host.DrawingContext.GenerateTextureNumberRange( 16 );
+            PlayerTextures = new BaseTexture[16];
+
+            for ( var i = 0; i < PlayerTextures.Length; i++ )
+            {
+                PlayerTextures[i] = BaseTexture.FromDynamicBuffer( Host.Video.Device, "_PlayerTexture{i}", new ByteArraySegment( new Byte[512 * 256 * 4] ), 512, 256, false, false );
+            }
+
         }
 
         // R_InitTextures
-        public void InitTextures()
+        public void InitTextures( )
         {
             // create a simple checkerboard texture for the default
-            _NoTextureMip = new Texture();
+            _NoTextureMip = new ModelTexture( );
             _NoTextureMip.pixels = new Byte[16 * 16 + 8 * 8 + 4 * 4 + 2 * 2];
             _NoTextureMip.width = _NoTextureMip.height = 16;
             var offset = 0;
@@ -238,13 +265,13 @@ namespace SharpQuake
             _NoTextureMip.offsets[3] = offset;
 
             var dest = _NoTextureMip.pixels;
-            for( var m = 0; m < 4; m++ )
+            for ( var m = 0; m < 4; m++ )
             {
                 offset = _NoTextureMip.offsets[m];
-                for( var y = 0; y < ( 16 >> m ); y++ )
-                    for( var x = 0; x < ( 16 >> m ); x++ )
+                for ( var y = 0; y < ( 16 >> m ); y++ )
+                    for ( var x = 0; x < ( 16 >> m ); x++ )
                     {
-                        if( ( y < ( 8 >> m ) ) ^ ( x < ( 8 >> m ) ) )
+                        if ( ( y < ( 8 >> m ) ) ^ ( x < ( 8 >> m ) ) )
                             dest[offset] = 0;
                         else
                             dest[offset] = 0xff;
@@ -258,44 +285,44 @@ namespace SharpQuake
         /// R_RenderView
         /// r_refdef must be set before the first call
         /// </summary>
-        public void RenderView()
+        public void RenderView( )
         {
-            if( _NoRefresh.Value != 0 )
+            if ( _NoRefresh.Value != 0 )
                 return;
 
-            if( _WorldEntity.model == null || Host.Client.cl.worldmodel == null )
+            if ( _WorldEntity.model == null || Host.Client.cl.worldmodel == null )
                 Utilities.Error( "R_RenderView: NULL worldmodel" );
 
             Double time1 = 0;
-            if( _Speeds.Value != 0 )
+            if ( _Speeds.Value != 0 )
             {
-                GL.Finish();
-                time1 = Timer.GetFloatTime();
+                Host.Video.Device.Finish( );
+                time1 = Timer.GetFloatTime( );
                 _BrushPolys = 0;
                 _AliasPolys = 0;
             }
 
-            _IsMirror = false;
+            //_IsMirror = false;
 
-            if( _glFinish.Value != 0 )
-                GL.Finish();
+            if ( _glFinish.Value != 0 )
+                Host.Video.Device.Finish( );
 
-            Clear();
+            Clear( );
 
             // render normal view
 
-            RenderScene();
-            DrawViewModel();
-            DrawWaterSurfaces();
+            RenderScene( );
+            DrawViewModel( );
+            DrawWaterSurfaces( );
 
             // render mirror view
-            Mirror();
+            //Mirror();
 
-            PolyBlend();
+            PolyBlend( );
 
-            if( _Speeds.Value != 0 )
+            if ( _Speeds.Value != 0 )
             {
-                var time2 = Timer.GetFloatTime();
+                var time2 = Timer.GetFloatTime( );
                 ConsoleWrapper.Print( "{0,3} ms  {1,4} wpoly {2,4} epoly\n", ( Int32 ) ( ( time2 - time1 ) * 1000 ), _BrushPolys, _AliasPolys );
             }
         }
@@ -308,22 +335,22 @@ namespace SharpQuake
         {
             var ef = ent.efrag;
 
-            while( ef != null )
+            while ( ef != null )
             {
                 var leaf = ef.leaf;
-                while( true )
+                while ( true )
                 {
                     var walk = leaf.efrags;
-                    if( walk == null )
+                    if ( walk == null )
                         break;
-                    if( walk == ef )
+                    if ( walk == ef )
                     {
                         // remove this fragment
                         leaf.efrags = ef.leafnext;
                         break;
                     }
                     else
-                        leaf = (MemoryLeaf)( Object ) walk.leafnext;
+                        leaf = ( MemoryLeaf ) ( Object ) walk.leafnext;
                 }
 
                 var old = ef;
@@ -343,23 +370,23 @@ namespace SharpQuake
         /// </summary>
         public void TranslatePlayerSkin( Int32 playernum )
         {
-            DisableMultitexture();
+            Host.Video.Device.DisableMultitexture( );
 
             var top = Host.Client.cl.scores[playernum].colors & 0xf0;
             var bottom = ( Host.Client.cl.scores[playernum].colors & 15 ) << 4;
 
             var translate = new Byte[256];
-            for( var i = 0; i < 256; i++ )
+            for ( var i = 0; i < 256; i++ )
                 translate[i] = ( Byte ) i;
 
-            for( var i = 0; i < 16; i++ )
+            for ( var i = 0; i < 16; i++ )
             {
-                if( top < 128 )	// the artists made some backwards ranges.  sigh.
+                if ( top < 128 )	// the artists made some backwards ranges.  sigh.
                     translate[TOP_RANGE + i] = ( Byte ) ( top + i );
                 else
                     translate[TOP_RANGE + i] = ( Byte ) ( top + 15 - i );
 
-                if( bottom < 128 )
+                if ( bottom < 128 )
                     translate[BOTTOM_RANGE + i] = ( Byte ) ( bottom + i );
                 else
                     translate[BOTTOM_RANGE + i] = ( Byte ) ( bottom + 15 - i );
@@ -370,140 +397,68 @@ namespace SharpQuake
             //
             _CurrentEntity = Host.Client.Entities[1 + playernum];
             var model = _CurrentEntity.model;
-            if( model == null )
+            if ( model == null )
                 return;		// player doesn't have a model yet
-            if( model.type != ModelType.mod_alias )
+            if ( model.type != ModelType.mod_alias )
                 return; // only translate skins on alias models
 
             var paliashdr = Host.Model.GetExtraData( model );
             var s = paliashdr.skinwidth * paliashdr.skinheight;
-            if( ( s & 3 ) != 0 )
+            if ( ( s & 3 ) != 0 )
                 Utilities.Error( "R_TranslateSkin: s&3" );
 
             Byte[] original;
-            if( _CurrentEntity.skinnum < 0 || _CurrentEntity.skinnum >= paliashdr.numskins )
+            if ( _CurrentEntity.skinnum < 0 || _CurrentEntity.skinnum >= paliashdr.numskins )
             {
                 ConsoleWrapper.Print( "({0}): Invalid player skin #{1}\n", playernum, _CurrentEntity.skinnum );
-                original = ( Byte[])paliashdr.texels[0];// (byte *)paliashdr + paliashdr.texels[0];
+                original = ( Byte[] ) paliashdr.texels[0];// (byte *)paliashdr + paliashdr.texels[0];
             }
             else
-                original = ( Byte[])paliashdr.texels[_CurrentEntity.skinnum];
+                original = ( Byte[] ) paliashdr.texels[_CurrentEntity.skinnum];
 
             var inwidth = paliashdr.skinwidth;
             var inheight = paliashdr.skinheight;
 
             // because this happens during gameplay, do it fast
             // instead of sending it through gl_upload 8
-            Host.DrawingContext.Bind( _PlayerTextures + playernum );
-
-            var scaled_width = ( Int32 ) ( Host.DrawingContext.glMaxSize < 512 ? Host.DrawingContext.glMaxSize : 512 );
-            var scaled_height = ( Int32 ) ( Host.DrawingContext.glMaxSize < 256 ? Host.DrawingContext.glMaxSize : 256 );
-
-            // allow users to crunch sizes down even more if they want
-            scaled_width >>= ( Int32 ) _glPlayerMip.Value;
-            scaled_height >>= ( Int32 ) _glPlayerMip.Value;
-
-            UInt32 fracstep, frac;
-            Int32 destOffset;
-
-            var translate32 = new UInt32[256];
-            for( var i = 0; i < 256; i++ )
-                translate32[i] = Host.Video.Table8to24[translate[i]];
-
-            var dest = new UInt32[512 * 256];
-            destOffset = 0;
-            fracstep = ( UInt32 ) ( inwidth * 0x10000 / scaled_width );
-            for( var i = 0; i < scaled_height; i++, destOffset += scaled_width )
-            {
-                var srcOffset = inwidth * ( i * inheight / scaled_height );
-                frac = fracstep >> 1;
-                for( var j = 0; j < scaled_width; j += 4 )
-                {
-                    dest[destOffset + j] = translate32[original[srcOffset + ( frac >> 16 )]];
-                    frac += fracstep;
-                    dest[destOffset + j + 1] = translate32[original[srcOffset + ( frac >> 16 )]];
-                    frac += fracstep;
-                    dest[destOffset + j + 2] = translate32[original[srcOffset + ( frac >> 16 )]];
-                    frac += fracstep;
-                    dest[destOffset + j + 3] = translate32[original[srcOffset + ( frac >> 16 )]];
-                    frac += fracstep;
-                }
-            }
-            var handle = GCHandle.Alloc( dest, GCHandleType.Pinned );
-            try
-            {
-                GL.TexImage2D( TextureTarget.Texture2D, 0, Host.DrawingContext.SolidFormat, scaled_width, scaled_height, 0,
-                     PixelFormat.Rgba, PixelType.UnsignedByte, handle.AddrOfPinnedObject() );
-            }
-            finally
-            {
-                handle.Free();
-            }
-            GL.TexEnv( TextureEnvTarget.TextureEnv, TextureEnvParameter.TextureEnvMode, ( Int32 ) TextureEnvMode.Modulate );
-            Host.DrawingContext.SetTextureFilters( TextureMinFilter.Linear, TextureMagFilter.Linear );
-        }
-
-        /// <summary>
-        /// GL_DisableMultitexture
-        /// </summary>
-        public void DisableMultitexture()
-        {
-            if( _MTexEnabled )
-            {
-                GL.Disable( EnableCap.Texture2D );
-                Host.DrawingContext.SelectTexture( MTexTarget.TEXTURE0_SGIS );
-                _MTexEnabled = false;
-            }
-        }
-
-        /// <summary>
-        /// GL_EnableMultitexture
-        /// </summary>
-        public void EnableMultitexture()
-        {
-            if( Host.Video.glMTexable )
-            {
-                Host.DrawingContext.SelectTexture( MTexTarget.TEXTURE1_SGIS );
-                GL.Enable( EnableCap.Texture2D );
-                _MTexEnabled = true;
-            }
+            PlayerTextures[playernum].TranslateAndUpload( original, translate, inwidth, inheight, ( Int32 ) Host.DrawingContext.glMaxSize, ( Int32 ) Host.DrawingContext.glMaxSize, ( Int32 ) _glPlayerMip.Value );
         }
 
         /// <summary>
         /// R_NewMap
         /// </summary>
-        public void NewMap()
+        public void NewMap( )
         {
-            for( var i = 0; i < 256; i++ )
+            for ( var i = 0; i < 256; i++ )
                 _LightStyleValue[i] = 264;		// normal light value
 
-            _WorldEntity.Clear();
+            _WorldEntity.Clear( );
             _WorldEntity.model = Host.Client.cl.worldmodel;
 
             // clear out efrags in case the level hasn't been reloaded
             // FIXME: is this one short?
-            for( var i = 0; i < Host.Client.cl.worldmodel.numleafs; i++ )
+            for ( var i = 0; i < Host.Client.cl.worldmodel.numleafs; i++ )
                 Host.Client.cl.worldmodel.leafs[i].efrags = null;
 
             _ViewLeaf = null;
-            ClearParticles();
+            ClearParticles( );
 
-            BuildLightMaps();
+            BuildLightMaps( );
 
             // identify sky texture
             _SkyTextureNum = -1;
-            _MirrorTextureNum = -1;
+            //_MirrorTextureNum = -1;
             var world = Host.Client.cl.worldmodel;
-            for( var i = 0; i < world.numtextures; i++ )
+            for ( var i = 0; i < world.numtextures; i++ )
             {
-                if( world.textures[i] == null )
+                if ( world.textures[i] == null )
                     continue;
-                if( world.textures[i].name != null )
+                if ( world.textures[i].name != null )
                 {
-                    if( world.textures[i].name.StartsWith( "sky" ) )
+                    if ( world.textures[i].name.StartsWith( "sky" ) )
                         _SkyTextureNum = i;
-                    if( world.textures[i].name.StartsWith( "window02_1" ) )
-                        _MirrorTextureNum = i;
+                    //if( world.textures[i].name.StartsWith( "window02_1" ) )
+                    //    _MirrorTextureNum = i;
                 }
                 world.textures[i].texturechain = null;
             }
@@ -512,180 +467,158 @@ namespace SharpQuake
         /// <summary>
         /// R_PolyBlend
         /// </summary>
-        private void PolyBlend()
+        private void PolyBlend( )
         {
-            if( _glPolyBlend.Value == 0 )
+            if ( _glPolyBlend.Value == 0 )
                 return;
 
-            if( Host.View.Blend.A == 0 )
+            if ( Host.View.Blend.A == 0 )
                 return;
 
-            DisableMultitexture();
-
-            GL.Disable( EnableCap.AlphaTest );
-            GL.Enable( EnableCap.Blend );
-            GL.Disable( EnableCap.DepthTest );
-            GL.Disable( EnableCap.Texture2D );
-
-            GL.LoadIdentity();
-
-            GL.Rotate( -90f, 1, 0, 0 );	    // put Z going up
-            GL.Rotate( 90f, 0, 0, 1 );	    // put Z going up
-
-            GL.Color4( Host.View.Blend );
-            GL.Begin( PrimitiveType.Quads );
-            GL.Vertex3( 10f, 100, 100 );
-            GL.Vertex3( 10f, -100, 100 );
-            GL.Vertex3( 10f, -100, -100 );
-            GL.Vertex3( 10f, 100, -100 );
-            GL.End();
-
-            GL.Disable( EnableCap.Blend );
-            GL.Enable( EnableCap.Texture2D );
-            GL.Enable( EnableCap.AlphaTest );
+            Host.Video.Device.Graphics.PolyBlend( Host.View.Blend );
         }
 
         /// <summary>
         /// R_Mirror
         /// </summary>
-        private void Mirror()
-        {
-            if( !_IsMirror )
-                return;
+        //private void Mirror()
+        //{
+        //    if( !_IsMirror )
+        //        return;
 
-            _BaseWorldMatrix = _WorldMatrix;
+        //    _BaseWorldMatrix = _WorldMatrix;
 
-            var d = Vector3.Dot( _RefDef.vieworg, _MirrorPlane.normal ) - _MirrorPlane.dist;
-            _RefDef.vieworg += _MirrorPlane.normal * -2 * d;
+        //    var d = Vector3.Dot( _RefDef.vieworg, _MirrorPlane.normal ) - _MirrorPlane.dist;
+        //    _RefDef.vieworg += _MirrorPlane.normal * -2 * d;
 
-            d = Vector3.Dot( ViewPn, _MirrorPlane.normal );
-            ViewPn += _MirrorPlane.normal * -2 * d;
+        //    d = Vector3.Dot( ViewPn, _MirrorPlane.normal );
+        //    ViewPn += _MirrorPlane.normal * -2 * d;
 
-            _RefDef.viewangles = new Vector3( ( Single ) ( Math.Asin( ViewPn.Z ) / Math.PI * 180.0 ),
-                ( Single ) ( Math.Atan2( ViewPn.Y, ViewPn.X ) / Math.PI * 180.0 ),
-                -_RefDef.viewangles.Z );
+        //    _RefDef.viewangles = new Vector3( ( Single ) ( Math.Asin( ViewPn.Z ) / Math.PI * 180.0 ),
+        //        ( Single ) ( Math.Atan2( ViewPn.Y, ViewPn.X ) / Math.PI * 180.0 ),
+        //        -_RefDef.viewangles.Z );
 
-            var ent = Host.Client.ViewEntity;
-            if( Host.Client.NumVisEdicts < ClientDef.MAX_VISEDICTS )
-            {
-                Host.Client.VisEdicts[Host.Client.NumVisEdicts] = ent;
-                Host.Client.NumVisEdicts++;
-            }
+        //    var ent = Host.Client.ViewEntity;
+        //    if( Host.Client.NumVisEdicts < ClientDef.MAX_VISEDICTS )
+        //    {
+        //        Host.Client.VisEdicts[Host.Client.NumVisEdicts] = ent;
+        //        Host.Client.NumVisEdicts++;
+        //    }
 
-            _glDepthMin = 0.5f;
-            _glDepthMax = 1;
-            GL.DepthRange( _glDepthMin, _glDepthMax );
-            GL.DepthFunc( DepthFunction.Lequal );
+        //    _glDepthMin = 0.5f;
+        //    _glDepthMax = 1;
+        //    GL.DepthRange( _glDepthMin, _glDepthMax );
+        //    GL.DepthFunc( DepthFunction.Lequal );
 
-            RenderScene();
-            DrawWaterSurfaces();
+        //    RenderScene();
+        //    DrawWaterSurfaces();
 
-            _glDepthMin = 0;
-            _glDepthMax = 0.5f;
-            GL.DepthRange( _glDepthMin, _glDepthMax );
-            GL.DepthFunc( DepthFunction.Lequal );
+        //    _glDepthMin = 0;
+        //    _glDepthMax = 0.5f;
+        //    GL.DepthRange( _glDepthMin, _glDepthMax );
+        //    GL.DepthFunc( DepthFunction.Lequal );
 
-            // blend on top
-            GL.Enable( EnableCap.Blend );
-            GL.MatrixMode( MatrixMode.Projection );
-            if( _MirrorPlane.normal.Z != 0 )
-                GL.Scale( 1f, -1, 1 );
-            else
-                GL.Scale( -1f, 1, 1 );
-            GL.CullFace( CullFaceMode.Front );
-            GL.MatrixMode( MatrixMode.Modelview );
+        //    // blend on top
+        //    GL.Enable( EnableCap.Blend );
+        //    GL.MatrixMode( MatrixMode.Projection );
+        //    if( _MirrorPlane.normal.Z != 0 )
+        //        GL.Scale( 1f, -1, 1 );
+        //    else
+        //        GL.Scale( -1f, 1, 1 );
+        //    GL.CullFace( CullFaceMode.Front );
+        //    GL.MatrixMode( MatrixMode.Modelview );
 
-            GL.LoadMatrix( ref _BaseWorldMatrix );
+        //    GL.LoadMatrix( ref _BaseWorldMatrix );
 
-            GL.Color4( 1, 1, 1, _MirrorAlpha.Value );
-            var s = Host.Client.cl.worldmodel.textures[_MirrorTextureNum].texturechain;
-            for( ; s != null; s = s.texturechain )
-                RenderBrushPoly( s );
-            Host.Client.cl.worldmodel.textures[_MirrorTextureNum].texturechain = null;
-            GL.Disable( EnableCap.Blend );
-            GL.Color4( 1f, 1, 1, 1 );
-        }
+        //    GL.Color4( 1, 1, 1, _MirrorAlpha.Value );
+        //    var s = Host.Client.cl.worldmodel.textures[_MirrorTextureNum].texturechain;
+        //    for( ; s != null; s = s.texturechain )
+        //        RenderBrushPoly( s );
+        //    Host.Client.cl.worldmodel.textures[_MirrorTextureNum].texturechain = null;
+        //    GL.Disable( EnableCap.Blend );
+        //    GL.Color4( 1f, 1, 1, 1 );
+        //}
 
         /// <summary>
         /// R_DrawViewModel
         /// </summary>
-        private void DrawViewModel()
+        private void DrawViewModel( )
         {
-            if( _DrawViewModel.Value == 0 )
+            if ( _DrawViewModel.Value == 0 )
                 return;
 
-            if( Host.ChaseView.IsActive )
+            if ( Host.ChaseView.IsActive )
                 return;
 
-            if( _IsEnvMap )
+            if ( _IsEnvMap )
                 return;
 
-            if( _DrawEntities.Value == 0 )
+            if ( _DrawEntities.Value == 0 )
                 return;
 
-            if( Host.Client.cl.HasItems( QItemsDef.IT_INVISIBILITY ) )
+            if ( Host.Client.cl.HasItems( QItemsDef.IT_INVISIBILITY ) )
                 return;
 
-            if( Host.Client.cl.stats[QStatsDef.STAT_HEALTH] <= 0 )
+            if ( Host.Client.cl.stats[QStatsDef.STAT_HEALTH] <= 0 )
                 return;
 
             _CurrentEntity = Host.Client.ViewEnt;
-            if( _CurrentEntity.model == null )
+            if ( _CurrentEntity.model == null )
                 return;
 
             var j = LightPoint( ref _CurrentEntity.origin );
 
-            if( j < 24 )
+            if ( j < 24 )
                 j = 24;		// allways give some light on gun
             _AmbientLight = j;
             _ShadeLight = j;
 
             // add dynamic lights
-            for( var lnum = 0; lnum < ClientDef.MAX_DLIGHTS; lnum++ )
+            for ( var lnum = 0; lnum < ClientDef.MAX_DLIGHTS; lnum++ )
             {
                 var dl = Host.Client.DLights[lnum];
-                if( dl.radius == 0 )
+                if ( dl.radius == 0 )
                     continue;
-                if( dl.die < Host.Client.cl.time )
+                if ( dl.die < Host.Client.cl.time )
                     continue;
 
                 var dist = _CurrentEntity.origin - dl.origin;
                 var add = dl.radius - dist.Length;
-                if( add > 0 )
+                if ( add > 0 )
                     _AmbientLight += add;
             }
 
             // hack the depth range to prevent view model from poking into walls
-            GL.DepthRange( _glDepthMin, _glDepthMin + 0.3f * ( _glDepthMax - _glDepthMin ) );
+            Host.Video.Device.SetDepth( _glDepthMin, _glDepthMin + 0.3f * ( _glDepthMax - _glDepthMin ) );
             DrawAliasModel( _CurrentEntity );
-            GL.DepthRange( _glDepthMin, _glDepthMax );
+            Host.Video.Device.SetDepth( _glDepthMin, _glDepthMax );
         }
 
         /// <summary>
         /// R_RenderScene
         /// r_refdef must be set before the first call
         /// </summary>
-        private void RenderScene()
+        private void RenderScene( )
         {
-            SetupFrame();
+            SetupFrame( );
 
-            SetFrustum();
+            SetFrustum( );
 
-            SetupGL();
+            SetupGL( );
 
-            MarkLeaves();	// done here so we know if we're in water
+            MarkLeaves( );	// done here so we know if we're in water
 
-            DrawWorld();		// adds entities to the list
+            DrawWorld( );		// adds entities to the list
 
-            Host.Sound.ExtraUpdate();	// don't let sound get messed up if going slow
+            Host.Sound.ExtraUpdate( );	// don't let sound get messed up if going slow
 
-            DrawEntitiesOnList();
+            DrawEntitiesOnList( );
 
-            DisableMultitexture();
+            Host.Video.Device.DisableMultitexture( );
 
-            RenderDlights();
+            RenderDlights( );
 
-            DrawParticles();
+            DrawParticles( );
 
 #if GLTEST
 	        Test_Draw ();
@@ -695,17 +628,17 @@ namespace SharpQuake
         /// <summary>
         /// R_DrawEntitiesOnList
         /// </summary>
-        private void DrawEntitiesOnList()
+        private void DrawEntitiesOnList( )
         {
-            if( _DrawEntities.Value == 0 )
+            if ( _DrawEntities.Value == 0 )
                 return;
 
             // draw sprites seperately, because of alpha blending
-            for( var i = 0; i < Host.Client.NumVisEdicts; i++ )
+            for ( var i = 0; i < Host.Client.NumVisEdicts; i++ )
             {
                 _CurrentEntity = Host.Client.VisEdicts[i];
 
-                switch( _CurrentEntity.model.type )
+                switch ( _CurrentEntity.model.type )
                 {
                     case ModelType.mod_alias:
                         DrawAliasModel( _CurrentEntity );
@@ -720,11 +653,11 @@ namespace SharpQuake
                 }
             }
 
-            for( var i = 0; i < Host.Client.NumVisEdicts; i++ )
+            for ( var i = 0; i < Host.Client.NumVisEdicts; i++ )
             {
                 _CurrentEntity = Host.Client.VisEdicts[i];
 
-                switch( _CurrentEntity.model.type )
+                switch ( _CurrentEntity.model.type )
                 {
                     case ModelType.mod_sprite:
                         DrawSpriteModel( _CurrentEntity );
@@ -741,10 +674,10 @@ namespace SharpQuake
             // don't even bother culling, because it's just a single
             // polygon without a surface cache
             var frame = GetSpriteFrame( e );
-            var psprite = (msprite_t)e.model.cache.data; // Uze: changed from _CurrentEntity to e
+            var psprite = ( msprite_t ) e.model.cache.data; // Uze: changed from _CurrentEntity to e
 
             Vector3 v_forward, right, up;
-            if( psprite.type == SPR.SPR_ORIENTED )
+            if ( psprite.type == SPR.SPR_ORIENTED )
             {
                 // bullet marks on walls
                 MathLib.AngleVectors( ref e.angles, out v_forward, out right, out up ); // Uze: changed from _CurrentEntity to e
@@ -757,30 +690,35 @@ namespace SharpQuake
 
             GL.Color3( 1f, 1, 1 );
 
-            DisableMultitexture();
+            Host.Video.Device.DisableMultitexture( );
 
-            Host.DrawingContext.Bind( frame.gl_texturenum );
+            GL.Enable( EnableCap.Texture2D );
+
+            var texture = Host.Model.SpriteTextures[frame.gl_texturenum];
+            texture.Bind( );
 
             GL.Enable( EnableCap.AlphaTest );
             GL.Begin( PrimitiveType.Quads );
 
             GL.TexCoord2( 0f, 1 );
             var point = e.origin + up * frame.down + right * frame.left;
-            GL.Vertex3( point );
+            GL.Vertex3( point.X, point.Y, point.Z );
 
             GL.TexCoord2( 0f, 0 );
             point = e.origin + up * frame.up + right * frame.left;
-            GL.Vertex3( point );
+            GL.Vertex3( point.X, point.Y, point.Z );
 
             GL.TexCoord2( 1f, 0 );
             point = e.origin + up * frame.up + right * frame.right;
-            GL.Vertex3( point );
+            GL.Vertex3( point.X, point.Y, point.Z );
 
             GL.TexCoord2( 1f, 1 );
             point = e.origin + up * frame.down + right * frame.right;
-            GL.Vertex3( point );
+            GL.Vertex3( point.X, point.Y, point.Z );
 
-            GL.End();
+            GL.End( );
+
+            GL.Disable( EnableCap.Texture2D );
             GL.Disable( EnableCap.AlphaTest );
         }
 
@@ -789,23 +727,23 @@ namespace SharpQuake
         /// </summary>
         private mspriteframe_t GetSpriteFrame( Entity currententity )
         {
-            var psprite = (msprite_t)currententity.model.cache.data;
+            var psprite = ( msprite_t ) currententity.model.cache.data;
             var frame = currententity.frame;
 
-            if( ( frame >= psprite.numframes ) || ( frame < 0 ) )
+            if ( ( frame >= psprite.numframes ) || ( frame < 0 ) )
             {
                 Host.Console.Print( "R_DrawSprite: no such frame {0}\n", frame );
                 frame = 0;
             }
 
             mspriteframe_t pspriteframe;
-            if( psprite.frames[frame].type == spriteframetype_t.SPR_SINGLE )
+            if ( psprite.frames[frame].type == spriteframetype_t.SPR_SINGLE )
             {
-                pspriteframe = (mspriteframe_t)psprite.frames[frame].frameptr;
+                pspriteframe = ( mspriteframe_t ) psprite.frames[frame].frameptr;
             }
             else
             {
-                var pspritegroup = (mspritegroup_t)psprite.frames[frame].frameptr;
+                var pspritegroup = ( mspritegroup_t ) psprite.frames[frame].frameptr;
                 var pintervals = pspritegroup.intervals;
                 var numframes = pspritegroup.numframes;
                 var fullinterval = pintervals[numframes - 1];
@@ -815,9 +753,9 @@ namespace SharpQuake
                 // are positive, so we don't have to worry about division by 0
                 var targettime = time - ( ( Int32 ) ( time / fullinterval ) ) * fullinterval;
                 Int32 i;
-                for( i = 0; i < ( numframes - 1 ); i++ )
+                for ( i = 0; i < ( numframes - 1 ); i++ )
                 {
-                    if( pintervals[i] > targettime )
+                    if ( pintervals[i] > targettime )
                         break;
                 }
                 pspriteframe = pspritegroup.frames[i];
@@ -835,7 +773,7 @@ namespace SharpQuake
             var mins = _CurrentEntity.origin + clmodel.mins;
             var maxs = _CurrentEntity.origin + clmodel.maxs;
 
-            if( CullBox( ref mins, ref maxs ) )
+            if ( CullBox( ref mins, ref maxs ) )
                 return;
 
             _EntOrigin = _CurrentEntity.origin;
@@ -848,16 +786,16 @@ namespace SharpQuake
             _AmbientLight = _ShadeLight = LightPoint( ref _CurrentEntity.origin );
 
             // allways give the gun some light
-            if( e == Host.Client.cl.viewent && _AmbientLight < 24 )
+            if ( e == Host.Client.cl.viewent && _AmbientLight < 24 )
                 _AmbientLight = _ShadeLight = 24;
 
-            for( var lnum = 0; lnum < ClientDef.MAX_DLIGHTS; lnum++ )
+            for ( var lnum = 0; lnum < ClientDef.MAX_DLIGHTS; lnum++ )
             {
-                if( Host.Client.DLights[lnum].die >= Host.Client.cl.time )
+                if ( Host.Client.DLights[lnum].die >= Host.Client.cl.time )
                 {
                     var dist = _CurrentEntity.origin - Host.Client.DLights[lnum].origin;
                     var add = Host.Client.DLights[lnum].radius - dist.Length;
-                    if( add > 0 )
+                    if ( add > 0 )
                     {
                         _AmbientLight += add;
                         //ZOID models should be affected by dlights as well
@@ -867,19 +805,19 @@ namespace SharpQuake
             }
 
             // clamp lighting so it doesn't overbright as much
-            if( _AmbientLight > 128 )
+            if ( _AmbientLight > 128 )
                 _AmbientLight = 128;
-            if( _AmbientLight + _ShadeLight > 192 )
+            if ( _AmbientLight + _ShadeLight > 192 )
                 _ShadeLight = 192 - _AmbientLight;
 
             // ZOID: never allow players to go totally black
             var playernum = Array.IndexOf( Host.Client.Entities, _CurrentEntity, 0, Host.Client.cl.maxclients );
-            if( playernum >= 1 )// && i <= cl.maxclients)
-                if( _AmbientLight < 8 )
+            if ( playernum >= 1 )// && i <= cl.maxclients)
+                if ( _AmbientLight < 8 )
                     _AmbientLight = _ShadeLight = 8;
 
             // HACK HACK HACK -- no fullbright colors, so make torches full light
-            if( clmodel.name == "progs/flame2.mdl" || clmodel.name == "progs/flame.mdl" )
+            if ( clmodel.name == "progs/flame2.mdl" || clmodel.name == "progs/flame.mdl" )
                 _AmbientLight = _ShadeLight = 256;
 
             _ShadeDots = anorm_dots.Values[( ( Int32 ) ( e.angles.Y * ( anorm_dots.SHADEDOT_QUANT / 360.0 ) ) ) & ( anorm_dots.SHADEDOT_QUANT - 1 )];
@@ -898,193 +836,28 @@ namespace SharpQuake
 
             _AliasPolys += paliashdr.numtris;
 
-            //
-            // draw all the triangles
-            //
+            BaseModel model = null;
 
-            DisableMultitexture();
-
-            GL.PushMatrix();
-            RotateForEntity( e );
-            if( clmodel.name == "progs/eyes.mdl" && _glDoubleEyes.Value != 0 )
+            if ( !BaseModel.ModelPool.ContainsKey( clmodel.name ) )
             {
-                var v = paliashdr.scale_origin;
-                v.Z -= ( 22 + 8 );
-                GL.Translate( v );
-                // double size of eyes, since they are really hard to see in gl
-                GL.Scale( paliashdr.scale * 2.0f );
+                var anim = ( Int32 ) ( Host.Client.cl.time * 10 ) & 3;
+
+                model = BaseModel.Create( Host.Video.Device, clmodel.name, Host.Model.SkinTextures[paliashdr.gl_texturenum[_CurrentEntity.skinnum, anim]], true );
             }
             else
-            {
-                GL.Translate( paliashdr.scale_origin );
-                GL.Scale( paliashdr.scale );
-            }
+                model = BaseModel.ModelPool[clmodel.name];
 
-            var anim = ( Int32 ) ( Host.Client.cl.time * 10 ) & 3;
-            Host.DrawingContext.Bind( paliashdr.gl_texturenum[_CurrentEntity.skinnum, anim] );
+            model.Desc.ScaleOrigin = paliashdr.scale_origin;
+            model.Desc.Scale = paliashdr.scale;
+            model.Desc.MinimumBounds = clmodel.mins;
+            model.Desc.MaximumBounds = clmodel.maxs;
+            model.Desc.Origin = e.origin;
+            model.Desc.EulerAngles = e.angles;
+            model.Desc.AliasFrame = _CurrentEntity.frame;
 
-            // we can't dynamically colormap textures, so they are cached
-            // seperately for the players.  Heads are just uncolored.
-            if( _CurrentEntity.colormap != Host.Screen.vid.colormap && _glNoColors.Value == 0 && playernum >= 1 )
-            {
-                Host.DrawingContext.Bind( _PlayerTextures - 1 + playernum );
-            }
-
-            if( _glSmoothModels.Value != 0 )
-                GL.ShadeModel( ShadingModel.Smooth );
-
-            GL.TexEnv( TextureEnvTarget.TextureEnv, TextureEnvParameter.TextureEnvMode, ( Int32 ) TextureEnvMode.Modulate );
-
-            if( _glAffineModels.Value != 0 )
-                GL.Hint( HintTarget.PerspectiveCorrectionHint, HintMode.Fastest );
-
-            SetupAliasFrame( _CurrentEntity.frame, paliashdr );
-
-            GL.TexEnv( TextureEnvTarget.TextureEnv, TextureEnvParameter.TextureEnvMode, ( Int32 ) TextureEnvMode.Replace );
-
-            GL.ShadeModel( ShadingModel.Flat );
-            if( _glAffineModels.Value != 0 )
-                GL.Hint( HintTarget.PerspectiveCorrectionHint, HintMode.Nicest );
-
-            GL.PopMatrix();
-
-            if( _Shadows.Value != 0 )
-            {
-                GL.PushMatrix();
-                RotateForEntity( e );
-                GL.Disable( EnableCap.Texture2D );
-                GL.Enable( EnableCap.Blend );
-                GL.Color4( 0, 0, 0, 0.5f );
-                DrawAliasShadow( paliashdr, _LastPoseNum );
-                GL.Enable( EnableCap.Texture2D );
-                GL.Disable( EnableCap.Blend );
-                GL.Color4( 1f, 1, 1, 1 );
-                GL.PopMatrix();
-            }
-        }
-
-        /// <summary>
-        /// GL_DrawAliasShadow
-        /// </summary>
-        private void DrawAliasShadow( aliashdr_t paliashdr, Int32 posenum )
-        {
-            var lheight = _CurrentEntity.origin.Z - _LightSpot.Z;
-            Single height = 0;
-            var verts = paliashdr.posedata;
-            var voffset = posenum * paliashdr.poseverts;
-            var order = paliashdr.commands;
-
-            height = -lheight + 1.0f;
-            var orderOffset = 0;
-
-            while( true )
-            {
-                // get the vertex count and primitive type
-                var count = order[orderOffset++];
-                if( count == 0 )
-                    break;		// done
-
-                if( count < 0 )
-                {
-                    count = -count;
-                    GL.Begin( PrimitiveType.TriangleFan );
-                }
-                else
-                    GL.Begin( PrimitiveType.TriangleStrip );
-
-                do
-                {
-                    // texture coordinates come from the draw list
-                    // (skipped for shadows) glTexCoord2fv ((float *)order);
-                    orderOffset += 2;
-
-                    // normals and vertexes come from the frame list
-                    var point = new Vector3(
-                        verts[voffset].v[0] * paliashdr.scale.X + paliashdr.scale_origin.X,
-                        verts[voffset].v[1] * paliashdr.scale.Y + paliashdr.scale_origin.Y,
-                        verts[voffset].v[2] * paliashdr.scale.Z + paliashdr.scale_origin.Z
-                    );
-
-                    point.X -= _ShadeVector.X * ( point.Z + lheight );
-                    point.Y -= _ShadeVector.Y * ( point.Z + lheight );
-                    point.Z = height;
-
-                    GL.Vertex3( point );
-
-                    voffset++;
-                } while( --count > 0 );
-
-                GL.End();
-            }
-        }
-
-        /// <summary>
-        /// R_SetupAliasFrame
-        /// </summary>
-        private void SetupAliasFrame( Int32 frame, aliashdr_t paliashdr )
-        {
-            if( ( frame >= paliashdr.numframes ) || ( frame < 0 ) )
-            {
-                Host.Console.DPrint( "R_AliasSetupFrame: no such frame {0}\n", frame );
-                frame = 0;
-            }
-
-            var pose = paliashdr.frames[frame].firstpose;
-            var numposes = paliashdr.frames[frame].numposes;
-
-            if( numposes > 1 )
-            {
-                var interval = paliashdr.frames[frame].interval;
-                pose += ( Int32 ) ( Host.Client.cl.time / interval ) % numposes;
-            }
-
-            DrawAliasFrame( paliashdr, pose );
-        }
-
-        /// <summary>
-        /// GL_DrawAliasFrame
-        /// </summary>
-        private void DrawAliasFrame( aliashdr_t paliashdr, Int32 posenum )
-        {
-            _LastPoseNum = posenum;
-
-            var verts = paliashdr.posedata;
-            var vertsOffset = posenum * paliashdr.poseverts;
-            var order = paliashdr.commands;
-            var orderOffset = 0;
-
-            while( true )
-            {
-                // get the vertex count and primitive type
-                var count = order[orderOffset++];
-                if( count == 0 )
-                    break;		// done
-
-                if( count < 0 )
-                {
-                    count = -count;
-                    GL.Begin( PrimitiveType.TriangleFan );
-                }
-                else
-                    GL.Begin( PrimitiveType.TriangleStrip );
-
-                Union4b u1 = Union4b.Empty, u2 = Union4b.Empty;
-                do
-                {
-                    // texture coordinates come from the draw list
-                    u1.i0 = order[orderOffset + 0];
-                    u2.i0 = order[orderOffset + 1];
-                    orderOffset += 2;
-                    GL.TexCoord2( u1.f0, u2.f0 );
-
-                    // normals and vertexes come from the frame list
-                    var l = _ShadeDots[verts[vertsOffset].lightnormalindex] * _ShadeLight;
-                    GL.Color3( l, l, l );
-                    GL.Vertex3( ( Single ) verts[vertsOffset].v[0], verts[vertsOffset].v[1], verts[vertsOffset].v[2] );
-                    vertsOffset++;
-                } while( --count > 0 );
-                GL.End();
-            }
+            model.DrawAliasModel( _ShadeLight, _ShadeVector, _ShadeDots, _LightSpot.Z, paliashdr,
+                Host.Client.cl.time, ( _Shadows.Value != 0 ), ( _glSmoothModels.Value != 0 ), ( _glAffineModels.Value != 0 ),
+                _glNoColors.Value == 0, ( clmodel.name == "progs/eyes.mdl" && _glDoubleEyes.Value != 0 ) );
         }
 
         /// <summary>
@@ -1092,7 +865,7 @@ namespace SharpQuake
         /// </summary>
         private void RotateForEntity( Entity e )
         {
-            GL.Translate( e.origin );
+            GL.Translate( e.origin.X, e.origin.Y, e.origin.Z );
 
             GL.Rotate( e.angles.Y, 0, 0, 1 );
             GL.Rotate( -e.angles.X, 0, 1, 0 );
@@ -1102,94 +875,85 @@ namespace SharpQuake
         /// <summary>
         /// R_SetupGL
         /// </summary>
-        private void SetupGL()
+        private void SetupGL( )
         {
-            //
-            // set up viewpoint
-            //
-            GL.MatrixMode( MatrixMode.Projection );
-            GL.LoadIdentity();
-            var x = _RefDef.vrect.x * Host.Screen.glWidth / Host.Screen.vid.width;
-            var x2 = ( _RefDef.vrect.x + _RefDef.vrect.width ) * Host.Screen.glWidth / Host.Screen.vid.width;
-            var y = ( Host.Screen.vid.height - _RefDef.vrect.y ) * Host.Screen.glHeight / Host.Screen.vid.height;
-            var y2 = ( Host.Screen.vid.height - ( _RefDef.vrect.y + _RefDef.vrect.height ) ) * Host.Screen.glHeight / Host.Screen.vid.height;
+            Host.Video.Device.Setup3DScene( _glCull.Value != 0, _RefDef, _IsEnvMap );
 
-            // fudge around because of frac screen scale
-            if( x > 0 )
-                x--;
-            if( x2 < Host.Screen.glWidth )
-                x2++;
-            if( y2 < 0 )
-                y2--;
-            if( y < Host.Screen.glHeight )
-                y++;
+            ////
+            //// set up viewpoint
+            ////
+            //GL.MatrixMode( MatrixMode.Projection );
+            //GL.LoadIdentity();
+            //var x = _RefDef.vrect.x * Host.Screen.glWidth / Host.Screen.vid.width;
+            //var x2 = ( _RefDef.vrect.x + _RefDef.vrect.width ) * Host.Screen.glWidth / Host.Screen.vid.width;
+            //var y = ( Host.Screen.vid.height - _RefDef.vrect.y ) * Host.Screen.glHeight / Host.Screen.vid.height;
+            //var y2 = ( Host.Screen.vid.height - ( _RefDef.vrect.y + _RefDef.vrect.height ) ) * Host.Screen.glHeight / Host.Screen.vid.height;
 
-            var w = x2 - x;
-            var h = y - y2;
+            //// fudge around because of frac screen scale
+            //if( x > 0 )
+            //    x--;
+            //if( x2 < Host.Screen.glWidth )
+            //    x2++;
+            //if( y2 < 0 )
+            //    y2--;
+            //if( y < Host.Screen.glHeight )
+            //    y++;
 
-            if( _IsEnvMap )
-            {
-                x = y2 = 0;
-                w = h = 256;
-            }
+            //var w = x2 - x;
+            //var h = y - y2;
 
-            GL.Viewport( Host.Screen.glX + x, Host.Screen.glY + y2, w, h );
-            var screenaspect = ( Single ) _RefDef.vrect.width / _RefDef.vrect.height;
-            MYgluPerspective( _RefDef.fov_y, screenaspect, 4, 4096 );
+            //if( _IsEnvMap )
+            //{
+            //    x = y2 = 0;
+            //    w = h = 256;
+            //}
 
-            if( _IsMirror )
-            {
-                if( _MirrorPlane.normal.Z != 0 )
-                    GL.Scale( 1f, -1f, 1f );
-                else
-                    GL.Scale( -1f, 1f, 1f );
-                GL.CullFace( CullFaceMode.Back );
-            }
-            else
-                GL.CullFace( CullFaceMode.Front );
+            //GL.Viewport( Host.Screen.glX + x, Host.Screen.glY + y2, w, h );
+            //var screenaspect = ( Single ) _RefDef.vrect.width / _RefDef.vrect.height;
+            //MYgluPerspective( _RefDef.fov_y, screenaspect, 4, 4096 );
 
-            GL.MatrixMode( MatrixMode.Modelview );
-            GL.LoadIdentity();
+            //if( _IsMirror )
+            //{
+            //    if( _MirrorPlane.normal.Z != 0 )
+            //        GL.Scale( 1f, -1f, 1f );
+            //    else
+            //        GL.Scale( -1f, 1f, 1f );
+            //    GL.CullFace( CullFaceMode.Back );
+            //}
+            //else
+            //    GL.CullFace( CullFaceMode.Front );
 
-            GL.Rotate( -90f, 1, 0, 0 );	    // put Z going up
-            GL.Rotate( 90f, 0, 0, 1 );	    // put Z going up
-            GL.Rotate( -_RefDef.viewangles.Z, 1, 0, 0 );
-            GL.Rotate( -_RefDef.viewangles.X, 0, 1, 0 );
-            GL.Rotate( -_RefDef.viewangles.Y, 0, 0, 1 );
-            GL.Translate( -_RefDef.vieworg.X, -_RefDef.vieworg.Y, -_RefDef.vieworg.Z );
+            //GL.MatrixMode( MatrixMode.Modelview );
+            //GL.LoadIdentity();
 
-            GL.GetFloat( GetPName.ModelviewMatrix, out _WorldMatrix );
+            //GL.Rotate( -90f, 1, 0, 0 );	    // put Z going up
+            //GL.Rotate( 90f, 0, 0, 1 );	    // put Z going up
+            //GL.Rotate( -_RefDef.viewangles.Z, 1, 0, 0 );
+            //GL.Rotate( -_RefDef.viewangles.X, 0, 1, 0 );
+            //GL.Rotate( -_RefDef.viewangles.Y, 0, 0, 1 );
+            //GL.Translate( -_RefDef.vieworg.X, -_RefDef.vieworg.Y, -_RefDef.vieworg.Z );
 
-            //
-            // set drawing parms
-            //
-            if( _glCull.Value != 0 )
-                GL.Enable( EnableCap.CullFace );
-            else
-                GL.Disable( EnableCap.CullFace );
+            //GL.GetFloat( GetPName.ModelviewMatrix, out _WorldMatrix );
 
-            GL.Disable( EnableCap.Blend );
-            GL.Disable( EnableCap.AlphaTest );
-            GL.Enable( EnableCap.DepthTest );
-        }
+            ////
+            //// set drawing parms
+            ////
+            //if( _glCull.Value != 0 )
+            //    GL.Enable( EnableCap.CullFace );
+            //else
+            //    GL.Disable( EnableCap.CullFace );
 
-        private void MYgluPerspective( Double fovy, Double aspect, Double zNear, Double zFar )
-        {
-            var ymax = zNear * Math.Tan( fovy * Math.PI / 360.0 );
-            var ymin = -ymax;
-
-            var xmin = ymin * aspect;
-            var xmax = ymax * aspect;
-
-            GL.Frustum( xmin, xmax, ymin, ymax, zNear, zFar );
+            //GL.Disable( EnableCap.Blend );
+            //GL.Disable( EnableCap.AlphaTest );
+            //GL.Enable( EnableCap.DepthTest );
         }
 
         /// <summary>
         /// R_SetFrustum
         /// </summary>
-        private void SetFrustum()
+        private void SetFrustum( )
         {
-            if( _RefDef.fov_x == 90 )
+            if ( _RefDef.fov_x == 90 )
             {
                 // front side is visible
                 _Frustum[0].normal = ViewPn + ViewRight;
@@ -1210,7 +974,7 @@ namespace SharpQuake
                 MathLib.RotatePointAroundVector( out _Frustum[3].normal, ref ViewRight, ref ViewPn, -( 90 - _RefDef.fov_y / 2 ) );
             }
 
-            for( var i = 0; i < 4; i++ )
+            for ( var i = 0; i < 4; i++ )
             {
                 _Frustum[i].type = PlaneDef.PLANE_ANYZ;
                 _Frustum[i].dist = Vector3.Dot( Origin, _Frustum[i].normal );
@@ -1222,11 +986,11 @@ namespace SharpQuake
         {
             // for fast box on planeside test
             var bits = 0;
-            if( p.normal.X < 0 )
+            if ( p.normal.X < 0 )
                 bits |= 1 << 0;
-            if( p.normal.Y < 0 )
+            if ( p.normal.Y < 0 )
                 bits |= 1 << 1;
-            if( p.normal.Z < 0 )
+            if ( p.normal.Z < 0 )
                 bits |= 1 << 2;
             return bits;
         }
@@ -1234,13 +998,13 @@ namespace SharpQuake
         /// <summary>
         /// R_SetupFrame
         /// </summary>
-        private void SetupFrame()
+        private void SetupFrame( )
         {
             // don't allow cheats in multiplayer
-            if( Host.Client.cl.maxclients > 1 )
+            if ( Host.Client.cl.maxclients > 1 )
                 CVar.Set( "r_fullbright", "0" );
 
-            AnimateLight();
+            AnimateLight( );
 
             _FrameCount++;
 
@@ -1254,7 +1018,7 @@ namespace SharpQuake
             _ViewLeaf = Host.Model.PointInLeaf( ref Origin, Host.Client.cl.worldmodel );
 
             Host.View.SetContentsColor( _ViewLeaf.contents );
-            Host.View.CalcBlend();
+            Host.View.CalcBlend( );
 
             _CacheThrash = false;
             _BrushPolys = 0;
@@ -1264,80 +1028,35 @@ namespace SharpQuake
         /// <summary>
         /// R_Clear
         /// </summary>
-        private void Clear()
+        private void Clear( )
         {
-            if( _MirrorAlpha.Value != 1.0 )
-            {
-                if( _glClear.Value != 0 )
-                    GL.Clear( ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit );
-                else
-                    GL.Clear( ClearBufferMask.DepthBufferBit );
-                _glDepthMin = 0;
-                _glDepthMax = 0.5f;
-                GL.DepthFunc( DepthFunction.Lequal );
-            }
-            else if( Host.Video.glZTrick )
-            {
-                if( _glClear.Value != 0 )
-                    GL.Clear( ClearBufferMask.ColorBufferBit );
-
-                _TrickFrame++;
-                if( ( _TrickFrame & 1 ) != 0 )
-                {
-                    _glDepthMin = 0;
-                    _glDepthMax = 0.49999f;
-                    GL.DepthFunc( DepthFunction.Lequal );
-                }
-                else
-                {
-                    _glDepthMin = 1;
-                    _glDepthMax = 0.5f;
-                    GL.DepthFunc( DepthFunction.Gequal );
-                }
-            }
-            else
-            {
-                if( _glClear.Value != 0 )
-                {
-                    GL.Clear( ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit );
-                    // Uze
-                    Host.StatusBar.Changed();
-                }
-                else
-                    GL.Clear( ClearBufferMask.DepthBufferBit );
-
-                _glDepthMin = 0;
-                _glDepthMax = 1;
-                GL.DepthFunc( DepthFunction.Lequal );
-            }
-
-            GL.DepthRange( _glDepthMin, _glDepthMax );
+            Host.Video.Device.Clear( Host.Video.glZTrick, _glClear.Value );
         }
 
         /// <summary>
         /// R_TimeRefresh_f
         /// For program optimization
         /// </summary>
-        private void TimeRefresh_f()
+        private void TimeRefresh_f( )
         {
             //GL.DrawBuffer(DrawBufferMode.Front);
-            GL.Finish();
+            Host.Video.Device.Finish( );
 
-            var start = Timer.GetFloatTime();
-            for( var i = 0; i < 128; i++ )
+            var start = Timer.GetFloatTime( );
+            for ( var i = 0; i < 128; i++ )
             {
                 _RefDef.viewangles.Y = ( Single ) ( i / 128.0 * 360.0 );
-                RenderView();
-                MainWindow.Instance.SwapBuffers();
+                RenderView( );
+                MainWindow.Instance.SwapBuffers( );
             }
 
-            GL.Finish();
-            var stop = Timer.GetFloatTime();
+            Host.Video.Device.Finish( );
+            var stop = Timer.GetFloatTime( );
             var time = stop - start;
             Host.Console.Print( "{0:F} seconds ({1:F1} fps)\n", time, 128 / time );
 
             //GL.DrawBuffer(DrawBufferMode.Back);
-            Host.Screen.EndRendering();
+            Host.Screen.EndRendering( );
         }
 
         /// <summary>
@@ -1346,25 +1065,12 @@ namespace SharpQuake
         /// </summary>
         private System.Boolean CullBox( ref Vector3 mins, ref Vector3 maxs )
         {
-            for( var i = 0; i < 4; i++ )
+            for ( var i = 0; i < 4; i++ )
             {
-                if( MathLib.BoxOnPlaneSide( ref mins, ref maxs, _Frustum[i] ) == 2 )
+                if ( MathLib.BoxOnPlaneSide( ref mins, ref maxs, _Frustum[i] ) == 2 )
                     return true;
             }
             return false;
         }
     }
-
-    
-
-    
-
-    // !!! if this is changed, it must be changed in asm_draw.h too !!!
-    public class refdef_t
-    {
-        public VRect vrect;				// subwindow in video for refresh
-        public Vector3 vieworg;
-        public Vector3 viewangles;
-        public Single fov_x, fov_y;
-    } // refdef_t;
 }
