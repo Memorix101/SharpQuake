@@ -258,13 +258,13 @@
       <Project>{6cf287d3-d413-4c9b-abac-01e78d6ccadb}</Project>
       <Name>SharpQuake.Framework</Name>
     </ProjectReference>
+    <ProjectReference Include="SharpQuake.Renderer.OpenGL\SharpQuake.Renderer.OpenGL.csproj">
+      <Project>{c2ca7b76-9ca5-4b24-b0b1-7f0aa5a39eed}</Project>
+      <Name>SharpQuake.Renderer.OpenGL</Name>
+    </ProjectReference>
     <ProjectReference Include="SharpQuake.Renderer\SharpQuake.Renderer.csproj">
       <Project>{44fdf305-a5f5-4a4f-a285-d2dd0af98c5f}</Project>
       <Name>SharpQuake.Renderer</Name>
-    </ProjectReference>
-    <ProjectReference Include="SharpQuakeEvolved.Renderer.OpenGL\SharpQuake.Renderer.OpenGL.csproj">
-      <Project>{c2ca7b76-9ca5-4b24-b0b1-7f0aa5a39eed}</Project>
-      <Name>SharpQuake.Renderer.OpenGL</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
