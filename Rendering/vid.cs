@@ -134,15 +134,15 @@ namespace SharpQuake
 
         public BaseDevice Device
         {
-            get;
-            private set;
+            get
+            {
+                return Host.MainWindow.Device;
+            }
         }
 
         public Vid( Host host )
         {
             Host = host;
-
-            Device = new GLDevice( Host.MainWindow, MainWindow.DisplayDevice );
         }
 
         // VID_Init (unsigned char *palette)

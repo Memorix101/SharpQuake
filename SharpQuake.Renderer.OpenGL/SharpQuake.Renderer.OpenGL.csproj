@@ -46,6 +46,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Desktop\GLWindow.cs" />
     <Compile Include="GLDevice.cs" />
     <Compile Include="GLDeviceDesc.cs" />
     <Compile Include="GLGraphics.cs" />

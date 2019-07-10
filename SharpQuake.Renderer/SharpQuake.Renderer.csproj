@@ -45,6 +45,12 @@
     <Compile Include="BaseDevice.cs" />
     <Compile Include="BaseDeviceDesc.cs" />
     <Compile Include="BaseGraphics.cs" />
+    <Compile Include="Desktop\BaseWindow.cs" />
+    <Compile Include="Desktop\Key.cs" />
+    <Compile Include="Desktop\KeyboardKeyEventArgs.cs" />
+    <Compile Include="Desktop\MouseButton.cs" />
+    <Compile Include="Desktop\MouseButtonEventArgs.cs" />
+    <Compile Include="Desktop\MouseWheelEventArgs.cs" />
     <Compile Include="GLRect.cs" />
     <Compile Include="Models\BaseModel.cs" />
     <Compile Include="Models\BaseModelDesc.cs" />
@@ -61,6 +67,7 @@
     <Compile Include="Textures\BaseTextureAtlas.cs" />
     <Compile Include="Textures\TextureTarget.cs" />
     <Compile Include="VideoMode.cs" />
+    <Compile Include="VSyncMode.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\SharpQuake.Framework\SharpQuake.Framework.csproj">

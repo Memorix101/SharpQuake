@@ -1004,7 +1004,7 @@ namespace SharpQuake
             {
                 _RefDef.viewangles.Y = ( Single ) ( i / 128.0 * 360.0 );
                 RenderView( );
-                MainWindow.Instance.SwapBuffers( );
+                MainWindow.Instance.Present( );
             }
 
             Host.Video.Device.Finish( );

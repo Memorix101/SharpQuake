@@ -26,15 +26,15 @@ using System;
 using System.Diagnostics;
 using System.Drawing;
 using System.IO;
-using OpenTK;
-using OpenTK.Graphics;
-using OpenTK.Input;
 using SDL2;
 using SharpQuake.Framework;
+using SharpQuake.Renderer;
+using SharpQuake.Renderer.Desktop;
+using SharpQuake.Renderer.OpenGL.Desktop;
 
 namespace SharpQuake
 {
-    public class MainWindow : GameWindow
+    public class MainWindow : GLWindow//GameWindow
     {
         public static MainWindow Instance
         {
@@ -44,23 +44,11 @@ namespace SharpQuake
             }
         }
 
-        public static DisplayDevice DisplayDevice
-        {
-            get
-            {
-                return _DisplayDevice;
-            }
-            set
-            {
-                _DisplayDevice = value;
-            }
-        }
-
         public static Boolean IsFullscreen
         {
             get
             {
-                return ( Instance.WindowState == WindowState.Fullscreen );
+                return Instance.IsFullScreen;
             }
         }
 
@@ -115,7 +103,6 @@ namespace SharpQuake
         }
 
         private static WeakReference _Instance;
-        private static DisplayDevice _DisplayDevice;
 
         private Int32 _MouseBtnState;
         private Stopwatch _Swatch;
@@ -126,9 +113,9 @@ namespace SharpQuake
             private set;
         }
 
-        protected override void OnFocusedChanged( EventArgs e )
+        protected override void OnFocusedChanged( )
         {
-            base.OnFocusedChanged( e );
+            base.OnFocusedChanged( );
 
             if ( this.Focused )
                 Host.Sound.UnblockSound( );
@@ -136,7 +123,7 @@ namespace SharpQuake
                 Host.Sound.BlockSound( );
         }
 
-        protected override void OnClosing( System.ComponentModel.CancelEventArgs e )
+        protected override void OnClosing(  )
         {
             // Turned this of as I hate this prompt so much 
             /*if (this.ConfirmExit)
@@ -174,14 +161,14 @@ namespace SharpQuake
                 //"Confirm Exit", MessageBoxButtons.YesNo) != DialogResult.Yes);
             }
             */
-            base.OnClosing( e );
+            base.OnClosing(  );
         }
 
-        protected override void OnUpdateFrame( FrameEventArgs e )
+        protected override void OnUpdateFrame( Double time )
         {
             try
             {
-                if ( this.WindowState == OpenTK.WindowState.Minimized || Host.Screen.BlockDrawing || Host.IsDisposing )
+                if ( IsMinimised || Host.Screen.BlockDrawing || Host.IsDisposing )
                     Host.Screen.SkipUpdate = true;	// no point in bothering to draw
 
                 _Swatch.Stop( );
@@ -196,13 +183,13 @@ namespace SharpQuake
             }
         }
 
-        private static MainWindow CreateInstance( Size size, GraphicsMode mode, Boolean fullScreen )
+        private static MainWindow CreateInstance( Size size, Boolean fullScreen )
         {
             if ( _Instance != null )
             {
                 throw new Exception( "Game instance is already created!" );
             }
-            return new MainWindow( size, mode, fullScreen );
+            return new MainWindow( size, fullScreen );
         }
 
         private static void DumpError( Exception ex )
@@ -266,18 +253,6 @@ namespace SharpQuake
         [STAThread]
         private static Int32 Main( String[] args )
         {
-            //Workaround for SDL2 mouse input issues
-            var options = new ToolkitOptions( );
-            options.Backend = PlatformBackend.PreferNative;
-            options.EnableHighResolution = true; //Just for testing
-            Toolkit.Init( options );
-#if !DEBUG
-            try
-            {
-#endif
-            // select display device
-            _DisplayDevice = DisplayDevice.Default;
-
             if ( File.Exists( DumpFilePath ) )
                 File.Delete( DumpFilePath );
 
@@ -301,9 +276,8 @@ namespace SharpQuake
                 throw new QuakeException( "Dedicated server mode not supported!" );
 
             var size = new Size( 1280, 720 );
-            var mode = new GraphicsMode( );
 
-            using ( var form = MainWindow.CreateInstance( size, mode, false ) )
+            using ( var form = MainWindow.CreateInstance( size, false ) )
             {
                 form.Host.Console.DPrint( "Host.Init\n" );
                 form.Host.Initialise( parms );
@@ -325,7 +299,7 @@ namespace SharpQuake
             return 0; // all Ok
         }
 
-        private void Mouse_WheelChanged( Object sender, OpenTK.Input.MouseWheelEventArgs e )
+        private void Mouse_WheelChanged( Object sender, MouseWheelEventArgs e )
         {
             if ( e.Delta > 0 )
             {
@@ -339,7 +313,7 @@ namespace SharpQuake
             }
         }
 
-        private void Mouse_ButtonEvent( Object sender, OpenTK.Input.MouseButtonEventArgs e )
+        private void Mouse_ButtonEvent( Object sender, MouseButtonEventArgs e )
         {
             _MouseBtnState = 0;
 
@@ -355,12 +329,12 @@ namespace SharpQuake
             Input.MouseEvent( _MouseBtnState );
         }
 
-        private void Mouse_Move( Object sender, OpenTK.Input.MouseMoveEventArgs e )
+        private void Mouse_Move( Object sender, EventArgs e )
         {
             Input.MouseEvent( _MouseBtnState );
         }
 
-        private Int32 MapKey( OpenTK.Input.Key srcKey )
+        private Int32 MapKey( Key srcKey )
         {
             var key = ( Int32 ) srcKey;
             key &= 255;
@@ -374,31 +348,31 @@ namespace SharpQuake
             return _KeyTable[key];
         }
 
-        private void Keyboard_KeyUp( Object sender, OpenTK.Input.KeyboardKeyEventArgs e )
+        private void Keyboard_KeyUp( Object sender, KeyboardKeyEventArgs e )
         {
             MainWindow.Instance.Host.Keyboard.Event( MapKey( e.Key ), false );
         }
 
-        private void Keyboard_KeyDown( Object sender, OpenTK.Input.KeyboardKeyEventArgs e )
+        private void Keyboard_KeyDown( Object sender, KeyboardKeyEventArgs e )
         {
             MainWindow.Instance.Host.Keyboard.Event( MapKey( e.Key ), true );
         }
 
-        private MainWindow( Size size, GraphicsMode mode, Boolean fullScreen )
-        : base( size.Width, size.Height, mode, "SharpQuake", fullScreen ? GameWindowFlags.Fullscreen : GameWindowFlags.Default )
+        private MainWindow( Size size, Boolean isFullScreen )
+        : base( "SharpQuakeEvolved", size, isFullScreen )
         {
             _Instance = new WeakReference( this );
             _Swatch = new Stopwatch( );
-            this.VSync = VSyncMode.On;
+            this.VSync = VSyncMode.One;
             this.Icon = Icon.ExtractAssociatedIcon( AppDomain.CurrentDomain.FriendlyName ); //Application.ExecutablePath
 
-            this.KeyDown += new EventHandler<OpenTK.Input.KeyboardKeyEventArgs>( Keyboard_KeyDown );
-            this.KeyUp += new EventHandler<OpenTK.Input.KeyboardKeyEventArgs>( Keyboard_KeyUp );
+            this.KeyDown += new EventHandler<KeyboardKeyEventArgs>( Keyboard_KeyDown );
+            this.KeyUp += new EventHandler<KeyboardKeyEventArgs>( Keyboard_KeyUp );
 
-            this.MouseMove += new EventHandler<OpenTK.Input.MouseMoveEventArgs>( Mouse_Move );
-            this.MouseDown += new EventHandler<OpenTK.Input.MouseButtonEventArgs>( Mouse_ButtonEvent );
-            this.MouseUp += new EventHandler<OpenTK.Input.MouseButtonEventArgs>( Mouse_ButtonEvent );
-            this.MouseWheel += new EventHandler<OpenTK.Input.MouseWheelEventArgs>( Mouse_WheelChanged );
+            this.MouseMove += new EventHandler<EventArgs>( Mouse_Move );
+            this.MouseDown += new EventHandler<MouseButtonEventArgs>( Mouse_ButtonEvent );
+            this.MouseUp += new EventHandler<MouseButtonEventArgs>( Mouse_ButtonEvent );
+            this.MouseWheel += new EventHandler<MouseWheelEventArgs>( Mouse_WheelChanged );
 
             Host = new Host( this );
         }

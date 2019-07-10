@@ -23,9 +23,8 @@
 /// </copyright>
 
 using System.Drawing;
-using OpenTK;
-using OpenTK.Input;
 using SharpQuake.Framework;
+using SharpQuake.Framework.Mathematics;
 
 // input.h -- external (non-keyboard) input devices
 
@@ -82,7 +81,7 @@ namespace SharpQuake
                 _MouseFilter = new CVar( "m_filter", "0" );
             }
 
-            _IsMouseActive = ( Mouse.GetState( 0 ).IsConnected != false );
+            _IsMouseActive = Host.MainWindow.IsMouseActive;
             if( _IsMouseActive )
             {
                 _MouseButtons = 3; //??? TODO: properly upgrade this to 3.0.1
@@ -112,13 +111,13 @@ namespace SharpQuake
         {
             _MouseActivateToggle = true;
 
-            if( Mouse.GetState( 0 ).IsConnected != false )
+            if( Host.MainWindow.IsMouseActive )
             {
                 //if (mouseparmsvalid)
                 //    restore_spi = SystemParametersInfo (SPI_SETMOUSE, 0, newmouseparms, 0);
 
                 //Cursor.Position = Input.WindowCenter;
-                Mouse.SetPosition(WindowCenter.X, WindowCenter.Y);
+                Host.MainWindow.SetMousePosition(WindowCenter.X, WindowCenter.Y);
 
 
                 //SetCapture(mainwindow);
@@ -175,7 +174,7 @@ namespace SharpQuake
             if( !MainWindow.Instance.Focused )
                 return;
 
-            if( MainWindow.Instance.WindowState == WindowState.Minimized )
+            if( MainWindow.Instance.IsMinimised )
                 return;
 
             MouseMove( cmd );
@@ -224,8 +223,8 @@ namespace SharpQuake
         {
             if( !_IsMouseActive )
                 return;
-           
-            var current_pos = new Point(Mouse.GetCursorState().X, Mouse.GetCursorState().Y); //Cursor.Position;
+
+            var current_pos = Host.MainWindow.GetMousePosition( ); //Cursor.Position;
             var window_center = WindowCenter;
 
             var mx = ( System.Int32 ) ( current_pos.X - window_center.X + _MouseAccum.X );
@@ -266,7 +265,7 @@ namespace SharpQuake
             if( mx != 0 || my != 0 )
             {
                 //Cursor.Position = window_center;
-                Mouse.SetPosition(window_center.X, window_center.Y);
+                Host.MainWindow.SetMousePosition(window_center.X, window_center.Y);
             }
         }
     }
