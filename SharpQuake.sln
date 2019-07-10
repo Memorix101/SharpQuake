@@ -11,7 +11,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SharpQuake.Renderer", "Shar
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SharpQuake.Renderer.OpenGL", "SharpQuake.Renderer.OpenGL\SharpQuake.Renderer.OpenGL.csproj", "{C2CA7B76-9CA5-4B24-B0B1-7F0AA5A39EED}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SharpQuake.Game", "..\SharpQuake.Game\SharpQuake.Game.csproj", "{5C497D12-3411-4DF9-99CA-5F176EA024E8}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SharpQuake.Game", "SharpQuake.Game\SharpQuake.Game.csproj", "{5C497D12-3411-4DF9-99CA-5F176EA024E8}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
