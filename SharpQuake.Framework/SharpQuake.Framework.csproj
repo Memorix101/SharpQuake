@@ -167,10 +167,16 @@
     <Compile Include="Rendering\Alias\AliasFrameDesc.cs" />
     <Compile Include="Rendering\Alias\AliasHeader.cs" />
     <Compile Include="Rendering\CachePic.cs" />
+    <Compile Include="Rendering\DLight.cs" />
     <Compile Include="Rendering\GLPic.cs" />
     <Compile Include="Rendering\GLPoly.cs" />
     <Compile Include="Rendering\GLTexture.cs" />
     <Compile Include="Definitions\Bsp\SurfaceDef.cs" />
+    <Compile Include="Rendering\Sprite\Sprite.cs" />
+    <Compile Include="Rendering\Sprite\SpriteFrame.cs" />
+    <Compile Include="Rendering\Sprite\SpriteFrameDesc.cs" />
+    <Compile Include="Rendering\Sprite\SpriteFrameType.cs" />
+    <Compile Include="Rendering\Sprite\SpriteGroup.cs" />
     <Compile Include="Rendering\SyncType.cs" />
     <Compile Include="Rendering\TriVertex.cs" />
     <Compile Include="Rendering\VidDef.cs" />

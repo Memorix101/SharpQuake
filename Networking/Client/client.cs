@@ -316,25 +316,6 @@ namespace SharpQuake
         }
     } // cshift_t;
 
-    public class dlight_t
-    {
-        public Vector3 origin;
-        public Single radius;
-        public Single die;				// stop lighting after this time
-        public Single decay;				// drop this each second
-        public Single minlight;			// don't add when contributing less
-        public Int32 key;
-
-        public void Clear()
-        {
-            this.origin = Vector3.Zero;
-            this.radius = 0;
-            this.die = 0;
-            this.decay = 0;
-            this.minlight = 0;
-            this.key = 0;
-        }
-    } //dlight_t;
 
     internal class beam_t
     {

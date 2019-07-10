@@ -23,8 +23,6 @@
 /// </copyright>
 
 using System;
-using System.Runtime.InteropServices;
-using OpenTK.Graphics.OpenGL;
 using SharpQuake.Framework;
 using SharpQuake.Framework.Mathematics;
 using SharpQuake.Game.Rendering.Memory;
@@ -473,14 +471,15 @@ namespace SharpQuake
             //
             // go back to the world matrix
             //
-            GL.LoadMatrix( ref _WorldMatrix );
+            Host.Video.Device.ResetMatrix( );
 
-            if ( _WaterAlpha.Value < 1.0 )
-            {
-                GL.Enable( EnableCap.Blend );
-                GL.Color4( 1, 1, 1, _WaterAlpha.Value );
-                GL.TexEnv( TextureEnvTarget.TextureEnv, TextureEnvParameter.TextureEnvMode, ( Int32 ) TextureEnvMode.Modulate );
-            }
+            // WaterAlpha is broken - will fix when we introduce GLSL...
+            //if ( _WaterAlpha.Value < 1.0 )
+            //{
+            //    GL.Enable( EnableCap.Blend );
+            //    GL.Color4( 1, 1, 1, _WaterAlpha.Value );
+            //    GL.TexEnv( TextureEnvTarget.TextureEnv, TextureEnvParameter.TextureEnvMode, ( Int32 ) TextureEnvMode.Modulate );
+            //}
 
             if( _glTexSort.Value == 0 )
             {
@@ -520,12 +519,13 @@ namespace SharpQuake
                 }
             }
 
-            if( _WaterAlpha.Value < 1.0 )
-            {
-                GL.TexEnv( TextureEnvTarget.TextureEnv, TextureEnvParameter.TextureEnvMode, ( Int32 ) TextureEnvMode.Replace );
-                GL.Color4( 1f, 1, 1, 1 );
-                GL.Disable( EnableCap.Blend );
-            }
+            // WaterAlpha is broken - will fix when we introduce GLSL...
+            //if( _WaterAlpha.Value < 1.0 )
+            //{
+            //    GL.TexEnv( TextureEnvTarget.TextureEnv, TextureEnvParameter.TextureEnvMode, ( Int32 ) TextureEnvMode.Replace );
+            //    GL.Color4( 1f, 1, 1, 1 );
+            //    GL.Disable( EnableCap.Blend );
+            //}
         }
 
         /// <summary>
@@ -580,9 +580,7 @@ namespace SharpQuake
             _ModelOrg = _RefDef.vieworg;
             _CurrentEntity = _TempEnt;
             Host.DrawingContext.CurrentTexture = -1;
-
-            GL.Color3( 1f, 1, 1 );
-
+            
             Array.Clear( _LightMapPolys, 0, _LightMapPolys.Length );
 
             RecursiveWorldNode( _TempEnt.model.nodes[0] );
@@ -602,21 +600,7 @@ namespace SharpQuake
             if( _glTexSort.Value == 0 )
                 return;
 
-            Host.Video.Device.SetZWrite( false ); // don't bother writing Z
-
-            if( Host.DrawingContext.LightMapFormat == "GL_LUMINANCE" )
-                GL.BlendFunc( BlendingFactor.Zero, BlendingFactor.OneMinusSrcColor );
-            //else if (gl_lightmap_format == GL_INTENSITY)
-            //{
-            //    glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
-            //    glColor4f(0, 0, 0, 1);
-            //    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-            //}
-
-            if( _LightMap.Value == 0 )
-            {
-                GL.Enable( EnableCap.Blend );
-            }
+            Host.Video.Device.Graphics.BeginBlendLightMap( ( _LightMap.Value == 0 ), Host.DrawingContext.LightMapFormat );
             
             for ( var i = 0; i < RenderDef.MAX_LIGHTMAPS; i++ )
             {
@@ -638,16 +622,7 @@ namespace SharpQuake
                 }
             }
 
-            GL.Disable( EnableCap.Blend );
-            if( Host.DrawingContext.LightMapFormat == "GL_LUMINANCE" )
-                GL.BlendFunc( BlendingFactor.SrcAlpha, BlendingFactor.OneMinusSrcAlpha );
-            //else if (gl_lightmap_format == GL_INTENSITY)
-            //{
-            //    glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE);
-            //    glColor4f(1, 1, 1, 1);
-            //}
-
-            Host.Video.Device.SetZWrite( true ); // back to normal Z buffering
+            Host.Video.Device.Graphics.EndBlendLightMap( ( _LightMap.Value == 0 ), Host.DrawingContext.LightMapFormat );
         }
 
         private void DrawTextureChains()
@@ -910,7 +885,6 @@ namespace SharpQuake
         /// </summary>
         private void DrawSequentialPoly( MemorySurface s )
         {
-            //GL.Enable( EnableCap.Texture2D );
             //
             // normal lightmaped poly
             //
@@ -921,54 +895,12 @@ namespace SharpQuake
                 var t = TextureAnimation( s.texinfo.texture );
                 if( Host.Video.Device.Desc.SupportsMultiTexture )
                 {
-                    // Binds world to texture env 0
-                    Host.DrawingContext.SelectTexture( MTexTarget.TEXTURE0_SGIS );
-                    t.texture.Bind( );
-                    GL.TexEnv( TextureEnvTarget.TextureEnv, TextureEnvParameter.TextureEnvMode, ( Int32 ) TextureEnvMode.Replace );
-
-                    // Binds lightmap to texenv 1
-                    Host.Video.Device.EnableMultitexture(); // Same as SelectTexture (TEXTURE1).
-                    LightMapTexture.BindLightmap( ( ( GLTextureDesc ) LightMapTexture.Desc ).TextureNumber + s.lightmaptexturenum );
-                    var i = s.lightmaptexturenum;
-                    if( LightMapTexture.LightMapModified[i] )
-                        CommitLightmap( i );
-
-                    GL.TexEnv( TextureEnvTarget.TextureEnv, TextureEnvParameter.TextureEnvMode, ( Int32 ) TextureEnvMode.Blend );
-                    GL.Begin( PrimitiveType.Polygon );
-                    for( i = 0; i < p.numverts; i++ )
-                    {
-                        var v = p.verts[i];
-                        GL.MultiTexCoord2( TextureUnit.Texture0, v[3], v[4] );
-                        GL.MultiTexCoord2( TextureUnit.Texture1, v[5], v[6] );
-                        GL.Vertex3( v );
-                    }
-                    GL.End();
+                    Host.Video.Device.Graphics.DrawSequentialPolyMultiTexture( t.texture, LightMapTexture, _LightMaps, p, s.lightmaptexturenum );
                     return;
                 }
                 else
                 {
-                    t.texture.Bind( );
-                    GL.Begin( PrimitiveType.Polygon );
-                    for( var i = 0; i < p.numverts; i++ )
-                    {
-                        var v = p.verts[i];
-                        GL.TexCoord2( v[3], v[4] );
-                        GL.Vertex3( v );
-                    }
-                    GL.End();
-
-                    LightMapTexture.BindLightmap( ( ( GLTextureDesc ) LightMapTexture.Desc ).TextureNumber + s.lightmaptexturenum );
-                    GL.Enable( EnableCap.Blend );
-                    GL.Begin( PrimitiveType.Polygon );
-                    for( var i = 0; i < p.numverts; i++ )
-                    {
-                        var v = p.verts[i];
-                        GL.TexCoord2( v[5], v[6] );
-                        GL.Vertex3( v );
-                    }
-                    GL.End();
-
-                    GL.Disable( EnableCap.Blend );
+                    Host.Video.Device.Graphics.DrawSequentialPoly( t.texture, LightMapTexture, p, s.lightmaptexturenum );
                 }
 
                 return;
@@ -1013,32 +945,39 @@ namespace SharpQuake
             if( Host.Video.Device.Desc.SupportsMultiTexture )
             {
                 var t = TextureAnimation( s.texinfo.texture );
+
                 Host.DrawingContext.SelectTexture( MTexTarget.TEXTURE0_SGIS );
-                t.texture.Bind( );
-                GL.TexEnv( TextureEnvTarget.TextureEnv, TextureEnvParameter.TextureEnvMode, ( Int32 ) TextureEnvMode.Replace );
-                Host.Video.Device.EnableMultitexture();
-                LightMapTexture.BindLightmap( ( ( GLTextureDesc ) LightMapTexture.Desc ).TextureNumber + s.lightmaptexturenum );
-                var i = s.lightmaptexturenum;
-                if( LightMapTexture.LightMapModified[i] )
-                    CommitLightmap( i );
 
-                GL.TexEnv( TextureEnvTarget.TextureEnv, TextureEnvParameter.TextureEnvMode, ( Int32 ) TextureEnvMode.Blend );
-                GL.Begin( PrimitiveType.TriangleFan );
-                var p = s.polys;
-                var nv = new Single[3];
-                for( i = 0; i < p.numverts; i++ )
-                {
-                    var v = p.verts[i];
-                    GL.MultiTexCoord2( TextureUnit.Texture0, v[3], v[4] );
-                    GL.MultiTexCoord2( TextureUnit.Texture1, v[5], v[6] );
+                Host.Video.Device.Graphics.DrawWaterPolyMultiTexture( _LightMaps, t.texture, LightMapTexture, s.lightmaptexturenum, s.polys, Host.RealTime );
+                //t.texture.Bind( );
 
-                    nv[0] = ( Single ) ( v[0] + 8 * Math.Sin( v[1] * 0.05 + Host.RealTime ) * Math.Sin( v[2] * 0.05 + Host.RealTime ) );
-                    nv[1] = ( Single ) ( v[1] + 8 * Math.Sin( v[0] * 0.05 + Host.RealTime ) * Math.Sin( v[2] * 0.05 + Host.RealTime ) );
-                    nv[2] = v[2];
+                //GL.TexEnv( TextureEnvTarget.TextureEnv, TextureEnvParameter.TextureEnvMode, ( Int32 ) TextureEnvMode.Replace );
 
-                    GL.Vertex3( nv );
-                }
-                GL.End();
+                //Host.Video.Device.EnableMultitexture();
+
+                //LightMapTexture.BindLightmap( ( ( GLTextureDesc ) LightMapTexture.Desc ).TextureNumber + s.lightmaptexturenum );
+
+                //var i = s.lightmaptexturenum;
+                //if( LightMapTexture.LightMapModified[i] )
+                //    CommitLightmap( i );
+
+                //GL.TexEnv( TextureEnvTarget.TextureEnv, TextureEnvParameter.TextureEnvMode, ( Int32 ) TextureEnvMode.Blend );
+                //GL.Begin( PrimitiveType.TriangleFan );
+                //var p = s.polys;
+                //var nv = new Single[3];
+                //for( i = 0; i < p.numverts; i++ )
+                //{
+                //    var v = p.verts[i];
+                //    GL.MultiTexCoord2( TextureUnit.Texture0, v[3], v[4] );
+                //    GL.MultiTexCoord2( TextureUnit.Texture1, v[5], v[6] );
+
+                //    nv[0] = ( Single ) ( v[0] + 8 * Math.Sin( v[1] * 0.05 + Host.RealTime ) * Math.Sin( v[2] * 0.05 + Host.RealTime ) );
+                //    nv[1] = ( Single ) ( v[1] + 8 * Math.Sin( v[0] * 0.05 + Host.RealTime ) * Math.Sin( v[2] * 0.05 + Host.RealTime ) );
+                //    nv[2] = v[2];
+
+                //    GL.Vertex3( nv );
+                //}
+                //GL.End();
             }
             else
             {

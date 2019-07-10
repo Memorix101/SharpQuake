@@ -176,11 +176,17 @@ namespace SharpQuake.Renderer
             ConsoleWrapper.Print( "GL_VERSION: {0}\n", Desc.Version );
             ConsoleWrapper.Print( "GL_EXTENSIONS: {0}\n", Desc.Extensions );
             
-            if ( Desc.Extensions.Contains( "GL_SGIS_multitexture " ) && !CommandLine.HasParam( "-nomtex" ) )
+            // Multitexturing is a bit buggy, water doesn't work
+            if ( ( Desc.Extensions.Contains( "GL_SGIS_multitexture " ) /*|| Desc.Extensions.Contains( "GL_ARB_multitexture " ) */) && !CommandLine.HasParam( "-nomtex" ) )
             {
                 ConsoleWrapper.Print( "Multitexture extensions found.\n" );
                 Desc.SupportsMultiTexture = true;
             }
+        }
+
+        public virtual void ResetMatrix( )
+        {
+            throw new NotImplementedException( );
         }
 
         public virtual void Dispose( )

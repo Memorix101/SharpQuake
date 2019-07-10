@@ -23,13 +23,8 @@
 /// </copyright>
 
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 using string_t = System.Int32;
-using func_t = System.Int32;
 using System.Runtime.InteropServices;
 
 namespace SharpQuake.Framework

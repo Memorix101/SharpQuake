@@ -23,8 +23,6 @@
 /// </copyright>
 /// 
 using System;
-using System.IO;
-using System.Text;
 using SharpQuake.Framework;
 using SharpQuake.Renderer.Textures;
 

@@ -29,7 +29,6 @@ using System.Runtime.InteropServices;
 using SharpQuake.Framework;
 using SharpQuake.Framework.IO;
 using SharpQuake.Renderer.Textures;
-using Buffer = System.Buffer;
 
 // gl_draw.c
 

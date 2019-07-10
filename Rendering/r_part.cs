@@ -23,9 +23,6 @@
 /// </copyright>
 
 using System;
-using System.Linq;
-using System.Collections.Generic;
-using OpenTK.Graphics.OpenGL;
 using SharpQuake.Framework;
 using SharpQuake.Framework.Mathematics;
 using SharpQuake.Game.World;

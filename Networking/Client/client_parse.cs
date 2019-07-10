@@ -23,9 +23,7 @@
 /// </copyright>
 
 using System;
-using OpenTK;
 using SharpQuake.Framework;
-using SharpQuake.Game.Rendering.Models;
 using SharpQuake.Game.World;
 
 // cl_parse.c

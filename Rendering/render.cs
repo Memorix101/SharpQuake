@@ -23,8 +23,6 @@
 /// </copyright>
 
 using System;
-using System.Runtime.InteropServices;
-using OpenTK.Graphics.OpenGL;
 using SharpQuake.Framework;
 using SharpQuake.Framework.Mathematics;
 using SharpQuake.Game.Rendering.Memory;
@@ -688,38 +686,9 @@ namespace SharpQuake
                 right = ViewRight;// vright;
             }
 
-            GL.Color3( 1f, 1, 1 );
-
-            Host.Video.Device.DisableMultitexture( );
-
-            GL.Enable( EnableCap.Texture2D );
-
             var texture = Host.Model.SpriteTextures[frame.gl_texturenum];
-            texture.Bind( );
 
-            GL.Enable( EnableCap.AlphaTest );
-            GL.Begin( PrimitiveType.Quads );
-
-            GL.TexCoord2( 0f, 1 );
-            var point = e.origin + up * frame.down + right * frame.left;
-            GL.Vertex3( point.X, point.Y, point.Z );
-
-            GL.TexCoord2( 0f, 0 );
-            point = e.origin + up * frame.up + right * frame.left;
-            GL.Vertex3( point.X, point.Y, point.Z );
-
-            GL.TexCoord2( 1f, 0 );
-            point = e.origin + up * frame.up + right * frame.right;
-            GL.Vertex3( point.X, point.Y, point.Z );
-
-            GL.TexCoord2( 1f, 1 );
-            point = e.origin + up * frame.down + right * frame.right;
-            GL.Vertex3( point.X, point.Y, point.Z );
-
-            GL.End( );
-
-            GL.Disable( EnableCap.Texture2D );
-            GL.Disable( EnableCap.AlphaTest );
+            Host.Video.Device.Graphics.DrawSpriteModel( texture, frame, up, right, e.origin );
         }
 
         /// <summary>
@@ -858,18 +827,6 @@ namespace SharpQuake
             model.DrawAliasModel( _ShadeLight, _ShadeVector, _ShadeDots, _LightSpot.Z, paliashdr,
                 Host.Client.cl.time, ( _Shadows.Value != 0 ), ( _glSmoothModels.Value != 0 ), ( _glAffineModels.Value != 0 ),
                 _glNoColors.Value == 0, ( clmodel.name == "progs/eyes.mdl" && _glDoubleEyes.Value != 0 ) );
-        }
-
-        /// <summary>
-        /// R_RotateForEntity
-        /// </summary>
-        private void RotateForEntity( Entity e )
-        {
-            GL.Translate( e.origin.X, e.origin.Y, e.origin.Z );
-
-            GL.Rotate( e.angles.Y, 0, 0, 1 );
-            GL.Rotate( -e.angles.X, 0, 1, 0 );
-            GL.Rotate( e.angles.Z, 1, 0, 0 );
         }
 
         /// <summary>

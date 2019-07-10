@@ -25,8 +25,6 @@
 using System;
 using System.Runtime.InteropServices;
 using SharpQuake.Framework;
-using SharpQuake.Game.Rendering.Models;
-using SharpQuake.Framework.Mathematics;
 
 // gl_model.h
 // modelgen.h
@@ -49,41 +47,12 @@ namespace SharpQuake
     // plane_t structure
     // !!! if this is changed, it must be changed in asm_i386.h too !!!
 
-    // FIXME: shorten these?
-    class mspriteframe_t
-    {
-        public Int32 width;
-        public Int32 height;
-        public Single up, down, left, right;
-        public Int32 gl_texturenum;
-    } //mspriteframe_t;
-
-    class mspritegroup_t
-    {
-        public Int32 numframes;
-        public Single[] intervals; // float*
-        public mspriteframe_t[] frames; // mspriteframe_t	*frames[1];
-    } //mspritegroup_t;
-
-    struct mspriteframedesc_t
-    {
-        public spriteframetype_t type;
-        public Object frameptr; // mspriteframe_t or mspritegroup_t
-    } // mspriteframedesc_t;
-
-    class msprite_t
-    {
-        public Int32 type;
-        public Int32 maxwidth;
-        public Int32 maxheight;
-        public Int32 numframes;
-        public Single beamlength;		// remove?
-        //void				*cachespot;		// remove?
-        public mspriteframedesc_t[] frames; // mspriteframedesc_t	frames[1];
-    } // msprite_t;
 
 
-    
+
+
+
+
 
     //===================================================================
 
@@ -292,11 +261,6 @@ namespace SharpQuake
 
         public static Int32 SizeInBytes = Marshal.SizeOf(typeof(dspriteinterval_t));
     } // dspriteinterval_t;
-
-    enum spriteframetype_t
-    {
-        SPR_SINGLE = 0, SPR_GROUP
-    } // spriteframetype_t;
 
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
     struct dspriteframetype_t

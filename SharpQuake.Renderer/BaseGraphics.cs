@@ -23,11 +23,7 @@
 /// </copyright>
 
 using System;
-using System.Collections.Generic;
 using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using SharpQuake.Framework;
 using SharpQuake.Framework.Mathematics;
 using SharpQuake.Renderer.Textures;
@@ -157,12 +153,57 @@ namespace SharpQuake.Renderer
             throw new NotImplementedException( );
         }
 
+        public virtual void DrawSequentialPoly( BaseTexture texture, BaseTexture lightMapTexture, GLPoly p, Int32 lightMapNumber )
+        {
+            throw new NotImplementedException( );
+        }
+
+        public virtual void DrawSequentialPolyMultiTexture( BaseTexture texture, BaseTexture lightMapTexture, Byte[] lightMapData, GLPoly p, Int32 lightMapNumber )
+        {
+            throw new NotImplementedException( );
+        }
+
+        public virtual void DrawWaterPolyMultiTexture( Byte[] lightMapData, BaseTexture texture, BaseTexture lightMapTexture, Int32 lightMapTextureNumber, GLPoly p, Double time )
+        {
+            throw new NotImplementedException( );
+        }
+
         public virtual void Fill( Int32 x, Int32 y, Int32 width, Int32 height, Color color )
         {
             throw new NotImplementedException( );
         }
 
         public virtual void DrawTransTranslate( BaseTexture texture, Int32 x, Int32 y, Int32 width, Int32 height, Byte[] translation )
+        {
+            throw new NotImplementedException( );
+        }
+
+        public virtual void BeginBlendLightMap( Boolean lightMapCvar, String filter = "GL_LUMINANCE" )
+        {
+            throw new NotImplementedException( );
+        }
+
+        public virtual void EndBlendLightMap( Boolean lightMapCvar, String filter = "GL_LUMINANCE" )
+        {
+            throw new NotImplementedException( );
+        }
+
+        public virtual void BeginDLights( )
+        {
+            throw new NotImplementedException( );
+        }
+
+        public virtual void EndDLights( )
+        {
+            throw new NotImplementedException( );
+        }
+
+        public virtual void DrawDLight( dlight_t light, Vector3 viewProj, Vector3 viewUp, Vector3 viewRight )
+        {
+            throw new NotImplementedException( );
+        }
+
+        public virtual void DrawSpriteModel( BaseTexture texture, mspriteframe_t frame, Vector3 up, Vector3 right, Vector3 origin )
         {
             throw new NotImplementedException( );
         }

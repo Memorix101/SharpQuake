@@ -23,7 +23,6 @@
 /// </copyright>
 
 using System;
-using OpenTK.Graphics.OpenGL;
 using SharpQuake.Framework;
 using SharpQuake.Framework.Mathematics;
 using SharpQuake.Game.Rendering.Memory;
@@ -106,13 +105,10 @@ namespace SharpQuake
             if( _glFlashBlend.Value == 0 )
                 return;
 
-            _DlightFrameCount = _FrameCount + 1;	// because the count hasn't advanced yet for this frame
+            _DlightFrameCount = _FrameCount + 1;    // because the count hasn't advanced yet for this frame
 
+            Host.Video.Device.Graphics.BeginDLights( );
             Host.Video.Device.SetZWrite( false );
-            GL.Disable( EnableCap.Texture2D );
-            GL.ShadeModel( ShadingModel.Smooth );
-            GL.Enable( EnableCap.Blend );
-            GL.BlendFunc( BlendingFactor.One, BlendingFactor.One );
 
             for( var i = 0; i < ClientDef.MAX_DLIGHTS; i++ )
             {
@@ -123,11 +119,7 @@ namespace SharpQuake
                 RenderDlight( l );
             }
 
-            GL.Color3( 1f, 1, 1 );
-            GL.Disable( EnableCap.Blend );
-            GL.Enable( EnableCap.Texture2D );
-            GL.BlendFunc( BlendingFactor.SrcAlpha, BlendingFactor.OneMinusSrcAlpha );
-            Host.Video.Device.SetZWrite( true );
+            Host.Video.Device.Graphics.EndDLights( );
         }
 
         /// <summary>
@@ -270,18 +262,7 @@ namespace SharpQuake
                 return;
             }
 
-            GL.Begin( PrimitiveType.TriangleFan );
-            GL.Color3( 0.2f, 0.1f, 0 );
-            v = light.origin - ViewPn * rad;
-            GL.Vertex3( v.X, v.Y, v.Z );
-            GL.Color3( 0, 0, 0 );
-            for( var i = 16; i >= 0; i-- )
-            {
-                var a = i / 16.0 * Math.PI * 2;
-                v = light.origin + ViewRight * ( Single ) Math.Cos( a ) * rad + ViewUp * ( Single ) Math.Sin( a ) * rad;
-                GL.Vertex3( v.X, v.Y, v.Z );
-            }
-            GL.End();
+            Host.Video.Device.Graphics.DrawDLight( light, ViewPn, ViewUp, ViewRight );
         }
 
         private void AddLightBlend( Single r, Single g, Single b, Single a2 )

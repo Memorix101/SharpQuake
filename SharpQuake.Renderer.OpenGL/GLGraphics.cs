@@ -35,9 +35,8 @@ namespace SharpQuake.Renderer.OpenGL
 {
     public class GLGraphics : BaseGraphics
     {
-
         public GLGraphics( GLDevice device ) : base( device )
-        {
+        {           
         }
 
         public override void Fill( Int32 x, Int32 y, Int32 width, Int32 height, Color colour )
@@ -197,6 +196,7 @@ namespace SharpQuake.Renderer.OpenGL
             }
             GL.End( );
             GL.Disable( EnableCap.Texture2D );
+            GL.UseProgram( 0 );
         }
 
         /// <summary>
@@ -205,8 +205,9 @@ namespace SharpQuake.Renderer.OpenGL
         public override void EmitWaterPolys( ref Single[] turbSin, Double time, Double turbScale, GLPoly polys )
         {
             GL.Color3( 1f, 1f, 1f );
-
             GL.Enable( EnableCap.Texture2D );
+
+            //texture.Bind( );
 
             for ( var p = polys; p != null; p = p.next )
             {
@@ -287,6 +288,98 @@ namespace SharpQuake.Renderer.OpenGL
                 GL.Disable( EnableCap.Blend );
         }
 
+        public override void DrawSequentialPoly( BaseTexture texture, BaseTexture lightMapTexture, GLPoly p, Int32 lightMapNumber )
+        {
+            GL.Enable( EnableCap.Texture2D );
+            texture.Bind( );
+            GL.Begin( PrimitiveType.Polygon );
+            for ( var i = 0; i < p.numverts; i++ )
+            {
+                var v = p.verts[i];
+                GL.TexCoord2( v[3], v[4] );
+                GL.Vertex3( v );
+            }
+            GL.End( );
+
+            lightMapTexture.BindLightmap( ( ( GLTextureDesc ) lightMapTexture.Desc ).TextureNumber + lightMapNumber );
+            GL.Enable( EnableCap.Blend );
+            GL.Begin( PrimitiveType.Polygon );
+            for ( var i = 0; i < p.numverts; i++ )
+            {
+                var v = p.verts[i];
+                GL.TexCoord2( v[5], v[6] );
+                GL.Vertex3( v );
+            }
+            GL.End( );
+
+            GL.Disable( EnableCap.Blend );
+            GL.Disable( EnableCap.Texture2D );
+        }
+
+        public override void DrawSequentialPolyMultiTexture( BaseTexture texture, BaseTexture lightMapTexture, Byte[] lightMapData, GLPoly p, Int32 lightMapNumber )
+        {
+            GL.Enable( EnableCap.Texture2D );
+            // Binds world to texture env 0
+            texture.Bind( );
+            GL.TexEnv( TextureEnvTarget.TextureEnv, TextureEnvParameter.TextureEnvMode, ( Int32 ) TextureEnvMode.Replace );
+
+            // Binds lightmap to texenv 1
+            Device.EnableMultitexture( ); // Same as SelectTexture (TEXTURE1).
+            lightMapTexture.BindLightmap( ( ( GLTextureDesc ) lightMapTexture.Desc ).TextureNumber + lightMapNumber );
+            var i = lightMapNumber;
+            if ( lightMapTexture.LightMapModified[i] )
+                lightMapTexture.CommitLightmap( lightMapData, i );
+
+            GL.TexEnv( TextureEnvTarget.TextureEnv, TextureEnvParameter.TextureEnvMode, ( Int32 ) TextureEnvMode.Blend );
+            GL.Begin( PrimitiveType.Polygon );
+            for ( i = 0; i < p.numverts; i++ )
+            {
+                var v = p.verts[i];
+                GL.MultiTexCoord2( TextureUnit.Texture0, v[3], v[4] );
+                GL.MultiTexCoord2( TextureUnit.Texture1, v[5], v[6] );
+                GL.Vertex3( v );
+            }
+            GL.End( );
+            GL.Disable( EnableCap.Texture2D );
+        }
+
+        public override void DrawWaterPolyMultiTexture( Byte[] lightMapData, BaseTexture texture, BaseTexture lightMapTexture, Int32 lightMapTextureNumber, GLPoly p, Double time )
+        {
+            GL.Enable( EnableCap.Texture2D );
+
+            texture.Bind( );
+
+            GL.TexEnv( TextureEnvTarget.TextureEnv, TextureEnvParameter.TextureEnvMode, ( Int32 ) TextureEnvMode.Replace );
+
+            Device.EnableMultitexture( );
+
+            lightMapTexture.BindLightmap( ( ( GLTextureDesc ) lightMapTexture.Desc ).TextureNumber + lightMapTextureNumber );
+            var i = lightMapTextureNumber;
+
+            if ( lightMapTexture.LightMapModified[i] )
+                lightMapTexture.CommitLightmap( lightMapData, i );
+
+            GL.TexEnv( TextureEnvTarget.TextureEnv, TextureEnvParameter.TextureEnvMode, ( Int32 ) TextureEnvMode.Blend );
+            GL.Begin( PrimitiveType.TriangleFan );
+
+            var nv = new Single[3];
+            for ( i = 0; i < p.numverts; i++ )
+            {
+                var v = p.verts[i];
+                GL.MultiTexCoord2( TextureUnit.Texture0, v[3], v[4] );
+                GL.MultiTexCoord2( TextureUnit.Texture1, v[5], v[6] );
+
+                nv[0] = ( Single ) ( v[0] + 8 * Math.Sin( v[1] * 0.05 + time ) * Math.Sin( v[2] * 0.05 + time ) );
+                nv[1] = ( Single ) ( v[1] + 8 * Math.Sin( v[0] * 0.05 + time ) * Math.Sin( v[2] * 0.05 + time ) );
+                nv[2] = v[2];
+
+                GL.Vertex3( nv );
+            }
+            GL.End( );
+
+            GL.Disable( EnableCap.Texture2D );
+        }
+
         /// <summary>
         /// Draw_TransPicTranslate
         /// Only used for the player color selection menu
@@ -340,6 +433,98 @@ namespace SharpQuake.Renderer.OpenGL
             GL.Disable( EnableCap.Texture2D );
         }
 
+        public override void BeginBlendLightMap( System.Boolean lightMapCvar, String filter = "GL_LUMINANCE" )
+        {
+            Device.SetZWrite( false ); // don't bother writing Z
+
+            if ( filter == "GL_LUMINANCE" )
+                GL.BlendFunc( BlendingFactor.Zero, BlendingFactor.OneMinusSrcColor );
+            
+            if ( lightMapCvar )
+                GL.Enable( EnableCap.Blend );
+        }
+
+        public override void EndBlendLightMap( System.Boolean lightMapCvar, String filter = "GL_LUMINANCE" )
+        {
+            if ( lightMapCvar )
+                GL.Disable( EnableCap.Blend );
+
+            if ( filter == "GL_LUMINANCE" )
+                GL.BlendFunc( BlendingFactor.SrcAlpha, BlendingFactor.OneMinusSrcAlpha );
+
+            Device.SetZWrite( true ); // back to normal Z buffering
+        }
+
+        public override void BeginDLights()
+        {
+            Device.SetZWrite( false );
+            GL.Disable( EnableCap.Texture2D );
+            GL.ShadeModel( ShadingModel.Smooth );
+            GL.Enable( EnableCap.Blend );
+            GL.BlendFunc( BlendingFactor.One, BlendingFactor.One );
+        }
+
+        public override void EndDLights( )
+        {
+            GL.Color3( 1f, 1, 1 );
+            GL.Disable( EnableCap.Blend );
+            GL.Enable( EnableCap.Texture2D );
+            GL.BlendFunc( BlendingFactor.SrcAlpha, BlendingFactor.OneMinusSrcAlpha );
+            Device.SetZWrite( true );
+        }
+
+        public override void DrawDLight( dlight_t light, Vector3 viewProj, Vector3 viewUp, Vector3 viewRight  )
+        {
+            var rad = light.radius * 0.35f;
+            var v = light.origin - viewProj * rad;
+
+            GL.Begin( PrimitiveType.TriangleFan );
+            GL.Color3( 0.2f, 0.1f, 0 );
+            GL.Vertex3( v.X, v.Y, v.Z );
+            GL.Color3( 0, 0, 0 );
+            for ( var i = 16; i >= 0; i-- )
+            {
+                var a = i / 16.0 * Math.PI * 2;
+                v = light.origin + viewRight * ( Single ) Math.Cos( a ) * rad + viewUp * ( Single ) Math.Sin( a ) * rad;
+                GL.Vertex3( v.X, v.Y, v.Z );
+            }
+            GL.End( );
+        }
+
+        public override void DrawSpriteModel( BaseTexture texture, mspriteframe_t frame, Vector3 up, Vector3 right, Vector3 origin )
+        {
+            GL.Color3( 1f, 1, 1 );
+
+            Device.DisableMultitexture( );
+
+            GL.Enable( EnableCap.Texture2D );
+
+            texture.Bind( );
+
+            GL.Enable( EnableCap.AlphaTest );
+            GL.Begin( PrimitiveType.Quads );
+
+            GL.TexCoord2( 0f, 1 );
+            var point = origin + up * frame.down + right * frame.left;
+            GL.Vertex3( point.X, point.Y, point.Z );
+
+            GL.TexCoord2( 0f, 0 );
+            point = origin + up * frame.up + right * frame.left;
+            GL.Vertex3( point.X, point.Y, point.Z );
+
+            GL.TexCoord2( 1f, 0 );
+            point = origin + up * frame.up + right * frame.right;
+            GL.Vertex3( point.X, point.Y, point.Z );
+
+            GL.TexCoord2( 1f, 1 );
+            point = origin + up * frame.down + right * frame.right;
+            GL.Vertex3( point.X, point.Y, point.Z );
+
+            GL.End( );
+
+            GL.Disable( EnableCap.Texture2D );
+            GL.Disable( EnableCap.AlphaTest );
+        }
         public override void PolyBlend( Color4 colour )
         {
             Device.DisableMultitexture( );

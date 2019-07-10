@@ -25,7 +25,6 @@
 using System;
 using SharpQuake.Renderer.Textures;
 using OpenTK.Graphics.OpenGL;
-using SharpQuake.Framework.IO;
 using SharpQuake.Framework;
 using System.Runtime.InteropServices;
 using System.Linq;

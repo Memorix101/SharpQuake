@@ -216,11 +216,18 @@ namespace SharpQuake.Renderer.OpenGL
         public override void BeginScene( )
         {
             base.BeginScene( );
+
+            GL.Color3( 1f, 1, 1 );
         }
 
         public override void EndScene( )
         {
             base.EndScene( );
+        }
+
+        public override void ResetMatrix( )
+        {
+            GL.LoadMatrix( ref WorldMatrix );
         }
 
         public override void PushMatrix( )
