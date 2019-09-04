@@ -12,12 +12,6 @@ namespace SharpQuake.Game.Rendering.Models
 {
     public class BrushModel : Model
     {
-        private Byte[] Buffer
-        {
-            get;
-            set;
-        }
-
         private BspHeader Header
         {
             get;
@@ -290,6 +284,11 @@ namespace SharpQuake.Game.Rendering.Models
         public override void CopyFrom( Model src )
         {
             base.CopyFrom( src );
+
+            Type = ModelType.mod_brush;
+
+            if ( !( src is BrushModel ) )
+                return;
 
             var brushSrc = ( BrushModel ) src;
 

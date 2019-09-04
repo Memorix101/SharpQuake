@@ -685,10 +685,25 @@ namespace SharpQuake
             //
             for( i = 1; i < nummodels; i++ )
             {
-                cl.model_precache[i] = Host.Model.ForName( model_precache[i], false );
+                var name = model_precache[i];
+                var n = name.ToLower( );
+                var type = ModelType.mod_sprite;
+
+                if ( n.StartsWith( "*" ) && !n.Contains( ".mdl" ) || n.Contains( ".bsp" ) )
+                    type = ModelType.mod_brush;
+                else if ( n.Contains( ".mdl" ) )
+                    type = ModelType.mod_alias;
+                else
+                    type = ModelType.mod_sprite;
+
+                if ( name == "progs/player.mdl")
+                {
+
+                 }
+                cl.model_precache[i] = Host.Model.ForName( name, false, type );
                 if( cl.model_precache[i] == null )
                 {
-                    Host.Console.Print( "Model {0} not found\n", model_precache[i] );
+                    Host.Console.Print( "Model {0} not found\n", name );
                     return;
                 }
                 KeepaliveMessage();

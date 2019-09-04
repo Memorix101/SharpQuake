@@ -65,10 +65,10 @@ namespace SharpQuake
         /// <summary>
         /// GL_MakeAliasModelDisplayLists
         /// </summary>
-        public static void MakeAliasModelDisplayLists( Model m, aliashdr_t hdr )
+        public static void MakeAliasModelDisplayLists( AliasModel m )
         {
             _AliasModel = m;
-            _AliasHdr = hdr;
+            _AliasHdr = m.Header;
 
             //
             // look for a cached version
@@ -97,7 +97,7 @@ namespace SharpQuake
                 //
                 ConsoleWrapper.Print( "meshing {0}...\n", m.Name );
 
-                BuildTris();		// trifans or lists
+                BuildTris( m );		// trifans or lists
 
                 //
                 // save out the cached version
@@ -125,7 +125,7 @@ namespace SharpQuake
             _AliasHdr.commands = cmds; // in bytes??? // (byte*)cmds - (byte*)paliashdr;
             Buffer.BlockCopy( _Commands, 0, cmds, 0, _NumCommands * 4 ); //memcpy (cmds, commands, numcommands * 4);
 
-            var poseverts = MainWindow.Instance.Host.Model.PoseVerts;
+            var poseverts = m.PoseVerts;
             var verts = new trivertx_t[_AliasHdr.numposes * _AliasHdr.poseverts]; // Hunk_Alloc (paliashdr->numposes * paliashdr->poseverts * sizeof(trivertx_t) );
             _AliasHdr.posedata = verts; // (byte*)verts - (byte*)paliashdr;
             var offset = 0;
@@ -139,7 +139,7 @@ namespace SharpQuake
         /// BuildTris
         /// Generate a list of trifans or strips for the model, which holds for all frames
         /// </summary>
-        private static void BuildTris()
+        private static void BuildTris( AliasModel m )
         {
             var bestverts = new Int32[1024];
             var besttris = new Int32[1024];
@@ -150,8 +150,8 @@ namespace SharpQuake
             //
             // build tristrips
             //
-            var stverts = MainWindow.Instance.Host.Model.STVerts;
-            var triangles = MainWindow.Instance.Host.Model.Triangles;
+            var stverts = m.STVerts;
+            var triangles = m.Triangles;
             _NumOrder = 0;
             _NumCommands = 0;
             Array.Clear( _Used, 0, _Used.Length ); // memset (used, 0, sizeof(used));
@@ -168,9 +168,9 @@ namespace SharpQuake
                     for( var startv = 0; startv < 3; startv++ )
                     {
                         if( type == 1 )
-                            len = StripLength( i, startv );
+                            len = StripLength( m, i, startv );
                         else
-                            len = FanLength( i, startv );
+                            len = FanLength( m, i, startv );
                         if( len > bestlen )
                         {
                             besttype = type;
@@ -222,11 +222,11 @@ namespace SharpQuake
             _AllTris += _AliasHdr.numtris;
         }
 
-        private static Int32 StripLength( Int32 starttri, Int32 startv )
+        private static Int32 StripLength( AliasModel m, Int32 starttri, Int32 startv )
         {
             _Used[starttri] = 2;
 
-            var triangles = MainWindow.Instance.Host.Model.Triangles;
+            var triangles = m.Triangles;
 
             var vidx = triangles[starttri].vertindex; //last = &triangles[starttri];
             _StripVerts[0] = vidx[( startv ) % 3];
@@ -286,11 +286,11 @@ done:
             return _StripCount;
         }
 
-        private static Int32 FanLength( Int32 starttri, Int32 startv )
+        private static Int32 FanLength( AliasModel m, Int32 starttri, Int32 startv )
         {
             _Used[starttri] = 2;
 
-            var triangles = MainWindow.Instance.Host.Model.Triangles;
+            var triangles = m.Triangles;
             //last = &triangles[starttri];
 
             var vidx = triangles[starttri].vertindex;

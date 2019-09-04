@@ -86,145 +86,12 @@ namespace SharpQuake
 
     // must match definition in spritegn.h
 
-    enum aliasframetype_t
-    {
-        ALIAS_SINGLE = 0, ALIAS_GROUP
-    } // aliasframetype_t;
-
-    enum aliasskintype_t
-    {
-        ALIAS_SKIN_SINGLE = 0, ALIAS_SKIN_GROUP
-    } // aliasskintype_t;
-
-    [StructLayout(LayoutKind.Sequential, Pack = 1)]
-    struct mdl_t
-    {
-        public Int32 ident;
-        public Int32 version;
-        public Vector3f scale;
-        public Vector3f scale_origin;
-        public Single boundingradius;
-        public Vector3f eyeposition;
-        public Int32 numskins;
-        public Int32 skinwidth;
-        public Int32 skinheight;
-        public Int32 numverts;
-        public Int32 numtris;
-        public Int32 numframes;
-        public SyncType synctype;
-        public Int32 flags;
-        public Single size;
-
-        public static readonly Int32 SizeInBytes = Marshal.SizeOf(typeof(mdl_t));
-
-        //static mdl_t()
-        //{
-        //    mdl_t.SizeInBytes = Marshal.SizeOf(typeof(mdl_t));
-        //}
-    } // mdl_t;
-
     // TODO: could be shorts
-
-    [StructLayout(LayoutKind.Sequential, Pack=1)]
-    public struct stvert_t
-    {
-        public Int32 onseam;
-        public Int32 s;
-        public Int32 t;
-
-        public static Int32 SizeInBytes = Marshal.SizeOf(typeof(stvert_t));
-    } // stvert_t;
-
-    [StructLayout(LayoutKind.Sequential)]
-    public struct dtriangle_t
-    {
-        public Int32 facesfront;
-        [MarshalAs(UnmanagedType.ByValArray, ArraySubType = UnmanagedType.I4, SizeConst = 3)]
-        public Int32[] vertindex; // int vertindex[3];
-
-        public static Int32 SizeInBytes = Marshal.SizeOf(typeof(dtriangle_t));
-    } // dtriangle_t;
-
     
-
-    [StructLayout(LayoutKind.Sequential, Pack = 1)]
-    struct daliasframe_t
-    {
-        public trivertx_t bboxmin;	// lightnormal isn't used
-        public trivertx_t bboxmax;	// lightnormal isn't used
-        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 16)]
-        public Byte[] name; // char[16]	// frame name from grabbing
-
-        public static Int32 SizeInBytes = Marshal.SizeOf(typeof(daliasframe_t));
-    } // daliasframe_t;
-
-    [StructLayout(LayoutKind.Sequential, Pack = 1)]
-    struct daliasgroup_t
-    {
-        public Int32 numframes;
-        public trivertx_t bboxmin;	// lightnormal isn't used
-        public trivertx_t bboxmax;	// lightnormal isn't used
-
-        public static Int32 SizeInBytes = Marshal.SizeOf(typeof(daliasgroup_t));
-    } // daliasgroup_t;
-
-    [StructLayout(LayoutKind.Sequential, Pack = 1)]
-    struct daliasskingroup_t
-    {
-        public Int32 numskins;
-
-        public static Int32 SizeInBytes = Marshal.SizeOf(typeof(daliasskingroup_t));
-    } // daliasskingroup_t;
-
-    [StructLayout(LayoutKind.Sequential, Pack = 1)]
-    struct daliasinterval_t
-    {
-        public Single interval;
-
-        public static Int32 SizeInBytes = Marshal.SizeOf(typeof(daliasinterval_t));
-    } // daliasinterval_t;
-
-    [StructLayout(LayoutKind.Sequential, Pack=1)]
-    struct daliasskininterval_t
-    {
-        public Single interval;
-
-        public static Int32 SizeInBytes = Marshal.SizeOf(typeof(daliasskininterval_t));
-    } // daliasskininterval_t;
-
-    [StructLayout(LayoutKind.Sequential, Pack = 1)]
-    struct daliasframetype_t
-    {
-        public aliasframetype_t type;
-    } // daliasframetype_t;
-
-    [StructLayout(LayoutKind.Sequential, Pack=1)]
-    struct daliasskintype_t
-    {
-        public aliasskintype_t type;
-
-        public static Int32 SizeInBytes = Marshal.SizeOf(typeof(daliasskintype_t));
-    } //daliasskintype_t;
-
     //
     // spritegn.h
     //
-
-    [StructLayout(LayoutKind.Sequential, Pack=1)]
-    struct dsprite_t
-    {
-        public Int32 ident;
-        public Int32 version;
-        public Int32 type;
-        public Single boundingradius;
-        public Int32 width;
-        public Int32 height;
-        public Int32 numframes;
-        public Single beamlength;
-        public SyncType synctype;
-
-        public static Int32 SizeInBytes = Marshal.SizeOf(typeof(dsprite_t));
-    } // dsprite_t;
+    
 
     static class SPR
     {
@@ -235,36 +102,9 @@ namespace SharpQuake
         public const Int32 SPR_VP_PARALLEL_ORIENTED = 4;
     }
 
-    [StructLayout(LayoutKind.Sequential, Pack=1)]
-    struct dspriteframe_t
-    {
-        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 2)]
-        public Int32[] origin; // [2];
-        public Int32 width;
-        public Int32 height;
+    
 
-        public static Int32 SizeInBytes = Marshal.SizeOf(typeof(dspriteframe_t));
-    } // dspriteframe_t;
 
-    [StructLayout(LayoutKind.Sequential, Pack = 1)]
-    struct dspritegroup_t
-    {
-        public Int32 numframes;
+   
 
-        public static Int32 SizeInBytes = Marshal.SizeOf(typeof(dspritegroup_t));
-    } // dspritegroup_t;
-
-    [StructLayout(LayoutKind.Sequential, Pack = 1)]
-    struct dspriteinterval_t
-    {
-        public Single interval;
-
-        public static Int32 SizeInBytes = Marshal.SizeOf(typeof(dspriteinterval_t));
-    } // dspriteinterval_t;
-
-    [StructLayout(LayoutKind.Sequential, Pack = 1)]
-    struct dspriteframetype_t
-    {
-        public spriteframetype_t type;
-    } // dspriteframetype_t;
 }

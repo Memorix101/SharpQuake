@@ -127,6 +127,12 @@ namespace SharpQuake.Game.Rendering.Models
             set;
         }
 
+        protected Byte[] Buffer
+        {
+            get;
+            set;
+        }
+
         public Model( ModelTexture noTexture )
         {
             NoTexture = noTexture;
@@ -165,6 +171,6 @@ namespace SharpQuake.Game.Rendering.Models
             ClipMax = src.ClipMax;
 
             cache = src.cache;
-        }        
+        }
     } //model_t;
 }

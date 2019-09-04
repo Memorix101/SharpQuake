@@ -23,6 +23,7 @@
 /// </copyright>
 
 using System;
+using System.Linq;
 using SharpQuake.Framework;
 using SharpQuake.Framework.Mathematics;
 using SharpQuake.Game.Rendering.Memory;
@@ -686,7 +687,7 @@ namespace SharpQuake
                 right = ViewRight;// vright;
             }
 
-            var texture = Host.Model.SpriteTextures[frame.gl_texturenum];
+            var texture = Host.Model.SpriteTextures.Where( t => ( ( Renderer.OpenGL.Textures.GLTextureDesc ) t.Desc ).TextureNumber == frame.gl_texturenum ).FirstOrDefault();
 
             Host.Video.Device.Graphics.DrawSpriteModel( texture, frame, up, right, e.origin );
         }
@@ -811,7 +812,9 @@ namespace SharpQuake
             {
                 var anim = ( Int32 ) ( Host.Client.cl.time * 10 ) & 3;
 
-                model = BaseModel.Create( Host.Video.Device, clmodel.Name, Host.Model.SkinTextures[paliashdr.gl_texturenum[_CurrentEntity.skinnum, anim]], true );
+                var tex = Host.Model.SkinTextures.Where( t =>  ( ( Renderer.OpenGL.Textures.GLTextureDesc ) t.Desc ).TextureNumber == paliashdr.gl_texturenum[_CurrentEntity.skinnum, anim] ).FirstOrDefault();
+
+                model = BaseModel.Create( Host.Video.Device, clmodel.Name, tex, true );
             }
             else
                 model = BaseModel.ModelPool[clmodel.Name];

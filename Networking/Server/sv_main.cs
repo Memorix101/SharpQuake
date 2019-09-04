@@ -616,7 +616,7 @@ namespace SharpQuake
             sv.paused = false;
             sv.time = 1.0;
             sv.modelname = String.Format( "maps/{0}.bsp", server );
-            sv.worldmodel = ( BrushModel ) Host.Model.ForName( sv.modelname, false, true );
+            sv.worldmodel = ( BrushModel ) Host.Model.ForName( sv.modelname, false, ModelType.mod_brush );
             if( sv.worldmodel == null )
             {
                 Host.Console.Print( "Couldn't spawn server {0}\n", sv.modelname );
@@ -637,7 +637,7 @@ namespace SharpQuake
             for( var i = 1; i < sv.worldmodel.NumSubModels; i++ )
             {
                 sv.model_precache[1 + i] = _LocalModels[i];
-                sv.models[i + 1] = Host.Model.ForName( _LocalModels[i], false, true );
+                sv.models[i + 1] = Host.Model.ForName( _LocalModels[i], false, ModelType.mod_brush );
             }
 
             //

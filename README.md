@@ -85,7 +85,7 @@ Original Quake switches apply and can be used.
 
 Enjoy! 🙂
 
-![](https://user-images.githubusercontent.com/1466920/56814073-a068e200-683e-11e9-8e90-b75ca617d9ce.png)
+![Screenshot](screenshot.jpg)
 
 ### Credits
 * Made by **[yurykiselev](https://sourceforge.net/u/yurykiselev/profile/)** and **Uze** and brought to Github by **[Memorix101](https://github.com/Memorix101)**

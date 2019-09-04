@@ -26,6 +26,7 @@ using System;
 using System.Text;
 using SharpQuake.Framework;
 using SharpQuake.Framework.Mathematics;
+using SharpQuake.Game.Rendering.Models;
 
 // pr_cmds.c
 
@@ -1229,7 +1230,18 @@ namespace SharpQuake
                 if ( Host.Server.sv.model_precache[i] == null )
                 {
                     Host.Server.sv.model_precache[i] = s;
-                    Host.Server.sv.models[i] = Host.Model.ForName( s, true );
+
+                    var n = s.ToLower( );
+                    var type = ModelType.mod_sprite;
+
+                    if ( n.StartsWith( "*" ) && !n.Contains( ".mdl" ) || n.Contains( ".bsp" ) )
+                        type = ModelType.mod_brush;
+                    else if ( n.Contains( ".mdl" ) )
+                        type = ModelType.mod_alias;
+                    else
+                        type = ModelType.mod_sprite;
+
+                    Host.Server.sv.models[i] = Host.Model.ForName( s, true, type );
                     return;
                 }
                 if ( Host.Server.sv.model_precache[i] == s )
