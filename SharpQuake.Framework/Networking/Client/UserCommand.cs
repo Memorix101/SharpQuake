@@ -39,10 +39,10 @@ namespace SharpQuake.Framework
 
         public void Clear( )
         {
-            this.viewangles = Vector3.Zero;
-            this.forwardmove = 0;
-            this.sidemove = 0;
-            this.upmove = 0;
+            viewangles = Vector3.Zero;
+            forwardmove = 0;
+            sidemove = 0;
+            upmove = 0;
         }
     }
 }

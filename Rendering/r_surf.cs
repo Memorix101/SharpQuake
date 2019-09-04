@@ -23,6 +23,7 @@
 /// </copyright>
 
 using System;
+using System.Linq;
 using SharpQuake.Framework;
 using SharpQuake.Framework.Mathematics;
 using SharpQuake.Game.Rendering.Memory;
@@ -118,28 +119,30 @@ namespace SharpQuake
             }
 
             var tempBuffer = new Int32[RenderDef.MAX_LIGHTMAPS, RenderDef.BLOCK_WIDTH];
+            var brushes = Host.Client.cl.model_precache.Where( m => m is BrushModel ).ToArray();
 
-            for ( var j = 1; j < QDef.MAX_MODELS; j++ )
+            //for ( var j = 1; j < QDef.MAX_MODELS; j++ )
+            for ( var j = 0; j < brushes.Length; j++ )
             {
-                var m = Host.Client.cl.model_precache[j];
+                var m = ( BrushModel ) brushes[j];
                 if( m == null )
                     break;
 
-                if( m.name != null && m.name.StartsWith( "*" ) )
+                if( m.Name != null && m.Name.StartsWith( "*" ) )
                     continue;
 
-                _CurrentVertBase = m.vertexes;
+                _CurrentVertBase = m.Vertices;
                 _CurrentModel = m;
-                for( var i = 0; i < m.numsurfaces; i++ )
+                for( var i = 0; i < m.NumSurfaces; i++ )
                 {
-                    CreateSurfaceLightmap( ref tempBuffer, m.surfaces[i] );
-                    if( ( m.surfaces[i].flags & SurfaceDef.SURF_DRAWTURB ) != 0 )
+                    CreateSurfaceLightmap( ref tempBuffer, m.Surfaces[i] );
+                    if( ( m.Surfaces[i].flags & SurfaceDef.SURF_DRAWTURB ) != 0 )
                         continue;
 
-                    if( ( m.surfaces[i].flags & SurfaceDef.SURF_DRAWSKY ) != 0 )
+                    if( ( m.Surfaces[i].flags & SurfaceDef.SURF_DRAWSKY ) != 0 )
                         continue;
 
-                    BuildSurfaceDisplayList( m.surfaces[i] );
+                    BuildSurfaceDisplayList( m.Surfaces[i] );
                 }
             }
 
@@ -181,8 +184,9 @@ namespace SharpQuake
         /// </summary>
         private void BuildSurfaceDisplayList( MemorySurface fa )
         {
+            var brushModel = ( BrushModel ) _CurrentModel;
             // reconstruct the polygon
-            var pedges = _CurrentModel.edges;
+            var pedges = brushModel.Edges;
             var lnumverts = fa.numedges;
 
             //
@@ -199,7 +203,7 @@ namespace SharpQuake
 
             for( var i = 0; i < lnumverts; i++ )
             {
-                var lindex = _CurrentModel.surfedges[fa.firstedge + i];
+                var lindex = brushModel.SurfEdges[fa.firstedge + i];
                 if( lindex > 0 )
                 {
                     r_pedge_v = pedges[lindex].v;
@@ -337,7 +341,7 @@ namespace SharpQuake
             var lightmap = surf.sample_base;// surf.samples;
 
             // set to full bright if no light data
-            if( _FullBright.Value != 0 || Host.Client.cl.worldmodel.lightdata == null )
+            if( _FullBright.Value != 0 || Host.Client.cl.worldmodel.LightData == null )
             {
                 for( var i = 0; i < size; i++ )
                     _BlockLights[i] = 255 * 256;
@@ -495,9 +499,9 @@ namespace SharpQuake
             }
             else
             {
-                for( var i = 0; i < Host.Client.cl.worldmodel.numtextures; i++ )
+                for( var i = 0; i < Host.Client.cl.worldmodel.NumTextures; i++ )
                 {
-                    var t = Host.Client.cl.worldmodel.textures[i];
+                    var t = Host.Client.cl.worldmodel.Textures[i];
                     if( t == null )
                         continue;
 
@@ -550,14 +554,14 @@ namespace SharpQuake
                 //memset(solid, 0xff, (cl.worldmodel->numleafs + 7) >> 3);
             }
             else
-                vis = Host.Model.LeafPVS( _ViewLeaf, Host.Client.cl.worldmodel );
+                vis = Host.Client.cl.worldmodel.LeafPVS( _ViewLeaf );
 
             var world = Host.Client.cl.worldmodel;
-            for( var i = 0; i < world.numleafs; i++ )
+            for( var i = 0; i < world.NumLeafs; i++ )
             {
                 if( vis[i >> 3] != 0 & ( 1 << ( i & 7 ) ) != 0 )
                 {
-                    MemoryNodeBase node = world.leafs[i + 1];
+                    MemoryNodeBase node = world.Leaves[i + 1];
                     do
                     {
                         if( node.visframe == _VisFrameCount )
@@ -583,7 +587,7 @@ namespace SharpQuake
             
             Array.Clear( _LightMapPolys, 0, _LightMapPolys.Length );
 
-            RecursiveWorldNode( _TempEnt.model.nodes[0] );
+            RecursiveWorldNode( ( ( BrushModel ) _TempEnt.model ).Nodes[0] );
 
             DrawTextureChains();
 
@@ -639,9 +643,9 @@ namespace SharpQuake
                 return;
             }
             var world = Host.Client.cl.worldmodel;
-            for( var i = 0; i < world.numtextures; i++ )
+            for( var i = 0; i < world.NumTextures; i++ )
             {
-                var t = world.textures[i];
+                var t = world.Textures[i];
                 if( t == null )
                     continue;
 
@@ -833,7 +837,7 @@ namespace SharpQuake
 
             if( c != 0 )
             {
-                var surf = Host.Client.cl.worldmodel.surfaces;
+                var surf = Host.Client.cl.worldmodel.Surfaces;
                 Int32 offset = n.firstsurface;
 
                 if( dot < 0 - QDef.BACKFACE_EPSILON )
@@ -1074,25 +1078,25 @@ namespace SharpQuake
             _CurrentEntity = e;
             Host.DrawingContext.CurrentTexture = -1;
 
-            var clmodel = e.model;
+            var clmodel = ( BrushModel ) e.model;
             var rotated = false;
             Vector3 mins, maxs;
             if( e.angles.X != 0 || e.angles.Y != 0 || e.angles.Z != 0 )
             {
                 rotated = true;
                 mins = e.origin;
-                mins.X -= clmodel.radius;
-                mins.Y -= clmodel.radius;
-                mins.Z -= clmodel.radius;
+                mins.X -= clmodel.Radius;
+                mins.Y -= clmodel.Radius;
+                mins.Z -= clmodel.Radius;
                 maxs = e.origin;
-                maxs.X += clmodel.radius;
-                maxs.Y += clmodel.radius;
-                maxs.Z += clmodel.radius;
+                maxs.X += clmodel.Radius;
+                maxs.Y += clmodel.Radius;
+                maxs.Z += clmodel.Radius;
             }
             else
             {
-                mins = e.origin + clmodel.mins;
-                maxs = e.origin + clmodel.maxs;
+                mins = e.origin + clmodel.BoundsMin;
+                maxs = e.origin + clmodel.BoundsMax;
             }
 
             if( CullBox( ref mins, ref maxs ) )
@@ -1112,14 +1116,14 @@ namespace SharpQuake
 
             // calculate dynamic lighting for bmodel if it's not an
             // instanced model
-            if( clmodel.firstmodelsurface != 0 && _glFlashBlend.Value == 0 )
+            if( clmodel.FirstModelSurface != 0 && _glFlashBlend.Value == 0 )
             {
                 for( var k = 0; k < ClientDef.MAX_DLIGHTS; k++ )
                 {
                     if( ( Host.Client.DLights[k].die < Host.Client.cl.time ) || ( Host.Client.DLights[k].radius == 0 ) )
                         continue;
 
-                    MarkLights( Host.Client.DLights[k], 1 << k, clmodel.nodes[clmodel.hulls[0].firstclipnode] );
+                    MarkLights( Host.Client.DLights[k], 1 << k, clmodel.Nodes[clmodel.Hulls[0].firstclipnode] );
                 }
             }
 
@@ -1128,13 +1132,13 @@ namespace SharpQuake
             Host.Video.Device.RotateForEntity( e.origin, e.angles );
             e.angles.X = -e.angles.X;	// stupid quake bug
 
-            var surfOffset = clmodel.firstmodelsurface;
-            var psurf = clmodel.surfaces; //[clmodel.firstmodelsurface];
+            var surfOffset = clmodel.FirstModelSurface;
+            var psurf = clmodel.Surfaces; //[clmodel.firstmodelsurface];
 
             //
             // draw texture
             //
-            for( var i = 0; i < clmodel.nummodelsurfaces; i++, surfOffset++ )
+            for( var i = 0; i < clmodel.NumModelSurfaces; i++, surfOffset++ )
             {
                 // find which side of the node we are on
                 var pplane = psurf[surfOffset].plane;

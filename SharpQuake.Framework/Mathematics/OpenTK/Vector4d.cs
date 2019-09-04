@@ -219,7 +219,7 @@ namespace SharpQuake.Framework.Mathematics
         {
             get
             {
-                return System.Math.Sqrt(X * X + Y * Y + Z * Z + W * W);
+                return Math.Sqrt(X * X + Y * Y + Z * Z + W * W);
             }
         }
 
@@ -271,7 +271,7 @@ namespace SharpQuake.Framework.Mathematics
         /// </summary>
         public void Normalize()
         {
-            double scale = 1.0 / this.Length;
+            double scale = 1.0 / Length;
             X *= scale;
             Y *= scale;
             Z *= scale;
@@ -1408,10 +1408,10 @@ namespace SharpQuake.Framework.Mathematics
         {
             unchecked
             {
-                var hashCode = this.X.GetHashCode();
-                hashCode = (hashCode * 397) ^ this.Y.GetHashCode();
-                hashCode = (hashCode * 397) ^ this.Z.GetHashCode();
-                hashCode = (hashCode * 397) ^ this.W.GetHashCode();
+                var hashCode = X.GetHashCode();
+                hashCode = (hashCode * 397) ^ Y.GetHashCode();
+                hashCode = (hashCode * 397) ^ Z.GetHashCode();
+                hashCode = (hashCode * 397) ^ W.GetHashCode();
                 return hashCode;
             }
         }
@@ -1428,7 +1428,7 @@ namespace SharpQuake.Framework.Mathematics
                 return false;
             }
 
-            return this.Equals((Vector4d)obj);
+            return Equals((Vector4d)obj);
         }
 
         /// <summary>Indicates whether the current vector is equal to another vector.</summary>

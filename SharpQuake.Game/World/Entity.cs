@@ -62,33 +62,33 @@ namespace SharpQuake.Game.World
 
         public void Clear( )
         {
-            this.forcelink = false;
-            this.update_type = 0;
+            forcelink = false;
+            update_type = 0;
 
-            this.baseline = EntityState.Empty;
+            baseline = EntityState.Empty;
 
-            this.msgtime = 0;
-            this.msg_origins[0] = Vector3.Zero;
-            this.msg_origins[1] = Vector3.Zero;
+            msgtime = 0;
+            msg_origins[0] = Vector3.Zero;
+            msg_origins[1] = Vector3.Zero;
 
-            this.origin = Vector3.Zero;
-            this.msg_angles[0] = Vector3.Zero;
-            this.msg_angles[1] = Vector3.Zero;
-            this.angles = Vector3.Zero;
-            this.model = null;
-            this.efrag = null;
-            this.frame = 0;
-            this.syncbase = 0;
-            this.colormap = null;
-            this.effects = 0;
-            this.skinnum = 0;
-            this.visframe = 0;
+            origin = Vector3.Zero;
+            msg_angles[0] = Vector3.Zero;
+            msg_angles[1] = Vector3.Zero;
+            angles = Vector3.Zero;
+            model = null;
+            efrag = null;
+            frame = 0;
+            syncbase = 0;
+            colormap = null;
+            effects = 0;
+            skinnum = 0;
+            visframe = 0;
 
-            this.dlightframe = 0;
-            this.dlightbits = 0;
+            dlightframe = 0;
+            dlightbits = 0;
 
-            this.trivial_accept = 0;
-            this.topnode = null;
+            trivial_accept = 0;
+            topnode = null;
         }
 
         public Entity( )

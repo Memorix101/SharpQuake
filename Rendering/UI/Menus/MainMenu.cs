@@ -55,7 +55,7 @@ namespace SharpQuake
             {
                 case KeysDef.K_ESCAPE:
                     //Host.Keyboard.Destination = keydest_t.key_game;
-                    MenuBase.CurrentMenu.Hide( );
+                    CurrentMenu.Hide( );
                     Host.Client.cls.demonum = _SaveDemoNum;
                     if ( Host.Client.cls.demonum != -1 && !Host.Client.cls.demoplayback && Host.Client.cls.state != cactive_t.ca_connected )
                         Host.Client.NextDemo( );
@@ -79,23 +79,23 @@ namespace SharpQuake
                     switch ( _Cursor )
                     {
                         case 0:
-                            MenuBase.SinglePlayerMenu.Show( Host );
+                            SinglePlayerMenu.Show( Host );
                             break;
 
                         case 1:
-                            MenuBase.MultiPlayerMenu.Show( Host );
+                            MultiPlayerMenu.Show( Host );
                             break;
 
                         case 2:
-                            MenuBase.OptionsMenu.Show( Host );
+                            OptionsMenu.Show( Host );
                             break;
 
                         case 3:
-                            MenuBase.HelpMenu.Show( Host );
+                            HelpMenu.Show( Host );
                             break;
 
                         case 4:
-                            MenuBase.QuitMenu.Show( Host );
+                            QuitMenu.Show( Host );
                             break;
                     }
                     break;

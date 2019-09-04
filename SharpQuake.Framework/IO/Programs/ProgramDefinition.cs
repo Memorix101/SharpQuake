@@ -43,9 +43,9 @@ namespace SharpQuake.Framework
 
         public void SwapBytes( )
         {
-            this.type = ( UInt16 ) EndianHelper.LittleShort( ( Int16 ) this.type );
-            this.ofs = ( UInt16 ) EndianHelper.LittleShort( ( Int16 ) this.ofs );
-            this.s_name = EndianHelper.LittleLong( this.s_name );
+            type = ( UInt16 ) EndianHelper.LittleShort( ( Int16 ) type );
+            ofs = ( UInt16 ) EndianHelper.LittleShort( ( Int16 ) ofs );
+            s_name = EndianHelper.LittleLong( s_name );
         }
     } // ddef_t;
 }

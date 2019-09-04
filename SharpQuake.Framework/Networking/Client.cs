@@ -63,30 +63,30 @@ namespace SharpQuake.Framework
 
         public void Clear( )
         {
-            this.active = false;
-            this.spawned = false;
-            this.dropasap = false;
-            this.privileged = false;
-            this.sendsignon = false;
-            this.last_message = 0;
-            this.netconnection = null;
-            this.cmd.Clear( );
-            this.wishdir = Vector3.Zero;
-            this.message.Clear( );
-            this.edict = null;
-            this.name = null;
-            this.colors = 0;
-            Array.Clear( this.ping_times, 0, this.ping_times.Length );
-            this.num_pings = 0;
-            Array.Clear( this.spawn_parms, 0, this.spawn_parms.Length );
-            this.old_frags = 0;
+            active = false;
+            spawned = false;
+            dropasap = false;
+            privileged = false;
+            sendsignon = false;
+            last_message = 0;
+            netconnection = null;
+            cmd.Clear( );
+            wishdir = Vector3.Zero;
+            message.Clear( );
+            edict = null;
+            name = null;
+            colors = 0;
+            Array.Clear( ping_times, 0, ping_times.Length );
+            num_pings = 0;
+            Array.Clear( spawn_parms, 0, spawn_parms.Length );
+            old_frags = 0;
         }
 
         public client_t( )
         {
-            this.ping_times = new Single[ServerDef.NUM_PING_TIMES];
-            this.spawn_parms = new Single[ServerDef.NUM_SPAWN_PARMS];
-            this.message = new MessageWriter( QDef.MAX_MSGLEN );
+            ping_times = new Single[ServerDef.NUM_PING_TIMES];
+            spawn_parms = new Single[ServerDef.NUM_SPAWN_PARMS];
+            message = new MessageWriter( QDef.MAX_MSGLEN );
         }
     }// client_t;
 }

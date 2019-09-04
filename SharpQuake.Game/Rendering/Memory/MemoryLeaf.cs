@@ -50,7 +50,7 @@ namespace SharpQuake.Game.Rendering.Memory
 
         public MemoryLeaf( )
         {
-            this.ambient_sound_level = new Byte[AmbientDef.NUM_AMBIENTS];
+            ambient_sound_level = new Byte[AmbientDef.NUM_AMBIENTS];
         }
     } //mleaf_t;
 

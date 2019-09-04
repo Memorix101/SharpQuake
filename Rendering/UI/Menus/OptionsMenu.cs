@@ -43,7 +43,7 @@ namespace SharpQuake
             if ( _Cursor > OPTIONS_ITEMS - 1 )
                 _Cursor = 0;
 
-            if ( _Cursor == OPTIONS_ITEMS - 1 && MenuBase.VideoMenu == null )
+            if ( _Cursor == OPTIONS_ITEMS - 1 && VideoMenu == null )
                 _Cursor = 0;
 
             base.Show( host );
@@ -54,7 +54,7 @@ namespace SharpQuake
             switch ( key )
             {
                 case KeysDef.K_ESCAPE:
-                    MenuBase.MainMenu.Show( Host );
+                    MainMenu.Show( Host );
                     break;
 
                 case KeysDef.K_ENTER:
@@ -62,11 +62,11 @@ namespace SharpQuake
                     switch ( _Cursor )
                     {
                         case 0:
-                            MenuBase.KeysMenu.Show( Host );
+                            KeysMenu.Show( Host );
                             break;
 
                         case 1:
-                            MenuBase.CurrentMenu.Hide( );
+                            CurrentMenu.Hide( );
                             Host.Console.ToggleConsole_f( );
                             break;
 
@@ -75,7 +75,7 @@ namespace SharpQuake
                             break;
 
                         case 12:
-                            MenuBase.VideoMenu.Show( Host );
+                            VideoMenu.Show( Host );
                             break;
 
                         default:

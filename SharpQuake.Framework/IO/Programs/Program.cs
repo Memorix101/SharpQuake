@@ -58,21 +58,21 @@ namespace SharpQuake.Framework
 
         public void SwapBytes( )
         {
-            this.version = EndianHelper.LittleLong( this.version );
-            this.crc = EndianHelper.LittleLong( this.crc );
-            this.ofs_statements = EndianHelper.LittleLong( this.ofs_statements );
-            this.numstatements = EndianHelper.LittleLong( this.numstatements );
-            this.ofs_globaldefs = EndianHelper.LittleLong( this.ofs_globaldefs );
-            this.numglobaldefs = EndianHelper.LittleLong( this.numglobaldefs );
-            this.ofs_fielddefs = EndianHelper.LittleLong( this.ofs_fielddefs );
-            this.numfielddefs = EndianHelper.LittleLong( this.numfielddefs );
-            this.ofs_functions = EndianHelper.LittleLong( this.ofs_functions );
-            this.numfunctions = EndianHelper.LittleLong( this.numfunctions );
-            this.ofs_strings = EndianHelper.LittleLong( this.ofs_strings );
-            this.numstrings = EndianHelper.LittleLong( this.numstrings );
-            this.ofs_globals = EndianHelper.LittleLong( this.ofs_globals );
-            this.numglobals = EndianHelper.LittleLong( this.numglobals );
-            this.entityfields = EndianHelper.LittleLong( this.entityfields );
+            version = EndianHelper.LittleLong( version );
+            crc = EndianHelper.LittleLong( crc );
+            ofs_statements = EndianHelper.LittleLong( ofs_statements );
+            numstatements = EndianHelper.LittleLong( numstatements );
+            ofs_globaldefs = EndianHelper.LittleLong( ofs_globaldefs );
+            numglobaldefs = EndianHelper.LittleLong( numglobaldefs );
+            ofs_fielddefs = EndianHelper.LittleLong( ofs_fielddefs );
+            numfielddefs = EndianHelper.LittleLong( numfielddefs );
+            ofs_functions = EndianHelper.LittleLong( ofs_functions );
+            numfunctions = EndianHelper.LittleLong( numfunctions );
+            ofs_strings = EndianHelper.LittleLong( ofs_strings );
+            numstrings = EndianHelper.LittleLong( numstrings );
+            ofs_globals = EndianHelper.LittleLong( ofs_globals );
+            numglobals = EndianHelper.LittleLong( numglobals );
+            entityfields = EndianHelper.LittleLong( entityfields );
         }
     } // dprograms_t;
 }

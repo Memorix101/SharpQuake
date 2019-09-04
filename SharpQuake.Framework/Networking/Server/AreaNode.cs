@@ -36,19 +36,19 @@ namespace SharpQuake.Framework
 
         public void Clear( )
         {
-            this.axis = 0;
-            this.dist = 0;
-            this.children[0] = null;
-            this.children[1] = null;
-            this.trigger_edicts.ClearToNulls( );
-            this.solid_edicts.ClearToNulls( );
+            axis = 0;
+            dist = 0;
+            children[0] = null;
+            children[1] = null;
+            trigger_edicts.ClearToNulls( );
+            solid_edicts.ClearToNulls( );
         }
 
         public areanode_t( )
         {
-            this.children = new areanode_t[2];
-            this.trigger_edicts = new Link( this );
-            this.solid_edicts = new Link( this );
+            children = new areanode_t[2];
+            trigger_edicts = new Link( this );
+            solid_edicts = new Link( this );
         }
     } //areanode_t;
 }

@@ -118,7 +118,7 @@ namespace SharpQuake
         {
             var trace = new trace_t();
 
-            Host.Server.RecursiveHullCheck( Host.Client.cl.worldmodel.hulls[0], 0, 0, 1, ref start, ref end, trace );
+            Host.Server.RecursiveHullCheck( Host.Client.cl.worldmodel.Hulls[0], 0, 0, 1, ref start, ref end, trace );
 
             impact = trace.endpos; // VectorCopy(trace.endpos, impact);
         }

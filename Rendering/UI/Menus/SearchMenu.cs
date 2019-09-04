@@ -67,7 +67,7 @@ namespace SharpQuake
 
             if ( Host.Network.HostCacheCount > 0 )
             {
-                MenuBase.ServerListMenu.Show( Host );
+                ServerListMenu.Show( Host );
                 return;
             }
 
@@ -75,7 +75,7 @@ namespace SharpQuake
             if ( ( Host.RealTime - _SearchCompleteTime ) < 3.0 )
                 return;
 
-            MenuBase.LanConfigMenu.Show( Host );
+            LanConfigMenu.Show( Host );
         }
     }
 }

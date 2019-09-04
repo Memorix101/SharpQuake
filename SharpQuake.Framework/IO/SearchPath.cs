@@ -38,29 +38,29 @@ namespace SharpQuake.Framework.IO
         {
             if ( path.EndsWith( ".PAK" ) )
             {
-                this.pack = FileSystem.LoadPackFile( path );
-                if ( this.pack == null )
+                pack = FileSystem.LoadPackFile( path );
+                if ( pack == null )
                     Utilities.Error( "Couldn't load packfile: {0}", path );
             }
             else if ( path.EndsWith( ".PK3" ) )
             {
-                this.pk3 = ZipFile.OpenRead( path );
-                this.pk3filename = path;
-                if ( this.pk3 == null )
+                pk3 = ZipFile.OpenRead( path );
+                pk3filename = path;
+                if ( pk3 == null )
                     Utilities.Error( "Couldn't load pk3file: {0}", path );
             }
             else
-                this.filename = path;
+                filename = path;
         }
 
         public SearchPath( Pak pak )
         {
-            this.pack = pak;
+            pack = pak;
         }
 
         public SearchPath( ZipArchive archive )
         {
-            this.pk3 = archive;
+            pk3 = archive;
         }
     } // searchpath_t;    
 }

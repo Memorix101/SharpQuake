@@ -570,7 +570,15 @@ namespace SharpQuake
                     var mod = Host.Server.sv.models[( Int32 ) e.v.modelindex];
 
                     if ( mod != null )
-                        SetMinMaxSize( e, ref mod.mins, ref mod.maxs, true );
+                    {
+                        var mins = mod.BoundsMin;
+                        var maxs = mod.BoundsMax;
+
+                        SetMinMaxSize( e, ref mins, ref maxs, true );
+
+                        mod.BoundsMin = mins;
+                        mod.BoundsMax = maxs;
+                    }
                     else
                         SetMinMaxSize( e, ref Utilities.ZeroVector, ref Utilities.ZeroVector, true );
 
@@ -945,8 +953,8 @@ namespace SharpQuake
 
             // get the PVS for the entity
             var org = Utilities.ToVector( ref ent.v.origin ) + Utilities.ToVector( ref ent.v.view_ofs );
-            var leaf = Host.Model.PointInLeaf( ref org, Host.Server.sv.worldmodel );
-            var pvs = Host.Model.LeafPVS( leaf, Host.Server.sv.worldmodel );
+            var leaf = Host.Server.sv.worldmodel.PointInLeaf( ref org );
+            var pvs = Host.Server.sv.worldmodel.LeafPVS( leaf );
             Buffer.BlockCopy( pvs, 0, _CheckPvs, 0, pvs.Length );
 
             return i;
@@ -984,8 +992,8 @@ namespace SharpQuake
             // if current entity can't possibly see the check entity, return 0
             var self = Host.Server.ProgToEdict( Host.Programs.GlobalStruct.self );
             var view = Utilities.ToVector( ref self.v.origin ) + Utilities.ToVector( ref self.v.view_ofs );
-            var leaf = Host.Model.PointInLeaf( ref view, Host.Server.sv.worldmodel );
-            var l = Array.IndexOf( Host.Server.sv.worldmodel.leafs, leaf ) - 1;
+            var leaf = Host.Server.sv.worldmodel.PointInLeaf( ref view );
+            var l = Array.IndexOf( Host.Server.sv.worldmodel.Leaves, leaf ) - 1;
             if ( ( l < 0 ) || ( _CheckPvs[l >> 3] & ( 1 << ( l & 7 ) ) ) == 0 )
             {
                 _NotVisCount++;

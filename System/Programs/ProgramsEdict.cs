@@ -168,7 +168,7 @@ namespace SharpQuake
             for( var i = 0; i < GEFV_CACHESIZE; i++ )
                 _gefvCache[i].field = null;
 
-            SharpQuake.Framework.Crc.Init( out _Crc );
+            Framework.Crc.Init( out _Crc );
 
             var buf = FileSystem.LoadFile( "progs.dat" );
 
@@ -178,7 +178,7 @@ namespace SharpQuake
             Host.Console.DPrint( "Programs occupy {0}K.\n", buf.Length / 1024 );
 
             for( var i = 0; i < buf.Length; i++ )
-                SharpQuake.Framework.Crc.ProcessByte( ref _Crc, buf[i] );
+                Framework.Crc.ProcessByte( ref _Crc, buf[i] );
 
             // byte swap the header
             _Progs.SwapBytes();

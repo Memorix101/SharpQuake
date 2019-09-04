@@ -46,11 +46,11 @@ namespace SharpQuake
             switch ( key )
             {
                 case KeysDef.K_ESCAPE:
-                    MenuBase.SinglePlayerMenu.Show( Host );
+                    SinglePlayerMenu.Show( Host );
                     break;
 
                 case KeysDef.K_ENTER:
-                    MenuBase.CurrentMenu.Hide( );
+                    CurrentMenu.Hide( );
                     Host.CommandBuffer.AddText( String.Format( "save s{0}\n", _Cursor ) );
                     return;
 

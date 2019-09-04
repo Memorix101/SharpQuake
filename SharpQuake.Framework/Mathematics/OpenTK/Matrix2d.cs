@@ -187,7 +187,7 @@ namespace SharpQuake.Framework.Mathematics
         /// </summary>
         public void Transpose()
         {
-            this = Matrix2d.Transpose(this);
+            this = Transpose( this);
         }
 
         /// <summary>
@@ -195,7 +195,7 @@ namespace SharpQuake.Framework.Mathematics
         /// </summary>
         public void Invert()
         {
-            this = Matrix2d.Invert(this);
+            this = Invert( this);
         }
 
         /// <summary>
@@ -205,8 +205,8 @@ namespace SharpQuake.Framework.Mathematics
         /// <param name="result">The resulting Matrix2d instance.</param>
         public static void CreateRotation(double angle, out Matrix2d result)
         {
-            double cos = (double)System.Math.Cos(angle);
-            double sin = (double)System.Math.Sin(angle);
+            double cos = (double) Math.Cos(angle);
+            double sin = (double) Math.Sin(angle);
 
             result.Row0.X = cos;
             result.Row0.Y = sin;
@@ -663,7 +663,7 @@ namespace SharpQuake.Framework.Mathematics
         {
             unchecked
             {
-                return (this.Row0.GetHashCode() * 397) ^ this.Row1.GetHashCode();
+                return (Row0.GetHashCode() * 397) ^ Row1.GetHashCode();
             }
         }
 
@@ -679,7 +679,7 @@ namespace SharpQuake.Framework.Mathematics
                 return false;
             }
 
-            return this.Equals((Matrix2d)obj);
+            return Equals((Matrix2d)obj);
         }
 
         /// <summary>Indicates whether the current matrix is equal to another matrix.</summary>

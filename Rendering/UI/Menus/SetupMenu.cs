@@ -64,7 +64,7 @@ namespace SharpQuake
             switch ( key )
             {
                 case KeysDef.K_ESCAPE:
-                    MenuBase.MultiPlayerMenu.Show( Host );
+                    MultiPlayerMenu.Show( Host );
                     break;
 
                 case KeysDef.K_UPARROW:
@@ -117,7 +117,7 @@ namespace SharpQuake
                     if ( _Top != _OldTop || _Bottom != _OldBottom )
                         Host.CommandBuffer.AddText( String.Format( "color {0} {1}\n", _Top, _Bottom ) );
                     Host.Menu.EnterSound = true;
-                    MenuBase.MultiPlayerMenu.Show( Host );
+                    MultiPlayerMenu.Show( Host );
                     break;
 
                 case KeysDef.K_BACKSPACE:

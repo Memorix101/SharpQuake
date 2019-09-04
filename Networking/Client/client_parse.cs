@@ -24,6 +24,7 @@
 
 using System;
 using SharpQuake.Framework;
+using SharpQuake.Game.Rendering.Models;
 using SharpQuake.Game.World;
 
 // cl_parse.c
@@ -389,7 +390,7 @@ namespace SharpQuake
                 // or randomized
                 if( model != null )
                 {
-                    if( model.synctype == SyncType.ST_RAND )
+                    if( model.SyncType == SyncType.ST_RAND )
                         ent.syncbase = ( Single ) ( MathLib.Random() & 0x7fff ) / 0x7fff;
                     else
                         ent.syncbase = 0;
@@ -702,7 +703,8 @@ namespace SharpQuake
             Host.Sound.EndPrecaching();
 
             // local state
-            _Entities[0].model = cl.worldmodel = cl.model_precache[1];
+            cl.worldmodel = ( BrushModel ) cl.model_precache[1];
+            _Entities[0].model = cl.model_precache[1];
 
             Host.RenderContext.NewMap();
 

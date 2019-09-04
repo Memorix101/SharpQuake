@@ -73,7 +73,7 @@ namespace SharpQuake
             //
             // look for a cached version
             //
-            var path = Path.ChangeExtension( "glquake/" + Path.GetFileNameWithoutExtension( m.name ), ".ms2" );
+            var path = Path.ChangeExtension( "glquake/" + Path.GetFileNameWithoutExtension( m.Name ), ".ms2" );
 
             DisposableWrapper<BinaryReader> file;
             FileSystem.FOpenFile( path, out file );
@@ -95,7 +95,7 @@ namespace SharpQuake
                 //
                 // build it from scratch
                 //
-                ConsoleWrapper.Print( "meshing {0}...\n", m.name );
+                ConsoleWrapper.Print( "meshing {0}...\n", m.Name );
 
                 BuildTris();		// trifans or lists
 

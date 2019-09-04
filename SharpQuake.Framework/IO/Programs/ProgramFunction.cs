@@ -52,7 +52,7 @@ namespace SharpQuake.Framework
         {
             get
             {
-                return ProgramsWrapper.GetString( this.s_file );
+                return ProgramsWrapper.GetString( s_file );
             }
         }
 
@@ -60,23 +60,23 @@ namespace SharpQuake.Framework
         {
             get
             {
-                return ProgramsWrapper.GetString( this.s_name );
+                return ProgramsWrapper.GetString( s_name );
             }
         }
 
         public void SwapBytes( )
         {
-            this.first_statement = EndianHelper.LittleLong( this.first_statement );
-            this.parm_start = EndianHelper.LittleLong( this.parm_start );
-            this.locals = EndianHelper.LittleLong( this.locals );
-            this.s_name = EndianHelper.LittleLong( this.s_name );
-            this.s_file = EndianHelper.LittleLong( this.s_file );
-            this.numparms = EndianHelper.LittleLong( this.numparms );
+            first_statement = EndianHelper.LittleLong( first_statement );
+            parm_start = EndianHelper.LittleLong( parm_start );
+            locals = EndianHelper.LittleLong( locals );
+            s_name = EndianHelper.LittleLong( s_name );
+            s_file = EndianHelper.LittleLong( s_file );
+            numparms = EndianHelper.LittleLong( numparms );
         }
 
         public override String ToString( )
         {
-            return String.Format( "{{{0}: {1}()}}", this.FileName, this.Name );
+            return String.Format( "{{{0}: {1}()}}", FileName, Name );
         }
     } // dfunction_t;
 }

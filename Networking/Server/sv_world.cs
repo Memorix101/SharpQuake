@@ -74,7 +74,7 @@ namespace SharpQuake
                 node.Clear();
             _NumAreaNodes = 0;
 
-            CreateAreaNode( 0, ref sv.worldmodel.mins, ref sv.worldmodel.maxs );
+            CreateAreaNode( 0, sv.worldmodel.BoundsMin, sv.worldmodel.BoundsMax );
         }
 
         /// <summary>
@@ -140,7 +140,7 @@ namespace SharpQuake
             // link to PVS leafs
             ent.num_leafs = 0;
             if( ent.v.modelindex != 0 )
-                FindTouchedLeafs( ent, sv.worldmodel.nodes[0] );
+                FindTouchedLeafs( ent, sv.worldmodel.Nodes[0] );
 
             if( ent.v.solid == Solids.SOLID_NOT )
                 return;
@@ -176,7 +176,7 @@ namespace SharpQuake
         /// </summary>
         public Int32 PointContents( ref Vector3 p )
         {
-            var cont = HullPointContents( sv.worldmodel.hulls[0], 0, ref p );
+            var cont = HullPointContents( sv.worldmodel.Hulls[0], 0, ref p );
             if( cont <= ContentsDef.CONTENTS_CURRENT_0 && cont >= ContentsDef.CONTENTS_CURRENT_DOWN )
                 cont = ContentsDef.CONTENTS_WATER;
             return cont;
@@ -337,7 +337,7 @@ namespace SharpQuake
         /// <summary>
         /// SV_CreateAreaNode
         /// </summary>
-        private areanode_t CreateAreaNode( Int32 depth, ref Vector3 mins, ref Vector3 maxs )
+        private areanode_t CreateAreaNode( Int32 depth, Vector3 mins, Vector3 maxs )
         {
             var anode = _AreaNodes[_NumAreaNodes];
             _NumAreaNodes++;
@@ -371,8 +371,8 @@ namespace SharpQuake
                 maxs1.Y = mins2.Y = anode.dist;
             }
 
-            anode.children[0] = CreateAreaNode( depth + 1, ref mins2, ref maxs2 );
-            anode.children[1] = CreateAreaNode( depth + 1, ref mins1, ref maxs1 );
+            anode.children[0] = CreateAreaNode( depth + 1, mins2, maxs2 );
+            anode.children[1] = CreateAreaNode( depth + 1, mins1, maxs1 );
 
             return anode;
         }
@@ -466,18 +466,18 @@ namespace SharpQuake
                 if( ent.v.movetype != Movetypes.MOVETYPE_PUSH )
                     Utilities.Error( "SOLID_BSP without MOVETYPE_PUSH" );
 
-                var model = sv.models[( Int32 ) ent.v.modelindex];
+                var model = ( BrushModel ) sv.models[( Int32 ) ent.v.modelindex];
 
-                if( model == null || model.type != ModelType.mod_brush )
+                if( model == null || model.Type != ModelType.mod_brush )
                     Utilities.Error( "MOVETYPE_PUSH with a non bsp model" );
 
                 var size = maxs - mins;
                 if( size.X < 3 )
-                    hull = model.hulls[0];
+                    hull = model.Hulls[0];
                 else if( size.X <= 32 )
-                    hull = model.hulls[1];
+                    hull = model.Hulls[1];
                 else
-                    hull = model.hulls[2];
+                    hull = model.Hulls[2];
 
                 // calculate an offset value to center the origin
                 offset = hull.clip_mins - mins;
@@ -512,7 +512,7 @@ namespace SharpQuake
                     return;
 
                 var leaf = (MemoryLeaf)node;
-                var leafnum = Array.IndexOf( sv.worldmodel.leafs, leaf ) - 1;
+                var leafnum = Array.IndexOf( sv.worldmodel.Leaves, leaf ) - 1;
 
                 ent.leafnums[ent.num_leafs] = ( Int16 ) leafnum;
                 ent.num_leafs++;

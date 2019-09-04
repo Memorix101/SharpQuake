@@ -41,8 +41,8 @@ namespace SharpQuake.Framework
 
         public void Init( )
         {
-            this.bboxmin.Init( );
-            this.bboxmax.Init( );
+            bboxmin.Init( );
+            bboxmax.Init( );
         }
     } //maliasframedesc_t;
 }

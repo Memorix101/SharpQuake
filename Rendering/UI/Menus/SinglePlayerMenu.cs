@@ -39,7 +39,7 @@ namespace SharpQuake
             switch ( key )
             {
                 case KeysDef.K_ESCAPE:
-                    MenuBase.MainMenu.Show( Host );
+                    MainMenu.Show( Host );
                     break;
 
                 case KeysDef.K_DOWNARROW:
@@ -71,11 +71,11 @@ namespace SharpQuake
                             break;
 
                         case 1:
-                            MenuBase.LoadMenu.Show( Host );
+                            LoadMenu.Show( Host );
                             break;
 
                         case 2:
-                            MenuBase.SaveMenu.Show( Host );
+                            SaveMenu.Show( Host );
                             break;
                     }
                     break;

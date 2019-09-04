@@ -259,10 +259,10 @@ namespace SharpQuake.Framework
         {
             if ( _Count + bytes > _Buffer.Length )
             {
-                if ( !this.AllowOverflow )
+                if ( !AllowOverflow )
                     Utilities.Error( "MsgWriter: overflow without allowoverflow set!" );
 
-                this.IsOveflowed = true;
+                IsOveflowed = true;
                 _Count = 0;
                 if ( bytes > _Buffer.Length )
                     Utilities.Error( "MsgWriter: Requested more than whole buffer has!" );
@@ -313,7 +313,7 @@ namespace SharpQuake.Framework
         public MessageWriter( Int32 capacity )
         {
             SetBufferSize( capacity );
-            this.AllowOverflow = false;
+            AllowOverflow = false;
         }
     }
 }

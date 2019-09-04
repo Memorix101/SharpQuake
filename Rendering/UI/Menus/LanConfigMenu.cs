@@ -36,7 +36,7 @@ namespace SharpQuake
         {
             get
             {
-                return MenuBase.MultiPlayerMenu.Cursor == 0;
+                return MultiPlayerMenu.Cursor == 0;
             }
         }
 
@@ -44,7 +44,7 @@ namespace SharpQuake
         {
             get
             {
-                return MenuBase.MultiPlayerMenu.Cursor == 1;
+                return MultiPlayerMenu.Cursor == 1;
             }
         }
 
@@ -81,7 +81,7 @@ namespace SharpQuake
             switch ( key )
             {
                 case KeysDef.K_ESCAPE:
-                    MenuBase.MultiPlayerMenu.Show( Host );
+                    MultiPlayerMenu.Show( Host );
                     break;
 
                 case KeysDef.K_UPARROW:
@@ -109,11 +109,11 @@ namespace SharpQuake
                     {
                         if ( StartingGame )
                         {
-                            MenuBase.GameOptionsMenu.Show( Host );
+                            GameOptionsMenu.Show( Host );
                         }
                         else
                         {
-                            MenuBase.SearchMenu.Show( Host );
+                            SearchMenu.Show( Host );
                         }
                         break;
                     }
@@ -122,7 +122,7 @@ namespace SharpQuake
                     {
                         Host.Menu.ReturnMenu = this;
                         Host.Menu.ReturnOnError = true;
-                        MenuBase.CurrentMenu.Hide( );
+                        CurrentMenu.Hide( );
                         Host.CommandBuffer.AddText( String.Format( "connect \"{0}\"\n", _JoinName ) );
                         break;
                     }

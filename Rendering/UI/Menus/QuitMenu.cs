@@ -52,7 +52,7 @@ namespace SharpQuake
                     if ( _PrevMenu != null )
                         _PrevMenu.Show( Host );
                     else
-                        MenuBase.CurrentMenu.Hide( );
+                        CurrentMenu.Hide( );
                     break;
 
                 case 'Y':

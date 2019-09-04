@@ -47,10 +47,10 @@ namespace SharpQuake.Framework
 
         public void Clear( )
         {
-            this.v = default( EntVars );
-            if ( this.fields != null )
-                Array.Clear( this.fields, 0, this.fields.Length );
-            this.free = false;
+            v = default( EntVars );
+            if ( fields != null )
+                Array.Clear( fields, 0, fields.Length );
+            free = false;
         }
 
         public Boolean IsV( string_t offset, out string_t correctedOffset )
@@ -69,7 +69,7 @@ namespace SharpQuake.Framework
             Int32 offset1;
             if ( IsV( offset, out offset1 ) )
             {
-                fixed ( void* pv = &this.v )
+                fixed ( void* pv = &v )
                 {
                     var a = ( EVal* ) ( ( Int32* ) pv + offset1 );
                     result->_int = a->_int;
@@ -77,7 +77,7 @@ namespace SharpQuake.Framework
             }
             else
             {
-                fixed ( void* pv = this.fields )
+                fixed ( void* pv = fields )
                 {
                     var a = ( EVal* ) ( ( Int32* ) pv + offset1 );
                     result->_int = a->_int;
@@ -90,7 +90,7 @@ namespace SharpQuake.Framework
             Int32 offset1;
             if ( IsV( offset, out offset1 ) )
             {
-                fixed ( void* pv = &this.v )
+                fixed ( void* pv = &v )
                 {
                     var a = ( EVal* ) ( ( Int32* ) pv + offset1 );
                     a->_int = value->_int;
@@ -98,7 +98,7 @@ namespace SharpQuake.Framework
             }
             else
             {
-                fixed ( void* pv = this.fields )
+                fixed ( void* pv = fields )
                 {
                     var a = ( EVal* ) ( ( Int32* ) pv + offset1 );
                     a->_int = value->_int;
@@ -111,7 +111,7 @@ namespace SharpQuake.Framework
             Int32 offset1;
             if ( IsV( offset, out offset1 ) )
             {
-                fixed ( void* pv = &this.v )
+                fixed ( void* pv = &v )
                 {
                     var a = ( EVal* ) ( ( Int32* ) pv + offset1 );
                     result->vector[0] = a->vector[0];
@@ -121,7 +121,7 @@ namespace SharpQuake.Framework
             }
             else
             {
-                fixed ( void* pf = this.fields )
+                fixed ( void* pf = fields )
                 {
                     var a = ( EVal* ) ( ( Int32* ) pf + offset1 );
                     result->vector[0] = a->vector[0];
@@ -136,7 +136,7 @@ namespace SharpQuake.Framework
             Int32 offset1;
             if ( IsV( offset, out offset1 ) )
             {
-                fixed ( void* pv = &this.v )
+                fixed ( void* pv = &v )
                 {
                     var a = ( EVal* ) ( ( Int32* ) pv + offset1 );
                     a->vector[0] = value->vector[0];
@@ -146,7 +146,7 @@ namespace SharpQuake.Framework
             }
             else
             {
-                fixed ( void* pf = this.fields )
+                fixed ( void* pf = fields )
                 {
                     var a = ( EVal* ) ( ( Int32* ) pf + offset1 );
                     a->vector[0] = value->vector[0];
@@ -161,7 +161,7 @@ namespace SharpQuake.Framework
             Int32 offset1, result;
             if ( IsV( offset, out offset1 ) )
             {
-                fixed ( void* pv = &this.v )
+                fixed ( void* pv = &v )
                 {
                     var a = ( EVal* ) ( ( Int32* ) pv + offset1 );
                     result = a->_int;
@@ -169,7 +169,7 @@ namespace SharpQuake.Framework
             }
             else
             {
-                fixed ( void* pv = this.fields )
+                fixed ( void* pv = fields )
                 {
                     var a = ( EVal* ) ( ( Int32* ) pv + offset1 );
                     result = a->_int;
@@ -184,7 +184,7 @@ namespace SharpQuake.Framework
             Single result;
             if ( IsV( offset, out offset1 ) )
             {
-                fixed ( void* pv = &this.v )
+                fixed ( void* pv = &v )
                 {
                     var a = ( EVal* ) ( ( Single* ) pv + offset1 );
                     result = a->_float;
@@ -192,7 +192,7 @@ namespace SharpQuake.Framework
             }
             else
             {
-                fixed ( void* pv = this.fields )
+                fixed ( void* pv = fields )
                 {
                     var a = ( EVal* ) ( ( Single* ) pv + offset1 );
                     result = a->_float;
@@ -206,7 +206,7 @@ namespace SharpQuake.Framework
             Int32 offset1;
             if ( IsV( offset, out offset1 ) )
             {
-                fixed ( void* pv = &this.v )
+                fixed ( void* pv = &v )
                 {
                     var a = ( EVal* ) ( ( Single* ) pv + offset1 );
                     a->_float = value;
@@ -214,7 +214,7 @@ namespace SharpQuake.Framework
             }
             else
             {
-                fixed ( void* pv = this.fields )
+                fixed ( void* pv = fields )
                 {
                     var a = ( EVal* ) ( ( Single* ) pv + offset1 );
                     a->_float = value;
@@ -224,9 +224,9 @@ namespace SharpQuake.Framework
 
         public MemoryEdict( )
         {
-            this.area = new Link( this );
-            this.leafnums = new Int16[ProgramDef.MAX_ENT_LEAFS];
-            this.fields = new Single[( ProgramDef.EdictSize - EntVars.SizeInBytes ) >> 2];
+            area = new Link( this );
+            leafnums = new Int16[ProgramDef.MAX_ENT_LEAFS];
+            fields = new Single[( ProgramDef.EdictSize - EntVars.SizeInBytes ) >> 2];
         }
     } // edict_t;
 }

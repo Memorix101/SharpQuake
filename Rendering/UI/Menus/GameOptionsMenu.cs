@@ -196,7 +196,7 @@ namespace SharpQuake
             switch ( key )
             {
                 case KeysDef.K_ESCAPE:
-                    MenuBase.LanConfigMenu.Show( Host );
+                    LanConfigMenu.Show( Host );
                     break;
 
                 case KeysDef.K_UPARROW:
@@ -409,7 +409,7 @@ namespace SharpQuake
             public level_t( String name, String desc )
             {
                 this.name = name;
-                this.description = desc;
+                description = desc;
             }
         } //level_t;
 
@@ -421,7 +421,7 @@ namespace SharpQuake
 
             public episode_t( String desc, Int32 firstLevel, Int32 levels )
             {
-                this.description = desc;
+                description = desc;
                 this.firstLevel = firstLevel;
                 this.levels = levels;
             }

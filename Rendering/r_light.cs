@@ -51,7 +51,7 @@ namespace SharpQuake
                 var l = Host.Client.DLights[i];
                 if( l.die < Host.Client.cl.time || l.radius == 0 )
                     continue;
-                MarkLights( l, 1 << i, Host.Client.cl.worldmodel.nodes[0] );
+                MarkLights( l, 1 << i, Host.Client.cl.worldmodel.Nodes[0] );
             }
         }
 
@@ -81,7 +81,7 @@ namespace SharpQuake
             // mark the polygons
             for( var i = 0; i < n.numsurfaces; i++ )
             {
-                var surf = Host.Client.cl.worldmodel.surfaces[n.firstsurface + i];
+                var surf = Host.Client.cl.worldmodel.Surfaces[n.firstsurface + i];
                 if( surf.dlightframe != _DlightFrameCount )
                 {
                     surf.dlightbits = 0;
@@ -151,13 +151,13 @@ namespace SharpQuake
         /// </summary>
         private Int32 LightPoint( ref Vector3 p )
         {
-            if( Host.Client.cl.worldmodel.lightdata == null )
+            if( Host.Client.cl.worldmodel.LightData == null )
                 return 255;
 
             var end = p;
             end.Z -= 2048;
 
-            var r = RecursiveLightPoint( Host.Client.cl.worldmodel.nodes[0], ref p, ref end );
+            var r = RecursiveLightPoint( Host.Client.cl.worldmodel.Nodes[0], ref p, ref end );
             if( r == -1 )
                 r = 0;
 
@@ -197,7 +197,7 @@ namespace SharpQuake
             _LightSpot = mid;
             _LightPlane = plane;
 
-            var surf = Host.Client.cl.worldmodel.surfaces;
+            var surf = Host.Client.cl.worldmodel.Surfaces;
             Int32 offset = n.firstsurface;
             for( var i = 0; i < n.numsurfaces; i++, offset++ )
             {

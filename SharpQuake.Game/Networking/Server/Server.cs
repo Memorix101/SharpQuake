@@ -48,7 +48,7 @@ namespace SharpQuake.Game.Networking.Server
         public Double lastchecktime;
         public String name;// char		name[64];			// map name
         public String modelname;// char		modelname[64];		// maps/<name>.bsp, for model_precache[0]
-        public Model worldmodel;
+        public BrushModel worldmodel;
         public String[] model_precache; //[MAX_MODELS];	// NULL terminated
         public Model[] models; //[MAX_MODELS];
         public String[] sound_precache; //[MAX_SOUNDS];	// NULL terminated
@@ -67,38 +67,38 @@ namespace SharpQuake.Game.Networking.Server
 
         public void Clear( )
         {
-            this.active = false;
-            this.paused = false;
-            this.loadgame = false;
-            this.time = 0;
-            this.lastcheck = 0;
-            this.lastchecktime = 0;
-            this.name = null;
-            this.modelname = null;
-            this.worldmodel = null;
-            Array.Clear( this.model_precache, 0, this.model_precache.Length );
-            Array.Clear( this.models, 0, this.models.Length );
-            Array.Clear( this.sound_precache, 0, this.sound_precache.Length );
-            Array.Clear( this.lightstyles, 0, this.lightstyles.Length );
-            this.num_edicts = 0;
-            this.max_edicts = 0;
-            this.edicts = null;
-            this.state = 0;
-            this.datagram.Clear( );
-            this.reliable_datagram.Clear( );
-            this.signon.Clear( );
+            active = false;
+            paused = false;
+            loadgame = false;
+            time = 0;
+            lastcheck = 0;
+            lastchecktime = 0;
+            name = null;
+            modelname = null;
+            worldmodel = null;
+            Array.Clear( model_precache, 0, model_precache.Length );
+            Array.Clear( models, 0, models.Length );
+            Array.Clear( sound_precache, 0, sound_precache.Length );
+            Array.Clear( lightstyles, 0, lightstyles.Length );
+            num_edicts = 0;
+            max_edicts = 0;
+            edicts = null;
+            state = 0;
+            datagram.Clear( );
+            reliable_datagram.Clear( );
+            signon.Clear( );
             GC.Collect( );
         }
 
         public server_t( )
         {
-            this.model_precache = new String[QDef.MAX_MODELS];
-            this.models = new Model[QDef.MAX_MODELS];
-            this.sound_precache = new String[QDef.MAX_SOUNDS];
-            this.lightstyles = new String[QDef.MAX_LIGHTSTYLES];
-            this.datagram = new MessageWriter( QDef.MAX_DATAGRAM );
-            this.reliable_datagram = new MessageWriter( QDef.MAX_DATAGRAM );
-            this.signon = new MessageWriter( 8192 );
+            model_precache = new String[QDef.MAX_MODELS];
+            models = new Model[QDef.MAX_MODELS];
+            sound_precache = new String[QDef.MAX_SOUNDS];
+            lightstyles = new String[QDef.MAX_LIGHTSTYLES];
+            datagram = new MessageWriter( QDef.MAX_DATAGRAM );
+            reliable_datagram = new MessageWriter( QDef.MAX_DATAGRAM );
+            signon = new MessageWriter( 8192 );
         }
     }// server_t;
 }

@@ -44,8 +44,8 @@ namespace SharpQuake.Framework
 
         public QuakeParameters( )
         {
-            this.basedir = String.Empty;
-            this.cachedir = String.Empty;
+            basedir = String.Empty;
+            cachedir = String.Empty;
         }
     }// quakeparms_t;
 }

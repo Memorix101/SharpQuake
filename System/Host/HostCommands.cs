@@ -141,8 +141,8 @@ namespace SharpQuake
             var m = Client.cl.model_precache[( Int32 ) e.v.modelindex];
 
             var f = MathLib.atoi( Command.Argv( 1 ) );
-            if ( f >= m.numframes )
-                f = m.numframes - 1;
+            if ( f >= m.FrameCount )
+                f = m.FrameCount - 1;
 
             e.v.frame = f;
         }
@@ -168,8 +168,8 @@ namespace SharpQuake
             var m = Client.cl.model_precache[( Int32 ) e.v.modelindex];
 
             e.v.frame = e.v.frame + 1;
-            if ( e.v.frame >= m.numframes )
-                e.v.frame = m.numframes - 1;
+            if ( e.v.frame >= m.FrameCount )
+                e.v.frame = m.FrameCount - 1;
 
             PrintFrameName( m, ( Int32 ) e.v.frame );
         }

@@ -54,14 +54,14 @@ namespace SharpQuake
 
         public void CopyFrom( trace_t src )
         {
-            this.allsolid = src.allsolid;
-            this.startsolid = src.startsolid;
-            this.inopen = src.inopen;
-            this.inwater = src.inwater;
-            this.fraction = src.fraction;
-            this.endpos = src.endpos;
-            this.plane = src.plane;
-            this.ent = src.ent;
+            allsolid = src.allsolid;
+            startsolid = src.startsolid;
+            inopen = src.inopen;
+            inwater = src.inwater;
+            fraction = src.fraction;
+            endpos = src.endpos;
+            plane = src.plane;
+            ent = src.ent;
         }
     } // trace_t;
 }

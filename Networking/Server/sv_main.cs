@@ -28,6 +28,7 @@ using SharpQuake.Framework.Mathematics;
 using SharpQuake.Game.Networking.Server;
 using SharpQuake.Game.Rendering;
 using SharpQuake.Game.Rendering.Memory;
+using SharpQuake.Game.Rendering.Models;
 
 namespace SharpQuake
 {
@@ -615,7 +616,7 @@ namespace SharpQuake
             sv.paused = false;
             sv.time = 1.0;
             sv.modelname = String.Format( "maps/{0}.bsp", server );
-            sv.worldmodel = Host.Model.ForName( sv.modelname, false );
+            sv.worldmodel = ( BrushModel ) Host.Model.ForName( sv.modelname, false, true );
             if( sv.worldmodel == null )
             {
                 Host.Console.Print( "Couldn't spawn server {0}\n", sv.modelname );
@@ -633,10 +634,10 @@ namespace SharpQuake
             sv.model_precache[0] = String.Empty;
 
             sv.model_precache[1] = sv.modelname;
-            for( var i = 1; i < sv.worldmodel.numsubmodels; i++ )
+            for( var i = 1; i < sv.worldmodel.NumSubModels; i++ )
             {
                 sv.model_precache[1 + i] = _LocalModels[i];
-                sv.models[i + 1] = Host.Model.ForName( _LocalModels[i], false );
+                sv.models[i + 1] = Host.Model.ForName( _LocalModels[i], false, true );
             }
 
             //
@@ -644,10 +645,10 @@ namespace SharpQuake
             //
             ent = EdictNum( 0 );
             ent.Clear();
-            ent.v.model = Host.Programs.StringOffset( sv.worldmodel.name );
+            ent.v.model = Host.Programs.StringOffset( sv.worldmodel.Name );
             if( ent.v.model == -1 )
             {
-                ent.v.model = Host.Programs.NewString( sv.worldmodel.name );
+                ent.v.model = Host.Programs.NewString( sv.worldmodel.Name );
             }
             ent.v.modelindex = 1;		// world model
             ent.v.solid = Solids.SOLID_BSP;
@@ -664,7 +665,7 @@ namespace SharpQuake
             // serverflags are for cross level information (sigils)
             Host.Programs.GlobalStruct.serverflags = svs.serverflags;
 
-            Host.Programs.LoadFromFile( sv.worldmodel.entities );
+            Host.Programs.LoadFromFile( sv.worldmodel.Entities );
 
             sv.active = true;
 
@@ -871,9 +872,9 @@ namespace SharpQuake
         /// </summary>
         private Byte[] FatPVS( ref Vector3 org )
         {
-            _FatBytes = ( sv.worldmodel.numleafs + 31 ) >> 3;
+            _FatBytes = ( sv.worldmodel.NumLeafs + 31 ) >> 3;
             Array.Clear( _FatPvs, 0, _FatPvs.Length );
-            AddToFatPVS( ref org, sv.worldmodel.nodes[0] );
+            AddToFatPVS( ref org, sv.worldmodel.Nodes[0] );
             return _FatPvs;
         }
 
@@ -893,7 +894,7 @@ namespace SharpQuake
                 {
                     if( node.contents != ContentsDef.CONTENTS_SOLID )
                     {
-                        var pvs = Host.Model.LeafPVS( (MemoryLeaf)node, sv.worldmodel );
+                        var pvs = sv.worldmodel.LeafPVS( (MemoryLeaf)node );
                         for( var i = 0; i < _FatBytes; i++ )
                             _FatPvs[i] |= pvs[i];
                     }

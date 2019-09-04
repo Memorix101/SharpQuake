@@ -59,10 +59,10 @@ namespace SharpQuake
             _EfragTopNode = null;
 
             var entmodel = ent.model;
-            _EMins = ent.origin + entmodel.mins;
-            _EMaxs = ent.origin + entmodel.maxs;
+            _EMins = ent.origin + entmodel.BoundsMin;
+            _EMaxs = ent.origin + entmodel.BoundsMax;
 
-            SplitEntityOnNode( Host.Client.cl.worldmodel.nodes[0] );
+            SplitEntityOnNode( Host.Client.cl.worldmodel.Nodes[0] );
             ent.topnode = _EfragTopNode;
         }
 
@@ -149,7 +149,7 @@ namespace SharpQuake
                 var pent = ef.entity;
                 var clmodel = pent.model;
 
-                switch( clmodel.type )
+                switch( clmodel.Type )
                 {
                     case ModelType.mod_alias:
                     case ModelType.mod_brush:
@@ -166,7 +166,7 @@ namespace SharpQuake
                         break;
 
                     default:
-                        Utilities.Error( "R_StoreEfrags: Bad entity type {0}\n", clmodel.type );
+                        Utilities.Error( "R_StoreEfrags: Bad entity type {0}\n", clmodel.Type );
                         break;
                 }
             }

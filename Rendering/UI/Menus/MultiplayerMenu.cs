@@ -36,7 +36,7 @@ namespace SharpQuake
             switch ( key )
             {
                 case KeysDef.K_ESCAPE:
-                    MenuBase.MainMenu.Show( Host );
+                    MainMenu.Show( Host );
                     break;
 
                 case KeysDef.K_DOWNARROW:
@@ -57,16 +57,16 @@ namespace SharpQuake
                     {
                         case 0:
                             if ( Host.Network.TcpIpAvailable )
-                                MenuBase.LanConfigMenu.Show( Host );
+                                LanConfigMenu.Show( Host );
                             break;
 
                         case 1:
                             if ( Host.Network.TcpIpAvailable )
-                                MenuBase.LanConfigMenu.Show( Host );
+                                LanConfigMenu.Show( Host );
                             break;
 
                         case 2:
-                            MenuBase.SetupMenu.Show( Host );
+                            SetupMenu.Show( Host );
                             break;
                     }
                     break;

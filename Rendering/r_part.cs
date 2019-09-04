@@ -448,7 +448,7 @@ namespace SharpQuake
             }
 
             var uintData = new UInt32[data.Length / 4];
-            System.Buffer.BlockCopy( data, 0, uintData, 0, data.Length );
+            Buffer.BlockCopy( data, 0, uintData, 0, data.Length );
 
             ParticleTexture = BaseTexture.FromBuffer( Host.Video.Device, "_Particles", uintData, 8, 8, false, true, "GL_LINEAR", "GL_MODULATE" );
         }

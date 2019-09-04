@@ -100,22 +100,22 @@ namespace SharpQuake.Framework
             if ( src.Length < ServerDef.NUM_SPAWN_PARMS )
                 throw new ArgumentException( String.Format( "There must be {0} parameters!", ServerDef.NUM_SPAWN_PARMS ) );
 
-            this.parm1 = src[0];
-            this.parm2 = src[1];
-            this.parm3 = src[2];
-            this.parm4 = src[3];
-            this.parm5 = src[4];
-            this.parm6 = src[5];
-            this.parm7 = src[6];
-            this.parm8 = src[7];
-            this.parm9 = src[8];
-            this.parm10 = src[9];
-            this.parm11 = src[10];
-            this.parm12 = src[11];
-            this.parm13 = src[12];
-            this.parm14 = src[13];
-            this.parm15 = src[14];
-            this.parm16 = src[15];
+            parm1 = src[0];
+            parm2 = src[1];
+            parm3 = src[2];
+            parm4 = src[3];
+            parm5 = src[4];
+            parm6 = src[5];
+            parm7 = src[6];
+            parm8 = src[7];
+            parm9 = src[8];
+            parm10 = src[9];
+            parm11 = src[10];
+            parm12 = src[11];
+            parm13 = src[12];
+            parm14 = src[13];
+            parm15 = src[14];
+            parm16 = src[15];
         }
     } // globalvars_t;
 }

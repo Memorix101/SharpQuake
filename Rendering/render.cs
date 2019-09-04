@@ -397,7 +397,7 @@ namespace SharpQuake
             var model = _CurrentEntity.model;
             if ( model == null )
                 return;		// player doesn't have a model yet
-            if ( model.type != ModelType.mod_alias )
+            if ( model.Type != ModelType.mod_alias )
                 return; // only translate skins on alias models
 
             var paliashdr = Host.Model.GetExtraData( model );
@@ -435,8 +435,8 @@ namespace SharpQuake
 
             // clear out efrags in case the level hasn't been reloaded
             // FIXME: is this one short?
-            for ( var i = 0; i < Host.Client.cl.worldmodel.numleafs; i++ )
-                Host.Client.cl.worldmodel.leafs[i].efrags = null;
+            for ( var i = 0; i < Host.Client.cl.worldmodel.NumLeafs; i++ )
+                Host.Client.cl.worldmodel.Leaves[i].efrags = null;
 
             _ViewLeaf = null;
             ClearParticles( );
@@ -447,18 +447,18 @@ namespace SharpQuake
             _SkyTextureNum = -1;
             //_MirrorTextureNum = -1;
             var world = Host.Client.cl.worldmodel;
-            for ( var i = 0; i < world.numtextures; i++ )
+            for ( var i = 0; i < world.NumTextures; i++ )
             {
-                if ( world.textures[i] == null )
+                if ( world.Textures[i] == null )
                     continue;
-                if ( world.textures[i].name != null )
+                if ( world.Textures[i].name != null )
                 {
-                    if ( world.textures[i].name.StartsWith( "sky" ) )
+                    if ( world.Textures[i].name.StartsWith( "sky" ) )
                         _SkyTextureNum = i;
                     //if( world.textures[i].name.StartsWith( "window02_1" ) )
                     //    _MirrorTextureNum = i;
                 }
-                world.textures[i].texturechain = null;
+                world.Textures[i].texturechain = null;
             }
         }
 
@@ -636,7 +636,7 @@ namespace SharpQuake
             {
                 _CurrentEntity = Host.Client.VisEdicts[i];
 
-                switch ( _CurrentEntity.model.type )
+                switch ( _CurrentEntity.model.Type )
                 {
                     case ModelType.mod_alias:
                         DrawAliasModel( _CurrentEntity );
@@ -655,7 +655,7 @@ namespace SharpQuake
             {
                 _CurrentEntity = Host.Client.VisEdicts[i];
 
-                switch ( _CurrentEntity.model.type )
+                switch ( _CurrentEntity.model.Type )
                 {
                     case ModelType.mod_sprite:
                         DrawSpriteModel( _CurrentEntity );
@@ -739,8 +739,8 @@ namespace SharpQuake
         private void DrawAliasModel( Entity e )
         {
             var clmodel = _CurrentEntity.model;
-            var mins = _CurrentEntity.origin + clmodel.mins;
-            var maxs = _CurrentEntity.origin + clmodel.maxs;
+            var mins = _CurrentEntity.origin + clmodel.BoundsMin;
+            var maxs = _CurrentEntity.origin + clmodel.BoundsMax;
 
             if ( CullBox( ref mins, ref maxs ) )
                 return;
@@ -786,7 +786,7 @@ namespace SharpQuake
                     _AmbientLight = _ShadeLight = 8;
 
             // HACK HACK HACK -- no fullbright colors, so make torches full light
-            if ( clmodel.name == "progs/flame2.mdl" || clmodel.name == "progs/flame.mdl" )
+            if ( clmodel.Name == "progs/flame2.mdl" || clmodel.Name == "progs/flame.mdl" )
                 _AmbientLight = _ShadeLight = 256;
 
             _ShadeDots = anorm_dots.Values[( ( Int32 ) ( e.angles.Y * ( anorm_dots.SHADEDOT_QUANT / 360.0 ) ) ) & ( anorm_dots.SHADEDOT_QUANT - 1 )];
@@ -807,26 +807,26 @@ namespace SharpQuake
 
             BaseModel model = null;
 
-            if ( !BaseModel.ModelPool.ContainsKey( clmodel.name ) )
+            if ( !BaseModel.ModelPool.ContainsKey( clmodel.Name ) )
             {
                 var anim = ( Int32 ) ( Host.Client.cl.time * 10 ) & 3;
 
-                model = BaseModel.Create( Host.Video.Device, clmodel.name, Host.Model.SkinTextures[paliashdr.gl_texturenum[_CurrentEntity.skinnum, anim]], true );
+                model = BaseModel.Create( Host.Video.Device, clmodel.Name, Host.Model.SkinTextures[paliashdr.gl_texturenum[_CurrentEntity.skinnum, anim]], true );
             }
             else
-                model = BaseModel.ModelPool[clmodel.name];
+                model = BaseModel.ModelPool[clmodel.Name];
 
             model.Desc.ScaleOrigin = paliashdr.scale_origin;
             model.Desc.Scale = paliashdr.scale;
-            model.Desc.MinimumBounds = clmodel.mins;
-            model.Desc.MaximumBounds = clmodel.maxs;
+            model.Desc.MinimumBounds = clmodel.BoundsMin;
+            model.Desc.MaximumBounds = clmodel.BoundsMax;
             model.Desc.Origin = e.origin;
             model.Desc.EulerAngles = e.angles;
             model.Desc.AliasFrame = _CurrentEntity.frame;
 
             model.DrawAliasModel( _ShadeLight, _ShadeVector, _ShadeDots, _LightSpot.Z, paliashdr,
                 Host.Client.cl.time, ( _Shadows.Value != 0 ), ( _glSmoothModels.Value != 0 ), ( _glAffineModels.Value != 0 ),
-                _glNoColors.Value == 0, ( clmodel.name == "progs/eyes.mdl" && _glDoubleEyes.Value != 0 ) );
+                _glNoColors.Value == 0, ( clmodel.Name == "progs/eyes.mdl" && _glDoubleEyes.Value != 0 ) );
         }
 
         /// <summary>
@@ -972,7 +972,7 @@ namespace SharpQuake
 
             // current viewleaf
             _OldViewLeaf = _ViewLeaf;
-            _ViewLeaf = Host.Model.PointInLeaf( ref Origin, Host.Client.cl.worldmodel );
+            _ViewLeaf = Host.Client.cl.worldmodel.PointInLeaf( ref Origin );
 
             Host.View.SetContentsColor( _ViewLeaf.contents );
             Host.View.CalcBlend( );

@@ -178,7 +178,7 @@ namespace SharpQuake.Framework.IO
             //
             foreach ( var pk3file in Directory.GetFiles( dir, "*.pk3" ).OrderByDescending( f => f ) )
             {
-                var file = FileSystem.OpenRead( pk3file );
+                var file = OpenRead( pk3file );
 
                 if ( file != null )
                 {
@@ -221,7 +221,7 @@ namespace SharpQuake.Framework.IO
         // needed.  This is for the ConsoleWrappervenience of developers using ISDN from home.
         private static void CopyFile( String netpath, String cachepath )
         {
-            using ( Stream src = FileSystem.OpenRead( netpath ), dest = FileSystem.OpenWrite( cachepath ) )
+            using ( Stream src = OpenRead( netpath ), dest = OpenWrite( cachepath ) )
             {
                 if ( src == null )
                 {
@@ -317,7 +317,7 @@ namespace SharpQuake.Framework.IO
                     }
 
                     var netpath = sp.filename + "/" + filename;  //sprintf (netpath, "%s/%s",search->filename, filename);
-                    var findtime = FileSystem.GetFileTime( netpath );
+                    var findtime = GetFileTime( netpath );
                     if ( findtime == DateTime.MinValue )
                         continue;
 
@@ -340,14 +340,14 @@ namespace SharpQuake.Framework.IO
                             cachepath = _CacheDir + netpath;
                         }
 
-                        var cachetime = FileSystem.GetFileTime( cachepath );
+                        var cachetime = GetFileTime( cachepath );
                         if ( cachetime < findtime )
                             CopyFile( netpath, cachepath );
                         netpath = cachepath;
                     }
 
                     ConsoleWrapper.DPrint( "FindFile: {0}\n", netpath );
-                    var fs = FileSystem.OpenRead( netpath );
+                    var fs = OpenRead( netpath );
                     if ( fs == null )
                     {
                         file = null;
@@ -407,7 +407,7 @@ namespace SharpQuake.Framework.IO
         /// </summary>
         public static Pak LoadPackFile( String packfile )
         {
-            var file = FileSystem.OpenRead( packfile );
+            var file = OpenRead( packfile );
             if ( file == null )
                 return null;
 

@@ -37,7 +37,7 @@ namespace SharpQuake.Framework
 
         public override String ToString( )
         {
-            return String.Format( "{0}, at {1}, {2} bytes}", this.name, this.filepos, this.filelen );
+            return String.Format( "{0}, at {1}, {2} bytes}", name, filepos, filelen );
         }
     } // packfile_t;
 }

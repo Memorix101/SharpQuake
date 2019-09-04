@@ -45,11 +45,11 @@ namespace SharpQuake
             switch ( key )
             {
                 case KeysDef.K_ESCAPE:
-                    MenuBase.LanConfigMenu.Show( Host );
+                    LanConfigMenu.Show( Host );
                     break;
 
                 case KeysDef.K_SPACE:
-                    MenuBase.SearchMenu.Show( Host );
+                    SearchMenu.Show( Host );
                     break;
 
                 case KeysDef.K_UPARROW:
@@ -73,7 +73,7 @@ namespace SharpQuake
                     Host.Menu.ReturnMenu = this;
                     Host.Menu.ReturnOnError = true;
                     _Sorted = false;
-                    MenuBase.CurrentMenu.Hide( );
+                    CurrentMenu.Hide( );
                     Host.CommandBuffer.AddText( String.Format( "connect \"{0}\"\n", Host.Network.HostCache[_Cursor].cname ) );
                     break;
 

@@ -44,7 +44,7 @@ namespace SharpQuake
             switch ( key )
             {
                 case KeysDef.K_ESCAPE:
-                    MenuBase.MainMenu.Show( Host );
+                    MainMenu.Show( Host );
                     break;
 
                 case KeysDef.K_UPARROW:

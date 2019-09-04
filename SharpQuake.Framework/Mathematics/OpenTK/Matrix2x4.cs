@@ -212,8 +212,8 @@ namespace SharpQuake.Framework.Mathematics
         /// <param name="result">The resulting Matrix2x4 instance.</param>
         public static void CreateRotation(float angle, out Matrix2x4 result)
         {
-            float cos = (float)System.Math.Cos(angle);
-            float sin = (float)System.Math.Sin(angle);
+            float cos = (float) Math.Cos(angle);
+            float sin = (float) Math.Sin(angle);
 
             result.Row0.X = cos;
             result.Row0.Y = sin;
@@ -672,7 +672,7 @@ namespace SharpQuake.Framework.Mathematics
         {
             unchecked
             {
-                return (this.Row0.GetHashCode() * 397) ^ this.Row1.GetHashCode();
+                return (Row0.GetHashCode() * 397) ^ Row1.GetHashCode();
             }
         }
 
@@ -688,7 +688,7 @@ namespace SharpQuake.Framework.Mathematics
                 return false;
             }
 
-            return this.Equals((Matrix2x4)obj);
+            return Equals((Matrix2x4)obj);
         }
 
         /// <summary>

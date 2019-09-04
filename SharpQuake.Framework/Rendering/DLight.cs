@@ -38,12 +38,12 @@ namespace SharpQuake.Framework
 
         public void Clear( )
         {
-            this.origin = Vector3.Zero;
-            this.radius = 0;
-            this.die = 0;
-            this.decay = 0;
-            this.minlight = 0;
-            this.key = 0;
+            origin = Vector3.Zero;
+            radius = 0;
+            die = 0;
+            decay = 0;
+            minlight = 0;
+            key = 0;
         }
     } //dlight_t;
 }

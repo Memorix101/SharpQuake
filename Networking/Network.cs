@@ -1200,7 +1200,7 @@ JustDoIt:
         {
             this.next = next;
             this.nextTime = nextTime;
-            this.procedure = handler;
+            procedure = handler;
             this.arg = arg;
         }
     }

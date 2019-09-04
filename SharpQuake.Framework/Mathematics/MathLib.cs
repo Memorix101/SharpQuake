@@ -403,7 +403,7 @@ namespace SharpQuake.Framework
 
             if ( i == offset )
             {
-                Int32.TryParse( s.Substring( offset + 2 ), System.Globalization.NumberStyles.HexNumber, null, out result );
+                Int32.TryParse( s.Substring( offset + 2 ), NumberStyles.HexNumber, null, out result );
             }
             else
             {

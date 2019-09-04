@@ -38,7 +38,7 @@ namespace SharpQuake.Game.Rendering.Memory
 
         public MemoryNode( )
         {
-            this.children = new MemoryNodeBase[2];
+            children = new MemoryNodeBase[2];
         }
     } //mnode_t;
 }

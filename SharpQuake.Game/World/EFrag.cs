@@ -35,10 +35,10 @@ namespace SharpQuake.Game.World
 
         public void Clear( )
         {
-            this.leaf = null;
-            this.leafnext = null;
-            this.entity = null;
-            this.entnext = null;
+            leaf = null;
+            leafnext = null;
+            entity = null;
+            entnext = null;
         }
     } // efrag_t;
 }

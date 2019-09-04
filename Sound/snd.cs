@@ -44,7 +44,7 @@ namespace SharpQuake
 
         public override String ToString( )
         {
-            return String.Format( "{{{0}, {1}}}", this.left, this.right );
+            return String.Format( "{{{0}, {1}}}", left, right );
         }
     }
 
@@ -772,7 +772,7 @@ namespace SharpQuake
             if ( Host.Client.cl.worldmodel == null )
                 return;
 
-            var l = Host.Model.PointInLeaf( ref _ListenerOrigin, Host.Client.cl.worldmodel );
+            var l = Host.Client.cl.worldmodel.PointInLeaf( ref _ListenerOrigin );
             if ( l == null || _AmbientLevel.Value == 0 )
             {
                 for ( var i = 0; i < AmbientDef.NUM_AMBIENTS; i++ )
@@ -868,7 +868,7 @@ namespace SharpQuake
 
         public void Clear( )
         {
-            this.name = null;
+            name = null;
             cache = null;
         }
     } // sfx_t;

@@ -335,7 +335,7 @@ namespace SharpQuake
                     Host.Console.Print( "EMPTY\n" );
                     continue;
                 }
-                Host.Console.Print( "{0}:{1:d2}  ({2}) [{3}]\n", ent.model.name, ent.frame, ent.origin, ent.angles );
+                Host.Console.Print( "{0}:{1:d2}  ({2}) [{3}]\n", ent.model.Name, ent.frame, ent.origin, ent.angles );
             }
         }
 
@@ -408,7 +408,7 @@ namespace SharpQuake
                 }
 
                 // rotate binary objects locally
-                if( ( ent.model.flags & EF.EF_ROTATE ) != 0 )
+                if( ( ent.model.Flags & EF.EF_ROTATE ) != 0 )
                     ent.angles.Y = bobjrotate;
 
                 if( ( ent.effects & EntityEffects.EF_BRIGHTFIELD ) != 0 )
@@ -442,15 +442,15 @@ namespace SharpQuake
                     dl.die = ( Single ) cl.time + 0.001f;
                 }
 
-                if( ( ent.model.flags & EF.EF_GIB ) != 0 )
+                if( ( ent.model.Flags & EF.EF_GIB ) != 0 )
                     Host.RenderContext.RocketTrail( ref oldorg, ref ent.origin, 2 );
-                else if( ( ent.model.flags & EF.EF_ZOMGIB ) != 0 )
+                else if( ( ent.model.Flags & EF.EF_ZOMGIB ) != 0 )
                     Host.RenderContext.RocketTrail( ref oldorg, ref ent.origin, 4 );
-                else if( ( ent.model.flags & EF.EF_TRACER ) != 0 )
+                else if( ( ent.model.Flags & EF.EF_TRACER ) != 0 )
                     Host.RenderContext.RocketTrail( ref oldorg, ref ent.origin, 3 );
-                else if( ( ent.model.flags & EF.EF_TRACER2 ) != 0 )
+                else if( ( ent.model.Flags & EF.EF_TRACER2 ) != 0 )
                     Host.RenderContext.RocketTrail( ref oldorg, ref ent.origin, 5 );
-                else if( ( ent.model.flags & EF.EF_ROCKET ) != 0 )
+                else if( ( ent.model.Flags & EF.EF_ROCKET ) != 0 )
                 {
                     Host.RenderContext.RocketTrail( ref oldorg, ref ent.origin, 0 );
                     var dl = AllocDlight( i );
@@ -458,9 +458,9 @@ namespace SharpQuake
                     dl.radius = 200;
                     dl.die = ( Single ) cl.time + 0.01f;
                 }
-                else if( ( ent.model.flags & EF.EF_GRENADE ) != 0 )
+                else if( ( ent.model.Flags & EF.EF_GRENADE ) != 0 )
                     Host.RenderContext.RocketTrail( ref oldorg, ref ent.origin, 1 );
-                else if( ( ent.model.flags & EF.EF_TRACER3 ) != 0 )
+                else if( ( ent.model.Flags & EF.EF_TRACER3 ) != 0 )
                     Host.RenderContext.RocketTrail( ref oldorg, ref ent.origin, 6 );
 
                 ent.forcelink = false;

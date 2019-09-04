@@ -44,8 +44,8 @@ namespace SharpQuake.Framework
         /// </summary>
         public void Init( )
         {
-            if ( this.v == null )
-                this.v = new Byte[3];
+            if ( v == null )
+                v = new Byte[3];
         }
     } // trivertx_t;
 }

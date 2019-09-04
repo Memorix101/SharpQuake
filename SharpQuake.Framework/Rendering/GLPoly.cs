@@ -40,19 +40,19 @@ namespace SharpQuake.Framework
 
         public void Clear( )
         {
-            this.next = null;
-            this.chain = null;
-            this.numverts = 0;
-            this.flags = 0;
-            this.verts = null;
+            next = null;
+            chain = null;
+            numverts = 0;
+            flags = 0;
+            verts = null;
         }
 
         public void AllocVerts( Int32 count )
         {
-            this.numverts = count;
-            this.verts = new Single[count][];
+            numverts = count;
+            verts = new Single[count][];
             for ( var i = 0; i < count; i++ )
-                this.verts[i] = new Single[ModelDef.VERTEXSIZE];
+                verts[i] = new Single[ModelDef.VERTEXSIZE];
         }
     } //glpoly_t;
 }

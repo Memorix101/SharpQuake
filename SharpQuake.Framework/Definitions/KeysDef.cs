@@ -274,5 +274,26 @@ namespace SharpQuake.Framework
 
             new KeyName("SEMICOLON", ';'),	// because a raw semicolon seperates commands
         };
+
+        public static Byte[] KeyTable = new Byte[130]
+        {
+            0, K_SHIFT, K_SHIFT, K_CTRL, K_CTRL, K_ALT, K_ALT, 0, // 0 - 7
+            0, 0, K_F1, K_F2, K_F3, K_F4, K_F5, K_F6, // 8 - 15
+            K_F7, K_F8, K_F9, K_F10, K_F11, K_F12, 0, 0, // 16 - 23
+            0, 0, 0, 0, 0, 0, 0, 0, // 24 - 31
+            0, 0, 0, 0, 0, 0, 0, 0, // 32 - 39
+            0, 0, 0, 0, 0, K_UPARROW, K_DOWNARROW, K_LEFTARROW, // 40 - 47
+            K_RIGHTARROW, K_ENTER, K_ESCAPE, K_SPACE, K_TAB, K_BACKSPACE, K_INS, K_DEL, // 48 - 55
+            K_PGUP, K_PGDN, K_HOME, K_END, 0, 0, 0, K_PAUSE, // 56 - 63
+            0, 0, 0, K_INS, K_END, K_DOWNARROW, K_PGDN, K_LEFTARROW, // 64 - 71
+            0, K_RIGHTARROW, K_HOME, K_UPARROW, K_PGUP, (Byte)'/', (Byte)'*', (Byte)'-', // 72 - 79
+            (Byte)'+', (Byte)'.', K_ENTER, (Byte)'a', (Byte)'b', (Byte)'c', (Byte)'d', (Byte)'e', // 80 - 87
+            (Byte)'f', (Byte)'g', (Byte)'h', (Byte)'i', (Byte)'j', (Byte)'k', (Byte)'l', (Byte)'m', // 88 - 95
+            (Byte)'n', (Byte)'o', (Byte)'p', (Byte)'q', (Byte)'r', (Byte)'s', (Byte)'t', (Byte)'u', // 96 - 103
+            (Byte)'v', (Byte)'w', (Byte)'x', (Byte)'y', (Byte)'z', (Byte)'0', (Byte)'1', (Byte)'2', // 104 - 111
+            (Byte)'3', (Byte)'4', (Byte)'5', (Byte)'6', (Byte)'7', (Byte)'8', (Byte)'9', (Byte)'`', // 112 - 119
+            (Byte)'-', (Byte)'+', (Byte)'[', (Byte)']', (Byte)';', (Byte)'\'', (Byte)',', (Byte)'.', // 120 - 127
+            (Byte)'/', (Byte)'\\' // 128 - 129
+        };
     }
 }

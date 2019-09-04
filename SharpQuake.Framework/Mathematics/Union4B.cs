@@ -68,13 +68,13 @@ namespace SharpQuake.Framework
         public Union4b( Byte b0, Byte b1, Byte b2, Byte b3 )
         {
             // Shut up compiler
-            this.ui0 = 0;
-            this.i0 = 0;
-            this.f0 = 0;
-            this.s0 = 0;
-            this.s1 = 0;
-            this.us0 = 0;
-            this.us1 = 0;
+            ui0 = 0;
+            i0 = 0;
+            f0 = 0;
+            s0 = 0;
+            s1 = 0;
+            us0 = 0;
+            us1 = 0;
             this.b0 = b0;
             this.b1 = b1;
             this.b2 = b2;

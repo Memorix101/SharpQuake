@@ -168,6 +168,7 @@
     <Compile Include="Rendering\Alias\AliasHeader.cs" />
     <Compile Include="Rendering\CachePic.cs" />
     <Compile Include="Rendering\DLight.cs" />
+    <Compile Include="Rendering\FloodFiller.cs" />
     <Compile Include="Rendering\GLPic.cs" />
     <Compile Include="Rendering\GLPoly.cs" />
     <Compile Include="Rendering\GLTexture.cs" />

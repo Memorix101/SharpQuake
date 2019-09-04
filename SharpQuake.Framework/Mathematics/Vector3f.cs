@@ -36,7 +36,7 @@ namespace SharpQuake.Framework
         {
             get
             {
-                return ( this.x == 0 ) && ( this.y == 0 ) && ( this.z == 0 );
+                return ( x == 0 ) && ( y == 0 ) && ( z == 0 );
             }
         }
     }

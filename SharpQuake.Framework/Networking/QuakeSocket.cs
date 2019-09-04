@@ -35,7 +35,7 @@ namespace SharpQuake.Framework
         {
             get
             {
-                return NetworkWrapper.GetLanDriver( this.landriver );
+                return NetworkWrapper.GetLanDriver( landriver );
             }
         }
 
@@ -70,24 +70,24 @@ namespace SharpQuake.Framework
 
         public void ClearBuffers( )
         {
-            this.sendMessageLength = 0;
-            this.receiveMessageLength = 0;
+            sendMessageLength = 0;
+            receiveMessageLength = 0;
         }
 
         public Int32 Read( Byte[] buf, Int32 len, ref EndPoint ep )
         {
-            return this.LanDriver.Read( this.socket, buf, len, ref ep );
+            return LanDriver.Read( socket, buf, len, ref ep );
         }
 
         public Int32 Write( Byte[] buf, Int32 len, EndPoint ep )
         {
-            return this.LanDriver.Write( this.socket, buf, len, ep );
+            return LanDriver.Write( socket, buf, len, ep );
         }
 
         public qsocket_t( )
         {
-            this.sendMessage = new Byte[NetworkDef.NET_MAXMESSAGE];
-            this.receiveMessage = new Byte[NetworkDef.NET_MAXMESSAGE];
+            sendMessage = new Byte[NetworkDef.NET_MAXMESSAGE];
+            receiveMessage = new Byte[NetworkDef.NET_MAXMESSAGE];
             disconnected = true;
         }
     }

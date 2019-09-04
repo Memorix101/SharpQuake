@@ -72,8 +72,8 @@ namespace SharpQuake.Framework
 
         public aliashdr_t( )
         {
-            this.gl_texturenum = new Int32[ModelDef.MAX_SKINS, 4];//[];
-            this.texels = new Object[ModelDef.MAX_SKINS];
+            gl_texturenum = new Int32[ModelDef.MAX_SKINS, 4];//[];
+            texels = new Object[ModelDef.MAX_SKINS];
         }
     } // aliashdr_t;
 }

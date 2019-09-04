@@ -62,27 +62,6 @@ namespace SharpQuake
             }
         }
 
-        private static Byte[] _KeyTable = new Byte[130]
-        {
-            0, KeysDef.K_SHIFT, KeysDef.K_SHIFT, KeysDef.K_CTRL, KeysDef.K_CTRL, KeysDef.K_ALT, KeysDef.K_ALT, 0, // 0 - 7
-            0, 0, KeysDef.K_F1, KeysDef.K_F2, KeysDef.K_F3, KeysDef.K_F4, KeysDef.K_F5, KeysDef.K_F6, // 8 - 15
-            KeysDef.K_F7, KeysDef.K_F8, KeysDef.K_F9, KeysDef.K_F10, KeysDef.K_F11, KeysDef.K_F12, 0, 0, // 16 - 23
-            0, 0, 0, 0, 0, 0, 0, 0, // 24 - 31
-            0, 0, 0, 0, 0, 0, 0, 0, // 32 - 39
-            0, 0, 0, 0, 0, KeysDef.K_UPARROW, KeysDef.K_DOWNARROW, KeysDef.K_LEFTARROW, // 40 - 47
-            KeysDef.K_RIGHTARROW, KeysDef.K_ENTER, KeysDef.K_ESCAPE, KeysDef.K_SPACE, KeysDef.K_TAB, KeysDef.K_BACKSPACE, KeysDef.K_INS, KeysDef.K_DEL, // 48 - 55
-            KeysDef.K_PGUP, KeysDef.K_PGDN, KeysDef.K_HOME, KeysDef.K_END, 0, 0, 0, KeysDef.K_PAUSE, // 56 - 63
-            0, 0, 0, KeysDef.K_INS, KeysDef.K_END, KeysDef.K_DOWNARROW, KeysDef.K_PGDN, KeysDef.K_LEFTARROW, // 64 - 71
-            0, KeysDef.K_RIGHTARROW, KeysDef.K_HOME, KeysDef.K_UPARROW, KeysDef.K_PGUP, (Byte)'/', (Byte)'*', (Byte)'-', // 72 - 79
-            (Byte)'+', (Byte)'.', KeysDef.K_ENTER, (Byte)'a', (Byte)'b', (Byte)'c', (Byte)'d', (Byte)'e', // 80 - 87
-            (Byte)'f', (Byte)'g', (Byte)'h', (Byte)'i', (Byte)'j', (Byte)'k', (Byte)'l', (Byte)'m', // 88 - 95
-            (Byte)'n', (Byte)'o', (Byte)'p', (Byte)'q', (Byte)'r', (Byte)'s', (Byte)'t', (Byte)'u', // 96 - 103
-            (Byte)'v', (Byte)'w', (Byte)'x', (Byte)'y', (Byte)'z', (Byte)'0', (Byte)'1', (Byte)'2', // 104 - 111
-            (Byte)'3', (Byte)'4', (Byte)'5', (Byte)'6', (Byte)'7', (Byte)'8', (Byte)'9', (Byte)'`', // 112 - 119
-            (Byte)'-', (Byte)'+', (Byte)'[', (Byte)']', (Byte)';', (Byte)'\'', (Byte)',', (Byte)'.', // 120 - 127
-            (Byte)'/', (Byte)'\\' // 128 - 129
-        };
-
         // This is where we start porting stuff over to proper instanced classes - TODO
         public Host Host
         {
@@ -117,7 +96,7 @@ namespace SharpQuake
         {
             base.OnFocusedChanged( );
 
-            if ( this.Focused )
+            if ( Focused )
                 Host.Sound.UnblockSound( );
             else
                 Host.Sound.BlockSound( );
@@ -277,7 +256,7 @@ namespace SharpQuake
 
             var size = new Size( 1280, 720 );
 
-            using ( var form = MainWindow.CreateInstance( size, false ) )
+            using ( var form = CreateInstance( size, false ) )
             {
                 form.Host.Console.DPrint( "Host.Init\n" );
                 form.Host.Initialise( parms );
@@ -303,13 +282,13 @@ namespace SharpQuake
         {
             if ( e.Delta > 0 )
             {
-                MainWindow.Instance.Host.Keyboard.Event( KeysDef.K_MWHEELUP, true );
-                MainWindow.Instance.Host.Keyboard.Event( KeysDef.K_MWHEELUP, false );
+                Instance.Host.Keyboard.Event( KeysDef.K_MWHEELUP, true );
+                Instance.Host.Keyboard.Event( KeysDef.K_MWHEELUP, false );
             }
             else
             {
-                MainWindow.Instance.Host.Keyboard.Event( KeysDef.K_MWHEELDOWN, true );
-                MainWindow.Instance.Host.Keyboard.Event( KeysDef.K_MWHEELDOWN, false );
+                Instance.Host.Keyboard.Event( KeysDef.K_MWHEELDOWN, true );
+                Instance.Host.Keyboard.Event( KeysDef.K_MWHEELDOWN, false );
             }
         }
 
@@ -339,23 +318,23 @@ namespace SharpQuake
             var key = ( Int32 ) srcKey;
             key &= 255;
 
-            if ( key >= _KeyTable.Length )
+            if ( key >= KeysDef.KeyTable.Length )
                 return 0;
 
-            if ( _KeyTable[key] == 0 )
-                MainWindow.Instance.Host.Console.DPrint( "key 0x{0:X} has no translation\n", key );
+            if ( KeysDef.KeyTable[key] == 0 )
+                Host.Console.DPrint( "key 0x{0:X} has no translation\n", key );
 
-            return _KeyTable[key];
+            return KeysDef.KeyTable[key];
         }
 
         private void Keyboard_KeyUp( Object sender, KeyboardKeyEventArgs e )
         {
-            MainWindow.Instance.Host.Keyboard.Event( MapKey( e.Key ), false );
+            Host.Keyboard.Event( MapKey( e.Key ), false );
         }
 
         private void Keyboard_KeyDown( Object sender, KeyboardKeyEventArgs e )
         {
-            MainWindow.Instance.Host.Keyboard.Event( MapKey( e.Key ), true );
+            Host.Keyboard.Event( MapKey( e.Key ), true );
         }
 
         private MainWindow( Size size, Boolean isFullScreen )
@@ -363,16 +342,16 @@ namespace SharpQuake
         {
             _Instance = new WeakReference( this );
             _Swatch = new Stopwatch( );
-            this.VSync = VSyncMode.One;
-            this.Icon = Icon.ExtractAssociatedIcon( AppDomain.CurrentDomain.FriendlyName ); //Application.ExecutablePath
+            VSync = VSyncMode.One;
+            Icon = Icon.ExtractAssociatedIcon( AppDomain.CurrentDomain.FriendlyName ); //Application.ExecutablePath
 
-            this.KeyDown += new EventHandler<KeyboardKeyEventArgs>( Keyboard_KeyDown );
-            this.KeyUp += new EventHandler<KeyboardKeyEventArgs>( Keyboard_KeyUp );
+            KeyDown += new EventHandler<KeyboardKeyEventArgs>( Keyboard_KeyDown );
+            KeyUp += new EventHandler<KeyboardKeyEventArgs>( Keyboard_KeyUp );
 
-            this.MouseMove += new EventHandler<EventArgs>( Mouse_Move );
-            this.MouseDown += new EventHandler<MouseButtonEventArgs>( Mouse_ButtonEvent );
-            this.MouseUp += new EventHandler<MouseButtonEventArgs>( Mouse_ButtonEvent );
-            this.MouseWheel += new EventHandler<MouseWheelEventArgs>( Mouse_WheelChanged );
+            MouseMove += new EventHandler<EventArgs>( Mouse_Move );
+            MouseDown += new EventHandler<MouseButtonEventArgs>( Mouse_ButtonEvent );
+            MouseUp += new EventHandler<MouseButtonEventArgs>( Mouse_ButtonEvent );
+            MouseWheel += new EventHandler<MouseWheelEventArgs>( Mouse_WheelChanged );
 
             Host = new Host( this );
         }
