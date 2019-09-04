@@ -1,3 +1,4 @@
+
 # SharpQuakeEvolved
 
 ### Description 
@@ -11,22 +12,34 @@ To try and reorganise and improve the already great work done by those who have 
 ** Many code changes are based on my own personal coding style which is more of a preference*
 
 ### Roadmap
+
 - Code cleanup:
-	* Convert static classes to instance classes where static is unnecessarily used
-	* Change Init / Shutdown pattern for IDisposable pattern
-	* Move type definitions out of core code and into a Framework library
-	* Use PascalCase for properties, fields, function names, class names & structs
-	* Use camelCase for local variables
-	* Rename type definitions to .NET style variations (Even if they are Quake specific)
-	* Remove code duplication via file loading and handling in many non-filesystem related classes
+	* [ ] Change Init / Shutdown pattern for IDisposable pattern **(Ongoing)**
+	* [ ] Move type definitions out of core code and into a Framework library **(Ongoing)**
+	* [ ] Use PascalCase for properties, fields, function names, class names & structs **(Ongoing)**
+	* [ ] Use inheritance and polymorphism where classes handle multiple object types **(Ongoing)**
+	* [ ] Use camelCase for local variables **(Ongoing)**
+	* [ ] Rename type definitions to .NET style variations **(Ongoing)**
+	* [ ] Support for external map textures **(Ongoing)**
+	* [ ] Adapt mesh routines to use Vertex and Index buffers
+	* [ ] Refactor into a structure similar to Quake 3 (cgame, game, quake3, ui)  
+	* [X] ~~Add 16:9, 16:10 and 21:9 support~~
+	* [X] ~~Add PK3 (ZIP) support~~
+	* [X] ~~Convert static classes to instance classes where static is unnecessarily used~~
+	* [X] ~~Remove code duplication via file loading and handling in many non-filesystem related classes~~
+	* [x] ~~Abstract OpenGL code from core engine code~~
 	
 - Features planned:
-	* Implement central messaging system like those in engines like idtech3 and idtech4 (Allowing for the reduction of spaghetti code)
-	* Abstract GL code from renderer pipeline (Relying on a standard drawing framework so you can use either D3D or OpenGL)
-	* Add support for Quake 3 BSPs and potentially Quake 3 shaders
-	* Upgrade lighting system/introduce Normal Map and specular map support
-	* Add support for MD3 and more modern model formats
-	* Introduce support for higher resolution textures
+	* [ ] Port geometry rendering to a GLSL shading system
+	* [ ] Implement central messaging system like those in engines like idtech3 and idtech4
+	* [ ] Add support for Quake 3 BSPs and potentially Quake 3 shaders
+	* [ ] Upgrade lighting system/introduce Normal Map and specular map support
+	* [ ] Add support for MD3 and more modern model formats
+	* [ ] Develop configurable UI system *(Similar to FAKK2/MOHAA)*
+
+- Maybe if we're lucky *(Would be nice)*:
+	* [ ] Port q3map compiler to C# .NET *(Why? Why not?)*
+	* [ ] Implement PBR and custom BSP format *(With light mapping like Bakery - GPU Lightmapper for Unity)*
 
 ### Dependencies
 * OpenTK 3.0.1
