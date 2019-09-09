@@ -267,12 +267,6 @@ namespace SharpQuake
         private Boolean _isPlaying;
         private Boolean _isPaused;
 
-
-        //OGG file
-        Int32 channels;
-        Int32 sampleRate;
-        TimeSpan totalTime;
-
         private Host Host
         {
             get;

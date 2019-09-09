@@ -117,14 +117,6 @@ namespace SharpQuake
         private CVar _StretchBy2;// = { "vid_stretch_by_2", "1", true };
         private CVar _WindowedMouse;// = { "_windowed_mouse", "1", true };
 
-        private System.Boolean _Windowed
-        {
-            get
-            {
-                return !Device.Desc.IsFullScreen;
-            }
-        }
-
         // Instances
         private Host Host
         {

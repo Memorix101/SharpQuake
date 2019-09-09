@@ -119,9 +119,6 @@ namespace SharpQuake.Game.Rendering.Models
 
             pspriteframe.gl_texturenum = index;
 
-            //Host.DrawingContext.LoadTexture( name, width, height,
-            //new ByteArraySegment( pin.Data, pin.StartIndex + dspriteframe_t.SizeInBytes ), true, true ); //   (byte *)(pinframe + 1)
-
             return pin.StartIndex + dspriteframe_t.SizeInBytes + size;
         }
 
@@ -136,7 +133,7 @@ namespace SharpQuake.Game.Rendering.Models
             var pspritegroup = new mspritegroup_t( );
             pspritegroup.numframes = numframes;
             pspritegroup.frames = new mspriteframe_t[numframes];
-            ppframe = pspritegroup;// (mspriteframe_t*)pspritegroup;
+            ppframe = pspritegroup;
             var poutintervals = new Single[numframes];
             pspritegroup.intervals = poutintervals;
 
@@ -162,7 +159,6 @@ namespace SharpQuake.Game.Rendering.Models
         public override void Clear( )
         {
             base.Clear( );
-
         }
 
         public override void CopyFrom( Model src )
@@ -170,12 +166,6 @@ namespace SharpQuake.Game.Rendering.Models
             base.CopyFrom( src );
 
             Type = ModelType.mod_sprite;
-
-            if ( !( src is SpriteModel ) )
-                return;
-
-            var spriteSrc = ( SpriteModel ) src;
-
         }
     }
 }

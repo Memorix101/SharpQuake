@@ -101,7 +101,7 @@ namespace SharpQuake.Renderer.OpenGL.Textures
             GL.BindTexture( TextureTarget.Texture2D, GLDesc.TextureNumber );
         }
 
-        public override void Upload( )
+        public override void Upload( System.Boolean resample )
         {
             if ( Desc.IsLightMap )
             {
@@ -115,9 +115,9 @@ namespace SharpQuake.Renderer.OpenGL.Textures
                 Bind( );
 
                 if ( Buffer32?.Length > 0 )
-                    Upload32( Buffer32, Desc.HasAlpha );
+                    Upload32( Buffer32, Desc.HasAlpha, resample );
                 else
-                    Upload8( );
+                    Upload8( resample );
             }
 
             if ( Desc.IsLightMap )
@@ -125,9 +125,9 @@ namespace SharpQuake.Renderer.OpenGL.Textures
         }
 
         // GL_Upload32
-        protected override void Upload32( UInt32[] data, System.Boolean alpha )
+        protected override void Upload32( UInt32[] data, System.Boolean alpha, System.Boolean resample )
         {
-            base.Upload32( data, alpha );
+            base.Upload32( data, alpha, resample );
 
             var filter = ( GLTextureFilter ) Device.GetTextureFilters( Desc.Filter );
 
@@ -152,11 +152,20 @@ namespace SharpQuake.Renderer.OpenGL.Textures
                     }
                     goto Done;
                 }
-                scaled = new UInt32[Desc.ScaledWidth * Desc.ScaledHeight]; // uint[1024 * 512];
-                data.CopyTo( scaled, 0 );
+                else
+                {
+                    scaled = new UInt32[Desc.ScaledWidth * Desc.ScaledHeight]; // uint[1024 * 512];
+                    data.CopyTo( scaled, 0 );
+                }
             }
-            else
+            else if ( resample )
                 Resample( data, Desc.Width, Desc.Height, out scaled, Desc.ScaledWidth, Desc.ScaledHeight );
+            else
+            {
+                Desc.ScaledWidth = Desc.Width;
+                Desc.ScaledHeight = Desc.Height;
+                scaled = data;
+            }
 
             var h = GCHandle.Alloc( scaled, GCHandleType.Pinned );
             try
@@ -178,6 +187,7 @@ namespace SharpQuake.Renderer.OpenGL.Textures
                         if ( Desc.ScaledHeight < 1 )
                             Desc.ScaledHeight = 1;
                         miplevel++;
+
                         GL.TexImage2D( TextureTarget.Texture2D, miplevel, samples, Desc.ScaledWidth, Desc.ScaledHeight, 0,
                             PixelFormat.Rgba, PixelType.UnsignedByte, ptr );
                     }

@@ -80,7 +80,7 @@ namespace SharpQuake
             //if( _LightMapTextures == 0 )
             //   _LightMapTextures = Host.DrawingContext.GenerateTextureNumberRange( RenderDef.MAX_LIGHTMAPS );
 
-            Host.DrawingContext.LightMapFormat = "GL_LUMINANCE";// GL_LUMINANCE;
+            Host.DrawingContext.LightMapFormat = "GL_LUMINANCE";
 
             // default differently on the Permedia
             if ( Host.Screen.IsPermedia )

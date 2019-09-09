@@ -214,21 +214,6 @@ namespace SharpQuake
             }
         }
 
-        private static void HandleException( Exception ex )
-        {
-            DumpError( ex );
-
-            if ( Debugger.IsAttached )
-                throw new Exception( "Fatal error!", ex );
-
-            Instance.CursorVisible = true;
-            SDL.SDL_ShowSimpleMessageBox( SDL.SDL_MessageBoxFlags.SDL_MESSAGEBOX_ERROR, "Fatal error!", ex.Message, IntPtr.Zero ); //MessageBox.Show(ex.Message);
-            SafeShutdown( );
-            
-        } 
-        
-        
-
         [STAThread]
         private static Int32 Main( String[] args )
         {

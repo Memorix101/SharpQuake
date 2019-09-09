@@ -165,12 +165,13 @@ namespace SharpQuake
             }
 
             _ControlSocket = OpenSocket( 0 );
+
             if( _ControlSocket == null )
             {
                 ConsoleWrapper.Print( "TCP/IP: Unable to open control socket\n" );
                 return false;
             }
-
+            
             _BroadcastAddress = new IPEndPoint( IPAddress.Broadcast, HostPort );
 
             _IsInitialised = true;
@@ -197,6 +198,7 @@ namespace SharpQuake
                     _AcceptSocket = OpenSocket( HostPort );
                     if( _AcceptSocket == null )
                         Utilities.Error( "UDP_Listen: Unable to open accept socket\n" );
+
                 }
             }
             else
@@ -217,6 +219,8 @@ namespace SharpQuake
             {
                 result = new Socket( AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp );
                 result.Blocking = false;
+                result.SetIPProtectionLevel( System.Net.Sockets.IPProtectionLevel.Unrestricted );
+
                 EndPoint ep = new IPEndPoint( _MyAddress, port );
                 result.Bind( ep );
             }

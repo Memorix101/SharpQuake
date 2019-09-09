@@ -68,7 +68,6 @@ namespace SharpQuake
         }
 
         public GlobalVariables GlobalStruct;
-        private const Int32 MAX_FIELD_LEN = 64;
         private const Int32 GEFV_CACHESIZE = 2;
 
         //gefv_cache;
@@ -813,18 +812,6 @@ namespace SharpQuake
             Host.Console.Print( "view      :{0}\n", models );
             Host.Console.Print( "touch     :{0}\n", solid );
             Host.Console.Print( "step      :{0}\n", step );
-        }
-
-        /// <summary>
-        /// ED_FindFunction
-        /// </summary>
-        private ProgramFunction FindFunction( String name )
-        {
-            var i = IndexOfFunction( name );
-            if( i != -1 )
-                return _Functions[i];
-
-            return null;
         }
 
         private Int32 IndexOfFunction( String name )

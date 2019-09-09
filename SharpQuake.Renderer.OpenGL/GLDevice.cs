@@ -52,7 +52,6 @@ namespace SharpQuake.Renderer.OpenGL
         }
 
         private OpenTK.Matrix4 WorldMatrix; // r_world_matrix
-        private OpenTK.Matrix4 BaseWorldMatrix; // r_base_world_matrix
 
         public GLDevice( OpenTK.GameWindow form, OpenTK.DisplayDevice openTKDevice )
             : base( typeof( GLDeviceDesc ), 

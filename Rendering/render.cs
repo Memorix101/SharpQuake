@@ -69,6 +69,7 @@ namespace SharpQuake
             }
         }
 
+
         public const Int32 MAXCLIPPLANES = 11;
         public const Int32 TOP_RANGE = 16;			// soldier uniform colors
         public const Int32 BOTTOM_RANGE = 96;
@@ -115,8 +116,6 @@ namespace SharpQuake
         private CVar _glKeepTJunctions;// = { "gl_keeptjunctions", "0" };
         private CVar _glReportTJunctions;// = { "gl_reporttjunctions", "0" };
         private CVar _glDoubleEyes;// = { "gl_doubleeys", "1" };
-
-        private Int32 _PlayerTextures; // playertextures	// up to 16 color translated skins
         private BaseTexture[] PlayerTextures;
         private System.Boolean _CacheThrash; // r_cache_thrash	// compatability
 
@@ -166,8 +165,6 @@ namespace SharpQuake
 
         private Plane[] _Frustum = new Plane[4]; // frustum
         private System.Boolean _IsEnvMap = false; // envmap	// true during envmap command capture
-        private OpenTK.Matrix4 _WorldMatrix; // r_world_matrix
-        private OpenTK.Matrix4 _BaseWorldMatrix; // r_base_world_matrix
         private Vector3 _ModelOrg; // modelorg
         private Vector3 _EntOrigin; // r_entorigin
         private Single _SpeedScale; // speedscale		// for top sky and bottom sky
@@ -175,7 +172,6 @@ namespace SharpQuake
         private Single _AmbientLight; // ambientlight
         private Single[] _ShadeDots = anorm_dots.Values[0]; // shadedots
         private Vector3 _ShadeVector; // shadevector
-        private Int32 _LastPoseNum; // lastposenum
         private Vector3 _LightSpot; // lightspot
 
         // CHANGE
@@ -632,7 +628,6 @@ namespace SharpQuake
             if ( _DrawEntities.Value == 0 )
                 return;
 
-            // draw sprites seperately, because of alpha blending
             for ( var i = 0; i < Host.Client.NumVisEdicts; i++ )
             {
                 _CurrentEntity = Host.Client.VisEdicts[i];
@@ -651,6 +646,8 @@ namespace SharpQuake
                         break;
                 }
             }
+
+            // draw sprites seperately, because of alpha blending
 
             for ( var i = 0; i < Host.Client.NumVisEdicts; i++ )
             {

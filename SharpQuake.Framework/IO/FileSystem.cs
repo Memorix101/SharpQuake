@@ -176,7 +176,7 @@ namespace SharpQuake.Framework.IO
             //
             // add any pk3 files in the format pak0.pk3 pak1.pk3, ...
             //
-            foreach ( var pk3file in Directory.GetFiles( dir, "*.pk3" ).OrderByDescending( f => f ) )
+            foreach ( var pk3file in Directory.GetFiles( _GameDir, "*.pk3", SearchOption.AllDirectories ).OrderByDescending( f => f ) )
             {
                 var file = OpenRead( pk3file );
 
@@ -192,6 +192,14 @@ namespace SharpQuake.Framework.IO
                     _SearchPaths.Insert( 0, new SearchPath( pk3 ) );
                 }
             }
+        }
+
+        public static String[] Search( String pattern )
+        {
+            return Directory.GetFiles( _GameDir, pattern, SearchOption.AllDirectories )
+                .OrderBy( f => f )
+                .Select( f => f.Replace( $"{_GameDir}\\", String.Empty ).Replace( "\\", "//" ) )
+                .ToArray( );
         }
 
         // COM_Path_f

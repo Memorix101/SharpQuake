@@ -59,12 +59,6 @@ namespace SharpQuake.Renderer.Textures
             set;
         }
 
-        private Int32 TextureCount
-        {
-            get;
-            set;
-        }
-
         private Int32 MaxTextures
         {
             get;
@@ -114,7 +108,7 @@ namespace SharpQuake.Renderer.Textures
         {
         }       
 
-        public virtual void Upload( )
+        public virtual void Upload( Boolean resample )
         {
             UploadCount++;
 
@@ -131,7 +125,7 @@ namespace SharpQuake.Renderer.Textures
                 {
                     texture.Initialise( new ByteArraySegment( Texels[i] ) );
                     texture.Bind( );
-                    texture.Upload8( );
+                    texture.Upload8( resample );
                 }
 
                 Textures[i] = texture;
@@ -166,7 +160,7 @@ namespace SharpQuake.Renderer.Textures
                     Texels[textureNumber][( y + i ) * Width + x + j] = buffer.Data[buffer.StartIndex + k];// p->data[k];
             }
 
-            Upload( );
+            Upload( true );
 
             return Textures[textureNumber];
         }

@@ -24,6 +24,9 @@
 
 using System;
 using System.Collections.Generic;
+using System.Drawing;
+using System.IO;
+using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
 
@@ -64,27 +67,36 @@ namespace SharpQuake.Framework.IO
         public const Int32 TYP_MIPTEX = 68;
 
         private Byte[] _Data; // void* wad_base
-        private Dictionary<String, WadLumpInfo> _Lumps;
+        public Dictionary<String, WadLumpInfo> _Lumps
+        {
+            get;
+            private set;
+        }
         private GCHandle _Handle;
         private IntPtr _DataPtr;
 
         // W_LoadWadFile (char *filename)
         public void LoadWadFile( String filename )
         {
-            _Data = FileSystem.LoadFile( filename );
-            if( _Data == null )
+            LoadWadFile( filename, FileSystem.LoadFile( filename ) );
+        }
+
+        public void LoadWadFile( String filename, Byte[] buffer )
+        {
+            _Data = buffer;
+            if ( _Data == null )
                 Utilities.Error( "Wad.LoadWadFile: couldn't load {0}", filename );
 
-            if( _Handle.IsAllocated )
+            if ( _Handle.IsAllocated )
             {
-                _Handle.Free();
+                _Handle.Free( );
             }
             _Handle = GCHandle.Alloc( _Data, GCHandleType.Pinned );
-            _DataPtr = _Handle.AddrOfPinnedObject();
+            _DataPtr = _Handle.AddrOfPinnedObject( );
 
             var header = Utilities.BytesToStructure<WadInfo>( _Data, 0 );
 
-            if( header.identification[0] != 'W' || header.identification[1] != 'A' ||
+            if ( header.identification[0] != 'W' || header.identification[1] != 'A' ||
                 header.identification[2] != 'D' || header.identification[3] != '2' )
                 Utilities.Error( "Wad file {0} doesn't have WAD2 id\n", filename );
 
@@ -94,20 +106,20 @@ namespace SharpQuake.Framework.IO
 
             _Lumps = new Dictionary<String, WadLumpInfo>( numlumps );
 
-            for( var i = 0; i < numlumps; i++ )
+            for ( var i = 0; i < numlumps; i++ )
             {
-                var ptr = new IntPtr( _DataPtr.ToInt64() + infotableofs + i * lumpInfoSize );
-                var lump = (WadLumpInfo)Marshal.PtrToStructure( ptr, typeof( WadLumpInfo ) );
+                var ptr = new IntPtr( _DataPtr.ToInt64( ) + infotableofs + i * lumpInfoSize );
+                var lump = ( WadLumpInfo ) Marshal.PtrToStructure( ptr, typeof( WadLumpInfo ) );
                 lump.filepos = EndianHelper.LittleLong( lump.filepos );
                 lump.size = EndianHelper.LittleLong( lump.size );
-                if( lump.type == TYP_QPIC )
+                if ( lump.type == TYP_QPIC )
                 {
-                    ptr = new IntPtr( _DataPtr.ToInt64() + lump.filepos );
-                    var pic = (WadPicHeader)Marshal.PtrToStructure( ptr, typeof( WadPicHeader ) );
+                    ptr = new IntPtr( _DataPtr.ToInt64( ) + lump.filepos );
+                    var pic = ( WadPicHeader ) Marshal.PtrToStructure( ptr, typeof( WadPicHeader ) );
                     EndianHelper.SwapPic( pic );
                     Marshal.StructureToPtr( pic, ptr, true );
                 }
-                _Lumps.Add( Encoding.ASCII.GetString( lump.name ).TrimEnd( '\0' ).ToLower(), lump );
+                _Lumps.Add( Encoding.ASCII.GetString( lump.name ).TrimEnd( '\0' ).ToLower( ), lump );
             }
         }
 
@@ -132,6 +144,48 @@ namespace SharpQuake.Framework.IO
         public Int32 GetLumpNameOffset( String name )
         {
             return GetLumpInfo( name ).filepos; // GetLumpInfo() never returns null
+        }
+
+        public Tuple<Byte[], Size> GetLumpBuffer( String name )
+        {
+            var lump = _Lumps
+                .Where( l => Encoding.ASCII.GetString( l.Value.name ).Replace( "\0", "" ) == name )
+                .FirstOrDefault( );
+
+            if ( lump.Value == null )
+                return null;
+
+            var lumpInfo = lump.Value;
+
+            if ( lumpInfo.type != 0x44 )
+                return null;
+
+            var offset = lumpInfo.filepos;
+
+            var ptr = new IntPtr( DataPointer.ToInt64( ) + offset );
+
+            var header = ( BspMipTex ) Marshal.PtrToStructure( ptr, typeof( BspMipTex ) );
+            var headerSize = BspMipTex.SizeInBytes;
+            
+            var width = EndianHelper.LittleLong( ( Int32 ) header.width );
+            var height = EndianHelper.LittleLong( ( Int32 ) header.height );
+            
+            if ( ( width & 15 ) != 0 || ( height & 15 ) != 0 )
+                Utilities.Error( "Texture {0} is not 16 aligned", name );
+                        
+            var pixelCount = ( Int32 ) ( width * height / 64 * 85 );
+            var pixels = new Byte[pixelCount];  
+
+#warning BlockCopy tries to copy data over the bounds of _ModBase if certain mods are loaded. Needs proof fix!
+            if ( offset + BspMipTex.SizeInBytes + pixelCount <= Data.Length )
+                System.Buffer.BlockCopy( Data, offset + BspMipTex.SizeInBytes, pixels, 0, pixelCount );
+            else
+            {
+                System.Buffer.BlockCopy( Data, offset, pixels, 0, pixelCount );
+                ConsoleWrapper.Print( $"Texture info of {name} truncated to fit in bounds of _ModBase\n" );
+            }
+
+            return new Tuple<Byte[], Size>( pixels, new Size( width, height ) );
         }
     }
 }

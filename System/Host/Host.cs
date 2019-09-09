@@ -23,7 +23,10 @@
 /// </copyright>
 
 using System;
+using System.Collections.Generic;
 using System.IO;
+using System.Linq;
+using System.Runtime.InteropServices;
 using System.Text;
 using SharpQuake.Framework;
 using SharpQuake.Framework.IO;
@@ -223,6 +226,18 @@ namespace SharpQuake
             private set;
         }
 
+        public Dictionary<String, Wad> WadFiles
+        {
+            get;
+            private set;
+        }
+
+        public Dictionary<String, String> WadTextures
+        {
+            get;
+            private set;
+        }
+
         public Keyboard Keyboard
         {
             get;
@@ -372,6 +387,9 @@ namespace SharpQuake
             Sound = new snd( this );
             CDAudio = new cd_audio( this );
             StatusBar = new sbar( this );
+
+            WadFiles = new Dictionary<String, Wad>( );
+            WadTextures = new Dictionary<String, String>( );
         }
 
         /// <summary>
@@ -460,6 +478,37 @@ namespace SharpQuake
             InitialiseVCR( parms );
             MainWindow.Common.Initialise( MainWindow, parms.basedir, parms.argv );
             InitialiseLocal( );
+
+            // Search wads
+            foreach ( var wadFile in FileSystem.Search( "*.wad" ) )
+            {
+                if ( wadFile == "radiant.wad" )
+                    continue;
+
+                if ( wadFile == "gfx.wad" )
+                    continue;
+
+                var data = FileSystem.LoadFile( wadFile );
+
+                if ( data == null )
+                    continue;
+
+                var wad = new Wad( );
+                wad.LoadWadFile( wadFile, data );
+
+                WadFiles.Add( wadFile, wad );
+
+                var textures = wad._Lumps.Values
+                    .Select( s => Encoding.ASCII.GetString( s.name ).Replace( "\0", "" ) )
+                    .ToArray( );
+
+                foreach ( var texture in textures )
+                {
+                    if ( !WadTextures.ContainsKey( texture ) )
+                        WadTextures.Add( texture, wadFile );
+                }
+            }
+            
             GfxWad.LoadWadFile( "gfx.wad" );
             Keyboard.Initialise( );
             Console.Initialise( );

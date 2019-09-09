@@ -114,7 +114,7 @@ namespace SharpQuake.Renderer.Textures
 
                     var headerSize = Marshal.SizeOf( typeof( WadPicHeader ) );
 
-                    return FromBuffer( device, new ByteArraySegment( data, headerSize ), header.width, header.height, path, filter, ignoreAtlas );
+                    return FromBuffer( device, new ByteArraySegment( data, headerSize ), ( Int32 ) header.width, ( Int32 ) header.height, path, filter, ignoreAtlas );
 
                 case "jpg":
                 case "bmp":

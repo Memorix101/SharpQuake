@@ -194,7 +194,7 @@ namespace SharpQuake.Renderer.Textures
         /// <summary>
         /// GL_Upload8
         /// </summary>
-        public virtual void Upload8( )
+        public virtual void Upload8( Boolean resample )
         {
             var data = Buffer;
             var width = Desc.Width;
@@ -237,16 +237,16 @@ namespace SharpQuake.Renderer.Textures
                 }
             }
 
-            Upload32( trans, alpha );
+            Upload32( trans, alpha, resample );
         }
 
-        public virtual void Upload( )
+        public virtual void Upload( Boolean resample )
         {
             throw new NotImplementedException( );
         }
 
         // GL_Upload32
-        protected virtual void Upload32( UInt32[] data, Boolean alpha )
+        protected virtual void Upload32( UInt32[] data, Boolean alpha, Boolean resample )
         {
             for ( Desc.ScaledWidth = 1; Desc.ScaledWidth < Desc.Width; Desc.ScaledWidth <<= 1 )
                 ;
@@ -302,26 +302,26 @@ namespace SharpQuake.Renderer.Textures
             return TexturePool[name];
         }
 
-        public static BaseTexture FromBuffer( BaseDevice device, BaseTextureDesc desc, ByteArraySegment buffer )
+        public static BaseTexture FromBuffer( BaseDevice device, BaseTextureDesc desc, ByteArraySegment buffer, Boolean resample = true )
         {
             if ( ExistsInPool( desc.Name ) )
                 return TexturePool[desc.Name];
 
             var texture = ( BaseTexture ) Activator.CreateInstance( device.TextureType, device, desc );
             texture.Initialise( buffer );
-            texture.Upload( );
+            texture.Upload( resample );
 
             return texture;
         }
 
-        public static BaseTexture FromBuffer( BaseDevice device, BaseTextureDesc desc, UInt32[] buffer )
+        public static BaseTexture FromBuffer( BaseDevice device, BaseTextureDesc desc, UInt32[] buffer, Boolean resample = false )
         {
             if ( ExistsInPool( desc.Name ) )
                 return TexturePool[desc.Name];
 
             var texture = ( BaseTexture ) Activator.CreateInstance( device.TextureType, device, desc );
             texture.Initialise( buffer );
-            texture.Upload( );
+            texture.Upload( resample );
 
             return texture;
         }

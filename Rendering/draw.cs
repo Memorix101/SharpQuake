@@ -129,7 +129,7 @@ namespace SharpQuake
             if ( _glNoBind == null )
             {
                 _glNoBind = new CVar( "gl_nobind", "0" );
-                _glMaxSize = new CVar( "gl_max_size", "1024" );
+                _glMaxSize = new CVar( "gl_max_size", "8192" );
                 _glPicMip = new CVar( "gl_picmip", "0" );
             }
 
@@ -176,7 +176,7 @@ namespace SharpQuake
 
             var ncdataIndex = Marshal.SizeOf( typeof( WadPicHeader ) ); // cb->data;
 
-            ConsoleBackground = BasePicture.FromBuffer( Host.Video.Device, new ByteArraySegment( buf, ncdataIndex ), cbHeader.width, cbHeader.height, "conback", "GL_LINEAR" );
+            ConsoleBackground = BasePicture.FromBuffer( Host.Video.Device, new ByteArraySegment( buf, ncdataIndex ), ( Int32 ) cbHeader.width, ( Int32 ) cbHeader.height, "conback", "GL_LINEAR" );
             
             TranslateTexture = BaseTexture.FromDynamicBuffer( Host.Video.Device, "_TranslateTexture", new ByteArraySegment( _MenuPlayerPixels ), _MenuPlayerPixelWidth, _MenuPlayerPixelHeight, false, true, "GL_LINEAR" );
 

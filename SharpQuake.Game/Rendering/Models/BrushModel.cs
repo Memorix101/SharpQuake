@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -341,7 +342,7 @@ namespace SharpQuake.Game.Rendering.Models
             Entities = brushSrc.Entities;
         }
 
-        public void Load( String name, Byte[] buffer, Action<ModelTexture> onCheckInitSkyTexture )
+        public void Load( String name, Byte[] buffer, Action<ModelTexture> onCheckInitSkyTexture, Func<String, Tuple<Byte[], Size>> onCheckForTexture )
         {
             Name = name;
             Buffer = buffer;
@@ -354,7 +355,7 @@ namespace SharpQuake.Game.Rendering.Models
             LoadVertices( ref lumps[LumpsDef.LUMP_VERTEXES] );
             LoadEdges( ref lumps[LumpsDef.LUMP_EDGES] );
             LoadSurfEdges( ref lumps[LumpsDef.LUMP_SURFEDGES] );
-            LoadTextures( ref lumps[LumpsDef.LUMP_TEXTURES], onCheckInitSkyTexture );
+            LoadTextures( ref lumps[LumpsDef.LUMP_TEXTURES], onCheckInitSkyTexture, onCheckForTexture );
             LoadLighting( ref lumps[LumpsDef.LUMP_LIGHTING] );
             LoadPlanes( ref lumps[LumpsDef.LUMP_PLANES] );
             LoadTexInfo( ref lumps[LumpsDef.LUMP_TEXINFO] );
@@ -468,7 +469,7 @@ namespace SharpQuake.Game.Rendering.Models
         /// <summary>
         /// Mod_LoadTextures
         /// </summary>
-        private void LoadTextures( ref BspLump l, Action<ModelTexture> onCheckInitSkyTexture )
+        private void LoadTextures( ref BspLump l, Action<ModelTexture> onCheckInitSkyTexture, Func<String, Tuple<Byte[], Size>> onCheckForTexture )
         {
             if ( l.filelen == 0 )
             {
@@ -497,21 +498,52 @@ namespace SharpQuake.Game.Rendering.Models
                 var mt = Utilities.BytesToStructure<BspMipTex>( Buffer, mtOffset ); //mt = (miptex_t *)((byte *)m + m.dataofs[i]);
                 mt.width = ( UInt32 ) EndianHelper.LittleLong( ( Int32 ) mt.width );
                 mt.height = ( UInt32 ) EndianHelper.LittleLong( ( Int32 ) mt.height );
-                for ( var j = 0; j < BspDef.MIPLEVELS; j++ )
-                    mt.offsets[j] = ( UInt32 ) EndianHelper.LittleLong( ( Int32 ) mt.offsets[j] );
 
-                if ( ( mt.width & 15 ) != 0 || ( mt.height & 15 ) != 0 )
-                    Utilities.Error( "Texture {0} is not 16 aligned", mt.name );
-
-                var pixels = ( Int32 ) ( mt.width * mt.height / 64 * 85 );
                 var tx = new ModelTexture( );// Hunk_AllocName(sizeof(texture_t) + pixels, loadname);
-                Textures[i] = tx;
+                tx.name = Utilities.GetString( mt.name );
 
-                tx.name = Utilities.GetString( mt.name );//   memcpy (tx->name, mt->name, sizeof(tx.name));
-                tx.width = mt.width;
-                tx.height = mt.height;
-                tx.scaleX = 1f;
-                tx.scaleY = 1f;
+                var texResult = onCheckForTexture( tx.name );
+                
+                if ( texResult?.Item1 != null )
+                {
+                    var overrideTex = texResult.Item1;
+                    var size = texResult.Item2;
+
+                    mt.width = ( UInt32 ) size.Width;
+                    mt.height = ( UInt32 ) size.Height;
+                    tx.scaleX = 1f;
+                    tx.scaleY = 1f;
+
+                    tx.pixels = overrideTex;
+
+                    tx.width = mt.width;
+                    tx.height = mt.height;
+                }
+                else
+                {
+                    tx.scaleX = 1f;
+                    tx.scaleY = 1f;
+
+                    tx.width = mt.width;
+                    tx.height = mt.height;
+                    var pixels = ( Int32 ) ( mt.width * mt.height / 64 * 85 );
+
+                    // the pixels immediately follow the structures
+                    tx.pixels = new Byte[pixels];
+#warning BlockCopy tries to copy data over the bounds of _ModBase if certain mods are loaded. Needs proof fix!
+                    if ( mtOffset + BspMipTex.SizeInBytes + pixels <= Buffer.Length )
+                        System.Buffer.BlockCopy( Buffer, mtOffset + BspMipTex.SizeInBytes, tx.pixels, 0, pixels );
+                    else
+                    {
+                        System.Buffer.BlockCopy( Buffer, mtOffset, tx.pixels, 0, pixels );
+                        ConsoleWrapper.Print( $"Texture info of {Name} truncated to fit in bounds of _ModBase\n" );
+                    }
+                }
+
+                for ( var j = 0; j < BspDef.MIPLEVELS; j++ )
+                    mt.offsets[j] = ( UInt32 ) EndianHelper.LittleLong( ( Int32 ) mt.offsets[j] );            
+
+                Textures[i] = tx;
 
                 if ( mt.offsets[0] == 0 )
                     continue;
@@ -519,16 +551,6 @@ namespace SharpQuake.Game.Rendering.Models
                 for ( var j = 0; j < BspDef.MIPLEVELS; j++ )
                     tx.offsets[j] = ( Int32 ) mt.offsets[j] - BspMipTex.SizeInBytes;
 
-                // the pixels immediately follow the structures
-                tx.pixels = new Byte[pixels];
-#warning BlockCopy tries to copy data over the bounds of _ModBase if certain mods are loaded. Needs proof fix!
-                if ( mtOffset + BspMipTex.SizeInBytes + pixels <= Buffer.Length )
-                    System.Buffer.BlockCopy( Buffer, mtOffset + BspMipTex.SizeInBytes, tx.pixels, 0, pixels );
-                else
-                {
-                    System.Buffer.BlockCopy( Buffer, mtOffset, tx.pixels, 0, pixels );
-                    ConsoleWrapper.Print( $"Texture info of {Name} truncated to fit in bounds of _ModBase\n" );
-                }
 
                 onCheckInitSkyTexture( tx );
 

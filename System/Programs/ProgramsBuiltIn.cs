@@ -77,8 +77,6 @@ namespace SharpQuake
             }
         }
 
-        private const Int32 MAX_CHECK = 16;
-
         private const Int32 MSG_BROADCAST = 0;	// unreliable to all
         private const Int32 MSG_ONE = 1;		// reliable to one (msg_entity)
         private const Int32 MSG_ALL = 2;		// reliable to all
@@ -900,21 +898,6 @@ namespace SharpQuake
                 Host.Programs.GlobalStruct.trace_ent = Host.Server.EdictToProg( trace.ent );
             else
                 Host.Programs.GlobalStruct.trace_ent = Host.Server.EdictToProg( Host.Server.sv.edicts[0] );
-        }
-
-        /*
-        =================
-        PF_checkpos
-
-        Returns true if the given entity can move to the given position from it's
-        current position by walking or rolling.
-        FIXME: make work...
-        scalar checkpos (entity, vector)
-        =================
-        */
-
-        private void PF_checkpos( )
-        {
         }
 
         private Int32 PF_newcheckclient( Int32 check )

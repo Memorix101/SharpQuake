@@ -427,8 +427,22 @@ namespace SharpQuake
                 if ( tx.name != null && tx.name.StartsWith( "sky" ) )// !Q_strncmp(mt->name,"sky",3))
                     Host.RenderContext.InitSky( tx );
                 else
+                {   
                     tx.texture = BaseTexture.FromBuffer( Host.Video.Device, tx.name, new ByteArraySegment( tx.pixels ),
-                        ( Int32 ) tx.width, ( Int32 ) tx.height, true, false );
+                     ( Int32 ) tx.width, ( Int32 ) tx.height, true, true );
+                }
+            },
+            ( textureFile ) =>             
+            {
+                if ( Host.WadTextures.ContainsKey( textureFile ) )
+                {
+                    var wadFile = Host.WadTextures[textureFile];
+                    var wad = Host.WadFiles[wadFile];
+
+                    return wad.GetLumpBuffer( textureFile );
+                }
+
+                return null;
             } );
 
             //

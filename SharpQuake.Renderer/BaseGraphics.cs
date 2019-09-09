@@ -93,7 +93,7 @@ namespace SharpQuake.Renderer
         public virtual void DrawPicture( BasePicture picture, Int32 x, Int32 y, Color? colour = null, Boolean hasAlpha = false )
         {
             if ( Device.TextureAtlas.IsDirty )
-                Device.TextureAtlas.Upload( );
+                Device.TextureAtlas.Upload( true );
 
             DrawTexture2D( picture.Texture, picture.Source, new Rectangle( x, y, picture.Width, picture.Height ), colour, hasAlpha );
         }
@@ -101,7 +101,7 @@ namespace SharpQuake.Renderer
         public virtual void DrawPicture( BasePicture picture, Int32 x, Int32 y, Int32 width, Int32 height, Color? colour = null, Boolean hasAlpha = false )
         {
             if ( Device.TextureAtlas.IsDirty )
-                Device.TextureAtlas.Upload( );
+                Device.TextureAtlas.Upload( true );
 
             DrawTexture2D( picture.Texture, picture.Source, new Rectangle( x, y, width, height ), colour, hasAlpha );
         }

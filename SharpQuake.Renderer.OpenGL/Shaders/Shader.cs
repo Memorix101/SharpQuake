@@ -160,16 +160,6 @@ namespace SharpQuake.Renderer.OpenGL
             return GL.GetAttribLocation( Handle, attribName );
         }
 
-
-        // Just loads the entire file into a string.
-        private static string LoadSource( string path )
-        {
-            using ( var sr = new StreamReader( path, Encoding.UTF8 ) )
-            {
-                return sr.ReadToEnd( );
-            }
-        }
-
         // Uniform setters
         // Uniforms are variables that can be set by user code, instead of reading them from the VBO.
         // You use VBOs for vertex-related data, and uniforms for almost everything else.
