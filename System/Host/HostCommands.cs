@@ -44,7 +44,7 @@ namespace SharpQuake
             private set;
         }
 
-        public void ShowFPS_f( )
+        public void ShowFPS_f( CommandMessage msg )
         {
             ShowFPS = !ShowFPS;
         }
@@ -52,7 +52,7 @@ namespace SharpQuake
         /// <summary>
         /// Host_Quit_f
         /// </summary>
-        public void Quit_f( )
+        public void Quit_f( CommandMessage msg )
         {
             if ( Keyboard.Destination != KeyDestination.key_console && Client.cls.state != cactive_t.ca_dedicated )
             {
@@ -68,60 +68,60 @@ namespace SharpQuake
         // Host_InitCommands
         private void InititaliseCommands( )
         {
-            Command.Add( "status", Status_f );
-            Command.Add( "quit", Quit_f );
-            Command.Add( "god", God_f );
-            Command.Add( "notarget", Notarget_f );
-            Command.Add( "fly", Fly_f );
-            Command.Add( "map", Map_f );
-            Command.Add( "restart", Restart_f );
-            Command.Add( "changelevel", Changelevel_f );
-            Command.Add( "connect", Connect_f );
-            Command.Add( "reconnect", Reconnect_f );
-            Command.Add( "name", Name_f );
-            Command.Add( "noclip", Noclip_f );
-            Command.Add( "version", Version_f );
-            Command.Add( "say", Say_f );
-            Command.Add( "say_team", Say_Team_f );
-            Command.Add( "tell", Tell_f );
-            Command.Add( "color", Color_f );
-            Command.Add( "kill", Kill_f );
-            Command.Add( "pause", Pause_f );
-            Command.Add( "spawn", Spawn_f );
-            Command.Add( "begin", Begin_f );
-            Command.Add( "prespawn", PreSpawn_f );
-            Command.Add( "kick", Kick_f );
-            Command.Add( "ping", Ping_f );
-            Command.Add( "load", Loadgame_f );
-            Command.Add( "save", Savegame_f );
-            Command.Add( "give", Give_f );
+            Commands.Add( "status", Status_f );
+            Commands.Add( "quit", Quit_f );
+            Commands.Add( "god", God_f );
+            Commands.Add( "notarget", Notarget_f );
+            Commands.Add( "fly", Fly_f );
+            Commands.Add( "map", Map_f );
+            Commands.Add( "restart", Restart_f );
+            Commands.Add( "changelevel", Changelevel_f );
+            Commands.Add( "connect", Connect_f );
+            Commands.Add( "reconnect", Reconnect_f );
+            Commands.Add( "name", Name_f );
+            Commands.Add( "noclip", Noclip_f );
+            Commands.Add( "version", Version_f );
+            Commands.Add( "say", Say_f );
+            Commands.Add( "say_team", Say_Team_f );
+            Commands.Add( "tell", Tell_f );
+            Commands.Add( "color", Color_f );
+            Commands.Add( "kill", Kill_f );
+            Commands.Add( "pause", Pause_f );
+            Commands.Add( "spawn", Spawn_f );
+            Commands.Add( "begin", Begin_f );
+            Commands.Add( "prespawn", PreSpawn_f );
+            Commands.Add( "kick", Kick_f );
+            Commands.Add( "ping", Ping_f );
+            Commands.Add( "load", Loadgame_f );
+            Commands.Add( "save", Savegame_f );
+            Commands.Add( "give", Give_f );
 
-            Command.Add( "startdemos", Startdemos_f );
-            Command.Add( "demos", Demos_f );
-            Command.Add( "stopdemo", Stopdemo_f );
+            Commands.Add( "startdemos", Startdemos_f );
+            Commands.Add( "demos", Demos_f );
+            Commands.Add( "stopdemo", Stopdemo_f );
 
-            Command.Add( "viewmodel", Viewmodel_f );
-            Command.Add( "viewframe", Viewframe_f );
-            Command.Add( "viewnext", Viewnext_f );
-            Command.Add( "viewprev", Viewprev_f );
+            Commands.Add( "viewmodel", Viewmodel_f );
+            Commands.Add( "viewframe", Viewframe_f );
+            Commands.Add( "viewnext", Viewnext_f );
+            Commands.Add( "viewprev", Viewprev_f );
 
-            Command.Add( "mcache", Model.Print );
+            Commands.Add( "mcache", Model.Print );
 
             // New
-            Command.Add( "showfps", ShowFPS_f );
+            Commands.Add( "showfps", ShowFPS_f );
         }
 
         // Host_Viewmodel_f
-        private void Viewmodel_f( )
+        private void Viewmodel_f( CommandMessage msg )
         {
             var e = FindViewthing( );
             if ( e == null )
                 return;
 
-            var m = Model.ForName( Command.Argv( 1 ), false, ModelType.mod_alias );
+            var m = Model.ForName( msg.Parameters[0], false, ModelType.mod_alias );
             if ( m == null )
             {
-                Console.Print( "Can't load {0}\n", Command.Argv( 1 ) );
+                Console.Print( "Can't load {0}\n", msg.Parameters[0] );
                 return;
             }
 
@@ -132,7 +132,7 @@ namespace SharpQuake
         /// <summary>
         /// Host_Viewframe_f
         /// </summary>
-        private void Viewframe_f( )
+        private void Viewframe_f( CommandMessage msg )
         {
             var e = FindViewthing( );
             if ( e == null )
@@ -140,7 +140,7 @@ namespace SharpQuake
 
             var m = Client.cl.model_precache[( Int32 ) e.v.modelindex];
 
-            var f = MathLib.atoi( Command.Argv( 1 ) );
+            var f = MathLib.atoi( msg.Parameters[0] );
             if ( f >= m.FrameCount )
                 f = m.FrameCount - 1;
 
@@ -159,7 +159,7 @@ namespace SharpQuake
         /// <summary>
         /// Host_Viewnext_f
         /// </summary>
-        private void Viewnext_f( )
+        private void Viewnext_f( CommandMessage msg )
         {
             var e = FindViewthing( );
             if ( e == null )
@@ -177,7 +177,7 @@ namespace SharpQuake
         /// <summary>
         /// Host_Viewprev_f
         /// </summary>
-        private void Viewprev_f( )
+        private void Viewprev_f( CommandMessage msg )
         {
             var e = FindViewthing( );
             if ( e == null )
@@ -195,14 +195,14 @@ namespace SharpQuake
         /// <summary>
         /// Host_Status_f
         /// </summary>
-        private void Status_f( )
+        private void Status_f( CommandMessage msg )
         {
             var flag = true;
-            if ( Command.Source == CommandSource.src_command )
+            if ( msg.Source == CommandSource.Command )
             {
                 if ( !Server.sv.active )
                 {
-                    Command.ForwardToServer( );
+                    Client.ForwardToServer_f( msg );
                     return;
                 }
             }
@@ -210,7 +210,7 @@ namespace SharpQuake
                 flag = false;
 
             var sb = new StringBuilder( 256 );
-            sb.Append( String.Format( "host:    {0}\n", CVar.GetString( "hostname" ) ) );
+            sb.Append( String.Format( "host:    {0}\n", CVars.Get( "hostname" ).Get<String>( ) ) );
             sb.Append( String.Format( "version: {0:F2}\n", QDef.VERSION ) );
             if ( Network.TcpIpAvailable )
             {
@@ -257,11 +257,11 @@ namespace SharpQuake
         /// Host_God_f
         /// Sets client to godmode
         /// </summary>
-        private void God_f( )
+        private void God_f( CommandMessage msg )
         {
-            if ( Command.Source == CommandSource.src_command )
+            if ( msg.Source == CommandSource.Command )
             {
-                Command.ForwardToServer( );
+                Client.ForwardToServer_f( msg );
                 return;
             }
 
@@ -278,11 +278,11 @@ namespace SharpQuake
         /// <summary>
         /// Host_Notarget_f
         /// </summary>
-        private void Notarget_f( )
+        private void Notarget_f( CommandMessage msg )
         {
-            if ( Command.Source == CommandSource.src_command )
+            if ( msg.Source == CommandSource.Command )
             {
-                Command.ForwardToServer( );
+                Client.ForwardToServer_f( msg );
                 return;
             }
 
@@ -299,11 +299,11 @@ namespace SharpQuake
         /// <summary>
         /// Host_Noclip_f
         /// </summary>
-        private void Noclip_f( )
+        private void Noclip_f( CommandMessage msg )
         {
-            if ( Command.Source == CommandSource.src_command )
+            if ( msg.Source == CommandSource.Command )
             {
-                Command.ForwardToServer( );
+                Client.ForwardToServer_f( msg );
                 return;
             }
 
@@ -328,11 +328,11 @@ namespace SharpQuake
         /// Host_Fly_f
         /// Sets client to flymode
         /// </summary>
-        private void Fly_f( )
+        private void Fly_f( CommandMessage msg )
         {
-            if ( Command.Source == CommandSource.src_command )
+            if ( msg.Source == CommandSource.Command )
             {
-                Command.ForwardToServer( );
+                Client.ForwardToServer_f( msg );
                 return;
             }
 
@@ -354,11 +354,11 @@ namespace SharpQuake
         /// <summary>
         /// Host_Ping_f
         /// </summary>
-        private void Ping_f( )
+        private void Ping_f( CommandMessage msg )
         {
-            if ( Command.Source == CommandSource.src_command )
+            if ( msg.Source == CommandSource.Command )
             {
-                Command.ForwardToServer( );
+                Client.ForwardToServer_f( msg );
                 return;
             }
 
@@ -381,9 +381,9 @@ namespace SharpQuake
         // handle a
         // map <servername>
         // command from the console.  Active clients are kicked off.
-        private void Map_f( )
+        private void Map_f( CommandMessage msg )
         {
-            if ( Command.Source != CommandSource.src_command )
+            if ( msg.Source != CommandSource.Command )
                 return;
 
             Client.cls.demonum = -1;		// stop demo loop in case this fails
@@ -394,10 +394,10 @@ namespace SharpQuake
             Keyboard.Destination = KeyDestination.key_game;			// remove console or menu
             Screen.BeginLoadingPlaque( );
 
-            Client.cls.mapstring = Command.JoinArgv( ) + "\n";
+            Client.cls.mapstring = msg.FullCommand + "\n";
 
             Server.svs.serverflags = 0;			// haven't completed an episode yet
-            var name = Command.Argv( 1 );
+            var name = msg.Parameters[0];
             Server.SpawnServer( name );
 
             if ( !Server.IsActive )
@@ -405,8 +405,8 @@ namespace SharpQuake
 
             if ( Client.cls.state != cactive_t.ca_dedicated )
             {
-                Client.cls.spawnparms = Command.JoinArgv( );
-                Command.ExecuteString( "connect local", CommandSource.src_command );
+                Client.cls.spawnparms = msg.FullCommand;
+                Commands.ExecuteString( "connect local", CommandSource.Command );
             }
         }
 
@@ -414,9 +414,9 @@ namespace SharpQuake
         /// Host_Changelevel_f
         /// Goes to a new map, taking all clients along
         /// </summary>
-        private void Changelevel_f( )
+        private void Changelevel_f( CommandMessage msg )
         {
-            if ( Command.Argc != 2 )
+            if ( msg.Parameters == null || msg.Parameters.Length != 1 )
             {
                 Console.Print( "changelevel <levelname> : continue game on a new level\n" );
                 return;
@@ -427,19 +427,19 @@ namespace SharpQuake
                 return;
             }
             Server.SaveSpawnparms( );
-            var level = Command.Argv( 1 );
+            var level = msg.Parameters[0];
             Server.SpawnServer( level );
         }
 
         // Host_Restart_f
         //
         // Restarts the current server for a dead player
-        private void Restart_f( )
+        private void Restart_f( CommandMessage msg )
         {
             if ( Client.cls.demoplayback || !Server.IsActive )
                 return;
 
-            if ( Command.Source != CommandSource.src_command )
+            if ( msg.Source != CommandSource.Command )
                 return;
 
             var mapname = Server.sv.name; // must copy out, because it gets cleared
@@ -452,7 +452,7 @@ namespace SharpQuake
         /// This command causes the client to wait for the signon messages again.
         /// This is sent just before a server changes levels
         /// </summary>
-        private void Reconnect_f( )
+        private void Reconnect_f( CommandMessage msg )
         {
             Screen.BeginLoadingPlaque( );
             Client.cls.signon = 0;		// need new connection messages
@@ -462,7 +462,7 @@ namespace SharpQuake
         /// Host_Connect_f
         /// User command to connect to server
         /// </summary>
-        private void Connect_f( )
+        private void Connect_f( CommandMessage msg )
         {
             Client.cls.demonum = -1;		// stop demo loop in case this fails
             if ( Client.cls.demoplayback )
@@ -470,9 +470,9 @@ namespace SharpQuake
                 Client.StopPlayback( );
                 Client.Disconnect( );
             }
-            var name = Command.Argv( 1 );
+            var name = msg.Parameters[0];
             Client.EstablishConnection( name );
-            Reconnect_f( );
+            Reconnect_f( null );
         }
 
         /// <summary>
@@ -499,9 +499,9 @@ namespace SharpQuake
         /// <summary>
         /// Host_Savegame_f
         /// </summary>
-        private void Savegame_f( )
+        private void Savegame_f( CommandMessage msg )
         {
-            if ( Command.Source != CommandSource.src_command )
+            if ( msg.Source != CommandSource.Command )
                 return;
 
             if ( !Server.sv.active )
@@ -522,13 +522,13 @@ namespace SharpQuake
                 return;
             }
 
-            if ( Command.Argc != 2 )
+            if ( msg.Parameters == null || msg.Parameters.Length != 1 )
             {
                 Console.Print( "save <savename> : save a game\n" );
                 return;
             }
 
-            if ( Command.Argv( 1 ).Contains( ".." ) )
+            if ( msg.Parameters[0].Contains( ".." ) )
             {
                 Console.Print( "Relative pathnames are not allowed.\n" );
                 return;
@@ -543,7 +543,7 @@ namespace SharpQuake
                 }
             }
 
-            var name = Path.ChangeExtension( Path.Combine( FileSystem.GameDir, Command.Argv( 1 ) ), ".sav" );
+            var name = Path.ChangeExtension( Path.Combine( FileSystem.GameDir, msg.Parameters[0] ), ".sav" );
 
             Console.Print( "Saving game to {0}...\n", name );
             var fs = FileSystem.OpenWrite( name, true );
@@ -589,12 +589,12 @@ namespace SharpQuake
         /// <summary>
         /// Host_Loadgame_f
         /// </summary>
-        private void Loadgame_f( )
+        private void Loadgame_f( CommandMessage msg )
         {
-            if ( Command.Source != CommandSource.src_command )
+            if ( msg.Source != CommandSource.Command )
                 return;
 
-            if ( Command.Argc != 2 )
+            if ( msg.Parameters == null || msg.Parameters.Length != 1 )
             {
                 Console.Print( "load <savename> : load a game\n" );
                 return;
@@ -602,7 +602,7 @@ namespace SharpQuake
 
             Client.cls.demonum = -1;		// stop demo loop in case this fails
 
-            var name = Path.ChangeExtension( Path.Combine( FileSystem.GameDir, Command.Argv( 1 ) ), ".sav" );
+            var name = Path.ChangeExtension( Path.Combine( FileSystem.GameDir, msg.Parameters[0] ), ".sav" );
 
             // we can't call SCR_BeginLoadingPlaque, because too much stack space has
             // been used.  The menu calls it before stuffing loadgame command
@@ -637,13 +637,13 @@ namespace SharpQuake
                 line = reader.ReadLine( );
                 var tfloat = MathLib.atof( line );
                 CurrentSkill = ( Int32 ) ( tfloat + 0.1 );
-                CVar.Set( "skill", ( Single ) CurrentSkill );
+                CVars.Set( "skill", ( Single ) CurrentSkill );
 
                 var mapname = reader.ReadLine( );
                 line = reader.ReadLine( );
                 var time = MathLib.atof( line );
 
-                Client.Disconnect_f( );
+                Client.Disconnect_f( null );
                 Server.SpawnServer( mapname );
 
                 if ( !Server.sv.active )
@@ -714,35 +714,35 @@ namespace SharpQuake
             if ( Client.cls.state != cactive_t.ca_dedicated )
             {
                 Client.EstablishConnection( "local" );
-                Reconnect_f( );
+                Reconnect_f( null );
             }
         }
 
         // Host_Name_f
-        private void Name_f( )
+        private void Name_f( CommandMessage msg )
         {
-            if ( Command.Argc == 1 )
+            if ( msg.Parameters == null || msg.Parameters.Length <= 0 )
             {
                 Console.Print( "\"name\" is \"{0}\"\n", Client.Name );
                 return;
             }
 
             String newName;
-            if ( Command.Argc == 2 )
-                newName = Command.Argv( 1 );
+            if ( msg.Parameters.Length == 1 )
+                newName = msg.Parameters[0];
             else
-                newName = Command.Args;
+                newName = msg.StringParameters;
 
             if ( newName.Length > 16 )
                 newName = newName.Remove( 15 );
 
-            if ( Command.Source == CommandSource.src_command )
+            if ( msg.Source == CommandSource.Command )
             {
                 if ( Client.Name == newName )
                     return;
-                CVar.Set( "_cl_name", newName );
+                CVars.Set( "_cl_name", newName );
                 if ( Client.cls.state == cactive_t.ca_connected )
-                    Command.ForwardToServer( );
+                    Client.ForwardToServer_f( msg );
                 return;
             }
 
@@ -754,14 +754,14 @@ namespace SharpQuake
             HostClient.edict.v.netname = Programs.NewString( newName );
 
             // send notification to all clients
-            var msg = Server.sv.reliable_datagram;
-            msg.WriteByte( ProtocolDef.svc_updatename );
-            msg.WriteByte( ClientNum );
-            msg.WriteString( newName );
+            var m = Server.sv.reliable_datagram;
+            m.WriteByte( ProtocolDef.svc_updatename );
+            m.WriteByte( ClientNum );
+            m.WriteString( newName );
         }
 
         // Host_Version_f
-        private void Version_f( )
+        private void Version_f( CommandMessage msg )
         {
             Console.Print( "Version {0}\n", QDef.VERSION );
             Console.Print( "Exe hash code: {0}\n", System.Reflection.Assembly.GetExecutingAssembly( ).GetHashCode( ) );
@@ -770,10 +770,10 @@ namespace SharpQuake
         /// <summary>
         /// Host_Say
         /// </summary>
-        private void Say( Boolean teamonly )
+        private void Say( CommandMessage msg, Boolean teamonly )
         {
             var fromServer = false;
-            if ( Command.Source == CommandSource.src_command )
+            if ( msg.Source == CommandSource.Command )
             {
                 if ( Client.cls.state == cactive_t.ca_dedicated )
                 {
@@ -782,17 +782,17 @@ namespace SharpQuake
                 }
                 else
                 {
-                    Command.ForwardToServer( );
+                    Client.ForwardToServer_f( msg );
                     return;
                 }
             }
 
-            if ( Command.Argc < 2 )
+            if ( msg.Parameters == null || msg.Parameters.Length < 1 )
                 return;
 
             var save = HostClient;
 
-            var p = Command.Args;
+            var p = msg.StringParameters;
             // remove quotes if present
             if ( p.StartsWith( "\"" ) )
             {
@@ -813,7 +813,7 @@ namespace SharpQuake
                 var client = Server.svs.clients[j];
                 if ( client == null || !client.active || !client.spawned )
                     continue;
-                if ( TeamPlay != 0 && teamonly && client.edict.v.team != save.edict.v.team )
+                if ( TeamPlay.Get<Int32>( ) != 0 && teamonly && client.edict.v.team != save.edict.v.team )
                     continue;
                 HostClient = client;
                 Server.ClientPrint( text );
@@ -822,31 +822,31 @@ namespace SharpQuake
         }
 
         // Host_Say_f
-        private void Say_f( )
+        private void Say_f( CommandMessage msg )
         {
-            Say( false );
+            Say( msg, false );
         }
 
         // Host_Say_Team_f
-        private void Say_Team_f( )
+        private void Say_Team_f( CommandMessage msg )
         {
-            Say( true );
+            Say( msg, true );
         }
 
         // Host_Tell_f
-        private void Tell_f( )
+        private void Tell_f( CommandMessage msg )
         {
-            if ( Command.Source == CommandSource.src_command )
+            if ( msg.Source == CommandSource.Command )
             {
-                Command.ForwardToServer( );
+                Client.ForwardToServer_f( msg );
                 return;
             }
 
-            if ( Command.Argc < 3 )
+            if ( msg.Parameters == null || msg.Parameters.Length < 2 )
                 return;
 
             var text = HostClient.name + ": ";
-            var p = Command.Args;
+            var p = msg.StringParameters;
 
             // remove quotes if present
             if ( p.StartsWith( "\"" ) )
@@ -862,7 +862,7 @@ namespace SharpQuake
                 var client = Server.svs.clients[j];
                 if ( !client.active || !client.spawned )
                     continue;
-                if ( client.name == Command.Argv( 1 ) )
+                if ( client.name == msg.Parameters[0] )
                     continue;
                 HostClient = client;
                 Server.ClientPrint( text );
@@ -872,9 +872,9 @@ namespace SharpQuake
         }
 
         // Host_Color_f
-        private void Color_f( )
+        private void Color_f( CommandMessage msg )
         {
-            if ( Command.Argc == 1 )
+            if ( msg.Parameters == null || msg.Parameters.Length <= 0 )
             {
                 Console.Print( "\"color\" is \"{0} {1}\"\n", ( ( Int32 ) Client.Color ) >> 4, ( ( Int32 ) Client.Color ) & 0x0f );
                 Console.Print( "color <0-13> [0-13]\n" );
@@ -882,12 +882,12 @@ namespace SharpQuake
             }
 
             Int32 top, bottom;
-            if ( Command.Argc == 2 )
-                top = bottom = MathLib.atoi( Command.Argv( 1 ) );
+            if ( msg.Parameters?.Length == 1 )
+                top = bottom = MathLib.atoi( msg.Parameters[0] );
             else
             {
-                top = MathLib.atoi( Command.Argv( 1 ) );
-                bottom = MathLib.atoi( Command.Argv( 2 ) );
+                top = MathLib.atoi( msg.Parameters[0] );
+                bottom = MathLib.atoi( msg.Parameters[1] );
             }
 
             top &= 15;
@@ -899,11 +899,11 @@ namespace SharpQuake
 
             var playercolor = top * 16 + bottom;
 
-            if ( Command.Source == CommandSource.src_command )
+            if ( msg.Source == CommandSource.Command )
             {
-                CVar.Set( "_cl_color", playercolor );
+                CVars.Set( "_cl_color", playercolor );
                 if ( Client.cls.state == cactive_t.ca_connected )
-                    Command.ForwardToServer( );
+                    Client.ForwardToServer_f( msg );
                 return;
             }
 
@@ -911,20 +911,20 @@ namespace SharpQuake
             HostClient.edict.v.team = bottom + 1;
 
             // send notification to all clients
-            var msg = Server.sv.reliable_datagram;
-            msg.WriteByte( ProtocolDef.svc_updatecolors );
-            msg.WriteByte( ClientNum );
-            msg.WriteByte( HostClient.colors );
+            var m = Server.sv.reliable_datagram;
+            m.WriteByte( ProtocolDef.svc_updatecolors );
+            m.WriteByte( ClientNum );
+            m.WriteByte( HostClient.colors );
         }
 
         /// <summary>
         /// Host_Kill_f
         /// </summary>
-        private void Kill_f( )
+        private void Kill_f( CommandMessage msg )
         {
-            if ( Command.Source == CommandSource.src_command )
+            if ( msg.Source == CommandSource.Command )
             {
-                Command.ForwardToServer( );
+                Client.ForwardToServer_f( msg );
                 return;
             }
 
@@ -942,14 +942,14 @@ namespace SharpQuake
         /// <summary>
         /// Host_Pause_f
         /// </summary>
-        private void Pause_f( )
+        private void Pause_f( CommandMessage msg )
         {
-            if ( Command.Source == CommandSource.src_command )
+            if ( msg.Source == CommandSource.Command )
             {
-                Command.ForwardToServer( );
+                Client.ForwardToServer_f( msg );
                 return;
             }
-            if ( _Pausable.Value == 0 )
+            if ( !Pausable.Get<Boolean>( ) )
                 Server.ClientPrint( "Pause not allowed.\n" );
             else
             {
@@ -973,9 +973,9 @@ namespace SharpQuake
         /// <summary>
         /// Host_PreSpawn_f
         /// </summary>
-        private void PreSpawn_f( )
+        private void PreSpawn_f( CommandMessage msg )
         {
-            if ( Command.Source == CommandSource.src_command )
+            if ( msg.Source == CommandSource.Command )
             {
                 Console.Print( "prespawn is not valid from the console\n" );
                 return;
@@ -987,19 +987,19 @@ namespace SharpQuake
                 return;
             }
 
-            var msg = HostClient.message;
-            msg.Write( Server.sv.signon.Data, 0, Server.sv.signon.Length );
-            msg.WriteByte( ProtocolDef.svc_signonnum );
-            msg.WriteByte( 2 );
+            var m = HostClient.message;
+            m.Write( Server.sv.signon.Data, 0, Server.sv.signon.Length );
+            m.WriteByte( ProtocolDef.svc_signonnum );
+            m.WriteByte( 2 );
             HostClient.sendsignon = true;
         }
 
         /// <summary>
         /// Host_Spawn_f
         /// </summary>
-        private void Spawn_f( )
+        private void Spawn_f( CommandMessage msg )
         {
-            if ( Command.Source == CommandSource.src_command )
+            if ( msg.Source == CommandSource.Command )
             {
                 Console.Print( "spawn is not valid from the console\n" );
                 return;
@@ -1046,53 +1046,53 @@ namespace SharpQuake
             }
 
             // send all current names, colors, and frag counts
-            var msg = HostClient.message;
-            msg.Clear( );
+            var m = HostClient.message;
+            m.Clear( );
 
             // send time of update
-            msg.WriteByte( ProtocolDef.svc_time );
-            msg.WriteFloat( ( Single ) Server.sv.time );
+            m.WriteByte( ProtocolDef.svc_time );
+            m.WriteFloat( ( Single ) Server.sv.time );
 
             for ( var i = 0; i < Server.svs.maxclients; i++ )
             {
                 var client = Server.svs.clients[i];
-                msg.WriteByte( ProtocolDef.svc_updatename );
-                msg.WriteByte( i );
-                msg.WriteString( client.name );
-                msg.WriteByte( ProtocolDef.svc_updatefrags );
-                msg.WriteByte( i );
-                msg.WriteShort( client.old_frags );
-                msg.WriteByte( ProtocolDef.svc_updatecolors );
-                msg.WriteByte( i );
-                msg.WriteByte( client.colors );
+                m.WriteByte( ProtocolDef.svc_updatename );
+                m.WriteByte( i );
+                m.WriteString( client.name );
+                m.WriteByte( ProtocolDef.svc_updatefrags );
+                m.WriteByte( i );
+                m.WriteShort( client.old_frags );
+                m.WriteByte( ProtocolDef.svc_updatecolors );
+                m.WriteByte( i );
+                m.WriteByte( client.colors );
             }
 
             // send all current light styles
             for ( var i = 0; i < QDef.MAX_LIGHTSTYLES; i++ )
             {
-                msg.WriteByte( ProtocolDef.svc_lightstyle );
-                msg.WriteByte( ( Char ) i );
-                msg.WriteString( Server.sv.lightstyles[i] );
+                m.WriteByte( ProtocolDef.svc_lightstyle );
+                m.WriteByte( ( Char ) i );
+                m.WriteString( Server.sv.lightstyles[i] );
             }
 
             //
             // send some stats
             //
-            msg.WriteByte( ProtocolDef.svc_updatestat );
-            msg.WriteByte( QStatsDef.STAT_TOTALSECRETS );
-            msg.WriteLong( ( Int32 ) Programs.GlobalStruct.total_secrets );
+            m.WriteByte( ProtocolDef.svc_updatestat );
+            m.WriteByte( QStatsDef.STAT_TOTALSECRETS );
+            m.WriteLong( ( Int32 ) Programs.GlobalStruct.total_secrets );
 
-            msg.WriteByte( ProtocolDef.svc_updatestat );
-            msg.WriteByte( QStatsDef.STAT_TOTALMONSTERS );
-            msg.WriteLong( ( Int32 ) Programs.GlobalStruct.total_monsters );
+            m.WriteByte( ProtocolDef.svc_updatestat );
+            m.WriteByte( QStatsDef.STAT_TOTALMONSTERS );
+            m.WriteLong( ( Int32 ) Programs.GlobalStruct.total_monsters );
 
-            msg.WriteByte( ProtocolDef.svc_updatestat );
-            msg.WriteByte( QStatsDef.STAT_SECRETS );
-            msg.WriteLong( ( Int32 ) Programs.GlobalStruct.found_secrets );
+            m.WriteByte( ProtocolDef.svc_updatestat );
+            m.WriteByte( QStatsDef.STAT_SECRETS );
+            m.WriteLong( ( Int32 ) Programs.GlobalStruct.found_secrets );
 
-            msg.WriteByte( ProtocolDef.svc_updatestat );
-            msg.WriteByte( QStatsDef.STAT_MONSTERS );
-            msg.WriteLong( ( Int32 ) Programs.GlobalStruct.killed_monsters );
+            m.WriteByte( ProtocolDef.svc_updatestat );
+            m.WriteByte( QStatsDef.STAT_MONSTERS );
+            m.WriteLong( ( Int32 ) Programs.GlobalStruct.killed_monsters );
 
             //
             // send a fixangle
@@ -1101,22 +1101,22 @@ namespace SharpQuake
             // and it won't happen if the game was just loaded, so you wind up
             // with a permanent head tilt
             ent = Server.EdictNum( 1 + ClientNum );
-            msg.WriteByte( ProtocolDef.svc_setangle );
-            msg.WriteAngle( ent.v.angles.x );
-            msg.WriteAngle( ent.v.angles.y );
-            msg.WriteAngle( 0 );
+            m.WriteByte( ProtocolDef.svc_setangle );
+            m.WriteAngle( ent.v.angles.x );
+            m.WriteAngle( ent.v.angles.y );
+            m.WriteAngle( 0 );
 
             Server.WriteClientDataToMessage( Server.Player, HostClient.message );
 
-            msg.WriteByte( ProtocolDef.svc_signonnum );
-            msg.WriteByte( 3 );
+            m.WriteByte( ProtocolDef.svc_signonnum );
+            m.WriteByte( 3 );
             HostClient.sendsignon = true;
         }
 
         // Host_Begin_f
-        private void Begin_f( )
+        private void Begin_f( CommandMessage msg )
         {
-            if ( Command.Source == CommandSource.src_command )
+            if ( msg.Source == CommandSource.Command )
             {
                 Console.Print( "begin is not valid from the console\n" );
                 return;
@@ -1129,13 +1129,13 @@ namespace SharpQuake
         /// Host_Kick_f
         /// Kicks a user off of the server
         /// </summary>
-        private void Kick_f( )
+        private void Kick_f( CommandMessage msg )
         {
-            if ( Command.Source == CommandSource.src_command )
+            if ( msg.Source == CommandSource.Command )
             {
                 if ( !Server.sv.active )
                 {
-                    Command.ForwardToServer( );
+                    Client.ForwardToServer_f( msg );
                     return;
                 }
             }
@@ -1145,9 +1145,9 @@ namespace SharpQuake
             var save = HostClient;
             var byNumber = false;
             Int32 i;
-            if ( Command.Argc > 2 && Command.Argv( 1 ) == "#" )
+            if ( msg.Parameters?.Length > 1 && msg.Parameters[0] == "#" )
             {
-                i = ( Int32 ) MathLib.atof( Command.Argv( 2 ) ) - 1;
+                i = ( Int32 ) MathLib.atof( msg.Parameters[1] ) - 1;
                 if ( i < 0 || i >= Server.svs.maxclients )
                     return;
                 if ( !Server.svs.clients[i].active )
@@ -1163,7 +1163,7 @@ namespace SharpQuake
                     HostClient = Server.svs.clients[i];
                     if ( !HostClient.active )
                         continue;
-                    if ( Utilities.SameText( HostClient.name, Command.Argv( 1 ) ) )
+                    if ( Utilities.SameText( HostClient.name, msg.Parameters[0] ) )
                         break;
                 }
             }
@@ -1171,7 +1171,7 @@ namespace SharpQuake
             if ( i < Server.svs.maxclients )
             {
                 String who;
-                if ( Command.Source == CommandSource.src_command )
+                if ( msg.Source == CommandSource.Command )
                     if ( Client.cls.state == cactive_t.ca_dedicated )
                         who = "Console";
                     else
@@ -1184,14 +1184,14 @@ namespace SharpQuake
                     return;
 
                 String message = null;
-                if ( Command.Argc > 2 )
+                if ( msg.Parameters?.Length > 1 )
                 {
-                    message = Tokeniser.Parse( Command.Args );
+                    message = Tokeniser.Parse( msg.StringParameters );
                     if ( byNumber )
                     {
                         message = message.Substring( 1 ); // skip the #
                         message = message.Trim( ); // skip white space
-                        message = message.Substring( Command.Argv( 2 ).Length );	// skip the number
+                        message = message.Substring( msg.Parameters[1].Length );	// skip the number
                     }
                     message = message.Trim( );
                 }
@@ -1208,19 +1208,19 @@ namespace SharpQuake
         /// <summary>
         /// Host_Give_f
         /// </summary>
-        private void Give_f( )
+        private void Give_f( CommandMessage msg )
         {
-            if ( Command.Source == CommandSource.src_command )
+            if ( msg.Source == CommandSource.Command )
             {
-                Command.ForwardToServer( );
+                Client.ForwardToServer_f( msg );
                 return;
             }
 
             if ( Programs.GlobalStruct.deathmatch != 0 && !HostClient.privileged )
                 return;
 
-            var t = Command.Argv( 1 );
-            var v = MathLib.atoi( Command.Argv( 2 ) );
+            var t =  msg.Parameters[0];
+            var v = MathLib.atoi(  msg.Parameters[1] );
 
             if ( String.IsNullOrEmpty( t ) )
                 return;
@@ -1352,16 +1352,16 @@ namespace SharpQuake
         }
 
         // Host_Startdemos_f
-        private void Startdemos_f( )
+        private void Startdemos_f( CommandMessage msg )
         {
             if ( Client.cls.state == cactive_t.ca_dedicated )
             {
                 if ( !Server.sv.active )
-                    CommandBuffer.AddText( "map start\n" );
+                    Commands.Buffer.Append( "map start\n" );
                 return;
             }
 
-            var c = Command.Argc - 1;
+            var c = msg.Parameters.Length;
             if ( c > ClientDef.MAX_DEMOS )
             {
                 Console.Print( "Max {0} demos in demoloop\n", ClientDef.MAX_DEMOS );
@@ -1369,8 +1369,8 @@ namespace SharpQuake
             }
             Console.Print( "{0} demo(s) in loop\n", c );
 
-            for ( var i = 1; i < c + 1; i++ )
-                Client.cls.demos[i - 1] = Utilities.Copy( Command.Argv( i ), ClientDef.MAX_DEMONAME );
+            for ( var i = 0; i < c; i++ )
+                Client.cls.demos[i] = Utilities.Copy( msg.Parameters[i], ClientDef.MAX_DEMONAME );
 
             if ( !Server.sv.active && Client.cls.demonum != -1 && !Client.cls.demoplayback )
             {
@@ -1385,13 +1385,13 @@ namespace SharpQuake
         /// Host_Demos_f
         /// Return to looping demos
         /// </summary>
-        private void Demos_f( )
+        private void Demos_f( CommandMessage msg )
         {
             if ( Client.cls.state == cactive_t.ca_dedicated )
                 return;
             if ( Client.cls.demonum == -1 )
                 Client.cls.demonum = 1;
-            Client.Disconnect_f( );
+            Client.Disconnect_f( null );
             Client.NextDemo( );
         }
 
@@ -1399,7 +1399,7 @@ namespace SharpQuake
         /// Host_Stopdemo_f
         /// Return to looping demos
         /// </summary>
-        private void Stopdemo_f( )
+        private void Stopdemo_f( CommandMessage msg )
         {
             if ( Client.cls.state == cactive_t.ca_dedicated )
                 return;

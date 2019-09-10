@@ -24,6 +24,7 @@
 
 using System;
 using SharpQuake.Framework;
+using SharpQuake.Framework.IO.BSP;
 using SharpQuake.Framework.Mathematics;
 using SharpQuake.Game.Rendering.Memory;
 
@@ -41,7 +42,7 @@ namespace SharpQuake
         /// </summary>
         public void PushDlights()
         {
-            if( _glFlashBlend.Value != 0 )
+            if( _glFlashBlend.Get<Boolean>() )
                 return;
 
             _DlightFrameCount = _FrameCount + 1;	// because the count hasn't advanced yet for this frame
@@ -102,7 +103,7 @@ namespace SharpQuake
             //int i;
             //dlight_t* l;
 
-            if( _glFlashBlend.Value == 0 )
+            if( !_glFlashBlend.Get<Boolean>( ) )
                 return;
 
             _DlightFrameCount = _FrameCount + 1;    // because the count hasn't advanced yet for this frame
@@ -201,7 +202,7 @@ namespace SharpQuake
             Int32 offset = n.firstsurface;
             for( var i = 0; i < n.numsurfaces; i++, offset++ )
             {
-                if( ( surf[offset].flags & SurfaceDef.SURF_DRAWTILED ) != 0 )
+                if( ( surf[offset].flags & ( Int32 ) Q1SurfaceFlags.Tiled ) != 0 )
                     continue;	// no lightmaps
 
                 var tex = surf[offset].texinfo;

@@ -58,7 +58,7 @@ namespace SharpQuake
                 case 'Y':
                 case 'y':
                     Host.Keyboard.Destination = KeyDestination.key_console;
-                    Host.Quit_f( );
+                    Host.Quit_f( null );
                     break;
 
                 default:

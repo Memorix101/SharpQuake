@@ -27,6 +27,7 @@ using SharpQuake.Framework;
 using SharpQuake.Game.Rendering.Models;
 using SharpQuake.Game.World;
 using SharpQuake.Framework.Mathematics;
+using SharpQuake.Framework.IO;
 
 // client.h
 
@@ -118,7 +119,7 @@ namespace SharpQuake
         {
             get
             {
-                return _ForwardSpeed.Value;
+                return _ForwardSpeed.Get<Single>( );
             }
         }
 
@@ -126,7 +127,7 @@ namespace SharpQuake
         {
             get
             {
-                return ( _LookSpring.Value != 0 );
+                return _LookSpring.Get<Boolean>( );
             }
         }
 
@@ -134,7 +135,7 @@ namespace SharpQuake
         {
             get
             {
-                return ( _LookStrafe.Value != 0 );
+                return _LookStrafe.Get<Boolean>( );
             }
         }
 
@@ -166,7 +167,7 @@ namespace SharpQuake
         {
             get
             {
-                return _Sensitivity.Value;
+                return _Sensitivity.Get<Single>( );
             }
         }
 
@@ -174,7 +175,7 @@ namespace SharpQuake
         {
             get
             {
-                return _MSide.Value;
+                return _MSide.Get<Single>( );
             }
         }
 
@@ -182,7 +183,7 @@ namespace SharpQuake
         {
             get
             {
-                return _MYaw.Value;
+                return _MYaw.Get<Single>( );
             }
         }
 
@@ -190,7 +191,7 @@ namespace SharpQuake
         {
             get
             {
-                return _MPitch.Value;
+                return _MPitch.Get<Single>( );
             }
         }
 
@@ -198,7 +199,7 @@ namespace SharpQuake
         {
             get
             {
-                return _MForward.Value;
+                return _MForward.Get<Single>( );
             }
         }
 
@@ -206,7 +207,7 @@ namespace SharpQuake
         {
             get
             {
-                return _Name.String;
+                return _Name.Get<String>();
             }
         }
 
@@ -214,7 +215,7 @@ namespace SharpQuake
         {
             get
             {
-                return _Color.Value;
+                return _Color.Get<Single>( );
             }
         }
                 
@@ -236,25 +237,25 @@ namespace SharpQuake
         private lightstyle_t[] _LightStyle = new lightstyle_t[QDef.MAX_LIGHTSTYLES]; // cl_lightstyle
         private dlight_t[] _DLights = new dlight_t[ClientDef.MAX_DLIGHTS]; // cl_dlights
 
-        private CVar _Name;// = { "_cl_name", "player", true };
-        private CVar _Color;// = { "_cl_color", "0", true };
-        private CVar _ShowNet;// = { "cl_shownet", "0" };	// can be 0, 1, or 2
-        private CVar _NoLerp;// = { "cl_nolerp", "0" };
-        private CVar _LookSpring;// = { "lookspring", "0", true };
-        private CVar _LookStrafe;// = { "lookstrafe", "0", true };
-        private CVar _Sensitivity;// = { "sensitivity", "3", true };
-        private CVar _MPitch;// = { "m_pitch", "0.022", true };
-        private CVar _MYaw;// = { "m_yaw", "0.022", true };
-        private CVar _MForward;// = { "m_forward", "1", true };
-        private CVar _MSide;// = { "m_side", "0.8", true };
-        private CVar _UpSpeed;// = { "cl_upspeed", "200" };
-        private CVar _ForwardSpeed;// = { "cl_forwardspeed", "200", true };
-        private CVar _BackSpeed;// = { "cl_backspeed", "200", true };
-        private CVar _SideSpeed;// = { "cl_sidespeed", "350" };
-        private CVar _MoveSpeedKey;// = { "cl_movespeedkey", "2.0" };
-        private CVar _YawSpeed;// = { "cl_yawspeed", "140" };
-        private CVar _PitchSpeed;// = { "cl_pitchspeed", "150" };
-        private CVar _AngleSpeedKey;// = { "cl_anglespeedkey", "1.5" };
+        private ClientVariable _Name;// = { "_cl_name", "player", true };
+        private ClientVariable _Color;// = { "_cl_color", "0", true };
+        private ClientVariable _ShowNet;// = { "cl_shownet", "0" };	// can be 0, 1, or 2
+        private ClientVariable _NoLerp;// = { "cl_nolerp", "0" };
+        private ClientVariable _LookSpring;// = { "lookspring", "0", true };
+        private ClientVariable _LookStrafe;// = { "lookstrafe", "0", true };
+        private ClientVariable _Sensitivity;// = { "sensitivity", "3", true };
+        private ClientVariable _MPitch;// = { "m_pitch", "0.022", true };
+        private ClientVariable _MYaw;// = { "m_yaw", "0.022", true };
+        private ClientVariable _MForward;// = { "m_forward", "1", true };
+        private ClientVariable _MSide;// = { "m_side", "0.8", true };
+        private ClientVariable _UpSpeed;// = { "cl_upspeed", "200" };
+        private ClientVariable _ForwardSpeed;// = { "cl_forwardspeed", "200", true };
+        private ClientVariable _BackSpeed;// = { "cl_backspeed", "200", true };
+        private ClientVariable _SideSpeed;// = { "cl_sidespeed", "350" };
+        private ClientVariable _MoveSpeedKey;// = { "cl_movespeedkey", "2.0" };
+        private ClientVariable _YawSpeed;// = { "cl_yawspeed", "140" };
+        private ClientVariable _PitchSpeed;// = { "cl_pitchspeed", "150" };
+        private ClientVariable _AngleSpeedKey;// = { "cl_anglespeedkey", "1.5" };
 
         // cl_numvisedicts
         private Entity[] _VisEdicts = new Entity[ClientDef.MAX_VISEDICTS]; // cl_visedicts[MAX_VISEDICTS]

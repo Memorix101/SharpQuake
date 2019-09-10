@@ -23,6 +23,7 @@
 /// </copyright>
 
 using System;
+using SharpQuake.Framework.IO;
 
 namespace SharpQuake.Framework
 {
@@ -56,8 +57,6 @@ namespace SharpQuake.Framework
             Capacity = capacity;
             BytesAllocated = 0;
             Head = new CacheEntry( this, true );
-
-            CommandWrapper.Add( "flush", Flush );
         }
 
         // Cache_Check
@@ -119,7 +118,7 @@ namespace SharpQuake.Framework
         //Cache_Flush
         //
         //Throw everything out, so new data will be demand cached
-        private void Flush( )
+        public void Flush( CommandMessage msg )
         {
             while ( Head.Next != Head )
                 Free( Head.Next ); // reclaim the space

@@ -24,6 +24,8 @@
 
 using System;
 using SharpQuake.Framework;
+using SharpQuake.Framework.IO;
+using SharpQuake.Framework.IO.BSP;
 using SharpQuake.Framework.Mathematics;
 using SharpQuake.Game.Networking.Server;
 using SharpQuake.Game.Rendering;
@@ -62,16 +64,16 @@ namespace SharpQuake
 
             if( _Friction == null )
             {
-                _Friction = new CVar( "sv_friction", "4", false, true );
-                _EdgeFriction = new CVar( "edgefriction", "2" );
-                _StopSpeed = new CVar( "sv_stopspeed", "100" );
-                _Gravity = new CVar( "sv_gravity", "800", false, true );
-                _MaxVelocity = new CVar( "sv_maxvelocity", "2000" );
-                _NoStep = new CVar( "sv_nostep", "0" );
-                _MaxSpeed = new CVar( "sv_maxspeed", "320", false, true );
-                _Accelerate = new CVar( "sv_accelerate", "10" );
-                _Aim = new CVar( "sv_aim", "0.93" );
-                _IdealPitchScale = new CVar( "sv_idealpitchscale", "0.8" );
+                _Friction = Host.CVars.Add( "sv_friction", 4f, ClientVariableFlags.Server );
+                _EdgeFriction = Host.CVars.Add( "edgefriction", 2f );
+                _StopSpeed = Host.CVars.Add( "sv_stopspeed", 100f );
+                _Gravity = Host.CVars.Add( "sv_gravity", 800f, ClientVariableFlags.Server );
+                _MaxVelocity = Host.CVars.Add( "sv_maxvelocity", 2000f );
+                _NoStep = Host.CVars.Add( "sv_nostep", false );
+                _MaxSpeed = Host.CVars.Add( "sv_maxspeed", 320f, ClientVariableFlags.Server );
+                _Accelerate = Host.CVars.Add( "sv_accelerate", 10f );
+                _Aim = Host.CVars.Add( "sv_aim", 0.93f );
+                _IdealPitchScale = Host.CVars.Add( "sv_idealpitchscale", 0.8f );
             }
 
             for( var i = 0; i < QDef.MAX_MODELS; i++ )
@@ -553,7 +555,7 @@ namespace SharpQuake
         {
             // let's not have any servers with no name
             if( String.IsNullOrEmpty( Host.Network.HostName ) )
-                CVar.Set( "hostname", "UNNAMED" );
+                Host.CVars.Set( "hostname", "UNNAMED" );
 
             Host.Screen.CenterTimeOff = 0;
 
@@ -571,16 +573,16 @@ namespace SharpQuake
             //
             // make cvars consistant
             //
-            if( Host.IsCoop )
-                CVar.Set( "deathmatch", 0 );
+            if( Host.Coop.Get<Boolean>() )
+                Host.CVars.Set( "deathmatch", 0 );
 
-            Host.CurrentSkill = ( Int32 ) ( Host.Skill + 0.5 );
+            Host.CurrentSkill = ( Int32 ) ( Host.Skill.Get<Int32>( ) + 0.5 );
             if( Host.CurrentSkill < 0 )
                 Host.CurrentSkill = 0;
             if( Host.CurrentSkill > 3 )
                 Host.CurrentSkill = 3;
 
-            CVar.Set( "skill", ( Single ) Host.CurrentSkill );
+            Host.CVars.Set( "skill", Host.CurrentSkill );
 
             //
             // set up the new server
@@ -654,10 +656,10 @@ namespace SharpQuake
             ent.v.solid = Solids.SOLID_BSP;
             ent.v.movetype = Movetypes.MOVETYPE_PUSH;
 
-            if( Host.IsCoop )
+            if( Host.Coop.Get<Boolean>() )
                 Host.Programs.GlobalStruct.coop = 1; //coop.value;
             else
-                Host.Programs.GlobalStruct.deathmatch = Host.Deathmatch;
+                Host.Programs.GlobalStruct.deathmatch = Host.Deathmatch.Get<Int32>( );
 
             var offset = Host.Programs.NewString( sv.name );
             Host.Programs.GlobalStruct.mapname = offset;
@@ -892,7 +894,7 @@ namespace SharpQuake
                 // if this is a leaf, accumulate the pvs bits
                 if( node.contents < 0 )
                 {
-                    if( node.contents != ContentsDef.CONTENTS_SOLID )
+                    if( node.contents != ( Int32 ) Q1Contents.Solid )
                     {
                         var pvs = sv.worldmodel.LeafPVS( (MemoryLeaf)node );
                         for( var i = 0; i < _FatBytes; i++ )
@@ -1039,7 +1041,7 @@ namespace SharpQuake
             writer.WriteLong( ProtocolDef.PROTOCOL_VERSION );
             writer.WriteByte( svs.maxclients );
 
-            if( !Host.IsCoop && Host.Deathmatch != 0 )
+            if( !Host.Coop.Get<Boolean>( ) && Host.Deathmatch.Get<Int32>( ) != 0 )
                 writer.WriteByte( ProtocolDef.GAME_DEATHMATCH );
             else
                 writer.WriteByte( ProtocolDef.GAME_COOP );
@@ -1095,7 +1097,7 @@ namespace SharpQuake
             Host.Network.SendToAll( msg, 5 );
 
             if( Host.Client.cls.state != cactive_t.ca_dedicated )
-                Host.Command.ExecuteString( "reconnect\n", CommandSource.src_command );
+                Host.Commands.ExecuteString( "reconnect\n", CommandSource.Command );
         }
 
         /// <summary>

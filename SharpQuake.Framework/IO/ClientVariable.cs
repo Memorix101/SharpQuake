@@ -71,10 +71,10 @@ namespace SharpQuake.Framework.IO
             set;
         }
 
-        private Type ValueType
+        public Type ValueType
         {
             get;
-            set;
+            private set;
         }
 
         public ClientVariableFlags Flags
@@ -83,13 +83,14 @@ namespace SharpQuake.Framework.IO
             private set;
         }
 
-        public ClientVariable( String name, Object defaultValue, Type valueType, ClientVariableFlags flags )
+        public ClientVariable( String name, Object defaultValue, Type valueType, ClientVariableFlags flags = ClientVariableFlags.None )
         {
             if ( String.IsNullOrEmpty( name ) )
                 throw new ArgumentNullException( "name" );
 
             Name = name;
             DefaultValue = defaultValue;
+            Value = DefaultValue;
             ValueType = valueType;
             Flags = flags;
 
@@ -105,100 +106,102 @@ namespace SharpQuake.Framework.IO
             //    throw new ArgumentException( String.Format( "Can't register variable: {0} is a command!\n", name ) );
             //}
         }
-
-        public ClientVariable( String name, Object defaultValue, Type valueType )
-                   : this( name, defaultValue, valueType, ClientVariableFlags.None )
+        
+        public ClientVariable( String name, String defaultValue, ClientVariableFlags flags = ClientVariableFlags.None )
+                   : this( name, defaultValue, typeof( String ), flags )
         {
         }
 
-        public ClientVariable( String name, String defaultValue )
-                   : this( name, defaultValue, typeof( String ), ClientVariableFlags.None )
+        public ClientVariable( String name, Int16 defaultValue, ClientVariableFlags flags = ClientVariableFlags.None )
+                   : this( name, defaultValue, typeof( Int16 ), flags )
         {
         }
 
-        public ClientVariable( String name, Int16 defaultValue )
-                   : this( name, defaultValue, typeof( Int16 ), ClientVariableFlags.None )
+        public ClientVariable( String name, Int32 defaultValue, ClientVariableFlags flags = ClientVariableFlags.None )
+                   : this( name, defaultValue, typeof( Int32 ), flags )
         {
         }
 
-        public ClientVariable( String name, Int32 defaultValue )
-                   : this( name, defaultValue, typeof( Int32 ), ClientVariableFlags.None )
+        public ClientVariable( String name, Int64 defaultValue, ClientVariableFlags flags = ClientVariableFlags.None )
+                   : this( name, defaultValue, typeof( Int64 ), flags )
         {
         }
 
-        public ClientVariable( String name, Int64 defaultValue )
-                   : this( name, defaultValue, typeof( Int64 ), ClientVariableFlags.None )
+        public ClientVariable( String name, UInt16 defaultValue, ClientVariableFlags flags = ClientVariableFlags.None )
+                   : this( name, defaultValue, typeof( UInt16 ), flags )
         {
         }
 
-        public ClientVariable( String name, UInt16 defaultValue )
-                   : this( name, defaultValue, typeof( UInt16 ), ClientVariableFlags.None )
+        public ClientVariable( String name, UInt32 defaultValue, ClientVariableFlags flags = ClientVariableFlags.None )
+                   : this( name, defaultValue, typeof( UInt32 ), flags )
         {
         }
 
-        public ClientVariable( String name, UInt32 defaultValue )
-                   : this( name, defaultValue, typeof( UInt32 ), ClientVariableFlags.None )
+        public ClientVariable( String name, UInt64 defaultValue, ClientVariableFlags flags = ClientVariableFlags.None )
+                   : this( name, defaultValue, typeof( UInt64 ), flags )
         {
         }
 
-        public ClientVariable( String name, UInt64 defaultValue )
-                   : this( name, defaultValue, typeof( UInt64 ), ClientVariableFlags.None )
+        public ClientVariable( String name, Single defaultValue, ClientVariableFlags flags = ClientVariableFlags.None )
+                   : this( name, defaultValue, typeof( Single ), flags )
         {
         }
 
-        public ClientVariable( String name, Single defaultValue )
-                   : this( name, defaultValue, typeof( Single ), ClientVariableFlags.None )
+        public ClientVariable( String name, Double defaultValue, ClientVariableFlags flags = ClientVariableFlags.None )
+                   : this( name, defaultValue, typeof( Double ), flags )
         {
         }
 
-        public ClientVariable( String name, Double defaultValue )
-                   : this( name, defaultValue, typeof( Double ), ClientVariableFlags.None )
+        public ClientVariable( String name, Vector2 defaultValue, ClientVariableFlags flags = ClientVariableFlags.None )
+                   : this( name, defaultValue, typeof( Vector2 ), flags )
         {
         }
 
-        public ClientVariable( String name, Vector2 defaultValue )
-                   : this( name, defaultValue, typeof( Vector2 ), ClientVariableFlags.None )
+        public ClientVariable( String name, Vector3 defaultValue, ClientVariableFlags flags = ClientVariableFlags.None )
+                   : this( name, defaultValue, typeof( Vector3 ), flags )
         {
         }
 
-        public ClientVariable( String name, Vector3 defaultValue )
-                   : this( name, defaultValue, typeof( Vector3 ), ClientVariableFlags.None )
+        public ClientVariable( String name, Vector4 defaultValue, ClientVariableFlags flags = ClientVariableFlags.None )
+                   : this( name, defaultValue, typeof( Vector4 ), flags )
         {
         }
 
-        public ClientVariable( String name, Vector4 defaultValue )
-                   : this( name, defaultValue, typeof( Vector4 ), ClientVariableFlags.None )
+        public ClientVariable( String name, Boolean defaultValue, ClientVariableFlags flags = ClientVariableFlags.None )
+                   : this( name, defaultValue, typeof( Boolean ), flags )
         {
         }
 
-        public ClientVariable( String name, Boolean defaultValue )
-                   : this( name, defaultValue, typeof( Boolean ), ClientVariableFlags.None )
+        public ClientVariable( String name, Rectangle defaultValue, ClientVariableFlags flags = ClientVariableFlags.None )
+                   : this( name, defaultValue, typeof( Rectangle ), flags )
         {
         }
 
-        public ClientVariable( String name, Rectangle defaultValue )
-                   : this( name, defaultValue, typeof( Rectangle ), ClientVariableFlags.None )
+        public ClientVariable( String name, Point defaultValue, ClientVariableFlags flags = ClientVariableFlags.None )
+                   : this( name, defaultValue, typeof( Point ), flags )
         {
         }
 
-        public ClientVariable( String name, Point defaultValue )
-                   : this( name, defaultValue, typeof( Point ), ClientVariableFlags.None )
+        public ClientVariable( String name, Size defaultValue, ClientVariableFlags flags = ClientVariableFlags.None )
+                   : this( name, defaultValue, typeof( Size ), flags )
         {
         }
 
-        public ClientVariable( String name, Size defaultValue )
-                   : this( name, defaultValue, typeof( Size ), ClientVariableFlags.None )
+        public ClientVariable( String name, Color defaultValue, ClientVariableFlags flags = ClientVariableFlags.None )
+                   : this( name, defaultValue, typeof( Color ), flags )
         {
         }
 
-        public ClientVariable( String name, Color defaultValue )
-                   : this( name, defaultValue, typeof( Color ), ClientVariableFlags.None )
+        public T Get<T>( )
         {
+            var type = typeof( T );
+
+            return ( T ) Value;
         }
 
-        public void Get<T>( out T value )
+        public Object Get( )
         {
-            value = ( T ) Value;
+            return Value;
         }
 
         public void Set<T>( T value )

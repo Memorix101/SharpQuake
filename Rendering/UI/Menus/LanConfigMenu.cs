@@ -123,7 +123,7 @@ namespace SharpQuake
                         Host.Menu.ReturnMenu = this;
                         Host.Menu.ReturnOnError = true;
                         CurrentMenu.Hide( );
-                        Host.CommandBuffer.AddText( String.Format( "connect \"{0}\"\n", _JoinName ) );
+                        Host.Commands.Buffer.Append( String.Format( "connect \"{0}\"\n", _JoinName ) );
                         break;
                     }
                     break;

@@ -50,6 +50,7 @@ using System;
 using System.IO;
 using NVorbis.OpenTKSupport;
 using SharpQuake.Framework;
+using SharpQuake.Framework.IO;
 
 namespace SharpQuake
 {
@@ -82,18 +83,18 @@ namespace SharpQuake
         /// </summary>
         public Boolean Initialise( )
         {
-            if (Host.Client.cls.state == cactive_t.ca_dedicated)
+            if ( Host.Client.cls.state == cactive_t.ca_dedicated )
                 return false;
 
-            if (CommandLine.HasParam("-nocdaudio"))
+            if ( CommandLine.HasParam( "-nocdaudio" ) )
                 return false;
 
             _Controller.Initialise( );
 
-            if (_Controller.IsInitialised)
+            if ( _Controller.IsInitialised )
             {
-                Host.Command.Add("cd", CD_f);
-                Host.Console.Print("CD Audio (Fallback) Initialized\n");
+                Host.Commands.Add( "cd", CD_f );
+                Host.Console.Print( "CD Audio (Fallback) Initialized\n" );
             }
 
             return _Controller.IsInitialised;
@@ -102,151 +103,151 @@ namespace SharpQuake
         // CDAudio_Play(byte track, qboolean looping)
         public void Play( Byte track, Boolean looping )
         {
-            _Controller.Play(track, looping);
+            _Controller.Play( track, looping );
 #if DEBUG
-            Console.WriteLine("DEBUG: track byte:{0} - loop byte: {1}", track, looping);
+            Console.WriteLine( "DEBUG: track byte:{0} - loop byte: {1}", track, looping );
 #endif
         }
 
         // CDAudio_Stop
-        public void Stop()
+        public void Stop( )
         {
-            _Controller.Stop();
+            _Controller.Stop( );
         }
 
         // CDAudio_Pause
-        public void Pause()
+        public void Pause( )
         {
-            _Controller.Pause();
+            _Controller.Pause( );
         }
 
         // CDAudio_Resume
-        public void Resume()
+        public void Resume( )
         {
-            _Controller.Resume();
+            _Controller.Resume( );
         }
 
         // CDAudio_Shutdown
-        public void Shutdown()
+        public void Shutdown( )
         {
-            _Controller.Shutdown();
+            _Controller.Shutdown( );
         }
 
         // CDAudio_Update
-        public void Update()
+        public void Update( )
         {
-            _Controller.Update();
+            _Controller.Update( );
         }
 
-        private void CD_f()
+        private void CD_f( CommandMessage msg )
         {
-            if ( Host.Command.Argc < 2 )
+            if ( msg.Parameters == null || msg.Parameters.Length < 1 )
                 return;
 
-            var command = Host.Command.Argv(1);
+            var command = msg.Parameters[0];
 
-            if (Utilities.SameText(command, "on"))
+            if ( Utilities.SameText( command, "on" ) )
             {
                 _Controller.IsEnabled = true;
                 return;
             }
 
-            if (Utilities.SameText(command, "off"))
+            if ( Utilities.SameText( command, "off" ) )
             {
-                if (_Controller.IsPlaying)
-                    _Controller.Stop();
+                if ( _Controller.IsPlaying )
+                    _Controller.Stop( );
                 _Controller.IsEnabled = false;
                 return;
             }
 
-            if (Utilities.SameText(command, "reset"))
+            if ( Utilities.SameText( command, "reset" ) )
             {
                 _Controller.IsEnabled = true;
-                if (_Controller.IsPlaying)
-                    _Controller.Stop();
+                if ( _Controller.IsPlaying )
+                    _Controller.Stop( );
 
-                _Controller.ReloadDiskInfo();
+                _Controller.ReloadDiskInfo( );
                 return;
             }
 
-            if (Utilities.SameText(command, "remap"))
+            if ( Utilities.SameText( command, "remap" ) )
             {
-                var ret = Host.Command.Argc - 2;
+                var ret = msg.Parameters.Length - 1;
                 var remap = _Controller.Remap;
-                if (ret <= 0)
+                if ( ret <= 0 )
                 {
-                    for ( var n = 1; n < 100; n++)
-                        if (remap[n] != n)
-                            Host.Console.Print("  {0} -> {1}\n", n, remap[n]);
+                    for ( var n = 1; n < 100; n++ )
+                        if ( remap[n] != n )
+                            Host.Console.Print( "  {0} -> {1}\n", n, remap[n] );
                     return;
                 }
-                for ( var n = 1; n <= ret; n++)
-                    remap[n] = ( Byte ) MathLib.atoi( Host.Command.Argv(n + 1));
+                for ( var n = 1; n <= ret; n++ )
+                    remap[n] = ( Byte ) MathLib.atoi( msg.Parameters[n] );
                 return;
             }
 
-            if (Utilities.SameText(command, "close"))
+            if ( Utilities.SameText( command, "close" ) )
             {
-                _Controller.CloseDoor();
+                _Controller.CloseDoor( );
                 return;
             }
 
-            if (!_Controller.IsValidCD)
+            if ( !_Controller.IsValidCD )
             {
-                _Controller.ReloadDiskInfo();
-                if (!_Controller.IsValidCD)
+                _Controller.ReloadDiskInfo( );
+                if ( !_Controller.IsValidCD )
                 {
-                    Host.Console.Print("No CD in player.\n");
+                    Host.Console.Print( "No CD in player.\n" );
                     return;
                 }
             }
 
-            if (Utilities.SameText(command, "play"))
+            if ( Utilities.SameText( command, "play" ) )
             {
-                _Controller.Play(( Byte ) MathLib.atoi( Host.Command.Argv(2)), false);
+                _Controller.Play( ( Byte ) MathLib.atoi( msg.Parameters[1] ), false );
                 return;
             }
 
-            if (Utilities.SameText(command, "loop"))
+            if ( Utilities.SameText( command, "loop" ) )
             {
-                _Controller.Play(( Byte ) MathLib.atoi( Host.Command.Argv(2)), true);
+                _Controller.Play( ( Byte ) MathLib.atoi( msg.Parameters[1] ), true );
                 return;
             }
 
-            if (Utilities.SameText(command, "stop"))
+            if ( Utilities.SameText( command, "stop" ) )
             {
-                _Controller.Stop();
+                _Controller.Stop( );
                 return;
             }
 
-            if (Utilities.SameText(command, "pause"))
+            if ( Utilities.SameText( command, "pause" ) )
             {
-                _Controller.Pause();
+                _Controller.Pause( );
                 return;
             }
 
-            if (Utilities.SameText(command, "resume"))
+            if ( Utilities.SameText( command, "resume" ) )
             {
-                _Controller.Resume();
+                _Controller.Resume( );
                 return;
             }
 
-            if (Utilities.SameText(command, "eject"))
+            if ( Utilities.SameText( command, "eject" ) )
             {
-                if (_Controller.IsPlaying)
-                    _Controller.Stop();
-                _Controller.Eject();
+                if ( _Controller.IsPlaying )
+                    _Controller.Stop( );
+                _Controller.Eject( );
                 return;
             }
 
-            if (Utilities.SameText(command, "info"))
+            if ( Utilities.SameText( command, "info" ) )
             {
-                Host.Console.Print("%u tracks\n", _Controller.MaxTrack);
-                if (_Controller.IsPlaying)
-                    Host.Console.Print("Currently {0} track {1}\n", _Controller.IsLooping ? "looping" : "playing", _Controller.CurrentTrack);
-                else if (_Controller.IsPaused)
-                    Host.Console.Print("Paused {0} track {1}\n", _Controller.IsLooping ? "looping" : "playing", _Controller.CurrentTrack);
-                Host.Console.Print("Volume is {0}\n", _Controller.Volume);
+                Host.Console.Print( "%u tracks\n", _Controller.MaxTrack );
+                if ( _Controller.IsPlaying )
+                    Host.Console.Print( "Currently {0} track {1}\n", _Controller.IsLooping ? "looping" : "playing", _Controller.CurrentTrack );
+                else if ( _Controller.IsPaused )
+                    Host.Console.Print( "Paused {0} track {1}\n", _Controller.IsLooping ? "looping" : "playing", _Controller.CurrentTrack );
+                Host.Console.Print( "Volume is {0}\n", _Controller.Volume );
                 return;
             }
         }
@@ -276,7 +277,7 @@ namespace SharpQuake
         public NullCDAudioController( Host host )
         {
             Host = host;
-               _Remap = new Byte[100];
+            _Remap = new Byte[100];
         }
 
         #region ICDAudioController Members
@@ -369,12 +370,12 @@ namespace SharpQuake
             }
         }
 
-        public void Initialise()
+        public void Initialise( )
         {
-            streamer = new OggStreamer(441000);
+            streamer = new OggStreamer( 441000 );
             _Volume = Host.Sound.BgmVolume;
 
-            if (Directory.Exists( String.Format("{0}/{1}/music/", QuakeParameter.globalbasedir, QuakeParameter.globalgameid)) == false)
+            if ( Directory.Exists( String.Format( "{0}/{1}/music/", QuakeParameter.globalbasedir, QuakeParameter.globalgameid ) ) == false )
             {
                 _noAudio = true;
             }
@@ -382,84 +383,84 @@ namespace SharpQuake
 
         public void Play( Byte track, Boolean looping )
         {
-            if (_noAudio == false)
+            if ( _noAudio == false )
             {
-                trackid = track.ToString("00");
-                trackpath = String.Format("{0}/{1}/music/track{2}.ogg", QuakeParameter.globalbasedir, QuakeParameter.globalgameid, trackid);
+                trackid = track.ToString( "00" );
+                trackpath = String.Format( "{0}/{1}/music/track{2}.ogg", QuakeParameter.globalbasedir, QuakeParameter.globalgameid, trackid );
 #if DEBUG
-                Console.WriteLine("DEBUG: track path:{0} ", trackpath);
+                Console.WriteLine( "DEBUG: track path:{0} ", trackpath );
 #endif
                 try
                 {
                     _isLooping = looping;
-                    if(oggStream != null)
-                        oggStream.Stop();
-                    oggStream = new OggStream(trackpath, 3);
+                    if ( oggStream != null )
+                        oggStream.Stop( );
+                    oggStream = new OggStream( trackpath, 3 );
                     oggStream.IsLooped = looping;
-                    oggStream.Play();
+                    oggStream.Play( );
                     oggStream.Volume = _Volume;
                     _noPlayback = false;
                 }
-                catch (Exception e)
+                catch ( Exception e )
                 {
-                    Console.WriteLine("Could not find or play {0}", trackpath);
+                    Console.WriteLine( "Could not find or play {0}", trackpath );
                     _noPlayback = true;
                     //throw;
                 }
             }
         }
 
-        public void Stop()
+        public void Stop( )
         {
-            if (streamer == null)
+            if ( streamer == null )
                 return;
 
-            if (_noAudio == true)
+            if ( _noAudio == true )
                 return;
 
-            oggStream.Stop();
+            oggStream.Stop( );
         }
 
-        public void Pause()
+        public void Pause( )
         {
-            if (streamer == null)
+            if ( streamer == null )
                 return;
 
-            if (_noAudio == true)
+            if ( _noAudio == true )
                 return;
 
-            oggStream.Pause();
+            oggStream.Pause( );
         }
 
-        public void Resume()
+        public void Resume( )
         {
-            if (streamer == null)
+            if ( streamer == null )
                 return;
 
-            oggStream.Resume();
+            oggStream.Resume( );
         }
 
-        public void Shutdown()
+        public void Shutdown( )
         {
-            if (streamer == null)
+            if ( streamer == null )
                 return;
 
-            if (_noAudio == true)
+            if ( _noAudio == true )
                 return;
 
             //oggStream.Dispose();
-            streamer.Dispose();
+            streamer.Dispose( );
         }
 
-        public void Update()
+        public void Update( )
         {
-            if (streamer == null)
+            if ( streamer == null )
                 return;
 
-            if (_noAudio == true)
+            if ( _noAudio == true )
                 return;
 
-            if (_noPlayback == true)
+            if ( _noPlayback == true )
                 return;
 
             /*if (waveOut.PlaybackState == PlaybackState.Paused)
@@ -484,15 +485,15 @@ namespace SharpQuake
             oggStream.Volume = _Volume;
         }
 
-        public void ReloadDiskInfo()
+        public void ReloadDiskInfo( )
         {
         }
 
-        public void CloseDoor()
+        public void CloseDoor( )
         {
         }
 
-        public void Eject()
+        public void Eject( )
         {
         }
 

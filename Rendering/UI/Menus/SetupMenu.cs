@@ -111,11 +111,11 @@ namespace SharpQuake
 
                     // _Cursor == 4 (OK)
                     if ( _MyName != Host.Client.Name )
-                        Host.CommandBuffer.AddText( String.Format( "name \"{0}\"\n", _MyName ) );
+                        Host.Commands.Buffer.Append( String.Format( "name \"{0}\"\n", _MyName ) );
                     if ( Host.Network.HostName != _HostName )
-                        CVar.Set( "hostname", _HostName );
+                        Host.CVars.Set( "hostname", _HostName );
                     if ( _Top != _OldTop || _Bottom != _OldBottom )
-                        Host.CommandBuffer.AddText( String.Format( "color {0} {1}\n", _Top, _Bottom ) );
+                        Host.Commands.Buffer.Append( String.Format( "color {0} {1}\n", _Top, _Bottom ) );
                     Host.Menu.EnterSound = true;
                     MultiPlayerMenu.Show( Host );
                     break;

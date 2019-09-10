@@ -1018,7 +1018,7 @@ namespace SharpQuake
         private void PF_localcmd( )
         {
             var cmd = GetString( ProgramOperatorDef.OFS_PARM0 );
-            Host.CommandBuffer.AddText( cmd );
+            Host.Commands.Buffer.Append( cmd );
         }
 
         /*
@@ -1032,7 +1032,19 @@ namespace SharpQuake
         private void PF_cvar( )
         {
             var str = GetString( ProgramOperatorDef.OFS_PARM0 );
-            ReturnFloat( CVar.GetValue( str ) );
+            var cvar = Host.CVars.Get( str );
+            var singleValue = 0f;
+
+            if ( cvar.ValueType == typeof( Boolean ) )
+                singleValue = cvar.Get<Boolean>( ) ? 1f : 0f;
+            else if ( cvar.ValueType == typeof( String ) )
+                return;
+            else if ( cvar.ValueType == typeof( Single ) )
+                singleValue = cvar.Get<Single>( );
+            else if ( cvar.ValueType == typeof( Int32 ) )
+                singleValue = ( Single ) cvar.Get<Int32>( );
+
+            ReturnFloat( singleValue );
         }
 
         /*
@@ -1045,7 +1057,7 @@ namespace SharpQuake
 
         private void PF_cvar_set( )
         {
-            CVar.Set( GetString( ProgramOperatorDef.OFS_PARM0 ), GetString( ProgramOperatorDef.OFS_PARM1 ) );
+            Host.CVars.Set( GetString( ProgramOperatorDef.OFS_PARM0 ), GetString( ProgramOperatorDef.OFS_PARM1 ) );
         }
 
         /*
@@ -1235,7 +1247,7 @@ namespace SharpQuake
 
         private void PF_coredump( )
         {
-            Host.Programs.PrintEdicts( );
+            Host.Programs.PrintEdicts( null );
         }
 
         private void PF_traceon( )
@@ -1442,7 +1454,7 @@ namespace SharpQuake
             var end = start + dir * 2048;
             var tr = Host.Server.Move( ref start, ref Utilities.ZeroVector, ref Utilities.ZeroVector, ref end, 0, ent );
             if ( tr.ent != null && tr.ent.v.takedamage == Damages.DAMAGE_AIM &&
-                ( Host.TeamPlay == 0 || ent.v.team <= 0 || ent.v.team != tr.ent.v.team ) )
+                ( Host.TeamPlay.Get<Int32>( ) == 0 || ent.v.team <= 0 || ent.v.team != tr.ent.v.team ) )
             {
                 ReturnVector( ref Host.Programs.GlobalStruct.v_forward );
                 return;
@@ -1460,7 +1472,7 @@ namespace SharpQuake
                     continue;
                 if ( check == ent )
                     continue;
-                if ( Host.TeamPlay != 0 && ent.v.team > 0 && ent.v.team == check.v.team )
+                if ( Host.TeamPlay.Get<Int32>( ) > 0 && ent.v.team > 0 && ent.v.team == check.v.team )
                     continue;	// don't aim at teammate
 
                 Vector3f tmp;
@@ -1599,7 +1611,7 @@ namespace SharpQuake
             Host.Server.svs.changelevel_issued = true;
 
             var s = GetString( ProgramOperatorDef.OFS_PARM0 );
-            Host.CommandBuffer.AddText( String.Format( "changelevel {0}\n", s ) );
+            Host.Commands.Buffer.Append( String.Format( "changelevel {0}\n", s ) );
         }
 
         private void PF_Fixme( )

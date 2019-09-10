@@ -29,6 +29,7 @@ using System.Net.Sockets;
 using System.Runtime.InteropServices;
 using System.Text;
 using SharpQuake.Framework;
+using SharpQuake.Framework.IO;
 
 namespace SharpQuake
 {
@@ -104,7 +105,7 @@ namespace SharpQuake
         {
             get
             {
-                return _HostName.String;
+                return _HostName.Get<String>();
             }
         }
 
@@ -244,10 +245,10 @@ namespace SharpQuake
 
         private Int32 _UnreliableMessagesReceived = 0;
 
-        private CVar _MessageTimeout;
+        private ClientVariable _MessageTimeout;
 
         // = { "net_messagetimeout", "300" };
-        private CVar _HostName;
+        private ClientVariable _HostName;
 
         private PollProcedure _PollProcedureList;
 
@@ -365,14 +366,14 @@ namespace SharpQuake
 
             if( _MessageTimeout == null )
             {
-                _MessageTimeout = new CVar( "net_messagetimeout", "300" );
-                _HostName = new CVar( "hostname", "UNNAMED" );
+                _MessageTimeout = Host.CVars.Add( "net_messagetimeout", 300 );
+                _HostName = Host.CVars.Add( "hostname", "UNNAMED" );
             }
 
-            Host.Command.Add( "slist", Slist_f );
-            Host.Command.Add( "listen", Listen_f );
-            Host.Command.Add( "maxplayers", MaxPlayers_f );
-            Host.Command.Add( "port", Port_f );
+            Host.Commands.Add( "slist", Slist_f );
+            Host.Commands.Add( "listen", Listen_f );
+            Host.Commands.Add( "maxplayers", MaxPlayers_f );
+            Host.Commands.Add( "port", Port_f );
 
             // initialize all the drivers
             _DriverLevel = 0;
@@ -508,7 +509,7 @@ namespace SharpQuake
             }
 
             SlistSilent = ( host != null );
-            Slist_f();
+            Slist_f( null );
 
             while( _SlistInProgress )
                 Poll();
@@ -613,7 +614,7 @@ JustDoIt:
             // see if this connection has timed out
             if( ret == 0 && sock.driver != 0 )
             {
-                if( _Time - sock.lastMessageTime > _MessageTimeout.Value )
+                if( _Time - sock.lastMessageTime > _MessageTimeout.Get<Int32>( ) )
                 {
                     Close( sock );
                     return -1;
@@ -872,7 +873,7 @@ JustDoIt:
         /// <summary>
         /// NET_Slist_f
         /// </summary>
-        public void Slist_f()
+        public void Slist_f( CommandMessage msg )
         {
             if( _SlistInProgress )
                 return;
@@ -990,15 +991,15 @@ JustDoIt:
         }
 
         // NET_Listen_f
-        private void Listen_f()
+        private void Listen_f( CommandMessage msg )
         {
-            if( Host.Command.Argc != 2 )
+            if ( msg.Parameters == null || msg.Parameters.Length != 1 )
             {
                 Host.Console.Print( "\"listen\" is \"{0}\"\n", _IsListening ? 1 : 0 );
                 return;
             }
 
-            _IsListening = ( MathLib.atoi( Host.Command.Argv( 1 ) ) != 0 );
+            _IsListening = ( MathLib.atoi( msg.Parameters[0] ) != 0 );
 
             foreach( var driver in _Drivers )
             {
@@ -1010,11 +1011,11 @@ JustDoIt:
         }
 
         // MaxPlayers_f
-        private void MaxPlayers_f()
+        private void MaxPlayers_f( CommandMessage msg )
         {
-            if( Host.Command.Argc != 2 )
+            if ( msg.Parameters == null || msg.Parameters.Length != 1 )
             {
-                Host.Console.Print( "\"maxplayers\" is \"%u\"\n", Host.Server.svs.maxclients );
+                Host.Console.Print( $"\"maxplayers\" is \"{Host.Server.svs.maxclients}\"\n" );
                 return;
             }
 
@@ -1024,7 +1025,7 @@ JustDoIt:
                 return;
             }
 
-            var n = MathLib.atoi( Host.Command.Argv( 1 ) );
+            var n = MathLib.atoi( msg.Parameters[0] );
             if( n < 1 )
                 n = 1;
             if( n > Host.Server.svs.maxclientslimit )
@@ -1034,28 +1035,28 @@ JustDoIt:
             }
 
             if( n == 1 && _IsListening )
-                Host.CommandBuffer.AddText( "listen 0\n" );
+                Host.Commands.Buffer.Append( "listen 0\n" );
 
             if( n > 1 && !_IsListening )
-                Host.CommandBuffer.AddText( "listen 1\n" );
+                Host.Commands.Buffer.Append( "listen 1\n" );
 
             Host.Server.svs.maxclients = n;
             if( n == 1 )
-                CVar.Set( "deathmatch", "0" );
+                Host.CVars.Set( "deathmatch", 0 );
             else
-                CVar.Set( "deathmatch", "1" );
+                Host.CVars.Set( "deathmatch", 1 );
         }
 
         // NET_Port_f
-        private void Port_f()
+        private void Port_f( CommandMessage msg )
         {
-            if( Host.Command.Argc != 2 )
+            if ( msg.Parameters == null || msg.Parameters.Length != 1 )
             {
-                Host.Console.Print( "\"port\" is \"{0}\"\n", HostPort );
+                Host.Console.Print( $"\"port\" is \"{HostPort}\"\n" );
                 return;
             }
 
-            var n = MathLib.atoi( Host.Command.Argv( 1 ) );
+            var n = MathLib.atoi( msg.Parameters[0] );
             if( n < 1 || n > 65534 )
             {
                 Host.Console.Print( "Bad value, must be between 1 and 65534\n" );
@@ -1068,8 +1069,8 @@ JustDoIt:
             if( _IsListening )
             {
                 // force a change to the new port
-                Host.CommandBuffer.AddText( "listen 0\n" );
-                Host.CommandBuffer.AddText( "listen 1\n" );
+                Host.Commands.Buffer.Append( "listen 0\n" );
+                Host.Commands.Buffer.Append( "listen 1\n" );
             }
         }
 

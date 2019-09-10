@@ -74,7 +74,7 @@ namespace SharpQuake
                     Host.Menu.ReturnOnError = true;
                     _Sorted = false;
                     CurrentMenu.Hide( );
-                    Host.CommandBuffer.AddText( String.Format( "connect \"{0}\"\n", Host.Network.HostCache[_Cursor].cname ) );
+                    Host.Commands.Buffer.Append( String.Format( "connect \"{0}\"\n", Host.Network.HostCache[_Cursor].cname ) );
                     break;
 
                 default:

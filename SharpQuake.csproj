@@ -141,11 +141,8 @@
     <Compile Include="Networking\Client\client_main.cs" />
     <Compile Include="Networking\Client\client_parse.cs" />
     <Compile Include="Networking\Client\client_temp_ent.cs" />
-    <Compile Include="System\Command.cs" />
-    <Compile Include="System\CommandBuffer.cs" />
     <Compile Include="System\Common.cs" />
     <Compile Include="Rendering\UI\Console.cs" />
-    <Compile Include="System\CVar.cs" />
     <Compile Include="Rendering\draw.cs" />
     <Compile Include="System\External.cs" />
     <Compile Include="Desktop\Input.cs" />

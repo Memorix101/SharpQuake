@@ -25,6 +25,7 @@
 using System;
 using System.Text;
 using SharpQuake.Framework;
+using SharpQuake.Framework.IO;
 using SharpQuake.Renderer.Textures;
 
 // sbar.h
@@ -197,8 +198,8 @@ namespace SharpQuake
             FaceInvisInvuln = BasePicture.FromWad( Host.Video.Device, Host.GfxWad, "face_inv2", "GL_NEAREST" );
             FaceQuad = BasePicture.FromWad( Host.Video.Device, Host.GfxWad, "face_quad", "GL_NEAREST" );
 
-            Host.Command.Add( "+showscores", ShowScores );
-            Host.Command.Add( "-showscores", DontShowScores );
+            Host.Commands.Add( "+showscores", ShowScores );
+            Host.Commands.Add( "-showscores", DontShowScores );
 
             SBar = BasePicture.FromWad( Host.Video.Device, Host.GfxWad, "sbar", "GL_NEAREST" );
             IBar = BasePicture.FromWad( Host.Video.Device, Host.GfxWad, "ibar", "GL_NEAREST" );
@@ -773,8 +774,8 @@ namespace SharpQuake
             // PGM 03/02/97 - fixed so color swatch only appears in CTF modes
             if ( MainWindow.Common.GameKind == GameKind.Rogue &&
                 ( Host.Client.cl.maxclients != 1 ) &&
-                ( Host.TeamPlay > 3 ) &&
-                ( Host.TeamPlay < 7 ) )
+                ( Host.TeamPlay.Get<Int32>( ) > 3 ) &&
+                ( Host.TeamPlay.Get<Int32>( ) < 7 ) )
             {
                 var s = cl.scores[cl.viewentity - 1];
 
@@ -1069,7 +1070,7 @@ namespace SharpQuake
         // Sbar_ShowScores
         //
         // Tab key down
-        private void ShowScores( )
+        private void ShowScores( CommandMessage msg )
         {
             if ( _ShowScores )
                 return;
@@ -1080,7 +1081,7 @@ namespace SharpQuake
         // Sbar_DontShowScores
         //
         // Tab key up
-        private void DontShowScores( )
+        private void DontShowScores( CommandMessage msg )
         {
             _ShowScores = false;
             _Updates = 0;

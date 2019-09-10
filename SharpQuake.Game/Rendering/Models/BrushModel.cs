@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using SharpQuake.Framework;
+using SharpQuake.Framework.IO.BSP;
 using SharpQuake.Framework.Mathematics;
 using SharpQuake.Game.Rendering.Memory;
 using SharpQuake.Game.Rendering.Textures;
@@ -13,7 +14,31 @@ namespace SharpQuake.Game.Rendering.Models
 {
     public class BrushModel : Model
     {
-        private BspHeader Header
+        private Int32 Version
+        {
+            get;
+            set;
+        }
+
+        private Int32 BaseOffset
+        {
+            get;
+            set;
+        }
+
+        private Q1Header Q1Header
+        {
+            get;
+            set;
+        }
+
+        private Q2Header Q2Header
+        {
+            get;
+            set;
+        }
+
+        private Q3Header Q3Header
         {
             get;
             set;
@@ -34,7 +59,7 @@ namespace SharpQuake.Game.Rendering.Models
             set;
         }
 
-        public BspModel[] SubModels
+        public Q1Model[] SubModels
         {
             get;
             set;
@@ -351,51 +376,144 @@ namespace SharpQuake.Game.Rendering.Models
             SwapLumps( );
 
             // load into heap
-            var lumps = Header.lumps;
-            LoadVertices( ref lumps[LumpsDef.LUMP_VERTEXES] );
-            LoadEdges( ref lumps[LumpsDef.LUMP_EDGES] );
-            LoadSurfEdges( ref lumps[LumpsDef.LUMP_SURFEDGES] );
-            LoadTextures( ref lumps[LumpsDef.LUMP_TEXTURES], onCheckInitSkyTexture, onCheckForTexture );
-            LoadLighting( ref lumps[LumpsDef.LUMP_LIGHTING] );
-            LoadPlanes( ref lumps[LumpsDef.LUMP_PLANES] );
-            LoadTexInfo( ref lumps[LumpsDef.LUMP_TEXINFO] );
-            LoadFaces( ref lumps[LumpsDef.LUMP_FACES] );
-            LoadMarkSurfaces( ref lumps[LumpsDef.LUMP_MARKSURFACES] );
-            LoadVisibility( ref lumps[LumpsDef.LUMP_VISIBILITY] );
-            LoadLeafs( ref lumps[LumpsDef.LUMP_LEAFS] );
-            LoadNodes( ref lumps[LumpsDef.LUMP_NODES] );
-            LoadClipNodes( ref lumps[LumpsDef.LUMP_CLIPNODES] );
-            LoadEntities( ref lumps[LumpsDef.LUMP_ENTITIES] );
-            LoadSubModels( ref lumps[LumpsDef.LUMP_MODELS] );
+            if ( Version == BspDef.Q1_BSPVERSION || Version == BspDef.HL_BSPVERSION )
+            {
+                var lumps = Q1Header.lumps;
+                LoadVertices( ref lumps[( Int32 ) Q1Lumps.Vertices] );
+                LoadEdges( ref lumps[( Int32 ) Q1Lumps.Edges] );
+                LoadSurfEdges( ref lumps[( Int32 ) Q1Lumps.SurfaceEdges] );
+                LoadTextures( ref lumps[( Int32 ) Q1Lumps.Textures], onCheckInitSkyTexture, onCheckForTexture );
+                LoadLighting( ref lumps[( Int32 ) Q1Lumps.Lighting] );
+                LoadPlanes( ref lumps[( Int32 ) Q1Lumps.Planes] );
+                LoadTexInfo( ref lumps[( Int32 ) Q1Lumps.TextureInfo] );
+                LoadFaces( ref lumps[( Int32 ) Q1Lumps.Faces] );
+                LoadMarkSurfaces( ref lumps[( Int32 ) Q1Lumps.MarkSurfaces] );
+                LoadVisibility( ref lumps[( Int32 ) Q1Lumps.Visibility] );
+                LoadLeafs( ref lumps[( Int32 ) Q1Lumps.Leaves] );
+                LoadNodes( ref lumps[( Int32 ) Q1Lumps.Nodes] );
+                LoadClipNodes( ref lumps[( Int32 ) Q1Lumps.ClipNodes] );
+                LoadEntities( ref lumps[( Int32 ) Q1Lumps.Entities] );
+                LoadSubModels( ref lumps[( Int32 ) Q1Lumps.Models] );
+                MakeHull0( );
+            }
+            else if ( Version == BspDef.Q2_BSPVERSION )
+            {
+                var lumps = Q2Header.lumps;
+                LoadEntities( ref lumps[( Int32 ) Q2Lumps.Entities] );
+                LoadPlanes( ref lumps[( Int32 ) Q2Lumps.Planes] );
+                LoadVertices( ref lumps[( Int32 ) Q2Lumps.Vertices] );
+                LoadVisibility( ref lumps[( Int32 ) Q2Lumps.Visibility] );
+                LoadNodes( ref lumps[( Int32 ) Q2Lumps.Nodes] );
+                LoadTexInfo( ref lumps[( Int32 ) Q2Lumps.TextureInfo] );
+                LoadFaces( ref lumps[( Int32 ) Q2Lumps.Faces] );
+                LoadLighting( ref lumps[( Int32 ) Q2Lumps.Lighting] );
+                LoadLeafs( ref lumps[( Int32 ) Q2Lumps.Leaves] );
+                // LeafFaces
+                // LeafBrushes
+                LoadEdges( ref lumps[( Int32 ) Q2Lumps.Edges] );
+                LoadSurfEdges( ref lumps[( Int32 ) Q2Lumps.SurfaceEdges] );
+                LoadSubModels( ref lumps[( Int32 ) Q2Lumps.Models] );
+                // Brushes
+                // BrushSides
+                // Pop
+                // Areas
+                // AreaPortals
+                MakeHull0( );
+            }
+            else if ( Version == BspDef.Q3_BSPVERSION )
+            {
+                BaseOffset += Q3Header.SizeInBytes;
 
-            MakeHull0( );
-
+                var lumps = Q3Header.lumps;
+                LoadEntities( ref lumps[( Int32 ) Q3Lumps.Entities] );
+                LoadTextures( ref lumps[( Int32 ) Q3Lumps.Textures], onCheckInitSkyTexture, onCheckForTexture );
+                //LoadPlanes( ref lumps[( Int32 ) Q3Lumps.Planes] );
+               // LoadNodes( ref lumps[( Int32 ) Q3Lumps.Nodes] );
+                //LoadLeafs( ref lumps[( Int32 ) Q3Lumps.Leaves] );
+                // LeafFaces
+                // LeafBrushes
+                //LoadSubModels( ref lumps[( Int32 ) Q3Lumps.Models] );
+                // Brushes
+                // BrushSides
+                //LoadVertices( ref lumps[( Int32 ) Q3Lumps.Vertices] );
+                // Triangles
+                // Effects
+                //LoadFaces( ref lumps[( Int32 ) Q3Lumps.Faces] );
+                // LightMaps
+                // LightGrid
+                // PVS
+               // MakeHull0( );
+            }
 
             FrameCount = 2;	// regular and alternate animation
         }
 
         private void LoadHeader( )
         {
-            var header = Utilities.BytesToStructure<BspHeader>( Buffer, 0 );
+            var v = BitConverter.ToInt32( Buffer.ToList( ).GetRange( 0, 4 ).ToArray( ), 0 );
+            var bspVersion = EndianHelper.LittleLong( v );
 
-            var i = EndianHelper.LittleLong( header.version );
+            if ( v < 0 || v > 1000 ) // Hack for detecting quake 3
+            {
+                v = BitConverter.ToInt32( Buffer.ToList( ).GetRange( 4, 4 ).ToArray( ), 0 );
+                bspVersion = EndianHelper.LittleLong( v );
+            }
 
-            if ( i != BspDef.Q1_BSPVERSION && i != BspDef.HL_BSPVERSION )
-                Utilities.Error( "Mod_LoadBrushModel: {0} has wrong version number ({1} should be {2})", Name, i, BspDef.Q1_BSPVERSION );
+            if ( !BspDef.SUPPORTED_BSPS.Contains( bspVersion ) )
+            {
+                Utilities.Error( $"Mod_LoadBrushModel: {Name} has wrong version number ({bspVersion})" );
+                return;
+            }
 
-            header.version = i;
+            if ( bspVersion == BspDef.Q1_BSPVERSION || bspVersion == BspDef.HL_BSPVERSION )
+            {
+                var header = Utilities.BytesToStructure<Q1Header>( Buffer, 0 );
+                header.version = EndianHelper.LittleLong( header.version );
+                Q1Header = header;
+            }
+            else if ( bspVersion == BspDef.Q2_BSPVERSION )
+            {
+                var header = Utilities.BytesToStructure<Q2Header>( Buffer, 0 );
+                header.version = EndianHelper.LittleLong( header.version );
+                Q2Header = header;
+            }
+            else if ( bspVersion == BspDef.Q3_BSPVERSION )
+            {
+                var header = Utilities.BytesToStructure<Q3Header>( Buffer, 0 );
+                header.version = EndianHelper.LittleLong( header.version );
+                Q3Header = header;
+            }
 
-            Header = header;
+            Version = bspVersion;
         }
 
         private void SwapLumps( )
         {
-            var lumps = Header.lumps;
+            BspLump[] lumps = null;
+
+            switch ( Version )
+            {
+                case BspDef.HL_BSPVERSION:
+                case BspDef.Q1_BSPVERSION:
+                    lumps = Q1Header.lumps;
+                    break;
+
+                case BspDef.Q2_BSPVERSION:
+                    lumps = Q2Header.lumps;
+                    break;
+
+                case BspDef.Q3_BSPVERSION:
+                    lumps = Q3Header.lumps;
+                    break;
+            }
+
+            if ( lumps == null )
+                return;
 
             for ( var i = 0; i < lumps.Length; i++ )
             {
-                lumps[i].filelen = EndianHelper.LittleLong( lumps[i].filelen );
-                lumps[i].fileofs = EndianHelper.LittleLong( lumps[i].fileofs );
+                lumps[i].Length = EndianHelper.LittleLong( lumps[i].Length );
+                lumps[i].Position = EndianHelper.LittleLong( lumps[i].Position );
             }
         }
 
@@ -404,19 +522,42 @@ namespace SharpQuake.Game.Rendering.Models
         /// </summary>
         private void LoadVertices( ref BspLump l )
         {
-            if ( ( l.filelen % BspVertex.SizeInBytes ) != 0 )
-                Utilities.Error( $"MOD_LoadBmodel: funny lump size in {Name}" );
+            var count = 0;
 
-            var count = l.filelen / BspVertex.SizeInBytes;
+            if ( Version == BspDef.Q1_BSPVERSION || Version == BspDef.HL_BSPVERSION )
+            {
+                if ( ( l.Length % BspVertex.SizeInBytes ) != 0 )
+                    Utilities.Error( $"MOD_LoadBmodel: funny lump size in {Name}" );
+
+                count = l.Length / BspVertex.SizeInBytes;
+            }
+            else
+            {
+                var cc = ( Single ) l.Length / Q3Vertex.SizeInBytes;
+
+                if ( ( ( BaseOffset + l.Length ) % Q3Vertex.SizeInBytes ) != 0 )
+                    Utilities.Error( $"MOD_LoadBmodel: funny lump size in {Name}" );
+
+                count = l.Length / Q3Vertex.SizeInBytes;
+            }
+
             var verts = new MemoryVertex[count];
 
             Vertices = verts;
             NumVertices = count;
 
-            for ( Int32 i = 0, offset = l.fileofs; i < count; i++, offset += BspVertex.SizeInBytes )
+            for ( Int32 i = 0, offset = BaseOffset + l.Position; i < count; i++, offset += BspVertex.SizeInBytes )
             {
-                var src = Utilities.BytesToStructure<BspVertex>( Buffer, offset );
-                verts[i].position = EndianHelper.LittleVector3( src.point );
+                if ( Version == BspDef.Q1_BSPVERSION || Version == BspDef.HL_BSPVERSION )
+                {
+                    var src = Utilities.BytesToStructure<BspVertex>( Buffer, offset );
+                    verts[i].position = EndianHelper.LittleVector3( src.point );
+                }
+                else
+                {
+                    var src = Utilities.BytesToStructure<Q3Vertex>( Buffer, offset );
+                    verts[i].position = EndianHelper.LittleVector3( src.origin );
+                }
             }
         }
 
@@ -425,17 +566,17 @@ namespace SharpQuake.Game.Rendering.Models
         /// </summary>
         private void LoadEdges( ref BspLump l )
         {
-            if ( ( l.filelen % BspEdge.SizeInBytes ) != 0 )
+            if ( ( l.Length % BspEdge.SizeInBytes ) != 0 )
                 Utilities.Error( $"MOD_LoadBmodel: funny lump size in {Name}" );
 
-            var count = l.filelen / BspEdge.SizeInBytes;
+            var count = l.Length / BspEdge.SizeInBytes;
 
             // Uze: Why count + 1 ?????
             var e = new MemoryEdge[count]; // out = Hunk_AllocName ( (count + 1) * sizeof(*out), loadname);
             Edges = e;
             NumEdges = count;
 
-            for ( Int32 i = 0, offset = l.fileofs; i < count; i++, offset += BspEdge.SizeInBytes )
+            for ( Int32 i = 0, offset = l.Position; i < count; i++, offset += BspEdge.SizeInBytes )
             {
                 var src = Utilities.BytesToStructure<BspEdge>( Buffer, offset );
                 e[i].v = new UInt16[] {
@@ -450,16 +591,16 @@ namespace SharpQuake.Game.Rendering.Models
         /// </summary>
         private void LoadSurfEdges( ref BspLump l )
         {
-            if ( ( l.filelen % sizeof( Int32 ) ) != 0 )
+            if ( ( l.Length % sizeof( Int32 ) ) != 0 )
                 Utilities.Error( $"MOD_LoadBmodel: funny lump size in {Name}" );
 
-            var count = l.filelen / sizeof( Int32 );
+            var count = l.Length / sizeof( Int32 );
             var e = new Int32[count];
 
             SurfEdges = e;
             NumSurfEdges = count;
 
-            for ( Int32 i = 0, offset = l.fileofs; i < count; i++, offset += 4 )
+            for ( Int32 i = 0, offset = l.Position; i < count; i++, offset += 4 )
             {
                 var src = BitConverter.ToInt32( Buffer, offset );
                 e[i] = src; // EndianHelper.LittleLong(in[i]);
@@ -471,196 +612,210 @@ namespace SharpQuake.Game.Rendering.Models
         /// </summary>
         private void LoadTextures( ref BspLump l, Action<ModelTexture> onCheckInitSkyTexture, Func<String, Tuple<Byte[], Size>> onCheckForTexture )
         {
-            if ( l.filelen == 0 )
+            if ( l.Length == 0 )
             {
                 Textures = null;
                 return;
             }
 
-            var m = Utilities.BytesToStructure<BspMipTexLump>( Buffer, l.fileofs );// (dmiptexlump_t *)(mod_base + l.fileofs);
-
-            m.nummiptex = EndianHelper.LittleLong( m.nummiptex );
-
-            var dataofs = new Int32[m.nummiptex];
-
-            System.Buffer.BlockCopy( Buffer, l.fileofs + BspMipTexLump.SizeInBytes, dataofs, 0, dataofs.Length * sizeof( Int32 ) );
-
-            NumTextures = m.nummiptex;
-            Textures = new ModelTexture[m.nummiptex]; // Hunk_AllocName (m->nummiptex * sizeof(*loadmodel->textures) , loadname);
-
-            for ( var i = 0; i < m.nummiptex; i++ )
+            if ( Version == BspDef.Q3_BSPVERSION )
             {
-                dataofs[i] = EndianHelper.LittleLong( dataofs[i] );
-                if ( dataofs[i] == -1 )
-                    continue;
-
-                var mtOffset = l.fileofs + dataofs[i];
-                var mt = Utilities.BytesToStructure<BspMipTex>( Buffer, mtOffset ); //mt = (miptex_t *)((byte *)m + m.dataofs[i]);
-                mt.width = ( UInt32 ) EndianHelper.LittleLong( ( Int32 ) mt.width );
-                mt.height = ( UInt32 ) EndianHelper.LittleLong( ( Int32 ) mt.height );
-
-                var tx = new ModelTexture( );// Hunk_AllocName(sizeof(texture_t) + pixels, loadname);
-                tx.name = Utilities.GetString( mt.name );
-
-                var texResult = onCheckForTexture( tx.name );
-                
-                if ( texResult?.Item1 != null )
+                var count = l.Length / Q3Texture.SizeInBytes;
+                var offset = BaseOffset + l.Position;
+                for ( var i = 0; i < count; i++ )
                 {
-                    var overrideTex = texResult.Item1;
-                    var size = texResult.Item2;
-
-                    mt.width = ( UInt32 ) size.Width;
-                    mt.height = ( UInt32 ) size.Height;
-                    tx.scaleX = 1f;
-                    tx.scaleY = 1f;
-
-                    tx.pixels = overrideTex;
-
-                    tx.width = mt.width;
-                    tx.height = mt.height;
+                    var tex = Utilities.BytesToStructure<Q3Texture>( Buffer, offset );
+                    
+                    offset += Q3Texture.SizeInBytes;
                 }
-                else
-                {
-                    tx.scaleX = 1f;
-                    tx.scaleY = 1f;
-
-                    tx.width = mt.width;
-                    tx.height = mt.height;
-                    var pixels = ( Int32 ) ( mt.width * mt.height / 64 * 85 );
-
-                    // the pixels immediately follow the structures
-                    tx.pixels = new Byte[pixels];
-#warning BlockCopy tries to copy data over the bounds of _ModBase if certain mods are loaded. Needs proof fix!
-                    if ( mtOffset + BspMipTex.SizeInBytes + pixels <= Buffer.Length )
-                        System.Buffer.BlockCopy( Buffer, mtOffset + BspMipTex.SizeInBytes, tx.pixels, 0, pixels );
-                    else
-                    {
-                        System.Buffer.BlockCopy( Buffer, mtOffset, tx.pixels, 0, pixels );
-                        ConsoleWrapper.Print( $"Texture info of {Name} truncated to fit in bounds of _ModBase\n" );
-                    }
-                }
-
-                for ( var j = 0; j < BspDef.MIPLEVELS; j++ )
-                    mt.offsets[j] = ( UInt32 ) EndianHelper.LittleLong( ( Int32 ) mt.offsets[j] );            
-
-                Textures[i] = tx;
-
-                if ( mt.offsets[0] == 0 )
-                    continue;
-
-                for ( var j = 0; j < BspDef.MIPLEVELS; j++ )
-                    tx.offsets[j] = ( Int32 ) mt.offsets[j] - BspMipTex.SizeInBytes;
-
-
-                onCheckInitSkyTexture( tx );
-
-                //if ( tx.name != null && tx.name.StartsWith( "sky" ) )// !Q_strncmp(mt->name,"sky",3))
-                //    Host.RenderContext.InitSky( tx );
-                //else
-                //    tx.texture = BaseTexture.FromBuffer( Host.Video.Device, tx.name, new ByteArraySegment( tx.pixels ),
-                //        ( Int32 ) tx.width, ( Int32 ) tx.height, true, false );
             }
-
-            //
-            // sequence the animations
-            //
-            var anims = new ModelTexture[10];
-            var altanims = new ModelTexture[10];
-
-            for ( var i = 0; i < m.nummiptex; i++ )
+            else
             {
-                var tx = Textures[i];
-                if ( tx == null || !tx.name.StartsWith( "+" ) )// [0] != '+')
-                    continue;
-                if ( tx.anim_next != null )
-                    continue;	// allready sequenced
+                var m = Utilities.BytesToStructure<BspMipTexLump>( Buffer, l.Position );// (dmiptexlump_t *)(mod_base + l.fileofs);
 
-                // find the number of frames in the animation
-                Array.Clear( anims, 0, anims.Length );
-                Array.Clear( altanims, 0, altanims.Length );
+                m.nummiptex = EndianHelper.LittleLong( m.nummiptex );
 
-                Int32 max = tx.name[1];
-                var altmax = 0;
-                if ( max >= 'a' && max <= 'z' )
-                    max -= 'a' - 'A';
-                if ( max >= '0' && max <= '9' )
-                {
-                    max -= '0';
-                    altmax = 0;
-                    anims[max] = tx;
-                    max++;
-                }
-                else if ( max >= 'A' && max <= 'J' )
-                {
-                    altmax = max - 'A';
-                    max = 0;
-                    altanims[altmax] = tx;
-                    altmax++;
-                }
-                else
-                    Utilities.Error( "Bad animating texture {0}", tx.name );
+                var dataofs = new Int32[m.nummiptex];
 
-                for ( var j = i + 1; j < m.nummiptex; j++ )
+                System.Buffer.BlockCopy( Buffer, l.Position + BspMipTexLump.SizeInBytes, dataofs, 0, dataofs.Length * sizeof( Int32 ) );
+
+                NumTextures = m.nummiptex;
+                Textures = new ModelTexture[m.nummiptex]; // Hunk_AllocName (m->nummiptex * sizeof(*loadmodel->textures) , loadname);
+
+                for ( var i = 0; i < m.nummiptex; i++ )
                 {
-                    var tx2 = Textures[j];
-                    if ( tx2 == null || !tx2.name.StartsWith( "+" ) )// tx2->name[0] != '+')
-                        continue;
-                    if ( String.Compare( tx2.name, 2, tx.name, 2, Math.Min( tx.name.Length, tx2.name.Length ) ) != 0 )// strcmp (tx2->name+2, tx->name+2))
+                    dataofs[i] = EndianHelper.LittleLong( dataofs[i] );
+                    if ( dataofs[i] == -1 )
                         continue;
 
-                    Int32 num = tx2.name[1];
+                    var mtOffset = l.Position + dataofs[i];
+                    var mt = Utilities.BytesToStructure<BspMipTex>( Buffer, mtOffset ); //mt = (miptex_t *)((byte *)m + m.dataofs[i]);
+                    mt.width = ( UInt32 ) EndianHelper.LittleLong( ( Int32 ) mt.width );
+                    mt.height = ( UInt32 ) EndianHelper.LittleLong( ( Int32 ) mt.height );
 
-                    if ( num >= 'a' && num <= 'z' )
-                        num -= 'a' - 'A';
+                    var tx = new ModelTexture( );// Hunk_AllocName(sizeof(texture_t) + pixels, loadname);
+                    tx.name = Utilities.GetString( mt.name );
 
-                    if ( num >= '0' && num <= '9' )
+                    var texResult = onCheckForTexture( tx.name );
+
+                    if ( texResult?.Item1 != null )
                     {
-                        num -= '0';
-                        anims[num] = tx2;
-                        if ( num + 1 > max )
-                            max = num + 1;
-                    }
-                    else if ( num >= 'A' && num <= 'J' )
-                    {
-                        num = num - 'A';
-                        altanims[num] = tx2;
-                        if ( num + 1 > altmax )
-                            altmax = num + 1;
+                        var overrideTex = texResult.Item1;
+                        var size = texResult.Item2;
+
+                        mt.width = ( UInt32 ) size.Width;
+                        mt.height = ( UInt32 ) size.Height;
+                        tx.scaleX = 1f;
+                        tx.scaleY = 1f;
+
+                        tx.pixels = overrideTex;
+
+                        tx.width = mt.width;
+                        tx.height = mt.height;
                     }
                     else
-                        Utilities.Error( "Bad animating texture {0}", tx2.name );
+                    {
+                        tx.scaleX = 1f;
+                        tx.scaleY = 1f;
+
+                        tx.width = mt.width;
+                        tx.height = mt.height;
+                        var pixels = ( Int32 ) ( mt.width * mt.height / 64 * 85 );
+
+                        // the pixels immediately follow the structures
+                        tx.pixels = new Byte[pixels];
+#warning BlockCopy tries to copy data over the bounds of _ModBase if certain mods are loaded. Needs proof fix!
+                        if ( mtOffset + BspMipTex.SizeInBytes + pixels <= Buffer.Length )
+                            System.Buffer.BlockCopy( Buffer, mtOffset + BspMipTex.SizeInBytes, tx.pixels, 0, pixels );
+                        else
+                        {
+                            System.Buffer.BlockCopy( Buffer, mtOffset, tx.pixels, 0, pixels );
+                            ConsoleWrapper.Print( $"Texture info of {Name} truncated to fit in bounds of _ModBase\n" );
+                        }
+                    }
+
+                    for ( var j = 0; j < BspDef.MIPLEVELS; j++ )
+                        mt.offsets[j] = ( UInt32 ) EndianHelper.LittleLong( ( Int32 ) mt.offsets[j] );
+
+                    Textures[i] = tx;
+
+                    if ( mt.offsets[0] == 0 )
+                        continue;
+
+                    for ( var j = 0; j < BspDef.MIPLEVELS; j++ )
+                        tx.offsets[j] = ( Int32 ) mt.offsets[j] - BspMipTex.SizeInBytes;
+
+
+                    onCheckInitSkyTexture( tx );
+
+                    //if ( tx.name != null && tx.name.StartsWith( "sky" ) )// !Q_strncmp(mt->name,"sky",3))
+                    //    Host.RenderContext.InitSky( tx );
+                    //else
+                    //    tx.texture = BaseTexture.FromBuffer( Host.Video.Device, tx.name, new ByteArraySegment( tx.pixels ),
+                    //        ( Int32 ) tx.width, ( Int32 ) tx.height, true, false );
                 }
 
-                // link them all together
-                for ( var j = 0; j < max; j++ )
+                //
+                // sequence the animations
+                //
+                var anims = new ModelTexture[10];
+                var altanims = new ModelTexture[10];
+
+                for ( var i = 0; i < m.nummiptex; i++ )
                 {
-                    var tx2 = anims[j];
+                    var tx = Textures[i];
+                    if ( tx == null || !tx.name.StartsWith( "+" ) )// [0] != '+')
+                        continue;
+                    if ( tx.anim_next != null )
+                        continue;   // allready sequenced
 
-                    if ( tx2 == null )
-                        Utilities.Error( "Missing frame {0} of {1}", j, tx.name );
+                    // find the number of frames in the animation
+                    Array.Clear( anims, 0, anims.Length );
+                    Array.Clear( altanims, 0, altanims.Length );
 
-                    tx2.anim_total = max * ModelDef.ANIM_CYCLE;
-                    tx2.anim_min = j * ModelDef.ANIM_CYCLE;
-                    tx2.anim_max = ( j + 1 ) * ModelDef.ANIM_CYCLE;
-                    tx2.anim_next = anims[( j + 1 ) % max];
+                    Int32 max = tx.name[1];
+                    var altmax = 0;
+                    if ( max >= 'a' && max <= 'z' )
+                        max -= 'a' - 'A';
+                    if ( max >= '0' && max <= '9' )
+                    {
+                        max -= '0';
+                        altmax = 0;
+                        anims[max] = tx;
+                        max++;
+                    }
+                    else if ( max >= 'A' && max <= 'J' )
+                    {
+                        altmax = max - 'A';
+                        max = 0;
+                        altanims[altmax] = tx;
+                        altmax++;
+                    }
+                    else
+                        Utilities.Error( "Bad animating texture {0}", tx.name );
 
-                    if ( altmax != 0 )
-                        tx2.alternate_anims = altanims[0];
-                }
-                for ( var j = 0; j < altmax; j++ )
-                {
-                    var tx2 = altanims[j];
+                    for ( var j = i + 1; j < m.nummiptex; j++ )
+                    {
+                        var tx2 = Textures[j];
+                        if ( tx2 == null || !tx2.name.StartsWith( "+" ) )// tx2->name[0] != '+')
+                            continue;
+                        if ( String.Compare( tx2.name, 2, tx.name, 2, Math.Min( tx.name.Length, tx2.name.Length ) ) != 0 )// strcmp (tx2->name+2, tx->name+2))
+                            continue;
 
-                    if ( tx2 == null )
-                        Utilities.Error( "Missing frame {0} of {1}", j, tx2.name );
+                        Int32 num = tx2.name[1];
 
-                    tx2.anim_total = altmax * ModelDef.ANIM_CYCLE;
-                    tx2.anim_min = j * ModelDef.ANIM_CYCLE;
-                    tx2.anim_max = ( j + 1 ) * ModelDef.ANIM_CYCLE;
-                    tx2.anim_next = altanims[( j + 1 ) % altmax];
+                        if ( num >= 'a' && num <= 'z' )
+                            num -= 'a' - 'A';
 
-                    if ( max != 0 )
-                        tx2.alternate_anims = anims[0];
+                        if ( num >= '0' && num <= '9' )
+                        {
+                            num -= '0';
+                            anims[num] = tx2;
+                            if ( num + 1 > max )
+                                max = num + 1;
+                        }
+                        else if ( num >= 'A' && num <= 'J' )
+                        {
+                            num = num - 'A';
+                            altanims[num] = tx2;
+                            if ( num + 1 > altmax )
+                                altmax = num + 1;
+                        }
+                        else
+                            Utilities.Error( "Bad animating texture {0}", tx2.name );
+                    }
+
+                    // link them all together
+                    for ( var j = 0; j < max; j++ )
+                    {
+                        var tx2 = anims[j];
+
+                        if ( tx2 == null )
+                            Utilities.Error( "Missing frame {0} of {1}", j, tx.name );
+
+                        tx2.anim_total = max * ModelDef.ANIM_CYCLE;
+                        tx2.anim_min = j * ModelDef.ANIM_CYCLE;
+                        tx2.anim_max = ( j + 1 ) * ModelDef.ANIM_CYCLE;
+                        tx2.anim_next = anims[( j + 1 ) % max];
+
+                        if ( altmax != 0 )
+                            tx2.alternate_anims = altanims[0];
+                    }
+                    for ( var j = 0; j < altmax; j++ )
+                    {
+                        var tx2 = altanims[j];
+
+                        if ( tx2 == null )
+                            Utilities.Error( "Missing frame {0} of {1}", j, tx2.name );
+
+                        tx2.anim_total = altmax * ModelDef.ANIM_CYCLE;
+                        tx2.anim_min = j * ModelDef.ANIM_CYCLE;
+                        tx2.anim_max = ( j + 1 ) * ModelDef.ANIM_CYCLE;
+                        tx2.anim_next = altanims[( j + 1 ) % altmax];
+
+                        if ( max != 0 )
+                            tx2.alternate_anims = anims[0];
+                    }
                 }
             }
         }
@@ -670,14 +825,14 @@ namespace SharpQuake.Game.Rendering.Models
         /// </summary>
         private void LoadLighting( ref BspLump l )
         {
-            if ( l.filelen == 0 )
+            if ( l.Length == 0 )
             {
                 LightData = null;
                 return;
             }
 
-            LightData = new Byte[l.filelen]; // Hunk_AllocName(l->filelen, loadname);
-            System.Buffer.BlockCopy( Buffer, l.fileofs, LightData, 0, l.filelen );
+            LightData = new Byte[l.Length]; // Hunk_AllocName(l->filelen, loadname);
+            System.Buffer.BlockCopy( Buffer, l.Position, LightData, 0, l.Length );
         }
 
         /// <summary>
@@ -685,10 +840,10 @@ namespace SharpQuake.Game.Rendering.Models
         /// </summary>
         private void LoadPlanes( ref BspLump l )
         {
-            if ( ( l.filelen % BspPlane.SizeInBytes ) != 0 )
+            if ( ( l.Length % BspPlane.SizeInBytes ) != 0 )
                 Utilities.Error( $"MOD_LoadBmodel: funny lump size in {Name}" );
 
-            var count = l.filelen / BspPlane.SizeInBytes;
+            var count = l.Length / BspPlane.SizeInBytes;
             // Uze: Possible error! Why in original is out = Hunk_AllocName ( count*2*sizeof(*out), loadname)???
             var p = new Plane[count];
 
@@ -700,7 +855,7 @@ namespace SharpQuake.Game.Rendering.Models
 
             for ( var i = 0; i < count; i++ )
             {
-                var src = Utilities.BytesToStructure<BspPlane>( Buffer, l.fileofs + i * BspPlane.SizeInBytes );
+                var src = Utilities.BytesToStructure<BspPlane>( Buffer, l.Position + i * BspPlane.SizeInBytes );
                 var bits = 0;
                 p[i].normal = EndianHelper.LittleVector3( src.normal );
 
@@ -725,10 +880,10 @@ namespace SharpQuake.Game.Rendering.Models
         private void LoadTexInfo( ref BspLump l )
         {
             //in = (void *)(mod_base + l->fileofs);
-            if ( ( l.filelen % BspTextureInfo.SizeInBytes ) != 0 )
+            if ( ( l.Length % BspTextureInfo.SizeInBytes ) != 0 )
                 Utilities.Error( $"MOD_LoadBmodel: funny lump size in {Name}" );
 
-            var count = l.filelen / BspTextureInfo.SizeInBytes;
+            var count = l.Length / BspTextureInfo.SizeInBytes;
             var infos = new MemoryTextureInfo[count]; // out = Hunk_AllocName ( count*sizeof(*out), loadname);
 
             for ( var i = 0; i < infos.Length; i++ )
@@ -739,7 +894,7 @@ namespace SharpQuake.Game.Rendering.Models
 
             for ( var i = 0; i < count; i++ )//, in++, out++)
             {
-                var src = Utilities.BytesToStructure<BspTextureInfo>( Buffer, l.fileofs + i * BspTextureInfo.SizeInBytes );
+                var src = Utilities.BytesToStructure<BspTextureInfo>( Buffer, l.Position + i * BspTextureInfo.SizeInBytes );
 
                 for ( var j = 0; j < 2; j++ )
                     infos[i].vecs[j] = EndianHelper.LittleVector4( src.vecs, j * 4 );
@@ -785,10 +940,10 @@ namespace SharpQuake.Game.Rendering.Models
         /// </summary>
         private void LoadFaces( ref BspLump l )
         {
-            if ( ( l.filelen % BspFace.SizeInBytes ) != 0 )
+            if ( ( l.Length % BspFace.SizeInBytes ) != 0 )
                 Utilities.Error( $"MOD_LoadBmodel: funny lump size in {Name}" );
 
-            var count = l.filelen / BspFace.SizeInBytes;
+            var count = l.Length / BspFace.SizeInBytes;
             var dest = new MemorySurface[count];
 
             for ( var i = 0; i < dest.Length; i++ )
@@ -796,7 +951,7 @@ namespace SharpQuake.Game.Rendering.Models
 
             Surfaces = dest;
             NumSurfaces = count;
-            var offset = l.fileofs;
+            var offset = l.Position;
 
             for ( var surfnum = 0; surfnum < count; surfnum++, offset += BspFace.SizeInBytes )
             {
@@ -810,7 +965,7 @@ namespace SharpQuake.Game.Rendering.Models
                 Int32 side = EndianHelper.LittleShort( src.side );
 
                 if ( side != 0 )
-                    dest[surfnum].flags |= SurfaceDef.SURF_PLANEBACK;
+                    dest[surfnum].flags |= ( Int32 ) Q1SurfaceFlags.PlaneBack;
 
                 dest[surfnum].plane = Planes[planenum];
                 dest[surfnum].texinfo = TexInfo[EndianHelper.LittleShort( src.texinfo )];
@@ -839,14 +994,14 @@ namespace SharpQuake.Game.Rendering.Models
                 {
                     if ( dest[surfnum].texinfo.texture.name.StartsWith( "sky" ) )	// sky
                     {
-                        dest[surfnum].flags |= ( SurfaceDef.SURF_DRAWSKY | SurfaceDef.SURF_DRAWTILED );
+                        dest[surfnum].flags |= ( ( Int32 ) Q1SurfaceFlags.Sky | ( Int32 ) Q1SurfaceFlags.Tiled );
                         SubdivideSurface( dest[surfnum] );	// cut up polygon for warps
                         continue;
                     }
 
                     if ( dest[surfnum].texinfo.texture.name.StartsWith( "*" ) )		// turbulent
                     {
-                        dest[surfnum].flags |= ( SurfaceDef.SURF_DRAWTURB | SurfaceDef.SURF_DRAWTILED );
+                        dest[surfnum].flags |= ( ( Int32 ) Q1SurfaceFlags.Turbulence | ( Int32 ) Q1SurfaceFlags.Tiled );
 
                         for ( var i = 0; i < 2; i++ )
                         {
@@ -866,10 +1021,10 @@ namespace SharpQuake.Game.Rendering.Models
         /// </summary>
         private void LoadMarkSurfaces( ref BspLump l )
         {
-            if ( ( l.filelen % sizeof( Int16 ) ) != 0 )
+            if ( ( l.Length % sizeof( Int16 ) ) != 0 )
                 Utilities.Error( $"MOD_LoadBmodel: funny lump size in {Name}" );
 
-            var count = l.filelen / sizeof( Int16 );
+            var count = l.Length / sizeof( Int16 );
             var dest = new MemorySurface[count];
 
             MarkSurfaces = dest;
@@ -877,7 +1032,7 @@ namespace SharpQuake.Game.Rendering.Models
 
             for ( var i = 0; i < count; i++ )
             {
-                Int32 j = BitConverter.ToInt16( Buffer, l.fileofs + i * sizeof( Int16 ) );
+                Int32 j = BitConverter.ToInt16( Buffer, l.Position + i * sizeof( Int16 ) );
 
                 if ( j >= NumSurfaces )
                     Utilities.Error( "Mod_ParseMarksurfaces: bad surface number" );
@@ -891,14 +1046,14 @@ namespace SharpQuake.Game.Rendering.Models
         /// </summary>
         private void LoadVisibility( ref BspLump l )
         {
-            if ( l.filelen == 0 )
+            if ( l.Length == 0 )
             {
                 VisData = null;
                 return;
             }
 
-            VisData = new Byte[l.filelen];
-            System.Buffer.BlockCopy( Buffer, l.fileofs, VisData, 0, l.filelen );
+            VisData = new Byte[l.Length];
+            System.Buffer.BlockCopy( Buffer, l.Position, VisData, 0, l.Length );
         }
 
         /// <summary>
@@ -906,10 +1061,10 @@ namespace SharpQuake.Game.Rendering.Models
         /// </summary>
         private void LoadLeafs( ref BspLump l )
         {
-            if ( ( l.filelen % BspLeaf.SizeInBytes ) != 0 )
+            if ( ( l.Length % BspLeaf.SizeInBytes ) != 0 )
                 Utilities.Error( $"MOD_LoadBmodel: funny lump size in {Name}" );
 
-            var count = l.filelen / BspLeaf.SizeInBytes;
+            var count = l.Length / BspLeaf.SizeInBytes;
             var dest = new MemoryLeaf[count];
 
             for ( var i = 0; i < dest.Length; i++ )
@@ -918,7 +1073,7 @@ namespace SharpQuake.Game.Rendering.Models
             Leaves = dest;
             NumLeafs = count;
 
-            for ( Int32 i = 0, offset = l.fileofs; i < count; i++, offset += BspLeaf.SizeInBytes )
+            for ( Int32 i = 0, offset = l.Position; i < count; i++, offset += BspLeaf.SizeInBytes )
             {
                 var src = Utilities.BytesToStructure<BspLeaf>( Buffer, offset );
 
@@ -969,10 +1124,10 @@ namespace SharpQuake.Game.Rendering.Models
         /// </summary>
         private void LoadNodes( ref BspLump l )
         {
-            if ( ( l.filelen % BspNode.SizeInBytes ) != 0 )
+            if ( ( l.Length % BspNode.SizeInBytes ) != 0 )
                 Utilities.Error( $"MOD_LoadBmodel: funny lump size in {Name}" );
 
-            var count = l.filelen / BspNode.SizeInBytes;
+            var count = l.Length / BspNode.SizeInBytes;
             var dest = new MemoryNode[count];
 
             for ( var i = 0; i < dest.Length; i++ )
@@ -981,7 +1136,7 @@ namespace SharpQuake.Game.Rendering.Models
             Nodes = dest;
             NumNodes = count;
 
-            for ( Int32 i = 0, offset = l.fileofs; i < count; i++, offset += BspNode.SizeInBytes )
+            for ( Int32 i = 0, offset = l.Position; i < count; i++, offset += BspNode.SizeInBytes )
             {
                 var src = Utilities.BytesToStructure<BspNode>( Buffer, offset );
 
@@ -1018,10 +1173,10 @@ namespace SharpQuake.Game.Rendering.Models
         /// </summary>
         private void LoadClipNodes( ref BspLump l )
         {
-            if ( ( l.filelen % BspClipNode.SizeInBytes ) != 0 )
+            if ( ( l.Length % BspClipNode.SizeInBytes ) != 0 )
                 Utilities.Error( $"MOD_LoadBmodel: funny lump size in {Name}" );
 
-            var count = l.filelen / BspClipNode.SizeInBytes;
+            var count = l.Length / BspClipNode.SizeInBytes;
             var dest = new BspClipNode[count];
 
             ClipNodes = dest;
@@ -1051,7 +1206,7 @@ namespace SharpQuake.Game.Rendering.Models
             hull.clip_maxs.Y = 32;
             hull.clip_maxs.Z = 64;
 
-            for ( Int32 i = 0, offset = l.fileofs; i < count; i++, offset += BspClipNode.SizeInBytes )
+            for ( Int32 i = 0, offset = l.Position; i < count; i++, offset += BspClipNode.SizeInBytes )
             {
                 var src = Utilities.BytesToStructure<BspClipNode>( Buffer, offset );
 
@@ -1067,13 +1222,13 @@ namespace SharpQuake.Game.Rendering.Models
         /// </summary>
         private void LoadEntities( ref BspLump l )
         {
-            if ( l.filelen == 0 )
+            if ( l.Length == 0 )
             {
                 Entities = null;
                 return;
             }
 
-            Entities = Encoding.ASCII.GetString( Buffer, l.fileofs, l.filelen );
+            Entities = Encoding.ASCII.GetString( Buffer, BaseOffset + l.Position, l.Length );
         }
 
         /// <summary>
@@ -1081,18 +1236,18 @@ namespace SharpQuake.Game.Rendering.Models
         /// </summary>
         private void LoadSubModels( ref BspLump l )
         {
-            if ( ( l.filelen % BspModel.SizeInBytes ) != 0 )
+            if ( ( l.Length % Q1Model.SizeInBytes ) != 0 )
                 Utilities.Error( $"MOD_LoadBmodel: funny lump size in {Name}" );
 
-            var count = l.filelen / BspModel.SizeInBytes;
-            var dest = new BspModel[count];
+            var count = l.Length / Q1Model.SizeInBytes;
+            var dest = new Q1Model[count];
 
             SubModels = dest;
             NumSubModels = count;
 
-            for ( Int32 i = 0, offset = l.fileofs; i < count; i++, offset += BspModel.SizeInBytes )
+            for ( Int32 i = 0, offset = l.Position; i < count; i++, offset += Q1Model.SizeInBytes )
             {
-                var src = Utilities.BytesToStructure<BspModel>( Buffer, offset );
+                var src = Utilities.BytesToStructure<Q1Model>( Buffer, offset );
 
                 dest[i].mins = new Single[3];
                 dest[i].maxs = new Single[3];
@@ -1336,7 +1491,7 @@ namespace SharpQuake.Game.Rendering.Models
             }
         }
 
-        public void SetupSubModel( ref BspModel submodel )
+        public void SetupSubModel( ref Q1Model submodel )
         {
             Hulls[0].firstclipnode = submodel.headnode[0];
             for ( var j = 1; j < BspDef.MAX_MAP_HULLS; j++ )

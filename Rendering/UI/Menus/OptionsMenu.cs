@@ -67,11 +67,11 @@ namespace SharpQuake
 
                         case 1:
                             CurrentMenu.Hide( );
-                            Host.Console.ToggleConsole_f( );
+                            Host.Console.ToggleConsole_f( null );
                             break;
 
                         case 2:
-                            Host.CommandBuffer.AddText( "exec default.cfg\n" );
+                            Host.Commands.Buffer.Append( "exec default.cfg\n" );
                             break;
 
                         case 12:
@@ -145,7 +145,7 @@ namespace SharpQuake
             Host.Menu.Print( 16, 48, "     Reset to defaults" );
 
             Host.Menu.Print( 16, 56, "           Screen size" );
-            var r = ( Host.Screen.ViewSize.Value - 30 ) / ( 120 - 30 );
+            var r = ( Host.Screen.ViewSize.Get<Single>( ) - 30 ) / ( 120 - 30 );
             Host.Menu.DrawSlider( 220, 56, r );
 
             Host.Menu.Print( 16, 64, "            Brightness" );
@@ -202,12 +202,12 @@ namespace SharpQuake
             switch ( _Cursor )
             {
                 case 3:	// screen size
-                    value = Host.Screen.ViewSize.Value + dir * 10;
+                    value = Host.Screen.ViewSize.Get<Single>( ) + dir * 10;
                     if ( value < 30 )
                         value = 30;
                     if ( value > 120 )
                         value = 120;
-                    CVar.Set( "viewsize", value );
+                    Host.CVars.Set( "viewsize", value );
                     break;
 
                 case 4:	// gamma
@@ -216,7 +216,7 @@ namespace SharpQuake
                         value = 0.5f;
                     if ( value > 1 )
                         value = 1;
-                    CVar.Set( "gamma", value );
+                    Host.CVars.Set( "gamma", value );
                     break;
 
                 case 5:	// mouse speed
@@ -225,7 +225,7 @@ namespace SharpQuake
                         value = 1;
                     if ( value > 11 )
                         value = 11;
-                    CVar.Set( "sensitivity", value );
+                    Host.CVars.Set( "sensitivity", value );
                     break;
 
                 case 6:	// music volume
@@ -234,7 +234,7 @@ namespace SharpQuake
                         value = 0;
                     if ( value > 1 )
                         value = 1;
-                    CVar.Set( "bgmvolume", value );
+                    Host.CVars.Set( "bgmvolume", value );
                     break;
 
                 case 7:	// sfx volume
@@ -243,32 +243,32 @@ namespace SharpQuake
                         value = 0;
                     if ( value > 1 )
                         value = 1;
-                    CVar.Set( "volume", value );
+                    Host.CVars.Set( "volume", value );
                     break;
 
                 case 8:	// allways run
                     if ( Host.Client.ForwardSpeed > 200 )
                     {
-                        CVar.Set( "cl_forwardspeed", 200f );
-                        CVar.Set( "cl_backspeed", 200f );
+                        Host.CVars.Set( "cl_forwardspeed", 200f );
+                        Host.CVars.Set( "cl_backspeed", 200f );
                     }
                     else
                     {
-                        CVar.Set( "cl_forwardspeed", 400f );
-                        CVar.Set( "cl_backspeed", 400f );
+                        Host.CVars.Set( "cl_forwardspeed", 400f );
+                        Host.CVars.Set( "cl_backspeed", 400f );
                     }
                     break;
 
                 case 9:	// invert mouse
-                    CVar.Set( "m_pitch", -Host.Client.MPitch );
+                    Host.CVars.Set( "m_pitch", -Host.Client.MPitch );
                     break;
 
                 case 10:	// lookspring
-                    CVar.Set( "lookspring", !Host.Client.LookSpring ? 1f : 0f );
+                    Host.CVars.Set( "lookspring", !Host.Client.LookSpring );
                     break;
 
                 case 11:	// lookstrafe
-                    CVar.Set( "lookstrafe", !Host.Client.LookStrafe ? 1f : 0f );
+                    Host.CVars.Set( "lookstrafe", !Host.Client.LookStrafe );
                     break;
 
 #if _WIN32

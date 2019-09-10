@@ -24,6 +24,7 @@
 
 using System;
 using SharpQuake.Framework;
+using SharpQuake.Framework.IO;
 using SharpQuake.Renderer;
 using SharpQuake.Renderer.Textures;
 
@@ -45,7 +46,7 @@ namespace SharpQuake
             }
         }
 
-        public CVar ViewSize
+        public ClientVariable ViewSize
         {
             get
             {
@@ -151,15 +152,15 @@ namespace SharpQuake
         // scr_centertime_off
         private String _CenterString; // char	scr_centerstring[1024]
 
-        private CVar _ViewSize; // = { "viewsize", "100", true };
-        private CVar _Fov;// = { "fov", "90" };	// 10 - 170
-        private CVar _ConSpeed;// = { "scr_conspeed", "300" };
-        private CVar _CenterTime;// = { "scr_centertime", "2" };
-        private CVar _ShowRam;// = { "showram", "1" };
-        private CVar _ShowTurtle;// = { "showturtle", "0" };
-        private CVar _ShowPause;// = { "showpause", "1" };
-        private CVar _PrintSpeed;// = { "scr_printspeed", "8" };
-        private CVar _glTripleBuffer;// = { "gl_triplebuffer", "1", true };
+        private ClientVariable _ViewSize; // = { "viewsize", "100", true };
+        private ClientVariable _Fov;// = { "fov", "90" };	// 10 - 170
+        private ClientVariable _ConSpeed;// = { "scr_conspeed", "300" };
+        private ClientVariable _CenterTime;// = { "scr_centertime", "2" };
+        private ClientVariable _ShowRam;// = { "showram", "1" };
+        private ClientVariable _ShowTurtle;// = { "showturtle", "0" };
+        private ClientVariable _ShowPause;// = { "showpause", "1" };
+        private ClientVariable _PrintSpeed;// = { "scr_printspeed", "8" };
+        private ClientVariable _glTripleBuffer;// = { "gl_triplebuffer", "1", true };
 
         private String _NotifyString; // scr_notifystring
         private System.Boolean _IsMouseWindowed; // windowed_mouse (don't confuse with _windowed_mouse cvar)
@@ -181,23 +182,23 @@ namespace SharpQuake
         {
             if ( _ViewSize == null )
             {
-                _ViewSize = new CVar( "viewsize", "100", true );
-                _Fov = new CVar( "fov", "90" );	// 10 - 170
-                _ConSpeed = new CVar( "scr_conspeed", "3000" );
-                _CenterTime = new CVar( "scr_centertime", "2" );
-                _ShowRam = new CVar( "showram", "1" );
-                _ShowTurtle = new CVar( "showturtle", "0" );
-                _ShowPause = new CVar( "showpause", "1" );
-                _PrintSpeed = new CVar( "scr_printspeed", "8" );
-                _glTripleBuffer = new CVar( "gl_triplebuffer", "1", true );
+                _ViewSize = Host.CVars.Add( "viewsize", 100f, ClientVariableFlags.Archive );
+                _Fov = Host.CVars.Add( "fov", 90f );	// 10 - 170
+                _ConSpeed = Host.CVars.Add( "scr_conspeed", 3000 );
+                _CenterTime = Host.CVars.Add( "scr_centertime", 2 );
+                _ShowRam = Host.CVars.Add( "showram", true );
+                _ShowTurtle = Host.CVars.Add( "showturtle", false );
+                _ShowPause = Host.CVars.Add( "showpause", true );
+                _PrintSpeed = Host.CVars.Add( "scr_printspeed", 8 );
+                _glTripleBuffer = Host.CVars.Add( "gl_triplebuffer", 1, ClientVariableFlags.Archive );
             }
 
             //
             // register our commands
             //
-            Host.Command.Add( "screenshot", ScreenShot_f );
-            Host.Command.Add( "sizeup", SizeUp_f );
-            Host.Command.Add( "sizedown", SizeDown_f );
+            Host.Commands.Add( "screenshot", ScreenShot_f );
+            Host.Commands.Add( "sizeup", SizeUp_f );
+            Host.Commands.Add( "sizedown", SizeDown_f );
 
             Ram = BasePicture.FromWad( Host.Video.Device, Host.GfxWad, "ram", "GL_LINEAR" );
             Net = BasePicture.FromWad( Host.Video.Device, Host.GfxWad, "net", "GL_LINEAR" );
@@ -229,7 +230,7 @@ namespace SharpQuake
                         MainWindow.Instance.VSync = ( Host.Video.Wait ? VSyncMode.One : VSyncMode.None );
                 }
 
-                _VidDef.numpages = 2 + ( Int32 ) _glTripleBuffer.Value;
+                _VidDef.numpages = 2 + ( Int32 ) _glTripleBuffer.Get<Int32>( );
 
                 CopyTop = false;
                 _CopyEverything = false;
@@ -253,15 +254,15 @@ namespace SharpQuake
                 //
                 // determine size of refresh window
                 //
-                if ( _OldFov != _Fov.Value )
+                if ( _OldFov != _Fov.Get<Single>( ) )
                 {
-                    _OldFov = _Fov.Value;
+                    _OldFov = _Fov.Get<Single>( );
                     _VidDef.recalc_refdef = true;
                 }
 
-                if ( _OldScreenSize != _ViewSize.Value )
+                if ( _OldScreenSize != _ViewSize.Get<Single>( ) )
                 {
-                    _OldScreenSize = _ViewSize.Value;
+                    _OldScreenSize = _ViewSize.Get<Single>( );
                     _VidDef.recalc_refdef = true;
                 }
 
@@ -397,7 +398,7 @@ namespace SharpQuake
         public void CenterPrint( String str )
         {
             _CenterString = str;
-            CenterTimeOff = _CenterTime.Value;
+            CenterTimeOff = _CenterTime.Get<Int32>( );
             _CenterTimeStart = ( Single ) Host.Client.cl.time;
 
             // count the number of lines for centering
@@ -481,23 +482,23 @@ namespace SharpQuake
         // SCR_SizeUp_f
         //
         // Keybinding command
-        private void SizeUp_f( )
+        private void SizeUp_f( CommandMessage msg )
         {
-            CVar.Set( "viewsize", _ViewSize.Value + 10 );
+            Host.CVars.Set( "viewsize", _ViewSize.Get<Single>( ) + 10 );
             _VidDef.recalc_refdef = true;
         }
 
         // SCR_SizeDown_f
         //
         // Keybinding command
-        private void SizeDown_f( )
+        private void SizeDown_f( CommandMessage msg )
         {
-            CVar.Set( "viewsize", _ViewSize.Value - 10 );
+            Host.CVars.Set( "viewsize", _ViewSize.Get<Single>( ) - 10 );
             _VidDef.recalc_refdef = true;
         }
 
         // SCR_ScreenShot_f
-        private void ScreenShot_f( )
+        private void ScreenShot_f( CommandMessage msg )
         {
             Host.Video.Device.ScreenShot( out var path );
         }
@@ -539,23 +540,23 @@ namespace SharpQuake
             Host.StatusBar.Changed( );
 
             // bound viewsize
-            if ( _ViewSize.Value < 30 )
-                CVar.Set( "viewsize", "30" );
-            if ( _ViewSize.Value > 120 )
-                CVar.Set( "viewsize", "120" );
+            if ( _ViewSize.Get<Single>( ) < 30 )
+                Host.CVars.Set( "viewsize", 30f );
+            if ( _ViewSize.Get<Single>( ) > 120 )
+                Host.CVars.Set( "viewsize", 120f );
 
             // bound field of view
-            if ( _Fov.Value < 10 )
-                CVar.Set( "fov", "10" );
-            if ( _Fov.Value > 170 )
-                CVar.Set( "fov", "170" );
+            if ( _Fov.Get<Single>( ) < 10 )
+                Host.CVars.Set( "fov", 10f );
+            if ( _Fov.Get<Single>( ) > 170 )
+                Host.CVars.Set( "fov", 170f );
 
             // intermission is always full screen
             Single size;
             if ( Host.Client.cl.intermission > 0 )
                 size = 120;
             else
-                size = _ViewSize.Value;
+                size = _ViewSize.Get<Single>( );
 
             if ( size >= 120 )
                 Host.StatusBar.Lines = 0; // no status bar at all
@@ -565,13 +566,13 @@ namespace SharpQuake
                 Host.StatusBar.Lines = 24 + 16 + 8;
 
             var full = false;
-            if ( _ViewSize.Value >= 100.0 )
+            if ( _ViewSize.Get<Single>( ) >= 100.0 )
             {
                 full = true;
                 size = 100.0f;
             }
             else
-                size = _ViewSize.Value;
+                size = _ViewSize.Get<Single>( );
 
             if ( Host.Client.cl.intermission > 0 )
             {
@@ -602,7 +603,7 @@ namespace SharpQuake
             else
                 rdef.vrect.y = ( h - rdef.vrect.height ) / 2;
 
-            rdef.fov_x = _Fov.Value;
+            rdef.fov_x = _Fov.Get<Single>( );
             rdef.fov_y = CalcFov( rdef.fov_x, rdef.vrect.width, rdef.vrect.height );
 
             _VRect = rdef.vrect;
@@ -645,13 +646,13 @@ namespace SharpQuake
 
             if ( _ConLines < _ConCurrent )
             {
-                _ConCurrent -= ( Int32 ) ( _ConSpeed.Value * Host.FrameTime );
+                _ConCurrent -= ( Int32 ) ( _ConSpeed.Get<Int32>( ) * Host.FrameTime );
                 if ( _ConLines > _ConCurrent )
                     _ConCurrent = _ConLines;
             }
             else if ( _ConLines > _ConCurrent )
             {
-                _ConCurrent += ( Int32 ) ( _ConSpeed.Value * Host.FrameTime );
+                _ConCurrent += ( Int32 ) ( _ConSpeed.Get<Int32>( ) * Host.FrameTime );
                 if ( _ConLines < _ConCurrent )
                     _ConCurrent = _ConLines;
             }
@@ -752,7 +753,7 @@ namespace SharpQuake
         // SCR_DrawRam
         private void DrawRam( )
         {
-            if ( _ShowRam.Value == 0 )
+            if ( !_ShowRam.Get<Boolean>( ) )
                 return;
 
             if ( !Host.RenderContext.CacheTrash )
@@ -766,7 +767,7 @@ namespace SharpQuake
         {
             //int	count;
 
-            if ( _ShowTurtle.Value == 0 )
+            if ( !_ShowTurtle.Get<Boolean>( ) )
                 return;
 
             if ( Host.FrameTime < 0.1 )
@@ -796,7 +797,7 @@ namespace SharpQuake
         // DrawPause
         private void DrawPause( )
         {
-            if ( _ShowPause.Value == 0 )	// turn off for screenshots
+            if ( !_ShowPause.Get<Boolean>( ) )	// turn off for screenshots
                 return;
 
             if ( !Host.Client.cl.paused )
@@ -829,7 +830,7 @@ namespace SharpQuake
 
             // the finale prints the characters one at a time
             if ( Host.Client.cl.intermission > 0 )
-                remaining = ( Int32 ) ( _PrintSpeed.Value * ( Host.Client.cl.time - _CenterTimeStart ) );
+                remaining = ( Int32 ) ( _PrintSpeed.Get<Int32>( ) * ( Host.Client.cl.time - _CenterTimeStart ) );
             else
                 remaining = 9999;
 

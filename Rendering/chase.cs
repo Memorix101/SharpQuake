@@ -24,6 +24,7 @@
 
 using System;
 using SharpQuake.Framework;
+using SharpQuake.Framework.IO;
 using SharpQuake.Framework.Mathematics;
 
 // chase.c -- chase camera code
@@ -42,14 +43,14 @@ namespace SharpQuake
         {
             get
             {
-                return ( _Active.Value != 0 );
+                return ( _Active.Get<Boolean>( ) );
             }
         }
 
-        private CVar _Back;// = { "chase_back", "100" };
-        private CVar _Up;// = { "chase_up", "16" };
-        private CVar _Right;// = { "chase_right", "0" };
-        private  CVar _Active;// = { "chase_active", "0" };
+        private ClientVariable _Back;// = { "chase_back", "100" };
+        private ClientVariable _Up;// = { "chase_up", "16" };
+        private ClientVariable _Right;// = { "chase_right", "0" };
+        private ClientVariable _Active;// = { "chase_active", "0" };
         private Vector3 _Dest;
 
         // Instances
@@ -69,10 +70,10 @@ namespace SharpQuake
         {
             if( _Back == null )
             {
-                _Back = new CVar( "chase_back", "100" );
-                _Up = new CVar( "chase_up", "16" );
-                _Right = new CVar( "chase_right", "0" );
-                _Active = new CVar( "chase_active", "0" );
+                _Back = Host.CVars.Add( "chase_back", 100f );
+                _Up = Host.CVars.Add( "chase_up", 16f );
+                _Right = Host.CVars.Add( "chase_right", 0f );
+                _Active = Host.CVars.Add( "chase_active", false );
             }
         }
 
@@ -91,8 +92,8 @@ namespace SharpQuake
             MathLib.AngleVectors( ref Host.Client.cl.viewangles, out forward, out right, out up );
 
             // calc exact destination
-            _Dest = Host.RenderContext.RefDef.vieworg - forward * _Back.Value - right * _Right.Value;
-            _Dest.Z = Host.RenderContext.RefDef.vieworg.Z + _Up.Value;
+            _Dest = Host.RenderContext.RefDef.vieworg - forward * _Back.Get<Single>( ) - right * _Right.Get<Single>( );
+            _Dest.Z = Host.RenderContext.RefDef.vieworg.Z + _Up.Get<Single>( );
 
             // find the spot the player is looking at
             var dest = Host.RenderContext.RefDef.vieworg + forward * 4096;

@@ -25,6 +25,8 @@
 using System;
 using SharpQuake.Framework.Mathematics;
 using SharpQuake.Framework;
+using SharpQuake.Framework.IO.BSP;
+using SharpQuake.Framework.IO;
 
 // view.h
 // view.c -- player eye positioning
@@ -45,7 +47,7 @@ namespace SharpQuake
         {
             get
             {
-                return _Crosshair.Value;
+                return _Crosshair.Get<Single>( );
             }
         }
 
@@ -53,49 +55,49 @@ namespace SharpQuake
         {
             get
             {
-                return _Gamma.Value;
+                return _Gamma.Get<Single>( );
             }
         }
 
         public Color4 Blend;
         private static readonly Vector3 SmallOffset = Vector3.One / 32f;
 
-        private CVar _LcdX; // = { "lcd_x", "0" };
-        private CVar _LcdYaw; // = { "lcd_yaw", "0" };
+        private ClientVariable _LcdX; // = { "lcd_x", "0" };
+        private ClientVariable _LcdYaw; // = { "lcd_yaw", "0" };
 
-        private CVar _ScrOfsX; // = { "scr_ofsx", "0", false };
-        private CVar _ScrOfsY; // = { "scr_ofsy", "0", false };
-        private CVar _ScrOfsZ; // = { "scr_ofsz", "0", false };
+        private ClientVariable _ScrOfsX; // = { "scr_ofsx", "0", false };
+        private ClientVariable _ScrOfsY; // = { "scr_ofsy", "0", false };
+        private ClientVariable _ScrOfsZ; // = { "scr_ofsz", "0", false };
 
-        private CVar _ClRollSpeed; // = { "cl_rollspeed", "200" };
-        private CVar _ClRollAngle; // = { "cl_rollangle", "2.0" };
+        private ClientVariable _ClRollSpeed; // = { "cl_rollspeed", "200" };
+        private ClientVariable _ClRollAngle; // = { "cl_rollangle", "2.0" };
 
-        private CVar _ClBob; // = { "cl_bob", "0.02", false };
-        private CVar _ClBobCycle; // = { "cl_bobcycle", "0.6", false };
-        private CVar _ClBobUp; // = { "cl_bobup", "0.5", false };
+        private ClientVariable _ClBob; // = { "cl_bob", "0.02", false };
+        private ClientVariable _ClBobCycle; // = { "cl_bobcycle", "0.6", false };
+        private ClientVariable _ClBobUp; // = { "cl_bobup", "0.5", false };
 
-        private CVar _KickTime; // = { "v_kicktime", "0.5", false };
-        private CVar _KickRoll; // = { "v_kickroll", "0.6", false };
-        private CVar _KickPitch; // = { "v_kickpitch", "0.6", false };
+        private ClientVariable _KickTime; // = { "v_kicktime", "0.5", false };
+        private ClientVariable _KickRoll; // = { "v_kickroll", "0.6", false };
+        private ClientVariable _KickPitch; // = { "v_kickpitch", "0.6", false };
 
-        private CVar _IYawCycle; // = { "v_iyaw_cycle", "2", false };
-        private CVar _IRollCycle; // = { "v_iroll_cycle", "0.5", false };
-        private CVar _IPitchCycle;// = { "v_ipitch_cycle", "1", false };
-        private CVar _IYawLevel;// = { "v_iyaw_level", "0.3", false };
-        private CVar _IRollLevel;// = { "v_iroll_level", "0.1", false };
-        private CVar _IPitchLevel;// = { "v_ipitch_level", "0.3", false };
+        private ClientVariable _IYawCycle; // = { "v_iyaw_cycle", "2", false };
+        private ClientVariable _IRollCycle; // = { "v_iroll_cycle", "0.5", false };
+        private ClientVariable _IPitchCycle;// = { "v_ipitch_cycle", "1", false };
+        private ClientVariable _IYawLevel;// = { "v_iyaw_level", "0.3", false };
+        private ClientVariable _IRollLevel;// = { "v_iroll_level", "0.1", false };
+        private ClientVariable _IPitchLevel;// = { "v_ipitch_level", "0.3", false };
 
-        private CVar _IdleScale;// = { "v_idlescale", "0", false };
+        private ClientVariable _IdleScale;// = { "v_idlescale", "0", false };
 
-        private CVar _Crosshair;// = { "crosshair", "0", true };
-        private CVar _ClCrossX;// = { "cl_crossx", "0", false };
-        private CVar _ClCrossY;// = { "cl_crossy", "0", false };
+        private ClientVariable _Crosshair;// = { "crosshair", "0", true };
+        private ClientVariable _ClCrossX;// = { "cl_crossx", "0", false };
+        private ClientVariable _ClCrossY;// = { "cl_crossy", "0", false };
 
-        private CVar _glCShiftPercent;// = { "gl_cshiftpercent", "100", false };
+        private ClientVariable _glCShiftPercent;// = { "gl_cshiftpercent", "100", false };
 
-        private CVar _Gamma;// = { "gamma", "1", true };
-        private CVar _CenterMove;// = { "v_centermove", "0.15", false };
-        private CVar _CenterSpeed;// = { "v_centerspeed", "500" };
+        private ClientVariable _Gamma;// = { "gamma", "1", true };
+        private ClientVariable _CenterMove;// = { "v_centermove", "0.15", false };
+        private ClientVariable _CenterSpeed;// = { "v_centerspeed", "500" };
 
         private Byte[] _GammaTable; // [256];	// palette is sent through this
         private cshift_t _CShift_empty;// = { { 130, 80, 50 }, 0 };
@@ -129,50 +131,50 @@ namespace SharpQuake
         // V_Init
         public void Initialise( )
         {
-            Host.Command.Add( "v_cshift", CShift_f );
-            Host.Command.Add( "bf", BonusFlash_f );
-            Host.Command.Add( "centerview", StartPitchDrift );
+            Host.Commands.Add( "v_cshift", CShift_f );
+            Host.Commands.Add( "bf", BonusFlash_f );
+            Host.Commands.Add( "centerview", StartPitchDrift );
 
             if( _LcdX == null )
             {
-                _LcdX = new CVar( "lcd_x", "0" );
-                _LcdYaw = new CVar( "lcd_yaw", "0" );
+                _LcdX = Host.CVars.Add( "lcd_x", 0f );
+                _LcdYaw = Host.CVars.Add( "lcd_yaw", 0f );
 
-                _ScrOfsX = new CVar( "scr_ofsx", "0", false );
-                _ScrOfsY = new CVar( "scr_ofsy", "0", false );
-                _ScrOfsZ = new CVar( "scr_ofsz", "0", false );
+                _ScrOfsX = Host.CVars.Add( "scr_ofsx", 0f );
+                _ScrOfsY = Host.CVars.Add( "scr_ofsy", 0f );
+                _ScrOfsZ = Host.CVars.Add( "scr_ofsz", 0f );
 
-                _ClRollSpeed = new CVar( "cl_rollspeed", "200" );
-                _ClRollAngle = new CVar( "cl_rollangle", "2.0" );
+                _ClRollSpeed = Host.CVars.Add( "cl_rollspeed", 200f );
+                _ClRollAngle = Host.CVars.Add( "cl_rollangle", 2.0f );
 
-                _ClBob = new CVar( "cl_bob", "0.02", false );
-                _ClBobCycle = new CVar( "cl_bobcycle", "0.6", false );
-                _ClBobUp = new CVar( "cl_bobup", "0.5", false );
+                _ClBob = Host.CVars.Add( "cl_bob", 0.02f );
+                _ClBobCycle = Host.CVars.Add( "cl_bobcycle", 0.6f );
+                _ClBobUp = Host.CVars.Add( "cl_bobup", 0.5f );
 
-                _KickTime = new CVar( "v_kicktime", "0.5", false );
-                _KickRoll = new CVar( "v_kickroll", "0.6", false );
-                _KickPitch = new CVar( "v_kickpitch", "0.6", false );
+                _KickTime = Host.CVars.Add( "v_kicktime", 0.5f );
+                _KickRoll = Host.CVars.Add( "v_kickroll", 0.6f );
+                _KickPitch = Host.CVars.Add( "v_kickpitch", 0.6f );
 
-                _IYawCycle = new CVar( "v_iyaw_cycle", "2", false );
-                _IRollCycle = new CVar( "v_iroll_cycle", "0.5", false );
-                _IPitchCycle = new CVar( "v_ipitch_cycle", "1", false );
-                _IYawLevel = new CVar( "v_iyaw_level", "0.3", false );
-                _IRollLevel = new CVar( "v_iroll_level", "0.1", false );
-                _IPitchLevel = new CVar( "v_ipitch_level", "0.3", false );
+                _IYawCycle = Host.CVars.Add( "v_iyaw_cycle", 2f );
+                _IRollCycle = Host.CVars.Add( "v_iroll_cycle", 0.5f );
+                _IPitchCycle = Host.CVars.Add( "v_ipitch_cycle", 1f );
+                _IYawLevel = Host.CVars.Add( "v_iyaw_level", 0.3f );
+                _IRollLevel = Host.CVars.Add( "v_iroll_level", 0.1f );
+                _IPitchLevel = Host.CVars.Add( "v_ipitch_level", 0.3f );
 
-                _IdleScale = new CVar( "v_idlescale", "0", false );
+                _IdleScale = Host.CVars.Add( "v_idlescale", 0f );
 
-                _Crosshair = new CVar( "crosshair", "0", true );
-                _ClCrossX = new CVar( "cl_crossx", "0", false );
-                _ClCrossY = new CVar( "cl_crossy", "0", false );
+                _Crosshair = Host.CVars.Add( "crosshair", 0f, ClientVariableFlags.Archive );
+                _ClCrossX = Host.CVars.Add( "cl_crossx", 0f );
+                _ClCrossY = Host.CVars.Add( "cl_crossy", 0f );
 
-                _glCShiftPercent = new CVar( "gl_cshiftpercent", "100", false );
+                _glCShiftPercent = Host.CVars.Add( "gl_cshiftpercent", 100f );
 
-                _CenterMove = new CVar( "v_centermove", "0.15", false );
-                _CenterSpeed = new CVar( "v_centerspeed", "500" );
+                _CenterMove = Host.CVars.Add( "v_centermove", 0.15f );
+                _CenterSpeed = Host.CVars.Add( "v_centerspeed", 500f );
 
                 BuildGammaTable( 1.0f );	// no gamma yet
-                _Gamma = new CVar( "gamma", "1", true );
+                _Gamma = Host.CVars.Add( "gamma", 1f, ClientVariableFlags.Archive );
             }
         }
 
@@ -189,9 +191,9 @@ namespace SharpQuake
             // don't allow cheats in multiplayer
             if( Host.Client.cl.maxclients > 1 )
             {
-                CVar.Set( "scr_ofsx", "0" );
-                CVar.Set( "scr_ofsy", "0" );
-                CVar.Set( "scr_ofsz", "0" );
+                Host.CVars.Set( "scr_ofsx", 0f );
+                Host.CVars.Set( "scr_ofsy", 0f );
+                Host.CVars.Set( "scr_ofsz", 0f );
             }
 
             if( Host.Client.cl.intermission > 0 )
@@ -204,7 +206,7 @@ namespace SharpQuake
 
             Host.RenderContext.PushDlights();
 
-            if( _LcdX.Value != 0 )
+            if( _LcdX.Get<Single>( ) != 0 )
             {
                 //
                 // render two interleaved views
@@ -215,8 +217,8 @@ namespace SharpQuake
                 vid.rowbytes <<= 1;
                 vid.aspect *= 0.5f;
 
-                rdef.viewangles.Y -= _LcdYaw.Value;
-                rdef.vieworg -= _Right * _LcdX.Value;
+                rdef.viewangles.Y -= _LcdYaw.Get<Single>( );
+                rdef.vieworg -= _Right * _LcdX.Get<Single>( );
 
                 Host.RenderContext.RenderView();
 
@@ -224,8 +226,8 @@ namespace SharpQuake
 
                 Host.RenderContext.PushDlights();
 
-                rdef.viewangles.Y += _LcdYaw.Value * 2;
-                rdef.vieworg += _Right * _LcdX.Value * 2;
+                rdef.viewangles.Y += _LcdYaw.Get<Single>( ) * 2;
+                rdef.vieworg += _Right * _LcdX.Get<Single>( ) * 2;
 
                 Host.RenderContext.RenderView();
 
@@ -253,9 +255,9 @@ namespace SharpQuake
             Single sign = side < 0 ? -1 : 1;
             side = Math.Abs( side );
 
-            var value = _ClRollAngle.Value;
-            if( side < _ClRollSpeed.Value )
-                side = side * value / _ClRollSpeed.Value;
+            var value = _ClRollAngle.Get<Single>( );
+            if( side < _ClRollSpeed.Get<Single>( ) )
+                side = side * value / _ClRollSpeed.Get<Single>( );
             else
                 side = value;
 
@@ -345,7 +347,7 @@ namespace SharpQuake
         }
 
         // V_StartPitchDrift
-        public void StartPitchDrift()
+        public void StartPitchDrift( CommandMessage msg )
         {
             var cl = Host.Client.cl;
             if( cl.laststop == cl.time )
@@ -354,7 +356,7 @@ namespace SharpQuake
             }
             if( cl.nodrift || cl.pitchvel == 0 )
             {
-                cl.pitchvel = _CenterSpeed.Value;
+                cl.pitchvel = _CenterSpeed.Get<Single>( );
                 cl.nodrift = false;
                 cl.driftmove = 0;
             }
@@ -381,11 +383,11 @@ namespace SharpQuake
 
             var cshifts = Host.Client.cl.cshifts;
 
-            if( _glCShiftPercent.Value != 0 )
+            if( _glCShiftPercent.Get<Single>( ) != 0 )
             {
                 for( var j = 0; j < ColorShift.NUM_CSHIFTS; j++ )
                 {
-                    var a2 = ( ( cshifts[j].percent * _glCShiftPercent.Value ) / 100.0f ) / 255.0f;
+                    var a2 = ( ( cshifts[j].percent * _glCShiftPercent.Get<Single>( ) ) / 100.0f ) / 255.0f;
 
                     if( a2 == 0 )
                         continue;
@@ -461,12 +463,12 @@ namespace SharpQuake
 
             var side = Vector3.Dot( from, right );
 
-            _DmgRoll = count * side * _KickRoll.Value;
+            _DmgRoll = count * side * _KickRoll.Get<Single>( );
 
             side = Vector3.Dot( from, forward );
-            _DmgPitch = count * side * _KickPitch.Value;
+            _DmgPitch = count * side * _KickPitch.Get<Single>( );
 
-            _DmgTime = _KickTime.Value;
+            _DmgTime = _KickTime.Get<Single>( );
         }
 
         /// <summary>
@@ -475,18 +477,18 @@ namespace SharpQuake
         /// </summary>
         public void SetContentsColor( Int32 contents )
         {
-            switch( contents )
+            switch( ( Q1Contents ) contents )
             {
-                case ContentsDef.CONTENTS_EMPTY:
-                case ContentsDef.CONTENTS_SOLID:
+                case Q1Contents.Empty:
+                case Q1Contents.Solid:
                     Host.Client.cl.cshifts[ColorShift.CSHIFT_CONTENTS] = _CShift_empty;
                     break;
 
-                case ContentsDef.CONTENTS_LAVA:
+                case Q1Contents.Lava:
                     Host.Client.cl.cshifts[ColorShift.CSHIFT_CONTENTS] = _CShift_lava;
                     break;
 
-                case ContentsDef.CONTENTS_SLIME:
+                case Q1Contents.Slime:
                     Host.Client.cl.cshifts[ColorShift.CSHIFT_CONTENTS] = _CShift_slime;
                     break;
 
@@ -521,18 +523,18 @@ namespace SharpQuake
         }
 
         // V_cshift_f
-        private void CShift_f()
+        private void CShift_f( CommandMessage msg )
         {
-            Int32.TryParse( Host.Command.Argv( 1 ), out _CShift_empty.destcolor[0] );
-            Int32.TryParse( Host.Command.Argv( 2 ), out _CShift_empty.destcolor[1] );
-            Int32.TryParse( Host.Command.Argv( 3 ), out _CShift_empty.destcolor[2] );
-            Int32.TryParse( Host.Command.Argv( 4 ), out _CShift_empty.percent );
+            Int32.TryParse( msg.Parameters[0], out _CShift_empty.destcolor[0] );
+            Int32.TryParse( msg.Parameters[1], out _CShift_empty.destcolor[1] );
+            Int32.TryParse( msg.Parameters[2], out _CShift_empty.destcolor[2] );
+            Int32.TryParse( msg.Parameters[3], out _CShift_empty.percent );
         }
 
         // V_BonusFlash_f
         //
         // When you run over an item, the server sends this command
-        private void BonusFlash_f()
+        private void BonusFlash_f( CommandMessage msg )
         {
             var cl = Host.Client.cl;
             cl.cshifts[ColorShift.CSHIFT_BONUS].destcolor[0] = 215;
@@ -590,7 +592,7 @@ namespace SharpQuake
             rdef.viewangles = cl.viewangles;
 
             CalcViewRoll();
-            AddIdle( _IdleScale.Value );
+            AddIdle( _IdleScale.Get<Single>( ) );
 
             // offsets
             var angles = ent.angles;
@@ -599,7 +601,7 @@ namespace SharpQuake
             Vector3 forward, right, up;
             MathLib.AngleVectors( ref angles, out forward, out right, out up );
 
-            rdef.vieworg += forward * _ScrOfsX.Value + right * _ScrOfsY.Value + up * _ScrOfsZ.Value;
+            rdef.vieworg += forward * _ScrOfsX.Get<Single>( ) + right * _ScrOfsY.Get<Single>( ) + up * _ScrOfsZ.Get<Single>( );
 
             BoundOffsets();
 
@@ -615,7 +617,7 @@ namespace SharpQuake
 
             // fudge position around to keep amount of weapon visible
             // roughly equal with different FOV
-            var viewSize = Host.Screen.ViewSize.Value; // scr_viewsize
+            var viewSize = Host.Screen.ViewSize.Get<Single>( ); // scr_viewsize
 
             if( viewSize == 110 )
                 view.origin.Z += 1;
@@ -662,9 +664,9 @@ namespace SharpQuake
         {
             var time = Host.Client.cl.time;
             var v = new Vector3(
-                ( Single ) ( Math.Sin( time * _IPitchCycle.Value ) * _IPitchLevel.Value ),
-                ( Single ) ( Math.Sin( time * _IYawCycle.Value ) * _IYawLevel.Value ),
-                ( Single ) ( Math.Sin( time * _IRollCycle.Value ) * _IRollLevel.Value ) );
+                ( Single ) ( Math.Sin( time * _IPitchCycle.Get<Single>( ) ) * _IPitchLevel.Get<Single>( ) ),
+                ( Single ) ( Math.Sin( time * _IYawCycle.Get<Single>( ) ) * _IYawLevel.Get<Single>( ) ),
+                ( Single ) ( Math.Sin( time * _IRollCycle.Get<Single>( ) ) * _IRollLevel.Get<Single>( ) ) );
             Host.RenderContext.RefDef.viewangles += v * idleScale;
         }
 
@@ -695,9 +697,9 @@ namespace SharpQuake
                 else
                     cl.driftmove += ( Single ) Host.FrameTime;
 
-                if( cl.driftmove > _CenterMove.Value )
+                if( cl.driftmove > _CenterMove.Get<Single>( ) )
                 {
-                    StartPitchDrift();
+                    StartPitchDrift( null );
                 }
                 return;
             }
@@ -710,7 +712,7 @@ namespace SharpQuake
             }
 
             var move = ( Single ) Host.FrameTime * cl.pitchvel;
-            cl.pitchvel += ( Single ) Host.FrameTime * _CenterSpeed.Value;
+            cl.pitchvel += ( Single ) Host.FrameTime * _CenterSpeed.Get<Single>( );
 
             if( delta > 0 )
             {
@@ -736,8 +738,8 @@ namespace SharpQuake
         private Single CalcBob()
         {
             var cl = Host.Client.cl;
-            var bobCycle = _ClBobCycle.Value;
-            var bobUp = _ClBobUp.Value;
+            var bobCycle = _ClBobCycle.Get<Single>( );
+            var bobUp = _ClBobUp.Get<Single>( );
             var cycle = ( Single ) ( cl.time - ( Int32 ) ( cl.time / bobCycle ) * bobCycle );
             cycle /= bobCycle;
             if( cycle < bobUp )
@@ -748,7 +750,7 @@ namespace SharpQuake
             // bob is proportional to velocity in the xy plane
             // (don't count Z, or jumping messes it up)
             var tmp = cl.velocity.Xy;
-            Double bob = tmp.Length * _ClBob.Value;
+            Double bob = tmp.Length * _ClBob.Get<Single>( );
             bob = bob * 0.3 + bob * 0.7 * Math.Sin( cycle );
             if( bob > 4 )
                 bob = 4;
@@ -769,8 +771,8 @@ namespace SharpQuake
 
             if( _DmgTime > 0 )
             {
-                rdef.viewangles.Z += _DmgTime / _KickTime.Value * _DmgRoll;
-                rdef.viewangles.X += _DmgTime / _KickTime.Value * _DmgPitch;
+                rdef.viewangles.Z += _DmgTime / _KickTime.Get<Single>( ) * _DmgRoll;
+                rdef.viewangles.X += _DmgTime / _KickTime.Get<Single>( ) * _DmgPitch;
                 _DmgTime -= ( Single ) Host.FrameTime;
             }
 
@@ -854,10 +856,10 @@ namespace SharpQuake
             cl.viewent.angles.Y = rdef.viewangles.Y + yaw;
             cl.viewent.angles.X = -( rdef.viewangles.X + pitch );
 
-            var idleScale = _IdleScale.Value;
-            cl.viewent.angles.Z -= ( Single ) ( idleScale * Math.Sin( cl.time * _IRollCycle.Value ) * _IRollLevel.Value );
-            cl.viewent.angles.X -= ( Single ) ( idleScale * Math.Sin( cl.time * _IPitchCycle.Value ) * _IPitchLevel.Value );
-            cl.viewent.angles.Y -= ( Single ) ( idleScale * Math.Sin( cl.time * _IYawCycle.Value ) * _IYawLevel.Value );
+            var idleScale = _IdleScale.Get<Single>( );
+            cl.viewent.angles.Z -= ( Single ) ( idleScale * Math.Sin( cl.time * _IRollCycle.Get<Single>( ) ) * _IRollLevel.Get<Single>( ) );
+            cl.viewent.angles.X -= ( Single ) ( idleScale * Math.Sin( cl.time * _IPitchCycle.Get<Single>( ) ) * _IPitchLevel.Get<Single>( ) );
+            cl.viewent.angles.Y -= ( Single ) ( idleScale * Math.Sin( cl.time * _IYawCycle.Get<Single>( ) ) * _IYawLevel.Get<Single>( ) );
         }
 
         // angledelta()
@@ -908,12 +910,12 @@ namespace SharpQuake
         // V_CheckGamma
         private Boolean CheckGamma()
         {
-            if( _Gamma.Value == _OldGammaValue )
+            if( _Gamma.Get<Single>( ) == _OldGammaValue )
                 return false;
 
-            _OldGammaValue = _Gamma.Value;
+            _OldGammaValue = _Gamma.Get<Single>( );
 
-            BuildGammaTable( _Gamma.Value );
+            BuildGammaTable( _Gamma.Get<Single>( ) );
             Host.Screen.vid.recalc_refdef = true;	// force a surface cache flush
 
             return true;

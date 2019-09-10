@@ -99,7 +99,7 @@ namespace SharpQuake
         private Boolean _IsInitialized; // qboolean con_initialized;
         private Boolean _ForcedUp; // qboolean con_forcedup		// because no entities to refresh
         private Int32 _NotifyLines; // con_notifylines	// scan lines to clear for notify lines
-        private CVar _NotifyTime; // con_notifytime = { "con_notifytime", "3" };		//seconds
+        private ClientVariable _NotifyTime; // con_notifytime = { "con_notifytime", "3" };		//seconds
         private Single _CursorSpeed = 4; // con_cursorspeed
         private FileStream _Log;
 
@@ -189,13 +189,13 @@ namespace SharpQuake
             //
             if( _NotifyTime == null )
             {
-                _NotifyTime = new CVar( "con_notifytime", "3" );
+                _NotifyTime = Host.CVars.Add( "con_notifytime", 3 );
             }
 
-            Host.Command.Add( "toggleconsole", ToggleConsole_f );
-            Host.Command.Add( "messagemode", MessageMode_f );
-            Host.Command.Add( "messagemode2", MessageMode2_f );
-            Host.Command.Add( "clear", Clear_f );
+            Host.Commands.Add( "toggleconsole", ToggleConsole_f );
+            Host.Commands.Add( "messagemode", MessageMode_f );
+            Host.Commands.Add( "messagemode2", MessageMode2_f );
+            Host.Commands.Add( "clear", Clear_f );
 
             ConsoleWrapper.OnPrint += ( txt ) =>
             {
@@ -323,7 +323,7 @@ namespace SharpQuake
                 if( time == 0 )
                     continue;
                 time = Host.RealTime - time;
-                if( time > _NotifyTime.Value )
+                if( time > _NotifyTime.Get<Int32>( ) )
                     continue;
 
                 var textOffset = ( i % _TotalLines ) * _LineWidth;
@@ -368,7 +368,7 @@ namespace SharpQuake
         /// <summary>
         /// Con_ToggleConsole_f
         /// </summary>
-        public void ToggleConsole_f()
+        public void ToggleConsole_f( CommandMessage msg )
         {
             if( Host.Keyboard.Destination == KeyDestination.key_console )
             {
@@ -487,20 +487,20 @@ namespace SharpQuake
         /// <summary>
         /// Con_Clear_f
         /// </summary>
-        private void Clear_f()
+        private void Clear_f( CommandMessage msg )
         {
             Utilities.FillArray( _Text, ' ' );
         }
 
         // Con_MessageMode_f
-        private void MessageMode_f()
+        private void MessageMode_f( CommandMessage msg )
         {
             Host.Keyboard.Destination = KeyDestination.key_message;
             Host.Keyboard.TeamMessage = false;
         }
 
         //Con_MessageMode2_f
-        private void MessageMode2_f()
+        private void MessageMode2_f( CommandMessage msg )
         {
             Host.Keyboard.Destination = KeyDestination.key_message;
             Host.Keyboard.TeamMessage = true;

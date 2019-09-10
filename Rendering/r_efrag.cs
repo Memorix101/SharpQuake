@@ -22,7 +22,9 @@
 /// Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 /// </copyright>
 
+using System;
 using SharpQuake.Framework;
+using SharpQuake.Framework.IO.BSP;
 using SharpQuake.Framework.Mathematics;
 using SharpQuake.Game.Rendering.Memory;
 using SharpQuake.Game.Rendering.Models;
@@ -71,7 +73,7 @@ namespace SharpQuake
         /// </summary>
         private void SplitEntityOnNode( MemoryNodeBase node )
         {
-            if( node.contents == ContentsDef.CONTENTS_SOLID )
+            if( node.contents == ( Int32 ) Q1Contents.Solid )
                 return;
 
             // add an efrag if the node is a leaf

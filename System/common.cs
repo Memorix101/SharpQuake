@@ -62,7 +62,7 @@ namespace SharpQuake
         {
             get
             {
-                return _Registered.Value != 0;
+                return _Registered.Get<Boolean>( );
             }
         }
 
@@ -91,9 +91,9 @@ namespace SharpQuake
             ,0x0000,0x0000,0x0000,0x0000,0x6500,0x0000,0x0000,0x0000
             ,0x0000,0x0000,0x0000,0x0000,0x6400,0x0000,0x0000,0x0000
         };
-        
-        private CVar _Registered;
-        private CVar _CmdLine;
+
+        private ClientVariable _Registered;
+        private ClientVariable _CmdLine;
         private GameKind _GameKind; // qboolean		standard_quake = true, rogue, hipnotic;
 
 
@@ -105,21 +105,21 @@ namespace SharpQuake
         }
 
         // void COM_Init (char *path)
-        public void Initialise( MainWindow mainWindow, String path, String[] argv)
+        public void Initialise( MainWindow mainWindow, String path, String[] argv )
         {
             MainWindow = mainWindow;
 
             CommandLine.Args = argv;
 
-            _Registered = new CVar("registered", "0");
-            _CmdLine = new CVar("cmdline", "0", false, true);
+            _Registered = mainWindow.Host.CVars.Add( "registered", false );
+            _CmdLine = mainWindow.Host.CVars.Add( "cmdline", "0", ClientVariableFlags.Server );
 
-            MainWindow.Host.Command.Add("path", FileSystem.Path_f );
+            MainWindow.Host.Commands.Add( "path", FileSystem.Path_f );
 
             CommandLine.Init( path, argv );
             FileSystem.InitFileSystem( MainWindow.Host.Parameters );
 
-            CheckRegistered();
+            CheckRegistered( );
         }
 
         // void COM_InitArgv (int argc, char **argv)
@@ -142,31 +142,31 @@ namespace SharpQuake
         // Sets the "registered" cvar.
         // Immediately exits out if an alternate game was attempted to be started without
         // being registered.
-        private void CheckRegistered()
+        private void CheckRegistered( )
         {
             FileSystem._StaticRegistered = false;
 
-            var buf = FileSystem.LoadFile("gfx/pop.lmp");
-            if (buf == null || buf.Length < 256)
+            var buf = FileSystem.LoadFile( "gfx/pop.lmp" );
+            if ( buf == null || buf.Length < 256 )
             {
-                MainWindow.Host.Console.Print("Playing shareware version.\n");
+                MainWindow.Host.Console.Print( "Playing shareware version.\n" );
                 if ( FileSystem._IsModified )
-                    Utilities.Error("You must have the registered version to use modified games");
+                    Utilities.Error( "You must have the registered version to use modified games" );
                 return;
             }
 
             var check = new UInt16[buf.Length / 2];
-            Buffer.BlockCopy(buf, 0, check, 0, buf.Length);
-            for ( var i = 0; i < 128; i++)
+            Buffer.BlockCopy( buf, 0, check, 0, buf.Length );
+            for ( var i = 0; i < 128; i++ )
             {
-                if (_Pop[i] != ( UInt16 ) EndianHelper.Converter.BigShort(( Int16 ) check[i]))
-                    Utilities.Error("Corrupted data file.");
+                if ( _Pop[i] != ( UInt16 ) EndianHelper.Converter.BigShort( ( Int16 ) check[i] ) )
+                    Utilities.Error( "Corrupted data file." );
             }
 
-            CVar.Set("cmdline", CommandLine._Args);
-            CVar.Set("registered", "1");
+            MainWindow.Host.CVars.Set( "cmdline", CommandLine._Args );
+            MainWindow.Host.CVars.Set( "registered", true );
             FileSystem._StaticRegistered = true;
-            MainWindow.Host.Console.Print("Playing registered version.\n");
+            MainWindow.Host.Console.Print( "Playing registered version.\n" );
         }
     }
 }

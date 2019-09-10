@@ -24,6 +24,7 @@
 
 using System;
 using SharpQuake.Framework;
+using SharpQuake.Framework.IO;
 
 namespace SharpQuake
 {
@@ -479,7 +480,7 @@ namespace SharpQuake
         }
 
         // PR_Profile_f
-        private void Profile_f()
+        private void Profile_f( CommandMessage msg )
         {
             if( _Functions == null )
                 return;

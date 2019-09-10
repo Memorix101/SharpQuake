@@ -61,7 +61,7 @@ namespace SharpQuake
                     Host.Screen.BeginLoadingPlaque( );
 
                     // issue the load command
-                    Host.CommandBuffer.AddText( String.Format( "load s{0}\n", _Cursor ) );
+                    Host.Commands.Buffer.Append( String.Format( "load s{0}\n", _Cursor ) );
                     return;
 
                 case KeysDef.K_UPARROW:

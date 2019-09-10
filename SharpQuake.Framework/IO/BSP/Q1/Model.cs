@@ -22,18 +22,28 @@
 /// Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 /// </copyright>
 
-using System;
+using System.Runtime.InteropServices;
 
-namespace SharpQuake.Framework
+namespace SharpQuake.Framework.IO.BSP
 {
-    public static class SurfaceDef
+    [StructLayout( LayoutKind.Sequential, Pack = 1 )]
+    public struct Q1Model
     {
-        public const Int32 SURF_PLANEBACK = 2;
-        public const Int32 SURF_DRAWSKY = 4;
-        public const Int32 SURF_DRAWSPRITE = 8;
-        public const Int32 SURF_DRAWTURB = 0x10;
-        public const Int32 SURF_DRAWTILED = 0x20;
-        public const Int32 SURF_DRAWBACKGROUND = 0x40;
-        public const Int32 SURF_UNDERWATER = 0x80;
-    }
+        [MarshalAs( UnmanagedType.ByValArray, SizeConst = 3 )]
+        public System.Single[] mins; // [3];
+
+        [MarshalAs( UnmanagedType.ByValArray, SizeConst = 3 )]
+        public System.Single[] maxs; //[3];
+
+        [MarshalAs( UnmanagedType.ByValArray, SizeConst = 3 )]
+        public System.Single[] origin; // [3];
+
+        [MarshalAs( UnmanagedType.ByValArray, SizeConst = BspDef.MAX_MAP_HULLS )]
+        public System.Int32[] headnode; //[MAX_MAP_HULLS];
+
+        public System.Int32 visleafs;		// not including the solid leaf 0
+        public System.Int32 firstface, numfaces;
+
+        public static System.Int32 SizeInBytes = Marshal.SizeOf( typeof( Q1Model ) );
+    } // dmodel_t
 }

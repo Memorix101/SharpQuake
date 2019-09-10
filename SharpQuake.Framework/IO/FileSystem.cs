@@ -203,7 +203,7 @@ namespace SharpQuake.Framework.IO
         }
 
         // COM_Path_f
-        public static void Path_f( )
+        public static void Path_f( CommandMessage msg )
         {
             ConsoleWrapper.Print( "Current search path:\n" );
             foreach ( var sp in _SearchPaths )

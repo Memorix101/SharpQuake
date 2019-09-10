@@ -24,6 +24,7 @@
 
 using System;
 using SharpQuake.Framework;
+using SharpQuake.Framework.IO;
 using SharpQuake.Framework.Mathematics;
 
 namespace SharpQuake
@@ -144,7 +145,7 @@ namespace SharpQuake
 
             if( steps < 2 )
                 return;
-            _Player.v.idealpitch = -dir * _IdealPitchScale.Value;
+            _Player.v.idealpitch = -dir * _IdealPitchScale.Get<Single>( );
         }
 
         /// <summary>
@@ -234,9 +235,9 @@ namespace SharpQuake
                             else if( Utilities.SameText( s, "ban", 3 ) )
                                 ret = 1;
                             if( ret == 2 )
-                                Host.CommandBuffer.InsertText( s );
+                                Host.Commands.Buffer.Insert( s );
                             else if( ret == 1 )
-                                Host.Command.ExecuteString( s, CommandSource.src_client );
+                                Host.Commands.ExecuteString( s, CommandSource.Client );
                             else
                                 Host.Console.DPrint( "{0} tried to {1}\n", Host.HostClient.name, s );
                             break;
@@ -386,10 +387,10 @@ namespace SharpQuake
                 wishvel.Z += _Cmd.upmove;
 
             var wishspeed = wishvel.Length;
-            if( wishspeed > _MaxSpeed.Value )
+            if( wishspeed > _MaxSpeed.Get<Single>( ) )
             {
-                wishvel *= _MaxSpeed.Value / wishspeed;
-                wishspeed = _MaxSpeed.Value;
+                wishvel *= _MaxSpeed.Get<Single>( ) / wishspeed;
+                wishspeed = _MaxSpeed.Get<Single>( );
             }
             wishspeed *= 0.7f;
 
@@ -399,7 +400,7 @@ namespace SharpQuake
             Single newspeed, speed = MathLib.Length( ref _Player.v.velocity );
             if( speed != 0 )
             {
-                newspeed = ( Single ) ( speed - Host.FrameTime * speed * _Friction.Value );
+                newspeed = ( Single ) ( speed - Host.FrameTime * speed * _Friction.Get<Single>( ) );
                 if( newspeed < 0 )
                     newspeed = 0;
                 MathLib.VectorScale( ref _Player.v.velocity, newspeed / speed, out _Player.v.velocity );
@@ -418,7 +419,7 @@ namespace SharpQuake
                 return;
 
             MathLib.Normalize( ref wishvel );
-            var accelspeed = ( Single ) ( _Accelerate.Value * wishspeed * Host.FrameTime );
+            var accelspeed = ( Single ) ( _Accelerate.Get<Single>( ) * wishspeed * Host.FrameTime );
             if( accelspeed > addspeed )
                 accelspeed = addspeed;
 
@@ -452,10 +453,10 @@ namespace SharpQuake
 
             _WishDir = wishvel;
             _WishSpeed = MathLib.Normalize( ref _WishDir );
-            if( _WishSpeed > _MaxSpeed.Value )
+            if( _WishSpeed > _MaxSpeed.Get<Single>( ) )
             {
-                wishvel *= _MaxSpeed.Value / _WishSpeed;
-                _WishSpeed = _MaxSpeed.Value;
+                wishvel *= _MaxSpeed.Get<Single>( ) / _WishSpeed;
+                _WishSpeed = _MaxSpeed.Get<Single>( );
             }
 
             if( _Player.v.movetype == Movetypes.MOVETYPE_NOCLIP )
@@ -491,12 +492,12 @@ namespace SharpQuake
             stop.Z = start.Z - 34;
 
             var trace = Move( ref start, ref Utilities.ZeroVector, ref Utilities.ZeroVector, ref stop, 1, _Player );
-            var friction = _Friction.Value;
+            var friction = _Friction.Get<Single>( );
             if( trace.fraction == 1.0 )
-                friction *= _EdgeFriction.Value;
+                friction *= _EdgeFriction.Get<Single>( );
 
             // apply friction
-            var control = speed < _StopSpeed.Value ? _StopSpeed.Value : speed;
+            var control = speed < _StopSpeed.Get<Single>( ) ? _StopSpeed.Get<Single>( ) : speed;
             var newspeed = ( Single ) ( speed - Host.FrameTime * control * friction );
 
             if( newspeed < 0 )
@@ -516,7 +517,7 @@ namespace SharpQuake
             if( addspeed <= 0 )
                 return;
 
-            var accelspeed = ( Single ) ( _Accelerate.Value * Host.FrameTime * _WishSpeed );
+            var accelspeed = ( Single ) ( _Accelerate.Get<Single>( ) * Host.FrameTime * _WishSpeed );
             if( accelspeed > addspeed )
                 accelspeed = addspeed;
 
@@ -537,7 +538,7 @@ namespace SharpQuake
             var addspeed = wishspd - currentspeed;
             if( addspeed <= 0 )
                 return;
-            var accelspeed = ( Single ) ( _Accelerate.Value * _WishSpeed * Host.FrameTime );
+            var accelspeed = ( Single ) ( _Accelerate.Get<Single>( ) * _WishSpeed * Host.FrameTime );
             if( accelspeed > addspeed )
                 accelspeed = addspeed;
 

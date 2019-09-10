@@ -22,6 +22,7 @@
 /// Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 /// </copyright>
 
+using System;
 using System.Runtime.InteropServices;
 
 namespace SharpQuake.Framework
@@ -29,6 +30,6 @@ namespace SharpQuake.Framework
     [StructLayout( LayoutKind.Sequential, Pack = 1 )]
     public struct BspLump
     {
-        public System.Int32 fileofs, filelen;
+        public Int32 Position, Length;
     } // lump_t
 }

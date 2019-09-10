@@ -22,6 +22,7 @@
 /// Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 /// </copyright>
 
+using System;
 using System.Runtime.InteropServices;
 
 namespace SharpQuake.Framework
@@ -30,13 +31,13 @@ namespace SharpQuake.Framework
     public struct BspMipTex
     {
         [MarshalAs( UnmanagedType.ByValArray, SizeConst = 16 )]
-        public System.Byte[] name; //[16];
+        public Byte[] name; //[16];
 
-        public System.UInt32 width, height;
+        public UInt32 width, height;
 
         [MarshalAs( UnmanagedType.ByValArray, SizeConst = BspDef.MIPLEVELS )]
-        public System.UInt32[] offsets; //[MIPLEVELS];		// four mip maps stored
+        public UInt32[] offsets; //[MIPLEVELS];		// four mip maps stored
 
-        public static System.Int32 SizeInBytes = Marshal.SizeOf( typeof( BspMipTex ) );
+        public static Int32 SizeInBytes = Marshal.SizeOf( typeof( BspMipTex ) );
     } // miptex_t
 }

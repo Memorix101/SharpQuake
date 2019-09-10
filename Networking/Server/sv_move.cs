@@ -24,6 +24,7 @@
 
 using System;
 using SharpQuake.Framework;
+using SharpQuake.Framework.IO.BSP;
 using SharpQuake.Framework.Mathematics;
 
 // sv_move.c
@@ -71,7 +72,7 @@ namespace SharpQuake
                     if( trace.fraction == 1 )
                     {
                         if( ( ( Int32 ) ent.v.flags & EdictFlags.FL_SWIM ) != 0 &&
-                            PointContents( ref trace.endpos ) == ContentsDef.CONTENTS_EMPTY )
+                            PointContents( ref trace.endpos ) == ( Int32 ) Q1Contents.Empty )
                             return false;	// swim monster left water
 
                         MathLib.Copy( ref trace.endpos, out ent.v.origin );
@@ -167,7 +168,7 @@ namespace SharpQuake
                 {
                     start.X = ( x != 0 ? maxs.x : mins.x );
                     start.Y = ( y != 0 ? maxs.y : mins.y );
-                    if( PointContents( ref start ) != ContentsDef.CONTENTS_SOLID )
+                    if( PointContents( ref start ) != ( Int32 ) Q1Contents.Solid )
                         goto RealCheck;
                 }
 

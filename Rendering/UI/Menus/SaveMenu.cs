@@ -51,7 +51,7 @@ namespace SharpQuake
 
                 case KeysDef.K_ENTER:
                     CurrentMenu.Hide( );
-                    Host.CommandBuffer.AddText( String.Format( "save s{0}\n", _Cursor ) );
+                    Host.Commands.Buffer.Append( String.Format( "save s{0}\n", _Cursor ) );
                     return;
 
                 case KeysDef.K_UPARROW:

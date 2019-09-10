@@ -24,6 +24,7 @@
 
 using System;
 using SharpQuake.Framework;
+using SharpQuake.Framework.IO;
 using SharpQuake.Game.Networking.Server;
 
 namespace SharpQuake
@@ -58,7 +59,7 @@ namespace SharpQuake
         {
             get
             {
-                return _Gravity.Value;
+                return _Gravity.Get<Single>( );
             }
         }
 
@@ -74,20 +75,20 @@ namespace SharpQuake
         {
             get
             {
-                return _Aim.Value;
+                return _Aim.Get<Single>( );
             }
         }
 
-        private CVar _Friction;// = { "sv_friction", "4", false, true };
-        private CVar _EdgeFriction;// = { "edgefriction", "2" };
-        private CVar _StopSpeed;// = { "sv_stopspeed", "100" };
-        private CVar _Gravity;// = { "sv_gravity", "800", false, true };
-        private CVar _MaxVelocity;// = { "sv_maxvelocity", "2000" };
-        private CVar _NoStep;// = { "sv_nostep", "0" };
-        private CVar _MaxSpeed;// = { "sv_maxspeed", "320", false, true };
-        private CVar _Accelerate;// = { "sv_accelerate", "10" };
-        private CVar _Aim;// = { "sv_aim", "0.93" };
-        private CVar _IdealPitchScale;// = { "sv_idealpitchscale", "0.8" };
+        private ClientVariable _Friction;// = { "sv_friction", "4", false, true };
+        private ClientVariable _EdgeFriction;// = { "edgefriction", "2" };
+        private ClientVariable _StopSpeed;// = { "sv_stopspeed", "100" };
+        private ClientVariable _Gravity;// = { "sv_gravity", "800", false, true };
+        private ClientVariable _MaxVelocity;// = { "sv_maxvelocity", "2000" };
+        private ClientVariable _NoStep;// = { "sv_nostep", "0" };
+        private ClientVariable _MaxSpeed;// = { "sv_maxspeed", "320", false, true };
+        private ClientVariable _Accelerate;// = { "sv_accelerate", "10" };
+        private ClientVariable _Aim;// = { "sv_aim", "0.93" };
+        private ClientVariable _IdealPitchScale;// = { "sv_idealpitchscale", "0.8" };
 
         private server_t _Server;
         private server_static_t _ServerStatic;

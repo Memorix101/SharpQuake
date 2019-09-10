@@ -24,6 +24,7 @@
 
 using System;
 using SharpQuake.Framework;
+using SharpQuake.Framework.IO;
 using SharpQuake.Game.Rendering.Models;
 using SharpQuake.Game.World;
 
@@ -93,9 +94,9 @@ namespace SharpQuake
             //
             // if recording demos, copy the message out
             //
-            if( _ShowNet.Value == 1 )
+            if( _ShowNet.Get<Int32>( ) == 1 )
                 Host.Console.Print( "{0} ", Host.Network.Message.Length );
-            else if( _ShowNet.Value == 2 )
+            else if( _ShowNet.Get<Int32>( ) == 2 )
                 Host.Console.Print( "------------------\n" );
 
             cl.onground = false;	// unless the server says otherwise
@@ -166,7 +167,7 @@ namespace SharpQuake
                         break;
 
                     case ProtocolDef.svc_stufftext:
-                        Host.CommandBuffer.AddText( Host.Network.Reader.ReadString() );
+                        Host.Commands.Buffer.Append( Host.Network.Reader.ReadString() );
                         break;
 
                     case ProtocolDef.svc_damage:
@@ -319,7 +320,7 @@ namespace SharpQuake
                         break;
 
                     case ProtocolDef.svc_sellscreen:
-                        Host.Command.ExecuteString( "help", CommandSource.src_command );
+                        Host.Commands.ExecuteString( "help", CommandSource.Command );
                         break;
                 }
             }
@@ -327,7 +328,7 @@ namespace SharpQuake
 
         private void ShowNet( String s )
         {
-            if( _ShowNet.Value == 2 )
+            if( _ShowNet.Get<Int32>( ) == 2 )
                 Host.Console.Print( "{0,3}:{1}\n", Host.Network.Reader.Position - 1, s );
         }
 

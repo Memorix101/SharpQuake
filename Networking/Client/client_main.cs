@@ -27,6 +27,7 @@ using SharpQuake.Framework.Mathematics;
 using SharpQuake.Framework;
 using SharpQuake.Game.Rendering;
 using SharpQuake.Game.World;
+using SharpQuake.Framework.IO;
 
 namespace SharpQuake
 {
@@ -47,25 +48,25 @@ namespace SharpQuake
 
             if( _Name == null )
             {
-                _Name = new CVar( "_cl_name", "player", true );
-                _Color = new CVar( "_cl_color", "0", true );
-                _ShowNet = new CVar( "cl_shownet", "0" );	// can be 0, 1, or 2
-                _NoLerp = new CVar( "cl_nolerp", "0" );
-                _LookSpring = new CVar( "lookspring", "0", true );
-                _LookStrafe = new CVar( "lookstrafe", "0", true );
-                _Sensitivity = new CVar( "sensitivity", "3", true );
-                _MPitch = new CVar( "m_pitch", "0.022", true );
-                _MYaw = new CVar( "m_yaw", "0.022", true );
-                _MForward = new CVar( "m_forward", "1", true );
-                _MSide = new CVar( "m_side", "0.8", true );
-                _UpSpeed = new CVar( "cl_upspeed", "200" );
-                _ForwardSpeed = new CVar( "cl_forwardspeed", "200", true );
-                _BackSpeed = new CVar( "cl_backspeed", "200", true );
-                _SideSpeed = new CVar( "cl_sidespeed", "350" );
-                _MoveSpeedKey = new CVar( "cl_movespeedkey", "2.0" );
-                _YawSpeed = new CVar( "cl_yawspeed", "140" );
-                _PitchSpeed = new CVar( "cl_pitchspeed", "150" );
-                _AngleSpeedKey = new CVar( "cl_anglespeedkey", "1.5" );
+                _Name = Host.CVars.Add( "_cl_name", "player", ClientVariableFlags.Archive );
+                _Color = Host.CVars.Add( "_cl_color", 0f, ClientVariableFlags.Archive );
+                _ShowNet = Host.CVars.Add( "cl_shownet", 0 );	// can be 0, 1, or 2
+                _NoLerp = Host.CVars.Add( "cl_nolerp", false );
+                _LookSpring = Host.CVars.Add( "lookspring", false, ClientVariableFlags.Archive );
+                _LookStrafe = Host.CVars.Add( "lookstrafe", false, ClientVariableFlags.Archive );
+                _Sensitivity = Host.CVars.Add( "sensitivity", 3f, ClientVariableFlags.Archive );
+                _MPitch = Host.CVars.Add( "m_pitch", 0.022f, ClientVariableFlags.Archive );
+                _MYaw = Host.CVars.Add( "m_yaw", 0.022f, ClientVariableFlags.Archive );
+                _MForward = Host.CVars.Add( "m_forward", 1f, ClientVariableFlags.Archive );
+                _MSide = Host.CVars.Add( "m_side", 0.8f, ClientVariableFlags.Archive );
+                _UpSpeed = Host.CVars.Add( "cl_upspeed", 200f );
+                _ForwardSpeed = Host.CVars.Add( "cl_forwardspeed", 200f, ClientVariableFlags.Archive );
+                _BackSpeed = Host.CVars.Add( "cl_backspeed", 200f, ClientVariableFlags.Archive );
+                _SideSpeed = Host.CVars.Add( "cl_sidespeed", 350f );
+                _MoveSpeedKey = Host.CVars.Add( "cl_movespeedkey", 2.0f );
+                _YawSpeed = Host.CVars.Add( "cl_yawspeed", 140f );
+                _PitchSpeed = Host.CVars.Add( "cl_pitchspeed", 150f );
+                _AngleSpeedKey = Host.CVars.Add( "cl_anglespeedkey", 1.5f );
             }
 
             for( var i = 0; i < _EFrags.Length; i++ )
@@ -83,12 +84,46 @@ namespace SharpQuake
             //
             // register our commands
             //
-            Host.Command.Add( "entities", PrintEntities_f );
-            Host.Command.Add( "disconnect", Disconnect_f );
-            Host.Command.Add( "record", Record_f );
-            Host.Command.Add( "stop", Stop_f );
-            Host.Command.Add( "playdemo", PlayDemo_f );
-            Host.Command.Add( "timedemo", TimeDemo_f );
+            Host.Commands.Add( "cmd", ForwardToServer_f );
+            Host.Commands.Add( "entities", PrintEntities_f );
+            Host.Commands.Add( "disconnect", Disconnect_f );
+            Host.Commands.Add( "record", Record_f );
+            Host.Commands.Add( "stop", Stop_f );
+            Host.Commands.Add( "playdemo", PlayDemo_f );
+            Host.Commands.Add( "timedemo", TimeDemo_f );
+        }
+
+        // void	Cmd_ForwardToServer (void);
+        // adds the current command line as a clc_stringcmd to the client message.
+        // things like godmode, noclip, etc, are commands directed to the server,
+        // so when they are typed in at the console, they will need to be forwarded.
+        //
+        // Sends the entire command line over to the server
+        public void ForwardToServer_f( CommandMessage msg )
+        {
+            if ( Host.Client.cls.state != cactive_t.ca_connected )
+            {
+                Host.Console.Print( $"Can't \"{msg.Name}\", not connected\n" );
+                return;
+            }
+
+            if ( Host.Client.cls.demoplayback )
+                return;		// not really connected
+
+            var writer = Host.Client.cls.message;
+            writer.WriteByte( ProtocolDef.clc_stringcmd );
+            if ( !msg.Name.Equals( "cmd" ) )
+            {
+                writer.Print( msg.Name + " " );
+            }
+            if ( msg.HasParameters )
+            {
+                writer.Print( msg.StringParameters );
+            }
+            else
+            {
+                writer.Print( "\n" );
+            }
         }
 
         /// <summary>
@@ -138,7 +173,7 @@ namespace SharpQuake
                 }
             }
 
-            Host.CommandBuffer.InsertText( String.Format( "playdemo {0}\n", cls.demos[cls.demonum] ) );
+            Host.Commands.Buffer.Insert( String.Format( "playdemo {0}\n", cls.demos[cls.demonum] ) );
             cls.demonum++;
         }
 
@@ -203,7 +238,7 @@ namespace SharpQuake
         }
 
         // CL_Disconnect_f
-        public void Disconnect_f()
+        public void Disconnect_f( CommandMessage msg )
         {
             Disconnect();
             if( Host.Server.IsActive )
@@ -273,7 +308,7 @@ namespace SharpQuake
                 ParseServerMessage();
             } while( ret != 0 && cls.state == cactive_t.ca_connected );
 
-            if( _ShowNet.Value != 0 )
+            if( _ShowNet.Get<Int32>( ) != 0 )
                 Host.Console.Print( "\n" );
 
             //
@@ -305,7 +340,7 @@ namespace SharpQuake
             else if( cls.state == cactive_t.ca_connected )
             {
                 if( cls.demorecording )
-                    Stop_f();
+                    Stop_f( null );
 
                 Host.Console.DPrint( "Sending clc_disconnect\n" );
                 cls.message.Clear();
@@ -324,7 +359,7 @@ namespace SharpQuake
         }
 
         // CL_PrintEntities_f
-        private void PrintEntities_f()
+        private void PrintEntities_f( CommandMessage msg )
         {
             for( var i = 0; i < _State.num_entities; i++ )
             {
@@ -494,10 +529,10 @@ namespace SharpQuake
 
                 case 2:
                     cls.message.WriteByte( ProtocolDef.clc_stringcmd );
-                    cls.message.WriteString( String.Format( "name \"{0}\"\n", _Name.String ) );
+                    cls.message.WriteString( String.Format( "name \"{0}\"\n", _Name.Get<String>( ) ) );
 
                     cls.message.WriteByte( ProtocolDef.clc_stringcmd );
-                    cls.message.WriteString( String.Format( "color {0} {1}\n", ( ( Int32 ) _Color.Value ) >> 4, ( ( Int32 ) _Color.Value ) & 15 ) );
+                    cls.message.WriteString( String.Format( "color {0} {1}\n", ( ( Int32 ) _Color.Get<Single>( ) ) >> 4, ( ( Int32 ) _Color.Get<Single>( ) ) & 15 ) );
 
                     cls.message.WriteByte( ProtocolDef.clc_stringcmd );
                     cls.message.WriteString( "spawn " + cls.spawnparms );
@@ -562,7 +597,7 @@ namespace SharpQuake
         private Single LerpPoint()
         {
             var f = cl.mtime[0] - cl.mtime[1];
-            if( f == 0 || _NoLerp.Value != 0 || cls.timedemo || Host.Server.IsActive )
+            if( f == 0 || _NoLerp.Get<Boolean>( ) || cls.timedemo || Host.Server.IsActive )
             {
                 cl.time = cl.mtime[0];
                 return 1;

@@ -66,7 +66,7 @@ namespace SharpQuake
         {
             get
             {
-                return ( _glZTrick.Value != 0 );
+                return _glZTrick.Get<Boolean>( );
             }
         }
 
@@ -74,7 +74,7 @@ namespace SharpQuake
         {
             get
             {
-                return _WindowedMouse.Value != 0;
+                return _WindowedMouse.Get<Boolean>( );
             }
         }
 
@@ -82,7 +82,7 @@ namespace SharpQuake
         {
             get
             {
-                return _Wait.Value != 0;
+                return _Wait.Get<Boolean>( );
             }
         }
 
@@ -100,22 +100,22 @@ namespace SharpQuake
         private const Int32 WARP_WIDTH = 320;
         private const Int32 WARP_HEIGHT = 200;
         
-        private CVar _glZTrick;// = { "gl_ztrick", "1" };
-        private CVar _Mode;// = { "vid_mode", "0", false };
+        private ClientVariable _glZTrick;// = { "gl_ztrick", "1" };
+        private ClientVariable _Mode;// = { "vid_mode", "0", false };
 
         // Note that 0 is MODE_WINDOWED
-        private CVar _DefaultMode;// = { "_vid_default_mode", "0", true };
+        private ClientVariable _DefaultMode;// = { "_vid_default_mode", "0", true };
 
         // Note that 3 is MODE_FULLSCREEN_DEFAULT
-        private CVar _DefaultModeWin;// = { "_vid_default_mode_win", "3", true };
+        private ClientVariable _DefaultModeWin;// = { "_vid_default_mode_win", "3", true };
 
-        private CVar _Wait;// = { "vid_wait", "0" };
-        private CVar _NoPageFlip;// = { "vid_nopageflip", "0", true };
-        private CVar _WaitOverride;// = { "_vid_wait_override", "0", true };
-        private CVar _ConfigX;// = { "vid_config_x", "800", true };
-        private CVar _ConfigY;// = { "vid_config_y", "600", true };
-        private CVar _StretchBy2;// = { "vid_stretch_by_2", "1", true };
-        private CVar _WindowedMouse;// = { "_windowed_mouse", "1", true };
+        private ClientVariable _Wait;// = { "vid_wait", "0" };
+        private ClientVariable _NoPageFlip;// = { "vid_nopageflip", "0", true };
+        private ClientVariable _WaitOverride;// = { "_vid_wait_override", "0", true };
+        private ClientVariable _ConfigX;// = { "vid_config_x", "800", true };
+        private ClientVariable _ConfigY;// = { "vid_config_y", "600", true };
+        private ClientVariable _StretchBy2;// = { "vid_stretch_by_2", "1", true };
+        private ClientVariable _WindowedMouse;// = { "_windowed_mouse", "1", true };
 
         // Instances
         private Host Host
@@ -145,23 +145,23 @@ namespace SharpQuake
         {
             if ( _glZTrick == null )
             {
-                _glZTrick = new CVar( "gl_ztrick", "1" );
-                _Mode = new CVar( "vid_mode", "0", false );
-                _DefaultMode = new CVar( "_vid_default_mode", "0", true );
-                _DefaultModeWin = new CVar( "_vid_default_mode_win", "3", true );
-                _Wait = new CVar( "vid_wait", "0" );
-                _NoPageFlip = new CVar( "vid_nopageflip", "0", true );
-                _WaitOverride = new CVar( "_vid_wait_override", "0", true );
-                _ConfigX = new CVar( "vid_config_x", "800", true );
-                _ConfigY = new CVar( "vid_config_y", "600", true );
-                _StretchBy2 = new CVar( "vid_stretch_by_2", "1", true );
-                _WindowedMouse = new CVar( "_windowed_mouse", "1", true );
+                _glZTrick = Host.CVars.Add( "gl_ztrick", true );
+                _Mode = Host.CVars.Add( "vid_mode", 0 );
+                _DefaultMode = Host.CVars.Add( "_vid_default_mode", 0, ClientVariableFlags.Archive );
+                _DefaultModeWin = Host.CVars.Add( "_vid_default_mode_win", 3, ClientVariableFlags.Archive );
+                _Wait = Host.CVars.Add( "vid_wait", false );
+                _NoPageFlip = Host.CVars.Add( "vid_nopageflip", 0, ClientVariableFlags.Archive );
+                _WaitOverride = Host.CVars.Add( "_vid_wait_override", 0, ClientVariableFlags.Archive );
+                _ConfigX = Host.CVars.Add( "vid_config_x", 800, ClientVariableFlags.Archive );
+                _ConfigY = Host.CVars.Add( "vid_config_y", 600, ClientVariableFlags.Archive );
+                _StretchBy2 = Host.CVars.Add( "vid_stretch_by_2", 1, ClientVariableFlags.Archive );
+                _WindowedMouse = Host.CVars.Add( "_windowed_mouse", true, ClientVariableFlags.Archive );
             }
 
-            Host.Command.Add( "vid_nummodes", NumModes_f );
-            Host.Command.Add( "vid_describecurrentmode", DescribeCurrentMode_f );
-            Host.Command.Add( "vid_describemode", DescribeMode_f );
-            Host.Command.Add( "vid_describemodes", DescribeModes_f );
+            Host.Commands.Add( "vid_nummodes", NumModes_f );
+            Host.Commands.Add( "vid_describecurrentmode", DescribeCurrentMode_f );
+            Host.Commands.Add( "vid_describemode", DescribeMode_f );
+            Host.Commands.Add( "vid_describemodes", DescribeModes_f );
 
             Device.Initialise( palette );
 
@@ -188,7 +188,7 @@ namespace SharpQuake
             Host.CDAudio.Resume( );
             Host.Screen.IsDisabledForLoading = temp;
 
-            CVar.Set( "vid_mode", ( Single ) Device.ChosenMode );
+            Host.CVars.Set( "vid_mode", Device.ChosenMode );
 
             // fix the leftover Alt from any Alt-Tab or the like that switched us away
             ClearAllStates( );
@@ -275,7 +275,7 @@ namespace SharpQuake
         }
 
         // VID_NumModes_f
-        private void NumModes_f()
+        private void NumModes_f( CommandMessage msg )
         {
             var nummodes = Device.AvailableModes.Length;
 
@@ -286,21 +286,21 @@ namespace SharpQuake
         }
 
         // VID_DescribeCurrentMode_f
-        private void DescribeCurrentMode_f()
+        private void DescribeCurrentMode_f( CommandMessage msg )
         {
             Host.Console.Print( "{0}\n", GetModeDescription( Device.ChosenMode ) );
         }
 
         // VID_DescribeMode_f
-        private void DescribeMode_f()
+        private void DescribeMode_f( CommandMessage msg )
         {
-            var modenum = MathLib.atoi( Host.Command.Argv( 1 ) );
+            var modenum = MathLib.atoi( msg.Parameters[0] );
 
             Host.Console.Print( "{0}\n", GetModeDescription( modenum ) );
         }
 
         // VID_DescribeModes_f
-        private void DescribeModes_f()
+        private void DescribeModes_f( CommandMessage msg )
         {
             for( var i = 0; i < Device.AvailableModes.Length; i++ )
             {

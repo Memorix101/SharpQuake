@@ -37,7 +37,7 @@ namespace SharpQuake
             Host.Network.SlistSilent = true;
             Host.Network.SlistLocal = false;
             _SearchComplete = false;
-            Host.Network.Slist_f( );
+            Host.Network.Slist_f( null );
         }
 
         public override void KeyEvent( Int32 key )

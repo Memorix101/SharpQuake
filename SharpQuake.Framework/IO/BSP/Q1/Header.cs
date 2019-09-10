@@ -22,21 +22,19 @@
 /// Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 /// </copyright>
 
+using System;
+using System.Runtime.InteropServices;
 
-namespace SharpQuake.Framework
+namespace SharpQuake.Framework.IO.BSP
 {
-    // Command execution takes a string, breaks it into tokens,
-    // then searches for a command or variable that matches the first token.
-    //
-    // Commands can come from three sources, but the handler functions may choose
-    // to dissallow the action or forward it to a remote server if the source is
-    // not apropriate.
-
-    public enum CommandSource
+    [StructLayout( LayoutKind.Sequential, Pack = 1 )]
+    public struct Q1Header
     {
-        src_client,     // came in over a net connection as a clc_stringcmd
+        public Int32 version;
 
-        // host_client will be valid during this state.
-        src_command		// from the command buffer
-    } // cmd_source_t
+        [MarshalAs( UnmanagedType.ByValArray, SizeConst = ( Int32 ) Q1Lumps.Count )]
+        public BspLump[] lumps; //[HEADER_LUMPS];
+
+        public static Int32 SizeInBytes = Marshal.SizeOf( typeof( Q1Header ) );
+    } // dheader_t
 }

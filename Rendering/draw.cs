@@ -43,7 +43,7 @@ namespace SharpQuake
         {
             get
             {
-                return _glMaxSize.Value;
+                return _glMaxSize.Get<Int32>( );
             }
         }
 
@@ -59,13 +59,13 @@ namespace SharpQuake
         public Int32 _MenuPlayerPixelWidth;
         public Int32 _MenuPlayerPixelHeight;
 
-        private CVar _glNoBind;
+        private ClientVariable _glNoBind;
 
         // = {"gl_nobind", "0"};
-        private CVar _glMaxSize;
+        private ClientVariable _glMaxSize;
 
         // = {"gl_max_size", "1024"};
-        private CVar _glPicMip;
+        private ClientVariable _glPicMip;
 
         public BasePicture Disc
         {
@@ -128,18 +128,19 @@ namespace SharpQuake
         {
             if ( _glNoBind == null )
             {
-                _glNoBind = new CVar( "gl_nobind", "0" );
-                _glMaxSize = new CVar( "gl_max_size", "8192" );
-                _glPicMip = new CVar( "gl_picmip", "0" );
+                _glNoBind = Host.CVars.Add( "gl_nobind", false );
+                _glMaxSize = Host.CVars.Add( "gl_max_size", 8192 );
+                _glPicMip = Host.CVars.Add( "gl_picmip", 0f );
             }
 
             // 3dfx can only handle 256 wide textures
             var renderer = Host.Video.Device.Desc.Renderer;
-            if ( renderer.Contains( "3dfx" ) || renderer.Contains( "Glide" ) )
-                CVar.Set( "gl_max_size", "256" );
 
-            Host.Command.Add( "gl_texturemode", TextureMode_f );
-            Host.Command.Add( "imagelist", Imagelist_f );
+            if ( renderer.Contains( "3dfx" ) || renderer.Contains( "Glide" ) )
+                Host.CVars.Set( "gl_max_size", 256 );
+
+            Host.Commands.Add( "gl_texturemode", TextureMode_f );
+            Host.Commands.Add( "imagelist", Imagelist_f );
 
             // load the console background and the charset
             // by hand, because we need to write the version
@@ -154,7 +155,7 @@ namespace SharpQuake
             }
 
             // Temporarily set here
-            BaseTexture.PicMip = _glPicMip.Value;
+            BaseTexture.PicMip = _glPicMip.Get<Single>( );
             BaseTexture.MaxSize = glMaxSize;
 
             CharSetFont = new Renderer.Font( Host.Video.Device, "charset" );
@@ -315,9 +316,9 @@ namespace SharpQuake
         /// <summary>
         /// Draw_TextureMode_f
         /// </summary>
-        private void TextureMode_f( )
+        private void TextureMode_f( CommandMessage msg )
         {
-            if ( Host.Command.Argc == 1 )
+            if ( msg.Parameters == null || msg.Parameters.Length == 0 )
             {
                 foreach ( var textureFilter in Host.Video.Device.TextureFilters )
                 {
@@ -336,7 +337,7 @@ namespace SharpQuake
 
             foreach ( var textureFilter in Host.Video.Device.TextureFilters )
             {
-                if ( Utilities.SameText( textureFilter.Name, Host.Command.Argv( 1 ) ) )
+                if ( Utilities.SameText( textureFilter.Name, msg.Parameters[0] ) )
                 {
                     newFilter = textureFilter;
                     break;
@@ -371,7 +372,7 @@ namespace SharpQuake
             CurrentFilter = newFilter.Name;
         }
 
-        private void Imagelist_f( )
+        private void Imagelist_f( CommandMessage msg )
         {
             Int16 textureCount = 0;
 

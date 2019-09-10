@@ -29,11 +29,12 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
 using SharpQuake.Framework;
+using SharpQuake.Framework.Factories.IO;
 using SharpQuake.Framework.IO;
 
 namespace SharpQuake
 {
-    public partial class Host : IDisposable
+    public partial class Host : MasterFactory
     {
         public QuakeParameters Parameters
         {
@@ -77,44 +78,12 @@ namespace SharpQuake
             private set;
         }
 
-        public Single TeamPlay
-        {
-            get
-            {
-                return _Teamplay.Value;
-            }
-        }
-
         public Byte[] BasePal
         {
             get;
             private set;
         }
-
-        public Boolean IsCoop
-        {
-            get
-            {
-                return _Coop.Value != 0;
-            }
-        }
-
-        public Single Skill
-        {
-            get
-            {
-                return _Skill.Value;
-            }
-        }
-
-        public Single Deathmatch
-        {
-            get
-            {
-                return _Deathmatch.Value;
-            }
-        }
-
+        
         public Int32 ClientNum
         {
             get
@@ -122,19 +91,7 @@ namespace SharpQuake
                 return Array.IndexOf( Server.svs.clients, HostClient );
             }
         }
-
-        public Single FragLimit
-        {
-            get;
-            private set;
-        }
-
-        public Single TimeLimit
-        {
-            get;
-            private set;
-        }
-
+        
         public Double RealTime
         {
             get;
@@ -196,17 +153,17 @@ namespace SharpQuake
             private set;
         }
 
-        public CommandBuffer CommandBuffer
-        {
-            get;
-            private set;
-        }
+        //private CommandBuffer CommandBuffer
+        //{
+        //    get;
+        //    set;
+        //}
 
-        public Command Command
-        {
-            get;
-            private set;
-        }
+        //private Command Command
+        //{
+        //    get;
+        //    set;
+        //}
 
         public View View
         {
@@ -334,21 +291,109 @@ namespace SharpQuake
             private set;
         }
 
-        private CVar _Sys_TickRate; // = {"sys_ticrate","0.05"};
-        private CVar _Developer; // {"developer","0"};
-        private CVar _FrameRate;// = {"host_framerate","0"};	// set for slow motion
-        private CVar _Speeds;// = {"host_speeds","0"};			// set for running times
-        private CVar _ServerProfile;// = {"serverprofile","0"};
-        private CVar _FragLimit;// = {"fraglimit","0",false,true};
-        private CVar _TimeLimit;// = {"timelimit","0",false,true};
-        private CVar _Teamplay;// = {"teamplay","0",false,true};
-        private CVar _SameLevel;// = {"samelevel","0"};
-        private CVar _NoExit; // = {"noexit","0",false,true};
-        private CVar _Skill;// = {"skill","1"};						// 0 - 3
-        private CVar _Deathmatch;// = {"deathmatch","0"};			// 0, 1, or 2
-        private CVar _Coop;// = {"coop","0"};			// 0 or 1
-        private CVar _Pausable;// = {"pausable","1"};
-        private CVar _Temp1;// = {"temp1","0"};
+        // Factories
+        public ClientVariableFactory CVars
+        {
+            get;
+            private set;
+        }
+
+        public CommandFactory Commands
+        {
+            get;
+            private set;
+        }
+
+        // CVars
+        public ClientVariable SystemTickRate
+        {
+            get;
+            private set;
+        }
+
+        public ClientVariable Developer
+        {
+            get;
+            private set;
+        }
+
+        public ClientVariable FrameRate
+        {
+            get;
+            private set;
+        }
+
+        public ClientVariable Speeds
+        {
+            get;
+            private set;
+        }
+
+        public ClientVariable ServerProfile
+        {
+            get;
+            private set;
+        }
+
+        public ClientVariable FragLimit
+        {
+            get;
+            private set;
+        }
+
+        public ClientVariable TimeLimit
+        {
+            get;
+            private set;
+        }
+
+        public ClientVariable TeamPlay
+        {
+            get;
+            private set;
+        }
+
+        public ClientVariable SameLevel
+        {
+            get;
+            private set;
+        }
+
+        public ClientVariable NoExit
+        {
+            get;
+            private set;
+        }
+
+        public ClientVariable Skill
+        {
+            get;
+            private set;
+        }
+
+        public ClientVariable Deathmatch
+        {
+            get;
+            private set;
+        }
+
+        public ClientVariable Coop
+        {
+            get;
+            private set;
+        }
+
+        public ClientVariable Pausable
+        {
+            get;
+            private set;
+        }
+
+        public ClientVariable Temp1
+        {
+            get;
+            private set;
+        }
 
         private Double _TimeTotal; // static double timetotal from Host_Frame
         private Int32 _TimeCount; // static int timecount from Host_Frame
@@ -364,10 +409,17 @@ namespace SharpQuake
         {
             MainWindow = window;
 
+            // Factories
+            Commands = AddFactory<CommandFactory>( );
+            CVars = AddFactory<ClientVariableFactory>( );
+
+            Commands.Initialise( CVars );
+
+            // Old
             Cache = new Cache( );
-            CommandBuffer = new CommandBuffer( this );
-            Command = new Command( this );
-            CVar.Initialise( Command );
+            //CommandBuffer = new CommandBuffer( this );
+            //Command = new Command( this );
+            //CVar.Initialise( Command );
             View = new View( this );
             ChaseView = new ChaseView( this );
             GfxWad = new Wad( );
@@ -469,10 +521,13 @@ namespace SharpQuake
         {
             Parameters = parms;
 
-            Command.SetupWrapper( ); // Temporary workaround - change soon!
+            //Command.SetupWrapper( ); // Temporary workaround - change soon!
             Cache.Initialise( 1024 * 1024 * 512 ); // debug
-            CommandBuffer.Initialise( );
-            Command.Initialise( );
+
+            Commands.Add( "flush", Cache.Flush );
+
+            //CommandBuffer.Initialise( );
+           // Command.Initialise( );
             View.Initialise( );
             ChaseView.Initialise( );
             InitialiseVCR( parms );
@@ -545,7 +600,7 @@ namespace SharpQuake
                 Client.Initialise( );
             }
 
-            CommandBuffer.InsertText( "exec quake.rc\n" );
+            Commands.Buffer.Insert( "exec quake.rc\n" );
 
             IsInitialised = true;
 
@@ -568,23 +623,23 @@ namespace SharpQuake
         {
             InititaliseCommands( );
 
-            if ( _Sys_TickRate == null )
+            if ( SystemTickRate == null )
             {
-                _Sys_TickRate = new CVar( "sys_ticrate", "0.05" );
-                _Developer = new CVar( "developer", "0" );
-                _FrameRate = new CVar( "host_framerate", "0" ); // set for slow motion
-                _Speeds = new CVar( "host_speeds", "0" );	// set for running times
-                _ServerProfile = new CVar( "serverprofile", "0" );
-                _FragLimit = new CVar( "fraglimit", "0", false, true );
-                _TimeLimit = new CVar( "timelimit", "0", false, true );
-                _Teamplay = new CVar( "teamplay", "0", false, true );
-                _SameLevel = new CVar( "samelevel", "0" );
-                _NoExit = new CVar( "noexit", "0", false, true );
-                _Skill = new CVar( "skill", "1" ); // 0 - 3
-                _Deathmatch = new CVar( "deathmatch", "0" ); // 0, 1, or 2
-                _Coop = new CVar( "coop", "0" ); // 0 or 1
-                _Pausable = new CVar( "pausable", "1" );
-                _Temp1 = new CVar( "temp1", "0" );
+                SystemTickRate = CVars.Add( "sys_ticrate", 0.05 );
+                Developer = CVars.Add( "developer", false );
+                FrameRate = CVars.Add( "host_framerate", 0.0 ); // set for slow motion
+                Speeds = CVars.Add( "host_speeds", false ); // set for running times
+                ServerProfile = CVars.Add( "serverprofile", false );
+                FragLimit = CVars.Add( "fraglimit", 0, ClientVariableFlags.Server );
+                TimeLimit = CVars.Add( "timelimit", 0, ClientVariableFlags.Server );
+                TeamPlay = CVars.Add( "teamplay", 0, ClientVariableFlags.Server );
+                SameLevel = CVars.Add( "samelevel", false );
+                NoExit = CVars.Add( "noexit", false, ClientVariableFlags.Server );
+                Skill = CVars.Add( "skill", 1 ); // 0 - 3
+                Deathmatch = CVars.Add( "deathmatch", 0 ); // 0, 1, or 2
+                Coop = CVars.Add( "coop", false );
+                Pausable = CVars.Add( "pausable", true );
+                Temp1 = CVars.Add( "temp1", 0 );
             }
 
             FindMaxClients( );
@@ -686,9 +741,9 @@ namespace SharpQuake
                 svs.clients[i] = new client_t( );
 
             if ( svs.maxclients > 1 )
-                CVar.Set( "deathmatch", 1.0f );
+                CVars.Set( "deathmatch", 1 );
             else
-                CVar.Set( "deathmatch", 0.0f );
+                CVars.Set( "deathmatch", 0 );
         }
 
         /// <summary>
@@ -705,8 +760,8 @@ namespace SharpQuake
             FrameTime = RealTime - _OldRealTime;
             _OldRealTime = RealTime;
 
-            if ( _FrameRate.Value > 0 )
-                FrameTime = _FrameRate.Value;
+            if ( FrameRate.Get<Double>( ) > 0 )
+                FrameTime = FrameRate.Get<Double>( );
             else
             {	// don't allow really long or short frames
                 if ( FrameTime > 0.1 )
@@ -737,7 +792,7 @@ namespace SharpQuake
             MainWindow.Input.Commands( );
 
             // process console commands
-            CommandBuffer.Execute( );
+            Commands.Buffer.Execute( );
 
             Network.Poll( );
 
@@ -777,12 +832,12 @@ namespace SharpQuake
             }
 
             // update video
-            if ( _Speeds.Value != 0 )
+            if ( Speeds.Get<Boolean>( ) )
                 _Time1 = Timer.GetFloatTime( );
 
             Screen.UpdateScreen( );
 
-            if ( _Speeds.Value != 0 )
+            if ( Speeds.Get<Boolean>( ) )
                 _Time2 = Timer.GetFloatTime( );
 
             // update audio
@@ -796,7 +851,7 @@ namespace SharpQuake
 
             CDAudio.Update( );
 
-            if ( _Speeds.Value != 0 )
+            if ( Speeds.Get<Boolean>( ) )
             {
                 var pass1 = ( Int32 ) ( ( _Time1 - _Time3 ) * 1000 );
                 _Time3 = Timer.GetFloatTime( );
@@ -819,7 +874,7 @@ namespace SharpQuake
                 if ( String.IsNullOrEmpty( cmd ) )
                     break;
 
-                CommandBuffer.AddText( cmd );
+                Commands.Buffer.Append( cmd );
             }
         }
 
@@ -848,7 +903,7 @@ namespace SharpQuake
         // Host_Frame
         public void Frame( Double time )
         {
-            if ( _ServerProfile.Value == 0 )
+            if ( !ServerProfile.Get<Boolean>( ) )
             {
                 InternalFrame( time );
                 return;
@@ -894,7 +949,7 @@ namespace SharpQuake
                     if ( fs != null )
                     {
                         Keyboard.WriteBindings( fs );
-                        CVar.WriteVariables( fs );
+                        CVars.WriteVariables( fs );
                     }
                 }
             }
@@ -971,7 +1026,7 @@ namespace SharpQuake
         /// <summary>
         /// Host_Shutdown
         /// </summary>
-        public void Dispose( )
+        public override void Dispose( )
         {
             IsDisposing = true;
 
@@ -1010,6 +1065,8 @@ namespace SharpQuake
                 }
 
                 Console.Shutdown( );
+
+                base.Dispose( );
             }
             finally
             {

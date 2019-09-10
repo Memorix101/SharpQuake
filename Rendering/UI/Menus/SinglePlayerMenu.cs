@@ -65,9 +65,9 @@ namespace SharpQuake
                                     break;
                             Host.Keyboard.Destination = KeyDestination.key_game;
                             if ( Host.Server.sv.active )
-                                Host.CommandBuffer.AddText( "disconnect\n" );
-                            Host.CommandBuffer.AddText( "maxplayers 1\n" );
-                            Host.CommandBuffer.AddText( "map start\n" );
+                                Host.Commands.Buffer.Append( "disconnect\n" );
+                            Host.Commands.Buffer.Append( "maxplayers 1\n" );
+                            Host.Commands.Buffer.Append( "map start\n" );
                             break;
 
                         case 1:

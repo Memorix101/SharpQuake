@@ -144,7 +144,7 @@ namespace SharpQuake
                 sc.loopstart = ( Int32 ) ( sc.loopstart / stepscale );
 
             sc.speed = _shm.speed;
-            if( _LoadAs8bit.Value != 0 )
+            if( _LoadAs8bit.Get<Boolean>( ) )
                 sc.width = 1;
             else
                 sc.width = inwidth;

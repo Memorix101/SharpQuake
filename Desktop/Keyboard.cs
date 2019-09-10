@@ -26,6 +26,7 @@ using System;
 using System.IO;
 using System.Text;
 using SharpQuake.Framework;
+using SharpQuake.Framework.IO;
 
 // keys.h
 // keys.c
@@ -195,7 +196,7 @@ namespace SharpQuake
 
                     case KeyDestination.key_game:
                     case KeyDestination.key_console:
-                        Host.Menu.ToggleMenu_f( );
+                        Host.Menu.ToggleMenu_f( null );
                         break;
 
                     default:
@@ -218,14 +219,14 @@ namespace SharpQuake
 
                 if ( !String.IsNullOrEmpty( kb ) && kb.StartsWith( "+" ) )
                 {
-                    Host.CommandBuffer.AddText( String.Format( "-{0} {1}\n", kb.Substring( 1 ), key ) );
+                    Host.Commands.Buffer.Append( String.Format( "-{0} {1}\n", kb.Substring( 1 ), key ) );
                 }
 
                 if ( _KeyShift[key] != key )
                 {
                     kb = _Bindings[_KeyShift[key]];
                     if ( !String.IsNullOrEmpty( kb ) && kb.StartsWith( "+" ) )
-                        Host.CommandBuffer.AddText( String.Format( "-{0} {1}\n", kb.Substring( 1 ), key ) );
+                        Host.Commands.Buffer.Append( String.Format( "-{0} {1}\n", kb.Substring( 1 ), key ) );
                 }
                 return;
             }
@@ -235,7 +236,7 @@ namespace SharpQuake
             //
             if ( Host.Client.cls.demoplayback && down && _ConsoleKeys[key] && _KeyDest == KeyDestination.key_game )
             {
-                Host.Menu.ToggleMenu_f( );
+                Host.Menu.ToggleMenu_f( null );
                 return;
             }
 
@@ -252,12 +253,12 @@ namespace SharpQuake
                     if ( kb.StartsWith( "+" ) )
                     {
                         // button commands add keynum as a parm
-                        Host.CommandBuffer.AddText( String.Format( "{0} {1}\n", kb, key ) );
+                        Host.Commands.Buffer.Append( String.Format( "{0} {1}\n", kb, key ) );
                     }
                     else
                     {
-                        Host.CommandBuffer.AddText( kb );
-                        Host.CommandBuffer.AddText( "\n" );
+                        Host.Commands.Buffer.Append( kb );
+                        Host.Commands.Buffer.Append( "\n" );
                     }
                 }
                 return;
@@ -357,9 +358,9 @@ namespace SharpQuake
             //
             // register our functions
             //
-            Host.Command.Add( "bind", Bind_f );
-            Host.Command.Add( "unbind", Unbind_f );
-            Host.Command.Add( "unbindall", UnbindAll_f );
+            Host.Commands.Add( "bind", Bind_f );
+            Host.Commands.Add( "unbind", Unbind_f );
+            Host.Commands.Add( "unbindall", UnbindAll_f );
         }
 
         /// <summary>
@@ -449,18 +450,20 @@ namespace SharpQuake
         }
 
         //Key_Unbind_f
-        private void Unbind_f( )
+        private void Unbind_f( CommandMessage msg )
         {
-            if ( Host.Command.Argc != 2 )
+            var c = msg.Parameters != null ? msg.Parameters.Length : 0;
+
+            if ( c != 1 )
             {
                 Host.Console.Print( "unbind <key> : remove commands from a key\n" );
                 return;
             }
 
-            var b = StringToKeynum( Host.Command.Argv( 1 ) );
+            var b = StringToKeynum( msg.Parameters[0] );
             if ( b == -1 )
             {
-                Host.Console.Print( "\"{0}\" isn't a valid key\n", Host.Command.Argv( 1 ) );
+                Host.Console.Print( $"\"{msg.Parameters[0]}\" isn't a valid key\n" );
                 return;
             }
 
@@ -468,7 +471,7 @@ namespace SharpQuake
         }
 
         // Key_Unbindall_f
-        private void UnbindAll_f( )
+        private void UnbindAll_f( CommandMessage msg )
         {
             for ( var i = 0; i < 256; i++ )
                 if ( !String.IsNullOrEmpty( _Bindings[i] ) )
@@ -476,42 +479,40 @@ namespace SharpQuake
         }
 
         //Key_Bind_f
-        private void Bind_f( )
+        private void Bind_f( CommandMessage msg )
         {
-            var c = Host.Command.Argc;
-            if ( c != 2 && c != 3 )
+            var c = msg.Parameters != null ? msg.Parameters.Length : 0;
+            if ( c != 1 && c != 2 )
             {
                 Host.Console.Print( "bind <key> [command] : attach a command to a key\n" );
                 return;
             }
 
-            var b = StringToKeynum( Host.Command.Argv( 1 ) );
+            var b = StringToKeynum( msg.Parameters[0] );
             if ( b == -1 )
             {
-                Host.Console.Print( "\"{0}\" isn't a valid key\n", Host.Command.Argv( 1 ) );
+                Host.Console.Print( $"\"{msg.Parameters[0]}\" isn't a valid key\n" );
                 return;
             }
 
-            if ( c == 2 )
+            if ( c == 1 )
             {
                 if ( !String.IsNullOrEmpty( _Bindings[b] ) )// keybindings[b])
-                    Host.Console.Print( "\"{0}\" = \"{1}\"\n", Host.Command.Argv( 1 ), _Bindings[b] );
+                    Host.Console.Print( $"\"{msg.Parameters[0]}\" = \"{_Bindings[b]}\"\n" );
                 else
-                    Host.Console.Print( "\"{0}\" is not bound\n", Host.Command.Argv( 1 ) );
+                    Host.Console.Print( $"\"{msg.Parameters[0]}\" is not bound\n" );
                 return;
             }
 
             // copy the rest of the command line
             // start out with a null string
-            var sb = new StringBuilder( 1024 );
-            for ( var i = 2; i < c; i++ )
-            {
-                if ( i > 2 )
-                    sb.Append( " " );
-                sb.Append( Host.Command.Argv( i ) );
-            }
 
-            SetBinding( b, sb.ToString( ) );
+            var args = String.Empty;
+
+            if ( msg.Parameters.Length > 1 )
+                args = msg.ParametersFrom( 1 );
+
+            SetBinding( b, args );
         }
 
         // Key_Message (int key)
@@ -520,12 +521,12 @@ namespace SharpQuake
             if ( key == KeysDef.K_ENTER )
             {
                 if ( _TeamMessage )
-                    Host.CommandBuffer.AddText( "say_team \"" );
+                    Host.Commands.Buffer.Append( "say_team \"" );
                 else
-                    Host.CommandBuffer.AddText( "say \"" );
+                    Host.Commands.Buffer.Append( "say \"" );
 
-                Host.CommandBuffer.AddText( _ChatBuffer.ToString( ) );
-                Host.CommandBuffer.AddText( "\"\n" );
+                Host.Commands.Buffer.Append( _ChatBuffer.ToString( ) );
+                Host.Commands.Buffer.Append( "\"\n" );
 
                 Destination = KeyDestination.key_game;
                 _ChatBuffer.Length = 0;
@@ -567,8 +568,8 @@ namespace SharpQuake
             {
                 var line = new String( _Lines[_EditLine] ).TrimEnd( '\0', ' ' );
                 var cmd = line.Substring( 1 );
-                Host.CommandBuffer.AddText( cmd );	// skip the >
-                Host.CommandBuffer.AddText( "\n" );
+                Host.Commands.Buffer.Append( cmd );	// skip the >
+                Host.Commands.Buffer.Append( "\n" );
                 Host.Console.Print( "{0}\n", line );
                 _EditLine = ( _EditLine + 1 ) & 31;
                 _HistoryLine = _EditLine;
@@ -584,8 +585,8 @@ namespace SharpQuake
             {
                 // command completion
                 var txt = new String( _Lines[_EditLine], 1, KeysDef.MAXCMDLINE - 1 ).TrimEnd( '\0', ' ' );
-                var cmds = Host.Command.Complete( txt );
-                var vars = CVar.CompleteName( txt );
+                var cmds = Host.Commands.Complete( txt );
+                var vars = Host.CVars.CompleteName( txt );
                 String match = null;
                 if ( cmds != null )
                 {

@@ -24,6 +24,7 @@
 /// 
 using System;
 using SharpQuake.Framework;
+using SharpQuake.Framework.IO;
 using SharpQuake.Renderer.Textures;
 
 // menu.h
@@ -65,18 +66,18 @@ namespace SharpQuake
         // M_Init (void)
         public void Initialise( )
         {
-            Host.Command.Add( "togglemenu", ToggleMenu_f );
-            Host.Command.Add( "menu_main", Menu_Main_f );
-            Host.Command.Add( "menu_singleplayer", Menu_SinglePlayer_f );
-            Host.Command.Add( "menu_load", Menu_Load_f );
-            Host.Command.Add( "menu_save", Menu_Save_f );
-            Host.Command.Add( "menu_multiplayer", Menu_MultiPlayer_f );
-            Host.Command.Add( "menu_setup", Menu_Setup_f );
-            Host.Command.Add( "menu_options", Menu_Options_f );
-            Host.Command.Add( "menu_keys", Menu_Keys_f );
-            Host.Command.Add( "menu_video", Menu_Video_f );
-            Host.Command.Add( "help", Menu_Help_f );
-            Host.Command.Add( "menu_quit", Menu_Quit_f );
+            Host.Commands.Add( "togglemenu", ToggleMenu_f );
+            Host.Commands.Add( "menu_main", Menu_Main_f );
+            Host.Commands.Add( "menu_singleplayer", Menu_SinglePlayer_f );
+            Host.Commands.Add( "menu_load", Menu_Load_f );
+            Host.Commands.Add( "menu_save", Menu_Save_f );
+            Host.Commands.Add( "menu_multiplayer", Menu_MultiPlayer_f );
+            Host.Commands.Add( "menu_setup", Menu_Setup_f );
+            Host.Commands.Add( "menu_options", Menu_Options_f );
+            Host.Commands.Add( "menu_keys", Menu_Keys_f );
+            Host.Commands.Add( "menu_video", Menu_Video_f );
+            Host.Commands.Add( "help", Menu_Help_f );
+            Host.Commands.Add( "menu_quit", Menu_Quit_f );
         }
 
         /// <summary>
@@ -130,7 +131,7 @@ namespace SharpQuake
         /// <summary>
         /// M_ToggleMenu_f
         /// </summary>
-        public void ToggleMenu_f()
+        public void ToggleMenu_f( CommandMessage msg )
         {
             EnterSound = true;
 
@@ -146,7 +147,7 @@ namespace SharpQuake
             }
             if( Host.Keyboard.Destination == KeyDestination.key_console )
             {
-                Host.Console.ToggleConsole_f();
+                Host.Console.ToggleConsole_f( null );
             }
             else
             {
@@ -312,7 +313,7 @@ namespace SharpQuake
         /// <summary>
         /// M_Menu_Main_f
         /// </summary>
-        private void Menu_Main_f()
+        private void Menu_Main_f( CommandMessage msg )
         {
             MenuBase.MainMenu.Show( Host );
         }
@@ -320,37 +321,37 @@ namespace SharpQuake
         /// <summary>
         /// M_Menu_SinglePlayer_f
         /// </summary>
-        private void Menu_SinglePlayer_f()
+        private void Menu_SinglePlayer_f( CommandMessage msg )
         {
             MenuBase.SinglePlayerMenu.Show( Host );
         }
 
         // M_Menu_Load_f
-        private void Menu_Load_f()
+        private void Menu_Load_f( CommandMessage msg )
         {
             MenuBase.LoadMenu.Show( Host );
         }
 
         // M_Menu_Save_f
-        private void Menu_Save_f()
+        private void Menu_Save_f( CommandMessage msg )
         {
             MenuBase.SaveMenu.Show( Host );
         }
 
         // M_Menu_MultiPlayer_f
-        private void Menu_MultiPlayer_f()
+        private void Menu_MultiPlayer_f( CommandMessage msg )
         {
             MenuBase.MultiPlayerMenu.Show( Host );
         }
 
         // M_Menu_Setup_f
-        private void Menu_Setup_f()
+        private void Menu_Setup_f( CommandMessage msg )
         {
             MenuBase.SetupMenu.Show( Host );
         }
 
         // M_Menu_Options_f
-        private void Menu_Options_f()
+        private void Menu_Options_f( CommandMessage msg )
         {
             MenuBase.OptionsMenu.Show( Host );
         }
@@ -358,7 +359,7 @@ namespace SharpQuake
         /// <summary>
         /// M_Menu_Keys_f
         /// </summary>
-        private void Menu_Keys_f()
+        private void Menu_Keys_f( CommandMessage msg )
         {
             MenuBase.KeysMenu.Show( Host );
         }
@@ -366,7 +367,7 @@ namespace SharpQuake
         /// <summary>
         /// M_Menu_Video_f
         /// </summary>
-        private void Menu_Video_f()
+        private void Menu_Video_f( CommandMessage msg )
         {
             MenuBase.VideoMenu.Show( Host );
         }
@@ -374,7 +375,7 @@ namespace SharpQuake
         /// <summary>
         /// M_Menu_Help_f
         /// </summary>
-        private void Menu_Help_f()
+        private void Menu_Help_f( CommandMessage msg )
         {
             MenuBase.HelpMenu.Show( Host );
         }
@@ -382,7 +383,7 @@ namespace SharpQuake
         /// <summary>
         /// M_Menu_Quit_f
         /// </summary>
-        private void Menu_Quit_f()
+        private void Menu_Quit_f( CommandMessage msg )
         {
             MenuBase.QuitMenu.Show( Host );
         }

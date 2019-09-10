@@ -51,7 +51,7 @@ namespace SharpQuake
         {
             get
             {
-                return _glSubDivideSize.Value;
+                return _glSubDivideSize.Get<Int32>( );
             }
         }
 
@@ -73,7 +73,7 @@ namespace SharpQuake
             private set;
         }
 
-        private CVar _glSubDivideSize
+        private ClientVariable _glSubDivideSize
         {
             get;
             set;
@@ -106,7 +106,7 @@ namespace SharpQuake
             ModelCache = new List<Model>( ModelDef.MAX_MOD_KNOWN );
 
             if ( _glSubDivideSize == null )
-                _glSubDivideSize = new CVar( "gl_subdivide_size", "128", true );
+                _glSubDivideSize = Host.CVars.Add( "gl_subdivide_size", 128, ClientVariableFlags.Archive );
         }
 
         /// <summary>
@@ -179,7 +179,7 @@ namespace SharpQuake
         } 
 
         // Mod_Print
-        public void Print( )
+        public void Print( CommandMessage msg )
         {
             var names = String.Join( "\n", ModelCache.Select( m => m.Name ) );
             ConsoleWrapper.Print( $"Cached models:\n{names}\n" );
