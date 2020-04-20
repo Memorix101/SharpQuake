@@ -67,7 +67,8 @@ namespace SharpQuake
                 _YawSpeed = Host.CVars.Add( "cl_yawspeed", 140f );
                 _PitchSpeed = Host.CVars.Add( "cl_pitchspeed", 150f );
                 _AngleSpeedKey = Host.CVars.Add( "cl_anglespeedkey", 1.5f );
-            }
+				AnimationBlend = Host.CVars.Add( "cl_animationblend", false );
+			}
 
             for( var i = 0; i < _EFrags.Length; i++ )
                 _EFrags[i] = new EFrag();

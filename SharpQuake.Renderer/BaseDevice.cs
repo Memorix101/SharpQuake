@@ -484,5 +484,10 @@ namespace SharpQuake.Renderer
                 }
             }
         }
-    }
+
+		public virtual void BlendedRotateForEntity( Vector3 origin, Vector3 angles, Double realTime, ref Vector3 origin1, ref Vector3 origin2, ref Single translateStartTime, ref Vector3 angles1, ref Vector3 angles2, ref Single rotateStartTime )
+		{
+			throw new NotImplementedException( );
+		}
+	}
 }
