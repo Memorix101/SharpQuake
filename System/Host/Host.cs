@@ -289,10 +289,16 @@ namespace SharpQuake
         {
             get;
             private set;
-        }
+		}
 
-        // Factories
-        public ClientVariableFactory CVars
+		public DedicatedServer DedicatedServer
+		{
+			get;
+			private set;
+		}
+
+		// Factories
+		public ClientVariableFactory CVars
         {
             get;
             private set;
@@ -439,8 +445,9 @@ namespace SharpQuake
             Sound = new snd( this );
             CDAudio = new cd_audio( this );
             StatusBar = new sbar( this );
+			DedicatedServer = new DedicatedServer( );
 
-            WadFiles = new Dictionary<String, Wad>( );
+			WadFiles = new Dictionary<String, Wad>( );
             WadTextures = new Dictionary<String, String>( );
         }
 
@@ -599,6 +606,10 @@ namespace SharpQuake
                 StatusBar.Initialise( );
                 Client.Initialise( );
             }
+			else
+			{
+				DedicatedServer.Initialise( );
+			}
 
             Commands.Buffer.Insert( "exec quake.rc\n" );
 
@@ -870,7 +881,8 @@ namespace SharpQuake
         {
             while ( true )
             {
-                var cmd = sys.ConsoleInput( );
+                var cmd = DedicatedServer.ConsoleInput( );
+
                 if ( String.IsNullOrEmpty( cmd ) )
                     break;
 

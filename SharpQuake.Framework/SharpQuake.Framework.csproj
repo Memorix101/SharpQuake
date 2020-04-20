@@ -247,6 +247,7 @@
     <Compile Include="System\CommandWrapper.cs" />
     <Compile Include="System\ConsoleWrapper.cs" />
     <Compile Include="System\Crc.cs" />
+    <Compile Include="System\DedicatedServer.cs" />
     <Compile Include="System\DisposableWrapper.cs" />
     <Compile Include="System\Edict.cs" />
     <Compile Include="System\EdictType.cs" />

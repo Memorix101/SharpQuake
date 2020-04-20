@@ -1,4 +1,4 @@
-/// <copyright>
+﻿/// <copyright>
 ///
 /// SharpQuakeEvolved changes by optimus-code, 2019
 /// 
@@ -23,17 +23,25 @@
 /// </copyright>
 
 using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
-namespace SharpQuake
+namespace SharpQuake.Framework
 {
-    internal static class sys
-    {
-        /// <summary>
-        /// Sys_ConsoleInput
-        /// </summary>
-        public static String ConsoleInput()
-        {
-            return null; // this is needed only for dedicated servers
-        }
-    }
+	public class DedicatedServer
+	{
+		public void Initialise( )
+		{
+		}
+
+		/// <summary>
+		/// Sys_ConsoleInput
+		/// </summary>
+		public String ConsoleInput( )
+		{
+			return null; // this is needed only for dedicated servers
+		}
+	}
 }
