@@ -26,6 +26,7 @@ using System;
 using SharpQuake.Framework;
 using SharpQuake.Framework.IO.BSP;
 using SharpQuake.Framework.Mathematics;
+using SharpQuake.Framework.World;
 
 // sv_move.c
 
@@ -44,7 +45,7 @@ namespace SharpQuake
         /// </summary>
         public Boolean MoveStep( MemoryEdict ent, ref Vector3f move, Boolean relink )
         {
-            trace_t trace;
+            Trace_t trace;
 
             // try the move
             var oldorg = ent.v.origin;

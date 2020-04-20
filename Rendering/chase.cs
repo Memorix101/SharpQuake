@@ -26,6 +26,7 @@ using System;
 using SharpQuake.Framework;
 using SharpQuake.Framework.IO;
 using SharpQuake.Framework.Mathematics;
+using SharpQuake.Framework.World;
 
 // chase.c -- chase camera code
 
@@ -117,7 +118,7 @@ namespace SharpQuake
 
         private void TraceLine( ref Vector3 start, ref Vector3 end, out Vector3 impact )
         {
-            var trace = new trace_t();
+            var trace = new Trace_t();
 
             Host.Server.RecursiveHullCheck( Host.Client.cl.worldmodel.Hulls[0], 0, 0, 1, ref start, ref end, trace );
 

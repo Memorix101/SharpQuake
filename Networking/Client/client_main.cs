@@ -24,6 +24,7 @@
 
 using System;
 using SharpQuake.Framework.Mathematics;
+using SharpQuake.Framework.World;
 using SharpQuake.Framework;
 using SharpQuake.Game.Rendering;
 using SharpQuake.Game.World;
@@ -444,7 +445,7 @@ namespace SharpQuake
                 }
 
                 // rotate binary objects locally
-                if( ( ent.model.Flags & EF.EF_ROTATE ) != 0 )
+                if( ent.model.Flags.HasFlag( EntityFlags.Rotate ) )
                     ent.angles.Y = bobjrotate;
 
                 if( ( ent.effects & EntityEffects.EF_BRIGHTFIELD ) != 0 )
@@ -478,15 +479,15 @@ namespace SharpQuake
                     dl.die = ( Single ) cl.time + 0.001f;
                 }
 
-                if( ( ent.model.Flags & EF.EF_GIB ) != 0 )
+                if ( ent.model.Flags.HasFlag( EntityFlags.Gib ))
                     Host.RenderContext.RocketTrail( ref oldorg, ref ent.origin, 2 );
-                else if( ( ent.model.Flags & EF.EF_ZOMGIB ) != 0 )
+                else if ( ent.model.Flags.HasFlag( EntityFlags.ZomGib ) )
                     Host.RenderContext.RocketTrail( ref oldorg, ref ent.origin, 4 );
-                else if( ( ent.model.Flags & EF.EF_TRACER ) != 0 )
+                else if ( ent.model.Flags.HasFlag( EntityFlags.Tracer ) )
                     Host.RenderContext.RocketTrail( ref oldorg, ref ent.origin, 3 );
-                else if( ( ent.model.Flags & EF.EF_TRACER2 ) != 0 )
+                else if ( ent.model.Flags.HasFlag( EntityFlags.Tracer2 ) )
                     Host.RenderContext.RocketTrail( ref oldorg, ref ent.origin, 5 );
-                else if( ( ent.model.Flags & EF.EF_ROCKET ) != 0 )
+                else if ( ent.model.Flags.HasFlag( EntityFlags.Rocket ) )
                 {
                     Host.RenderContext.RocketTrail( ref oldorg, ref ent.origin, 0 );
                     var dl = AllocDlight( i );
@@ -494,9 +495,9 @@ namespace SharpQuake
                     dl.radius = 200;
                     dl.die = ( Single ) cl.time + 0.01f;
                 }
-                else if( ( ent.model.Flags & EF.EF_GRENADE ) != 0 )
+                else if ( ent.model.Flags.HasFlag( EntityFlags.Grenade ) )
                     Host.RenderContext.RocketTrail( ref oldorg, ref ent.origin, 1 );
-                else if( ( ent.model.Flags & EF.EF_TRACER3 ) != 0 )
+                else if ( ent.model.Flags.HasFlag( EntityFlags.Tracer3 ) )
                     Host.RenderContext.RocketTrail( ref oldorg, ref ent.origin, 6 );
 
                 ent.forcelink = false;

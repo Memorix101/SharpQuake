@@ -26,6 +26,7 @@ using System;
 using SharpQuake.Framework;
 using SharpQuake.Framework.IO.BSP;
 using SharpQuake.Framework.Mathematics;
+using SharpQuake.Framework.World;
 using SharpQuake.Game.Rendering.Memory;
 using SharpQuake.Game.Rendering.Models;
 
@@ -192,7 +193,7 @@ namespace SharpQuake
         /// shouldn't be considered solid objects
         /// passedict is explicitly excluded from clipping checks (normally NULL)
         /// </summary>
-        public trace_t Move( ref Vector3 start, ref Vector3 mins, ref Vector3 maxs, ref Vector3 end, Int32 type, MemoryEdict passedict )
+        public Trace_t Move( ref Vector3 start, ref Vector3 mins, ref Vector3 maxs, ref Vector3 end, Int32 type, MemoryEdict passedict )
         {
             var clip = new moveclip_t();
 
@@ -229,7 +230,7 @@ namespace SharpQuake
         /// <summary>
         /// SV_RecursiveHullCheck
         /// </summary>
-        public Boolean RecursiveHullCheck( BspHull hull, Int32 num, Single p1f, Single p2f, ref Vector3 p1, ref Vector3 p2, trace_t trace )
+        public Boolean RecursiveHullCheck( BspHull hull, Int32 num, Single p1f, Single p2f, ref Vector3 p1, ref Vector3 p2, Trace_t trace )
         {
             // check for empty
             if( num < 0 )
@@ -580,9 +581,9 @@ namespace SharpQuake
         /// Handles selection or creation of a clipping hull, and offseting (and
         /// eventually rotation) of the end points
         /// </summary>
-        private trace_t ClipMoveToEntity( MemoryEdict ent, ref Vector3 start, ref Vector3 mins, ref Vector3 maxs, ref Vector3 end )
+        private Trace_t ClipMoveToEntity( MemoryEdict ent, ref Vector3 start, ref Vector3 mins, ref Vector3 maxs, ref Vector3 end )
         {
-            var trace = new trace_t();
+            var trace = new Trace_t();
             // fill in a default trace
             trace.fraction = 1;
             trace.allsolid = true;
@@ -625,7 +626,7 @@ namespace SharpQuake
         private void ClipToLinks( areanode_t node, moveclip_t clip )
         {
             Link next;
-            trace_t trace;
+            Trace_t trace;
 
             // touch linked edicts
             for( var l = node.solid_edicts.Next; l != node.solid_edicts; l = next )
@@ -723,7 +724,7 @@ namespace SharpQuake
             public Vector3 mins, maxs;	// size of the moving object
             public Vector3 mins2, maxs2;	// size when clipping against mosnters
             public Vector3 start, end;
-            public trace_t trace;
+            public Trace_t trace;
             public Int32 type;
             public MemoryEdict passedict;
         } //moveclip_t;

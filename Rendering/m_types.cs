@@ -60,17 +60,6 @@ namespace SharpQuake
     // Whole model
     //
 
-    static class EF
-    {
-        public const Int32 EF_ROCKET = 1;			// leave a trail
-        public const Int32 EF_GRENADE = 2;			// leave a trail
-        public const Int32 EF_GIB = 4;			// leave a trail
-        public const Int32 EF_ROTATE = 8;			// rotate (bonus items)
-        public const Int32 EF_TRACER = 16;			// green split trail
-        public const Int32 EF_ZOMGIB = 32;			// small blood trail
-        public const Int32 EF_TRACER2 = 64;			// orange split trail + rotate
-        public const Int32 EF_TRACER3 = 128;			// purple trail
-    }
 
     //
     // modelgen.h: header file for model generation program

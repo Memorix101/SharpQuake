@@ -26,6 +26,7 @@ using System;
 using SharpQuake.Framework;
 using SharpQuake.Framework.IO.BSP;
 using SharpQuake.Framework.Mathematics;
+using SharpQuake.Framework.World;
 
 namespace SharpQuake
 {
@@ -190,12 +191,12 @@ namespace SharpQuake
         /// PushEntity
         /// Does not change the entities velocity at all
         /// </summary>
-        private trace_t PushEntity( MemoryEdict ent, ref Vector3f push )
+        private Trace_t PushEntity( MemoryEdict ent, ref Vector3f push )
         {
             Vector3f end;
             MathLib.VectorAdd( ref ent.v.origin, ref push, out end );
 
-            trace_t trace;
+            Trace_t trace;
             if ( ent.v.movetype == Movetypes.MOVETYPE_FLYMISSILE )
                 trace = Move( ref ent.v.origin, ref ent.v.mins, ref ent.v.maxs, ref end, MOVE_MISSILE, ent );
             else if ( ent.v.solid == Solids.SOLID_TRIGGER || ent.v.solid == Solids.SOLID_NOT )
@@ -441,7 +442,7 @@ namespace SharpQuake
 
             var oldorg = ent.v.origin;
             var oldvel = ent.v.velocity;
-            var steptrace = new trace_t( );
+            var steptrace = new Trace_t( );
             var clip = FlyMove( ent, ( Single ) Host.FrameTime, steptrace );
 
             if ( ( clip & 2 ) == 0 )
@@ -531,7 +532,7 @@ namespace SharpQuake
             var oldorg = ent.v.origin;
             var dir = Utilities.ZeroVector3f;
 
-            var steptrace = new trace_t( );
+            var steptrace = new Trace_t( );
             for ( var i = 0; i < 8; i++ )
             {
                 // try pushing a little in an axial direction
@@ -602,7 +603,7 @@ namespace SharpQuake
         /// <summary>
         /// SV_WallFriction
         /// </summary>
-        private void WallFriction( MemoryEdict ent, trace_t trace )
+        private void WallFriction( MemoryEdict ent, Trace_t trace )
         {
             Vector3 forward, right, up, vangle = Utilities.ToVector( ref ent.v.v_angle );
             MathLib.AngleVectors( ref vangle, out forward, out right, out up );
@@ -756,7 +757,7 @@ namespace SharpQuake
         /// 4 = dead stop
         /// If steptrace is not NULL, the trace of any vertical wall hit will be stored
         /// </summary>
-        private Int32 FlyMove( MemoryEdict ent, Single time, trace_t steptrace )
+        private Int32 FlyMove( MemoryEdict ent, Single time, Trace_t steptrace )
         {
             var original_velocity = ent.v.velocity;
             var primal_velocity = ent.v.velocity;
@@ -885,7 +886,7 @@ namespace SharpQuake
             return blocked;
         }
 
-        private trace_t Move( ref Vector3f start, ref Vector3f mins, ref Vector3f maxs, ref Vector3f end, Int32 type, MemoryEdict passedict )
+        private Trace_t Move( ref Vector3f start, ref Vector3f mins, ref Vector3f maxs, ref Vector3f end, Int32 type, MemoryEdict passedict )
         {
             Vector3 vstart, vmins, vmaxs, vend;
             MathLib.Copy( ref start, out vstart );

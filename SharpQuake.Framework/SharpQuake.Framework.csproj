@@ -282,6 +282,10 @@
     <Compile Include="System\Tokeniser.cs" />
     <Compile Include="System\Utilities.cs" />
     <Compile Include="System\XComand.cs" />
+    <Compile Include="World\EntityFlags.cs" />
+    <Compile Include="World\Move.cs" />
+    <Compile Include="World\Plane.cs" />
+    <Compile Include="World\Trace.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="IO\BSP\HL\" />

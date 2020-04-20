@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using SharpQuake.Framework;
+using SharpQuake.Framework.World;
 using SharpQuake.Framework.IO.Alias;
 using SharpQuake.Framework.Mathematics;
 using SharpQuake.Framework.Rendering;
@@ -77,7 +78,7 @@ namespace SharpQuake.Game.Rendering.Models
             //
             Header = new aliashdr_t( );
 
-            Flags = EndianHelper.LittleLong( pinmodel.flags );
+            Flags = ( EntityFlags ) EndianHelper.LittleLong( pinmodel.flags );
 
             //
             // endian-adjust and copy the data, starting with the alias model header
