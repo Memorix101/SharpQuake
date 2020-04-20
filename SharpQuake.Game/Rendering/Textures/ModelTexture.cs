@@ -50,8 +50,9 @@ namespace SharpQuake.Game.Rendering.Textures
         public Byte[] pixels; // added by Uze
         public Single scaleX;
         public Single scaleY;
+		public Byte[] localPalette;
 
-        public BaseTexture Texture
+		public BaseTexture Texture
         {
             get;
             set;
