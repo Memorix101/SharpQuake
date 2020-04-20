@@ -28,6 +28,7 @@ using SharpQuake.Game.Rendering.Models;
 using SharpQuake.Game.World;
 using SharpQuake.Framework.Mathematics;
 using SharpQuake.Framework.IO;
+using SharpQuake.Framework.IO.Sound;
 
 // client.h
 
@@ -454,7 +455,7 @@ namespace SharpQuake
         //
         public Model[] model_precache; // [MAX_MODELS];
 
-        public sfx_t[] sound_precache; // [MAX_SOUNDS];
+        public SoundEffect_t[] sound_precache; // [MAX_SOUNDS];
 
         public String levelname; // char[40];	// for display on solo scoreboard
         public Int32 viewentity;		// cl_entitites[cl.viewentity] = player
@@ -560,7 +561,7 @@ namespace SharpQuake
             mvelocity = new Vector3[2];
             mtime = new Double[2];
             model_precache = new Model[QDef.MAX_MODELS];
-            sound_precache = new sfx_t[QDef.MAX_SOUNDS];
+            sound_precache = new SoundEffect_t[QDef.MAX_SOUNDS];
             viewent = new Entity();
         }
     } //client_state_t;

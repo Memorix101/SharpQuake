@@ -25,6 +25,7 @@
 using System;
 using System.Text;
 using SharpQuake.Framework;
+using SharpQuake.Framework.IO.Sound;
 
 // snd_mem.c
 
@@ -33,9 +34,9 @@ namespace SharpQuake
     public partial class snd
     {
         // GetWavinfo
-        private wavinfo_t GetWavInfo( String name, Byte[] wav )
+        private WavInfo_t GetWavInfo( String name, Byte[] wav )
         {
-            var info = new wavinfo_t();
+            var info = new WavInfo_t();
 
             if( wav == null )
                 return info;
@@ -130,9 +131,9 @@ namespace SharpQuake
         }
 
         // ResampleSfx
-        private void ResampleSfx( sfx_t sfx, Int32 inrate, Int32 inwidth, ByteArraySegment data )
+        private void ResampleSfx( SoundEffect_t sfx, Int32 inrate, Int32 inwidth, ByteArraySegment data )
         {
-            var sc = (sfxcache_t) Host.Cache.Check( sfx.cache );
+            var sc = (SoundEffectCache_t) Host.Cache.Check( sfx.cache );
             if( sc == null )
                 return;
 

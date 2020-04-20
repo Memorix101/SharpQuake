@@ -151,6 +151,13 @@
     <Compile Include="IO\Programs\ProgramOperator.cs" />
     <Compile Include="IO\Programs\ProgramStack.cs" />
     <Compile Include="IO\Programs\ProgramsWrapper.cs" />
+    <Compile Include="IO\Sound\Channel.cs" />
+    <Compile Include="IO\Sound\DMA.cs" />
+    <Compile Include="IO\Sound\ISoundController.cs" />
+    <Compile Include="IO\Sound\PortableSamplePair.cs" />
+    <Compile Include="IO\Sound\SoundEffect.cs" />
+    <Compile Include="IO\Sound\SoundEffectCache.cs" />
+    <Compile Include="IO\Sound\WavInfo.cs" />
     <Compile Include="IO\Sprite\Sprite.cs" />
     <Compile Include="IO\Sprite\SpriteFrame.cs" />
     <Compile Include="IO\Sprite\SpriteFrameType.cs" />

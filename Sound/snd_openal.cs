@@ -26,6 +26,7 @@ using System;
 using System.Collections.Generic;
 using OpenTK.Audio;
 using OpenTK.Audio.OpenAL;
+using SharpQuake.Framework.IO.Sound;
 
 namespace SharpQuake
 {

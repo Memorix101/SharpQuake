@@ -24,6 +24,7 @@
 
 using System;
 using SharpQuake.Framework;
+using SharpQuake.Framework.IO.Sound;
 using SharpQuake.Framework.Mathematics;
 using SharpQuake.Game.Rendering.Models;
 using SharpQuake.Game.World;
@@ -38,13 +39,13 @@ namespace SharpQuake
         private Entity[] _TempEntities = new Entity[ClientDef.MAX_TEMP_ENTITIES]; // cl_temp_entities[MAX_TEMP_ENTITIES]
         private beam_t[] _Beams = new beam_t[ClientDef.MAX_BEAMS]; // cl_beams[MAX_BEAMS]
 
-        private sfx_t _SfxWizHit; // cl_sfx_wizhit
-        private sfx_t _SfxKnigtHit; // cl_sfx_knighthit
-        private sfx_t _SfxTink1; // cl_sfx_tink1
-        private sfx_t _SfxRic1; // cl_sfx_ric1
-        private sfx_t _SfxRic2; // cl_sfx_ric2
-        private sfx_t _SfxRic3; // cl_sfx_ric3
-        private sfx_t _SfxRExp3; // cl_sfx_r_exp3
+        private SoundEffect_t _SfxWizHit; // cl_sfx_wizhit
+        private SoundEffect_t _SfxKnigtHit; // cl_sfx_knighthit
+        private SoundEffect_t _SfxTink1; // cl_sfx_tink1
+        private SoundEffect_t _SfxRic1; // cl_sfx_ric1
+        private SoundEffect_t _SfxRic2; // cl_sfx_ric2
+        private SoundEffect_t _SfxRic3; // cl_sfx_ric3
+        private SoundEffect_t _SfxRExp3; // cl_sfx_r_exp3
 
         // CL_InitTEnts
         private void InitTempEntities()

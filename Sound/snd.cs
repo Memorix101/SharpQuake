@@ -26,6 +26,7 @@ using System;
 using System.Runtime.InteropServices;
 using SharpQuake.Framework;
 using SharpQuake.Framework.IO;
+using SharpQuake.Framework.IO.Sound;
 using SharpQuake.Framework.Mathematics;
 
 // sound.h -- client sound i/o functions
@@ -34,19 +35,6 @@ namespace SharpQuake
 {
     // snd_started == Sound._Controller.IsInitialized
     // snd_initialized == Sound._IsInitialized
-
-    // !!! if this is changed, it much be changed in asm_i386.h too !!!
-    [StructLayout( LayoutKind.Sequential, Pack = 1 )]
-    internal struct portable_samplepair_t
-    {
-        public Int32 left;
-        public Int32 right;
-
-        public override String ToString( )
-        {
-            return String.Format( "{{{0}, {1}}}", left, right );
-        }
-    }
 
     /// <summary>
     /// S_functions
@@ -61,7 +49,7 @@ namespace SharpQuake
             }
         }
 
-        public dma_t shm
+        public DMA_t shm
         {
             get
             {
@@ -107,16 +95,16 @@ namespace SharpQuake
         private ISoundController _Controller = new OpenALController( );// NullSoundController();
         private Boolean _IsInitialized; // snd_initialized
 
-        private sfx_t[] _KnownSfx = new sfx_t[MAX_SFX]; // hunk allocated [MAX_SFX]
+        private SoundEffect_t[] _KnownSfx = new SoundEffect_t[MAX_SFX]; // hunk allocated [MAX_SFX]
         private Int32 _NumSfx; // num_sfx
-        private sfx_t[] _AmbientSfx = new sfx_t[AmbientDef.NUM_AMBIENTS]; // *ambient_sfx[NUM_AMBIENTS]
+        private SoundEffect_t[] _AmbientSfx = new SoundEffect_t[AmbientDef.NUM_AMBIENTS]; // *ambient_sfx[NUM_AMBIENTS]
         private Boolean _Ambient = true; // snd_ambient
-        private dma_t _shm = new dma_t( ); // shm
+        private DMA_t _shm = new DMA_t( ); // shm
 
         // 0 to MAX_DYNAMIC_CHANNELS-1	= normal entity sounds
         // MAX_DYNAMIC_CHANNELS to MAX_DYNAMIC_CHANNELS + NUM_AMBIENTS -1 = water, etc
         // MAX_DYNAMIC_CHANNELS + NUM_AMBIENTS to total_channels = static sounds
-        private channel_t[] _Channels = new channel_t[MAX_CHANNELS]; // channels[MAX_CHANNELS]
+        private Channel_t[] _Channels = new Channel_t[MAX_CHANNELS]; // channels[MAX_CHANNELS]
 
         private Int32 _TotalChannels; // total_channels
 
@@ -164,7 +152,7 @@ namespace SharpQuake
                 return;
 
             for ( var i = 0; i < _Channels.Length; i++ )
-                _Channels[i] = new channel_t( );
+                _Channels[i] = new Channel_t( );
 
             Host.Commands.Add( "play", Play );
             Host.Commands.Add( "playvol", PlayVol );
@@ -234,7 +222,7 @@ namespace SharpQuake
         }
 
         // S_StaticSound (sfx_t *sfx, vec3_t origin, float vol, float attenuation)
-        public void StaticSound( sfx_t sfx, ref Vector3 origin, Single vol, Single attenuation )
+        public void StaticSound( SoundEffect_t sfx, ref Vector3 origin, Single vol, Single attenuation )
         {
             if ( sfx == null )
                 return;
@@ -268,7 +256,7 @@ namespace SharpQuake
         }
 
         // S_StartSound (int entnum, int entchannel, sfx_t *sfx, vec3_t origin, float fvol,  float attenuation)
-        public void StartSound( Int32 entnum, Int32 entchannel, sfx_t sfx, ref Vector3 origin, Single fvol, Single attenuation )
+        public void StartSound( Int32 entnum, Int32 entchannel, SoundEffect_t sfx, ref Vector3 origin, Single fvol, Single attenuation )
         {
             if ( !_SoundStarted || sfx == null )
                 return;
@@ -343,7 +331,7 @@ namespace SharpQuake
         }
 
         // sfx_t *S_PrecacheSound (char *sample)
-        public sfx_t PrecacheSound( String sample )
+        public SoundEffect_t PrecacheSound( String sample )
         {
             if ( !_IsInitialized || _NoSound.Get<Boolean>( ) )
                 return null;
@@ -379,7 +367,7 @@ namespace SharpQuake
             // update general area ambient sound sources
             UpdateAmbientSounds( );
 
-            channel_t combine = null;
+            Channel_t combine = null;
 
             // update spatialization for and dynamic sounds
             //channel_t ch = channels + NUM_AMBIENTS;
@@ -584,7 +572,7 @@ namespace SharpQuake
             for ( var i = 0; i < _NumSfx; i++ )
             {
                 var sfx = _KnownSfx[i];
-                var sc = ( sfxcache_t ) Host.Cache.Check( sfx.cache );
+                var sc = ( SoundEffectCache_t ) Host.Cache.Check( sfx.cache );
                 if ( sc == null )
                     continue;
 
@@ -625,7 +613,7 @@ namespace SharpQuake
         }
 
         // S_FindName
-        private sfx_t FindName( String name )
+        private SoundEffect_t FindName( String name )
         {
             if ( String.IsNullOrEmpty( name ) )
                 Utilities.Error( "S_FindName: NULL or empty\n" );
@@ -651,7 +639,7 @@ namespace SharpQuake
         }
 
         // SND_Spatialize
-        private void Spatialize( channel_t ch )
+        private void Spatialize( Channel_t ch )
         {
             // anything coming from the view entity will allways be full volume
             if ( ch.entnum == Host.Client.cl.viewentity )
@@ -693,10 +681,10 @@ namespace SharpQuake
         }
 
         // S_LoadSound
-        private sfxcache_t LoadSound( sfx_t s )
+        private SoundEffectCache_t LoadSound( SoundEffect_t s )
         {
             // see if still in memory
-            var sc = ( sfxcache_t ) Host.Cache.Check( s.cache );
+            var sc = ( SoundEffectCache_t ) Host.Cache.Check( s.cache );
             if ( sc != null )
                 return sc;
 
@@ -726,7 +714,7 @@ namespace SharpQuake
             if ( s.cache == null )
                 return null;
 
-            sc = new sfxcache_t( );
+            sc = new SoundEffectCache_t( );
             sc.length = info.samples;
             sc.loopstart = info.loopstart;
             sc.speed = info.rate;
@@ -740,7 +728,7 @@ namespace SharpQuake
         }
 
         // SND_PickChannel
-        private channel_t PickChannel( Int32 entnum, Int32 entchannel )
+        private Channel_t PickChannel( Int32 entnum, Int32 entchannel )
         {
             // Check for replacement sound, or find the best one to replace
             var first_to_die = -1;
@@ -869,111 +857,7 @@ namespace SharpQuake
             Host = host;
 
             for ( var i = 0; i < _KnownSfx.Length; i++ )
-                _KnownSfx[i] = new sfx_t( );
+                _KnownSfx[i] = new SoundEffect_t( );
         }
-    }
-
-    // portable_samplepair_t;
-
-    public class sfx_t
-    {
-        public String name; // char[MAX_QPATH];
-        public CacheUser cache; // cache_user_t
-
-        public void Clear( )
-        {
-            name = null;
-            cache = null;
-        }
-    } // sfx_t;
-
-    // !!! if this is changed, it much be changed in asm_i386.h too !!!
-    public class sfxcache_t
-    {
-        public Int32 length;
-        public Int32 loopstart;
-        public Int32 speed;
-        public Int32 width;
-        public Int32 stereo;
-        public Byte[] data; // [1];		// variable sized
-    } // sfxcache_t;
-
-    public class dma_t
-    {
-        public Boolean gamealive;
-        public Boolean soundalive;
-        public Boolean splitbuffer;
-        public Int32 channels;
-        public Int32 samples;             // mono samples in buffer
-        public Int32 submission_chunk;        // don't mix less than this #
-        public Int32 samplepos;               // in mono samples
-        public Int32 samplebits;
-        public Int32 speed;
-        public Byte[] buffer;
-    } // dma_t;
-
-    // !!! if this is changed, it much be changed in asm_i386.h too !!!
-    [StructLayout( LayoutKind.Sequential )]
-    public class channel_t
-    {
-        public sfx_t sfx;			// sfx number
-        public Int32 leftvol;		// 0-255 volume
-        public Int32 rightvol;		// 0-255 volume
-        public Int32 end;			// end time in global paintsamples
-        public Int32 pos;			// sample position in sfx
-        public Int32 looping;		// where to loop, -1 = no looping
-        public Int32 entnum;			// to allow overriding a specific sound
-        public Int32 entchannel;		//
-        public Vector3 origin;			// origin of sound effect
-        public Single dist_mult;		// distance multiplier (attenuation/clipK)
-        public Int32 master_vol;		// 0-255 master volume
-
-        public void Clear( )
-        {
-            sfx = null;
-            leftvol = 0;
-            rightvol = 0;
-            end = 0;
-            pos = 0;
-            looping = 0;
-            entnum = 0;
-            entchannel = 0;
-            origin = Vector3.Zero;
-            dist_mult = 0;
-            master_vol = 0;
-        }
-    } // channel_t;
-
-    //[StructLayout(LayoutKind.Sequential)]
-    public class wavinfo_t
-    {
-        public Int32 rate;
-        public Int32 width;
-        public Int32 channels;
-        public Int32 loopstart;
-        public Int32 samples;
-        public Int32 dataofs;		// chunk starts this many bytes from file start
-    } // wavinfo_t;
-
-    public interface ISoundController
-    {
-        Boolean IsInitialised
-        {
-            get;
-        }
-
-        void Initialise( Object host );
-
-        void Shutdown( );
-
-        void ClearBuffer( );
-
-        Byte[] LockBuffer( );
-
-        void UnlockBuffer( Int32 count );
-
-        Int32 GetPosition( );
-
-        //void Submit();
-    }
+    }    
 }

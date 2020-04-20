@@ -24,6 +24,7 @@
 
 using System;
 using SharpQuake.Framework;
+using SharpQuake.Framework.IO.Sound;
 
 namespace SharpQuake
 {
@@ -33,7 +34,7 @@ namespace SharpQuake
         private const Int16 C8000 = -32768;
 
         private Int32[,] _ScaleTable = new Int32[32, 256];
-        private portable_samplepair_t[] _PaintBuffer = new portable_samplepair_t[PAINTBUFFER_SIZE]; // paintbuffer[PAINTBUFFER_SIZE]
+        private PortableSamplePair_t[] _PaintBuffer = new PortableSamplePair_t[PAINTBUFFER_SIZE]; // paintbuffer[PAINTBUFFER_SIZE]
 
         // SND_InitScaletable
         private void InitScaletable()
@@ -114,7 +115,7 @@ namespace SharpQuake
         }
 
         // SND_PaintChannelFrom8
-        private void PaintChannelFrom8( channel_t ch, sfxcache_t sc, Int32 count )
+        private void PaintChannelFrom8( Channel_t ch, SoundEffectCache_t sc, Int32 count )
         {
             if( ch.leftvol > 255 )
                 ch.leftvol = 255;
@@ -136,7 +137,7 @@ namespace SharpQuake
         }
 
         // SND_PaintChannelFrom16
-        private void PaintChannelFrom16( channel_t ch, sfxcache_t sc, Int32 count )
+        private void PaintChannelFrom16( Channel_t ch, SoundEffectCache_t sc, Int32 count )
         {
             var leftvol = ch.leftvol;
             var rightvol = ch.rightvol;
