@@ -434,16 +434,18 @@ namespace SharpQuake
             },
             ( textureFile ) =>             
             {
-                if ( Host.WadTextures.ContainsKey( textureFile ) )
-                {
-                    var wadFile = Host.WadTextures[textureFile];
-                    var wad = Host.WadFiles[wadFile];
+				var lowerName = textureFile.ToLower( );
 
-                    return wad.GetLumpBuffer( textureFile );
-                }
+				if ( Host.WadTextures.ContainsKey( lowerName ) )
+				{
+					var wadFile = Host.WadTextures[lowerName];
+					var wad = Host.WadFiles[wadFile];
 
-                return null;
-            } );
+					return wad.GetLumpBuffer( textureFile );
+				}
+
+				return null;
+			} );
 
             //
             // set up the submodels (FIXME: this is confusing)
