@@ -159,6 +159,7 @@
     <Compile Include="IO\Wad\Wad.cs" />
     <Compile Include="IO\Wad\WadInfo.cs" />
     <Compile Include="IO\Wad\WadLumpInfo.cs" />
+    <Compile Include="IO\Wad\WadMipTex.cs" />
     <Compile Include="IO\Wad\WadPicHeader.cs" />
     <Compile Include="Mathematics\OpenTK\BezierCurve.cs" />
     <Compile Include="Mathematics\OpenTK\BezierCurveCubic.cs" />
