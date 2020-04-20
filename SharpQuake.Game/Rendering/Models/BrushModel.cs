@@ -367,7 +367,7 @@ namespace SharpQuake.Game.Rendering.Models
             Entities = brushSrc.Entities;
         }
 
-        public void Load( String name, Byte[] buffer, Action<ModelTexture> onCheckInitSkyTexture, Func<String, Tuple<Byte[], Size>> onCheckForTexture )
+        public void Load( String name, Byte[] buffer, Action<ModelTexture> onCheckInitSkyTexture, Func<String, Tuple<Byte[], Size, Byte[]>> onCheckForTexture )
         {
             Name = name;
             Buffer = buffer;
@@ -610,7 +610,7 @@ namespace SharpQuake.Game.Rendering.Models
         /// <summary>
         /// Mod_LoadTextures
         /// </summary>
-        private void LoadTextures( ref BspLump l, Action<ModelTexture> onCheckInitSkyTexture, Func<String, Tuple<Byte[], Size>> onCheckForTexture )
+        private void LoadTextures( ref BspLump l, Action<ModelTexture> onCheckInitSkyTexture, Func<String, Tuple<Byte[], Size, Byte[]>> onCheckForTexture )
         {
             if ( l.Length == 0 )
             {
