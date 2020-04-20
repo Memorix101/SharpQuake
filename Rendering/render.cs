@@ -27,6 +27,7 @@ using System.Linq;
 using SharpQuake.Framework;
 using SharpQuake.Framework.IO;
 using SharpQuake.Framework.Mathematics;
+using SharpQuake.Framework.World;
 using SharpQuake.Game.Rendering.Memory;
 using SharpQuake.Game.Rendering.Models;
 using SharpQuake.Game.Rendering.Textures;
@@ -675,7 +676,7 @@ namespace SharpQuake
             var psprite = ( msprite_t ) e.model.cache.data; // Uze: changed from _CurrentEntity to e
 
             Vector3 v_forward, right, up;
-            if ( psprite.type == SPR.SPR_ORIENTED )
+            if ( psprite.type == SpriteType.Oriented )
             {
                 // bullet marks on walls
                 MathLib.AngleVectors( ref e.angles, out v_forward, out right, out up ); // Uze: changed from _CurrentEntity to e

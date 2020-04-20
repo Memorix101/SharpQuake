@@ -8,6 +8,7 @@ using SharpQuake.Framework.IO.Alias;
 using SharpQuake.Framework.IO.Sprite;
 using SharpQuake.Framework.Mathematics;
 using SharpQuake.Framework.Rendering;
+using SharpQuake.Framework.World;
 using SharpQuake.Game.Rendering.Textures;
 
 namespace SharpQuake.Game.Rendering.Models
@@ -40,7 +41,7 @@ namespace SharpQuake.Game.Rendering.Models
             cache = new CacheUser( );
             cache.data = psprite;
 
-            psprite.type = EndianHelper.LittleLong( pin.type );
+            psprite.type = ( SpriteType ) EndianHelper.LittleLong( pin.type );
             psprite.maxwidth = EndianHelper.LittleLong( pin.width );
             psprite.maxheight = EndianHelper.LittleLong( pin.height );
             psprite.beamlength = EndianHelper.LittleFloat( pin.beamlength );

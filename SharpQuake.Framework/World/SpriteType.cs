@@ -21,21 +21,21 @@
 /// along with this program; if not, write to the Free Software
 /// Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 /// </copyright>
-/// 
 
 using System;
-using SharpQuake.Framework.World;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
-namespace SharpQuake.Framework
+namespace SharpQuake.Framework.World
 {
-    public class msprite_t
-    {
-        public SpriteType type;
-        public Int32 maxwidth;
-        public Int32 maxheight;
-        public Int32 numframes;
-        public Single beamlength;		// remove?
-        //void				*cachespot;		// remove?
-        public mspriteframedesc_t[] frames; // mspriteframedesc_t	frames[1];
-    } // msprite_t;
+	public enum SpriteType : Int32
+	{
+		ViewportParallelUpright = 0,
+		FacingUpright = 1,
+		ViewportParallel = 2,
+		Oriented = 3,
+		ViewportParallelOriented = 4
+	}
 }

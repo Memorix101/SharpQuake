@@ -151,7 +151,6 @@
     <Compile Include="Rendering\UI\Menu.cs" />
     <Compile Include="Rendering\mesh.cs" />
     <Compile Include="Rendering\model.cs" />
-    <Compile Include="Rendering\m_types.cs" />
     <Compile Include="Networking\Network.cs" />
     <Compile Include="Networking\net_datagram.cs" />
     <Compile Include="Networking\net_loop.cs" />

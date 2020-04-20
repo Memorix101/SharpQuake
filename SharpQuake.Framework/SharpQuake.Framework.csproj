@@ -285,6 +285,7 @@
     <Compile Include="World\EntityFlags.cs" />
     <Compile Include="World\Move.cs" />
     <Compile Include="World\Plane.cs" />
+    <Compile Include="World\SpriteType.cs" />
     <Compile Include="World\Trace.cs" />
   </ItemGroup>
   <ItemGroup>
