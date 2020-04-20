@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using SharpQuake.Framework;
 using SharpQuake.Framework.IO.BSP;
 using SharpQuake.Framework.Mathematics;
+using SharpQuake.Framework.Wad;
 using SharpQuake.Game.Rendering.Memory;
 using SharpQuake.Game.Rendering.Textures;
 
@@ -649,64 +650,66 @@ namespace SharpQuake.Game.Rendering.Models
                         continue;
 
                     var mtOffset = l.Position + dataofs[i];
-                    var mt = Utilities.BytesToStructure<BspMipTex>( Buffer, mtOffset ); //mt = (miptex_t *)((byte *)m + m.dataofs[i]);
-                    mt.width = ( UInt32 ) EndianHelper.LittleLong( ( Int32 ) mt.width );
-                    mt.height = ( UInt32 ) EndianHelper.LittleLong( ( Int32 ) mt.height );
+					var mt = Utilities.BytesToStructure<WadMipTex>( Buffer, mtOffset ); //mt = (miptex_t *)((byte *)m + m.dataofs[i]);
+					mt.width = ( UInt32 ) EndianHelper.LittleLong( ( Int32 ) mt.width );
+					mt.height = ( UInt32 ) EndianHelper.LittleLong( ( Int32 ) mt.height );
 
-                    var tx = new ModelTexture( );// Hunk_AllocName(sizeof(texture_t) + pixels, loadname);
-                    tx.name = Utilities.GetString( mt.name );
+					var tx = new ModelTexture( );// Hunk_AllocName(sizeof(texture_t) + pixels, loadname);
+					tx.name = Utilities.GetString( mt.name );
 
-                    var texResult = onCheckForTexture( tx.name );
+					var texResult = onCheckForTexture( tx.name );
 
-                    if ( texResult?.Item1 != null )
-                    {
-                        var overrideTex = texResult.Item1;
-                        var size = texResult.Item2;
+					if ( texResult?.Item1 != null )
+					{
+						var overrideTex = texResult.Item1;
+						var size = texResult.Item2;
 
-                        mt.width = ( UInt32 ) size.Width;
-                        mt.height = ( UInt32 ) size.Height;
-                        tx.scaleX = 1f;
-                        tx.scaleY = 1f;
+						mt.width = ( UInt32 ) size.Width;
+						mt.height = ( UInt32 ) size.Height;
+						tx.scaleX = 1f;
+						tx.scaleY = 1f;
 
-                        tx.pixels = overrideTex;
+						tx.pixels = overrideTex;
 
-                        tx.width = mt.width;
-                        tx.height = mt.height;
-                    }
-                    else
-                    {
-                        tx.scaleX = 1f;
-                        tx.scaleY = 1f;
+						tx.width = mt.width;
+						tx.height = mt.height;
+						tx.localPalette = texResult.Item3;
+					}
+					else if ( Version == BspDef.Q1_BSPVERSION )
+					{
+						tx.scaleX = 1f;
+						tx.scaleY = 1f;
 
-                        tx.width = mt.width;
-                        tx.height = mt.height;
-                        var pixels = ( Int32 ) ( mt.width * mt.height / 64 * 85 );
+						tx.width = mt.width;
+						tx.height = mt.height;
+						var pixels = ( Int32 ) ( mt.width * mt.height / 64 * 85 );
 
-                        // the pixels immediately follow the structures
-                        tx.pixels = new Byte[pixels];
+						// the pixels immediately follow the structures
+						tx.pixels = new Byte[pixels];
 #warning BlockCopy tries to copy data over the bounds of _ModBase if certain mods are loaded. Needs proof fix!
-                        if ( mtOffset + BspMipTex.SizeInBytes + pixels <= Buffer.Length )
-                            System.Buffer.BlockCopy( Buffer, mtOffset + BspMipTex.SizeInBytes, tx.pixels, 0, pixels );
-                        else
-                        {
-                            System.Buffer.BlockCopy( Buffer, mtOffset, tx.pixels, 0, pixels );
-                            ConsoleWrapper.Print( $"Texture info of {Name} truncated to fit in bounds of _ModBase\n" );
-                        }
-                    }
+						if ( mtOffset + WadMipTex.SizeInBytes + pixels <= Buffer.Length )
+							System.Buffer.BlockCopy( Buffer, mtOffset + WadMipTex.SizeInBytes, tx.pixels, 0, pixels );
+						else
+						{
+							System.Buffer.BlockCopy( Buffer, mtOffset + WadMipTex.SizeInBytes, tx.pixels, 0, pixels );
+							ConsoleWrapper.Print( $"Texture info of {Name} truncated to fit in bounds of _ModBase\n" );
+						}
+					}
+					else
+						continue;
 
-                    for ( var j = 0; j < BspDef.MIPLEVELS; j++ )
-                        mt.offsets[j] = ( UInt32 ) EndianHelper.LittleLong( ( Int32 ) mt.offsets[j] );
+					for ( var j = 0; j < BspDef.MIPLEVELS; j++ )
+						mt.offsets[j] = ( UInt32 ) EndianHelper.LittleLong( ( Int32 ) mt.offsets[j] );
 
-                    Textures[i] = tx;
+					Textures[i] = tx;
 
-                    if ( mt.offsets[0] == 0 )
-                        continue;
+					if ( Version == BspDef.Q1_BSPVERSION && mt.offsets[0] == 0 )
+						continue;
 
-                    for ( var j = 0; j < BspDef.MIPLEVELS; j++ )
-                        tx.offsets[j] = ( Int32 ) mt.offsets[j] - BspMipTex.SizeInBytes;
+					for ( var j = 0; j < BspDef.MIPLEVELS; j++ )
+						tx.offsets[j] = ( Int32 ) mt.offsets[j] - WadMipTex.SizeInBytes;
 
-
-                    onCheckInitSkyTexture( tx );
+					onCheckInitSkyTexture( tx );
 
                     //if ( tx.name != null && tx.name.StartsWith( "sky" ) )// !Q_strncmp(mt->name,"sky",3))
                     //    Host.RenderContext.InitSky( tx );
@@ -1364,10 +1367,17 @@ namespace SharpQuake.Game.Rendering.Models
                 s.texturemins[i] = ( Int16 ) ( bmins[i] * 16 );
                 s.extents[i] = ( Int16 ) ( ( bmaxs[i] - bmins[i] ) * 16 );
 
-                if ( ( tex.flags & BspDef.TEX_SPECIAL ) == 0 && s.extents[i] > 512 )
-                    Utilities.Error( "Bad surface extents" );
-            }
-        }
+			}
+
+			var ssize = ( s.extents[0] >> 4 ) + 1;
+			var tsize = ( s.extents[1] >> 4 ) + 1;
+
+			if ( Version != BspDef.Q3_BSPVERSION && ( tex?.flags & BspDef.TEX_SPECIAL ) == 0 ) //&& s.extents[i] > 512
+			{
+				if ( ssize > 256 || tsize > 256 )
+					Utilities.Error( "Bad surface extents" );
+			}
+		}
 
         /// <summary>
         /// GL_SubdivideSurface
