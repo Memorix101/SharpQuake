@@ -256,9 +256,10 @@ namespace SharpQuake
         private ClientVariable _YawSpeed;// = { "cl_yawspeed", "140" };
         private ClientVariable _PitchSpeed;// = { "cl_pitchspeed", "150" };
         private ClientVariable _AngleSpeedKey;// = { "cl_anglespeedkey", "1.5" };
+		public ClientVariable AnimationBlend;
 
-        // cl_numvisedicts
-        private Entity[] _VisEdicts = new Entity[ClientDef.MAX_VISEDICTS]; // cl_visedicts[MAX_VISEDICTS]
+		// cl_numvisedicts
+		private Entity[] _VisEdicts = new Entity[ClientDef.MAX_VISEDICTS]; // cl_visedicts[MAX_VISEDICTS]
     }
 
     // lightstyle_t;

@@ -32,35 +32,52 @@ namespace SharpQuake.Game.World
 {
     public class Entity
     {
-        public System.Boolean forcelink;		// model changed
-        public Int32 update_type;
-        public EntityState baseline;		// to fill in defaults in updates
-        public Double msgtime;		// time of last update
-        public Vector3[] msg_origins; //[2];	// last two updates (0 is newest)
-        public Vector3 origin;
-        public Vector3[] msg_angles; //[2];	// last two updates (0 is newest)
-        public Vector3 angles;
-        public Model model;			// NULL = no model
-        public EFrag efrag;			// linked list of efrags
-        public Int32 frame;
-        public Single syncbase;		// for client-side animations
-        public Byte[] colormap;
-        public Int32 effects;		// light, particals, etc
-        public Int32 skinnum;		// for Alias models
-        public Int32 visframe;		// last frame this entity was
-        //  found in an active leaf
+		public System.Boolean forcelink;        // model changed
+		public Int32 update_type;
+		public EntityState baseline;        // to fill in defaults in updates
+		public Double msgtime;      // time of last update
+		public Vector3[] msg_origins; //[2];	// last two updates (0 is newest)
+		public Vector3 origin;
+		public Vector3[] msg_angles; //[2];	// last two updates (0 is newest)
+		public Vector3 angles;
+		public Model model;         // NULL = no model
+		public EFrag efrag;         // linked list of efrags
+		public Int32 frame;
+		public Single syncbase;     // for client-side animations
+		public Byte[] colormap;
+		public Int32 effects;       // light, particals, etc
+		public Int32 skinnum;       // for Alias models
+		public Int32 visframe;      // last frame this entity was
+									//  found in an active leaf
 
-        public Int32 dlightframe;	// dynamic lighting
-        public Int32 dlightbits;
+		public Int32 dlightframe;   // dynamic lighting
+		public Int32 dlightbits;
 
-        // FIXME: could turn these into a union
-        public Int32 trivial_accept;
+		// FIXME: could turn these into a union
+		public Int32 trivial_accept;
 
-        public MemoryNode topnode;		// for bmodels, first world node
-        //  that splits bmodel, or NULL if
-        //  not split
+		public MemoryNode topnode;      // for bmodels, first world node
+										//  that splits bmodel, or NULL if
+										//  not split
 
-        public void Clear( )
+		// fenix@io.com: model animation interpolation
+		public float frame_start_time;
+		public float frame_interval;
+		public int pose1;
+		public int pose2;
+
+		// fenix@io.com: model transform interpolation
+		public float translate_start_time;
+		public Vector3 origin1;
+		public Vector3 origin2;
+
+		public float rotate_start_time;
+		public Vector3 angles1;
+		public Vector3 angles2;
+
+		public Boolean useInterpolation = false;
+
+		public void Clear( )
         {
             forcelink = false;
             update_type = 0;

@@ -586,7 +586,7 @@ namespace SharpQuake
 
             // hack the depth range to prevent view model from poking into walls
             Host.Video.Device.SetDepth( _glDepthMin, _glDepthMin + 0.3f * ( _glDepthMax - _glDepthMin ) );
-            DrawAliasModel( _CurrentEntity );
+			DrawAliasModel( _CurrentEntity );
             Host.Video.Device.SetDepth( _glDepthMin, _glDepthMax );
         }
 
@@ -636,7 +636,8 @@ namespace SharpQuake
                 switch ( _CurrentEntity.model.Type )
                 {
                     case ModelType.mod_alias:
-                        DrawAliasModel( _CurrentEntity );
+						_CurrentEntity.useInterpolation = Host.Client.AnimationBlend.Get<Boolean>( );
+						DrawAliasModel( _CurrentEntity );
                         break;
 
                     case ModelType.mod_brush:
@@ -825,15 +826,19 @@ namespace SharpQuake
             model.Desc.EulerAngles = e.angles;
             model.Desc.AliasFrame = _CurrentEntity.frame;
 
-            model.DrawAliasModel( _ShadeLight, _ShadeVector, _ShadeDots, _LightSpot.Z, paliashdr,
-                Host.Client.cl.time, ( _Shadows.Get<Boolean>() ), ( _glSmoothModels.Get<Boolean>() ), ( _glAffineModels.Get<Boolean>() ),
-                !_glNoColors.Get<Boolean>( ), ( clmodel.Name == "progs/eyes.mdl" && _glDoubleEyes.Get<Boolean>() ) );
-        }
+			model.DrawAliasModel( _ShadeLight, _ShadeVector, _ShadeDots, _LightSpot.Z, paliashdr,
+				Host.RealTime, Host.Client.cl.time,
+				ref e.pose1, ref e.pose2, ref e.frame_start_time, ref e.frame_interval,
+				ref e.origin1, ref e.origin2, ref e.translate_start_time, ref e.angles1,
+				ref e.angles2, ref e.rotate_start_time,
+				( _Shadows.Get<Boolean>( ) ), ( _glSmoothModels.Get<Boolean>( ) ), ( _glAffineModels.Get<Boolean>( ) ),
+				!_glNoColors.Get<Boolean>( ), ( clmodel.Name == "progs/eyes.mdl" && _glDoubleEyes.Get<Boolean>( ) ), e.useInterpolation );
+		}
 
-        /// <summary>
-        /// R_SetupGL
-        /// </summary>
-        private void SetupGL( )
+		/// <summary>
+		/// R_SetupGL
+		/// </summary>
+		private void SetupGL( )
         {
             Host.Video.Device.Setup3DScene( _glCull.Get<Boolean>(), _RefDef, _IsEnvMap );
 

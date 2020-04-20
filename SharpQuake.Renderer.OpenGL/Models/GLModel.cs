@@ -30,179 +30,265 @@ using SharpQuake.Framework;
 
 namespace SharpQuake.Renderer.OpenGL.Models
 {
-    public class GLModel : BaseModel
-    {
-        public GLModel( BaseDevice device, BaseModelDesc desc ) : base( device, desc )
-        {
-        }
-        
-        public override void DrawAliasModel( Single shadeLight, Vector3 shadeVector, Single[] shadeDots, Single lightSpotZ, aliashdr_t paliashdr, Double time, System.Boolean shadows = true, System.Boolean smoothModels = true, System.Boolean affineModels = false, System.Boolean noColours = false, System.Boolean isEyes = false )
-        {
-            Device.DisableMultitexture( );
+	public class GLModel : BaseModel
+	{
+		public GLModel( BaseDevice device, BaseModelDesc desc ) : base( device, desc )
+		{
+		}
 
-            GL.Enable( EnableCap.Texture2D );
+		public override void DrawAliasModel( Single shadeLight, Vector3 shadeVector, Single[] shadeDots, Single lightSpotZ, aliashdr_t paliashdr, Double realTime, Double time, ref Int32 poseNum, ref Int32 poseNum2, ref Single frameStartTime, ref Single frameInterval, ref Vector3 origin1, ref Vector3 origin2, ref Single translateStartTime, ref Vector3 angles1, ref Vector3 angles2, ref Single rotateStartTime, System.Boolean shadows = true, System.Boolean smoothModels = true, System.Boolean affineModels = false, System.Boolean noColours = false, System.Boolean isEyes = false, System.Boolean useInterpolation = true )
+		{
+			Device.DisableMultitexture( );
 
-            GL.PushMatrix( );
+			GL.Enable( EnableCap.Texture2D );
 
-            Device.RotateForEntity( Desc.Origin, Desc.EulerAngles );
+			GL.PushMatrix( );
 
-            if ( isEyes )
-            {
-                var v = Desc.ScaleOrigin;
-                v.Z -= ( 22 + 8 );
-                GL.Translate( v.X, v.Y, v.Z );
-                // double size of eyes, since they are really hard to see in gl
-                var s = Desc.Scale * 2.0f;
-                GL.Scale( s.X, s.Y, s.Z );
-            }
-            else
-            {
-                GL.Translate( Desc.ScaleOrigin.X, Desc.ScaleOrigin.Y, Desc.ScaleOrigin.Z );
-                GL.Scale( Desc.Scale.X, Desc.Scale.Y, Desc.Scale.Z );
-            }
+			if ( useInterpolation )
+				Device.BlendedRotateForEntity( Desc.Origin, Desc.EulerAngles, realTime, ref origin1, ref origin2, ref translateStartTime, ref angles1, ref angles2, ref rotateStartTime );
+			else
+				Device.RotateForEntity( Desc.Origin, Desc.EulerAngles );
 
-            var anim = ( Int32 ) ( time * 10 ) & 3;
-            //var texture = Host.Model.SkinTextures[paliashdr.gl_texturenum[_CurrentEntity.skinnum, anim]];
-            Desc.Texture.Bind( );
+			if ( isEyes )
+			{
+				var v = Desc.ScaleOrigin;
+				v.Z -= ( 22 + 8 );
+				GL.Translate( v.X, v.Y, v.Z );
+				// double size of eyes, since they are really hard to see in gl
+				var s = Desc.Scale * 2.0f;
+				GL.Scale( s.X, s.Y, s.Z );
+			}
+			else
+			{
+				GL.Translate( Desc.ScaleOrigin.X, Desc.ScaleOrigin.Y, Desc.ScaleOrigin.Z );
+				GL.Scale( Desc.Scale.X, Desc.Scale.Y, Desc.Scale.Z );
+			}
 
-            // we can't dynamically colormap textures, so they are cached
-            // seperately for the players.  Heads are just uncolored.
-            //if ( _CurrentEntity.colormap != Host.Screen.vid.colormap && !noColours && playernum >= 1 )
-            //{
-            //    PlayerTextures[playernum > 0 ? playernum - 1 : playernum].Bind( );
-            //    //Host.DrawingContext.Bind( _PlayerTextures - 1 + playernum );
-            //}
+			var anim = ( Int32 ) ( time * 10 ) & 3;
+			//var texture = Host.Model.SkinTextures[paliashdr.gl_texturenum[_CurrentEntity.skinnum, anim]];
+			Desc.Texture.Bind( );
 
-            if ( smoothModels )
-                GL.ShadeModel( ShadingModel.Smooth );
+			// we can't dynamically colormap textures, so they are cached
+			// seperately for the players.  Heads are just uncolored.
+			//if ( _CurrentEntity.colormap != Host.Screen.vid.colormap && !noColours && playernum >= 1 )
+			//{
+			//    PlayerTextures[playernum > 0 ? playernum - 1 : playernum].Bind( );
+			//    //Host.DrawingContext.Bind( _PlayerTextures - 1 + playernum );
+			//}
 
-            GL.TexEnv( TextureEnvTarget.TextureEnv, TextureEnvParameter.TextureEnvMode, ( Int32 ) TextureEnvMode.Modulate );
+			if ( smoothModels )
+				GL.ShadeModel( ShadingModel.Smooth );
 
-            if ( affineModels )
-                GL.Hint( HintTarget.PerspectiveCorrectionHint, HintMode.Fastest );
+			GL.TexEnv( TextureEnvTarget.TextureEnv, TextureEnvParameter.TextureEnvMode, ( Int32 ) TextureEnvMode.Modulate );
 
-            SetupAliasFrame( shadeLight, Desc.AliasFrame, time, paliashdr, shadeDots );
+			if ( affineModels )
+				GL.Hint( HintTarget.PerspectiveCorrectionHint, HintMode.Fastest );
 
-            GL.TexEnv( TextureEnvTarget.TextureEnv, TextureEnvParameter.TextureEnvMode, ( Int32 ) TextureEnvMode.Replace );
+			//SetupAliasFrame( shadeLight, Desc.AliasFrame, time, paliashdr, shadeDots );
+			SetupAliasBlendedFrame( shadeLight, Desc.AliasFrame, realTime, time, paliashdr, shadeDots, ref poseNum, ref poseNum2, ref frameStartTime, ref frameInterval );
 
-            GL.ShadeModel( ShadingModel.Flat );
-            if ( affineModels )
-                GL.Hint( HintTarget.PerspectiveCorrectionHint, HintMode.Nicest );
+			GL.TexEnv( TextureEnvTarget.TextureEnv, TextureEnvParameter.TextureEnvMode, ( Int32 ) TextureEnvMode.Replace );
 
-            GL.PopMatrix( );
+			GL.ShadeModel( ShadingModel.Flat );
+			if ( affineModels )
+				GL.Hint( HintTarget.PerspectiveCorrectionHint, HintMode.Nicest );
 
-            if ( shadows )
-            {
-                GL.PushMatrix( );
-                Device.RotateForEntity( Desc.Origin, Desc.EulerAngles );
-                GL.Disable( EnableCap.Texture2D );
-                GL.Enable( EnableCap.Blend );
-                GL.Color4( 0, 0, 0, 0.5f );
-                DrawAliasShadow( paliashdr, Desc.LastPoseNumber, lightSpotZ, shadeVector );
-                GL.Enable( EnableCap.Texture2D );
-                GL.Disable( EnableCap.Blend );
-                GL.Color4( 1f, 1, 1, 1 );
-                GL.PopMatrix( );
-            }
+			GL.PopMatrix( );
 
-            GL.Disable( EnableCap.Texture2D );
-        }
+			if ( shadows )
+			{
+				GL.PushMatrix( );
+				Device.RotateForEntity( Desc.Origin, Desc.EulerAngles );
+				GL.Disable( EnableCap.Texture2D );
+				GL.Enable( EnableCap.Blend );
+				GL.Color4( 0, 0, 0, 0.5f );
+				DrawAliasShadow( paliashdr, Desc.LastPoseNumber, lightSpotZ, shadeVector );
+				GL.Enable( EnableCap.Texture2D );
+				GL.Disable( EnableCap.Blend );
+				GL.Color4( 1f, 1, 1, 1 );
+				GL.PopMatrix( );
+			}
 
-        protected override void DrawAliasShadow( aliashdr_t paliashdr, Int32 posenum, Single lightSpotZ, Vector3 shadeVector )
-        {
-            var lheight = Desc.Origin.Z - lightSpotZ;
-            Single height = 0;
-            var verts = paliashdr.posedata;
-            var voffset = posenum * paliashdr.poseverts;
-            var order = paliashdr.commands;
+			GL.Disable( EnableCap.Texture2D );
+		}
 
-            height = -lheight + 1.0f;
-            var orderOffset = 0;
+		protected override void DrawAliasShadow( aliashdr_t paliashdr, Int32 posenum, Single lightSpotZ, Vector3 shadeVector )
+		{
+			var lheight = Desc.Origin.Z - lightSpotZ;
+			Single height = 0;
+			var verts = paliashdr.posedata;
+			var voffset = posenum * paliashdr.poseverts;
+			var order = paliashdr.commands;
 
-            while ( true )
-            {
-                // get the vertex count and primitive type
-                var count = order[orderOffset++];
-                if ( count == 0 )
-                    break;		// done
+			height = -lheight + 1.0f;
+			var orderOffset = 0;
 
-                if ( count < 0 )
-                {
-                    count = -count;
-                    GL.Begin( PrimitiveType.TriangleFan );
-                }
-                else
-                    GL.Begin( PrimitiveType.TriangleStrip );
+			while ( true )
+			{
+				// get the vertex count and primitive type
+				var count = order[orderOffset++];
+				if ( count == 0 )
+					break;      // done
 
-                do
-                {
-                    // texture coordinates come from the draw list
-                    // (skipped for shadows) glTexCoord2fv ((float *)order);
-                    orderOffset += 2;
+				if ( count < 0 )
+				{
+					count = -count;
+					GL.Begin( PrimitiveType.TriangleFan );
+				}
+				else
+					GL.Begin( PrimitiveType.TriangleStrip );
 
-                    // normals and vertexes come from the frame list
-                    var point = new Vector3(
-                        verts[voffset].v[0] * paliashdr.scale.X + paliashdr.scale_origin.X,
-                        verts[voffset].v[1] * paliashdr.scale.Y + paliashdr.scale_origin.Y,
-                        verts[voffset].v[2] * paliashdr.scale.Z + paliashdr.scale_origin.Z
-                    );
+				do
+				{
+					// texture coordinates come from the draw list
+					// (skipped for shadows) glTexCoord2fv ((float *)order);
+					orderOffset += 2;
 
-                    point.X -= shadeVector.X * ( point.Z + lheight );
-                    point.Y -= shadeVector.Y * ( point.Z + lheight );
-                    point.Z = height;
+					// normals and vertexes come from the frame list
+					var point = new Vector3(
+						verts[voffset].v[0] * paliashdr.scale.X + paliashdr.scale_origin.X,
+						verts[voffset].v[1] * paliashdr.scale.Y + paliashdr.scale_origin.Y,
+						verts[voffset].v[2] * paliashdr.scale.Z + paliashdr.scale_origin.Z
+					);
 
-                    GL.Vertex3( point.X, point.Y, point.Z );
+					point.X -= shadeVector.X * ( point.Z + lheight );
+					point.Y -= shadeVector.Y * ( point.Z + lheight );
+					point.Z = height;
 
-                    voffset++;
-                } while ( --count > 0 );
+					GL.Vertex3( point.X, point.Y, point.Z );
 
-                GL.End( );
-            }
-        }
-        /// <summary>
-        /// GL_DrawAliasFrame
-        /// </summary>
-        protected override void DrawAliasFrame( Single shadeLight, Single[] shadeDots, aliashdr_t paliashdr, Int32 posenum )
-        {
-            Desc.LastPoseNumber = posenum;
+					voffset++;
+				} while ( --count > 0 );
 
-            var verts = paliashdr.posedata;
-            var vertsOffset = posenum * paliashdr.poseverts;
-            var order = paliashdr.commands;
-            var orderOffset = 0;
+				GL.End( );
+			}
+		}
 
-            while ( true )
-            {
-                // get the vertex count and primitive type
-                var count = order[orderOffset++];
-                if ( count == 0 )
-                    break;		// done
+		/*
+         =============
+         GL_DrawAliasBlendedFrame
 
-                if ( count < 0 )
-                {
-                    count = -count;
-                    GL.Begin( PrimitiveType.TriangleFan );
-                }
-                else
-                    GL.Begin( PrimitiveType.TriangleStrip );
+         fenix@io.com: model animation interpolation
+         =============
+         */		
 
-                Union4b u1 = Union4b.Empty, u2 = Union4b.Empty;
-                do
-                {
-                    // texture coordinates come from the draw list
-                    u1.i0 = order[orderOffset + 0];
-                    u2.i0 = order[orderOffset + 1];
-                    orderOffset += 2;
-                    GL.TexCoord2( u1.f0, u2.f0 );
+		protected override void DrawAliasBlendedFrame( Single shadeLight, Single[] shadeDots, aliashdr_t paliashdr, Int32 posenum, Int32 posenum2, Single blend )
+		{
+			Desc.LastPoseNumber0 = posenum;
+			Desc.LastPoseNumber = posenum2;
 
-                    // normals and vertexes come from the frame list
-                    var l = shadeDots[verts[vertsOffset].lightnormalindex] * shadeLight;
-                    GL.Color3( l, l, l );
-                    GL.Vertex3( ( Single ) verts[vertsOffset].v[0], verts[vertsOffset].v[1], verts[vertsOffset].v[2] );
-                    vertsOffset++;
-                } while ( --count > 0 );
-                GL.End( );
-            }
-        }
-    }
+			var verts = paliashdr.posedata;
+			var vert2 = verts;
+			var vertsOffset = posenum * paliashdr.poseverts;
+
+			var verts2Offset = posenum2 * paliashdr.poseverts;
+
+			var order = paliashdr.commands;
+			var orderOffset = 0;
+
+			while ( true )
+			{
+				if ( orderOffset >= order.Length )
+					break;
+
+				// get the vertex count and primitive type
+				var count = order[orderOffset];
+				orderOffset++;
+				if ( count == 0 )
+					break;      // done
+
+				if ( count < 0 )
+				{
+					count = -count;
+					GL.Begin( PrimitiveType.TriangleFan );
+				}
+				else
+					GL.Begin( PrimitiveType.TriangleStrip );
+
+				Union4b u1 = Union4b.Empty, u2 = Union4b.Empty;
+				do
+				{
+					if ( orderOffset + 1 >= order.Length )
+						break;
+					// texture coordinates come from the draw list
+					u1.i0 = order[orderOffset + 0];
+					u2.i0 = order[orderOffset + 1];
+					orderOffset += 2;
+					GL.TexCoord2( u1.f0, u2.f0 );
+
+					// normals and vertexes come from the frame list
+					// blend the light intensity from the two frames together
+					Vector3 d = Vector3.Zero;
+
+					if ( vertsOffset >= verts.Length )
+					{
+						count = 0;
+						break;
+					}
+
+					d.X = shadeDots[vert2[verts2Offset].lightnormalindex] -
+						   shadeDots[verts[vertsOffset].lightnormalindex];
+
+					//var l = shadeDots[verts[vertsOffset].lightnormalindex] * shadeLight;
+					var l = shadeLight * ( shadeDots[verts[vertsOffset].lightnormalindex] + ( blend * d.X ) );
+					GL.Color3( l, l, l );
+
+					var v = new Vector3( verts[vertsOffset].v[0], verts[vertsOffset].v[1], verts[vertsOffset].v[2] );
+					var v2 = new Vector3( vert2[verts2Offset].v[0], vert2[verts2Offset].v[1], verts[verts2Offset].v[2] );
+					d = v2 - v;
+
+					GL.Vertex3( ( Single ) verts[vertsOffset].v[0] + ( blend * d[0] ), verts[vertsOffset].v[1] + ( blend * d[1] ), verts[vertsOffset].v[2] + ( blend * d[2] ) );
+					vertsOffset++;
+					verts2Offset++;
+				} while ( --count > 0 );
+				GL.End( );
+			}
+		}
+
+		/// <summary>
+		/// GL_DrawAliasFrame
+		/// </summary>
+		protected override void DrawAliasFrame( Single shadeLight, Single[] shadeDots, aliashdr_t paliashdr, Int32 posenum )
+		{
+			Desc.LastPoseNumber = posenum;
+
+			var verts = paliashdr.posedata;
+			var vertsOffset = posenum * paliashdr.poseverts;
+			var order = paliashdr.commands;
+			var orderOffset = 0;
+
+			while ( true )
+			{
+				// get the vertex count and primitive type
+				var count = order[orderOffset++];
+				if ( count == 0 )
+					break;      // done
+
+				if ( count < 0 )
+				{
+					count = -count;
+					GL.Begin( PrimitiveType.TriangleFan );
+				}
+				else
+					GL.Begin( PrimitiveType.TriangleStrip );
+
+				Union4b u1 = Union4b.Empty, u2 = Union4b.Empty;
+				do
+				{
+					// texture coordinates come from the draw list
+					u1.i0 = order[orderOffset + 0];
+					u2.i0 = order[orderOffset + 1];
+					orderOffset += 2;
+					GL.TexCoord2( u1.f0, u2.f0 );
+
+					// normals and vertexes come from the frame list
+					var l = shadeDots[verts[vertsOffset].lightnormalindex] * shadeLight;
+					GL.Color3( l, l, l );
+					GL.Vertex3( ( Single ) verts[vertsOffset].v[0], verts[vertsOffset].v[1], verts[vertsOffset].v[2] );
+					vertsOffset++;
+				} while ( --count > 0 );
+				GL.End( );
+			}
+		}
+	}
 }

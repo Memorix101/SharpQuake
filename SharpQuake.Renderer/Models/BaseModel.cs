@@ -30,112 +30,230 @@ using SharpQuake.Renderer.Textures;
 
 namespace SharpQuake.Renderer.Models
 {
-    public class BaseModel : IDisposable
-    {
-        public BaseDevice Device
-        {
-            get;
-            private set;
-        }
+	public class BaseModel : IDisposable
+	{
+		public BaseDevice Device
+		{
+			get;
+			private set;
+		}
 
-        public BaseModelDesc Desc
-        {
-            get;
-            protected set;
-        }
+		public BaseModelDesc Desc
+		{
+			get;
+			protected set;
+		}
 
-        public static Dictionary<String, BaseModel> ModelPool
-        {
-            get;
-            protected set;
-        }
+		public static Dictionary<String, BaseModel> ModelPool
+		{
+			get;
+			protected set;
+		}
 
-        static BaseModel( )
-        {
-            ModelPool = new Dictionary<String, BaseModel>( );
-        }
+		static BaseModel( )
+		{
+			ModelPool = new Dictionary<String, BaseModel>( );
+		}
 
-        public BaseModel( BaseDevice device, BaseModelDesc desc )
-        {
-            Device = device;
-            Desc = desc;
-            ModelPool.Add( Desc.Name, this );
-        }
+		public BaseModel( BaseDevice device, BaseModelDesc desc )
+		{
+			Device = device;
+			Desc = desc;
+			ModelPool.Add( Desc.Name, this );
+		}
 
-        public virtual void Initialise( )
-        {
-            //throw new NotImplementedException( );
-        }
+		public virtual void Initialise( )
+		{
+			//throw new NotImplementedException( );
+		}
 
-        public virtual void Draw( )
-        {
-        }
+		public virtual void Draw( )
+		{
+		}
 
-        /// <summary>
-        /// R_DrawAliasModel
-        /// </summary>
-        public virtual void DrawAliasModel( Single shadeLight, Vector3 shadeVector, Single[] shadeDots, Single lightSpotZ, aliashdr_t paliashdr, Double time, Boolean shadows = true, Boolean smoothModels = true, Boolean affineModels = false, Boolean noColours = false, Boolean isEyes = false )
-        {
-            throw new NotImplementedException( );
-        }
+		/// <summary>
+		/// R_DrawAliasModel
+		/// </summary>
+		public virtual void DrawAliasModel( Single shadeLight, Vector3 shadeVector, Single[] shadeDots, Single lightSpotZ, aliashdr_t paliashdr, Double realTime, Double time, ref Int32 poseNum, ref Int32 poseNum2, ref Single frameStartTime, ref Single frameInterval, ref Vector3 origin1, ref Vector3 origin2, ref Single translateStartTime, ref Vector3 angles1, ref Vector3 angles2, ref Single rotateStartTime, Boolean shadows = true, Boolean smoothModels = true, Boolean affineModels = false, Boolean noColours = false, Boolean isEyes = false, Boolean useInterpolation = true )
+		{
+			throw new NotImplementedException( );
+		}
 
-        /// <summary>
-        /// GL_DrawAliasShadow
-        /// </summary>
-        protected virtual void DrawAliasShadow( aliashdr_t paliashdr, Int32 posenum, Single lightSpotZ, Vector3 shadeVector )
-        {
-            throw new NotImplementedException( );
-        }
+		/// <summary>
+		/// GL_DrawAliasShadow
+		/// </summary>
+		protected virtual void DrawAliasShadow( aliashdr_t paliashdr, Int32 posenum, Single lightSpotZ, Vector3 shadeVector )
+		{
+			throw new NotImplementedException( );
+		}
 
-        /// <summary>
-        /// R_SetupAliasFrame
-        /// </summary>
-        protected virtual void SetupAliasFrame( Single shadeLight, Int32 frame, Double time, aliashdr_t paliashdr, Single[] shadeDots )
-        {
-            if ( ( frame >= paliashdr.numframes ) || ( frame < 0 ) )
-            {
-                ConsoleWrapper.Print( "R_AliasSetupFrame: no such frame {0}\n", frame );
-                frame = 0;
-            }
+		/*
+		=================
+		R_SetupAliasBlendedFrame
 
-            var pose = paliashdr.frames[frame].firstpose;
-            var numposes = paliashdr.frames[frame].numposes;
+		fenix@io.com: model animation interpolation
+		=================
+		*/
+		/*void R_SetupAliasBlendedFrame( int frame, aliashdr_t* paliashdr, entity_t* e )
+		{
+			int pose;
+			int numposes;
+			float blend;
 
-            if ( numposes > 1 )
-            {
-                var interval = paliashdr.frames[frame].interval;
-                pose += ( Int32 ) ( time / interval ) % numposes;
-            }
+			if ( ( frame >= paliashdr->numframes ) || ( frame < 0 ) )
+			{
+				Con_DPrintf( "R_AliasSetupFrame: no such frame %d\n", frame );
+				frame = 0;
+			}
 
-            DrawAliasFrame( shadeLight, shadeDots, paliashdr, pose );
-        }
+			pose = paliashdr->frames[frame].firstpose;
+			numposes = paliashdr->frames[frame].numposes;
 
-        /// <summary>
-        /// GL_DrawAliasFrame
-        /// </summary>
-        protected virtual void DrawAliasFrame( Single shadeLight, Single[] shadeDots, aliashdr_t paliashdr, Int32 posenum )
-        {
-            throw new NotImplementedException( );
-        }
+			if ( numposes > 1 )
+			{
+				e->frame_interval = paliashdr->frames[frame].interval;
+				pose += ( int ) ( cl.time / e->frame_interval ) % numposes;
+			}
+			else
+			{
+				// One tenth of a second is a good for most Quake animations.
+				If the nextthink is longer then the animation is usually meant to pause
+				(e.g. check out the shambler magic animation in shambler.qc).  If its
+				shorter then things will still be smoothed partly, and the jumps will be
+				less noticable because of the shorter time.  So, this is probably a good
+				assumption. //
+				e->frame_interval = 0.1;
+			}
 
-        public virtual void Dispose( )
-        {
-        }
+			if ( e->pose2 != pose )
+			{
+				e->frame_start_time = realtime;
+				e->pose1 = e->pose2;
+				e->pose2 = pose;
+				blend = 0;
+			}
+			else
+			{
+				blend = ( realtime - e->frame_start_time ) / e->frame_interval;
+			}
 
-        public static BaseModel Create( BaseDevice device, String identifier, BaseTexture texture, Boolean isAliasModel )
-        {
-            if ( ModelPool.ContainsKey( identifier ) )
-                return ModelPool[identifier];
+			// wierd things start happening if blend passes 1
+			if ( cl.paused || blend > 1 ) blend = 1;
 
-            var desc = ( BaseModelDesc ) Activator.CreateInstance( device.ModelDescType );
-            desc.Name = identifier;
-            desc.IsAliasModel = isAliasModel;
-            desc.Texture = texture;
+			GL_DrawAliasBlendedFrame( paliashdr, e->pose1, e->pose2, blend );
+		}*/
 
-            var model = ( BaseModel ) Activator.CreateInstance( device.ModelType, device, desc );
-            model.Initialise( );
+		protected virtual void DrawAliasBlendedFrame( Single shadeLight, Single[] shadeDots, aliashdr_t paliashdr, Int32 posenum, Int32 posenum2, Single blend )
+		{
+			throw new NotImplementedException( );
+		}
+		/*
+		=================
+		R_SetupAliasBlendedFrame
 
-            return model;
-        }
-    }
+		fenix@io.com: model animation interpolation
+		=================
+		*/
+		protected virtual void SetupAliasBlendedFrame( Single shadeLight, Int32 frame, Double realTime, Double time, aliashdr_t paliashdr, Single[] shadeDots, ref Int32 poseNum, ref Int32 poseNum2, ref Single frameStartTime, ref Single frameInterval )
+		{
+			if ( ( frame >= paliashdr.numframes ) || ( frame < 0 ) )
+			{
+				ConsoleWrapper.Print( "R_AliasSetupFrame: no such frame {0}\n", frame );
+				frame = 0;
+			}
+
+			var pose = paliashdr.frames[frame].firstpose;
+			var numposes = paliashdr.frames[frame].numposes;
+
+			if ( numposes > 1 )
+			{
+				var interval = paliashdr.frames[frame].interval;
+				pose += ( Int32 ) ( time / interval ) % numposes;
+				frameInterval = interval;
+			}
+			else
+			{
+				/* One tenth of a second is a good for most Quake animations.
+				If the nextthink is longer then the animation is usually meant to pause
+				( e.g.check out the shambler magic animation in shambler.qc).  If its
+				shorter then things will still be smoothed partly, and the jumps will be
+				less noticable because of the shorter time.So, this is probably a good
+				assumption. */
+				frameInterval = 0.1f;
+			}
+
+			var blend = 0f;
+
+			var e = paliashdr.frames[frame];
+
+			if ( poseNum2 != pose )
+			{
+				frameStartTime = ( Single ) realTime;
+				poseNum = poseNum2;
+				poseNum2 = pose;
+				blend = 0;
+			}
+			else
+			{
+				blend = ( Single ) ( ( realTime - frameStartTime ) / frameInterval );
+			}
+
+			// wierd things start happening if blend passes 1
+			if ( /*cl.paused || */ blend > 1 )
+				blend = 1;
+
+			DrawAliasBlendedFrame( shadeLight, shadeDots, paliashdr, poseNum, poseNum2, blend );
+		}
+
+		/// <summary>
+		/// R_SetupAliasFrame
+		/// </summary>
+		protected virtual void SetupAliasFrame( Single shadeLight, Int32 frame, Double time, aliashdr_t paliashdr, Single[] shadeDots )
+		{
+			if ( ( frame >= paliashdr.numframes ) || ( frame < 0 ) )
+			{
+				ConsoleWrapper.Print( "R_AliasSetupFrame: no such frame {0}\n", frame );
+				frame = 0;
+			}
+
+			var pose = paliashdr.frames[frame].firstpose;
+			var numposes = paliashdr.frames[frame].numposes;
+
+			if ( numposes > 1 )
+			{
+				var interval = paliashdr.frames[frame].interval;
+				pose += ( Int32 ) ( time / interval ) % numposes;
+			}
+
+			DrawAliasFrame( shadeLight, shadeDots, paliashdr, pose );
+		}
+
+		/// <summary>
+		/// GL_DrawAliasFrame
+		/// </summary>
+		protected virtual void DrawAliasFrame( Single shadeLight, Single[] shadeDots, aliashdr_t paliashdr, Int32 posenum )
+		{
+			throw new NotImplementedException( );
+		}
+
+		public virtual void Dispose( )
+		{
+		}
+
+		public static BaseModel Create( BaseDevice device, String identifier, BaseTexture texture, Boolean isAliasModel )
+		{
+			if ( ModelPool.ContainsKey( identifier ) )
+				return ModelPool[identifier];
+
+			var desc = ( BaseModelDesc ) Activator.CreateInstance( device.ModelDescType );
+			desc.Name = identifier;
+			desc.IsAliasModel = isAliasModel;
+			desc.Texture = texture;
+
+			var model = ( BaseModel ) Activator.CreateInstance( device.ModelType, device, desc );
+			model.Initialise( );
+
+			return model;
+		}
+	}
 }

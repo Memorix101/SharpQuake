@@ -489,7 +489,6 @@ namespace SharpQuake.Renderer.OpenGL
             ConsoleWrapper.Print( "Wrote {0}\n", Path.GetFileName( path ) );
         }
 
-
         /// <summary>
         /// R_RotateForEntity
         /// </summary>
@@ -501,5 +500,87 @@ namespace SharpQuake.Renderer.OpenGL
             GL.Rotate( -angles.X, 0, 1, 0 );
             GL.Rotate( angles.Z, 1, 0, 0 );
         }
-    }
+
+		/// <summary>
+		/// R_BlendedRotateForEntity
+		/// </summary>
+		public override void BlendedRotateForEntity( Vector3 origin, Vector3 angles, Double realTime, ref Vector3 origin1, ref Vector3 origin2, ref Single translateStartTime, ref Vector3 angles1, ref Vector3 angles2, ref Single rotateStartTime )
+		{
+			// positional interpolation
+
+			var blend = 0f;
+			var timepassed = realTime - translateStartTime;
+
+			if ( translateStartTime == 0 || timepassed > 1 )
+			{
+				translateStartTime = ( Single ) realTime;
+
+				origin1 = new Vector3( origin );
+				origin2 = new Vector3( origin );
+				blend = 0f;
+			}
+			if ( origin != origin2 )
+			{
+				translateStartTime = ( Single ) realTime;
+				origin1 = new Vector3( origin2 );
+				origin2 = new Vector3( origin );
+				blend = 0;
+			}
+			else
+			{
+				blend = ( Single ) ( timepassed / 0.1f );
+
+				if ( /*cl.paused || */blend > 1 )
+					blend = 1;
+			}
+
+			var d = origin2 - origin1;
+
+			GL.Translate( origin1.X + ( blend * d[0] ), origin1.Y + ( blend * d[1] ), origin1.Z + ( blend * d[2] ) );
+
+			// orientation interpolation (Euler angles, yuck!)
+
+			timepassed = realTime - rotateStartTime;
+
+			if ( rotateStartTime == 0 || timepassed > 1 )
+			{
+				rotateStartTime = ( Single ) realTime;
+				angles1 = new Vector3( angles );
+				angles2 = new Vector3( angles );
+			}
+
+			if ( angles != angles2 )
+			{
+				rotateStartTime = ( Single ) realTime;
+				angles1 = new Vector3( angles2 );
+				angles2 = new Vector3( angles );
+				blend = 0;
+			}
+			else
+			{
+				blend = ( Single ) ( timepassed / 0.1 );
+
+				if ( /*cl.paused ||*/ blend > 1 ) blend = 1;
+			}
+
+			d = angles2 - angles1;
+
+			// always interpolate along the shortest path
+			for ( var i = 0; i < 3; i++ )
+			{
+				if ( d[i] > 180 )
+				{
+					d[i] -= 360;
+				}
+				else if ( d[i] < -180 )
+				{
+					d[i] += 360;
+				}
+			}
+
+			GL.Rotate( angles1.Y + ( blend * d[1] ), 0, 0, 1 );
+			GL.Rotate( -angles1.X + ( -blend * d[0] ), 0, 1, 0 );
+			GL.Rotate( angles1.Z + ( blend * d[2] ), 1, 0, 0 );
+		}
+	}
 }
