@@ -783,10 +783,10 @@ namespace SharpQuake
 
             // decide the simulation time
             if ( !FilterTime( time ) )
-                return;			// don't run too fast, or packets will flood out
+                return;         // don't run too fast, or packets will flood out
 
-            // get new key events
-            sys.SendKeyEvents( );
+			// get new key events
+			MainWindow.SendKeyEvents( );
 
             // allow mice or other external controllers to add commands
             MainWindow.Input.Commands( );

@@ -29,36 +29,11 @@ namespace SharpQuake
     internal static class sys
     {
         /// <summary>
-        /// Sys_SendKeyEvents
-        /// </summary>
-        public static void SendKeyEvents()
-        {
-            MainWindow.Instance.Host.Screen.SkipUpdate = false;
-            MainWindow.Instance.ProcessEvents();
-        }
-
-        /// <summary>
         /// Sys_ConsoleInput
         /// </summary>
         public static String ConsoleInput()
         {
             return null; // this is needed only for dedicated servers
-        }
-
-        /// <summary>
-        /// Sys_Quit
-        /// </summary>
-        public static void Quit()
-        {
-            if( MainWindow.Instance != null )
-            {
-                MainWindow.Instance.ConfirmExit = false;
-                MainWindow.Instance.Exit();
-                MainWindow.Instance.Dispose();
-
-                // Temp fix
-                Environment.Exit( 0 );
-            }
         }
     }
 }

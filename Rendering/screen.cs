@@ -469,8 +469,8 @@ namespace SharpQuake
 
             do
             {
-                Host.Keyboard.KeyCount = -1;		// wait for a key down and up
-                sys.SendKeyEvents( );
+                Host.Keyboard.KeyCount = -1;        // wait for a key down and up
+				Host.MainWindow.SendKeyEvents( );
             } while ( Host.Keyboard.LastPress != 'y' && Host.Keyboard.LastPress != 'n' && Host.Keyboard.LastPress != KeysDef.K_ESCAPE );
 
             Host.Screen.FullUpdate = 0;

@@ -62,7 +62,7 @@ namespace SharpQuake
 
             Client.Disconnect( );
             ShutdownServer( false );
-            sys.Quit( );
+            MainWindow.Quit( );
         }
 
         // Host_InitCommands

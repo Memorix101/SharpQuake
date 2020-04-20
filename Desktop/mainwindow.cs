@@ -348,6 +348,28 @@ namespace SharpQuake
             Host.Dispose( );
 
             base.Dispose( );
-        }
-    }
+		}
+
+		/// <summary>
+		/// Sys_SendKeyEventsa
+		/// </summary>
+		public void SendKeyEvents( )
+		{
+			Host.Screen.SkipUpdate = false;
+			ProcessEvents( );
+		}
+
+		/// <summary>
+		/// Sys_Quit
+		/// </summary>
+		public void Quit( )
+		{
+			ConfirmExit = false;
+			Exit( );
+			Dispose( );
+
+			// Temp fix
+			Environment.Exit( 0 );
+		}
+	}
 }
