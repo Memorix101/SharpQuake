@@ -26,12 +26,11 @@ using System;
 using SharpQuake.Framework;
 using SharpQuake.Framework.World;
 using SharpQuake.Framework.Mathematics;
-using SharpQuake.Game.Rendering.Memory;
 using SharpQuake.Game.Rendering.Textures;
 
-namespace SharpQuake.Game.Rendering.Models
+namespace SharpQuake.Game.Data.Models
 {
-    public class Model 
+	public class ModelData
     {
         public String Name
         {
@@ -134,7 +133,7 @@ namespace SharpQuake.Game.Rendering.Models
             set;
         }
 
-        public Model( ModelTexture noTexture )
+        public ModelData( ModelTexture noTexture )
         {
             NoTexture = noTexture;
         }
@@ -156,7 +155,7 @@ namespace SharpQuake.Game.Rendering.Models
             cache = null;
         }
 
-        public virtual void CopyFrom( Model src )
+        public virtual void CopyFrom( ModelData src )
         {
             Name = src.Name;
             IsLoadRequired = src.IsLoadRequired;

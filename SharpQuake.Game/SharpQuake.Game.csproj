@@ -52,11 +52,11 @@
     <Compile Include="Rendering\Memory\MemoryVertex.cs" />
     <Compile Include="Networking\Server\Server.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Rendering\Models\AliasModel.cs" />
-    <Compile Include="Rendering\Models\BrushModel.cs" />
-    <Compile Include="Rendering\Models\Model.cs" />
-    <Compile Include="Rendering\Models\ModelType.cs" />
-    <Compile Include="Rendering\Models\SpriteModel.cs" />
+    <Compile Include="Data\Models\AliasModelData.cs" />
+    <Compile Include="Data\Models\BrushModelData.cs" />
+    <Compile Include="Data\Models\ModelData.cs" />
+    <Compile Include="Data\Models\ModelType.cs" />
+    <Compile Include="Data\Models\SpriteModelData.cs" />
     <Compile Include="Rendering\Textures\ModelTexture.cs" />
     <Compile Include="Rendering\Textures\WarpableTextures.cs" />
     <Compile Include="World\EFrag.cs" />

@@ -26,7 +26,6 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Runtime.InteropServices;
 using System.Text;
 using SharpQuake.Framework;
 using SharpQuake.Framework.Factories.IO;
@@ -34,7 +33,7 @@ using SharpQuake.Framework.IO;
 
 namespace SharpQuake
 {
-    public partial class Host : MasterFactory
+	public partial class Host : MasterFactory
     {
         public QuakeParameters Parameters
         {

@@ -27,14 +27,14 @@ using SharpQuake.Framework;
 using SharpQuake.Framework.IO;
 using SharpQuake.Framework.IO.BSP;
 using SharpQuake.Framework.Mathematics;
+using SharpQuake.Game.Data.Models;
 using SharpQuake.Game.Networking.Server;
 using SharpQuake.Game.Rendering;
 using SharpQuake.Game.Rendering.Memory;
-using SharpQuake.Game.Rendering.Models;
 
 namespace SharpQuake
 {
-    partial class server
+	partial class server
     {
         private Int32 _FatBytes; // fatbytes
         private Byte[] _FatPvs = new Byte[BspDef.MAX_MAP_LEAFS / 8]; // fatpvs
@@ -618,7 +618,7 @@ namespace SharpQuake
             sv.paused = false;
             sv.time = 1.0;
             sv.modelname = String.Format( "maps/{0}.bsp", server );
-            sv.worldmodel = ( BrushModel ) Host.Model.ForName( sv.modelname, false, ModelType.mod_brush );
+            sv.worldmodel = ( BrushModelData ) Host.Model.ForName( sv.modelname, false, ModelType.mod_brush );
             if( sv.worldmodel == null )
             {
                 Host.Console.Print( "Couldn't spawn server {0}\n", sv.modelname );

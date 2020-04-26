@@ -24,22 +24,18 @@
 
 using System;
 using System.Collections.Generic;
-using System.Drawing;
-using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 using SharpQuake.Framework.IO;
-using SharpQuake.Framework.Mathematics;
 
 namespace SharpQuake.Framework.Factories.IO
 {
-    // Command execution takes a string, breaks it into tokens,
-    // then searches for a command or variable that matches the first token.
-    //
-    // Commands can come from three sources, but the handler functions may choose
-    // to dissallow the action or forward it to a remote server if the source is
-    // not apropriate.
-    public class CommandFactory : BaseFactory<String, CommandDelegate>
+	// Command execution takes a string, breaks it into tokens,
+	// then searches for a command or variable that matches the first token.
+	//
+	// Commands can come from three sources, but the handler functions may choose
+	// to dissallow the action or forward it to a remote server if the source is
+	// not apropriate.
+	public class CommandFactory : BaseFactory<String, CommandDelegate>
     {
         public const Int32 MAX_ALIAS_NAME = 32;
 

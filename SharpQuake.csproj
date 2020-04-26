@@ -133,7 +133,7 @@
     <Compile Include="Rendering\UI\Menus\VideoMenu.cs" />
     <Compile Include="Sound\cd_audio.cs" />
     <Compile Include="Sound\cd_audio_win.cs" />
-    <Compile Include="Rendering\chase.cs" />
+    <Compile Include="Rendering\ChaseView.cs" />
     <Compile Include="Networking\Client\client.cs" />
     <Compile Include="Networking\Client\client_demo.cs" />
     <Compile Include="Networking\Client\client_input.cs" />

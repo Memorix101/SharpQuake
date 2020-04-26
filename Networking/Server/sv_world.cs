@@ -27,8 +27,8 @@ using SharpQuake.Framework;
 using SharpQuake.Framework.IO.BSP;
 using SharpQuake.Framework.Mathematics;
 using SharpQuake.Framework.World;
+using SharpQuake.Game.Data.Models;
 using SharpQuake.Game.Rendering.Memory;
-using SharpQuake.Game.Rendering.Models;
 
 // world.c -- world query functions
 
@@ -38,7 +38,7 @@ using SharpQuake.Game.Rendering.Models;
 
 namespace SharpQuake
 {
-    partial class server
+	partial class server
     {
         // 1/32 epsilon to keep floating point happy
         private const Single DIST_EPSILON = 0.03125f;
@@ -468,7 +468,7 @@ namespace SharpQuake
                 if( ent.v.movetype != Movetypes.MOVETYPE_PUSH )
                     Utilities.Error( "SOLID_BSP without MOVETYPE_PUSH" );
 
-                var model = ( BrushModel ) sv.models[( Int32 ) ent.v.modelindex];
+                var model = ( BrushModelData ) sv.models[( Int32 ) ent.v.modelindex];
 
                 if( model == null || model.Type != ModelType.mod_brush )
                     Utilities.Error( "MOVETYPE_PUSH with a non bsp model" );

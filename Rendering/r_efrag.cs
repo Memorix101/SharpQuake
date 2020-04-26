@@ -26,15 +26,15 @@ using System;
 using SharpQuake.Framework;
 using SharpQuake.Framework.IO.BSP;
 using SharpQuake.Framework.Mathematics;
+using SharpQuake.Game.Data.Models;
 using SharpQuake.Game.Rendering.Memory;
-using SharpQuake.Game.Rendering.Models;
 using SharpQuake.Game.World;
 
 // gl_refrag.c
 
 namespace SharpQuake
 {
-    partial class render
+	partial class render
     {
         private Entity _AddEnt; // r_addent
         private MemoryNode _EfragTopNode; // r_pefragtopnode

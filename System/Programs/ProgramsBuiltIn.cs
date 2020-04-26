@@ -26,13 +26,13 @@ using System;
 using System.Text;
 using SharpQuake.Framework;
 using SharpQuake.Framework.Mathematics;
-using SharpQuake.Game.Rendering.Models;
+using SharpQuake.Game.Data.Models;
 
 // pr_cmds.c
 
 namespace SharpQuake
 {
-    public class ProgramsBuiltIn
+	public class ProgramsBuiltIn
     {
         public Int32 Count
         {

@@ -1,13 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Runtime.InteropServices;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace SharpQuake.Framework.IO.Alias
 {
-    public enum aliasskintype_t
+	public enum aliasskintype_t
     {
         ALIAS_SKIN_SINGLE = 0,
         ALIAS_SKIN_GROUP

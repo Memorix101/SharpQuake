@@ -1,21 +1,14 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using SharpQuake.Framework;
-using SharpQuake.Framework.IO.Alias;
 using SharpQuake.Framework.IO.Sprite;
-using SharpQuake.Framework.Mathematics;
-using SharpQuake.Framework.Rendering;
 using SharpQuake.Framework.World;
 using SharpQuake.Game.Rendering.Textures;
 
-namespace SharpQuake.Game.Rendering.Models
+namespace SharpQuake.Game.Data.Models
 {
-    public class SpriteModel : Model
+	public class SpriteModelData : ModelData
     {        
-        public SpriteModel( ModelTexture noTexture ) : base( noTexture )
+        public SpriteModelData( ModelTexture noTexture ) : base( noTexture )
         {
 
         }
@@ -162,7 +155,7 @@ namespace SharpQuake.Game.Rendering.Models
             base.Clear( );
         }
 
-        public override void CopyFrom( Model src )
+        public override void CopyFrom( ModelData src )
         {
             base.CopyFrom( src );
 

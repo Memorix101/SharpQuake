@@ -1,12 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace SharpQuake.Framework.Rendering
 {
-    public class FloodFiller
+	public class FloodFiller
     {
         private struct floodfill_t
         {

@@ -23,14 +23,10 @@
 /// </copyright>
 
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace SharpQuake.Renderer.Desktop
 {
-    public class MouseWheelEventArgs : EventArgs
+	public class MouseWheelEventArgs : EventArgs
     {
         public Int32 Delta
         {

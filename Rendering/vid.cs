@@ -27,16 +27,15 @@ using System.IO;
 using SharpQuake.Framework;
 using SharpQuake.Framework.IO;
 using SharpQuake.Renderer;
-using SharpQuake.Renderer.OpenGL;
 
 // vid.h -- video driver defs
 
 namespace SharpQuake
 {
-    /// <summary>
-    /// Vid_functions
-    /// </summary>
-    public class Vid
+	/// <summary>
+	/// Vid_functions
+	/// </summary>
+	public class Vid
     {
         public UInt16[] Table8to16
         {

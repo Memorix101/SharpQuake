@@ -24,17 +24,14 @@
 
 using System;
 using System.Collections.Generic;
-using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 using SharpQuake.Framework.IO;
-using SharpQuake.Framework.Mathematics;
 
 namespace SharpQuake.Framework.Factories.IO
 {
-    public class ClientVariableFactory : BaseFactory<String, ClientVariable>
+	public class ClientVariableFactory : BaseFactory<String, ClientVariable>
     {
         public ClientVariableFactory() : base( )
         {

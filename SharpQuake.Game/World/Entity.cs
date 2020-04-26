@@ -26,7 +26,7 @@ using System;
 using SharpQuake.Framework;
 using SharpQuake.Framework.Mathematics;
 using SharpQuake.Game.Rendering.Memory;
-using SharpQuake.Game.Rendering.Models;
+using SharpQuake.Game.Data.Models;
 
 namespace SharpQuake.Game.World
 {
@@ -40,7 +40,7 @@ namespace SharpQuake.Game.World
 		public Vector3 origin;
 		public Vector3[] msg_angles; //[2];	// last two updates (0 is newest)
 		public Vector3 angles;
-		public Model model;         // NULL = no model
+		public ModelData model;         // NULL = no model
 		public EFrag efrag;         // linked list of efrags
 		public Int32 frame;
 		public Single syncbase;     // for client-side animations

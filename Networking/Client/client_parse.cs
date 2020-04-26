@@ -25,14 +25,14 @@
 using System;
 using SharpQuake.Framework;
 using SharpQuake.Framework.IO;
-using SharpQuake.Game.Rendering.Models;
+using SharpQuake.Game.Data.Models;
 using SharpQuake.Game.World;
 
 // cl_parse.c
 
 namespace SharpQuake
 {
-    partial class client
+	partial class client
     {
         private const String ConsoleBar = "\n\n\u001D\u001E\u001E\u001E\u001E\u001E\u001E\u001E\u001E\u001E\u001E\u001E\u001E\u001E\u001E\u001E\u001E\u001E\u001E\u001E\u001E\u001E\u001E\u001E\u001E\u001E\u001E\u001E\u001E\u001E\u001E\u001E\u001E\u001E\u001E\u001E\u001E\u001E\u001F\n\n";
 
@@ -719,7 +719,7 @@ namespace SharpQuake
             Host.Sound.EndPrecaching();
 
             // local state
-            cl.worldmodel = ( BrushModel ) cl.model_precache[1];
+            cl.worldmodel = ( BrushModelData ) cl.model_precache[1];
             _Entities[0].model = cl.model_precache[1];
 
             Host.RenderContext.NewMap();

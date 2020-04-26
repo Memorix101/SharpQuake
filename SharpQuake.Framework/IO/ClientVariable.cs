@@ -23,19 +23,13 @@
 /// </copyright>
 
 using System;
-using System.Collections.Generic;
-using System.Collections.Specialized;
 using System.Drawing;
-using System.Globalization;
-using System.IO;
 using System.Linq;
-using System.Text;
-using SharpQuake.Framework;
 using SharpQuake.Framework.Mathematics;
 
 namespace SharpQuake.Framework.IO
 {
-    public class ClientVariable
+	public class ClientVariable
     {
         public String Name
         {

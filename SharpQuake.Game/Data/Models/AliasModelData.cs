@@ -1,8 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using SharpQuake.Framework;
 using SharpQuake.Framework.World;
 using SharpQuake.Framework.IO.Alias;
@@ -10,9 +7,9 @@ using SharpQuake.Framework.Mathematics;
 using SharpQuake.Framework.Rendering;
 using SharpQuake.Game.Rendering.Textures;
 
-namespace SharpQuake.Game.Rendering.Models
+namespace SharpQuake.Game.Data.Models
 {
-    public class AliasModel : Model
+	public class AliasModelData : ModelData
     {
         public aliashdr_t Header
         {
@@ -54,12 +51,12 @@ namespace SharpQuake.Game.Rendering.Models
         private dtriangle_t[] _Triangles = new dtriangle_t[ModelDef.MAXALIASTRIS]; // triangles
         private trivertx_t[][] _PoseVerts = new trivertx_t[ModelDef.MAXALIASFRAMES][]; // poseverts
 
-        public AliasModel( ModelTexture noTexture ) : base( noTexture )
+        public AliasModelData( ModelTexture noTexture ) : base( noTexture )
         {
 
         }
 
-        public void Load( UInt32[] table8to24, String name, Byte[] buffer, Func<String, ByteArraySegment, aliashdr_t, Int32> onLoadSkinTexture, Action<AliasModel, aliashdr_t> onMakeAliasModelDisplayList )
+        public void Load( UInt32[] table8to24, String name, Byte[] buffer, Func<String, ByteArraySegment, aliashdr_t, Int32> onLoadSkinTexture, Action<AliasModelData, aliashdr_t> onMakeAliasModelDisplayList )
         {
             Name = name;
             Buffer = buffer;
@@ -383,16 +380,16 @@ namespace SharpQuake.Game.Rendering.Models
             _Triangles = null;
         }
 
-        public override void CopyFrom( Model src )
+        public override void CopyFrom( ModelData src )
         {
             base.CopyFrom( src );
 
             Type = ModelType.mod_alias;
 
-            if ( ! ( src is AliasModel ) )
+            if ( ! ( src is AliasModelData ) )
                 return;
             
-            var aliasSrc = ( AliasModel ) src;
+            var aliasSrc = ( AliasModelData ) src;
 
             Header = aliasSrc.Header;
             PoseNum = aliasSrc.PoseNum;

@@ -28,8 +28,8 @@ using SharpQuake.Framework;
 using SharpQuake.Framework.IO;
 using SharpQuake.Framework.Mathematics;
 using SharpQuake.Framework.World;
+using SharpQuake.Game.Data.Models;
 using SharpQuake.Game.Rendering.Memory;
-using SharpQuake.Game.Rendering.Models;
 using SharpQuake.Game.Rendering.Textures;
 using SharpQuake.Game.World;
 using SharpQuake.Renderer;
@@ -42,10 +42,10 @@ using SharpQuake.Renderer.Textures;
 
 namespace SharpQuake
 {
-    /// <summary>
-    /// R_functions
-    /// </summary>
-    public partial class render
+	/// <summary>
+	/// R_functions
+	/// </summary>
+	public partial class render
     {
         public refdef_t RefDef
         {
@@ -756,7 +756,7 @@ namespace SharpQuake
             var mins = _CurrentEntity.origin + clmodel.BoundsMin;
             var maxs = _CurrentEntity.origin + clmodel.BoundsMax;
 
-            if ( CullBox( ref mins, ref maxs ) )
+            if ( Utilities.CullBox( ref mins, ref maxs, ref _Frustum ) )
                 return;
 
             _EntOrigin = _CurrentEntity.origin;
@@ -1034,20 +1034,6 @@ namespace SharpQuake
 
             //GL.DrawBuffer(DrawBufferMode.Back);
             Host.Screen.EndRendering( );
-        }
-
-        /// <summary>
-        /// R_CullBox
-        /// Returns true if the box is completely outside the frustom
-        /// </summary>
-        private System.Boolean CullBox( ref Vector3 mins, ref Vector3 maxs )
-        {
-            for ( var i = 0; i < 4; i++ )
-            {
-                if ( MathLib.BoxOnPlaneSide( ref mins, ref maxs, _Frustum[i] ) == 2 )
-                    return true;
-            }
-            return false;
         }
     }
 }

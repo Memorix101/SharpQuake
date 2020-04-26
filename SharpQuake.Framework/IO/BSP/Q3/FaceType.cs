@@ -46,14 +46,10 @@
 /// </copyright>
 
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace SharpQuake.Framework.IO.BSP
 {
-    public enum Q3FaceType : Int32
+	public enum Q3FaceType : Int32
     {
         Flat = 1,
         Patch = 2,

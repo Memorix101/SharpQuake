@@ -24,7 +24,7 @@
 
 using System;
 using SharpQuake.Framework;
-using SharpQuake.Game.Rendering.Models;
+using SharpQuake.Game.Data.Models;
 
 namespace SharpQuake.Game.Networking.Server
 {
@@ -48,9 +48,9 @@ namespace SharpQuake.Game.Networking.Server
         public Double lastchecktime;
         public String name;// char		name[64];			// map name
         public String modelname;// char		modelname[64];		// maps/<name>.bsp, for model_precache[0]
-        public BrushModel worldmodel;
+        public BrushModelData worldmodel;
         public String[] model_precache; //[MAX_MODELS];	// NULL terminated
-        public Model[] models; //[MAX_MODELS];
+        public ModelData[] models; //[MAX_MODELS];
         public String[] sound_precache; //[MAX_SOUNDS];	// NULL terminated
         public String[] lightstyles; // [MAX_LIGHTSTYLES];
         public Int32 num_edicts;
@@ -93,7 +93,7 @@ namespace SharpQuake.Game.Networking.Server
         public server_t( )
         {
             model_precache = new String[QDef.MAX_MODELS];
-            models = new Model[QDef.MAX_MODELS];
+            models = new ModelData[QDef.MAX_MODELS];
             sound_precache = new String[QDef.MAX_SOUNDS];
             lightstyles = new String[QDef.MAX_LIGHTSTYLES];
             datagram = new MessageWriter( QDef.MAX_DATAGRAM );

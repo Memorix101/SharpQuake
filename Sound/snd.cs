@@ -23,7 +23,6 @@
 /// </copyright>
 
 using System;
-using System.Runtime.InteropServices;
 using SharpQuake.Framework;
 using SharpQuake.Framework.IO;
 using SharpQuake.Framework.IO.Sound;
@@ -33,13 +32,13 @@ using SharpQuake.Framework.Mathematics;
 
 namespace SharpQuake
 {
-    // snd_started == Sound._Controller.IsInitialized
-    // snd_initialized == Sound._IsInitialized
+	// snd_started == Sound._Controller.IsInitialized
+	// snd_initialized == Sound._IsInitialized
 
-    /// <summary>
-    /// S_functions
-    /// </summary>
-    public partial class snd
+	/// <summary>
+	/// S_functions
+	/// </summary>
+	public partial class snd
     {
         public Boolean IsInitialised
         {

@@ -23,7 +23,7 @@
 /// </copyright>
 
 
-namespace SharpQuake.Game.Rendering.Models
+namespace SharpQuake.Game.Data.Models
 {
     public enum ModelType
     {

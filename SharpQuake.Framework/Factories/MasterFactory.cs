@@ -23,17 +23,11 @@
 /// </copyright>
 
 using System;
-using System.Collections.Generic;
-using System.Drawing;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using SharpQuake.Framework.IO;
-using SharpQuake.Framework.Mathematics;
 
 namespace SharpQuake.Framework.Factories.IO
 {
-    public class MasterFactory : BaseFactory<String, IBaseFactory>
+	public class MasterFactory : BaseFactory<String, IBaseFactory>
     {
         public MasterFactory( ) : base( )
         {

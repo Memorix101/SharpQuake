@@ -1,15 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Runtime.InteropServices;
-using System.Text;
-using System.Threading.Tasks;
 using SharpQuake.Framework.Mathematics;
 using SharpQuake.Game.World;
 
 namespace SharpQuake.QuakeCS
 {
-    public static class Definitions
+	public static class Definitions
 	{
 		//
 		// system globals

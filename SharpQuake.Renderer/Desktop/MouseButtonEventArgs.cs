@@ -23,14 +23,10 @@
 /// </copyright>
 
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace SharpQuake.Renderer.Desktop
 {
-    public class MouseButtonEventArgs : EventArgs
+	public class MouseButtonEventArgs : EventArgs
     {
         public Boolean IsPressed
         {

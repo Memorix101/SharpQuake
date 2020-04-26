@@ -26,14 +26,14 @@ using System;
 using SharpQuake.Framework;
 using SharpQuake.Framework.IO.Sound;
 using SharpQuake.Framework.Mathematics;
-using SharpQuake.Game.Rendering.Models;
+using SharpQuake.Game.Data.Models;
 using SharpQuake.Game.World;
 
 // cl_tent.c
 
 namespace SharpQuake
 {
-    partial class client
+	partial class client
     {
         private Int32 _NumTempEntities; // num_temp_entities
         private Entity[] _TempEntities = new Entity[ClientDef.MAX_TEMP_ENTITIES]; // cl_temp_entities[MAX_TEMP_ENTITIES]
@@ -284,7 +284,7 @@ namespace SharpQuake
         /// <summary>
         /// CL_ParseBeam
         /// </summary>
-        private void ParseBeam( Model m )
+        private void ParseBeam( ModelData m )
         {
             var ent = Host.Network.Reader.ReadShort();
 

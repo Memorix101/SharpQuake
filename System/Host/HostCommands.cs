@@ -28,11 +28,11 @@ using System.IO;
 using System.Text;
 using SharpQuake.Framework;
 using SharpQuake.Framework.IO;
-using SharpQuake.Game.Rendering.Models;
+using SharpQuake.Game.Data.Models;
 
 namespace SharpQuake
 {
-    public partial class Host
+	public partial class Host
     {
         public UInt32 FPSCounter = 0;
         public UInt32 FPS = 0;
@@ -147,7 +147,7 @@ namespace SharpQuake
             e.v.frame = f;
         }
 
-        private void PrintFrameName( Model m, Int32 frame )
+        private void PrintFrameName( ModelData m, Int32 frame )
         {
             var hdr = Model.GetExtraData( m );
             if ( hdr == null )

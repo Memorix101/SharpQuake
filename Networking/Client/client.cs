@@ -24,17 +24,17 @@
 
 using System;
 using SharpQuake.Framework;
-using SharpQuake.Game.Rendering.Models;
 using SharpQuake.Game.World;
 using SharpQuake.Framework.Mathematics;
 using SharpQuake.Framework.IO;
 using SharpQuake.Framework.IO.Sound;
+using SharpQuake.Game.Data.Models;
 
 // client.h
 
 namespace SharpQuake
 {
-    public struct lightstyle_t
+	public struct lightstyle_t
     {
         //public int length;
         public String map; // [MAX_STYLESTRING];
@@ -323,7 +323,7 @@ namespace SharpQuake
     internal class beam_t
     {
         public Int32 entity;
-        public Model model;
+        public ModelData model;
         public Single endtime;
         public Vector3 start, end;
 
@@ -453,7 +453,7 @@ namespace SharpQuake
         //
         // information that is static for the entire time connected to a server
         //
-        public Model[] model_precache; // [MAX_MODELS];
+        public ModelData[] model_precache; // [MAX_MODELS];
 
         public SoundEffect_t[] sound_precache; // [MAX_SOUNDS];
 
@@ -463,7 +463,7 @@ namespace SharpQuake
         public Int32 gametype;
 
         // refresh related state
-        public BrushModel worldmodel;	// cl_entitites[0].model
+        public BrushModelData worldmodel;	// cl_entitites[0].model
 
         public EFrag free_efrags; // first free efrag in list
         public Int32 num_entities;	// held in cl_entities array
@@ -560,7 +560,7 @@ namespace SharpQuake
             mviewangles = new Vector3[2]; //??????
             mvelocity = new Vector3[2];
             mtime = new Double[2];
-            model_precache = new Model[QDef.MAX_MODELS];
+            model_precache = new ModelData[QDef.MAX_MODELS];
             sound_precache = new SoundEffect_t[QDef.MAX_SOUNDS];
             viewent = new Entity();
         }

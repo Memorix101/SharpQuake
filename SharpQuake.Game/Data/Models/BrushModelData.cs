@@ -1,9 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 using SharpQuake.Framework;
 using SharpQuake.Framework.IO.BSP;
 using SharpQuake.Framework.Mathematics;
@@ -11,9 +9,9 @@ using SharpQuake.Framework.Wad;
 using SharpQuake.Game.Rendering.Memory;
 using SharpQuake.Game.Rendering.Textures;
 
-namespace SharpQuake.Game.Rendering.Models
+namespace SharpQuake.Game.Data.Models
 {
-    public class BrushModel : Model
+	public class BrushModelData : ModelData
     {
         private Int32 Version
         {
@@ -243,7 +241,7 @@ namespace SharpQuake.Game.Rendering.Models
         private Byte[] _NoVis = new Byte[BspDef.MAX_MAP_LEAFS / 8]; // byte mod_novis[MAX_MAP_LEAFS/8]
         private Byte[] _Decompressed = new Byte[BspDef.MAX_MAP_LEAFS / 8]; // static byte decompressed[] from Mod_DecompressVis()
         
-        public BrushModel( Single subdivideSize, ModelTexture noTexture ) : base( noTexture )
+        public BrushModelData( Single subdivideSize, ModelTexture noTexture ) : base( noTexture )
         {
             Type = ModelType.mod_brush;
 
@@ -308,16 +306,16 @@ namespace SharpQuake.Game.Rendering.Models
             Entities = null;
         }
 
-        public override void CopyFrom( Model src )
+        public override void CopyFrom( ModelData src )
         {
             base.CopyFrom( src );
 
             Type = ModelType.mod_brush;
 
-            if ( !( src is BrushModel ) )
+            if ( !( src is BrushModelData ) )
                 return;
 
-            var brushSrc = ( BrushModel ) src;
+            var brushSrc = ( BrushModelData ) src;
 
             FirstModelSurface = brushSrc.FirstModelSurface;
             NumModelSurfaces = brushSrc.NumModelSurfaces;
@@ -1615,6 +1613,5 @@ namespace SharpQuake.Game.Rendering.Models
 
             return result;
         }
-
-    }
+	}
 }

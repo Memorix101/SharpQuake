@@ -26,7 +26,6 @@ using System;
 using System.Diagnostics;
 using System.Drawing;
 using System.IO;
-using SDL2;
 using SharpQuake.Framework;
 using SharpQuake.Renderer;
 using SharpQuake.Renderer.Desktop;
@@ -34,7 +33,7 @@ using SharpQuake.Renderer.OpenGL.Desktop;
 
 namespace SharpQuake
 {
-    public class MainWindow : GLWindow//GameWindow
+	public class MainWindow : GLWindow//GameWindow
     {
         public static MainWindow Instance
         {

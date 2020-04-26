@@ -23,16 +23,12 @@
 /// </copyright>
 
 using System;
-using System.Collections.Generic;
 using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using SharpQuake.Renderer.Desktop;
 
 namespace SharpQuake.Renderer.OpenGL.Desktop
 {
-    public class GLWindow : BaseWindow
+	public class GLWindow : BaseWindow
     {
         private OpenTK.GameWindow OpenTKWindow
         {

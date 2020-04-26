@@ -25,7 +25,6 @@
 using System;
 using System.Collections.Generic;
 using System.Drawing;
-using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
@@ -33,10 +32,10 @@ using SharpQuake.Framework.Wad;
 
 namespace SharpQuake.Framework.IO
 {
-    /// <summary>
-    /// W_functions
-    /// </summary>
-    public class Wad
+	/// <summary>
+	/// W_functions
+	/// </summary>
+	public class Wad
     {
         public Byte[] Data
         {

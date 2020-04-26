@@ -1,13 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Runtime.InteropServices;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Runtime.InteropServices;
 
 namespace SharpQuake.Framework.IO.Alias
 {
-    public enum aliasframetype_t
+	public enum aliasframetype_t
     {
         ALIAS_SINGLE = 0,
         ALIAS_GROUP

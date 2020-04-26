@@ -25,12 +25,10 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace SharpQuake.Framework.Factories
 {
-    public class BaseFactory<TKey, TItem> : IBaseFactory, IDisposable where TItem : class
+	public class BaseFactory<TKey, TItem> : IBaseFactory, IDisposable where TItem : class
     {
         protected Type KeyType
         {
