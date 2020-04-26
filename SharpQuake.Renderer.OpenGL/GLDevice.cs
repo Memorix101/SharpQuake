@@ -59,7 +59,9 @@ namespace SharpQuake.Renderer.OpenGL
                   typeof( GLTextureAtlas ),
                   typeof( GLModel ),
                   typeof( GLModelDesc ),
-                  typeof( GLTexture ), 
+				  typeof( GLAliasModel ),
+				  typeof( GLAliasModelDesc ),
+				  typeof( GLTexture ), 
                   typeof( GLTextureDesc ) )
         {
             Form = form;

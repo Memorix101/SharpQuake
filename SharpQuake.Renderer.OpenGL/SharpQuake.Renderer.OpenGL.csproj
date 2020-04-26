@@ -51,6 +51,8 @@
     <Compile Include="GLDeviceDesc.cs" />
     <Compile Include="GLGraphics.cs" />
     <Compile Include="GLMode.cs" />
+    <Compile Include="Models\GLAliasModel.cs" />
+    <Compile Include="Models\GLAliasModelDesc.cs" />
     <Compile Include="Models\GLModel.cs" />
     <Compile Include="Models\GLModelDesc.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

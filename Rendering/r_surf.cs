@@ -253,7 +253,7 @@ namespace SharpQuake
 			{
 				for ( var i = 0; i < lnumverts; ++i )
 				{
-					if ( IsCollinear( poly.verts[( i + lnumverts - 1 ) % lnumverts],
+					if ( Utilities.IsCollinear( poly.verts[( i + lnumverts - 1 ) % lnumverts],
 						poly.verts[i],
 						poly.verts[( i + 1 ) % lnumverts] ) )
 					{
@@ -272,18 +272,6 @@ namespace SharpQuake
 				}
 			}
 			poly.numverts = lnumverts;
-		}
-
-		private System.Boolean IsCollinear( Single[] prev, Single[] cur, Single[] next )
-		{
-			var v1 = new Vector3( cur[0] - prev[0], cur[1] - prev[1], cur[2] - prev[2] );
-			MathLib.Normalize( ref v1 );
-			var v2 = new Vector3( next[0] - prev[0], next[1] - prev[1], next[2] - prev[2] );
-			MathLib.Normalize( ref v2 );
-			v1 -= v2;
-			return ( ( Math.Abs( v1.X ) <= COLINEAR_EPSILON ) &&
-				( Math.Abs( v1.Y ) <= COLINEAR_EPSILON ) &&
-				( Math.Abs( v1.Z ) <= COLINEAR_EPSILON ) );
 		}
 
 		// returns a texture number and the position inside it
@@ -943,35 +931,6 @@ namespace SharpQuake
 				Host.DrawingContext.SelectTexture( MTexTarget.TEXTURE0_SGIS );
 
 				Host.Video.Device.Graphics.DrawWaterPolyMultiTexture( _LightMaps, t.texture, LightMapTexture, s.lightmaptexturenum, s.polys, Host.RealTime );
-				//t.texture.Bind( );
-
-				//GL.TexEnv( TextureEnvTarget.TextureEnv, TextureEnvParameter.TextureEnvMode, ( Int32 ) TextureEnvMode.Replace );
-
-				//Host.Video.Device.EnableMultitexture();
-
-				//LightMapTexture.BindLightmap( ( ( GLTextureDesc ) LightMapTexture.Desc ).TextureNumber + s.lightmaptexturenum );
-
-				//var i = s.lightmaptexturenum;
-				//if( LightMapTexture.LightMapModified[i] )
-				//    CommitLightmap( i );
-
-				//GL.TexEnv( TextureEnvTarget.TextureEnv, TextureEnvParameter.TextureEnvMode, ( Int32 ) TextureEnvMode.Blend );
-				//GL.Begin( PrimitiveType.TriangleFan );
-				//var p = s.polys;
-				//var nv = new Single[3];
-				//for( i = 0; i < p.numverts; i++ )
-				//{
-				//    var v = p.verts[i];
-				//    GL.MultiTexCoord2( TextureUnit.Texture0, v[3], v[4] );
-				//    GL.MultiTexCoord2( TextureUnit.Texture1, v[5], v[6] );
-
-				//    nv[0] = ( Single ) ( v[0] + 8 * Math.Sin( v[1] * 0.05 + Host.RealTime ) * Math.Sin( v[2] * 0.05 + Host.RealTime ) );
-				//    nv[1] = ( Single ) ( v[1] + 8 * Math.Sin( v[0] * 0.05 + Host.RealTime ) * Math.Sin( v[2] * 0.05 + Host.RealTime ) );
-				//    nv[2] = v[2];
-
-				//    GL.Vertex3( nv );
-				//}
-				//GL.End();
 			}
 			else
 			{
@@ -984,8 +943,6 @@ namespace SharpQuake
 				LightMapTexture.BindLightmap( ( ( GLTextureDesc ) LightMapTexture.Desc ).TextureNumber + s.lightmaptexturenum );
 				Host.Video.Device.Graphics.DrawWaterPolyLightmap( p, Host.RealTime, true );
 			}
-
-			//GL.Disable( EnableCap.Texture2D );
 		}
 
 		private void CommitLightmap( Int32 i )

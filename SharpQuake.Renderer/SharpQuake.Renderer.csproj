@@ -52,6 +52,8 @@
     <Compile Include="Desktop\MouseButtonEventArgs.cs" />
     <Compile Include="Desktop\MouseWheelEventArgs.cs" />
     <Compile Include="GLRect.cs" />
+    <Compile Include="Models\BaseAliasModel.cs" />
+    <Compile Include="Models\BaseAliasModelDesc.cs" />
     <Compile Include="Models\BaseModel.cs" />
     <Compile Include="Models\BaseModelDesc.cs" />
     <Compile Include="ParticleSystem.cs" />

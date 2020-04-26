@@ -22,60 +22,11 @@
 /// Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 /// </copyright>
 
-using System;
-using SharpQuake.Framework.Mathematics;
-using SharpQuake.Renderer.Textures;
+using SharpQuake.Renderer.Models;
 
-namespace SharpQuake.Renderer.Models
+namespace SharpQuake.Renderer.OpenGL.Models
 {
-	public class BaseModelDesc
+	public class GLAliasModelDesc : BaseAliasModelDesc
 	{
-		public virtual String Name
-		{
-			get;
-			set;
-		}
-
-		public virtual BaseTexture Texture
-		{
-			get;
-			set;
-		}
-
-		public virtual Vector3 Origin
-		{
-			get;
-			set;
-		}
-
-		public virtual Vector3 EulerAngles
-		{
-			get;
-			set;
-		}
-
-		public virtual Vector3 Scale
-		{
-			get;
-			set;
-		}
-
-		public virtual Vector3 ScaleOrigin
-		{
-			get;
-			set;
-		}
-
-		public virtual Vector3 MinimumBounds
-		{
-			get;
-			set;
-		}
-
-		public virtual Vector3 MaximumBounds
-		{
-			get;
-			set;
-		}
 	}
 }

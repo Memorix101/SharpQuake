@@ -819,7 +819,7 @@ namespace SharpQuake
 
             _AliasPolys += paliashdr.numtris;
 
-            BaseModel model = null;
+            BaseAliasModel model = null;
 
             if ( !BaseModel.ModelPool.ContainsKey( clmodel.Name ) )
             {
@@ -827,18 +827,18 @@ namespace SharpQuake
 
                 var tex = Host.Model.SkinTextures.Where( t =>  ( ( Renderer.OpenGL.Textures.GLTextureDesc ) t.Desc ).TextureNumber == paliashdr.gl_texturenum[_CurrentEntity.skinnum, anim] ).FirstOrDefault();
 
-                model = BaseModel.Create( Host.Video.Device, clmodel.Name, tex, true );
+                model = BaseAliasModel.Create( Host.Video.Device, clmodel.Name, tex );
             }
             else
-                model = BaseModel.ModelPool[clmodel.Name];
+                model = ( BaseAliasModel ) BaseModel.ModelPool[clmodel.Name];
 
-            model.Desc.ScaleOrigin = paliashdr.scale_origin;
-            model.Desc.Scale = paliashdr.scale;
-            model.Desc.MinimumBounds = clmodel.BoundsMin;
-            model.Desc.MaximumBounds = clmodel.BoundsMax;
-            model.Desc.Origin = e.origin;
-            model.Desc.EulerAngles = e.angles;
-            model.Desc.AliasFrame = _CurrentEntity.frame;
+            model.AliasDesc.ScaleOrigin = paliashdr.scale_origin;
+            model.AliasDesc.Scale = paliashdr.scale;
+            model.AliasDesc.MinimumBounds = clmodel.BoundsMin;
+            model.AliasDesc.MaximumBounds = clmodel.BoundsMax;
+            model.AliasDesc.Origin = e.origin;
+            model.AliasDesc.EulerAngles = e.angles;
+            model.AliasDesc.AliasFrame = _CurrentEntity.frame;
 
 			model.DrawAliasModel( _ShadeLight, _ShadeVector, _ShadeDots, _LightSpot.Z, paliashdr,
 				Host.RealTime, Host.Client.cl.time,

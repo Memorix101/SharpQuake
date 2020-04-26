@@ -69,9 +69,20 @@ namespace SharpQuake.Renderer
         {
             get;
             private set;
-        }
+		}
+		public Type AliasModelType
+		{
+			get;
+			private set;
+		}
 
-        public Palette Palette
+		public Type AliasModelDescType
+		{
+			get;
+			private set;
+		}
+
+		public Palette Palette
         {
             get;
             private set;
@@ -143,7 +154,7 @@ namespace SharpQuake.Renderer
             set;
         }
 
-        public BaseDevice( Type descType, Type graphicsType, Type textureAtlasType, Type modelType, Type modelDescType, Type textureType, Type textureDescType )
+        public BaseDevice( Type descType, Type graphicsType, Type textureAtlasType, Type modelType, Type modelDescType, Type aliasModelType, Type aliasModelDescType, Type textureType, Type textureDescType )
         {
             Desc = ( BaseDeviceDesc ) Activator.CreateInstance( descType );
             TextureType = textureType;
@@ -151,6 +162,8 @@ namespace SharpQuake.Renderer
             TextureDescType = textureDescType;
             ModelType = modelType;
             ModelDescType = modelDescType;
+			AliasModelType = aliasModelType;
+			AliasModelDescType = aliasModelDescType;
             Palette = new Palette( this );
             Graphics = ( BaseGraphics ) Activator.CreateInstance( graphicsType, this );
             TextureAtlas = ( BaseTextureAtlas ) Activator.CreateInstance( TextureAtlasType, this, DrawDef.MAX_SCRAPS, DrawDef.BLOCK_WIDTH, DrawDef.BLOCK_HEIGHT );

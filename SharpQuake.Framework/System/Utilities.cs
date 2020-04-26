@@ -67,7 +67,9 @@ namespace SharpQuake.Framework
 
         private static readonly Byte[] ZeroBytes = new Byte[4096];
 
-        public static Boolean SameText( String a, String b )
+		private const Double COLINEAR_EPSILON = 0.001;
+
+		public static Boolean SameText( String a, String b )
         {
             return ( String.Compare( a, b, true ) == 0 );
         }
@@ -262,7 +264,6 @@ namespace SharpQuake.Framework
             }
         }
 
-
 		/// <summary>
 		/// R_CullBox
 		/// Returns true if the box is completely outside the frustom
@@ -275,6 +276,18 @@ namespace SharpQuake.Framework
 					return true;
 			}
 			return false;
+		}
+
+		public static System.Boolean IsCollinear( Single[] prev, Single[] cur, Single[] next )
+		{
+			var v1 = new Vector3( cur[0] - prev[0], cur[1] - prev[1], cur[2] - prev[2] );
+			MathLib.Normalize( ref v1 );
+			var v2 = new Vector3( next[0] - prev[0], next[1] - prev[1], next[2] - prev[2] );
+			MathLib.Normalize( ref v2 );
+			v1 -= v2;
+			return ( ( Math.Abs( v1.X ) <= COLINEAR_EPSILON ) &&
+				( Math.Abs( v1.Y ) <= COLINEAR_EPSILON ) &&
+				( Math.Abs( v1.Z ) <= COLINEAR_EPSILON ) );
 		}
 	}
 }
