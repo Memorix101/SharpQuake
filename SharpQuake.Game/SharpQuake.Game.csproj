@@ -58,6 +58,7 @@
     <Compile Include="Rendering\Models\ModelType.cs" />
     <Compile Include="Rendering\Models\SpriteModel.cs" />
     <Compile Include="Rendering\Textures\ModelTexture.cs" />
+    <Compile Include="Rendering\Textures\WarpableTextures.cs" />
     <Compile Include="World\EFrag.cs" />
     <Compile Include="World\Entity.cs" />
   </ItemGroup>

@@ -425,7 +425,7 @@ namespace SharpQuake
             mod.Load( mod.Name, buffer, ( tx ) => 
             {
                 if ( tx.name != null && tx.name.StartsWith( "sky" ) )// !Q_strncmp(mt->name,"sky",3))
-                    Host.RenderContext.InitSky( tx );
+                    Host.RenderContext.WarpableTextures.InitSky( tx );
                 else
                 {   
                     tx.texture = BaseTexture.FromBuffer( Host.Video.Device, tx.name, new ByteArraySegment( tx.pixels ),

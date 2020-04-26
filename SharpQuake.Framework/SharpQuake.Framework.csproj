@@ -71,6 +71,7 @@
     <Compile Include="Definitions\Bsp\AmbientDef.cs" />
     <Compile Include="Definitions\Bsp\BspDef.cs" />
     <Compile Include="Definitions\ParticleDef.cs" />
+    <Compile Include="Definitions\WarpDef.cs" />
     <Compile Include="Factories\BaseFactory.cs" />
     <Compile Include="Factories\IBaseFactory.cs" />
     <Compile Include="Factories\IO\ClientVariableFactory.cs" />

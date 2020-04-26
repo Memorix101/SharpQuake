@@ -169,7 +169,6 @@ namespace SharpQuake
         private System.Boolean _IsEnvMap = false; // envmap	// true during envmap command capture
         private Vector3 _ModelOrg; // modelorg
         private Vector3 _EntOrigin; // r_entorigin
-        private Single _SpeedScale; // speedscale		// for top sky and bottom sky
         private Single _ShadeLight; // shadelight
         private Single _AmbientLight; // ambientlight
         private Single[] _ShadeDots = anorm_dots.Values[0]; // shadedots
@@ -189,10 +188,17 @@ namespace SharpQuake
 			private set;
 		}
 
+		public WarpableTextures WarpableTextures
+		{
+			get;
+			private set;
+		}
+
 		public render( Host host )
         {
             Host = host;
 			Particles = new ParticleSystem( Host.Video.Device );
+			WarpableTextures = new WarpableTextures( Host.Video.Device );
 		}
 
         /// <summary>

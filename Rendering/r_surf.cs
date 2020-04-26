@@ -494,7 +494,7 @@ namespace SharpQuake
                 for( var s = _WaterChain; s != null; s = s.texturechain )
                 {
                     s.texinfo.texture.texture.Bind( );
-                    EmitWaterPolys( s );
+                    WarpableTextures.EmitWaterPolys( Host.RealTime, s );
                 }
                 _WaterChain = null;
             }
@@ -518,7 +518,7 @@ namespace SharpQuake
                     t.texture.Bind( );
 
                     for( ; s != null; s = s.texturechain )
-                        EmitWaterPolys( s );
+                        WarpableTextures.EmitWaterPolys( Host.RealTime, s );
 
                     t.texturechain = null;
                 }
@@ -638,7 +638,7 @@ namespace SharpQuake
 
                 if( _SkyChain != null )
                 {
-                    DrawSkyChain( _SkyChain );
+					WarpableTextures.DrawSkyChain( Host.RealTime, Host.RenderContext.Origin, _SkyChain );
                     _SkyChain = null;
                 }
                 return;
@@ -654,8 +654,8 @@ namespace SharpQuake
                 if( s == null )
                     continue;
 
-                if( i == _SkyTextureNum )
-                    DrawSkyChain( s );
+				if ( i == _SkyTextureNum )
+					WarpableTextures.DrawSkyChain( Host.RealTime, Host.RenderContext.Origin, s );
                 //else if( i == _MirrorTextureNum && _MirrorAlpha.Value != 1.0f )
                 //{
                 //    MirrorChain( s );
@@ -682,7 +682,7 @@ namespace SharpQuake
 
             if( ( fa.flags & ( Int32 ) Q1SurfaceFlags.Sky ) != 0 )
             {	// warp texture, no lightmaps
-                EmitBothSkyLayers( fa );
+                WarpableTextures.EmitBothSkyLayers( Host.RealTime, Host.RenderContext.Origin, fa );
                 return;
             }
 
@@ -691,7 +691,7 @@ namespace SharpQuake
 
             if ( ( fa.flags & ( Int32 ) Q1SurfaceFlags.Turbulence ) != 0 )
             {	// warp texture, no lightmaps
-                EmitWaterPolys( fa );
+                WarpableTextures.EmitWaterPolys( Host.RealTime, fa );
                 return;
             }
 
@@ -919,7 +919,7 @@ namespace SharpQuake
             {
                 Host.Video.Device.DisableMultitexture();
                 s.texinfo.texture.texture.Bind( );
-                EmitWaterPolys( s );
+                WarpableTextures.EmitWaterPolys( Host.RealTime, s );
                 return;
             }
 
@@ -928,19 +928,8 @@ namespace SharpQuake
             //
             if( ( s.flags & ( Int32 ) Q1SurfaceFlags.Sky ) != 0 )
             {
-                Host.Video.Device.DisableMultitexture();
-                SolidSkyTexture.Bind( );
-                _SpeedScale = ( Single ) Host.RealTime * 8;
-                _SpeedScale -= ( Int32 ) _SpeedScale & ~127;
-
-                Host.Video.Device.Graphics.EmitSkyPolys( s.polys, Host.RenderContext.Origin, _SpeedScale );
-
-                AlphaSkyTexture.Bind( );
-                _SpeedScale = ( Single ) Host.RealTime * 16;
-                _SpeedScale -= ( Int32 ) _SpeedScale & ~127;
-
-                Host.Video.Device.Graphics.EmitSkyPolys( s.polys, Host.RenderContext.Origin, _SpeedScale, true );
-                return;
+				WarpableTextures.EmitBothSkyLayers( Host.RealTime, Host.RenderContext.Origin, s );
+				return;
             }
 
             //

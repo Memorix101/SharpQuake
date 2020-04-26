@@ -162,7 +162,6 @@
     <Compile Include="Rendering\r_efrag.cs" />
     <Compile Include="Rendering\r_light.cs" />
     <Compile Include="Rendering\r_surf.cs" />
-    <Compile Include="Rendering\r_warp.cs" />
     <Compile Include="Rendering\sbar.cs" />
     <Compile Include="Rendering\screen.cs" />
     <Compile Include="SDL2-CS\src\SDL2.cs" />
