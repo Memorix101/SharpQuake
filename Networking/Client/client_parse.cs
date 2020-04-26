@@ -231,7 +231,7 @@ namespace SharpQuake
                         break;
 
                     case ProtocolDef.svc_particle:
-                        Host.RenderContext.ParseParticleEffect();
+                        Host.RenderContext.Particles.ParseParticleEffect( Host.Client.cl.time, Host.Network.Reader );
                         break;
 
                     case ProtocolDef.svc_spawnbaseline:

@@ -115,7 +115,6 @@
     <Compile Include="System\Host\Host.cs" />
     <Compile Include="System\Host\HostCommands.cs" />
     <Compile Include="Rendering\anorm_dots.cs" />
-    <Compile Include="Rendering\anorms.cs" />
     <Compile Include="Rendering\UI\Menus\GameOptionsMenu.cs" />
     <Compile Include="Rendering\UI\Menus\HelpMenu.cs" />
     <Compile Include="Rendering\UI\Menus\KeysMenu.cs" />
@@ -162,7 +161,6 @@
     <Compile Include="Rendering\render.cs" />
     <Compile Include="Rendering\r_efrag.cs" />
     <Compile Include="Rendering\r_light.cs" />
-    <Compile Include="Rendering\r_part.cs" />
     <Compile Include="Rendering\r_surf.cs" />
     <Compile Include="Rendering\r_warp.cs" />
     <Compile Include="Rendering\sbar.cs" />

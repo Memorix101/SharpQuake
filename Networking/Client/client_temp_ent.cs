@@ -163,13 +163,13 @@ namespace SharpQuake
             {
                 case ProtocolDef.TE_WIZSPIKE:			// spike hitting wall
                     pos = Host.Network.Reader.ReadCoords();
-                    Host.RenderContext.RunParticleEffect( ref pos, ref Utilities.ZeroVector, 20, 30 );
+                    Host.RenderContext.Particles.RunParticleEffect( Host.Client.cl.time, ref pos, ref Utilities.ZeroVector, 20, 30 );
                     Host.Sound.StartSound( -1, 0, _SfxWizHit, ref pos, 1, 1 );
                     break;
 
                 case ProtocolDef.TE_KNIGHTSPIKE:			// spike hitting wall
                     pos = Host.Network.Reader.ReadCoords();
-                    Host.RenderContext.RunParticleEffect( ref pos, ref Utilities.ZeroVector, 226, 20 );
+                    Host.RenderContext.Particles.RunParticleEffect( Host.Client.cl.time, ref pos, ref Utilities.ZeroVector, 226, 20 );
                     Host.Sound.StartSound( -1, 0, _SfxKnigtHit, ref pos, 1, 1 );
                     break;
 
@@ -178,7 +178,7 @@ namespace SharpQuake
 #if GLTEST
                     Test_Spawn (pos);
 #else
-                    Host.RenderContext.RunParticleEffect( ref pos, ref Utilities.ZeroVector, 0, 10 );
+                    Host.RenderContext.Particles.RunParticleEffect( Host.Client.cl.time, ref pos, ref Utilities.ZeroVector, 0, 10 );
 #endif
                     if( ( MathLib.Random() % 5 ) != 0 )
                         Host.Sound.StartSound( -1, 0, _SfxTink1, ref pos, 1, 1 );
@@ -196,7 +196,7 @@ namespace SharpQuake
 
                 case ProtocolDef.TE_SUPERSPIKE:			// super spike hitting wall
                     pos = Host.Network.Reader.ReadCoords();
-                    Host.RenderContext.RunParticleEffect( ref pos, ref Utilities.ZeroVector, 0, 20 );
+                    Host.RenderContext.Particles.RunParticleEffect( Host.Client.cl.time, ref pos, ref Utilities.ZeroVector, 0, 20 );
 
                     if( ( MathLib.Random() % 5 ) != 0 )
                         Host.Sound.StartSound( -1, 0, _SfxTink1, ref pos, 1, 1 );
@@ -214,12 +214,12 @@ namespace SharpQuake
 
                 case ProtocolDef.TE_GUNSHOT:			// bullet hitting wall
                     pos = Host.Network.Reader.ReadCoords();
-                    Host.RenderContext.RunParticleEffect( ref pos, ref Utilities.ZeroVector, 0, 20 );
+                    Host.RenderContext.Particles.RunParticleEffect( Host.Client.cl.time, ref pos, ref Utilities.ZeroVector, 0, 20 );
                     break;
 
                 case ProtocolDef.TE_EXPLOSION:			// rocket explosion
                     pos = Host.Network.Reader.ReadCoords();
-                    Host.RenderContext.ParticleExplosion( ref pos );
+                    Host.RenderContext.Particles.ParticleExplosion( Host.Client.cl.time, ref pos );
                     dl = AllocDlight( 0 );
                     dl.origin = pos;
                     dl.radius = 350;
@@ -230,7 +230,7 @@ namespace SharpQuake
 
                 case ProtocolDef.TE_TAREXPLOSION:			// tarbaby explosion
                     pos = Host.Network.Reader.ReadCoords();
-                    Host.RenderContext.BlobExplosion( ref pos );
+                    Host.RenderContext.Particles.BlobExplosion( Host.Client.cl.time, ref pos );
                     Host.Sound.StartSound( -1, 0, _SfxRExp3, ref pos, 1, 1 );
                     break;
 
@@ -254,19 +254,19 @@ namespace SharpQuake
 
                 case ProtocolDef.TE_LAVASPLASH:
                     pos = Host.Network.Reader.ReadCoords();
-                    Host.RenderContext.LavaSplash( ref pos );
+                    Host.RenderContext.Particles.LavaSplash( Host.Client.cl.time, ref pos );
                     break;
 
                 case ProtocolDef.TE_TELEPORT:
                     pos = Host.Network.Reader.ReadCoords();
-                    Host.RenderContext.TeleportSplash( ref pos );
+                    Host.RenderContext.Particles.TeleportSplash( Host.Client.cl.time, ref pos );
                     break;
 
                 case ProtocolDef.TE_EXPLOSION2:				// color mapped explosion
                     pos = Host.Network.Reader.ReadCoords();
                     var colorStart = Host.Network.Reader.ReadByte();
                     var colorLength = Host.Network.Reader.ReadByte();
-                    Host.RenderContext.ParticleExplosion( ref pos, colorStart, colorLength );
+                    Host.RenderContext.Particles.ParticleExplosion( Host.Client.cl.time, ref pos, colorStart, colorLength );
                     dl = AllocDlight( 0 );
                     dl.origin = pos;
                     dl.radius = 350;

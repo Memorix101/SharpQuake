@@ -449,7 +449,7 @@ namespace SharpQuake
                     ent.angles.Y = bobjrotate;
 
                 if( ( ent.effects & EntityEffects.EF_BRIGHTFIELD ) != 0 )
-                    Host.RenderContext.EntityParticles( ent );
+                    Host.RenderContext.Particles.EntityParticles( Host.Client.cl.time, ent.origin );
 
                 if( ( ent.effects & EntityEffects.EF_MUZZLEFLASH ) != 0 )
                 {
@@ -480,25 +480,25 @@ namespace SharpQuake
                 }
 
                 if ( ent.model.Flags.HasFlag( EntityFlags.Gib ))
-                    Host.RenderContext.RocketTrail( ref oldorg, ref ent.origin, 2 );
+                    Host.RenderContext.Particles.RocketTrail( Host.Client.cl.time, ref oldorg, ref ent.origin, 2 );
                 else if ( ent.model.Flags.HasFlag( EntityFlags.ZomGib ) )
-                    Host.RenderContext.RocketTrail( ref oldorg, ref ent.origin, 4 );
+                    Host.RenderContext.Particles.RocketTrail( Host.Client.cl.time, ref oldorg, ref ent.origin, 4 );
                 else if ( ent.model.Flags.HasFlag( EntityFlags.Tracer ) )
-                    Host.RenderContext.RocketTrail( ref oldorg, ref ent.origin, 3 );
+                    Host.RenderContext.Particles.RocketTrail( Host.Client.cl.time, ref oldorg, ref ent.origin, 3 );
                 else if ( ent.model.Flags.HasFlag( EntityFlags.Tracer2 ) )
-                    Host.RenderContext.RocketTrail( ref oldorg, ref ent.origin, 5 );
+                    Host.RenderContext.Particles.RocketTrail( Host.Client.cl.time, ref oldorg, ref ent.origin, 5 );
                 else if ( ent.model.Flags.HasFlag( EntityFlags.Rocket ) )
                 {
-                    Host.RenderContext.RocketTrail( ref oldorg, ref ent.origin, 0 );
+                    Host.RenderContext.Particles.RocketTrail( Host.Client.cl.time, ref oldorg, ref ent.origin, 0 );
                     var dl = AllocDlight( i );
                     dl.origin = ent.origin;
                     dl.radius = 200;
                     dl.die = ( Single ) cl.time + 0.01f;
                 }
                 else if ( ent.model.Flags.HasFlag( EntityFlags.Grenade ) )
-                    Host.RenderContext.RocketTrail( ref oldorg, ref ent.origin, 1 );
+                    Host.RenderContext.Particles.RocketTrail( Host.Client.cl.time, ref oldorg, ref ent.origin, 1 );
                 else if ( ent.model.Flags.HasFlag( EntityFlags.Tracer3 ) )
-                    Host.RenderContext.RocketTrail( ref oldorg, ref ent.origin, 6 );
+                    Host.RenderContext.Particles.RocketTrail( Host.Client.cl.time, ref oldorg, ref ent.origin, 6 );
 
                 ent.forcelink = false;
 

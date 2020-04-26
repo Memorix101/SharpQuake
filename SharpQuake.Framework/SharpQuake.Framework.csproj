@@ -67,8 +67,10 @@
     <Compile Include="Data\BigEndianConverter.cs" />
     <Compile Include="Data\ByteArraySegment.cs" />
     <Compile Include="Data\EndianHelper.cs" />
+    <Compile Include="Definitions\ANormsDef.cs" />
     <Compile Include="Definitions\Bsp\AmbientDef.cs" />
     <Compile Include="Definitions\Bsp\BspDef.cs" />
+    <Compile Include="Definitions\ParticleDef.cs" />
     <Compile Include="Factories\BaseFactory.cs" />
     <Compile Include="Factories\IBaseFactory.cs" />
     <Compile Include="Factories\IO\ClientVariableFactory.cs" />
@@ -228,6 +230,9 @@
     <Compile Include="Rendering\GLPoly.cs" />
     <Compile Include="Rendering\GLTexture.cs" />
     <Compile Include="IO\BSP\Q1\SurfaceFlags.cs" />
+    <Compile Include="Rendering\Particles\Particle.cs" />
+    <Compile Include="Rendering\Particles\ParticleSystem.cs" />
+    <Compile Include="Rendering\Particles\ParticleType.cs" />
     <Compile Include="Rendering\Sprite\Sprite.cs" />
     <Compile Include="Rendering\Sprite\SpriteFrame.cs" />
     <Compile Include="Rendering\Sprite\SpriteFrameDesc.cs" />

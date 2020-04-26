@@ -183,10 +183,17 @@ namespace SharpQuake
             set;
         }
 
-        public render( Host host )
+		public ParticleSystem Particles
+		{
+			get;
+			private set;
+		}
+
+		public render( Host host )
         {
             Host = host;
-        }
+			Particles = new ParticleSystem( Host.Video.Device );
+		}
 
         /// <summary>
         /// R_Init
@@ -232,8 +239,8 @@ namespace SharpQuake
             if ( Host.Video.Device.Desc.SupportsMultiTexture )
                 Host.CVars.Set( "gl_texsort", 0.0f );
 
-            InitParticles( );
-            InitParticleTexture( );
+			Particles.InitParticles( );
+			Particles.InitParticleTexture( );
 
             // reserve 16 textures
             PlayerTextures = new BaseTexture[16];
@@ -438,7 +445,7 @@ namespace SharpQuake
                 Host.Client.cl.worldmodel.Leaves[i].efrags = null;
 
             _ViewLeaf = null;
-            ClearParticles( );
+			Particles.ClearParticles( );
 
             BuildLightMaps( );
 
@@ -615,7 +622,7 @@ namespace SharpQuake
 
             RenderDlights( );
 
-            DrawParticles( );
+			Particles.DrawParticles( Host.Client.cl.time, Host.Client.cl.oldtime, Host.Server.Gravity, Origin, ViewUp, ViewRight, ViewPn );
 
 #if GLTEST
 	        Test_Draw ();
