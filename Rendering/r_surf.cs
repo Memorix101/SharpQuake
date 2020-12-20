@@ -34,6 +34,7 @@ using SharpQuake.Game.World;
 using SharpQuake.Renderer;
 using SharpQuake.Renderer.OpenGL.Textures;
 using SharpQuake.Renderer.Textures;
+using SharpQuake.Rendering;
 
 // gl_rsurf.c
 
@@ -52,8 +53,8 @@ namespace SharpQuake
 																			   //private glRect_t[] _LightMapRectChange = new glRect_t[RenderDef.MAX_LIGHTMAPS]; // lightmap_rectchange
 		private UInt32[] _BlockLights = new UInt32[18 * 18]; // blocklights
 		private Int32 _ColinElim; // nColinElim
-		private MemorySurface _SkyChain; // skychain
-		private MemorySurface _WaterChain; // waterchain
+		
+		
 		private Entity _TempEnt = new Entity( ); // for DrawWorld
 
 		// the lightmap texture data needs to be kept in
@@ -61,6 +62,12 @@ namespace SharpQuake
 		private Byte[] _LightMaps = new Byte[4 * RenderDef.MAX_LIGHTMAPS * RenderDef.BLOCK_WIDTH * RenderDef.BLOCK_HEIGHT]; // lightmaps
 
 		private BaseTexture LightMapTexture
+		{
+			get;
+			set;
+		}
+
+		protected TextureChains TextureChains
 		{
 			get;
 			set;
@@ -476,15 +483,15 @@ namespace SharpQuake
 
 			if ( !_glTexSort.Get<Boolean>( ) )
 			{
-				if ( _WaterChain == null )
+				if ( TextureChains.WaterChain == null )
 					return;
 
-				for ( var s = _WaterChain; s != null; s = s.texturechain )
+				for ( var s = TextureChains.WaterChain; s != null; s = s.texturechain )
 				{
 					s.texinfo.texture.texture.Bind( );
 					WarpableTextures.EmitWaterPolys( Host.RealTime, s );
 				}
-				_WaterChain = null;
+				TextureChains.WaterChain = null;
 			}
 			else
 			{
@@ -519,48 +526,7 @@ namespace SharpQuake
 			//    GL.Color4( 1f, 1, 1, 1 );
 			//    GL.Disable( EnableCap.Blend );
 			//}
-		}
-
-		/// <summary>
-		/// R_MarkLeaves
-		/// </summary>
-		private void MarkLeaves( )
-		{
-			if ( _OldViewLeaf == _ViewLeaf && !_NoVis.Get<Boolean>( ) )
-				return;
-
-			//if( _IsMirror )
-			//  return;
-
-			_VisFrameCount++;
-			_OldViewLeaf = _ViewLeaf;
-
-			Byte[] vis;
-			if ( _NoVis.Get<Boolean>( ) )
-			{
-				vis = new Byte[4096];
-				Utilities.FillArray<Byte>( vis, 0xff ); // todo: add count parameter?
-														//memset(solid, 0xff, (cl.worldmodel->numleafs + 7) >> 3);
-			}
-			else
-				vis = Host.Client.cl.worldmodel.LeafPVS( _ViewLeaf );
-
-			var world = Host.Client.cl.worldmodel;
-			for ( var i = 0; i < world.NumLeafs; i++ )
-			{
-				if ( vis[i >> 3] != 0 & ( 1 << ( i & 7 ) ) != 0 )
-				{
-					MemoryNodeBase node = world.Leaves[i + 1];
-					do
-					{
-						if ( node.visframe == _VisFrameCount )
-							break;
-						node.visframe = _VisFrameCount;
-						node = node.parent;
-					} while ( node != null );
-				}
-			}
-		}
+		}		
 
 		/// <summary>
 		/// R_DrawWorld
@@ -624,10 +590,10 @@ namespace SharpQuake
 			{
 				Host.Video.Device.DisableMultitexture( );
 
-				if ( _SkyChain != null )
+				if ( TextureChains.SkyChain != null )
 				{
-					WarpableTextures.DrawSkyChain( Host.RealTime, Host.RenderContext.Origin, _SkyChain );
-					_SkyChain = null;
+					WarpableTextures.DrawSkyChain( Host.RealTime, Host.RenderContext.Origin, TextureChains.SkyChain );
+					TextureChains.SkyChain = null;
 				}
 				return;
 			}
@@ -755,120 +721,13 @@ namespace SharpQuake
 		/// </summary>
 		private void RecursiveWorldNode( MemoryNodeBase node )
 		{
-			if ( node.contents == ( Int32 ) Q1Contents.Solid )
-				return;     // solid
-
-			if ( node.visframe != _VisFrameCount )
-				return;
-			if ( Utilities.CullBox( ref node.mins, ref node.maxs, ref _Frustum ) )
-				return;
-
-			Int32 c;
-
-			// if a leaf node, draw stuff
-			if ( node.contents < 0 )
+			Occlusion.RecursiveWorldNode( node, _ModelOrg, _FrameCount, ref _Frustum, ( surf ) => 
 			{
-				var pleaf = ( MemoryLeaf ) node;
-				var marks = pleaf.marksurfaces;
-				var mark = pleaf.firstmarksurface;
-				c = pleaf.nummarksurfaces;
-
-				if ( c != 0 )
-				{
-					do
-					{
-						marks[mark].visframe = _FrameCount;
-						mark++;
-					} while ( --c != 0 );
-				}
-
-				// deal with model fragments in this leaf
-				if ( pleaf.efrags != null )
-					StoreEfrags( pleaf.efrags );
-
-				return;
-			}
-
-			// node is just a decision point, so go down the apropriate sides
-
-			var n = ( MemoryNode ) node;
-
-			// find which side of the node we are on
-			var plane = n.plane;
-			Double dot;
-
-			switch ( plane.type )
+				DrawSequentialPoly( surf );
+			}, ( efrags ) => 
 			{
-				case PlaneDef.PLANE_X:
-					dot = _ModelOrg.X - plane.dist;
-					break;
-
-				case PlaneDef.PLANE_Y:
-					dot = _ModelOrg.Y - plane.dist;
-					break;
-
-				case PlaneDef.PLANE_Z:
-					dot = _ModelOrg.Z - plane.dist;
-					break;
-
-				default:
-					dot = Vector3.Dot( _ModelOrg, plane.normal ) - plane.dist;
-					break;
-			}
-
-			var side = ( dot >= 0 ? 0 : 1 );
-
-			// recurse down the children, front side first
-			RecursiveWorldNode( n.children[side] );
-
-			// draw stuff
-			c = n.numsurfaces;
-
-			if ( c != 0 )
-			{
-				var surf = Host.Client.cl.worldmodel.Surfaces;
-				Int32 offset = n.firstsurface;
-
-				if ( dot < 0 - QDef.BACKFACE_EPSILON )
-					side = ( Int32 ) Q1SurfaceFlags.PlaneBack;
-				else if ( dot > QDef.BACKFACE_EPSILON )
-					side = 0;
-
-				for ( ; c != 0; c--, offset++ )
-				{
-					if ( surf[offset].visframe != _FrameCount )
-						continue;
-
-					// don't backface underwater surfaces, because they warp
-					if ( ( surf[offset].flags & ( Int32 ) Q1SurfaceFlags.Underwater ) == 0 && ( ( dot < 0 ) ^ ( ( surf[offset].flags & ( Int32 ) Q1SurfaceFlags.PlaneBack ) != 0 ) ) )
-						continue;       // wrong side
-
-					// if sorting by texture, just store it out
-					if ( _glTexSort.Get<Boolean>( ) )
-					{
-						//if( !_IsMirror || surf[offset].texinfo.texture != Host.Client.cl.worldmodel.textures[_MirrorTextureNum] )
-						//{
-						surf[offset].texturechain = surf[offset].texinfo.texture.texturechain;
-						surf[offset].texinfo.texture.texturechain = surf[offset];
-						//}
-					}
-					else if ( ( surf[offset].flags & ( Int32 ) Q1SurfaceFlags.Sky ) != 0 )
-					{
-						surf[offset].texturechain = _SkyChain;
-						_SkyChain = surf[offset];
-					}
-					else if ( ( surf[offset].flags & ( Int32 ) Q1SurfaceFlags.Turbulence ) != 0 )
-					{
-						surf[offset].texturechain = _WaterChain;
-						_WaterChain = surf[offset];
-					}
-					else
-						DrawSequentialPoly( surf[offset] );
-				}
-			}
-
-			// recurse down the back side
-			RecursiveWorldNode( n.children[side == 0 ? 1 : 0] );
+				StoreEfrags( efrags );
+			} );
 		}
 
 		/// <summary>

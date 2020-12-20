@@ -35,6 +35,7 @@ using SharpQuake.Game.World;
 using SharpQuake.Renderer;
 using SharpQuake.Renderer.Models;
 using SharpQuake.Renderer.Textures;
+using SharpQuake.Rendering;
 
 // refresh.h -- public interface to refresh functions
 // gl_rmisc.c
@@ -127,14 +128,17 @@ namespace SharpQuake
         private Entity _WorldEntity = new Entity( ); // r_worldentity
         private Entity _CurrentEntity; // currententity
 
-        private MemoryLeaf _ViewLeaf; // r_viewleaf
-        private MemoryLeaf _OldViewLeaf; // r_oldviewleaf
-
         private Int32 _SkyTextureNum; // skytexturenum
-        //private Int32 _MirrorTextureNum; // mirrortexturenum	// quake texturenum, not gltexturenum
+                                      //private Int32 _MirrorTextureNum; // mirrortexturenum	// quake texturenum, not gltexturenum
 
-        private Int32 _VisFrameCount; // r_visframecount	// bumped when going to a new PVS
         private Int32 _FrameCount; // r_framecount		// used for dlight push checking
+       
+        public Occlusion Occlusion
+        {
+            get;
+            private set;
+        }
+
         private Int32 _BrushPolys; // c_brush_polys
         private Int32 _AliasPolys; // c_alias_polys
         //private System.Boolean _IsMirror; // mirror
@@ -205,7 +209,7 @@ namespace SharpQuake
         /// R_Init
         /// </summary>
         public void Initialise( )
-        {
+        {            
             for ( var i = 0; i < _Frustum.Length; i++ )
                 _Frustum[i] = new Plane( );
 
@@ -256,6 +260,8 @@ namespace SharpQuake
                 PlayerTextures[i] = BaseTexture.FromDynamicBuffer( Host.Video.Device, "_PlayerTexture{i}", new ByteArraySegment( new Byte[512 * 256 * 4] ), 512, 256, false, false );
             }
 
+            TextureChains = new TextureChains();
+            Occlusion = new Occlusion( Host, _glTexSort, _NoVis, TextureChains );
         }
 
         // R_InitTextures
@@ -450,7 +456,7 @@ namespace SharpQuake
             for ( var i = 0; i < Host.Client.cl.worldmodel.NumLeafs; i++ )
                 Host.Client.cl.worldmodel.Leaves[i].efrags = null;
 
-            _ViewLeaf = null;
+            Occlusion.ViewLeaf = null;
 			Particles.ClearParticles( );
 
             BuildLightMaps( );
@@ -616,7 +622,7 @@ namespace SharpQuake
 
             SetupGL( );
 
-            MarkLeaves( );	// done here so we know if we're in water
+            Occlusion.MarkLeaves( );	// done here so we know if we're in water
 
             DrawWorld( );		// adds entities to the list
 
@@ -991,10 +997,8 @@ namespace SharpQuake
             MathLib.AngleVectors( ref _RefDef.viewangles, out ViewPn, out ViewRight, out ViewUp );
 
             // current viewleaf
-            _OldViewLeaf = _ViewLeaf;
-            _ViewLeaf = Host.Client.cl.worldmodel.PointInLeaf( ref Origin );
-
-            Host.View.SetContentsColor( _ViewLeaf.contents );
+            Occlusion.SetupFrame( ref Origin );
+            Host.View.SetContentsColor( Occlusion.ViewLeaf.contents );
             Host.View.CalcBlend( );
 
             _CacheThrash = false;
