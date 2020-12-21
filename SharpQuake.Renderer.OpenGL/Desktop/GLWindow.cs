@@ -25,6 +25,7 @@
 using System;
 using System.Drawing;
 using SharpQuake.Renderer.Desktop;
+using SharpQuake.Framework.IO.Input;
 
 namespace SharpQuake.Renderer.OpenGL.Desktop
 {

@@ -145,8 +145,13 @@
     <Compile Include="IO\CommandBuffer.cs" />
     <Compile Include="IO\CommandDelegate.cs" />
     <Compile Include="IO\CommandMessage.cs" />
+    <Compile Include="IO\Input\Key.cs" />
+    <Compile Include="IO\Input\KeyboardKeyEventArgs.cs" />
     <Compile Include="IO\Input\KeyDestination.cs" />
     <Compile Include="IO\Input\KeyName.cs" />
+    <Compile Include="IO\Input\MouseButton.cs" />
+    <Compile Include="IO\Input\MouseButtonEventArgs.cs" />
+    <Compile Include="IO\Input\MouseWheelEventArgs.cs" />
     <Compile Include="IO\Programs\ProgramDefinition.cs" />
     <Compile Include="IO\Programs\ProgramFunction.cs" />
     <Compile Include="IO\Pak\MemoryPakFile.cs" />

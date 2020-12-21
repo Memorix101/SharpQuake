@@ -30,6 +30,7 @@ using System.Text;
 using SharpQuake.Framework;
 using SharpQuake.Framework.Factories.IO;
 using SharpQuake.Framework.IO;
+using SharpQuake.Framework.IO.Input;
 using SharpQuake.Rendering.UI;
 using SharpQuake.Sys;
 

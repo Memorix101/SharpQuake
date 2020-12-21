@@ -24,26 +24,19 @@
 
 using System;
 
-namespace SharpQuake.Renderer.Desktop
+namespace SharpQuake.Framework.IO.Input
 {
-	public class MouseButtonEventArgs : EventArgs
+	public class MouseWheelEventArgs : EventArgs
     {
-        public Boolean IsPressed
+        public Int32 Delta
         {
             get;
             private set;
         }
 
-        public MouseButton Button
+        public MouseWheelEventArgs( Int32 delta )
         {
-            get;
-            private set;
-        }
-
-        public MouseButtonEventArgs( MouseButton button, Boolean isPressed )
-        {
-            Button = button;
-            IsPressed = isPressed;
+            Delta = delta;
         }
     }
 }

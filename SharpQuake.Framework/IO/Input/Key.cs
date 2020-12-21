@@ -24,7 +24,7 @@
 /// Borrowed from OpenTK
 
 
-namespace SharpQuake.Renderer.Desktop
+namespace SharpQuake.Framework.IO.Input
 {
 	public enum Key
     {

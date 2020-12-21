@@ -27,6 +27,7 @@ using System.IO;
 using System.Text;
 using SharpQuake.Framework;
 using SharpQuake.Framework.IO;
+using SharpQuake.Framework.IO.Input;
 
 // keys.h
 // keys.c

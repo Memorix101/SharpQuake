@@ -24,6 +24,7 @@
 
 using System;
 using SharpQuake.Framework;
+using SharpQuake.Framework.IO.Input;
 
 namespace SharpQuake.Rendering.UI
 {

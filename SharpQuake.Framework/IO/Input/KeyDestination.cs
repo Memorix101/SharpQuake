@@ -23,7 +23,7 @@
 /// </copyright>
 
 
-namespace SharpQuake.Framework
+namespace SharpQuake.Framework.IO.Input
 {
     public enum KeyDestination
     {

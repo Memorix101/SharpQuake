@@ -1,4 +1,5 @@
-﻿/// <copyright>
+﻿using System;
+/// <copyright>
 ///
 /// SharpQuakeEvolved changes by optimus-code, 2019
 /// 
@@ -22,21 +23,20 @@
 /// Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 /// </copyright>
 
-using System;
 
-namespace SharpQuake.Renderer.Desktop
+namespace SharpQuake.Framework.IO.Input
 {
-	public class MouseWheelEventArgs : EventArgs
+	public class KeyboardKeyEventArgs : EventArgs
     {
-        public Int32 Delta
+        public Key Key
         {
             get;
             private set;
         }
 
-        public MouseWheelEventArgs( Int32 delta )
+        public KeyboardKeyEventArgs( Key key )
         {
-            Delta = delta;
+            Key = key;
         }
     }
 }

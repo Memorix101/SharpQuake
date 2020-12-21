@@ -27,6 +27,7 @@ using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using SharpQuake.Framework;
+using SharpQuake.Framework.IO.Input;
 using SharpQuake.Renderer;
 using SharpQuake.Renderer.Desktop;
 using SharpQuake.Renderer.OpenGL.Desktop;

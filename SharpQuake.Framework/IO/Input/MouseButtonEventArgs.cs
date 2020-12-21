@@ -1,5 +1,4 @@
-﻿using System;
-/// <copyright>
+﻿/// <copyright>
 ///
 /// SharpQuakeEvolved changes by optimus-code, 2019
 /// 
@@ -23,20 +22,28 @@
 /// Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 /// </copyright>
 
+using System;
 
-namespace SharpQuake.Renderer.Desktop
+namespace SharpQuake.Framework.IO.Input
 {
-	public class KeyboardKeyEventArgs : EventArgs
+	public class MouseButtonEventArgs : EventArgs
     {
-        public Key Key
+        public Boolean IsPressed
         {
             get;
             private set;
         }
 
-        public KeyboardKeyEventArgs( Key key )
+        public MouseButton Button
         {
-            Key = key;
+            get;
+            private set;
+        }
+
+        public MouseButtonEventArgs( MouseButton button, Boolean isPressed )
+        {
+            Button = button;
+            IsPressed = isPressed;
         }
     }
 }
