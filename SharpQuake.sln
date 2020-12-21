@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.28803.156
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SharpQuake", "SharpQuake.csproj", "{0FC3229A-25C5-49F9-80C6-237A3BC319B1}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SharpQuake", "SharpQuake\SharpQuake.csproj", "{0FC3229A-25C5-49F9-80C6-237A3BC319B1}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SharpQuake.Framework", "SharpQuake.Framework\SharpQuake.Framework.csproj", "{6CF287D3-D413-4C9B-ABAC-01E78D6CCADB}"
 EndProject
