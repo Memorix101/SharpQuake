@@ -28,7 +28,7 @@ using System.Text;
 using SharpQuake.Framework;
 using SharpQuake.Framework.IO;
 
-namespace SharpQuake
+namespace SharpQuake.Rendering.UI
 {
     public class LoadMenu : MenuBase
     {

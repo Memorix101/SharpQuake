@@ -78,19 +78,7 @@ namespace SharpQuake
         private Int32[] _TypeSize = new Int32[8] // type_size
         {
             1, sizeof(Int32)/4, 1, 3, 1, 1, sizeof(Int32)/4, IntPtr.Size/4
-        };
-
-        private ClientVariable _NoMonsters;// = { "nomonsters", "0" };
-        private ClientVariable _GameCfg;// = { "gamecfg", "0" };
-        private ClientVariable _Scratch1;// = { "scratch1", "0" };
-        private ClientVariable _Scratch2;// = { "scratch2", "0" };
-        private ClientVariable _Scratch3;// = { "scratch3", "0" };
-        private ClientVariable _Scratch4;// = { "scratch4", "0" };
-        private ClientVariable _SavedGameCfg;// = { "savedgamecfg", "0", true };
-        private ClientVariable _Saved1;// = { "saved1", "0", true };
-        private ClientVariable _Saved2;// = { "saved2", "0", true };
-        private ClientVariable _Saved3;// = { "saved3", "0", true };
-        private ClientVariable _Saved4;// = { "saved4", "0", true };
+        };       
 
         private Program _Progs; // progs
         private ProgramFunction[] _Functions; // pr_functions
@@ -137,19 +125,19 @@ namespace SharpQuake
             Host.Commands.Add( "profile", Profile_f );
             Host.Commands.Add( "test5", Test5_f );
 
-            if ( _NoMonsters == null )
+            if ( Host.Cvars.NoMonsters == null )
             {
-                _NoMonsters = Host.CVars.Add( "nomonsters", false );
-                _GameCfg = Host.CVars.Add( "gamecfg", false );
-                _Scratch1 = Host.CVars.Add( "scratch1", false );
-                _Scratch2 = Host.CVars.Add( "scratch2", false );
-                _Scratch3 = Host.CVars.Add( "scratch3", false );
-                _Scratch4 = Host.CVars.Add( "scratch4", false );
-                _SavedGameCfg = Host.CVars.Add( "savedgamecfg", false, ClientVariableFlags.Archive );
-                _Saved1 = Host.CVars.Add( "saved1", false, ClientVariableFlags.Archive );
-                _Saved2 = Host.CVars.Add( "saved2", false, ClientVariableFlags.Archive );
-                _Saved3 = Host.CVars.Add( "saved3", false, ClientVariableFlags.Archive );
-                _Saved4 = Host.CVars.Add( "saved4", false, ClientVariableFlags.Archive );
+                Host.Cvars.NoMonsters = Host.CVars.Add( "nomonsters", false );
+                Host.Cvars.GameCfg = Host.CVars.Add( "gamecfg", false );
+                Host.Cvars.Scratch1 = Host.CVars.Add( "scratch1", false );
+                Host.Cvars.Scratch2 = Host.CVars.Add( "scratch2", false );
+                Host.Cvars.Scratch3 = Host.CVars.Add( "scratch3", false );
+                Host.Cvars.Scratch4 = Host.CVars.Add( "scratch4", false );
+                Host.Cvars.SavedGameCfg = Host.CVars.Add( "savedgamecfg", false, ClientVariableFlags.Archive );
+                Host.Cvars.Saved1 = Host.CVars.Add( "saved1", false, ClientVariableFlags.Archive );
+                Host.Cvars.Saved2 = Host.CVars.Add( "saved2", false, ClientVariableFlags.Archive );
+                Host.Cvars.Saved3 = Host.CVars.Add( "saved3", false, ClientVariableFlags.Archive );
+                Host.Cvars.Saved4 = Host.CVars.Add( "saved4", false, ClientVariableFlags.Archive );
             }
         }
 
@@ -324,7 +312,7 @@ namespace SharpQuake
                 data = ParseEdict( data, ent );
 
                 // remove things from different skill levels or deathmatch
-                if ( Host.Deathmatch.Get<Int32>( ) != 0 )
+                if ( Host.Cvars.Deathmatch.Get<Int32>( ) != 0 )
                 {
                     if ( ( ( Int32 ) ent.v.spawnflags & SpawnFlags.SPAWNFLAG_NOT_DEATHMATCH ) != 0 )
                     {

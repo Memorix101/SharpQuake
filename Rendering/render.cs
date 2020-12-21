@@ -93,32 +93,7 @@ namespace SharpQuake
 
         private refdef_t _RefDef = new refdef_t( ); // refdef_t	r_refdef;
         private ModelTexture _NoTextureMip; // r_notexture_mip
-
-        private ClientVariable _NoRefresh;// = { "r_norefresh", "0" };
-        private ClientVariable _DrawEntities;// = { "r_drawentities", "1" };
-        private ClientVariable _DrawViewModel;// = { "r_drawviewmodel", "1" };
-        private ClientVariable _Speeds;// = { "r_speeds", "0" };
-        private ClientVariable _FullBright;// = { "r_fullbright", "0" };
-        private ClientVariable _LightMap;// = { "r_lightmap", "0" };
-        private ClientVariable _Shadows;// = { "r_shadows", "0" };
-        //private CVar _MirrorAlpha;// = { "r_mirroralpha", "1" };
-        private ClientVariable _WaterAlpha;// = { "r_wateralpha", "1" };
-        private ClientVariable _Dynamic;// = { "r_dynamic", "1" };
-        private ClientVariable _NoVis;// = { "r_novis", "0" };
-
-        private ClientVariable _glFinish;// = { "gl_finish", "0" };
-        private ClientVariable _glClear;// = { "gl_clear", "0" };
-        private ClientVariable _glCull;// = { "gl_cull", "1" };
-        private ClientVariable _glTexSort;// = { "gl_texsort", "1" };
-        private ClientVariable _glSmoothModels;// = { "gl_smoothmodels", "1" };
-        private ClientVariable _glAffineModels;// = { "gl_affinemodels", "0" };
-        private ClientVariable _glPolyBlend;// = { "gl_polyblend", "1" };
-        private ClientVariable _glFlashBlend;// = { "gl_flashblend", "1" };
-        private ClientVariable _glPlayerMip;// = { "gl_playermip", "0" };
-        private ClientVariable _glNoColors;// = { "gl_nocolors", "0" };
-        private ClientVariable _glKeepTJunctions;// = { "gl_keeptjunctions", "0" };
-        private ClientVariable _glReportTJunctions;// = { "gl_reporttjunctions", "0" };
-        private ClientVariable _glDoubleEyes;// = { "gl_doubleeys", "1" };
+        
         private BaseTexture[] PlayerTextures;
         private System.Boolean _CacheThrash; // r_cache_thrash	// compatability
 
@@ -217,33 +192,33 @@ namespace SharpQuake
             //Cmd.Add("envmap", Envmap_f);
             //Cmd.Add("pointfile", ReadPointFile_f);
 
-            if ( _NoRefresh == null )
+            if ( Host.Cvars.NoRefresh == null )
             {
-                _NoRefresh = Host.CVars.Add( "r_norefresh", false );
-                _DrawEntities = Host.CVars.Add( "r_drawentities", true );
-                _DrawViewModel = Host.CVars.Add( "r_drawviewmodel", true );
-                _Speeds = Host.CVars.Add( "r_speeds", false );
-                _FullBright = Host.CVars.Add( "r_fullbright", false );
-                _LightMap = Host.CVars.Add( "r_lightmap", false );
-                _Shadows = Host.CVars.Add( "r_shadows", false );
+                Host.Cvars.NoRefresh = Host.CVars.Add( "r_norefresh", false );
+                Host.Cvars.DrawEntities = Host.CVars.Add( "r_drawentities", true );
+                Host.Cvars.DrawViewModel = Host.CVars.Add( "r_drawviewmodel", true );
+                Host.Cvars.Speeds = Host.CVars.Add( "r_speeds", false );
+                Host.Cvars.FullBright = Host.CVars.Add( "r_fullbright", false );
+                Host.Cvars.LightMap = Host.CVars.Add( "r_lightmap", false );
+                Host.Cvars.Shadows = Host.CVars.Add( "r_shadows", false );
                 //_MirrorAlpha = Host.CVars.Add( "r_mirroralpha", "1" );
-                _WaterAlpha = Host.CVars.Add( "r_wateralpha", 1f );
-                _Dynamic = Host.CVars.Add( "r_dynamic", true );
-                _NoVis = Host.CVars.Add( "r_novis", false );
+                Host.Cvars.WaterAlpha = Host.CVars.Add( "r_wateralpha", 1f );
+                Host.Cvars.Dynamic = Host.CVars.Add( "r_dynamic", true );
+                Host.Cvars.NoVis = Host.CVars.Add( "r_novis", false );
 
-                _glFinish = Host.CVars.Add( "gl_finish", false );
-                _glClear = Host.CVars.Add( "gl_clear", 0f );
-                _glCull = Host.CVars.Add( "gl_cull", true );
-                _glTexSort = Host.CVars.Add( "gl_texsort", true );
-                _glSmoothModels = Host.CVars.Add( "gl_smoothmodels", true );
-                _glAffineModels = Host.CVars.Add( "gl_affinemodels", false );
-                _glPolyBlend = Host.CVars.Add( "gl_polyblend", true );
-                _glFlashBlend = Host.CVars.Add( "gl_flashblend", true );
-                _glPlayerMip = Host.CVars.Add( "gl_playermip", 0 );
-                _glNoColors = Host.CVars.Add( "gl_nocolors", false );
-                _glKeepTJunctions = Host.CVars.Add( "gl_keeptjunctions", false );
-                _glReportTJunctions = Host.CVars.Add( "gl_reporttjunctions", false );
-                _glDoubleEyes = Host.CVars.Add( "gl_doubleeys", true );
+                Host.Cvars.glFinish = Host.CVars.Add( "gl_finish", false );
+                Host.Cvars.glClear = Host.CVars.Add( "gl_clear", 0f );
+                Host.Cvars.glCull = Host.CVars.Add( "gl_cull", true );
+                Host.Cvars.glTexSort = Host.CVars.Add( "gl_texsort", true );
+                Host.Cvars.glSmoothModels = Host.CVars.Add( "gl_smoothmodels", true );
+                Host.Cvars.glAffineModels = Host.CVars.Add( "gl_affinemodels", false );
+                Host.Cvars.glPolyBlend = Host.CVars.Add( "gl_polyblend", true );
+                Host.Cvars.glFlashBlend = Host.CVars.Add( "gl_flashblend", true );
+                Host.Cvars.glPlayerMip = Host.CVars.Add( "gl_playermip", 0 );
+                Host.Cvars.glNoColors = Host.CVars.Add( "gl_nocolors", false );
+                Host.Cvars.glKeepTJunctions = Host.CVars.Add( "gl_keeptjunctions", false );
+                Host.Cvars.glReportTJunctions = Host.CVars.Add( "gl_reporttjunctions", false );
+                Host.Cvars.glDoubleEyes = Host.CVars.Add( "gl_doubleeys", true );
             }
 
             if ( Host.Video.Device.Desc.SupportsMultiTexture )
@@ -261,7 +236,7 @@ namespace SharpQuake
             }
 
             TextureChains = new TextureChains();
-            Occlusion = new Occlusion( Host, _glTexSort, _NoVis, TextureChains );
+            Occlusion = new Occlusion( Host, TextureChains );
         }
 
         // R_InitTextures
@@ -303,14 +278,14 @@ namespace SharpQuake
         /// </summary>
         public void RenderView( )
         {
-            if ( _NoRefresh.Get<Boolean>() )
+            if ( Host.Cvars.NoRefresh.Get<Boolean>() )
                 return;
 
             if ( _WorldEntity.model == null || Host.Client.cl.worldmodel == null )
                 Utilities.Error( "R_RenderView: NULL worldmodel" );
 
             Double time1 = 0;
-            if ( _Speeds.Get<Boolean>( ) )
+            if ( Host.Cvars.Speeds.Get<Boolean>( ) )
             {
                 Host.Video.Device.Finish( );
                 time1 = Timer.GetFloatTime( );
@@ -320,7 +295,7 @@ namespace SharpQuake
 
             //_IsMirror = false;
 
-            if ( _glFinish.Get<Boolean>() )
+            if ( Host.Cvars.glFinish.Get<Boolean>() )
                 Host.Video.Device.Finish( );
 
             Clear( );
@@ -336,7 +311,7 @@ namespace SharpQuake
 
             PolyBlend( );
 
-            if ( _Speeds.Get<Boolean>() )
+            if ( Host.Cvars.Speeds.Get<Boolean>() )
             {
                 var time2 = Timer.GetFloatTime( );
                 ConsoleWrapper.Print( "{0,3} ms  {1,4} wpoly {2,4} epoly\n", ( Int32 ) ( ( time2 - time1 ) * 1000 ), _BrushPolys, _AliasPolys );
@@ -437,7 +412,7 @@ namespace SharpQuake
 
             // because this happens during gameplay, do it fast
             // instead of sending it through gl_upload 8
-            PlayerTextures[playernum].TranslateAndUpload( original, translate, inwidth, inheight, ( Int32 ) Host.DrawingContext.glMaxSize, ( Int32 ) Host.DrawingContext.glMaxSize, ( Int32 ) _glPlayerMip.Get<Int32>() );
+            PlayerTextures[playernum].TranslateAndUpload( original, translate, inwidth, inheight, ( Int32 ) Host.DrawingContext.glMaxSize, ( Int32 ) Host.DrawingContext.glMaxSize, ( Int32 ) Host.Cvars.glPlayerMip.Get<Int32>() );
         }
 
         /// <summary>
@@ -485,7 +460,7 @@ namespace SharpQuake
         /// </summary>
         private void PolyBlend( )
         {
-            if ( !_glPolyBlend.Get<Boolean>() )
+            if ( !Host.Cvars.glPolyBlend.Get<Boolean>() )
                 return;
 
             if ( Host.View.Blend.A == 0 )
@@ -560,7 +535,7 @@ namespace SharpQuake
         /// </summary>
         private void DrawViewModel( )
         {
-            if ( !_DrawViewModel.Get<Boolean>() )
+            if ( !Host.Cvars.DrawViewModel.Get<Boolean>() )
                 return;
 
             if ( Host.ChaseView.IsActive )
@@ -569,7 +544,7 @@ namespace SharpQuake
             if ( _IsEnvMap )
                 return;
 
-            if ( !_DrawEntities.Get<Boolean>( ) )
+            if ( !Host.Cvars.DrawEntities.Get<Boolean>( ) )
                 return;
 
             if ( Host.Client.cl.HasItems( QItemsDef.IT_INVISIBILITY ) )
@@ -646,7 +621,7 @@ namespace SharpQuake
         /// </summary>
         private void DrawEntitiesOnList( )
         {
-            if ( !_DrawEntities.Get<Boolean>( ) )
+            if ( !Host.Cvars.DrawEntities.Get<Boolean>( ) )
                 return;
 
             for ( var i = 0; i < Host.Client.NumVisEdicts; i++ )
@@ -656,7 +631,7 @@ namespace SharpQuake
                 switch ( _CurrentEntity.model.Type )
                 {
                     case ModelType.mod_alias:
-						_CurrentEntity.useInterpolation = Host.Client.AnimationBlend.Get<Boolean>( );
+						_CurrentEntity.useInterpolation = Host.Cvars.AnimationBlend.Get<Boolean>( );
 						DrawAliasModel( _CurrentEntity );
                         break;
 
@@ -851,8 +826,8 @@ namespace SharpQuake
 				ref e.pose1, ref e.pose2, ref e.frame_start_time, ref e.frame_interval,
 				ref e.origin1, ref e.origin2, ref e.translate_start_time, ref e.angles1,
 				ref e.angles2, ref e.rotate_start_time,
-				( _Shadows.Get<Boolean>( ) ), ( _glSmoothModels.Get<Boolean>( ) ), ( _glAffineModels.Get<Boolean>( ) ),
-				!_glNoColors.Get<Boolean>( ), ( clmodel.Name == "progs/eyes.mdl" && _glDoubleEyes.Get<Boolean>( ) ), e.useInterpolation );
+				( Host.Cvars.Shadows.Get<Boolean>( ) ), ( Host.Cvars.glSmoothModels.Get<Boolean>( ) ), ( Host.Cvars.glAffineModels.Get<Boolean>( ) ),
+				!Host.Cvars.glNoColors.Get<Boolean>( ), ( clmodel.Name == "progs/eyes.mdl" && Host.Cvars.glDoubleEyes.Get<Boolean>( ) ), e.useInterpolation );
 		}
 
 		/// <summary>
@@ -860,7 +835,7 @@ namespace SharpQuake
 		/// </summary>
 		private void SetupGL( )
         {
-            Host.Video.Device.Setup3DScene( _glCull.Get<Boolean>(), _RefDef, _IsEnvMap );
+            Host.Video.Device.Setup3DScene( Host.Cvars.glCull.Get<Boolean>(), _RefDef, _IsEnvMap );
 
             ////
             //// set up viewpoint
@@ -1011,7 +986,7 @@ namespace SharpQuake
         /// </summary>
         private void Clear( )
         {
-            Host.Video.Device.Clear( Host.Video.glZTrick, _glClear.Get<Single>( ) );
+            Host.Video.Device.Clear( Host.Video.glZTrick, Host.Cvars.glClear.Get<Single>( ) );
         }
 
         /// <summary>

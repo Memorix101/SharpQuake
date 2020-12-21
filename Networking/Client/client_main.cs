@@ -47,28 +47,28 @@ namespace SharpQuake
             InitInput( Host );
             InitTempEntities();
 
-            if( _Name == null )
+            if( Host.Cvars.Name == null )
             {
-                _Name = Host.CVars.Add( "_cl_name", "player", ClientVariableFlags.Archive );
-                _Color = Host.CVars.Add( "_cl_color", 0f, ClientVariableFlags.Archive );
-                _ShowNet = Host.CVars.Add( "cl_shownet", 0 );	// can be 0, 1, or 2
-                _NoLerp = Host.CVars.Add( "cl_nolerp", false );
-                _LookSpring = Host.CVars.Add( "lookspring", false, ClientVariableFlags.Archive );
-                _LookStrafe = Host.CVars.Add( "lookstrafe", false, ClientVariableFlags.Archive );
-                _Sensitivity = Host.CVars.Add( "sensitivity", 3f, ClientVariableFlags.Archive );
-                _MPitch = Host.CVars.Add( "m_pitch", 0.022f, ClientVariableFlags.Archive );
-                _MYaw = Host.CVars.Add( "m_yaw", 0.022f, ClientVariableFlags.Archive );
-                _MForward = Host.CVars.Add( "m_forward", 1f, ClientVariableFlags.Archive );
-                _MSide = Host.CVars.Add( "m_side", 0.8f, ClientVariableFlags.Archive );
-                _UpSpeed = Host.CVars.Add( "cl_upspeed", 200f );
-                _ForwardSpeed = Host.CVars.Add( "cl_forwardspeed", 200f, ClientVariableFlags.Archive );
-                _BackSpeed = Host.CVars.Add( "cl_backspeed", 200f, ClientVariableFlags.Archive );
-                _SideSpeed = Host.CVars.Add( "cl_sidespeed", 350f );
-                _MoveSpeedKey = Host.CVars.Add( "cl_movespeedkey", 2.0f );
-                _YawSpeed = Host.CVars.Add( "cl_yawspeed", 140f );
-                _PitchSpeed = Host.CVars.Add( "cl_pitchspeed", 150f );
-                _AngleSpeedKey = Host.CVars.Add( "cl_anglespeedkey", 1.5f );
-				AnimationBlend = Host.CVars.Add( "cl_animationblend", false );
+                Host.Cvars.Name = Host.CVars.Add( "_cl_name", "player", ClientVariableFlags.Archive );
+                Host.Cvars.Color = Host.CVars.Add( "_cl_color", 0f, ClientVariableFlags.Archive );
+                Host.Cvars.ShowNet = Host.CVars.Add( "cl_shownet", 0 );	// can be 0, 1, or 2
+                Host.Cvars.NoLerp = Host.CVars.Add( "cl_nolerp", false );
+                Host.Cvars.LookSpring = Host.CVars.Add( "lookspring", false, ClientVariableFlags.Archive );
+                Host.Cvars.LookStrafe = Host.CVars.Add( "lookstrafe", false, ClientVariableFlags.Archive );
+                Host.Cvars.Sensitivity = Host.CVars.Add( "sensitivity", 3f, ClientVariableFlags.Archive );
+                Host.Cvars.MPitch = Host.CVars.Add( "m_pitch", 0.022f, ClientVariableFlags.Archive );
+                Host.Cvars.MYaw = Host.CVars.Add( "m_yaw", 0.022f, ClientVariableFlags.Archive );
+                Host.Cvars.MForward = Host.CVars.Add( "m_forward", 1f, ClientVariableFlags.Archive );
+                Host.Cvars.MSide = Host.CVars.Add( "m_side", 0.8f, ClientVariableFlags.Archive );
+                Host.Cvars.UpSpeed = Host.CVars.Add( "cl_upspeed", 200f );
+                Host.Cvars.ForwardSpeed = Host.CVars.Add( "cl_forwardspeed", 200f, ClientVariableFlags.Archive );
+                Host.Cvars.BackSpeed = Host.CVars.Add( "cl_backspeed", 200f, ClientVariableFlags.Archive );
+                Host.Cvars.SideSpeed = Host.CVars.Add( "cl_sidespeed", 350f );
+                Host.Cvars.MoveSpeedKey = Host.CVars.Add( "cl_movespeedkey", 2.0f );
+                Host.Cvars.YawSpeed = Host.CVars.Add( "cl_yawspeed", 140f );
+                Host.Cvars.PitchSpeed = Host.CVars.Add( "cl_pitchspeed", 150f );
+                Host.Cvars.AngleSpeedKey = Host.CVars.Add( "cl_anglespeedkey", 1.5f );
+                Host.Cvars.AnimationBlend = Host.CVars.Add( "cl_animationblend", false );
 			}
 
             for( var i = 0; i < _EFrags.Length; i++ )
@@ -310,7 +310,7 @@ namespace SharpQuake
                 ParseServerMessage();
             } while( ret != 0 && cls.state == cactive_t.ca_connected );
 
-            if( _ShowNet.Get<Int32>( ) != 0 )
+            if( Host.Cvars.ShowNet.Get<Int32>( ) != 0 )
                 Host.Console.Print( "\n" );
 
             //
@@ -531,10 +531,10 @@ namespace SharpQuake
 
                 case 2:
                     cls.message.WriteByte( ProtocolDef.clc_stringcmd );
-                    cls.message.WriteString( String.Format( "name \"{0}\"\n", _Name.Get<String>( ) ) );
+                    cls.message.WriteString( String.Format( "name \"{0}\"\n", Host.Cvars.Name.Get<String>( ) ) );
 
                     cls.message.WriteByte( ProtocolDef.clc_stringcmd );
-                    cls.message.WriteString( String.Format( "color {0} {1}\n", ( ( Int32 ) _Color.Get<Single>( ) ) >> 4, ( ( Int32 ) _Color.Get<Single>( ) ) & 15 ) );
+                    cls.message.WriteString( String.Format( "color {0} {1}\n", ( ( Int32 ) Host.Cvars.Color.Get<Single>( ) ) >> 4, ( ( Int32 ) Host.Cvars.Color.Get<Single>( ) ) & 15 ) );
 
                     cls.message.WriteByte( ProtocolDef.clc_stringcmd );
                     cls.message.WriteString( "spawn " + cls.spawnparms );
@@ -599,7 +599,7 @@ namespace SharpQuake
         private Single LerpPoint()
         {
             var f = cl.mtime[0] - cl.mtime[1];
-            if( f == 0 || _NoLerp.Get<Boolean>( ) || cls.timedemo || Host.Server.IsActive )
+            if( f == 0 || Host.Cvars.NoLerp.Get<Boolean>( ) || cls.timedemo || Host.Server.IsActive )
             {
                 cl.time = cl.mtime[0];
                 return 1;

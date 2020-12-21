@@ -29,6 +29,7 @@ using System.Text;
 using SharpQuake.Framework;
 using SharpQuake.Framework.IO;
 using SharpQuake.Game.Data.Models;
+using SharpQuake.Rendering.UI;
 
 namespace SharpQuake
 {
@@ -65,7 +66,9 @@ namespace SharpQuake
             MainWindow.Quit( );
         }
 
-        // Host_InitCommands
+        /// <summary>
+        /// Host_InitCommands
+        /// </summary>
         private void InititaliseCommands( )
         {
             Commands.Add( "status", Status_f );
@@ -111,7 +114,10 @@ namespace SharpQuake
             Commands.Add( "showfps", ShowFPS_f );
         }
 
-        // Host_Viewmodel_f
+        /// <summary>
+        /// Host_Viewmodel_f
+        /// </summary>
+        /// <param name="msg"></param>
         private void Viewmodel_f( CommandMessage msg )
         {
             var e = FindViewthing( );
@@ -376,11 +382,14 @@ namespace SharpQuake
             }
         }
 
-        // Host_Map_f
-        //
-        // handle a
-        // map <servername>
-        // command from the console.  Active clients are kicked off.
+        /// <summary>
+        /// Host_Map_f
+        ///
+        /// handle a
+        /// map [servername]
+        /// command from the console.  Active clients are kicked off.
+        /// </summary>
+        /// <param name="msg"></param>
         private void Map_f( CommandMessage msg )
         {
             if ( msg.Source != CommandSource.Command )
@@ -718,7 +727,10 @@ namespace SharpQuake
             }
         }
 
-        // Host_Name_f
+        /// <summary>
+        /// Host_Name_f
+        /// </summary>
+        /// <param name="msg"></param>
         private void Name_f( CommandMessage msg )
         {
             if ( msg.Parameters == null || msg.Parameters.Length <= 0 )
@@ -760,7 +772,10 @@ namespace SharpQuake
             m.WriteString( newName );
         }
 
-        // Host_Version_f
+        /// <summary>
+        /// Host_Version_f
+        /// </summary>
+        /// <param name="msg"></param>
         private void Version_f( CommandMessage msg )
         {
             Console.Print( "Version {0}\n", QDef.VERSION );
@@ -813,7 +828,7 @@ namespace SharpQuake
                 var client = Server.svs.clients[j];
                 if ( client == null || !client.active || !client.spawned )
                     continue;
-                if ( TeamPlay.Get<Int32>( ) != 0 && teamonly && client.edict.v.team != save.edict.v.team )
+                if ( Cvars.TeamPlay.Get<Int32>( ) != 0 && teamonly && client.edict.v.team != save.edict.v.team )
                     continue;
                 HostClient = client;
                 Server.ClientPrint( text );
@@ -821,19 +836,28 @@ namespace SharpQuake
             HostClient = save;
         }
 
-        // Host_Say_f
+        /// <summary>
+        /// Host_Say_f
+        /// </summary>
+        /// <param name="msg"></param>
         private void Say_f( CommandMessage msg )
         {
             Say( msg, false );
         }
 
-        // Host_Say_Team_f
+        /// <summary>
+        /// Host_Say_Team_f
+        /// </summary>
+        /// <param name="msg"></param>
         private void Say_Team_f( CommandMessage msg )
         {
             Say( msg, true );
         }
 
-        // Host_Tell_f
+        /// <summary>
+        /// Host_Tell_f
+        /// </summary>
+        /// <param name="msg"></param>
         private void Tell_f( CommandMessage msg )
         {
             if ( msg.Source == CommandSource.Command )
@@ -871,7 +895,10 @@ namespace SharpQuake
             HostClient = save;
         }
 
-        // Host_Color_f
+        /// <summary>
+        /// Host_Color_f
+        /// </summary>
+        /// <param name="msg"></param>
         private void Color_f( CommandMessage msg )
         {
             if ( msg.Parameters == null || msg.Parameters.Length <= 0 )
@@ -949,7 +976,7 @@ namespace SharpQuake
                 Client.ForwardToServer_f( msg );
                 return;
             }
-            if ( !Pausable.Get<Boolean>( ) )
+            if ( !Cvars.Pausable.Get<Boolean>( ) )
                 Server.ClientPrint( "Pause not allowed.\n" );
             else
             {
@@ -1113,7 +1140,10 @@ namespace SharpQuake
             HostClient.sendsignon = true;
         }
 
-        // Host_Begin_f
+        /// <summary>
+        /// Host_Begin_f
+        /// </summary>
+        /// <param name="msg"></param>
         private void Begin_f( CommandMessage msg )
         {
             if ( msg.Source == CommandSource.Command )
@@ -1351,7 +1381,10 @@ namespace SharpQuake
             return null;
         }
 
-        // Host_Startdemos_f
+        /// <summary>
+        /// Host_Startdemos_f
+        /// </summary>
+        /// <param name="msg"></param>
         private void Startdemos_f( CommandMessage msg )
         {
             if ( Client.cls.state == cactive_t.ca_dedicated )
@@ -1401,9 +1434,7 @@ namespace SharpQuake
         /// </summary>
         private void Stopdemo_f( CommandMessage msg )
         {
-            if ( Client.cls.state == cactive_t.ca_dedicated )
-                return;
-            if ( !Client.cls.demoplayback )
+            if ( Client.cls.state == cactive_t.ca_dedicated || !Client.cls.demoplayback )
                 return;
             Client.StopPlayback( );
             Client.Disconnect( );

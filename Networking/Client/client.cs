@@ -120,7 +120,7 @@ namespace SharpQuake
         {
             get
             {
-                return _ForwardSpeed.Get<Single>( );
+                return Host.Cvars.ForwardSpeed.Get<Single>( );
             }
         }
 
@@ -128,7 +128,7 @@ namespace SharpQuake
         {
             get
             {
-                return _LookSpring.Get<Boolean>( );
+                return Host.Cvars.LookSpring.Get<Boolean>( );
             }
         }
 
@@ -136,7 +136,7 @@ namespace SharpQuake
         {
             get
             {
-                return _LookStrafe.Get<Boolean>( );
+                return Host.Cvars.LookStrafe.Get<Boolean>( );
             }
         }
 
@@ -168,7 +168,7 @@ namespace SharpQuake
         {
             get
             {
-                return _Sensitivity.Get<Single>( );
+                return Host.Cvars.Sensitivity.Get<Single>( );
             }
         }
 
@@ -176,7 +176,7 @@ namespace SharpQuake
         {
             get
             {
-                return _MSide.Get<Single>( );
+                return Host.Cvars.MSide.Get<Single>( );
             }
         }
 
@@ -184,7 +184,7 @@ namespace SharpQuake
         {
             get
             {
-                return _MYaw.Get<Single>( );
+                return Host.Cvars.MYaw.Get<Single>( );
             }
         }
 
@@ -192,7 +192,7 @@ namespace SharpQuake
         {
             get
             {
-                return _MPitch.Get<Single>( );
+                return Host.Cvars.MPitch.Get<Single>( );
             }
         }
 
@@ -200,7 +200,7 @@ namespace SharpQuake
         {
             get
             {
-                return _MForward.Get<Single>( );
+                return Host.Cvars.MForward.Get<Single>( );
             }
         }
 
@@ -208,7 +208,7 @@ namespace SharpQuake
         {
             get
             {
-                return _Name.Get<String>();
+                return Host.Cvars.Name.Get<String>();
             }
         }
 
@@ -216,7 +216,7 @@ namespace SharpQuake
         {
             get
             {
-                return _Color.Get<Single>( );
+                return Host.Cvars.Color.Get<Single>( );
             }
         }
                 
@@ -237,27 +237,6 @@ namespace SharpQuake
         private Entity[] _StaticEntities = new Entity[ClientDef.MAX_STATIC_ENTITIES]; // cl_static_entities
         private lightstyle_t[] _LightStyle = new lightstyle_t[QDef.MAX_LIGHTSTYLES]; // cl_lightstyle
         private dlight_t[] _DLights = new dlight_t[ClientDef.MAX_DLIGHTS]; // cl_dlights
-
-        private ClientVariable _Name;// = { "_cl_name", "player", true };
-        private ClientVariable _Color;// = { "_cl_color", "0", true };
-        private ClientVariable _ShowNet;// = { "cl_shownet", "0" };	// can be 0, 1, or 2
-        private ClientVariable _NoLerp;// = { "cl_nolerp", "0" };
-        private ClientVariable _LookSpring;// = { "lookspring", "0", true };
-        private ClientVariable _LookStrafe;// = { "lookstrafe", "0", true };
-        private ClientVariable _Sensitivity;// = { "sensitivity", "3", true };
-        private ClientVariable _MPitch;// = { "m_pitch", "0.022", true };
-        private ClientVariable _MYaw;// = { "m_yaw", "0.022", true };
-        private ClientVariable _MForward;// = { "m_forward", "1", true };
-        private ClientVariable _MSide;// = { "m_side", "0.8", true };
-        private ClientVariable _UpSpeed;// = { "cl_upspeed", "200" };
-        private ClientVariable _ForwardSpeed;// = { "cl_forwardspeed", "200", true };
-        private ClientVariable _BackSpeed;// = { "cl_backspeed", "200", true };
-        private ClientVariable _SideSpeed;// = { "cl_sidespeed", "350" };
-        private ClientVariable _MoveSpeedKey;// = { "cl_movespeedkey", "2.0" };
-        private ClientVariable _YawSpeed;// = { "cl_yawspeed", "140" };
-        private ClientVariable _PitchSpeed;// = { "cl_pitchspeed", "150" };
-        private ClientVariable _AngleSpeedKey;// = { "cl_anglespeedkey", "1.5" };
-		public ClientVariable AnimationBlend;
 
 		// cl_numvisedicts
 		private Entity[] _VisEdicts = new Entity[ClientDef.MAX_VISEDICTS]; // cl_visedicts[MAX_VISEDICTS]

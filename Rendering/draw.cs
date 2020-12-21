@@ -43,7 +43,7 @@ namespace SharpQuake
         {
             get
             {
-                return _glMaxSize.Get<Int32>( );
+                return Host.Cvars.glMaxSize.Get<Int32>( );
             }
         }
 
@@ -58,14 +58,6 @@ namespace SharpQuake
         public Byte[] _MenuPlayerPixels = new Byte[4096];
         public Int32 _MenuPlayerPixelWidth;
         public Int32 _MenuPlayerPixelHeight;
-
-        private ClientVariable _glNoBind;
-
-        // = {"gl_nobind", "0"};
-        private ClientVariable _glMaxSize;
-
-        // = {"gl_max_size", "1024"};
-        private ClientVariable _glPicMip;
 
         public BasePicture Disc
         {
@@ -126,11 +118,11 @@ namespace SharpQuake
         // Draw_Init
         public void Initialise( )
         {
-            if ( _glNoBind == null )
+            if ( Host.Cvars.glNoBind == null )
             {
-                _glNoBind = Host.CVars.Add( "gl_nobind", false );
-                _glMaxSize = Host.CVars.Add( "gl_max_size", 8192 );
-                _glPicMip = Host.CVars.Add( "gl_picmip", 0f );
+                Host.Cvars.glNoBind = Host.CVars.Add( "gl_nobind", false );
+                Host.Cvars.glMaxSize = Host.CVars.Add( "gl_max_size", 8192 );
+                Host.Cvars.glPicMip = Host.CVars.Add( "gl_picmip", 0f );
             }
 
             // 3dfx can only handle 256 wide textures
@@ -155,7 +147,7 @@ namespace SharpQuake
             }
 
             // Temporarily set here
-            BaseTexture.PicMip = _glPicMip.Get<Single>( );
+            BaseTexture.PicMip = Host.Cvars.glPicMip.Get<Single>( );
             BaseTexture.MaxSize = glMaxSize;
 
             CharSetFont = new Renderer.Font( Host.Video.Device, "charset" );
@@ -228,7 +220,7 @@ namespace SharpQuake
         public void FadeScreen( )
         {
             Host.Video.Device.Graphics.FadeScreen( );
-            Host.StatusBar.Changed( );
+            Host.Hud.Changed( );
         }
 
         // Draw_Character

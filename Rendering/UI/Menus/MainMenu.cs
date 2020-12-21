@@ -25,7 +25,7 @@
 using System;
 using SharpQuake.Framework;
 
-namespace SharpQuake
+namespace SharpQuake.Rendering.UI
 {
     /// <summary>
     /// MainMenu

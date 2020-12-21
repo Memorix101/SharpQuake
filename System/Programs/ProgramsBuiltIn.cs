@@ -1454,7 +1454,7 @@ namespace SharpQuake
             var end = start + dir * 2048;
             var tr = Host.Server.Move( ref start, ref Utilities.ZeroVector, ref Utilities.ZeroVector, ref end, 0, ent );
             if ( tr.ent != null && tr.ent.v.takedamage == Damages.DAMAGE_AIM &&
-                ( Host.TeamPlay.Get<Int32>( ) == 0 || ent.v.team <= 0 || ent.v.team != tr.ent.v.team ) )
+                ( Host.Cvars.TeamPlay.Get<Int32>( ) == 0 || ent.v.team <= 0 || ent.v.team != tr.ent.v.team ) )
             {
                 ReturnVector( ref Host.Programs.GlobalStruct.v_forward );
                 return;
@@ -1472,7 +1472,7 @@ namespace SharpQuake
                     continue;
                 if ( check == ent )
                     continue;
-                if ( Host.TeamPlay.Get<Int32>( ) > 0 && ent.v.team > 0 && ent.v.team == check.v.team )
+                if ( Host.Cvars.TeamPlay.Get<Int32>( ) > 0 && ent.v.team > 0 && ent.v.team == check.v.team )
                     continue;	// don't aim at teammate
 
                 Vector3f tmp;

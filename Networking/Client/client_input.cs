@@ -418,23 +418,23 @@ namespace SharpQuake
 
             if ( client_input.StrafeBtn.IsDown )
             {
-                cmd.sidemove += _SideSpeed.Get<Single>( ) * KeyState( ref client_input.RightBtn );
-                cmd.sidemove -= _SideSpeed.Get<Single>( ) * KeyState( ref client_input.LeftBtn );
+                cmd.sidemove += Host.Cvars.SideSpeed.Get<Single>( ) * KeyState( ref client_input.RightBtn );
+                cmd.sidemove -= Host.Cvars.SideSpeed.Get<Single>( ) * KeyState( ref client_input.LeftBtn );
             }
 
-            cmd.sidemove += _SideSpeed.Get<Single>( ) * KeyState( ref client_input.MoveRightBtn );
-            cmd.sidemove -= _SideSpeed.Get<Single>( ) * KeyState( ref client_input.MoveLeftBtn );
+            cmd.sidemove += Host.Cvars.SideSpeed.Get<Single>( ) * KeyState( ref client_input.MoveRightBtn );
+            cmd.sidemove -= Host.Cvars.SideSpeed.Get<Single>( ) * KeyState( ref client_input.MoveLeftBtn );
 
             var upBtn = KeyState( ref client_input.UpBtn );
             if ( upBtn > 0 )
                 Console.WriteLine( "asd" );
-            cmd.upmove += _UpSpeed.Get<Single>( ) * KeyState( ref client_input.UpBtn );
-            cmd.upmove -= _UpSpeed.Get<Single>( ) * KeyState( ref client_input.DownBtn );
+            cmd.upmove += Host.Cvars.UpSpeed.Get<Single>( ) * KeyState( ref client_input.UpBtn );
+            cmd.upmove -= Host.Cvars.UpSpeed.Get<Single>( ) * KeyState( ref client_input.DownBtn );
 
             if ( !client_input.KLookBtn.IsDown )
             {
-                cmd.forwardmove += _ForwardSpeed.Get<Single>( ) * KeyState( ref client_input.ForwardBtn );
-                cmd.forwardmove -= _BackSpeed.Get<Single>( ) * KeyState( ref client_input.BackBtn );
+                cmd.forwardmove += Host.Cvars.ForwardSpeed.Get<Single>( ) * KeyState( ref client_input.ForwardBtn );
+                cmd.forwardmove -= Host.Cvars.BackSpeed.Get<Single>( ) * KeyState( ref client_input.BackBtn );
             }
 
             //
@@ -442,9 +442,9 @@ namespace SharpQuake
             //
             if ( client_input.SpeedBtn.IsDown )
             {
-                cmd.forwardmove *= _MoveSpeedKey.Get<Single>( );
-                cmd.sidemove *= _MoveSpeedKey.Get<Single>( );
-                cmd.upmove *= _MoveSpeedKey.Get<Single>( );
+                cmd.forwardmove *= Host.Cvars.MoveSpeedKey.Get<Single>( );
+                cmd.sidemove *= Host.Cvars.MoveSpeedKey.Get<Single>( );
+                cmd.upmove *= Host.Cvars.MoveSpeedKey.Get<Single>( );
             }
         }
 
@@ -456,27 +456,27 @@ namespace SharpQuake
             var speed = ( Single ) Host.FrameTime;
 
             if ( client_input.SpeedBtn.IsDown )
-                speed *= _AngleSpeedKey.Get<Single>( );
+                speed *= Host.Cvars.AngleSpeedKey.Get<Single>( );
 
             if ( !client_input.StrafeBtn.IsDown )
             {
-                cl.viewangles.Y -= speed * _YawSpeed.Get<Single>( ) * KeyState( ref client_input.RightBtn );
-                cl.viewangles.Y += speed * _YawSpeed.Get<Single>( ) * KeyState( ref client_input.LeftBtn );
+                cl.viewangles.Y -= speed * Host.Cvars.YawSpeed.Get<Single>( ) * KeyState( ref client_input.RightBtn );
+                cl.viewangles.Y += speed * Host.Cvars.YawSpeed.Get<Single>( ) * KeyState( ref client_input.LeftBtn );
                 cl.viewangles.Y = MathLib.AngleMod( cl.viewangles.Y );
             }
 
             if ( client_input.KLookBtn.IsDown )
             {
                 Host.View.StopPitchDrift( );
-                cl.viewangles.X -= speed * _PitchSpeed.Get<Single>( ) * KeyState( ref client_input.ForwardBtn );
-                cl.viewangles.X += speed * _PitchSpeed.Get<Single>( ) * KeyState( ref client_input.BackBtn );
+                cl.viewangles.X -= speed * Host.Cvars.PitchSpeed.Get<Single>( ) * KeyState( ref client_input.ForwardBtn );
+                cl.viewangles.X += speed * Host.Cvars.PitchSpeed.Get<Single>( ) * KeyState( ref client_input.BackBtn );
             }
 
             var up = KeyState( ref client_input.LookUpBtn );
             var down = KeyState( ref client_input.LookDownBtn );
 
-            cl.viewangles.X -= speed * _PitchSpeed.Get<Single>( ) * up;
-            cl.viewangles.X += speed * _PitchSpeed.Get<Single>( ) * down;
+            cl.viewangles.X -= speed * Host.Cvars.PitchSpeed.Get<Single>( ) * up;
+            cl.viewangles.X += speed * Host.Cvars.PitchSpeed.Get<Single>( ) * down;
 
             if ( up != 0 || down != 0 )
                 Host.View.StopPitchDrift( );

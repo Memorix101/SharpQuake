@@ -24,7 +24,7 @@
 
 using System;
 
-namespace SharpQuake
+namespace SharpQuake.Rendering.UI
 {
     public class SearchMenu : MenuBase
     {

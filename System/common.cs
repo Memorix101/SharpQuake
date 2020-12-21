@@ -62,7 +62,7 @@ namespace SharpQuake
         {
             get
             {
-                return _Registered.Get<Boolean>( );
+                return MainWindow.Host.Cvars.Registered.Get<Boolean>( );
             }
         }
 
@@ -92,8 +92,6 @@ namespace SharpQuake
             ,0x0000,0x0000,0x0000,0x0000,0x6400,0x0000,0x0000,0x0000
         };
 
-        private ClientVariable _Registered;
-        private ClientVariable _CmdLine;
         private GameKind _GameKind; // qboolean		standard_quake = true, rogue, hipnotic;
 
 
@@ -111,8 +109,8 @@ namespace SharpQuake
 
             CommandLine.Args = argv;
 
-            _Registered = mainWindow.Host.CVars.Add( "registered", false );
-            _CmdLine = mainWindow.Host.CVars.Add( "cmdline", "0", ClientVariableFlags.Server );
+            mainWindow.Host.Cvars.Registered = mainWindow.Host.CVars.Add( "registered", false );
+            mainWindow.Host.Cvars.CmdLine = mainWindow.Host.CVars.Add( "cmdline", "0", ClientVariableFlags.Server );
 
             MainWindow.Host.Commands.Add( "path", FileSystem.Path_f );
 

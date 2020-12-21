@@ -56,7 +56,6 @@ namespace SharpQuake
             }
         }
 
-        private ClientVariable _MouseFilter;// = { "m_filter", "0" };
         private Vector2 _OldMouse; // old_mouse_x, old_mouse_y
         private Vector2 _Mouse; // mouse_x, mouse_y
         private Vector2 _MouseAccum; // mx_accum, my_accum
@@ -78,8 +77,8 @@ namespace SharpQuake
         {
             Host = host;
 
-            if ( _MouseFilter == null )
-                _MouseFilter = Host.CVars.Add( "m_filter", false );
+            if ( Host.Cvars.MouseFilter == null )
+                Host.Cvars.MouseFilter = Host.CVars.Add( "m_filter", false );
 
             _IsMouseActive = Host.MainWindow.IsMouseActive;
 
@@ -231,7 +230,7 @@ namespace SharpQuake
             _MouseAccum.X = 0;
             _MouseAccum.Y = 0;
 
-            if ( _MouseFilter.Get<Boolean>( ) )
+            if ( Host.Cvars.MouseFilter.Get<Boolean>( ) )
             {
                 _Mouse.X = ( mx + _OldMouse.X ) * 0.5f;
                 _Mouse.Y = ( my + _OldMouse.Y ) * 0.5f;

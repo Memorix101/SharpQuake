@@ -170,7 +170,7 @@ namespace SharpQuake
             var out_mask = _shm.samples - 1;
             var out_idx = 0; //_PaintedTime * _shm.channels & out_mask;
             var step = 3 - _shm.channels;
-            var snd_vol = ( Int32 ) ( _Volume.Get<Single>( ) * 256 );
+            var snd_vol = ( Int32 ) ( Host.Cvars.Volume.Get<Single>( ) * 256 );
             var buffer = _Controller.LockBuffer();
             var uval = Union4b.Empty;
             Int32 val, srcIndex = 0;
@@ -239,7 +239,7 @@ namespace SharpQuake
         // S_TransferStereo16
         private void TransferStereo16( Int32 endtime )
         {
-            var snd_vol = ( Int32 ) ( _Volume.Get<Single>( ) * 256 );
+            var snd_vol = ( Int32 ) ( Host.Cvars.Volume.Get<Single>( ) * 256 );
             var lpaintedtime = _PaintedTime;
             var buffer = _Controller.LockBuffer();
             var srcOffset = 0;

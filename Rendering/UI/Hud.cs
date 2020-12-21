@@ -33,12 +33,12 @@ using SharpQuake.Renderer.Textures;
 // the status bar is only redrawn if something has changed, but if anything
 // does, the entire thing will be redrawn for the next vid.numpages frames.
 
-namespace SharpQuake
+namespace SharpQuake.Rendering.UI
 {
     /// <summary>
     /// Sbar_functions
     /// </summary>
-    public class sbar
+    public class Hud
     {
         public Int32 Lines
         {
@@ -110,7 +110,7 @@ namespace SharpQuake
         }
         // sb_lines scan lines to draw
 
-        public sbar( Host host )
+        public Hud( Host host )
         {
             Host = host;
         }
@@ -774,8 +774,8 @@ namespace SharpQuake
             // PGM 03/02/97 - fixed so color swatch only appears in CTF modes
             if ( MainWindow.Common.GameKind == GameKind.Rogue &&
                 ( Host.Client.cl.maxclients != 1 ) &&
-                ( Host.TeamPlay.Get<Int32>( ) > 3 ) &&
-                ( Host.TeamPlay.Get<Int32>( ) < 7 ) )
+                ( Host.Cvars.TeamPlay.Get<Int32>( ) > 3 ) &&
+                ( Host.Cvars.TeamPlay.Get<Int32>( ) < 7 ) )
             {
                 var s = cl.scores[cl.viewentity - 1];
 

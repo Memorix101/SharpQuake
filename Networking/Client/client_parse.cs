@@ -94,9 +94,9 @@ namespace SharpQuake
             //
             // if recording demos, copy the message out
             //
-            if( _ShowNet.Get<Int32>( ) == 1 )
+            if( Host.Cvars.ShowNet.Get<Int32>( ) == 1 )
                 Host.Console.Print( "{0} ", Host.Network.Message.Length );
-            else if( _ShowNet.Get<Int32>( ) == 2 )
+            else if( Host.Cvars.ShowNet.Get<Int32>( ) == 2 )
                 Host.Console.Print( "------------------\n" );
 
             cl.onground = false;	// unless the server says otherwise
@@ -206,7 +206,7 @@ namespace SharpQuake
                         break;
 
                     case ProtocolDef.svc_updatename:
-                        Host.StatusBar.Changed();
+                        Host.Hud.Changed();
                         i = Host.Network.Reader.ReadByte();
                         if( i >= cl.maxclients )
                             Host.Error( "CL_ParseServerMessage: svc_updatename > MAX_SCOREBOARD" );
@@ -214,7 +214,7 @@ namespace SharpQuake
                         break;
 
                     case ProtocolDef.svc_updatefrags:
-                        Host.StatusBar.Changed();
+                        Host.Hud.Changed();
                         i = Host.Network.Reader.ReadByte();
                         if( i >= cl.maxclients )
                             Host.Error( "CL_ParseServerMessage: svc_updatefrags > MAX_SCOREBOARD" );
@@ -222,7 +222,7 @@ namespace SharpQuake
                         break;
 
                     case ProtocolDef.svc_updatecolors:
-                        Host.StatusBar.Changed();
+                        Host.Hud.Changed();
                         i = Host.Network.Reader.ReadByte();
                         if( i >= cl.maxclients )
                             Host.Error( "CL_ParseServerMessage: svc_updatecolors > MAX_SCOREBOARD" );
@@ -328,7 +328,7 @@ namespace SharpQuake
 
         private void ShowNet( String s )
         {
-            if( _ShowNet.Get<Int32>( ) == 2 )
+            if( Host.Cvars.ShowNet.Get<Int32>( ) == 2 )
                 Host.Console.Print( "{0,3}:{1}\n", Host.Network.Reader.Position - 1, s );
         }
 
@@ -516,7 +516,7 @@ namespace SharpQuake
 
             if( cl.items != i2 )
             {	// set flash times
-                Host.StatusBar.Changed();
+                Host.Hud.Changed();
                 for( var j = 0; j < 32; j++ )
                     if( ( i2 & ( 1 << j ) ) != 0 && ( cl.items & ( 1 << j ) ) == 0 )
                         cl.item_gettime[j] = ( Single ) cl.time;
@@ -538,7 +538,7 @@ namespace SharpQuake
             if( cl.stats[QStatsDef.STAT_ARMOR] != i2 )
             {
                 cl.stats[QStatsDef.STAT_ARMOR] = i2;
-                Host.StatusBar.Changed();
+                Host.Hud.Changed();
             }
 
             if( ( bits & ProtocolDef.SU_WEAPON ) != 0 )
@@ -548,21 +548,21 @@ namespace SharpQuake
             if( cl.stats[QStatsDef.STAT_WEAPON] != i2 )
             {
                 cl.stats[QStatsDef.STAT_WEAPON] = i2;
-                Host.StatusBar.Changed();
+                Host.Hud.Changed();
             }
 
             i2 = Host.Network.Reader.ReadShort();
             if( cl.stats[QStatsDef.STAT_HEALTH] != i2 )
             {
                 cl.stats[QStatsDef.STAT_HEALTH] = i2;
-                Host.StatusBar.Changed();
+                Host.Hud.Changed();
             }
 
             i2 = Host.Network.Reader.ReadByte();
             if( cl.stats[QStatsDef.STAT_AMMO] != i2 )
             {
                 cl.stats[QStatsDef.STAT_AMMO] = i2;
-                Host.StatusBar.Changed();
+                Host.Hud.Changed();
             }
 
             for( i2 = 0; i2 < 4; i2++ )
@@ -571,7 +571,7 @@ namespace SharpQuake
                 if( cl.stats[QStatsDef.STAT_SHELLS + i2] != j )
                 {
                     cl.stats[QStatsDef.STAT_SHELLS + i2] = j;
-                    Host.StatusBar.Changed();
+                    Host.Hud.Changed();
                 }
             }
 
@@ -583,7 +583,7 @@ namespace SharpQuake
                 if( cl.stats[QStatsDef.STAT_ACTIVEWEAPON] != i2 )
                 {
                     cl.stats[QStatsDef.STAT_ACTIVEWEAPON] = i2;
-                    Host.StatusBar.Changed();
+                    Host.Hud.Changed();
                 }
             }
             else
@@ -591,7 +591,7 @@ namespace SharpQuake
                 if( cl.stats[QStatsDef.STAT_ACTIVEWEAPON] != ( 1 << i2 ) )
                 {
                     cl.stats[QStatsDef.STAT_ACTIVEWEAPON] = ( 1 << i2 );
-                    Host.StatusBar.Changed();
+                    Host.Hud.Changed();
                 }
             }
         }

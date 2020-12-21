@@ -59,7 +59,7 @@ namespace SharpQuake
         {
             get
             {
-                return _Gravity.Get<Single>( );
+                return Host.Cvars.Gravity.Get<Single>( );
             }
         }
 
@@ -75,20 +75,9 @@ namespace SharpQuake
         {
             get
             {
-                return _Aim.Get<Single>( );
+                return Host.Cvars.Aim.Get<Single>( );
             }
         }
-
-        private ClientVariable _Friction;// = { "sv_friction", "4", false, true };
-        private ClientVariable _EdgeFriction;// = { "edgefriction", "2" };
-        private ClientVariable _StopSpeed;// = { "sv_stopspeed", "100" };
-        private ClientVariable _Gravity;// = { "sv_gravity", "800", false, true };
-        private ClientVariable _MaxVelocity;// = { "sv_maxvelocity", "2000" };
-        private ClientVariable _NoStep;// = { "sv_nostep", "0" };
-        private ClientVariable _MaxSpeed;// = { "sv_maxspeed", "320", false, true };
-        private ClientVariable _Accelerate;// = { "sv_accelerate", "10" };
-        private ClientVariable _Aim;// = { "sv_aim", "0.93" };
-        private ClientVariable _IdealPitchScale;// = { "sv_idealpitchscale", "0.8" };
 
         private server_t _Server;
         private server_static_t _ServerStatic;

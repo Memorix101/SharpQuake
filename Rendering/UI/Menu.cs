@@ -30,7 +30,7 @@ using SharpQuake.Renderer.Textures;
 // menu.h
 // menu.c
 
-namespace SharpQuake
+namespace SharpQuake.Rendering.UI
 {
     /// <summary>
     /// M_functions
@@ -63,7 +63,9 @@ namespace SharpQuake
             Host = host;
         }
 
-        // M_Init (void)
+        /// <summary>
+        /// M_Init
+        /// </summary>
         public void Initialise( )
         {
             Host.Commands.Add( "togglemenu", ToggleMenu_f );
@@ -326,31 +328,46 @@ namespace SharpQuake
             MenuBase.SinglePlayerMenu.Show( Host );
         }
 
-        // M_Menu_Load_f
+        /// <summary>
+        /// M_Menu_Load_f
+        /// </summary>
+        /// <param name="msg"></param>
         private void Menu_Load_f( CommandMessage msg )
         {
             MenuBase.LoadMenu.Show( Host );
         }
 
-        // M_Menu_Save_f
+        /// <summary>
+        /// M_Menu_Save_f
+        /// </summary>
+        /// <param name="msg"></param>
         private void Menu_Save_f( CommandMessage msg )
         {
             MenuBase.SaveMenu.Show( Host );
         }
 
-        // M_Menu_MultiPlayer_f
+        /// <summary>
+        /// M_Menu_MultiPlayer_f
+        /// </summary>
+        /// <param name="msg"></param>
         private void Menu_MultiPlayer_f( CommandMessage msg )
         {
             MenuBase.MultiPlayerMenu.Show( Host );
         }
 
-        // M_Menu_Setup_f
+        /// <summary>
+        /// M_Menu_Setup_f
+        /// </summary>
+        /// <param name="msg"></param>
         private void Menu_Setup_f( CommandMessage msg )
         {
             MenuBase.SetupMenu.Show( Host );
         }
 
-        // M_Menu_Options_f
+        /// <summary>
+        /// M_Menu_Options_f
+        /// </summary>
+        /// <param name="msg"></param>
         private void Menu_Options_f( CommandMessage msg )
         {
             MenuBase.OptionsMenu.Show( Host );

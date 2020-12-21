@@ -58,29 +58,15 @@ namespace SharpQuake.Rendering
 			set;
 		}
 
-		private ClientVariable TexSort
-		{
-			get;
-			set;
-		}
-
-		private ClientVariable NoVis
-		{
-			get;
-			set;
-		}
-
 		private TextureChains TextureChains
 		{
 			get;
 			set;
 		}
 
-		public Occlusion( Host host, ClientVariable texSort, ClientVariable noVis, TextureChains textureChains  )
+		public Occlusion( Host host, TextureChains textureChains  )
 		{
 			Host = host;
-			TexSort = texSort;
-			NoVis = noVis;
 			TextureChains = textureChains;
 		}
 
@@ -95,7 +81,7 @@ namespace SharpQuake.Rendering
 		/// </summary>
 		public void MarkLeaves( )
 		{
-			if ( OldViewLeaf == ViewLeaf && !NoVis.Get<Boolean>() )
+			if ( OldViewLeaf == ViewLeaf && !Host.Cvars.NoVis.Get<Boolean>() )
 				return;
 
 			//if( _IsMirror )
@@ -105,7 +91,7 @@ namespace SharpQuake.Rendering
 			OldViewLeaf = ViewLeaf;
 
 			Byte[] vis;
-			if ( NoVis.Get<Boolean>() )
+			if ( Host.Cvars.NoVis.Get<Boolean>() )
 			{
 				vis = new Byte[4096];
 				Utilities.FillArray<Byte>( vis, 0xff ); // todo: add count parameter?
@@ -226,7 +212,7 @@ namespace SharpQuake.Rendering
 						continue;       // wrong side
 
 					// if sorting by texture, just store it out
-					if ( TexSort.Get<Boolean>() )
+					if ( Host.Cvars.glTexSort.Get<Boolean>() )
 					{
 						//if( !_IsMirror || surf[offset].texinfo.texture != Host.Client.cl.worldmodel.textures[_MirrorTextureNum] )
 						//{

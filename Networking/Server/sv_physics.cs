@@ -260,7 +260,7 @@ namespace SharpQuake
             var val = Host.Programs.GetEdictFieldFloat( ent, "gravity" );
             if ( val == 0 )
                 val = 1;
-            ent.v.velocity.z -= ( Single ) ( val * _Gravity.Get<Single>( ) * Host.FrameTime );
+            ent.v.velocity.z -= ( Single ) ( val * Host.Cvars.Gravity.Get<Single>( ) * Host.FrameTime );
         }
 
         /// <summary>
@@ -273,7 +273,7 @@ namespace SharpQuake
             // freefall if not onground
             if ( ( ( Int32 ) ent.v.flags & ( EdictFlags.FL_ONGROUND | EdictFlags.FL_FLY | EdictFlags.FL_SWIM ) ) == 0 )
             {
-                if ( ent.v.velocity.z < _Gravity.Get<Single>( ) * -0.1 )
+                if ( ent.v.velocity.z < Host.Cvars.Gravity.Get<Single>( ) * -0.1 )
                     hitsound = true;
                 else
                     hitsound = false;
@@ -454,7 +454,7 @@ namespace SharpQuake
             if ( ent.v.movetype != Movetypes.MOVETYPE_WALK )
                 return;		// gibbed by a trigger
 
-            if ( _NoStep.Get<Boolean>( ) )
+            if ( Host.Cvars.NoStep.Get<Boolean>( ) )
                 return;
 
             if ( ( ( Int32 ) _Player.v.flags & EdictFlags.FL_WATERJUMP ) != 0 )
@@ -743,8 +743,8 @@ namespace SharpQuake
                 Host.Console.Print( "Got a NaN origin on {0}\n", Host.Programs.GetString( ent.v.classname ) );
             }
 
-            var max = Vector3.One * _MaxVelocity.Get<Single>( );
-            var min = -Vector3.One * _MaxVelocity.Get<Single>( );
+            var max = Vector3.One * Host.Cvars.MaxVelocity.Get<Single>( );
+            var min = -Vector3.One * Host.Cvars.MaxVelocity.Get<Single>( );
             MathLib.Clamp( ref ent.v.velocity, ref min, ref max, out ent.v.velocity );
         }
 

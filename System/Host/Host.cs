@@ -30,6 +30,8 @@ using System.Text;
 using SharpQuake.Framework;
 using SharpQuake.Framework.Factories.IO;
 using SharpQuake.Framework.IO;
+using SharpQuake.Rendering.UI;
+using SharpQuake.Sys;
 
 namespace SharpQuake
 {
@@ -284,7 +286,7 @@ namespace SharpQuake
             private set;
         }
 
-        public sbar StatusBar
+        public Hud Hud
         {
             get;
             private set;
@@ -310,91 +312,7 @@ namespace SharpQuake
         }
 
         // CVars
-        public ClientVariable SystemTickRate
-        {
-            get;
-            private set;
-        }
-
-        public ClientVariable Developer
-        {
-            get;
-            private set;
-        }
-
-        public ClientVariable FrameRate
-        {
-            get;
-            private set;
-        }
-
-        public ClientVariable Speeds
-        {
-            get;
-            private set;
-        }
-
-        public ClientVariable ServerProfile
-        {
-            get;
-            private set;
-        }
-
-        public ClientVariable FragLimit
-        {
-            get;
-            private set;
-        }
-
-        public ClientVariable TimeLimit
-        {
-            get;
-            private set;
-        }
-
-        public ClientVariable TeamPlay
-        {
-            get;
-            private set;
-        }
-
-        public ClientVariable SameLevel
-        {
-            get;
-            private set;
-        }
-
-        public ClientVariable NoExit
-        {
-            get;
-            private set;
-        }
-
-        public ClientVariable Skill
-        {
-            get;
-            private set;
-        }
-
-        public ClientVariable Deathmatch
-        {
-            get;
-            private set;
-        }
-
-        public ClientVariable Coop
-        {
-            get;
-            private set;
-        }
-
-        public ClientVariable Pausable
-        {
-            get;
-            private set;
-        }
-
-        public ClientVariable Temp1
+        public Cvars Cvars
         {
             get;
             private set;
@@ -413,6 +331,7 @@ namespace SharpQuake
         public Host( MainWindow window )
         {
             MainWindow = window;
+            Cvars = new Cvars();
 
             // Factories
             Commands = AddFactory<CommandFactory>( );
@@ -443,7 +362,7 @@ namespace SharpQuake
             RenderContext = new render( this );
             Sound = new snd( this );
             CDAudio = new cd_audio( this );
-            StatusBar = new sbar( this );
+            Hud = new Hud( this );
 			DedicatedServer = new DedicatedServer( );
 
 			WadFiles = new Dictionary<String, Wad>( );
@@ -602,7 +521,7 @@ namespace SharpQuake
                 RenderContext.Initialise( );
                 Sound.Initialise( );
                 CDAudio.Initialise( );
-                StatusBar.Initialise( );
+                Hud.Initialise( );
                 Client.Initialise( );
             }
 			else
@@ -633,23 +552,23 @@ namespace SharpQuake
         {
             InititaliseCommands( );
 
-            if ( SystemTickRate == null )
+            if ( Cvars.SystemTickRate == null )
             {
-                SystemTickRate = CVars.Add( "sys_ticrate", 0.05 );
-                Developer = CVars.Add( "developer", false );
-                FrameRate = CVars.Add( "host_framerate", 0.0 ); // set for slow motion
-                Speeds = CVars.Add( "host_speeds", false ); // set for running times
-                ServerProfile = CVars.Add( "serverprofile", false );
-                FragLimit = CVars.Add( "fraglimit", 0, ClientVariableFlags.Server );
-                TimeLimit = CVars.Add( "timelimit", 0, ClientVariableFlags.Server );
-                TeamPlay = CVars.Add( "teamplay", 0, ClientVariableFlags.Server );
-                SameLevel = CVars.Add( "samelevel", false );
-                NoExit = CVars.Add( "noexit", false, ClientVariableFlags.Server );
-                Skill = CVars.Add( "skill", 1 ); // 0 - 3
-                Deathmatch = CVars.Add( "deathmatch", 0 ); // 0, 1, or 2
-                Coop = CVars.Add( "coop", false );
-                Pausable = CVars.Add( "pausable", true );
-                Temp1 = CVars.Add( "temp1", 0 );
+                Cvars.SystemTickRate = CVars.Add( "sys_ticrate", 0.05 );
+                Cvars.Developer = CVars.Add( "developer", false );
+                Cvars.FrameRate = CVars.Add( "host_framerate", 0.0 ); // set for slow motion
+                Cvars.HostSpeeds = CVars.Add( "host_speeds", false ); // set for running times
+                Cvars.ServerProfile = CVars.Add( "serverprofile", false );
+                Cvars.FragLimit = CVars.Add( "fraglimit", 0, ClientVariableFlags.Server );
+                Cvars.TimeLimit = CVars.Add( "timelimit", 0, ClientVariableFlags.Server );
+                Cvars.TeamPlay = CVars.Add( "teamplay", 0, ClientVariableFlags.Server );
+                Cvars.SameLevel = CVars.Add( "samelevel", false );
+                Cvars.NoExit = CVars.Add( "noexit", false, ClientVariableFlags.Server );
+                Cvars.Skill = CVars.Add( "skill", 1 ); // 0 - 3
+                Cvars.Deathmatch = CVars.Add( "deathmatch", 0 ); // 0, 1, or 2
+                Cvars.Coop = CVars.Add( "coop", false );
+                Cvars.Pausable = CVars.Add( "pausable", true );
+                Cvars.Temp1 = CVars.Add( "temp1", 0 );
             }
 
             FindMaxClients( );
@@ -770,8 +689,8 @@ namespace SharpQuake
             FrameTime = RealTime - _OldRealTime;
             _OldRealTime = RealTime;
 
-            if ( FrameRate.Get<Double>( ) > 0 )
-                FrameTime = FrameRate.Get<Double>( );
+            if ( Cvars.FrameRate.Get<Double>( ) > 0 )
+                FrameTime = Cvars.FrameRate.Get<Double>( );
             else
             {	// don't allow really long or short frames
                 if ( FrameTime > 0.1 )
@@ -842,12 +761,12 @@ namespace SharpQuake
             }
 
             // update video
-            if ( Speeds.Get<Boolean>( ) )
+            if ( Cvars.HostSpeeds.Get<Boolean>( ) )
                 _Time1 = Timer.GetFloatTime( );
 
             Screen.UpdateScreen( );
 
-            if ( Speeds.Get<Boolean>( ) )
+            if ( Cvars.HostSpeeds.Get<Boolean>( ) )
                 _Time2 = Timer.GetFloatTime( );
 
             // update audio
@@ -861,7 +780,7 @@ namespace SharpQuake
 
             CDAudio.Update( );
 
-            if ( Speeds.Get<Boolean>( ) )
+            if ( Cvars.HostSpeeds.Get<Boolean>( ) )
             {
                 var pass1 = ( Int32 ) ( ( _Time1 - _Time3 ) * 1000 );
                 _Time3 = Timer.GetFloatTime( );
@@ -914,7 +833,7 @@ namespace SharpQuake
         // Host_Frame
         public void Frame( Double time )
         {
-            if ( !ServerProfile.Get<Boolean>( ) )
+            if ( !Cvars.ServerProfile.Get<Boolean>( ) )
             {
                 InternalFrame( time );
                 return;

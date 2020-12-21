@@ -65,7 +65,7 @@ namespace SharpQuake
         {
             get
             {
-                return _glZTrick.Get<Boolean>( );
+                return Host.Cvars.glZTrick.Get<Boolean>( );
             }
         }
 
@@ -73,15 +73,15 @@ namespace SharpQuake
         {
             get
             {
-                return _WindowedMouse.Get<Boolean>( );
+                return Host.Cvars.WindowedMouse.Get<Boolean>( );
             }
         }
 
-        public System.Boolean Wait
+        public Boolean Wait
         {
             get
             {
-                return _Wait.Get<Boolean>( );
+                return Host.Cvars.Wait.Get<Boolean>( );
             }
         }
 
@@ -97,25 +97,8 @@ namespace SharpQuake
         public const Int32 VID_GRADES = (1 << VID_CBITS);
         public const Int32 VID_ROW_SIZE = 3;
         private const Int32 WARP_WIDTH = 320;
-        private const Int32 WARP_HEIGHT = 200;
-        
-        private ClientVariable _glZTrick;// = { "gl_ztrick", "1" };
-        private ClientVariable _Mode;// = { "vid_mode", "0", false };
-
-        // Note that 0 is MODE_WINDOWED
-        private ClientVariable _DefaultMode;// = { "_vid_default_mode", "0", true };
-
-        // Note that 3 is MODE_FULLSCREEN_DEFAULT
-        private ClientVariable _DefaultModeWin;// = { "_vid_default_mode_win", "3", true };
-
-        private ClientVariable _Wait;// = { "vid_wait", "0" };
-        private ClientVariable _NoPageFlip;// = { "vid_nopageflip", "0", true };
-        private ClientVariable _WaitOverride;// = { "_vid_wait_override", "0", true };
-        private ClientVariable _ConfigX;// = { "vid_config_x", "800", true };
-        private ClientVariable _ConfigY;// = { "vid_config_y", "600", true };
-        private ClientVariable _StretchBy2;// = { "vid_stretch_by_2", "1", true };
-        private ClientVariable _WindowedMouse;// = { "_windowed_mouse", "1", true };
-
+        private const Int32 WARP_HEIGHT = 200;        
+       
         // Instances
         private Host Host
         {
@@ -136,25 +119,28 @@ namespace SharpQuake
             Host = host;
         }
 
-        // VID_Init (unsigned char *palette)
-        // Called at startup to set up translation tables, takes 256 8 bit RGB values
-        // the palette data will go away after the call, so it must be copied off if
-        // the video driver will need it again
+        /// <summary>
+        /// VID_Init (unsigned char *palette)
+        /// Called at startup to set up translation tables, takes 256 8 bit RGB values
+        /// the palette data will go away after the call, so it must be copied off if
+        /// the video driver will need it again
+        /// </summary>
+        /// <param name="palette"></param>
         public void Initialise( Byte[] palette )
         {
-            if ( _glZTrick == null )
+            if ( Host.Cvars.glZTrick == null )
             {
-                _glZTrick = Host.CVars.Add( "gl_ztrick", true );
-                _Mode = Host.CVars.Add( "vid_mode", 0 );
-                _DefaultMode = Host.CVars.Add( "_vid_default_mode", 0, ClientVariableFlags.Archive );
-                _DefaultModeWin = Host.CVars.Add( "_vid_default_mode_win", 3, ClientVariableFlags.Archive );
-                _Wait = Host.CVars.Add( "vid_wait", false );
-                _NoPageFlip = Host.CVars.Add( "vid_nopageflip", 0, ClientVariableFlags.Archive );
-                _WaitOverride = Host.CVars.Add( "_vid_wait_override", 0, ClientVariableFlags.Archive );
-                _ConfigX = Host.CVars.Add( "vid_config_x", 800, ClientVariableFlags.Archive );
-                _ConfigY = Host.CVars.Add( "vid_config_y", 600, ClientVariableFlags.Archive );
-                _StretchBy2 = Host.CVars.Add( "vid_stretch_by_2", 1, ClientVariableFlags.Archive );
-                _WindowedMouse = Host.CVars.Add( "_windowed_mouse", true, ClientVariableFlags.Archive );
+                Host.Cvars.glZTrick = Host.CVars.Add( "gl_ztrick", true );
+                Host.Cvars.Mode = Host.CVars.Add( "vid_mode", 0 );
+                Host.Cvars.DefaultMode = Host.CVars.Add( "_vid_default_mode", 0, ClientVariableFlags.Archive );
+                Host.Cvars.DefaultModeWin = Host.CVars.Add( "_vid_default_mode_win", 3, ClientVariableFlags.Archive );
+                Host.Cvars.Wait = Host.CVars.Add( "vid_wait", false );
+                Host.Cvars.NoPageFlip = Host.CVars.Add( "vid_nopageflip", 0, ClientVariableFlags.Archive );
+                Host.Cvars.WaitOverride = Host.CVars.Add( "_vid_wait_override", 0, ClientVariableFlags.Archive );
+                Host.Cvars.ConfigX = Host.CVars.Add( "vid_config_x", 800, ClientVariableFlags.Archive );
+                Host.Cvars.ConfigY = Host.CVars.Add( "vid_config_y", 600, ClientVariableFlags.Archive );
+                Host.Cvars.StretchBy2 = Host.CVars.Add( "vid_stretch_by_2", 1, ClientVariableFlags.Archive );
+                Host.Cvars.WindowedMouse = Host.CVars.Add( "_windowed_mouse", true, ClientVariableFlags.Archive );
             }
 
             Host.Commands.Add( "vid_nummodes", NumModes_f );
@@ -264,7 +250,6 @@ namespace SharpQuake
             //_IsInitialized = false;
         }
 
-
         /// <summary>
         /// VID_GetModeDescription
         /// </summary>
@@ -273,7 +258,10 @@ namespace SharpQuake
             return Device.GetModeDescription( mode );
         }
 
-        // VID_NumModes_f
+        /// <summary>
+        /// VID_NumModes_f
+        /// </summary>
+        /// <param name="msg"></param>
         private void NumModes_f( CommandMessage msg )
         {
             var nummodes = Device.AvailableModes.Length;
@@ -284,13 +272,19 @@ namespace SharpQuake
                 Host.Console.Print( "{0} video modes are available\n", nummodes );
         }
 
-        // VID_DescribeCurrentMode_f
+        /// <summary>
+        /// VID_DescribeCurrentMode_f
+        /// </summary>
+        /// <param name="msg"></param>
         private void DescribeCurrentMode_f( CommandMessage msg )
         {
             Host.Console.Print( "{0}\n", GetModeDescription( Device.ChosenMode ) );
         }
 
-        // VID_DescribeMode_f
+        /// <summary>
+        /// VID_DescribeMode_f
+        /// </summary>
+        /// <param name="msg"></param>
         private void DescribeMode_f( CommandMessage msg )
         {
             var modenum = MathLib.atoi( msg.Parameters[0] );
@@ -298,7 +292,10 @@ namespace SharpQuake
             Host.Console.Print( "{0}\n", GetModeDescription( modenum ) );
         }
 
-        // VID_DescribeModes_f
+        /// <summary>
+        /// VID_DescribeModes_f
+        /// </summary>
+        /// <param name="msg"></param>
         private void DescribeModes_f( CommandMessage msg )
         {
             for( var i = 0; i < Device.AvailableModes.Length; i++ )
@@ -307,7 +304,9 @@ namespace SharpQuake
             }
         }
 
-        // ClearAllStates
+        /// <summary>
+        /// ClearAllStates
+        /// </summary>
         private void ClearAllStates()
         {
             // send an up event for each key, to make sure the server clears them all

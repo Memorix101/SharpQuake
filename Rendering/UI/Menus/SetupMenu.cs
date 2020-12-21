@@ -27,7 +27,7 @@ using System.Runtime.InteropServices;
 using SharpQuake.Framework;
 using SharpQuake.Framework.IO;
 
-namespace SharpQuake
+namespace SharpQuake.Rendering.UI
 {
     public class SetupMenu : MenuBase
     {

@@ -25,7 +25,7 @@
 using System;
 using SharpQuake.Framework;
 
-namespace SharpQuake
+namespace SharpQuake.Rendering.UI
 {
     /// <summary>
     /// M_Menu_GameOptions_functions
@@ -267,7 +267,7 @@ namespace SharpQuake
             Host.Menu.Print( 160, 56, _MaxPlayers.ToString( ) );
 
             Host.Menu.Print( 0, 64, "        Game Type" );
-            if ( Host.Coop.Get<Boolean>( ) )
+            if ( Host.Cvars.Coop.Get<Boolean>( ) )
                 Host.Menu.Print( 160, 64, "Cooperative" );
             else
                 Host.Menu.Print( 160, 64, "Deathmatch" );
@@ -276,7 +276,7 @@ namespace SharpQuake
             if ( MainWindow.Common.GameKind == GameKind.Rogue )
             {
                 String msg;
-                switch ( Host.TeamPlay.Get<Int32>( ) )
+                switch ( Host.Cvars.TeamPlay.Get<Int32>( ) )
                 {
                     case 1:
                         msg = "No Friendly Fire";
@@ -311,7 +311,7 @@ namespace SharpQuake
             else
             {
                 String msg;
-                switch ( Host.TeamPlay.Get<Int32>( ) )
+                switch ( Host.Cvars.TeamPlay.Get<Int32>( ) )
                 {
                     case 1:
                         msg = "No Friendly Fire";
@@ -329,26 +329,26 @@ namespace SharpQuake
             }
 
             Host.Menu.Print( 0, 80, "            Skill" );
-            if ( Host.Skill.Get<Int32>( ) == 0 )
+            if ( Host.Cvars.Skill.Get<Int32>( ) == 0 )
                 Host.Menu.Print( 160, 80, "Easy difficulty" );
-            else if ( Host.Skill.Get<Int32>( ) == 1 )
+            else if ( Host.Cvars.Skill.Get<Int32>( ) == 1 )
                 Host.Menu.Print( 160, 80, "Normal difficulty" );
-            else if ( Host.Skill.Get<Int32>( ) == 2 )
+            else if ( Host.Cvars.Skill.Get<Int32>( ) == 2 )
                 Host.Menu.Print( 160, 80, "Hard difficulty" );
             else
                 Host.Menu.Print( 160, 80, "Nightmare difficulty" );
 
             Host.Menu.Print( 0, 88, "       Frag Limit" );
-            if ( Host.FragLimit.Get<Int32>( ) == 0 )
+            if ( Host.Cvars.FragLimit.Get<Int32>( ) == 0 )
                 Host.Menu.Print( 160, 88, "none" );
             else
-                Host.Menu.Print( 160, 88, String.Format( "{0} frags", Host.FragLimit.Get<Int32>( ) ) );
+                Host.Menu.Print( 160, 88, String.Format( "{0} frags", Host.Cvars.FragLimit.Get<Int32>( ) ) );
 
             Host.Menu.Print( 0, 96, "       Time Limit" );
-            if ( Host.TimeLimit.Get<Int32>( ) == 0 )
+            if ( Host.Cvars.TimeLimit.Get<Int32>( ) == 0 )
                 Host.Menu.Print( 160, 96, "none" );
             else
-                Host.Menu.Print( 160, 96, String.Format( "{0} minutes", Host.TimeLimit.Get<Int32>( ) ) );
+                Host.Menu.Print( 160, 96, String.Format( "{0} minutes", Host.Cvars.TimeLimit.Get<Int32>( ) ) );
 
             Host.Menu.Print( 0, 112, "         Episode" );
             //MED 01/06/97 added hipnotic episodes
@@ -449,7 +449,7 @@ namespace SharpQuake
                     break;
 
                 case 2:
-                    Host.CVars.Set( "coop", Host.Coop.Get<Boolean>( ) );
+                    Host.CVars.Set( "coop", Host.Cvars.Coop.Get<Boolean>( ) );
                     break;
 
                 case 3:
@@ -458,7 +458,7 @@ namespace SharpQuake
                     else
                         count = 2;
 
-                    var tp = Host.TeamPlay.Get<Int32>( ) + dir;
+                    var tp = Host.Cvars.TeamPlay.Get<Int32>( ) + dir;
                     if ( tp > count )
                         tp = 0;
                     else if ( tp < 0 )
@@ -468,7 +468,7 @@ namespace SharpQuake
                     break;
 
                 case 4:
-                    var skill = Host.Skill.Get<Int32>( ) + dir;
+                    var skill = Host.Cvars.Skill.Get<Int32>( ) + dir;
                     if ( skill > 3 )
                         skill = 0;
                     if ( skill < 0 )
@@ -477,7 +477,7 @@ namespace SharpQuake
                     break;
 
                 case 5:
-                    var fraglimit = Host.FragLimit.Get<Int32>( ) + dir * 10;
+                    var fraglimit = Host.Cvars.FragLimit.Get<Int32>( ) + dir * 10;
                     if ( fraglimit > 100 )
                         fraglimit = 0;
                     if ( fraglimit < 0 )
@@ -486,7 +486,7 @@ namespace SharpQuake
                     break;
 
                 case 6:
-                    var timelimit = Host.TimeLimit.Get<Int32>( ) + dir * 5;
+                    var timelimit = Host.Cvars.TimeLimit.Get<Int32>( ) + dir * 5;
                     if ( timelimit > 60 )
                         timelimit = 0;
                     if ( timelimit < 0 )
