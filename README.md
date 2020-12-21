@@ -1,6 +1,9 @@
 
 # SharpQuakeEvolved
 
+![](https://img.shields.io/github/stars/optimus-code/SharpQuakeEvolved.svg) ![](https://img.shields.io/github/forks/optimus-code/SharpQuakeEvolved.svg) ![](https://img.shields.io/github/issues/optimus-code/SharpQuakeEvolved.svg) [![GitHub contributors](https://img.shields.io/github/contributors/optimus-code/SharpQuakeEvolved.svg)](https://GitHub.com/optimus-code/SharpQuakeEvolved/graphs/contributors/) [![GitHub license](https://img.shields.io/github/license/optimus-code/SharpQuakeEvolved.svg)](https://github.com/Naereen/StrapDown.js/blob/master/LICENSE)
+ ![](https://img.shields.io/github/release/optimus-code/SharpQuakeEvolved.svg) [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=flat-square)](http://makeapullrequest.com)
+ 
 ### Description 
 
 SharpQuakeEvolved is based on **[SharpQuake](https://memorix101.itch.io/sharpquake)** a **[GLQuake](https://github.com/dpteam/GLQuake3D)** reimplementation in C# using the **[OpenTK](https://github.com/opentk/opentk)** library.
