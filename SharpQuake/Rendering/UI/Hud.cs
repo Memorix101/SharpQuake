@@ -115,12 +115,11 @@ namespace SharpQuake.Rendering.UI
             Host = host;
         }
 
-        // Sbar_Init
-        public void Initialise( )
+        private void LoadNumbers( )
         {
             for ( var i = 0; i < 10; i++ )
             {
-                var str = i.ToString( );
+                var str = i.ToString();
 
                 Numbers[0, i] = BasePicture.FromWad( Host.Video.Device, Host.GfxWad, "num_" + str, "GL_NEAREST" );
                 Numbers[1, i] = BasePicture.FromWad( Host.Video.Device, Host.GfxWad, "anum_" + str, "GL_NEAREST" );
@@ -128,10 +127,16 @@ namespace SharpQuake.Rendering.UI
 
             Numbers[0, 10] = BasePicture.FromWad( Host.Video.Device, Host.GfxWad, "num_minus", "GL_NEAREST" );
             Numbers[1, 10] = BasePicture.FromWad( Host.Video.Device, Host.GfxWad, "anum_minus", "GL_NEAREST" );
+        }
 
+        private void LoadSymbols( )
+        {
             Colon = BasePicture.FromWad( Host.Video.Device, Host.GfxWad, "num_colon", "GL_NEAREST" );
             Slash = BasePicture.FromWad( Host.Video.Device, Host.GfxWad, "num_slash", "GL_NEAREST" );
+        }
 
+        private void LoadWeapons( )
+        {
             Weapons[0, 0] = BasePicture.FromWad( Host.Video.Device, Host.GfxWad, "inv_shotgun", "GL_LINEAR" );
             Weapons[0, 1] = BasePicture.FromWad( Host.Video.Device, Host.GfxWad, "inv_sshotgun", "GL_LINEAR" );
             Weapons[0, 2] = BasePicture.FromWad( Host.Video.Device, Host.GfxWad, "inv_nailgun", "GL_LINEAR" );
@@ -150,7 +155,7 @@ namespace SharpQuake.Rendering.UI
 
             for ( var i = 0; i < 5; i++ )
             {
-                var s = "inva" + ( i + 1 ).ToString( );
+                var s = "inva" + ( i + 1 ).ToString();
 
                 Weapons[2 + i, 0] = BasePicture.FromWad( Host.Video.Device, Host.GfxWad, s + "_shotgun", "GL_LINEAR" );
                 Weapons[2 + i, 1] = BasePicture.FromWad( Host.Video.Device, Host.GfxWad, s + "_sshotgun", "GL_LINEAR" );
@@ -160,28 +165,43 @@ namespace SharpQuake.Rendering.UI
                 Weapons[2 + i, 5] = BasePicture.FromWad( Host.Video.Device, Host.GfxWad, s + "_srlaunch", "GL_LINEAR" );
                 Weapons[2 + i, 6] = BasePicture.FromWad( Host.Video.Device, Host.GfxWad, s + "_lightng", "GL_LINEAR" );
             }
+        }
 
+        private void LoadAmmo( )
+        {
             Ammo[0] = BasePicture.FromWad( Host.Video.Device, Host.GfxWad, "sb_shells", "GL_LINEAR" );
             Ammo[1] = BasePicture.FromWad( Host.Video.Device, Host.GfxWad, "sb_nails", "GL_LINEAR" );
             Ammo[2] = BasePicture.FromWad( Host.Video.Device, Host.GfxWad, "sb_rocket", "GL_LINEAR" );
             Ammo[3] = BasePicture.FromWad( Host.Video.Device, Host.GfxWad, "sb_cells", "GL_LINEAR" );
+        }
 
+        private void LoadArmour( )
+        {
             Armour[0] = BasePicture.FromWad( Host.Video.Device, Host.GfxWad, "sb_armor1", "GL_LINEAR" );
             Armour[1] = BasePicture.FromWad( Host.Video.Device, Host.GfxWad, "sb_armor2", "GL_LINEAR" );
             Armour[2] = BasePicture.FromWad( Host.Video.Device, Host.GfxWad, "sb_armor3", "GL_LINEAR" );
+        }
 
+        private void LoadItems( )
+        {
             Items[0] = BasePicture.FromWad( Host.Video.Device, Host.GfxWad, "sb_key1", "GL_LINEAR" );
             Items[1] = BasePicture.FromWad( Host.Video.Device, Host.GfxWad, "sb_key2", "GL_LINEAR" );
             Items[2] = BasePicture.FromWad( Host.Video.Device, Host.GfxWad, "sb_invis", "GL_LINEAR" );
             Items[3] = BasePicture.FromWad( Host.Video.Device, Host.GfxWad, "sb_invuln", "GL_LINEAR" );
             Items[4] = BasePicture.FromWad( Host.Video.Device, Host.GfxWad, "sb_suit", "GL_LINEAR" );
             Items[5] = BasePicture.FromWad( Host.Video.Device, Host.GfxWad, "sb_quad", "GL_LINEAR" );
+        }
 
+        private void LoadSigil( )
+        {
             Sigil[0] = BasePicture.FromWad( Host.Video.Device, Host.GfxWad, "sb_sigil1", "GL_LINEAR" );
             Sigil[1] = BasePicture.FromWad( Host.Video.Device, Host.GfxWad, "sb_sigil2", "GL_LINEAR" );
             Sigil[2] = BasePicture.FromWad( Host.Video.Device, Host.GfxWad, "sb_sigil3", "GL_LINEAR" );
             Sigil[3] = BasePicture.FromWad( Host.Video.Device, Host.GfxWad, "sb_sigil4", "GL_LINEAR" );
+        }
 
+        private void LoadFaces( )
+        {
             Faces[4, 0] = BasePicture.FromWad( Host.Video.Device, Host.GfxWad, "face1", "GL_NEAREST" );
             Faces[4, 1] = BasePicture.FromWad( Host.Video.Device, Host.GfxWad, "face_p1", "GL_NEAREST" );
             Faces[3, 0] = BasePicture.FromWad( Host.Video.Device, Host.GfxWad, "face2", "GL_NEAREST" );
@@ -197,65 +217,88 @@ namespace SharpQuake.Rendering.UI
             FaceInvuln = BasePicture.FromWad( Host.Video.Device, Host.GfxWad, "face_invul2", "GL_NEAREST" );
             FaceInvisInvuln = BasePicture.FromWad( Host.Video.Device, Host.GfxWad, "face_inv2", "GL_NEAREST" );
             FaceQuad = BasePicture.FromWad( Host.Video.Device, Host.GfxWad, "face_quad", "GL_NEAREST" );
+        }
 
-            Host.Commands.Add( "+showscores", ShowScores );
-            Host.Commands.Add( "-showscores", DontShowScores );
-
+        private void LoadBars( )
+        {
             SBar = BasePicture.FromWad( Host.Video.Device, Host.GfxWad, "sbar", "GL_NEAREST" );
             IBar = BasePicture.FromWad( Host.Video.Device, Host.GfxWad, "ibar", "GL_NEAREST" );
             ScoreBar = BasePicture.FromWad( Host.Video.Device, Host.GfxWad, "scorebar", "GL_LINEAR" );
+        }
+
+        private void LoadHipnotic()
+        {
+            HWeapons[0, 0] = BasePicture.FromWad( Host.Video.Device, Host.GfxWad, "inv_laser", "GL_LINEAR" );
+            HWeapons[0, 1] = BasePicture.FromWad( Host.Video.Device, Host.GfxWad, "inv_mjolnir", "GL_LINEAR" );
+            HWeapons[0, 2] = BasePicture.FromWad( Host.Video.Device, Host.GfxWad, "inv_gren_prox", "GL_LINEAR" );
+            HWeapons[0, 3] = BasePicture.FromWad( Host.Video.Device, Host.GfxWad, "inv_prox_gren", "GL_LINEAR" );
+            HWeapons[0, 4] = BasePicture.FromWad( Host.Video.Device, Host.GfxWad, "inv_prox", "GL_LINEAR" );
+
+            HWeapons[1, 0] = BasePicture.FromWad( Host.Video.Device, Host.GfxWad, "inv2_laser", "GL_LINEAR" );
+            HWeapons[1, 1] = BasePicture.FromWad( Host.Video.Device, Host.GfxWad, "inv2_mjolnir", "GL_LINEAR" );
+            HWeapons[1, 2] = BasePicture.FromWad( Host.Video.Device, Host.GfxWad, "inv2_gren_prox", "GL_LINEAR" );
+            HWeapons[1, 3] = BasePicture.FromWad( Host.Video.Device, Host.GfxWad, "inv2_prox_gren", "GL_LINEAR" );
+            HWeapons[1, 4] = BasePicture.FromWad( Host.Video.Device, Host.GfxWad, "inv2_prox", "GL_LINEAR" );
+
+            for ( var i = 0; i < 5; i++ )
+            {
+                var s = "inva" + ( i + 1 ).ToString();
+                HWeapons[2 + i, 0] = BasePicture.FromWad( Host.Video.Device, Host.GfxWad, s + "_laser", "GL_LINEAR" );
+                HWeapons[2 + i, 1] = BasePicture.FromWad( Host.Video.Device, Host.GfxWad, s + "_mjolnir", "GL_LINEAR" );
+                HWeapons[2 + i, 2] = BasePicture.FromWad( Host.Video.Device, Host.GfxWad, s + "_gren_prox", "GL_LINEAR" );
+                HWeapons[2 + i, 3] = BasePicture.FromWad( Host.Video.Device, Host.GfxWad, s + "_prox_gren", "GL_LINEAR" );
+                HWeapons[2 + i, 4] = BasePicture.FromWad( Host.Video.Device, Host.GfxWad, s + "_prox", "GL_LINEAR" );
+            }
+
+            HItems[0] = BasePicture.FromWad( Host.Video.Device, Host.GfxWad, "sb_wsuit", "GL_LINEAR" );
+            HItems[1] = BasePicture.FromWad( Host.Video.Device, Host.GfxWad, "sb_eshld", "GL_LINEAR" );
+        }
+
+        private void LoadRogue()
+        {
+            RInvBar[0] = BasePicture.FromWad( Host.Video.Device, Host.GfxWad, "r_invbar1", "GL_LINEAR" );
+            RInvBar[1] = BasePicture.FromWad( Host.Video.Device, Host.GfxWad, "r_invbar2", "GL_LINEAR" );
+
+            RWeapons[0] = BasePicture.FromWad( Host.Video.Device, Host.GfxWad, "r_lava", "GL_LINEAR" );
+            RWeapons[1] = BasePicture.FromWad( Host.Video.Device, Host.GfxWad, "r_superlava", "GL_LINEAR" );
+            RWeapons[2] = BasePicture.FromWad( Host.Video.Device, Host.GfxWad, "r_gren", "GL_LINEAR" );
+            RWeapons[3] = BasePicture.FromWad( Host.Video.Device, Host.GfxWad, "r_multirock", "GL_LINEAR" );
+            RWeapons[4] = BasePicture.FromWad( Host.Video.Device, Host.GfxWad, "r_plasma", "GL_LINEAR" );
+
+            RItems[0] = BasePicture.FromWad( Host.Video.Device, Host.GfxWad, "r_shield1", "GL_LINEAR" );
+            RItems[1] = BasePicture.FromWad( Host.Video.Device, Host.GfxWad, "r_agrav1", "GL_LINEAR" );
+
+            // PGM 01/19/97 - team color border
+            RTeamBord = BasePicture.FromWad( Host.Video.Device, Host.GfxWad, "r_teambord", "GL_LINEAR" );
+            // PGM 01/19/97 - team color border
+
+            RAmmo[0] = BasePicture.FromWad( Host.Video.Device, Host.GfxWad, "r_ammolava", "GL_LINEAR" );
+            RAmmo[1] = BasePicture.FromWad( Host.Video.Device, Host.GfxWad, "r_ammomulti", "GL_LINEAR" );
+            RAmmo[2] = BasePicture.FromWad( Host.Video.Device, Host.GfxWad, "r_ammoplasma", "GL_LINEAR" );
+        }
+
+        // Sbar_Init
+        public void Initialise( )
+        {
+            LoadNumbers();
+            LoadSymbols();
+            LoadWeapons();
+            LoadAmmo();
+            LoadArmour();
+            LoadItems();
+            LoadSigil();
+            LoadFaces();
+            LoadBars();
 
             //MED 01/04/97 added new hipnotic weapons
             if ( MainWindow.Common.GameKind == GameKind.Hipnotic )
-            {
-                HWeapons[0, 0] = BasePicture.FromWad( Host.Video.Device, Host.GfxWad, "inv_laser", "GL_LINEAR" );
-                HWeapons[0, 1] = BasePicture.FromWad( Host.Video.Device, Host.GfxWad, "inv_mjolnir", "GL_LINEAR" );
-                HWeapons[0, 2] = BasePicture.FromWad( Host.Video.Device, Host.GfxWad, "inv_gren_prox", "GL_LINEAR" );
-                HWeapons[0, 3] = BasePicture.FromWad( Host.Video.Device, Host.GfxWad, "inv_prox_gren", "GL_LINEAR" );
-                HWeapons[0, 4] = BasePicture.FromWad( Host.Video.Device, Host.GfxWad, "inv_prox", "GL_LINEAR" );
-
-                HWeapons[1, 0] = BasePicture.FromWad( Host.Video.Device, Host.GfxWad, "inv2_laser", "GL_LINEAR" );
-                HWeapons[1, 1] = BasePicture.FromWad( Host.Video.Device, Host.GfxWad, "inv2_mjolnir", "GL_LINEAR" );
-                HWeapons[1, 2] = BasePicture.FromWad( Host.Video.Device, Host.GfxWad, "inv2_gren_prox", "GL_LINEAR" );
-                HWeapons[1, 3] = BasePicture.FromWad( Host.Video.Device, Host.GfxWad, "inv2_prox_gren", "GL_LINEAR" );
-                HWeapons[1, 4] = BasePicture.FromWad( Host.Video.Device, Host.GfxWad, "inv2_prox", "GL_LINEAR" );
-
-                for ( var i = 0; i < 5; i++ )
-                {
-                    var s = "inva" + ( i + 1 ).ToString( );
-                    HWeapons[2 + i, 0] = BasePicture.FromWad( Host.Video.Device, Host.GfxWad, s + "_laser", "GL_LINEAR" );
-                    HWeapons[2 + i, 1] = BasePicture.FromWad( Host.Video.Device, Host.GfxWad, s + "_mjolnir", "GL_LINEAR" );
-                    HWeapons[2 + i, 2] = BasePicture.FromWad( Host.Video.Device, Host.GfxWad, s + "_gren_prox", "GL_LINEAR" );
-                    HWeapons[2 + i, 3] = BasePicture.FromWad( Host.Video.Device, Host.GfxWad, s + "_prox_gren", "GL_LINEAR" );
-                    HWeapons[2 + i, 4] = BasePicture.FromWad( Host.Video.Device, Host.GfxWad, s + "_prox", "GL_LINEAR" );
-                }
-
-                HItems[0] = BasePicture.FromWad( Host.Video.Device, Host.GfxWad, "sb_wsuit", "GL_LINEAR" );
-                HItems[1] = BasePicture.FromWad( Host.Video.Device, Host.GfxWad, "sb_eshld", "GL_LINEAR" );
-            }
+                LoadHipnotic();
 
             if ( MainWindow.Common.GameKind == GameKind.Rogue )
-            {
-                RInvBar[0] = BasePicture.FromWad( Host.Video.Device, Host.GfxWad, "r_invbar1", "GL_LINEAR" );
-                RInvBar[1] = BasePicture.FromWad( Host.Video.Device, Host.GfxWad, "r_invbar2", "GL_LINEAR" );
+                LoadRogue();
 
-                RWeapons[0] = BasePicture.FromWad( Host.Video.Device, Host.GfxWad, "r_lava", "GL_LINEAR" );
-                RWeapons[1] = BasePicture.FromWad( Host.Video.Device, Host.GfxWad, "r_superlava", "GL_LINEAR" );
-                RWeapons[2] = BasePicture.FromWad( Host.Video.Device, Host.GfxWad, "r_gren", "GL_LINEAR" );
-                RWeapons[3] = BasePicture.FromWad( Host.Video.Device, Host.GfxWad, "r_multirock", "GL_LINEAR" );
-                RWeapons[4] = BasePicture.FromWad( Host.Video.Device, Host.GfxWad, "r_plasma", "GL_LINEAR" );
-
-                RItems[0] = BasePicture.FromWad( Host.Video.Device, Host.GfxWad, "r_shield1", "GL_LINEAR" );
-                RItems[1] = BasePicture.FromWad( Host.Video.Device, Host.GfxWad, "r_agrav1", "GL_LINEAR" );
-
-                // PGM 01/19/97 - team color border
-                RTeamBord = BasePicture.FromWad( Host.Video.Device, Host.GfxWad, "r_teambord", "GL_LINEAR" );
-                // PGM 01/19/97 - team color border
-
-                RAmmo[0] = BasePicture.FromWad( Host.Video.Device, Host.GfxWad, "r_ammolava", "GL_LINEAR" );
-                RAmmo[1] = BasePicture.FromWad( Host.Video.Device, Host.GfxWad, "r_ammomulti", "GL_LINEAR" );
-                RAmmo[2] = BasePicture.FromWad( Host.Video.Device, Host.GfxWad, "r_ammoplasma", "GL_LINEAR" );
-            }
+            Host.Commands.Add( "+showscores", ShowScores );
+            Host.Commands.Add( "-showscores", DontShowScores );
         }
 
         // Sbar_Changed
@@ -465,23 +508,10 @@ namespace SharpQuake.Rendering.UI
             }
         }
 
-        // Sbar_DrawInventory
-        private void DrawInventory( )
+        private void DrawInventoryWeapons( ref Int32 flashon )
         {
-            Int32 flashon;
-
             var cl = Host.Client.cl;
-            if ( MainWindow.Common.GameKind == GameKind.Rogue )
-            {
-                if ( cl.stats[QStatsDef.STAT_ACTIVEWEAPON] >= QItemsDef.RIT_LAVA_NAILGUN )
-                    DrawPic( 0, -24, RInvBar[0] );
-                else
-                    DrawPic( 0, -24, RInvBar[1] );
-            }
-            else
-                DrawPic( 0, -24, IBar );
 
-            // weapons
             for ( var i = 0; i < 7; i++ )
             {
                 if ( cl.HasItems( QItemsDef.IT_SHOTGUN << i ) )
@@ -504,77 +534,83 @@ namespace SharpQuake.Rendering.UI
                         _Updates = 0; // force update to remove flash
                 }
             }
+        }
 
-            // MED 01/04/97
-            // hipnotic weapons
-            if ( MainWindow.Common.GameKind == GameKind.Hipnotic )
-            {
-                var grenadeflashing = 0;
-                for ( var i = 0; i < 4; i++ )
-                {
-                    if ( cl.HasItems( 1 << _HipWeapons[i] ) )
-                    {
-                        var time = cl.item_gettime[_HipWeapons[i]];
-                        flashon = ( Int32 ) ( ( cl.time - time ) * 10 );
-                        if ( flashon >= 10 )
-                        {
-                            if ( cl.stats[QStatsDef.STAT_ACTIVEWEAPON] == ( 1 << _HipWeapons[i] ) )
-                                flashon = 1;
-                            else
-                                flashon = 0;
-                        }
-                        else
-                            flashon = ( flashon % 5 ) + 2;
+        private void DrawInventoryHipnoticWeapons( ref Int32 flashon )
+        {
+            var cl = Host.Client.cl;
+            var grenadeflashing = 0;
 
-                        // check grenade launcher
-                        if ( i == 2 )
-                        {
-                            if ( cl.HasItems( QItemsDef.HIT_PROXIMITY_GUN ) )
-                            {
-                                if ( flashon > 0 )
-                                {
-                                    grenadeflashing = 1;
-                                    DrawPic( 96, -16, HWeapons[flashon, 2] );
-                                }
-                            }
-                        }
-                        else if ( i == 3 )
-                        {
-                            if ( cl.HasItems( QItemsDef.IT_SHOTGUN << 4 ) )
-                            {
-                                if ( flashon > 0 && grenadeflashing == 0 )
-                                {
-                                    DrawPic( 96, -16, HWeapons[flashon, 3] );
-                                }
-                                else if ( grenadeflashing == 0 )
-                                {
-                                    DrawPic( 96, -16, HWeapons[0, 3] );
-                                }
-                            }
-                            else
-                                DrawPic( 96, -16, HWeapons[flashon, 4] );
-                        }
-                        else
-                            DrawPic( 176 + ( i * 24 ), -16, HWeapons[flashon, i] );
-                        if ( flashon > 1 )
-                            _Updates = 0; // force update to remove flash
-                    }
-                }
-            }
-
-            if ( MainWindow.Common.GameKind == GameKind.Rogue )
-            {
-                // check for powered up weapon.
-                if ( cl.stats[QStatsDef.STAT_ACTIVEWEAPON] >= QItemsDef.RIT_LAVA_NAILGUN )
-                    for ( var i = 0; i < 5; i++ )
-                        if ( cl.stats[QStatsDef.STAT_ACTIVEWEAPON] == ( QItemsDef.RIT_LAVA_NAILGUN << i ) )
-                            DrawPic( ( i + 2 ) * 24, -16, RWeapons[i] );
-            }
-
-            // ammo counts
             for ( var i = 0; i < 4; i++ )
             {
-                var num = cl.stats[QStatsDef.STAT_SHELLS + i].ToString( ).PadLeft( 3 );
+                if ( cl.HasItems( 1 << _HipWeapons[i] ) )
+                {
+                    var time = cl.item_gettime[_HipWeapons[i]];
+                    flashon = ( Int32 ) ( ( cl.time - time ) * 10 );
+                    if ( flashon >= 10 )
+                    {
+                        if ( cl.stats[QStatsDef.STAT_ACTIVEWEAPON] == ( 1 << _HipWeapons[i] ) )
+                            flashon = 1;
+                        else
+                            flashon = 0;
+                    }
+                    else
+                        flashon = ( flashon % 5 ) + 2;
+
+                    // check grenade launcher
+                    if ( i == 2 )
+                    {
+                        if ( cl.HasItems( QItemsDef.HIT_PROXIMITY_GUN ) )
+                        {
+                            if ( flashon > 0 )
+                            {
+                                grenadeflashing = 1;
+                                DrawPic( 96, -16, HWeapons[flashon, 2] );
+                            }
+                        }
+                    }
+                    else if ( i == 3 )
+                    {
+                        if ( cl.HasItems( QItemsDef.IT_SHOTGUN << 4 ) )
+                        {
+                            if ( flashon > 0 && grenadeflashing == 0 )
+                            {
+                                DrawPic( 96, -16, HWeapons[flashon, 3] );
+                            }
+                            else if ( grenadeflashing == 0 )
+                            {
+                                DrawPic( 96, -16, HWeapons[0, 3] );
+                            }
+                        }
+                        else
+                            DrawPic( 96, -16, HWeapons[flashon, 4] );
+                    }
+                    else
+                        DrawPic( 176 + ( i * 24 ), -16, HWeapons[flashon, i] );
+                    if ( flashon > 1 )
+                        _Updates = 0; // force update to remove flash
+                }
+            }
+        }
+
+        private void DrawInventoryRogueWeapons( )
+        {
+            var cl = Host.Client.cl;
+
+            // check for powered up weapon.
+            if ( cl.stats[QStatsDef.STAT_ACTIVEWEAPON] >= QItemsDef.RIT_LAVA_NAILGUN )
+                for ( var i = 0; i < 5; i++ )
+                    if ( cl.stats[QStatsDef.STAT_ACTIVEWEAPON] == ( QItemsDef.RIT_LAVA_NAILGUN << i ) )
+                        DrawPic( ( i + 2 ) * 24, -16, RWeapons[i] );
+        }
+
+        private void DrawInventoryAmmoCounts( )
+        {
+            var cl = Host.Client.cl;
+
+            for ( var i = 0; i < 4; i++ )
+            {
+                var num = cl.stats[QStatsDef.STAT_SHELLS + i].ToString().PadLeft( 3 );
                 //sprintf(num, "%3i", cl.stats[QStats.STAT_SHELLS + i]);
                 if ( num[0] != ' ' )
                     DrawCharacter( ( 6 * i + 1 ) * 8 - 2, -24, 18 + num[0] - '0' );
@@ -583,9 +619,12 @@ namespace SharpQuake.Rendering.UI
                 if ( num[2] != ' ' )
                     DrawCharacter( ( 6 * i + 3 ) * 8 - 2, -24, 18 + num[2] - '0' );
             }
+        }
 
-            flashon = 0;
-            // items
+        private void DrawInventoryItems( Int32 flashon )
+        {
+            var cl = Host.Client.cl;
+
             for ( var i = 0; i < 6; i++ )
             {
                 if ( cl.HasItems( 1 << ( 17 + i ) ) )
@@ -607,72 +646,130 @@ namespace SharpQuake.Rendering.UI
                         _Updates = 0;
                 }
             }
+        }
+
+        private void DrawInventoryHipnoticItems( Int32 flashon )
+        {
+            var cl = Host.Client.cl;
+
+            for ( var i = 0; i < 2; i++ )
+            {
+                if ( cl.HasItems( 1 << ( 24 + i ) ) )
+                {
+                    var time = cl.item_gettime[24 + i];
+                    if ( time > 0 && time > cl.time - 2 && flashon > 0 )
+                    {  // flash frame
+                        _Updates = 0;
+                    }
+                    else
+                    {
+                        DrawPic( 288 + i * 16, -16, HItems[i] );
+                    }
+                    if ( time > 0 && time > cl.time - 2 )
+                        _Updates = 0;
+                }
+            }
+        }
+
+        private void DrawInventoryRogueItems( Int32 flashon )
+        {
+            var cl = Host.Client.cl;
+
+            for ( var i = 0; i < 2; i++ )
+            {
+                if ( cl.HasItems( 1 << ( 29 + i ) ) )
+                {
+                    var time = cl.item_gettime[29 + i];
+
+                    if ( time > 0 && time > cl.time - 2 && flashon > 0 )
+                    {   // flash frame
+                        _Updates = 0;
+                    }
+                    else
+                    {
+                        DrawPic( 288 + i * 16, -16, RItems[i] );
+                    }
+
+                    if ( time > 0 && time > cl.time - 2 )
+                        _Updates = 0;
+                }
+            }
+        }
+
+        private void DrawInventorySigils( Int32 flashon )
+        {
+            var cl = Host.Client.cl;
+
+            for ( var i = 0; i < 4; i++ )
+            {
+                if ( cl.HasItems( 1 << ( 28 + i ) ) )
+                {
+                    var time = cl.item_gettime[28 + i];
+                    if ( time > 0 && time > cl.time - 2 && flashon > 0 )
+                    {   // flash frame
+                        _Updates = 0;
+                    }
+                    else
+                        DrawPic( 320 - 32 + i * 8, -16, Sigil[i] );
+                    if ( time > 0 && time > cl.time - 2 )
+                        _Updates = 0;
+                }
+            }
+        }
+
+        private void DrawInventoryIBar()
+        {
+            DrawPic( 0, -24, IBar );
+        }
+
+        private void DrawInventoryRogueIBar()
+        {
+            var cl = Host.Client.cl;
+
+            if ( cl.stats[QStatsDef.STAT_ACTIVEWEAPON] >= QItemsDef.RIT_LAVA_NAILGUN )
+                DrawPic( 0, -24, RInvBar[0] );
+            else
+                DrawPic( 0, -24, RInvBar[1] );
+
+        }
+        // Sbar_DrawInventory
+        private void DrawInventory( )
+        {
+            var flashon = 0;
+
+            if ( MainWindow.Common.GameKind == GameKind.Rogue )
+                DrawInventoryRogueIBar();
+            else
+                DrawInventoryIBar();
+
+            // weapons
+            DrawInventoryWeapons( ref flashon );
+
+            // MED 01/04/97
+            // hipnotic weapons
+            if ( MainWindow.Common.GameKind == GameKind.Hipnotic )
+                DrawInventoryHipnoticWeapons( ref flashon );
+
+            if ( MainWindow.Common.GameKind == GameKind.Rogue )
+                DrawInventoryRogueWeapons();
+
+            // ammo counts
+            DrawInventoryAmmoCounts();
+
+            // DAN - Is this pointless? it resets flashon and then passes it into the next function, which has logic that might be not be needed
+            flashon = 0;
+            // items
+            DrawInventoryItems( flashon );
 
             //MED 01/04/97 added hipnotic items
             // hipnotic items
             if ( MainWindow.Common.GameKind == GameKind.Hipnotic )
-            {
-                for ( var i = 0; i < 2; i++ )
-                {
-                    if ( cl.HasItems( 1 << ( 24 + i ) ) )
-                    {
-                        var time = cl.item_gettime[24 + i];
-                        if ( time > 0 && time > cl.time - 2 && flashon > 0 )
-                        {  // flash frame
-                            _Updates = 0;
-                        }
-                        else
-                        {
-                            DrawPic( 288 + i * 16, -16, HItems[i] );
-                        }
-                        if ( time > 0 && time > cl.time - 2 )
-                            _Updates = 0;
-                    }
-                }
-            }
+                DrawInventoryHipnoticItems( flashon );
 
-            if ( MainWindow.Common.GameKind == GameKind.Rogue )
-            {
-                // new rogue items
-                for ( var i = 0; i < 2; i++ )
-                {
-                    if ( cl.HasItems( 1 << ( 29 + i ) ) )
-                    {
-                        var time = cl.item_gettime[29 + i];
-
-                        if ( time > 0 && time > cl.time - 2 && flashon > 0 )
-                        {	// flash frame
-                            _Updates = 0;
-                        }
-                        else
-                        {
-                            DrawPic( 288 + i * 16, -16, RItems[i] );
-                        }
-
-                        if ( time > 0 && time > cl.time - 2 )
-                            _Updates = 0;
-                    }
-                }
-            }
-            else
-            {
-                // sigils
-                for ( var i = 0; i < 4; i++ )
-                {
-                    if ( cl.HasItems( 1 << ( 28 + i ) ) )
-                    {
-                        var time = cl.item_gettime[28 + i];
-                        if ( time > 0 && time > cl.time - 2 && flashon > 0 )
-                        {	// flash frame
-                            _Updates = 0;
-                        }
-                        else
-                            DrawPic( 320 - 32 + i * 8, -16, Sigil[i] );
-                        if ( time > 0 && time > cl.time - 2 )
-                            _Updates = 0;
-                    }
-                }
-            }
+            if ( MainWindow.Common.GameKind == GameKind.Rogue ) // new rogue items
+                DrawInventoryRogueItems( flashon );
+            else // sigils
+                DrawInventorySigils( flashon );
         }
 
         // Sbar_DrawFrags

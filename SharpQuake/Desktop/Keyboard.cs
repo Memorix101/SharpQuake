@@ -559,80 +559,72 @@ namespace SharpQuake
             _ChatBuffer.Append( ( Char ) key );
         }
 
-        /// <summary>
-        /// Key_Console
-        /// Interactive line editing and console scrollback
-        /// </summary>
-        private void KeyConsole( Int32 key )
+        private Boolean KeyConsoleEnter( )
         {
-            if ( key == KeysDef.K_ENTER )
+            var line = new String( _Lines[_EditLine] ).TrimEnd( '\0', ' ' );
+            var cmd = line.Substring( 1 );
+            Host.Commands.Buffer.Append( cmd );	// skip the >
+            Host.Commands.Buffer.Append( "\n" );
+            Host.Console.Print( "{0}\n", line );
+            _EditLine = ( _EditLine + 1 ) & 31;
+            _HistoryLine = _EditLine;
+            _Lines[_EditLine][0] = ']';
+            LinePos = 1;
+
+            if ( Host.Client.cls.state == cactive_t.ca_disconnected )
+                Host.Screen.UpdateScreen(); // force an update, because the command
+                                            // may take some time
+            return true;
+        }
+
+        private Boolean KeyConsoleTab( )
+        {
+            // command completion
+            var txt = new String( _Lines[_EditLine], 1, KeysDef.MAXCMDLINE - 1 ).TrimEnd( '\0', ' ' );
+            var cmds = Host.Commands.Complete( txt );
+            var vars = Host.CVars.CompleteName( txt );
+            String match = null;
+            if ( cmds != null )
             {
-                var line = new String( _Lines[_EditLine] ).TrimEnd( '\0', ' ' );
-                var cmd = line.Substring( 1 );
-                Host.Commands.Buffer.Append( cmd );	// skip the >
-                Host.Commands.Buffer.Append( "\n" );
-                Host.Console.Print( "{0}\n", line );
-                _EditLine = ( _EditLine + 1 ) & 31;
-                _HistoryLine = _EditLine;
-                _Lines[_EditLine][0] = ']';
-                LinePos = 1;
-                if ( Host.Client.cls.state == cactive_t.ca_disconnected )
-                    Host.Screen.UpdateScreen( );	// force an update, because the command
-                // may take some time
-                return;
+                if ( cmds.Length > 1 || vars != null )
+                {
+                    Host.Console.Print( "\nCommands:\n" );
+                    foreach ( var s in cmds )
+                        Host.Console.Print( "  {0}\n", s );
+                }
+                else
+                    match = cmds[0];
+            }
+            if ( vars != null )
+            {
+                if ( vars.Length > 1 || cmds != null )
+                {
+                    Host.Console.Print( "\nVariables:\n" );
+                    foreach ( var s in vars )
+                        Host.Console.Print( "  {0}\n", s );
+                }
+                else if ( match == null )
+                    match = vars[0];
+            }
+            if ( !String.IsNullOrEmpty( match ) )
+            {
+                var len = Math.Min( match.Length, KeysDef.MAXCMDLINE - 3 );
+                for ( var i = 0; i < len; i++ )
+                {
+                    _Lines[_EditLine][i + 1] = match[i];
+                }
+                LinePos = len + 1;
+                _Lines[_EditLine][LinePos] = ' ';
+                LinePos++;
+                _Lines[_EditLine][LinePos] = '\0';
+                return true;
             }
 
-            if ( key == KeysDef.K_TAB )
-            {
-                // command completion
-                var txt = new String( _Lines[_EditLine], 1, KeysDef.MAXCMDLINE - 1 ).TrimEnd( '\0', ' ' );
-                var cmds = Host.Commands.Complete( txt );
-                var vars = Host.CVars.CompleteName( txt );
-                String match = null;
-                if ( cmds != null )
-                {
-                    if ( cmds.Length > 1 || vars != null )
-                    {
-                        Host.Console.Print( "\nCommands:\n" );
-                        foreach ( var s in cmds )
-                            Host.Console.Print( "  {0}\n", s );
-                    }
-                    else
-                        match = cmds[0];
-                }
-                if ( vars != null )
-                {
-                    if ( vars.Length > 1 || cmds != null )
-                    {
-                        Host.Console.Print( "\nVariables:\n" );
-                        foreach ( var s in vars )
-                            Host.Console.Print( "  {0}\n", s );
-                    }
-                    else if ( match == null )
-                        match = vars[0];
-                }
-                if ( !String.IsNullOrEmpty( match ) )
-                {
-                    var len = Math.Min( match.Length, KeysDef.MAXCMDLINE - 3 );
-                    for ( var i = 0; i < len; i++ )
-                    {
-                        _Lines[_EditLine][i + 1] = match[i];
-                    }
-                    LinePos = len + 1;
-                    _Lines[_EditLine][LinePos] = ' ';
-                    LinePos++;
-                    _Lines[_EditLine][LinePos] = '\0';
-                    return;
-                }
-            }
+            return false;
+        }
 
-            if ( key == KeysDef.K_BACKSPACE || key == KeysDef.K_LEFTARROW )
-            {
-                if ( LinePos > 1 )
-                    LinePos--;
-                return;
-            }
-
+        private Boolean KeyConsoleArrows( Int32 key )
+        {
             if ( key == KeysDef.K_UPARROW )
             {
                 do
@@ -645,13 +637,13 @@ namespace SharpQuake
                 LinePos = 0;
                 while ( _Lines[_EditLine][LinePos] != '\0' && LinePos < KeysDef.MAXCMDLINE )
                     LinePos++;
-                return;
+                return true;
             }
 
             if ( key == KeysDef.K_DOWNARROW )
             {
                 if ( _HistoryLine == _EditLine )
-                    return;
+                    return true;
                 do
                 {
                     _HistoryLine = ( _HistoryLine + 1 ) & 31;
@@ -669,15 +661,20 @@ namespace SharpQuake
                     while ( _Lines[_EditLine][LinePos] != '\0' && LinePos < KeysDef.MAXCMDLINE )
                         LinePos++;
                 }
-                return;
+                return true;
             }
 
+            return false;
+        }
+
+        private Boolean KeyConsoleScroll( Int32 key )
+        {
             if ( key == KeysDef.K_PGUP || key == KeysDef.K_MWHEELUP )
             {
                 Host.Console.BackScroll += 2;
                 if ( Host.Console.BackScroll > Host.Console.TotalLines - ( Host.Screen.vid.height >> 3 ) - 1 )
                     Host.Console.BackScroll = Host.Console.TotalLines - ( Host.Screen.vid.height >> 3 ) - 1;
-                return;
+                return true;
             }
 
             if ( key == KeysDef.K_PGDN || key == KeysDef.K_MWHEELDOWN )
@@ -685,20 +682,45 @@ namespace SharpQuake
                 Host.Console.BackScroll -= 2;
                 if ( Host.Console.BackScroll < 0 )
                     Host.Console.BackScroll = 0;
-                return;
+                return true;
             }
 
             if ( key == KeysDef.K_HOME )
             {
                 Host.Console.BackScroll = Host.Console.TotalLines - ( Host.Screen.vid.height >> 3 ) - 1;
-                return;
+                return true;
             }
 
             if ( key == KeysDef.K_END )
             {
                 Host.Console.BackScroll = 0;
+                return true;
+            }
+
+            return false;
+        }
+
+        /// <summary>
+        /// Key_Console
+        /// Interactive line editing and console scrollback
+        /// </summary>
+        private void KeyConsole( Int32 key )
+        {
+            if ( key == KeysDef.K_ENTER && KeyConsoleEnter( ) )
+                return;
+
+            if ( key == KeysDef.K_TAB && KeyConsoleTab() )
+                return;            
+
+            if ( key == KeysDef.K_BACKSPACE || key == KeysDef.K_LEFTARROW )
+            {
+                if ( LinePos > 1 )
+                    LinePos--;
                 return;
             }
+
+            if ( KeyConsoleArrows( key ) || KeyConsoleScroll( key ) )
+                return;         
 
             if ( key < 32 || key > 127 )
                 return;	// non printable
