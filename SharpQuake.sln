@@ -13,8 +13,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SharpQuake.Renderer.OpenGL"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SharpQuake.Game", "SharpQuake.Game\SharpQuake.Game.csproj", "{5C497D12-3411-4DF9-99CA-5F176EA024E8}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SharpQuake.QuakeCS", "SharpQuake.QuakeCS\SharpQuake.QuakeCS.csproj", "{F3DBA40D-15F4-41DF-8188-510D37B6DFBC}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -63,14 +61,6 @@ Global
 		{5C497D12-3411-4DF9-99CA-5F176EA024E8}.Release|Any CPU.Build.0 = Release|Any CPU
 		{5C497D12-3411-4DF9-99CA-5F176EA024E8}.Release|x86.ActiveCfg = Release|Any CPU
 		{5C497D12-3411-4DF9-99CA-5F176EA024E8}.Release|x86.Build.0 = Release|Any CPU
-		{F3DBA40D-15F4-41DF-8188-510D37B6DFBC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{F3DBA40D-15F4-41DF-8188-510D37B6DFBC}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{F3DBA40D-15F4-41DF-8188-510D37B6DFBC}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{F3DBA40D-15F4-41DF-8188-510D37B6DFBC}.Debug|x86.Build.0 = Debug|Any CPU
-		{F3DBA40D-15F4-41DF-8188-510D37B6DFBC}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{F3DBA40D-15F4-41DF-8188-510D37B6DFBC}.Release|Any CPU.Build.0 = Release|Any CPU
-		{F3DBA40D-15F4-41DF-8188-510D37B6DFBC}.Release|x86.ActiveCfg = Release|Any CPU
-		{F3DBA40D-15F4-41DF-8188-510D37B6DFBC}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
