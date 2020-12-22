@@ -55,7 +55,7 @@ To try and reorganise and improve the already great work done by those who have 
 **Project is built against and tested for Visual Studio 2019 on .NET 4.7.2**
 
 1) **Add the OpenTK nuget package with the package manager console in Visual Studio.**
-    - `Install-Package OpenTK -Version 3.0.1`
+    - `Install-Package OpenTK -Version 3.3.1`
     - `Install-Package NVorbis -Version 0.8.6`
     - `Install-Package NVorbis.OpenTKSupport -Version 1.2.0`
 
