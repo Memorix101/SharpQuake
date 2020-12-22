@@ -45,7 +45,7 @@ To try and reorganise and improve the already great work done by those who have 
 	* [ ] Implement PBR and custom BSP format *(With light mapping like Bakery - GPU Lightmapper for Unity)*
 
 ### Dependencies
-* OpenTK 3.0.1
+* OpenTK 3.3.1
 * NVorbis 0.8.6
 * **[OpenAL](https://www.openal.org/downloads/)** (Windows) / libopenal on Linux
 * **[SDL2](https://www.libsdl.org/download-2.0.php)** (Windows and macOS) / libsdl2-2.0 on Linux (Runtime binaries)
