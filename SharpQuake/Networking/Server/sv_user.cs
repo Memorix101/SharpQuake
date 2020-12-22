@@ -23,6 +23,7 @@
 /// </copyright>
 
 using System;
+using System.Linq;
 using SharpQuake.Framework;
 using SharpQuake.Framework.IO;
 using SharpQuake.Framework.IO.Input;
@@ -58,6 +59,29 @@ namespace SharpQuake
 
         private Vector3 _WishDir; // wishdir
         private Single _WishSpeed; // wishspeed
+
+        private String[] ClientMessageCommands = new String[]
+        {
+            "status",
+            "god",
+            "notarget",
+            "fly",
+            "name",
+            "noclip",
+            "say",
+            "say_team",
+            "tell",
+            "color",
+            "kill",
+            "pause",
+            "spawn",
+            "begin",
+            "prespawn",
+            "kick",
+            "ping",
+            "give",
+            "ban"
+        };
 
         /// <summary>
         /// SV_RunClients
@@ -149,6 +173,23 @@ namespace SharpQuake
             _Player.v.idealpitch = -dir * Host.Cvars.IdealPitchScale.Get<Single>( );
         }
 
+        private Int32 GetClientMessageCommand( String s )
+        {
+            Int32 ret;
+
+            if ( Host.HostClient.privileged )
+                ret = 2;
+            else
+                ret = 0;
+
+            var cmdName = s.Split( ' ' )[0];
+
+            if ( ClientMessageCommands.Contains( cmdName ) )
+                ret = 1;           
+
+            return ret;
+        }
+
         /// <summary>
         /// SV_ReadClientMessage
         /// Returns false if the client should be killed
@@ -193,48 +234,7 @@ namespace SharpQuake
 
                         case ProtocolDef.clc_stringcmd:
                             var s = Host.Network.Reader.ReadString();
-                            if( Host.HostClient.privileged )
-                                ret = 2;
-                            else
-                                ret = 0;
-                            if( Utilities.SameText( s, "status", 6 ) )
-                                ret = 1;
-                            else if( Utilities.SameText( s, "god", 3 ) )
-                                ret = 1;
-                            else if( Utilities.SameText( s, "notarget", 8 ) )
-                                ret = 1;
-                            else if( Utilities.SameText( s, "fly", 3 ) )
-                                ret = 1;
-                            else if( Utilities.SameText( s, "name", 4 ) )
-                                ret = 1;
-                            else if( Utilities.SameText( s, "noclip", 6 ) )
-                                ret = 1;
-                            else if( Utilities.SameText( s, "say", 3 ) )
-                                ret = 1;
-                            else if( Utilities.SameText( s, "say_team", 8 ) )
-                                ret = 1;
-                            else if( Utilities.SameText( s, "tell", 4 ) )
-                                ret = 1;
-                            else if( Utilities.SameText( s, "color", 5 ) )
-                                ret = 1;
-                            else if( Utilities.SameText( s, "kill", 4 ) )
-                                ret = 1;
-                            else if( Utilities.SameText( s, "pause", 5 ) )
-                                ret = 1;
-                            else if( Utilities.SameText( s, "spawn", 5 ) )
-                                ret = 1;
-                            else if( Utilities.SameText( s, "begin", 5 ) )
-                                ret = 1;
-                            else if( Utilities.SameText( s, "prespawn", 8 ) )
-                                ret = 1;
-                            else if( Utilities.SameText( s, "kick", 4 ) )
-                                ret = 1;
-                            else if( Utilities.SameText( s, "ping", 4 ) )
-                                ret = 1;
-                            else if( Utilities.SameText( s, "give", 4 ) )
-                                ret = 1;
-                            else if( Utilities.SameText( s, "ban", 3 ) )
-                                ret = 1;
+                            ret = GetClientMessageCommand( s );
                             if( ret == 2 )
                                 Host.Commands.Buffer.Insert( s );
                             else if( ret == 1 )
