@@ -39,14 +39,6 @@ namespace SharpQuake
     /// </summary>
     public class Drawer
     {
-        public Single glMaxSize
-        {
-            get
-            {
-                return Host.Cvars.glMaxSize.Get<Int32>( );
-            }
-        }
-
         public Int32 CurrentTexture = -1;
 
         public String LightMapFormat = "GL_RGBA";
@@ -102,7 +94,7 @@ namespace SharpQuake
         // menu_cachepics
         private Int32 _MenuNumCachePics;
 
-        public System.Boolean IsInitialised
+        public Boolean IsInitialised
         {
             get;
             private set;
@@ -113,6 +105,11 @@ namespace SharpQuake
         {
             get;
             set;
+        }
+
+        public Drawer( Host host )
+        {
+            Host = host;
         }
 
         // Draw_Init
@@ -148,7 +145,7 @@ namespace SharpQuake
 
             // Temporarily set here
             BaseTexture.PicMip = Host.Cvars.glPicMip.Get<Single>( );
-            BaseTexture.MaxSize = glMaxSize;
+            BaseTexture.MaxSize = Host.Cvars.glMaxSize.Get<Int32>();
 
             CharSetFont = new Renderer.Font( Host.Video.Device, "charset" );
             CharSetFont.Initialise( new ByteArraySegment( draw_chars, offset ) );
@@ -398,11 +395,6 @@ namespace SharpQuake
                 srcOffset += 128; // source += 128;
                 destOffset += 320; // dest += 320;
             }
-        }
-
-        public Drawer( Host host )
-        {
-            Host = host;
         }
     }
 }

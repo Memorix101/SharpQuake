@@ -311,7 +311,7 @@ namespace SharpQuake
         {
             mod.Load( Host.Video.Device.Palette.Table8to24, mod.Name, buffer, ( n, b, h ) => 
             {
-                var texture = ( Renderer.OpenGL.Textures.GLTexture )  BaseTexture.FromBuffer( Host.Video.Device, n,
+                var texture = ( Renderer.OpenGL.Textures.GLTexture ) BaseTexture.FromBuffer( Host.Video.Device, n,
                         b, h.skinwidth, h.skinheight, true, false );
 
                 SkinTextures.Add( texture );
@@ -348,68 +348,6 @@ namespace SharpQuake
 
                 return texture.GLDesc.TextureNumber;
             } );
-
-            //var pin = Utilities.BytesToStructure<dsprite_t>( buffer, 0 );
-
-            //var version = EndianHelper.LittleLong( pin.version );
-
-            //if ( version != ModelDef.SPRITE_VERSION )
-            //    Utilities.Error( "{0} has wrong version number ({1} should be {2})",
-            //        mod.Name, version, ModelDef.SPRITE_VERSION );
-
-            //var numframes = EndianHelper.LittleLong( pin.numframes );
-
-            //var psprite = new msprite_t( );
-
-            //// Uze: sprite models are not cached so
-            //mod.cache = new CacheUser( );
-            //mod.cache.data = psprite;
-
-            //psprite.type = EndianHelper.LittleLong( pin.type );
-            //psprite.maxwidth = EndianHelper.LittleLong( pin.width );
-            //psprite.maxheight = EndianHelper.LittleLong( pin.height );
-            //psprite.beamlength = EndianHelper.LittleFloat( pin.beamlength );
-            //mod.SyncType = ( SyncType ) EndianHelper.LittleLong( ( Int32 ) pin.synctype );
-            //psprite.numframes = numframes;
-
-            //var mins = mod.BoundsMin;
-            //var maxs = mod.BoundsMax;
-            //mins.X = mins.Y = -psprite.maxwidth / 2;
-            //maxs.X = maxs.Y = psprite.maxwidth / 2;
-            //mins.Z = -psprite.maxheight / 2;
-            //maxs.Z = psprite.maxheight / 2;
-            //mod.BoundsMin = mod.BoundsMin;
-
-            ////
-            //// load the frames
-            ////
-            //if ( numframes < 1 )
-            //    Utilities.Error( "Mod_LoadSpriteModel: Invalid # of frames: {0}\n", numframes );
-
-            //mod.FrameCount = numframes;
-
-            //var frameOffset = dsprite_t.SizeInBytes;
-
-            //psprite.frames = new mspriteframedesc_t[numframes];
-
-            //for ( var i = 0; i < numframes; i++ )
-            //{
-            //    var frametype = ( spriteframetype_t ) BitConverter.ToInt32( buffer, frameOffset );
-            //    frameOffset += 4;
-
-            //    psprite.frames[i].type = frametype;
-
-            //    if ( frametype == spriteframetype_t.SPR_SINGLE )
-            //    {
-            //        frameOffset = LoadSpriteFrame( new ByteArraySegment( buffer, frameOffset ), out psprite.frames[i].frameptr, i );
-            //    }
-            //    else
-            //    {
-            //        frameOffset = LoadSpriteGroup( new ByteArraySegment( buffer, frameOffset ), out psprite.frames[i].frameptr, i );
-            //    }
-            //}
-
-            //mod.Type = ModelType.mod_sprite;
         }
 
         /// <summary>

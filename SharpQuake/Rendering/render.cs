@@ -412,7 +412,8 @@ namespace SharpQuake
 
             // because this happens during gameplay, do it fast
             // instead of sending it through gl_upload 8
-            PlayerTextures[playernum].TranslateAndUpload( original, translate, inwidth, inheight, ( Int32 ) Host.DrawingContext.glMaxSize, ( Int32 ) Host.DrawingContext.glMaxSize, ( Int32 ) Host.Cvars.glPlayerMip.Get<Int32>() );
+            var maxSize = Host.Cvars.glMaxSize.Get<Int32>();
+            PlayerTextures[playernum].TranslateAndUpload( original, translate, inwidth, inheight, maxSize, maxSize, ( Int32 ) Host.Cvars.glPlayerMip.Get<Int32>() );
         }
 
         /// <summary>

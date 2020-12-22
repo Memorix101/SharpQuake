@@ -87,7 +87,7 @@ namespace SharpQuake.Renderer.Textures
             set;
         }
 
-        public System.Boolean[] LightMapModified
+        public Boolean[] LightMapModified
         {
             get;
             set;

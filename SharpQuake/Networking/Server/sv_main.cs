@@ -350,15 +350,9 @@ namespace SharpQuake
                 }
         }
 
-        /// <summary>
-        /// SV_WriteClientdataToMessage
-        /// </summary>
-        public void WriteClientDataToMessage( MemoryEdict ent, MessageWriter msg )
+        private void WriteClientDamageMessage( MemoryEdict ent, MessageWriter msg )
         {
-            //
-            // send a damage message
-            //
-            if( ent.v.dmg_take != 0 || ent.v.dmg_save != 0 )
+            if ( ent.v.dmg_take != 0 || ent.v.dmg_save != 0 )
             {
                 var other = ProgToEdict( ent.v.dmg_inflictor );
                 msg.WriteByte( ProtocolDef.svc_damage );
@@ -371,14 +365,45 @@ namespace SharpQuake
                 ent.v.dmg_take = 0;
                 ent.v.dmg_save = 0;
             }
+        }
 
-            //
-            // send the current viewpos offset from the view entity
-            //
-            SetIdealPitch();		// how much to look up / down ideally
+        private void WriteClientWeapons( MemoryEdict ent, MessageWriter msg )
+        {
+            if ( MainWindow.Common.GameKind == GameKind.StandardQuake )
+            {
+                msg.WriteByte( ( Int32 ) ent.v.weapon );
+            }
+            else
+            {
+                for ( var i = 0; i < 32; i++ )
+                {
+                    if ( ( ( ( Int32 ) ent.v.weapon ) & ( 1 << i ) ) != 0 )
+                    {
+                        msg.WriteByte( i );
+                        break;
+                    }
+                }
+            }
+        }
 
-            // a fixangle might get lost in a dropped packet.  Oh well.
-            if( ent.v.fixangle != 0 )
+        private void WriteClientHeader( MessageWriter msg, Int32 bits )
+        {
+            msg.WriteByte( ProtocolDef.svc_clientdata );
+            msg.WriteShort( bits );
+        }
+
+        private void WriteClientAmmo( MemoryEdict ent, MessageWriter msg )
+        {
+            msg.WriteByte( ( Int32 ) ent.v.currentammo );
+            msg.WriteByte( ( Int32 ) ent.v.ammo_shells );
+            msg.WriteByte( ( Int32 ) ent.v.ammo_nails );
+            msg.WriteByte( ( Int32 ) ent.v.ammo_rockets );
+            msg.WriteByte( ( Int32 ) ent.v.ammo_cells );
+        }
+        
+        private void WriteClientFixAngle( MemoryEdict ent, MessageWriter msg )
+        {
+            if ( ent.v.fixangle != 0 )
             {
                 msg.WriteByte( ProtocolDef.svc_setangle );
                 msg.WriteAngle( ent.v.angles.x );
@@ -386,113 +411,135 @@ namespace SharpQuake
                 msg.WriteAngle( ent.v.angles.z );
                 ent.v.fixangle = 0;
             }
+        }
 
+        private void WriteClientView( MemoryEdict ent, MessageWriter msg, Int32 bits )
+        {
+            if ( ( bits & ProtocolDef.SU_VIEWHEIGHT ) != 0 )
+                msg.WriteChar( ( Int32 ) ent.v.view_ofs.z );
+
+            if ( ( bits & ProtocolDef.SU_IDEALPITCH ) != 0 )
+                msg.WriteChar( ( Int32 ) ent.v.idealpitch );
+        }
+
+        private void WriteClientPunches( MemoryEdict ent, MessageWriter msg, Int32 bits )
+        {
+            if ( ( bits & ProtocolDef.SU_PUNCH1 ) != 0 )
+                msg.WriteChar( ( Int32 ) ent.v.punchangle.x );
+            if ( ( bits & ProtocolDef.SU_VELOCITY1 ) != 0 )
+                msg.WriteChar( ( Int32 ) ( ent.v.velocity.x / 16 ) );
+
+            if ( ( bits & ProtocolDef.SU_PUNCH2 ) != 0 )
+                msg.WriteChar( ( Int32 ) ent.v.punchangle.y );
+            if ( ( bits & ProtocolDef.SU_VELOCITY2 ) != 0 )
+                msg.WriteChar( ( Int32 ) ( ent.v.velocity.y / 16 ) );
+
+            if ( ( bits & ProtocolDef.SU_PUNCH3 ) != 0 )
+                msg.WriteChar( ( Int32 ) ent.v.punchangle.z );
+            if ( ( bits & ProtocolDef.SU_VELOCITY3 ) != 0 )
+                msg.WriteChar( ( Int32 ) ( ent.v.velocity.z / 16 ) );
+        }
+
+        private void WriteClientItems( MemoryEdict ent, MessageWriter msg, Int32 items, Int32 bits )
+        {
+            msg.WriteLong( items );
+
+            if ( ( bits & ProtocolDef.SU_WEAPONFRAME ) != 0 )
+                msg.WriteByte( ( Int32 ) ent.v.weaponframe );
+            if ( ( bits & ProtocolDef.SU_ARMOR ) != 0 )
+                msg.WriteByte( ( Int32 ) ent.v.armorvalue );
+            if ( ( bits & ProtocolDef.SU_WEAPON ) != 0 )
+                msg.WriteByte( ModelIndex( Host.Programs.GetString( ent.v.weaponmodel ) ) );
+        }
+
+        private void WriteClientHealth( MemoryEdict ent, MessageWriter msg )
+        {
+            msg.WriteShort( ( Int32 ) ent.v.health );
+        }
+
+        private Int32 GenerateClientBits( MemoryEdict ent, out Int32 items )
+        {
             var bits = 0;
 
-            if( ent.v.view_ofs.z != ProtocolDef.DEFAULT_VIEWHEIGHT )
+            if ( ent.v.view_ofs.z != ProtocolDef.DEFAULT_VIEWHEIGHT )
                 bits |= ProtocolDef.SU_VIEWHEIGHT;
 
-            if( ent.v.idealpitch != 0 )
+            if ( ent.v.idealpitch != 0 )
                 bits |= ProtocolDef.SU_IDEALPITCH;
 
             // stuff the sigil bits into the high bits of items for sbar, or else
             // mix in items2
             var val = Host.Programs.GetEdictFieldFloat( ent, "items2", 0 );
-            Int32 items;
-            if( val != 0 )
+
+            if ( val != 0 )
                 items = ( Int32 ) ent.v.items | ( ( Int32 ) val << 23 );
             else
                 items = ( Int32 ) ent.v.items | ( ( Int32 ) Host.Programs.GlobalStruct.serverflags << 28 );
 
             bits |= ProtocolDef.SU_ITEMS;
 
-            if( ( ( Int32 ) ent.v.flags & EdictFlags.FL_ONGROUND ) != 0 )
+            if ( ( ( Int32 ) ent.v.flags & EdictFlags.FL_ONGROUND ) != 0 )
                 bits |= ProtocolDef.SU_ONGROUND;
 
-            if( ent.v.waterlevel >= 2 )
+            if ( ent.v.waterlevel >= 2 )
                 bits |= ProtocolDef.SU_INWATER;
 
-            if( ent.v.punchangle.x != 0 )
+            if ( ent.v.punchangle.x != 0 )
                 bits |= ProtocolDef.SU_PUNCH1;
-            if( ent.v.punchangle.y != 0 )
+            if ( ent.v.punchangle.y != 0 )
                 bits |= ProtocolDef.SU_PUNCH2;
-            if( ent.v.punchangle.z != 0 )
+            if ( ent.v.punchangle.z != 0 )
                 bits |= ProtocolDef.SU_PUNCH3;
 
-            if( ent.v.velocity.x != 0 )
+            if ( ent.v.velocity.x != 0 )
                 bits |= ProtocolDef.SU_VELOCITY1;
-            if( ent.v.velocity.y != 0 )
+            if ( ent.v.velocity.y != 0 )
                 bits |= ProtocolDef.SU_VELOCITY2;
-            if( ent.v.velocity.z != 0 )
+            if ( ent.v.velocity.z != 0 )
                 bits |= ProtocolDef.SU_VELOCITY3;
 
-            if( ent.v.weaponframe != 0 )
+            if ( ent.v.weaponframe != 0 )
                 bits |= ProtocolDef.SU_WEAPONFRAME;
 
-            if( ent.v.armorvalue != 0 )
+            if ( ent.v.armorvalue != 0 )
                 bits |= ProtocolDef.SU_ARMOR;
 
             //	if (ent.v.weapon)
             bits |= ProtocolDef.SU_WEAPON;
 
+            return bits;
+        }
+
+        /// <summary>
+        /// SV_WriteClientdataToMessage
+        /// </summary>
+        public void WriteClientDataToMessage( MemoryEdict ent, MessageWriter msg )
+        {
+            //
+            // send a damage message
+            //
+            WriteClientDamageMessage( ent, msg );            
+
+            //
+            // send the current viewpos offset from the view entity
+            //
+            SetIdealPitch();		// how much to look up / down ideally
+
+            // a fixangle might get lost in a dropped packet.  Oh well.
+            WriteClientFixAngle( ent, msg );
+
+            var bits = GenerateClientBits( ent, out var items );
+
             // send the data
-
-            msg.WriteByte( ProtocolDef.svc_clientdata );
-            msg.WriteShort( bits );
-
-            if( ( bits & ProtocolDef.SU_VIEWHEIGHT ) != 0 )
-                msg.WriteChar( ( Int32 ) ent.v.view_ofs.z );
-
-            if( ( bits & ProtocolDef.SU_IDEALPITCH ) != 0 )
-                msg.WriteChar( ( Int32 ) ent.v.idealpitch );
-
-            if( ( bits & ProtocolDef.SU_PUNCH1 ) != 0 )
-                msg.WriteChar( ( Int32 ) ent.v.punchangle.x );
-            if( ( bits & ProtocolDef.SU_VELOCITY1 ) != 0 )
-                msg.WriteChar( ( Int32 ) ( ent.v.velocity.x / 16 ) );
-
-            if( ( bits & ProtocolDef.SU_PUNCH2 ) != 0 )
-                msg.WriteChar( ( Int32 ) ent.v.punchangle.y );
-            if( ( bits & ProtocolDef.SU_VELOCITY2 ) != 0 )
-                msg.WriteChar( ( Int32 ) ( ent.v.velocity.y / 16 ) );
-
-            if( ( bits & ProtocolDef.SU_PUNCH3 ) != 0 )
-                msg.WriteChar( ( Int32 ) ent.v.punchangle.z );
-            if( ( bits & ProtocolDef.SU_VELOCITY3 ) != 0 )
-                msg.WriteChar( ( Int32 ) ( ent.v.velocity.z / 16 ) );
+            WriteClientHeader( msg, bits );
+            WriteClientView( ent, msg, bits );
+            WriteClientPunches( ent, msg, bits );
 
             // always sent
-            msg.WriteLong( items );
-
-            if( ( bits & ProtocolDef.SU_WEAPONFRAME ) != 0 )
-                msg.WriteByte( ( Int32 ) ent.v.weaponframe );
-            if( ( bits & ProtocolDef.SU_ARMOR ) != 0 )
-                msg.WriteByte( ( Int32 ) ent.v.armorvalue );
-            if( ( bits & ProtocolDef.SU_WEAPON ) != 0 )
-                msg.WriteByte( ModelIndex( Host.Programs.GetString( ent.v.weaponmodel ) ) );
-
-            msg.WriteShort( ( Int32 ) ent.v.health );
-            msg.WriteByte( ( Int32 ) ent.v.currentammo );
-            msg.WriteByte( ( Int32 ) ent.v.ammo_shells );
-            msg.WriteByte( ( Int32 ) ent.v.ammo_nails );
-            msg.WriteByte( ( Int32 ) ent.v.ammo_rockets );
-            msg.WriteByte( ( Int32 ) ent.v.ammo_cells );
-
-            if( MainWindow.Common.GameKind == GameKind.StandardQuake )
-            {
-                msg.WriteByte( ( Int32 ) ent.v.weapon );
-            }
-            else
-            {
-                for( var i = 0; i < 32; i++ )
-                {
-                    if( ( ( ( Int32 ) ent.v.weapon ) & ( 1 << i ) ) != 0 )
-                    {
-                        msg.WriteByte( i );
-                        break;
-                    }
-                }
-            }
+            WriteClientItems( ent, msg, items, bits );
+            WriteClientHealth( ent, msg );
+            WriteClientAmmo( ent, msg );
+            WriteClientWeapons( ent, msg );
         }
 
         /// <summary>

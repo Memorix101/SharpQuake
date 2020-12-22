@@ -151,8 +151,8 @@
     <Compile Include="Desktop\Keyboard.cs" />
     <Compile Include="Desktop\MainWindow.cs" />
     <Compile Include="Rendering\UI\Menu.cs" />
-    <Compile Include="Rendering\mesh.cs" />
-    <Compile Include="Rendering\model.cs" />
+    <Compile Include="Rendering\Mesh.cs" />
+    <Compile Include="Rendering\Model.cs" />
     <Compile Include="Networking\Network.cs" />
     <Compile Include="Networking\net_datagram.cs" />
     <Compile Include="Networking\net_loop.cs" />

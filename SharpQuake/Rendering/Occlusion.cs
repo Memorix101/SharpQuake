@@ -64,7 +64,7 @@ namespace SharpQuake.Rendering
 			set;
 		}
 
-		public Occlusion( Host host, TextureChains textureChains  )
+		public Occlusion( Host host, TextureChains textureChains )
 		{
 			Host = host;
 			TextureChains = textureChains;
