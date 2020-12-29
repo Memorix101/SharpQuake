@@ -809,7 +809,7 @@ namespace SharpQuake
 
                 var tex = Host.Model.SkinTextures.Where( t =>  ( ( Renderer.OpenGL.Textures.GLTextureDesc ) t.Desc ).TextureNumber == paliashdr.gl_texturenum[_CurrentEntity.skinnum, anim] ).FirstOrDefault();
 
-                model = BaseAliasModel.Create( Host.Video.Device, clmodel.Name, tex );
+                model = BaseAliasModel.Create( Host.Video.Device, clmodel.Name, tex, paliashdr );
             }
             else
                 model = ( BaseAliasModel ) BaseModel.ModelPool[clmodel.Name];
@@ -822,7 +822,7 @@ namespace SharpQuake
             model.AliasDesc.EulerAngles = e.angles;
             model.AliasDesc.AliasFrame = _CurrentEntity.frame;
 
-			model.DrawAliasModel( _ShadeLight, _ShadeVector, _ShadeDots, _LightSpot.Z, paliashdr,
+			model.DrawAliasModel( _ShadeLight, _ShadeVector, _ShadeDots, _LightSpot.Z,
 				Host.RealTime, Host.Client.cl.time,
 				ref e.pose1, ref e.pose2, ref e.frame_start_time, ref e.frame_interval,
 				ref e.origin1, ref e.origin2, ref e.translate_start_time, ref e.angles1,

@@ -36,7 +36,7 @@ namespace SharpQuake.Renderer.OpenGL.Models
 		{
 		}
 
-		public override void DrawAliasModel( Single shadeLight, Vector3 shadeVector, Single[] shadeDots, Single lightSpotZ, aliashdr_t paliashdr, Double realTime, Double time, ref Int32 poseNum, ref Int32 poseNum2, ref Single frameStartTime, ref Single frameInterval, ref Vector3 origin1, ref Vector3 origin2, ref Single translateStartTime, ref Vector3 angles1, ref Vector3 angles2, ref Single rotateStartTime, System.Boolean shadows = true, System.Boolean smoothModels = true, System.Boolean affineModels = false, System.Boolean noColours = false, System.Boolean isEyes = false, System.Boolean useInterpolation = true )
+		public override void DrawAliasModel( Single shadeLight, Vector3 shadeVector, Single[] shadeDots, Single lightSpotZ, Double realTime, Double time, ref Int32 poseNum, ref Int32 poseNum2, ref Single frameStartTime, ref Single frameInterval, ref Vector3 origin1, ref Vector3 origin2, ref Single translateStartTime, ref Vector3 angles1, ref Vector3 angles2, ref Single rotateStartTime, System.Boolean shadows = true, System.Boolean smoothModels = true, System.Boolean affineModels = false, System.Boolean noColours = false, System.Boolean isEyes = false, System.Boolean useInterpolation = true )
 		{
 			Device.DisableMultitexture( );
 
@@ -85,7 +85,7 @@ namespace SharpQuake.Renderer.OpenGL.Models
 				GL.Hint( HintTarget.PerspectiveCorrectionHint, HintMode.Fastest );
 
 			//SetupAliasFrame( shadeLight, Desc.AliasFrame, time, paliashdr, shadeDots );
-			SetupAliasBlendedFrame( shadeLight, AliasDesc.AliasFrame, realTime, time, paliashdr, shadeDots, ref poseNum, ref poseNum2, ref frameStartTime, ref frameInterval );
+			SetupAliasBlendedFrame( shadeLight, AliasDesc.AliasFrame, realTime, time, shadeDots, ref poseNum, ref poseNum2, ref frameStartTime, ref frameInterval );
 
 			GL.TexEnv( TextureEnvTarget.TextureEnv, TextureEnvParameter.TextureEnvMode, ( Int32 ) TextureEnvMode.Replace );
 
@@ -102,7 +102,7 @@ namespace SharpQuake.Renderer.OpenGL.Models
 				GL.Disable( EnableCap.Texture2D );
 				GL.Enable( EnableCap.Blend );
 				GL.Color4( 0, 0, 0, 0.5f );
-				DrawAliasShadow( paliashdr, AliasDesc.LastPoseNumber, lightSpotZ, shadeVector );
+				DrawAliasShadow( AliasDesc.LastPoseNumber, lightSpotZ, shadeVector );
 				GL.Enable( EnableCap.Texture2D );
 				GL.Disable( EnableCap.Blend );
 				GL.Color4( 1f, 1, 1, 1 );
@@ -112,13 +112,13 @@ namespace SharpQuake.Renderer.OpenGL.Models
 			GL.Disable( EnableCap.Texture2D );
 		}
 
-		protected override void DrawAliasShadow( aliashdr_t paliashdr, Int32 posenum, Single lightSpotZ, Vector3 shadeVector )
+		protected override void DrawAliasShadow( Int32 posenum, Single lightSpotZ, Vector3 shadeVector )
 		{
 			var lheight = Desc.Origin.Z - lightSpotZ;
 			Single height = 0;
-			var verts = paliashdr.posedata;
-			var voffset = posenum * paliashdr.poseverts;
-			var order = paliashdr.commands;
+			var verts = AliasDesc.AliasHeader.posedata;
+			var voffset = posenum * AliasDesc.AliasHeader.poseverts;
+			var order = AliasDesc.AliasHeader.commands;
 
 			height = -lheight + 1.0f;
 			var orderOffset = 0;
@@ -146,9 +146,9 @@ namespace SharpQuake.Renderer.OpenGL.Models
 
 					// normals and vertexes come from the frame list
 					var point = new Vector3(
-						verts[voffset].v[0] * paliashdr.scale.X + paliashdr.scale_origin.X,
-						verts[voffset].v[1] * paliashdr.scale.Y + paliashdr.scale_origin.Y,
-						verts[voffset].v[2] * paliashdr.scale.Z + paliashdr.scale_origin.Z
+						verts[voffset].v[0] * AliasDesc.AliasHeader.scale.X + AliasDesc.AliasHeader.scale_origin.X,
+						verts[voffset].v[1] * AliasDesc.AliasHeader.scale.Y + AliasDesc.AliasHeader.scale_origin.Y,
+						verts[voffset].v[2] * AliasDesc.AliasHeader.scale.Z + AliasDesc.AliasHeader.scale_origin.Z
 					);
 
 					point.X -= shadeVector.X * ( point.Z + lheight );
@@ -172,18 +172,18 @@ namespace SharpQuake.Renderer.OpenGL.Models
          =============
          */
 
-		protected override void DrawAliasBlendedFrame( Single shadeLight, Single[] shadeDots, aliashdr_t paliashdr, Int32 posenum, Int32 posenum2, Single blend )
+		protected override void DrawAliasBlendedFrame( Single shadeLight, Single[] shadeDots, Int32 posenum, Int32 posenum2, Single blend )
 		{
 			AliasDesc.LastPoseNumber0 = posenum;
 			AliasDesc.LastPoseNumber = posenum2;
 
-			var verts = paliashdr.posedata;
+			var verts = AliasDesc.AliasHeader.posedata;
 			var vert2 = verts;
-			var vertsOffset = posenum * paliashdr.poseverts;
+			var vertsOffset = posenum * AliasDesc.AliasHeader.poseverts;
 
-			var verts2Offset = posenum2 * paliashdr.poseverts;
+			var verts2Offset = posenum2 * AliasDesc.AliasHeader.poseverts;
 
-			var order = paliashdr.commands;
+			var order = AliasDesc.AliasHeader.commands;
 			var orderOffset = 0;
 
 			while ( true )
@@ -248,13 +248,13 @@ namespace SharpQuake.Renderer.OpenGL.Models
 		/// <summary>
 		/// GL_DrawAliasFrame
 		/// </summary>
-		protected override void DrawAliasFrame( Single shadeLight, Single[] shadeDots, aliashdr_t paliashdr, Int32 posenum )
+		protected override void DrawAliasFrame( Single shadeLight, Single[] shadeDots, Int32 posenum )
 		{
 			AliasDesc.LastPoseNumber = posenum;
 
-			var verts = paliashdr.posedata;
-			var vertsOffset = posenum * paliashdr.poseverts;
-			var order = paliashdr.commands;
+			var verts = AliasDesc.AliasHeader.posedata;
+			var vertsOffset = posenum * AliasDesc.AliasHeader.poseverts;
+			var order = AliasDesc.AliasHeader.commands;
 			var orderOffset = 0;
 
 			while ( true )

@@ -174,7 +174,7 @@ namespace SharpQuake
             if ( Host.Cvars.ViewSize == null )
             {
                 Host.Cvars.ViewSize = Host.CVars.Add( "viewsize", 100f, ClientVariableFlags.Archive );
-                Host.Cvars.Fov = Host.CVars.Add( "fov", 90f );	// 10 - 170
+                Host.Cvars.Fov = Host.CVars.Add( "fov", 90f, ClientVariableFlags.Archive );	// 10 - 170
                 Host.Cvars.ConSpeed = Host.CVars.Add( "scr_conspeed", 3000 );
                 Host.Cvars.CenterTime = Host.CVars.Add( "scr_centertime", 2 );
                 Host.Cvars.ShowRam = Host.CVars.Add( "showram", true );
