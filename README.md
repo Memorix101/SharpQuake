@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 
 # SharpQuake
 
@@ -10,23 +9,6 @@
 ### Description 
 
  **[SharpQuake](https://memorix101.itch.io/sharpquake)** is a **[GLQuake](https://github.com/dpteam/GLQuake3D)** reimplementation in C# using the **[OpenTK](https://github.com/opentk/opentk)** library and the **[.NET Core](https://dotnet.microsoft.com/download)** platform.
-=======
-
-# SharpQuakeEvolved
-
-![](https://img.shields.io/github/stars/optimus-code/SharpQuakeEvolved.svg) ![](https://img.shields.io/github/forks/optimus-code/SharpQuakeEvolved.svg) ![](https://img.shields.io/github/issues/optimus-code/SharpQuakeEvolved.svg) [![GitHub contributors](https://img.shields.io/github/contributors/optimus-code/SharpQuakeEvolved.svg)](https://GitHub.com/optimus-code/SharpQuakeEvolved/graphs/contributors/) [![GitHub license](https://img.shields.io/github/license/optimus-code/SharpQuakeEvolved.svg)](https://github.com/Naereen/StrapDown.js/blob/master/LICENSE)
- ![](https://img.shields.io/github/release/optimus-code/SharpQuakeEvolved.svg) [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=flat-square)](http://makeapullrequest.com)
- 
-### Description 
-
-SharpQuakeEvolved is based on **[SharpQuake](https://memorix101.itch.io/sharpquake)** a **[GLQuake](https://github.com/dpteam/GLQuake3D)** reimplementation in C# using the **[OpenTK](https://github.com/opentk/opentk)** library.
-
-### Goals
-
-To try and reorganise and improve the already great work done by those who have contributed to SharpQuake (Credited below).
-
-** Many code changes are based on my own personal coding style which is more of a preference*
->>>>>>> 09390c7b5f9b59b1428159e4ff68940faf18e7de
 
 ### Roadmap
 
@@ -57,7 +39,6 @@ To try and reorganise and improve the already great work done by those who have 
 - Maybe if we're lucky *(Would be nice)*:
 	* [ ] Port q3map compiler to C# .NET *(Why? Why not?)*
 	* [ ] Implement PBR and custom BSP format *(With light mapping like Bakery - GPU Lightmapper for Unity)*
-<<<<<<< HEAD
 	- [ ] Make it possible to run [mod episodes](https://www.moddb.com/mods/its)
 
 - Please take a look into this
@@ -71,12 +52,6 @@ To try and reorganise and improve the already great work done by those who have 
 ### Dependencies
 * OpenTK 3.3.1
 * NVorbis 0.10.1
-=======
-
-### Dependencies
-* OpenTK 3.3.1
-* NVorbis 0.8.6
->>>>>>> 09390c7b5f9b59b1428159e4ff68940faf18e7de
 * **[OpenAL](https://www.openal.org/downloads/)** (Windows) / libopenal on Linux
 * **[SDL2](https://www.libsdl.org/download-2.0.php)** (Windows and macOS) / libsdl2-2.0 on Linux (Runtime binaries)
   
@@ -86,14 +61,9 @@ To try and reorganise and improve the already great work done by those who have 
 
 1) **Add the OpenTK nuget package with the package manager console in Visual Studio.**
     - `Install-Package OpenTK -Version 3.3.1`
-<<<<<<< HEAD
     - `Install-Package NVorbis -Version 0.10.1`
     - `Install-Package NVorbis.OpenTKSupport -Version 1.4.0`
 	- `Update-Package –reinstall`
-=======
-    - `Install-Package NVorbis -Version 0.8.6`
-    - `Install-Package NVorbis.OpenTKSupport -Version 1.2.0`
->>>>>>> 09390c7b5f9b59b1428159e4ff68940faf18e7de
 
 2) **Initialize git submodules**
 
