@@ -42,7 +42,7 @@
 	- [ ] Make it possible to run [mod episodes](https://www.moddb.com/mods/its)
 
 - Please take a look into this
-	- [x] Cleanup and restructure/modernise the code (Thanks to @optimus-code)
+	- [x] Cleanup and restructure/modernise the code (Thanks to [optimus-code](https://github.com/optimus-code))
 	- [ ] Server browser doesn't update connected player count (in some scenarios like crashes ...)
 	- [ ] Add [MonoKickstart](https://github.com/OutOfOrder/MonoKickstart) for Unix platforms
 	- [x]  Music playback for mission packs not working correctly
