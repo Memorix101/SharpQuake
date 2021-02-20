@@ -328,7 +328,11 @@ namespace SharpQuake
             _Instance = new WeakReference( this );
             _Swatch = new Stopwatch( );
             VSync = VSyncMode.One;
+<<<<<<< HEAD
             //Icon = Icon.ExtractAssociatedIcon( AppDomain.CurrentDomain.FriendlyName ); //Application.ExecutablePath
+=======
+            Icon = Icon.ExtractAssociatedIcon( AppDomain.CurrentDomain.FriendlyName ); //Application.ExecutablePath
+>>>>>>> 09390c7b5f9b59b1428159e4ff68940faf18e7de
 
             KeyDown += new EventHandler<KeyboardKeyEventArgs>( Keyboard_KeyDown );
             KeyUp += new EventHandler<KeyboardKeyEventArgs>( Keyboard_KeyUp );

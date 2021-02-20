@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFramework>netcoreapp3.1</TargetFramework>
@@ -15,4 +16,313 @@
   <ItemGroup>
     <Folder Include="Properties\" />
   </ItemGroup>
+=======
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{6CF287D3-D413-4C9B-ABAC-01E78D6CCADB}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>SharpQuake.Framework</RootNamespace>
+    <AssemblyName>SharpQuake.Framework</AssemblyName>
+    <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <Deterministic>true</Deterministic>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x86'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\x86\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <DebugType>full</DebugType>
+    <PlatformTarget>x86</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x86'">
+    <OutputPath>bin\x86\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <Optimize>true</Optimize>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>x86</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.IO.Compression" />
+    <Reference Include="System.IO.Compression.FileSystem" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Data\BigEndianConverter.cs" />
+    <Compile Include="Data\ByteArraySegment.cs" />
+    <Compile Include="Data\EndianHelper.cs" />
+    <Compile Include="Definitions\ANormsDef.cs" />
+    <Compile Include="Definitions\Bsp\AmbientDef.cs" />
+    <Compile Include="Definitions\Bsp\BspDef.cs" />
+    <Compile Include="Definitions\ParticleDef.cs" />
+    <Compile Include="Definitions\WarpDef.cs" />
+    <Compile Include="Factories\BaseFactory.cs" />
+    <Compile Include="Factories\IBaseFactory.cs" />
+    <Compile Include="Factories\IO\ClientVariableFactory.cs" />
+    <Compile Include="Factories\IO\CommandFactory.cs" />
+    <Compile Include="Factories\MasterFactory.cs" />
+    <Compile Include="IO\BSP\Q1\Contents.cs" />
+    <Compile Include="IO\BSP\Q1\Lumps.cs" />
+    <Compile Include="Definitions\Bsp\ModelDef.cs" />
+    <Compile Include="Definitions\Bsp\PlaneDef.cs" />
+    <Compile Include="Definitions\Bsp\SideDef.cs" />
+    <Compile Include="Definitions\ClientDef.cs" />
+    <Compile Include="Definitions\DrawDef.cs" />
+    <Compile Include="Definitions\HostDef.cs" />
+    <Compile Include="Definitions\KeysDef.cs" />
+    <Compile Include="Definitions\NetworkDef.cs" />
+    <Compile Include="Definitions\ProgDef.cs" />
+    <Compile Include="Definitions\ProgramOperatorDef.cs" />
+    <Compile Include="Definitions\ProtocolDef.cs" />
+    <Compile Include="Definitions\QItemsDef.cs" />
+    <Compile Include="Definitions\QStatsDef.cs" />
+    <Compile Include="Definitions\RenderDef.cs" />
+    <Compile Include="Definitions\ServerDef.cs" />
+    <Compile Include="IO\Alias\AliasFrame.cs" />
+    <Compile Include="IO\Alias\AliasFrameType.cs" />
+    <Compile Include="IO\Alias\AliasGroup.cs" />
+    <Compile Include="IO\Alias\AliasInterval.cs" />
+    <Compile Include="IO\Alias\AliasModel.cs" />
+    <Compile Include="IO\Alias\AliasSkinGroup.cs" />
+    <Compile Include="IO\Alias\AliasSkinInterval.cs" />
+    <Compile Include="IO\Alias\AliasSkinType.cs" />
+    <Compile Include="IO\Alias\Triangle.cs" />
+    <Compile Include="IO\Alias\Vertex.cs" />
+    <Compile Include="IO\BSP\BspClipNode.cs" />
+    <Compile Include="IO\BSP\BspEdge.cs" />
+    <Compile Include="IO\BSP\BspFace.cs" />
+    <Compile Include="IO\BSP\Q1\Header.cs" />
+    <Compile Include="IO\BSP\BspHull.cs" />
+    <Compile Include="IO\BSP\BspLeaf.cs" />
+    <Compile Include="IO\BSP\BspLump.cs" />
+    <Compile Include="IO\BSP\BspMipTex.cs" />
+    <Compile Include="IO\BSP\BspMipTexLump.cs" />
+    <Compile Include="IO\BSP\Q1\Model.cs" />
+    <Compile Include="IO\BSP\BspNode.cs" />
+    <Compile Include="IO\BSP\BspPlane.cs" />
+    <Compile Include="IO\BSP\BspTextureInfo.cs" />
+    <Compile Include="IO\BSP\BspVertex.cs" />
+    <Compile Include="IO\BSP\Q2\Contents.cs" />
+    <Compile Include="IO\BSP\Q2\Header.cs" />
+    <Compile Include="IO\BSP\Q2\Model.cs" />
+    <Compile Include="IO\BSP\Q2\SurfaceFlags.cs" />
+    <Compile Include="IO\BSP\Q3\Brush.cs" />
+    <Compile Include="IO\BSP\Q3\BrushSide.cs" />
+    <Compile Include="IO\BSP\Q3\Contents.cs" />
+    <Compile Include="IO\BSP\Q2\Lumps.cs" />
+    <Compile Include="IO\BSP\Q3\Face.cs" />
+    <Compile Include="IO\BSP\Q3\FaceType.cs" />
+    <Compile Include="IO\BSP\Q3\Header.cs" />
+    <Compile Include="IO\BSP\Q3\Leaf.cs" />
+    <Compile Include="IO\BSP\Q3\LightGrid.cs" />
+    <Compile Include="IO\BSP\Q3\LightMap.cs" />
+    <Compile Include="IO\BSP\Q3\Lumps.cs" />
+    <Compile Include="IO\BSP\Q3\Model.cs" />
+    <Compile Include="IO\BSP\Q3\Node.cs" />
+    <Compile Include="IO\BSP\Q3\Plane.cs" />
+    <Compile Include="IO\BSP\Q3\PVS.cs" />
+    <Compile Include="IO\BSP\Q3\SurfaceFlags.cs" />
+    <Compile Include="IO\BSP\Q3\Texture.cs" />
+    <Compile Include="IO\BSP\Q3\Vertex.cs" />
+    <Compile Include="IO\ClientVariable.cs" />
+    <Compile Include="IO\ClientVariableFlags.cs" />
+    <Compile Include="IO\CommandBuffer.cs" />
+    <Compile Include="IO\CommandDelegate.cs" />
+    <Compile Include="IO\CommandMessage.cs" />
+    <Compile Include="IO\Input\Key.cs" />
+    <Compile Include="IO\Input\KeyboardKeyEventArgs.cs" />
+    <Compile Include="IO\Input\KeyDestination.cs" />
+    <Compile Include="IO\Input\KeyName.cs" />
+    <Compile Include="IO\Input\MouseButton.cs" />
+    <Compile Include="IO\Input\MouseButtonEventArgs.cs" />
+    <Compile Include="IO\Input\MouseWheelEventArgs.cs" />
+    <Compile Include="IO\Programs\ProgramDefinition.cs" />
+    <Compile Include="IO\Programs\ProgramFunction.cs" />
+    <Compile Include="IO\Pak\MemoryPakFile.cs" />
+    <Compile Include="IO\Programs\Program.cs" />
+    <Compile Include="IO\Programs\ProgramOperator.cs" />
+    <Compile Include="IO\Programs\ProgramStack.cs" />
+    <Compile Include="IO\Programs\ProgramsWrapper.cs" />
+    <Compile Include="IO\Sound\Channel.cs" />
+    <Compile Include="IO\Sound\DMA.cs" />
+    <Compile Include="IO\Sound\ISoundController.cs" />
+    <Compile Include="IO\Sound\PortableSamplePair.cs" />
+    <Compile Include="IO\Sound\SoundEffect.cs" />
+    <Compile Include="IO\Sound\SoundEffectCache.cs" />
+    <Compile Include="IO\Sound\WavInfo.cs" />
+    <Compile Include="IO\Sprite\Sprite.cs" />
+    <Compile Include="IO\Sprite\SpriteFrame.cs" />
+    <Compile Include="IO\Sprite\SpriteFrameType.cs" />
+    <Compile Include="IO\Sprite\SpriteGroup.cs" />
+    <Compile Include="IO\Sprite\SpriteInterval.cs" />
+    <Compile Include="IO\Wad\Wad.cs" />
+    <Compile Include="IO\Wad\WadInfo.cs" />
+    <Compile Include="IO\Wad\WadLumpInfo.cs" />
+    <Compile Include="IO\Wad\WadMipTex.cs" />
+    <Compile Include="IO\Wad\WadPicHeader.cs" />
+    <Compile Include="Mathematics\OpenTK\BezierCurve.cs" />
+    <Compile Include="Mathematics\OpenTK\BezierCurveCubic.cs" />
+    <Compile Include="Mathematics\OpenTK\BezierCurveQuadric.cs" />
+    <Compile Include="Mathematics\OpenTK\Box2.cs" />
+    <Compile Include="Mathematics\OpenTK\Box2d.cs" />
+    <Compile Include="Mathematics\OpenTK\Color4.cs" />
+    <Compile Include="Mathematics\OpenTK\ColorFormat.cs" />
+    <Compile Include="Mathematics\OpenTK\Half.cs" />
+    <Compile Include="Mathematics\OpenTK\MathHelper.cs" />
+    <Compile Include="Mathematics\OpenTK\Matrix2.cs" />
+    <Compile Include="Mathematics\OpenTK\Matrix2d.cs" />
+    <Compile Include="Mathematics\OpenTK\Matrix2x3.cs" />
+    <Compile Include="Mathematics\OpenTK\Matrix2x3d.cs" />
+    <Compile Include="Mathematics\OpenTK\Matrix2x4.cs" />
+    <Compile Include="Mathematics\OpenTK\Matrix2x4d.cs" />
+    <Compile Include="Mathematics\OpenTK\Matrix3.cs" />
+    <Compile Include="Mathematics\OpenTK\Matrix3d.cs" />
+    <Compile Include="Mathematics\OpenTK\Matrix3x2.cs" />
+    <Compile Include="Mathematics\OpenTK\Matrix3x2d.cs" />
+    <Compile Include="Mathematics\OpenTK\Matrix3x4.cs" />
+    <Compile Include="Mathematics\OpenTK\Matrix3x4d.cs" />
+    <Compile Include="Mathematics\OpenTK\Matrix4.cs" />
+    <Compile Include="Mathematics\OpenTK\Matrix4d.cs" />
+    <Compile Include="Mathematics\OpenTK\Matrix4x2.cs" />
+    <Compile Include="Mathematics\OpenTK\Matrix4x2d.cs" />
+    <Compile Include="Mathematics\OpenTK\Matrix4x3.cs" />
+    <Compile Include="Mathematics\OpenTK\Matrix4x3d.cs" />
+    <Compile Include="Mathematics\OpenTK\Point.cs" />
+    <Compile Include="Mathematics\OpenTK\Quaternion.cs" />
+    <Compile Include="Mathematics\OpenTK\Quaterniond.cs" />
+    <Compile Include="Mathematics\OpenTK\Rectangle.cs" />
+    <Compile Include="Mathematics\OpenTK\Size.cs" />
+    <Compile Include="Mathematics\OpenTK\Vector2.cs" />
+    <Compile Include="Mathematics\OpenTK\Vector2d.cs" />
+    <Compile Include="Mathematics\OpenTK\Vector2h.cs" />
+    <Compile Include="Mathematics\OpenTK\Vector3.cs" />
+    <Compile Include="Mathematics\OpenTK\Vector3d.cs" />
+    <Compile Include="Mathematics\OpenTK\Vector3h.cs" />
+    <Compile Include="Mathematics\OpenTK\Vector4.cs" />
+    <Compile Include="Mathematics\OpenTK\Vector4d.cs" />
+    <Compile Include="Mathematics\OpenTK\Vector4h.cs" />
+    <Compile Include="Networking\Client\UserCommand.cs" />
+    <Compile Include="Networking\HostCache.cs" />
+    <Compile Include="Networking\INetDriver.cs" />
+    <Compile Include="Networking\INetLanDriver.cs" />
+    <Compile Include="Networking\NetworkWrapper.cs" />
+    <Compile Include="Networking\net_tcp_ip.cs" />
+    <Compile Include="Networking\PacketHeader.cs" />
+    <Compile Include="Networking\QuakeSocket.cs" />
+    <Compile Include="Networking\Server\AreaNode.cs" />
+    <Compile Include="Networking\Server\ServerStatic.cs" />
+    <Compile Include="Rendering\Alias\AliasFrameDesc.cs" />
+    <Compile Include="Rendering\Alias\AliasHeader.cs" />
+    <Compile Include="Rendering\CachePic.cs" />
+    <Compile Include="Rendering\DLight.cs" />
+    <Compile Include="Rendering\FloodFiller.cs" />
+    <Compile Include="Rendering\GLPic.cs" />
+    <Compile Include="Rendering\GLPoly.cs" />
+    <Compile Include="Rendering\GLTexture.cs" />
+    <Compile Include="IO\BSP\Q1\SurfaceFlags.cs" />
+    <Compile Include="Rendering\Particles\Particle.cs" />
+    <Compile Include="Rendering\Particles\ParticleSystem.cs" />
+    <Compile Include="Rendering\Particles\ParticleType.cs" />
+    <Compile Include="Rendering\Sprite\Sprite.cs" />
+    <Compile Include="Rendering\Sprite\SpriteFrame.cs" />
+    <Compile Include="Rendering\Sprite\SpriteFrameDesc.cs" />
+    <Compile Include="Rendering\Sprite\SpriteFrameType.cs" />
+    <Compile Include="Rendering\Sprite\SpriteGroup.cs" />
+    <Compile Include="Rendering\SyncType.cs" />
+    <Compile Include="Rendering\TriVertex.cs" />
+    <Compile Include="Rendering\VidDef.cs" />
+    <Compile Include="Rendering\VidMode.cs" />
+    <Compile Include="Rendering\VRect.cs" />
+    <Compile Include="Networking\Client.cs" />
+    <Compile Include="System\Cache.cs" />
+    <Compile Include="System\CacheEntry.cs" />
+    <Compile Include="System\CacheUser.cs" />
+    <Compile Include="System\CommandLine.cs" />
+    <Compile Include="IO\CommandSource.cs" />
+    <Compile Include="System\CommandWrapper.cs" />
+    <Compile Include="System\ConsoleWrapper.cs" />
+    <Compile Include="System\Crc.cs" />
+    <Compile Include="System\DedicatedServer.cs" />
+    <Compile Include="System\DisposableWrapper.cs" />
+    <Compile Include="System\Edict.cs" />
+    <Compile Include="System\EdictType.cs" />
+    <Compile Include="System\EntityState.cs" />
+    <Compile Include="System\EntVars.cs" />
+    <Compile Include="System\EVal.cs" />
+    <Compile Include="System\Exceptions.cs" />
+    <Compile Include="IO\FileSystem.cs" />
+    <Compile Include="IO\Pak\Pak.cs" />
+    <Compile Include="IO\Pak\PakFile.cs" />
+    <Compile Include="IO\Pak\PakHeader.cs" />
+    <Compile Include="IO\SearchPath.cs" />
+    <Compile Include="Data\IByteOrderConverter.cs" />
+    <Compile Include="Data\LittleEndianConverter.cs" />
+    <Compile Include="Mathematics\MathLib.cs" />
+    <Compile Include="Mathematics\Plane.cs" />
+    <Compile Include="Mathematics\Vector3f.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="System\GameKind.cs" />
+    <Compile Include="System\GlobalVariables.cs" />
+    <Compile Include="System\Link.cs" />
+    <Compile Include="System\MemoryEdict.cs" />
+    <Compile Include="System\MessageReader.cs" />
+    <Compile Include="System\MessageWriter.cs" />
+    <Compile Include="System\PadInt28.cs" />
+    <Compile Include="System\QuakeParameter.cs" />
+    <Compile Include="Definitions\QDef.cs" />
+    <Compile Include="Data\SwapHelper.cs" />
+    <Compile Include="Mathematics\Union4B.cs" />
+    <Compile Include="System\Statement.cs" />
+    <Compile Include="System\Timer.cs" />
+    <Compile Include="System\Tokeniser.cs" />
+    <Compile Include="System\Utilities.cs" />
+    <Compile Include="System\XComand.cs" />
+    <Compile Include="World\EntityFlags.cs" />
+    <Compile Include="World\Move.cs" />
+    <Compile Include="World\Plane.cs" />
+    <Compile Include="World\SpriteType.cs" />
+    <Compile Include="World\Trace.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="IO\BSP\HL\" />
+    <Folder Include="IO\Messaging\" />
+    <Folder Include="Rendering\GL\" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+>>>>>>> 09390c7b5f9b59b1428159e4ff68940faf18e7de
 </Project>
