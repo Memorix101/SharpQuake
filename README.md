@@ -48,6 +48,7 @@
 	- [x]  Music playback for mission packs not working correctly
 	- [ ] [Try to make this playable on Mac](https://youtu.be/DmpmJJADJw8) ([OpenGL is broken/deprecated there](https://developer.apple.com/macos/whats-new/)) 😕
 	- [ ]  Make model animations more smooth
+	- [ ]  Update OpenTK API to version 4.5.0
 
 ### Dependencies
 * OpenTK 3.3.1
