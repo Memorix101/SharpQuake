@@ -1,18 +1,14 @@
 
-# SharpQuakeEvolved
+# SharpQuake
 
-![](https://img.shields.io/github/stars/optimus-code/SharpQuakeEvolved.svg) ![](https://img.shields.io/github/forks/optimus-code/SharpQuakeEvolved.svg) ![](https://img.shields.io/github/issues/optimus-code/SharpQuakeEvolved.svg) [![GitHub contributors](https://img.shields.io/github/contributors/optimus-code/SharpQuakeEvolved.svg)](https://GitHub.com/optimus-code/SharpQuakeEvolved/graphs/contributors/) [![GitHub license](https://img.shields.io/github/license/optimus-code/SharpQuakeEvolved.svg)](https://github.com/Naereen/StrapDown.js/blob/master/LICENSE)
- ![](https://img.shields.io/github/release/optimus-code/SharpQuakeEvolved.svg) [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=flat-square)](http://makeapullrequest.com)
+![](https://img.shields.io/github/stars/memorix101/SharpQuake.svg) ![](https://img.shields.io/github/forks/memorix101/SharpQuake.svg) 
+![](https://img.shields.io/github/issues/memorix101/SharpQuake.svg) 
+[![GitHub license](https://img.shields.io/github/license/memorix101/SharpQuake.svg)](https://github.com/Naereen/StrapDown.js/blob/master/LICENSE)
+![](https://img.shields.io/github/release/memorix101/SharpQuake.svg) [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=flat-square)](http://makeapullrequest.com)
  
 ### Description 
 
-SharpQuakeEvolved is based on **[SharpQuake](https://memorix101.itch.io/sharpquake)** a **[GLQuake](https://github.com/dpteam/GLQuake3D)** reimplementation in C# using the **[OpenTK](https://github.com/opentk/opentk)** library.
-
-### Goals
-
-To try and reorganise and improve the already great work done by those who have contributed to SharpQuake (Credited below).
-
-** Many code changes are based on my own personal coding style which is more of a preference*
+ **[SharpQuake](https://memorix101.itch.io/sharpquake)** is a **[GLQuake](https://github.com/dpteam/GLQuake3D)** reimplementation in C# using the **[OpenTK](https://github.com/opentk/opentk)** library and the **[.NET Core](https://dotnet.microsoft.com/download)** platform.
 
 ### Roadmap
 
@@ -43,21 +39,32 @@ To try and reorganise and improve the already great work done by those who have 
 - Maybe if we're lucky *(Would be nice)*:
 	* [ ] Port q3map compiler to C# .NET *(Why? Why not?)*
 	* [ ] Implement PBR and custom BSP format *(With light mapping like Bakery - GPU Lightmapper for Unity)*
+	- [ ] Make it possible to run [mod episodes](https://www.moddb.com/mods/its)
+
+- Please take a look into this
+	- [x] Cleanup and restructure/modernise the code (Thanks to [optimus-code](https://github.com/optimus-code))
+	- [ ] Server browser doesn't update connected player count (in some scenarios like crashes ...)
+	- [ ] Add [MonoKickstart](https://github.com/OutOfOrder/MonoKickstart) for Unix platforms
+	- [x]  Music playback for mission packs not working correctly
+	- [ ] [Try to make this playable on Mac](https://youtu.be/DmpmJJADJw8) ([OpenGL is broken/deprecated there](https://developer.apple.com/macos/whats-new/)) 😕
+	- [ ]  Make model animations more smooth
+	- [ ]  Update OpenTK API to version 4.5.0
 
 ### Dependencies
 * OpenTK 3.3.1
-* NVorbis 0.8.6
+* NVorbis 0.10.1
 * **[OpenAL](https://www.openal.org/downloads/)** (Windows) / libopenal on Linux
 * **[SDL2](https://www.libsdl.org/download-2.0.php)** (Windows and macOS) / libsdl2-2.0 on Linux (Runtime binaries)
   
 ### Building
 
-**Project is built against and tested for Visual Studio 2019 on .NET 4.7.2**
+**Project is built against and tested for Visual Studio 2019 on .NET Core 3.1**
 
-1) **Add the OpenTK nuget package with the package manager console in Visual Studio.**
+1) **Install these nuget packages**
     - `Install-Package OpenTK -Version 3.3.1`
-    - `Install-Package NVorbis -Version 0.8.6`
-    - `Install-Package NVorbis.OpenTKSupport -Version 1.2.0`
+    - `Install-Package NVorbis -Version 0.10.1`
+    - `Install-Package NVorbis.OpenTKSupport -Version 1.4.0`
+	- `Update-Package –reinstall`
 
 2) **Initialize git submodules**
 
@@ -92,11 +99,7 @@ Enjoy! 🙂
 
 ### Credits
 * Made by **[yurykiselev](https://sourceforge.net/u/yurykiselev/profile/)** and **Uze** and brought to Github by **[Memorix101](https://github.com/Memorix101)**
-
 * QuakeSharpEvolved enhancements by **[optimus-code](https://github.com/optimus-code)**
-
 * Updated to .NET 4.7.1 and OpenTK 3.0.1 by **[Daniel Cornelius (Kerfuffles/NukeAndBeans)](https://github.com/Kerfuffles)**
-
 * Engine additions and fixes by **[multiguy18](https://github.com/multiguy18)** and **[Memorix101](https://github.com/Memorix101)**
-
 * Original source code on **[SourceForge.net](https://sourceforge.net/projects/sharpquake/)**
