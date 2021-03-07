@@ -1227,14 +1227,14 @@ namespace SharpQuake
                     Host.Server.sv.model_precache[i] = s;
 
                     var n = s.ToLower( );
-                    var type = ModelType.mod_sprite;
+                    var type = ModelType.Sprite;
 
                     if ( n.StartsWith( "*" ) && !n.Contains( ".mdl" ) || n.Contains( ".bsp" ) )
-                        type = ModelType.mod_brush;
+                        type = ModelType.Brush;
                     else if ( n.Contains( ".mdl" ) )
-                        type = ModelType.mod_alias;
+                        type = ModelType.Alias;
                     else
-                        type = ModelType.mod_sprite;
+                        type = ModelType.Sprite;
 
                     Host.Server.sv.models[i] = Host.Model.ForName( s, true, type );
                     return;

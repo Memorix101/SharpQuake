@@ -125,7 +125,7 @@ namespace SharpQuake
             if ( e == null )
                 return;
 
-            var m = Model.ForName( msg.Parameters[0], false, ModelType.mod_alias );
+            var m = Model.ForName( msg.Parameters[0], false, ModelType.Alias );
             if ( m == null )
             {
                 Console.Print( "Can't load {0}\n", msg.Parameters[0] );

@@ -40,7 +40,7 @@ namespace SharpQuake
 	/// <summary>
 	/// Mod_functions
 	/// </summary>
-	public class Mod
+	public class ModelFactory
     {
         public Single SubdivideSize
         {
@@ -55,6 +55,12 @@ namespace SharpQuake
             get;
             private set;
         }
+
+        private AliasModelBuilder AliasModelBuilder
+		{
+            get;
+            set;
+		}
 
         public List<BaseTexture> SkinTextures
         {
@@ -86,7 +92,7 @@ namespace SharpQuake
             set;
         }
 
-        public Mod( Host host )
+        public ModelFactory( Host host )
         {
             Host = host;
         }
@@ -99,6 +105,7 @@ namespace SharpQuake
             SkinTextures = new List<BaseTexture>( );
             SpriteTextures = new List<BaseTexture>( );
             ModelCache = new List<ModelData>( ModelDef.MAX_MOD_KNOWN );
+            AliasModelBuilder = new AliasModelBuilder();
 
             if ( _glSubDivideSize == null )
                 _glSubDivideSize = Host.CVars.Add( "gl_subdivide_size", 128, ClientVariableFlags.Archive );
@@ -113,7 +120,7 @@ namespace SharpQuake
             {
                 var mod = ModelCache[i];
 
-                if ( mod.Type != ModelType.mod_alias )
+                if ( mod.Type != ModelType.Alias )
                     mod.IsLoadRequired = true;
             }
         }
@@ -126,7 +133,7 @@ namespace SharpQuake
         {
             var mod = FindName( name, type );
 
-            return LoadModel( mod, crash, type );
+            return Load( mod, crash, type );
         }
 
         /// <summary>
@@ -140,7 +147,7 @@ namespace SharpQuake
             if ( r != null )
                 return ( aliashdr_t ) r;
 
-            LoadModel( mod, true, ModelType.mod_alias );
+            Load( mod, true, ModelType.Alias );
 
             if ( mod.cache.data == null )
                 Utilities.Error( "Mod_Extradata: caching failed" );
@@ -158,17 +165,17 @@ namespace SharpQuake
             var n = name.ToLower( );
 
             if ( n.StartsWith( "*" ) && !n.Contains( ".mdl" ) || n.Contains( ".bsp" ) )
-                type = ModelType.mod_brush;
+                type = ModelType.Brush;
             else if ( n.Contains( ".mdl" ) )
-                type = ModelType.mod_alias;
+                type = ModelType.Alias;
             else
-                type = ModelType.mod_sprite;
+                type = ModelType.Sprite;
 
             var mod = FindName( name, type );
 
             if ( !mod.IsLoadRequired )
             {
-                if ( mod.Type == ModelType.mod_alias )
+                if ( mod.Type == ModelType.Alias )
                     Host.Cache.Check( mod.cache );
             }
         } 
@@ -183,7 +190,7 @@ namespace SharpQuake
         /// <summary>
         /// Mod_FindName
         /// </summary>
-        public ModelData FindName( String name, ModelType type )
+        private ModelData FindName( String name, ModelType type )
         {
             if ( String.IsNullOrEmpty( name ) )
                 Utilities.Error( "Mod_ForName: NULL name" );
@@ -197,15 +204,15 @@ namespace SharpQuake
 
                 switch ( type )
                 {
-                    case ModelType.mod_brush:
+                    case ModelType.Brush:
                         mod = new BrushModelData( Host.Model.SubdivideSize, Host.RenderContext.NoTextureMip );
                         break;
 
-                    case ModelType.mod_sprite:
+                    case ModelType.Sprite:
                         mod = new AliasModelData( Host.RenderContext.NoTextureMip );
                         break;
 
-                    case ModelType.mod_alias:
+                    case ModelType.Alias:
                         mod = new SpriteModelData( Host.RenderContext.NoTextureMip );
                         break;
                 }
@@ -222,7 +229,7 @@ namespace SharpQuake
         /// Mod_LoadModel
         /// Loads a model into the cache
         /// </summary>
-        public ModelData LoadModel( ModelData mod, Boolean crash, ModelType type )
+        private ModelData Load( ModelData mod, Boolean crash, ModelType type )
         {
             var name = mod.Name;
 
@@ -232,17 +239,17 @@ namespace SharpQuake
 
                 switch ( type )
                 {
-                    case ModelType.mod_brush:
+                    case ModelType.Brush:
                         newMod = new BrushModelData( Host.Model.SubdivideSize, Host.RenderContext.NoTextureMip );
                         newMod.CopyFrom( mod );
                         break;
 
-                    case ModelType.mod_alias:
+                    case ModelType.Alias:
                         newMod = new AliasModelData( Host.RenderContext.NoTextureMip );
                         newMod.CopyFrom( mod );
                         break;
 
-                    case ModelType.mod_sprite:
+                    case ModelType.Sprite:
                         newMod = new SpriteModelData( Host.RenderContext.NoTextureMip );
                         newMod.CopyFrom( mod );
                         break;
@@ -259,7 +266,7 @@ namespace SharpQuake
 
             if ( !mod.IsLoadRequired )
             {
-                if ( mod.Type == ModelType.mod_alias )
+                if ( mod.Type == ModelType.Alias )
                 {
                     if ( Host.Cache.Check( mod.cache ) != null )
                         return mod;
@@ -268,46 +275,49 @@ namespace SharpQuake
                     return mod;		// not cached at all
             }
 
-            //
-            // load the file
-            //
+            // Load the file
             var buf = FileSystem.LoadFile( mod.Name );
+
             if ( buf == null )
             {
                 if ( crash )
                     Utilities.Error( "Mod_NumForName: {0} not found", mod.Name );
+
                 return null;
             }
 
-            //
-            // allocate a new model
-            //
+            // Allocate a new model
+            Allocate( mod, buf );
+
+            return mod;
+        }
+
+        private void Allocate( ModelData mod, Byte[] buf )
+        {
             CurrentModel = mod;
 
             mod.IsLoadRequired = false;
 
-            switch ( BitConverter.ToUInt32( buf, 0 ) )// LittleLong(*(unsigned *)buf))
+            switch ( BitConverter.ToUInt32( buf, 0 ) )
             {
                 case ModelDef.IDPOLYHEADER:
-                    LoadAliasModel( ( AliasModelData ) mod, buf );
+                    LoadAlias( ( AliasModelData ) mod, buf );
                     break;
 
                 case ModelDef.IDSPRITEHEADER:
-                    LoadSpriteModel( ( SpriteModelData ) mod, buf );
+                    LoadSprite( ( SpriteModelData ) mod, buf );
                     break;
 
                 default:
-                    LoadBrushModel( ( BrushModelData ) mod, buf );
+                    LoadBrush( ( BrushModelData ) mod, buf );
                     break;
             }
-
-            return mod;
         }
 
         /// <summary>
         /// Mod_LoadAliasModel
         /// </summary>
-        public void LoadAliasModel( AliasModelData mod, Byte[] buffer )
+        private void LoadAlias( AliasModelData mod, Byte[] buffer )
         {
             mod.Load( Host.Video.Device.Palette.Table8to24, mod.Name, buffer, ( n, b, h ) => 
             {
@@ -317,32 +327,30 @@ namespace SharpQuake
                 SkinTextures.Add( texture );
 
                 return texture.GLDesc.TextureNumber;
-            }, ( m, h ) => 
+            }, ( model, header ) => 
             {
-                //
-                // build the draw lists
-                //
-                mesh.MakeAliasModelDisplayLists( m );
+                // Build the draw lists
+                AliasModelBuilder.MakeDisplayLists( model );
 
-                //
-                // move the complete, relocatable alias model to the cache
-                //
-                mod.cache = Host.Cache.Alloc( aliashdr_t.SizeInBytes * h.frames.Length * maliasframedesc_t.SizeInBytes, null );
+                // Move the complete, relocatable alias model to the cache
+                mod.cache = Host.Cache.Alloc( aliashdr_t.SizeInBytes * header.frames.Length * maliasframedesc_t.SizeInBytes, null );
+
                 if ( mod.cache == null )
                     return;
-                mod.cache.data = h;
+
+                mod.cache.data = header;
             } );
         }
 
         /// <summary>
         /// Mod_LoadSpriteModel
         /// </summary>
-        public void LoadSpriteModel( SpriteModelData mod, Byte[] buffer )
+        private void LoadSprite( SpriteModelData mod, Byte[] buffer )
         {
-            mod.Load( mod.Name, buffer, ( n, b, w, h ) =>
+            mod.Load( mod.Name, buffer, ( name, buf, width, height ) =>
             {
-                var texture = ( Renderer.OpenGL.Textures.GLTexture ) BaseTexture.FromBuffer( Host.Video.Device, n,
-                        b, w, h, true, true );
+                var texture = ( Renderer.OpenGL.Textures.GLTexture ) BaseTexture.FromBuffer( Host.Video.Device, name,
+                        buf, width, height, hasMipMap: true, hasAlpha: true );
 
                 SpriteTextures.Add( texture );
 
@@ -353,7 +361,7 @@ namespace SharpQuake
         /// <summary>
         /// Mod_LoadBrushModel
         /// </summary>
-        public void LoadBrushModel( BrushModelData mod, Byte[] buffer )
+        private void LoadBrush( BrushModelData mod, Byte[] buffer )
         {
             mod.Load( mod.Name, buffer, ( tx ) => 
             {
@@ -364,8 +372,7 @@ namespace SharpQuake
                     tx.texture = BaseTexture.FromBuffer( Host.Video.Device, tx.name, new ByteArraySegment( tx.pixels ),
                      ( Int32 ) tx.width, ( Int32 ) tx.height, true, true );
                 }
-            },
-            ( textureFile ) =>             
+            }, ( textureFile ) =>             
             {
 				var lowerName = textureFile.ToLower( );
 
@@ -391,7 +398,7 @@ namespace SharpQuake
                 {
                     // duplicate the basic information
                     var name = "*" + ( i + 1 ).ToString( );
-                    CurrentModel = FindName( name, ModelType.mod_brush );
+                    CurrentModel = FindName( name, ModelType.Brush );
                     CurrentModel.CopyFrom( mod ); // *loadmodel = *mod;
                     CurrentModel.Name = name; //strcpy (loadmodel->name, name);
                     mod = ( BrushModelData ) CurrentModel; //mod = loadmodel;

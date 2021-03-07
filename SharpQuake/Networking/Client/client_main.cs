@@ -44,6 +44,7 @@ namespace SharpQuake
         // CL_Init
         public void Initialise( )
         {
+            InitialiseMessageDelegates();
             InitInput( Host );
             InitTempEntities();
 

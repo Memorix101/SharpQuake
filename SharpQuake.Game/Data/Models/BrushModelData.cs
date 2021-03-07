@@ -243,7 +243,7 @@ namespace SharpQuake.Game.Data.Models
         
         public BrushModelData( Single subdivideSize, ModelTexture noTexture ) : base( noTexture )
         {
-            Type = ModelType.mod_brush;
+            Type = ModelType.Brush;
 
             SubdivideSize = subdivideSize;
 
@@ -310,7 +310,7 @@ namespace SharpQuake.Game.Data.Models
         {
             base.CopyFrom( src );
 
-            Type = ModelType.mod_brush;
+            Type = ModelType.Brush;
 
             if ( !( src is BrushModelData ) )
                 return;

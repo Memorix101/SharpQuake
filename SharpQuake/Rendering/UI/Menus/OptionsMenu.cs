@@ -134,35 +134,29 @@ namespace SharpQuake.Rendering.UI
             #endif*/
         }
 
-        public override void Draw( )
+        private void DrawPlaque()
         {
             Host.Menu.DrawTransPic( 16, 4, Host.DrawingContext.CachePic( "gfx/qplaque.lmp", "GL_NEAREST" ) );
             var p = Host.DrawingContext.CachePic( "gfx/p_option.lmp", "GL_NEAREST" );
             Host.Menu.DrawPic( ( 320 - p.Width ) / 2, 4, p );
+        }
 
-            Host.Menu.Print( 16, 32, "    Customize controls" );
-            Host.Menu.Print( 16, 40, "         Go to console" );
-            Host.Menu.Print( 16, 48, "     Reset to defaults" );
-
-            Host.Menu.Print( 16, 56, "           Screen size" );
-            var r = ( Host.Screen.ViewSize.Get<Single>( ) - 30 ) / ( 120 - 30 );
-            Host.Menu.DrawSlider( 220, 56, r );
-
-            Host.Menu.Print( 16, 64, "            Brightness" );
-            r = ( 1.0f - Host.View.Gamma ) / 0.5f;
-            Host.Menu.DrawSlider( 220, 64, r );
-
-            Host.Menu.Print( 16, 72, "           Mouse Speed" );
-            r = ( Host.Client.Sensitivity - 1 ) / 10;
-            Host.Menu.DrawSlider( 220, 72, r );
-
+        private void DrawSound()
+		{
             Host.Menu.Print( 16, 80, "       CD Music Volume" );
-            r = Host.Sound.BgmVolume;
+            var r = Host.Sound.BgmVolume;
             Host.Menu.DrawSlider( 220, 80, r );
 
             Host.Menu.Print( 16, 88, "          Sound Volume" );
             r = Host.Sound.Volume;
             Host.Menu.DrawSlider( 220, 88, r );
+        }
+
+        private void DrawMovementControls()
+        {
+            Host.Menu.Print( 16, 72, "           Mouse Speed" );
+            var r = ( Host.Client.Sensitivity - 1 ) / 10;
+            Host.Menu.DrawSlider( 220, 72, r );
 
             Host.Menu.Print( 16, 96, "            Always Run" );
             Host.Menu.DrawCheckbox( 220, 96, Host.Client.ForwardSpeed > 200 );
@@ -175,6 +169,30 @@ namespace SharpQuake.Rendering.UI
 
             Host.Menu.Print( 16, 120, "            Lookstrafe" );
             Host.Menu.DrawCheckbox( 220, 120, Host.Client.LookStrafe );
+        }
+
+        private void DrawScreenSettings()
+		{
+            Host.Menu.Print( 16, 56, "           Screen size" );
+            var r = ( Host.Screen.ViewSize.Get<Single>() - 30 ) / ( 120 - 30 );
+            Host.Menu.DrawSlider( 220, 56, r );
+
+            Host.Menu.Print( 16, 64, "            Brightness" );
+            r = ( 1.0f - Host.View.Gamma ) / 0.5f;
+            Host.Menu.DrawSlider( 220, 64, r );
+        }
+
+        public override void Draw( )
+        {
+            DrawPlaque();
+
+            Host.Menu.Print( 16, 32, "    Customize controls" );
+            Host.Menu.Print( 16, 40, "         Go to console" );
+            Host.Menu.Print( 16, 48, "     Reset to defaults" );
+
+            DrawScreenSettings();
+            DrawSound();
+            DrawMovementControls();
 
             /*if( VideoMenu != null )
                 Host.Menu.Print( 16, 128, "         Video Options" );*/

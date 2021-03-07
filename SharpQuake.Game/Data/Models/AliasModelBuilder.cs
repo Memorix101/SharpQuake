@@ -1,12 +1,4 @@
-/// <copyright>
-///
-/// SharpQuakeEvolved changes by optimus-code, 2019
-/// 
-/// Based on SharpQuake (Quake Rewritten in C# by Yury Kiselev, 2010.)
-///
-/// Copyright (C) 1996-1997 Id Software, Inc.
-///
-/// This program is free software; you can redistribute it and/or
+﻿/// This program is free software; you can redistribute it and/or
 /// modify it under the terms of the GNU General Public License
 /// as published by the Free Software Foundation; either version 2
 /// of the License, or (at your option) any later version.
@@ -24,45 +16,45 @@
 
 using SharpQuake.Framework;
 using SharpQuake.Framework.IO;
-using SharpQuake.Game.Data.Models;
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Text;
 
-// gl_mesh.c
+// Remnants of gl_mesh.c
 
-namespace SharpQuake
+namespace SharpQuake.Game.Data.Models
 {
-	internal static class mesh
+	public class AliasModelBuilder
 	{
 		private const Int32 MAX_COMMANDS = 8192;
 		private const Int32 MAX_STRIP = 128;
 
-		private static ModelData _AliasModel; // AliasModelData
-		private static aliashdr_t _AliasHdr; // paliashdr
+		private ModelData _AliasModel; // AliasModelData
+		private aliashdr_t _AliasHdr; // paliashdr
 
-		private static Byte[] _Used = new Byte[MAX_COMMANDS]; // qboolean used. changed to vyte because can have values 0, 1, 2...
+		private Byte[] _Used = new Byte[MAX_COMMANDS]; // qboolean used. changed to vyte because can have values 0, 1, 2...
 
 		// the command list holds counts and s/t values that are valid for
 		// every frame
-		private static Int32[] _Commands = new Int32[MAX_COMMANDS]; // commands
+		private Int32[] _Commands = new Int32[MAX_COMMANDS]; // commands
 
-		private static Int32 _NumCommands; // numcommands
+		private Int32 _NumCommands; // numcommands
 
 		// all frames will have their vertexes rearranged and expanded
 		// so they are in the order expected by the command list
-		private static Int32[] _VertexOrder = new Int32[MAX_COMMANDS]; // vertexorder
+		private Int32[] _VertexOrder = new Int32[MAX_COMMANDS]; // vertexorder
 
-		private static Int32 _NumOrder; // numorder
+		private Int32 _NumOrder; // numorder
 
-		private static Int32 _AllVerts; // allverts
-		private static Int32 _AllTris; // alltris
+		private Int32 _AllVerts; // allverts
+		private Int32 _AllTris; // alltris
 
-		private static Int32[] _StripVerts = new Int32[MAX_STRIP]; // stripverts
-		private static Int32[] _StripTris = new Int32[MAX_STRIP]; // striptris
-		private static Int32 _StripCount; // stripcount
+		private Int32[] _StripVerts = new Int32[MAX_STRIP]; // stripverts
+		private Int32[] _StripTris = new Int32[MAX_STRIP]; // striptris
+		private Int32 _StripCount; // stripcount
 
-		private static void CheckForCachedAliasModelDisplayList( AliasModelData m )
+		private void CheckForCachedAliasModelDisplayList( AliasModelData m )
 		{
 			var path = Path.ChangeExtension( "glquake/" + Path.GetFileNameWithoutExtension( m.Name ), ".ms2" );
 
@@ -108,7 +100,7 @@ namespace SharpQuake
 			}
 		}
 
-		private static void SaveAliasModelDisplayList( AliasModelData m )
+		private void SaveAliasModelDisplayList( AliasModelData m )
 		{
 			_AliasHdr.poseverts = _NumOrder;
 
@@ -129,7 +121,7 @@ namespace SharpQuake
 		/// <summary>
 		/// GL_MakeAliasModelDisplayLists
 		/// </summary>
-		public static void MakeAliasModelDisplayLists( AliasModelData m )
+		public void MakeDisplayLists( AliasModelData m )
 		{
 			_AliasModel = m;
 			_AliasHdr = m.Header;
@@ -145,7 +137,7 @@ namespace SharpQuake
 		/// BuildTris
 		/// Generate a list of trifans or strips for the model, which holds for all frames
 		/// </summary>
-		private static void BuildTris( AliasModelData m )
+		private void BuildTris( AliasModelData m )
 		{
 			var bestverts = new Int32[1024];
 			var besttris = new Int32[1024];
@@ -228,7 +220,7 @@ namespace SharpQuake
 			_AllTris += _AliasHdr.numtris;
 		}
 
-		private static Int32 StripLength( AliasModelData m, Int32 starttri, Int32 startv )
+		private Int32 StripLength( AliasModelData m, Int32 starttri, Int32 startv )
 		{
 			_Used[starttri] = 2;
 
@@ -292,7 +284,7 @@ namespace SharpQuake
 			return _StripCount;
 		}
 
-		private static Int32 FanLength( AliasModelData m, Int32 starttri, Int32 startv )
+		private Int32 FanLength( AliasModelData m, Int32 starttri, Int32 startv )
 		{
 			_Used[starttri] = 2;
 

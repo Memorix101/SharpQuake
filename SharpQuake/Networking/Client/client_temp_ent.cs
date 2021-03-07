@@ -235,20 +235,20 @@ namespace SharpQuake
                     break;
 
                 case ProtocolDef.TE_LIGHTNING1:				// lightning bolts
-                    ParseBeam( Host.Model.ForName( "progs/bolt.mdl", true, ModelType.mod_alias ) );
+                    ParseBeam( Host.Model.ForName( "progs/bolt.mdl", true, ModelType.Alias ) );
                     break;
 
                 case ProtocolDef.TE_LIGHTNING2:				// lightning bolts
-                    ParseBeam( Host.Model.ForName( "progs/bolt2.mdl", true, ModelType.mod_alias) );
+                    ParseBeam( Host.Model.ForName( "progs/bolt2.mdl", true, ModelType.Alias) );
                     break;
 
                 case ProtocolDef.TE_LIGHTNING3:				// lightning bolts
-                    ParseBeam( Host.Model.ForName( "progs/bolt3.mdl", true, ModelType.mod_alias ) );
+                    ParseBeam( Host.Model.ForName( "progs/bolt3.mdl", true, ModelType.Alias ) );
                     break;
 
                 // PGM 01/21/97
                 case ProtocolDef.TE_BEAM:				// grappling hook beam
-                    ParseBeam( Host.Model.ForName( "progs/beam.mdl", true, ModelType.mod_alias ) );
+                    ParseBeam( Host.Model.ForName( "progs/beam.mdl", true, ModelType.Alias ) );
                     break;
                 // PGM 01/21/97
 

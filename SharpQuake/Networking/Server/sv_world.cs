@@ -470,7 +470,7 @@ namespace SharpQuake
 
 				var model = ( BrushModelData ) sv.models[( Int32 ) ent.v.modelindex];
 
-				if ( model == null || model.Type != ModelType.mod_brush )
+				if ( model == null || model.Type != ModelType.Brush )
 					Utilities.Error( "MOVETYPE_PUSH with a non bsp model" );
 
 				var size = maxs - mins;

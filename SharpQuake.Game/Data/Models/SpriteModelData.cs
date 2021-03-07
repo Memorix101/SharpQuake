@@ -78,7 +78,7 @@ namespace SharpQuake.Game.Data.Models
                 }
             }
 
-            Type = ModelType.mod_sprite;
+            Type = ModelType.Sprite;
         }
 
         /// <summary>
@@ -159,7 +159,7 @@ namespace SharpQuake.Game.Data.Models
         {
             base.CopyFrom( src );
 
-            Type = ModelType.mod_sprite;
+            Type = ModelType.Sprite;
         }
     }
 }

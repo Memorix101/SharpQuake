@@ -227,7 +227,7 @@ namespace SharpQuake
             private set;
         }
 
-        public Mod Model
+        public ModelFactory Model
         {
             get;
             private set;
@@ -353,7 +353,7 @@ namespace SharpQuake
             Menu = new Menu( this );
             Programs = new Programs( this );
             ProgramsBuiltIn = new ProgramsBuiltIn( this );
-            Model = new Mod( this );
+            Model = new ModelFactory( this );
             Network = new Network( this );
             Server = new server( this );
             Client = new client( this );

@@ -153,9 +153,9 @@ namespace SharpQuake
 
                 switch( clmodel.Type )
                 {
-                    case ModelType.mod_alias:
-                    case ModelType.mod_brush:
-                    case ModelType.mod_sprite:
+                    case ModelType.Alias:
+                    case ModelType.Brush:
+                    case ModelType.Sprite:
                         if( ( pent.visframe != _FrameCount ) && ( Host.Client.NumVisEdicts < ClientDef.MAX_VISEDICTS ) )
                         {
                             Host.Client.VisEdicts[Host.Client.NumVisEdicts++] = pent;

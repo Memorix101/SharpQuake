@@ -254,29 +254,41 @@ namespace SharpQuake.Rendering.UI
             }
         }
 
-        public override void Draw( )
-        {
+        private void DrawPlaque()
+		{
             Host.Menu.DrawTransPic( 16, 4, Host.DrawingContext.CachePic( "gfx/qplaque.lmp", "GL_NEAREST" ) );
             var p = Host.DrawingContext.CachePic( "gfx/p_multi.lmp", "GL_NEAREST" );
             Host.Menu.DrawPic( ( 320 - p.Width ) / 2, 4, p );
+        }
 
+        private void DrawBeginGame()
+		{
             Host.Menu.DrawTextBox( 152, 32, 10, 1 );
             Host.Menu.Print( 160, 40, "begin game" );
+        }
 
+        private void DrawMaxPlayers()
+		{
             Host.Menu.Print( 0, 56, "      Max players" );
-            Host.Menu.Print( 160, 56, _MaxPlayers.ToString( ) );
+            Host.Menu.Print( 160, 56, _MaxPlayers.ToString() );
+        }
 
+        private void DrawGameType()
+		{
             Host.Menu.Print( 0, 64, "        Game Type" );
-            if ( Host.Cvars.Coop.Get<Boolean>( ) )
+            if ( Host.Cvars.Coop.Get<Boolean>() )
                 Host.Menu.Print( 160, 64, "Cooperative" );
             else
                 Host.Menu.Print( 160, 64, "Deathmatch" );
+        }
 
+        private void DrawTeamPlay( )
+        {
             Host.Menu.Print( 0, 72, "        Teamplay" );
             if ( MainWindow.Common.GameKind == GameKind.Rogue )
             {
                 String msg;
-                switch ( Host.Cvars.TeamPlay.Get<Int32>( ) )
+                switch ( Host.Cvars.TeamPlay.Get<Int32>() )
                 {
                     case 1:
                         msg = "No Friendly Fire";
@@ -311,7 +323,7 @@ namespace SharpQuake.Rendering.UI
             else
             {
                 String msg;
-                switch ( Host.Cvars.TeamPlay.Get<Int32>( ) )
+                switch ( Host.Cvars.TeamPlay.Get<Int32>() )
                 {
                     case 1:
                         msg = "No Friendly Fire";
@@ -327,29 +339,41 @@ namespace SharpQuake.Rendering.UI
                 }
                 Host.Menu.Print( 160, 72, msg );
             }
+        }
 
+        private void DrawSkill()
+		{
             Host.Menu.Print( 0, 80, "            Skill" );
-            if ( Host.Cvars.Skill.Get<Int32>( ) == 0 )
+            if ( Host.Cvars.Skill.Get<Int32>() == 0 )
                 Host.Menu.Print( 160, 80, "Easy difficulty" );
-            else if ( Host.Cvars.Skill.Get<Int32>( ) == 1 )
+            else if ( Host.Cvars.Skill.Get<Int32>() == 1 )
                 Host.Menu.Print( 160, 80, "Normal difficulty" );
-            else if ( Host.Cvars.Skill.Get<Int32>( ) == 2 )
+            else if ( Host.Cvars.Skill.Get<Int32>() == 2 )
                 Host.Menu.Print( 160, 80, "Hard difficulty" );
             else
                 Host.Menu.Print( 160, 80, "Nightmare difficulty" );
+        }
 
+        private void DrawFragLimit()
+		{
             Host.Menu.Print( 0, 88, "       Frag Limit" );
-            if ( Host.Cvars.FragLimit.Get<Int32>( ) == 0 )
+            if ( Host.Cvars.FragLimit.Get<Int32>() == 0 )
                 Host.Menu.Print( 160, 88, "none" );
             else
-                Host.Menu.Print( 160, 88, String.Format( "{0} frags", Host.Cvars.FragLimit.Get<Int32>( ) ) );
+                Host.Menu.Print( 160, 88, String.Format( "{0} frags", Host.Cvars.FragLimit.Get<Int32>() ) );
+        }
 
+        private void DrawTimeLimit()
+		{
             Host.Menu.Print( 0, 96, "       Time Limit" );
-            if ( Host.Cvars.TimeLimit.Get<Int32>( ) == 0 )
+            if ( Host.Cvars.TimeLimit.Get<Int32>() == 0 )
                 Host.Menu.Print( 160, 96, "none" );
             else
-                Host.Menu.Print( 160, 96, String.Format( "{0} minutes", Host.Cvars.TimeLimit.Get<Int32>( ) ) );
+                Host.Menu.Print( 160, 96, String.Format( "{0} minutes", Host.Cvars.TimeLimit.Get<Int32>() ) );
+        }
 
+        private void DrawEpisode()
+		{
             Host.Menu.Print( 0, 112, "         Episode" );
             //MED 01/06/97 added hipnotic episodes
             if ( MainWindow.Common.GameKind == GameKind.Hipnotic )
@@ -359,7 +383,10 @@ namespace SharpQuake.Rendering.UI
                 Host.Menu.Print( 160, 112, RogueEpisodes[_StartEpisode].description );
             else
                 Host.Menu.Print( 160, 112, Episodes[_StartEpisode].description );
+        }
 
+        private void DrawLevel()
+		{
             Host.Menu.Print( 0, 120, "           Level" );
             //MED 01/06/97 added hipnotic episodes
             if ( MainWindow.Common.GameKind == GameKind.Hipnotic )
@@ -378,10 +405,10 @@ namespace SharpQuake.Rendering.UI
                 Host.Menu.Print( 160, 120, Levels[Episodes[_StartEpisode].firstLevel + _StartLevel].description );
                 Host.Menu.Print( 160, 128, Levels[Episodes[_StartEpisode].firstLevel + _StartLevel].name );
             }
+        }
 
-            // line cursor
-            Host.Menu.DrawCharacter( 144, _CursorTable[_Cursor], 12 + ( ( Int32 ) ( Host.RealTime * 4 ) & 1 ) );
-
+        private void DrawServerInfoMessage()
+		{
             if ( _ServerInfoMessage )
             {
                 if ( ( Host.RealTime - _ServerInfoMessageTime ) < 5.0 )
@@ -399,6 +426,25 @@ namespace SharpQuake.Rendering.UI
                     _ServerInfoMessage = false;
                 }
             }
+        }
+
+        public override void Draw( )
+        {
+            DrawPlaque();
+            DrawBeginGame();
+            DrawMaxPlayers();
+            DrawGameType();
+            DrawTeamPlay();
+            DrawSkill();
+            DrawFragLimit();
+            DrawTimeLimit();
+            DrawEpisode();
+            DrawLevel();
+
+            // line cursor
+            Host.Menu.DrawCharacter( 144, _CursorTable[_Cursor], 12 + ( ( Int32 ) ( Host.RealTime * 4 ) & 1 ) );
+
+            DrawServerInfoMessage();
         }
 
         private class level_t

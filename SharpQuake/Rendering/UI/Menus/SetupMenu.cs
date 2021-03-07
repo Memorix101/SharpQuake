@@ -166,30 +166,49 @@ namespace SharpQuake.Rendering.UI
                 _Bottom = 13;
         }
 
-        public override void Draw( )
-        {
+        private void DrawPlaque()
+		{
             Host.Menu.DrawTransPic( 16, 4, Host.DrawingContext.CachePic( "gfx/qplaque.lmp", "GL_NEAREST" ) );
             var p = Host.DrawingContext.CachePic( "gfx/p_multi.lmp", "GL_NEAREST" );
             Host.Menu.DrawPic( ( 320 - p.Width ) / 2, 4, p );
+        }
 
+        private void DrawHostName()
+        {
             Host.Menu.Print( 64, 40, "Hostname" );
             Host.Menu.DrawTextBox( 160, 32, 16, 1 );
             Host.Menu.Print( 168, 40, _HostName );
+        }
 
+        private void DrawName()
+		{
             Host.Menu.Print( 64, 56, "Your name" );
             Host.Menu.DrawTextBox( 160, 48, 16, 1 );
             Host.Menu.Print( 168, 56, _MyName );
+        }
 
+        private void DrawClothesColours()
+		{
             Host.Menu.Print( 64, 80, "Shirt color" );
             Host.Menu.Print( 64, 104, "Pants color" );
+        }
 
+        private void DrawAcceptButton()
+		{
             Host.Menu.DrawTextBox( 64, 140 - 8, 14, 1 );
             Host.Menu.Print( 72, 140, "Accept Changes" );
+        }
 
-            p = Host.DrawingContext.CachePic( "gfx/bigbox.lmp", "GL_NEAREST" );
+        private void DrawBigBox()
+        {
+            var p = Host.DrawingContext.CachePic( "gfx/bigbox.lmp", "GL_NEAREST" );
             Host.Menu.DrawTransPic( 160, 64, p );
-            p = Host.DrawingContext.CachePic( "gfx/menuplyr.lmp", "GL_NEAREST", true );
-            
+        }
+
+        private void DrawPlayer()
+		{
+            var p = Host.DrawingContext.CachePic( "gfx/menuplyr.lmp", "GL_NEAREST", true );
+
             if ( !hasPlayPixels && p != null )
             {
                 // HACK HACK HACK --- we need to keep the bytes for
@@ -202,13 +221,16 @@ namespace SharpQuake.Rendering.UI
                 Host.DrawingContext._MenuPlayerPixelHeight = p.Texture.Desc.Height;
                 Buffer.BlockCopy( data, headerSize, Host.DrawingContext._MenuPlayerPixels, 0, p.Texture.Desc.Width * p.Texture.Desc.Height );
                 //memcpy (menuplyr_pixels, dat->data, dat->width*dat->height);
-                
+
                 hasPlayPixels = true;
             }
 
             Host.Menu.BuildTranslationTable( _Top * 16, _Bottom * 16 );
             Host.Menu.DrawTransPicTranslate( 172, 72, p );
+        }
 
+        private void DrawText()
+		{
             Host.Menu.DrawCharacter( 56, _CursorTable[_Cursor], 12 + ( ( Int32 ) ( Host.RealTime * 4 ) & 1 ) );
 
             if ( _Cursor == 0 )
@@ -216,6 +238,18 @@ namespace SharpQuake.Rendering.UI
 
             if ( _Cursor == 1 )
                 Host.Menu.DrawCharacter( 168 + 8 * _MyName.Length, _CursorTable[_Cursor], 10 + ( ( Int32 ) ( Host.RealTime * 4 ) & 1 ) );
+        }
+
+        public override void Draw( )
+        {
+            DrawPlaque();
+            DrawHostName();
+            DrawName();
+            DrawClothesColours();
+            DrawAcceptButton();
+            DrawBigBox();
+            DrawPlayer();
+            DrawText();
         }
     }
 }

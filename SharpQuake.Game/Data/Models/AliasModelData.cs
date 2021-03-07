@@ -6,6 +6,9 @@ using SharpQuake.Framework.IO.Alias;
 using SharpQuake.Framework.Mathematics;
 using SharpQuake.Framework.Rendering;
 using SharpQuake.Game.Rendering.Textures;
+using System.Text;
+using System.IO;
+using SharpQuake.Framework.IO;
 
 namespace SharpQuake.Game.Data.Models
 {
@@ -171,7 +174,7 @@ namespace SharpQuake.Game.Data.Models
 
             Header.numposes = PoseNum;
 
-            Type = ModelType.mod_alias;
+            Type = ModelType.Alias;
 
             // FIXME: do this right
             BoundsMin = -Vector3.One * 16.0f;
@@ -384,7 +387,7 @@ namespace SharpQuake.Game.Data.Models
         {
             base.CopyFrom( src );
 
-            Type = ModelType.mod_alias;
+            Type = ModelType.Alias;
 
             if ( ! ( src is AliasModelData ) )
                 return;

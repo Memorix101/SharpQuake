@@ -390,7 +390,7 @@ namespace SharpQuake
             var model = _CurrentEntity.model;
             if ( model == null )
                 return;		// player doesn't have a model yet
-            if ( model.Type != ModelType.mod_alias )
+            if ( model.Type != ModelType.Alias )
                 return; // only translate skins on alias models
 
             var paliashdr = Host.Model.GetExtraData( model );
@@ -631,12 +631,12 @@ namespace SharpQuake
 
                 switch ( _CurrentEntity.model.Type )
                 {
-                    case ModelType.mod_alias:
+                    case ModelType.Alias:
 						_CurrentEntity.useInterpolation = Host.Cvars.AnimationBlend.Get<Boolean>( );
 						DrawAliasModel( _CurrentEntity );
                         break;
 
-                    case ModelType.mod_brush:
+                    case ModelType.Brush:
                         DrawBrushModel( _CurrentEntity );
                         break;
 
@@ -653,7 +653,7 @@ namespace SharpQuake
 
                 switch ( _CurrentEntity.model.Type )
                 {
-                    case ModelType.mod_sprite:
+                    case ModelType.Sprite:
                         DrawSpriteModel( _CurrentEntity );
                         break;
                 }
