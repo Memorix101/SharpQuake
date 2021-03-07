@@ -797,6 +797,89 @@ namespace SharpQuake
 			return true;
 		}
 
+		private Int32 SetupEntityBits( Int32 e, MemoryEdict ent )
+		{
+			var bits = 0;
+			Vector3f miss;
+			MathLib.VectorSubtract( ref ent.v.origin, ref ent.baseline.origin, out miss );
+			if ( miss.x < -0.1f || miss.x > 0.1f )
+				bits |= ProtocolDef.U_ORIGIN1;
+			if ( miss.y < -0.1f || miss.y > 0.1f )
+				bits |= ProtocolDef.U_ORIGIN2;
+			if ( miss.z < -0.1f || miss.z > 0.1f )
+				bits |= ProtocolDef.U_ORIGIN3;
+
+			if ( ent.v.angles.x != ent.baseline.angles.x )
+				bits |= ProtocolDef.U_ANGLE1;
+
+			if ( ent.v.angles.y != ent.baseline.angles.y )
+				bits |= ProtocolDef.U_ANGLE2;
+
+			if ( ent.v.angles.z != ent.baseline.angles.z )
+				bits |= ProtocolDef.U_ANGLE3;
+
+			if ( ent.v.movetype == Movetypes.MOVETYPE_STEP )
+				bits |= ProtocolDef.U_NOLERP;   // don't mess up the step animation
+
+			if ( ent.baseline.colormap != ent.v.colormap )
+				bits |= ProtocolDef.U_COLORMAP;
+
+			if ( ent.baseline.skin != ent.v.skin )
+				bits |= ProtocolDef.U_SKIN;
+
+			if ( ent.baseline.frame != ent.v.frame )
+				bits |= ProtocolDef.U_FRAME;
+
+			if ( ent.baseline.effects != ent.v.effects )
+				bits |= ProtocolDef.U_EFFECTS;
+
+			if ( ent.baseline.modelindex != ent.v.modelindex )
+				bits |= ProtocolDef.U_MODEL;
+
+			if ( e >= 256 )
+				bits |= ProtocolDef.U_LONGENTITY;
+
+			if ( bits >= 256 )
+				bits |= ProtocolDef.U_MOREBITS;
+
+			return bits;
+		}
+
+		private void WriteEntityBytes( Int32 bits, Int32 e, MemoryEdict ent, MessageWriter msg )
+		{
+			msg.WriteByte( bits | ProtocolDef.U_SIGNAL );
+
+			if ( ( bits & ProtocolDef.U_MOREBITS ) != 0 )
+				msg.WriteByte( bits >> 8 );
+			if ( ( bits & ProtocolDef.U_LONGENTITY ) != 0 )
+				msg.WriteShort( e );
+			else
+				msg.WriteByte( e );
+
+			if ( ( bits & ProtocolDef.U_MODEL ) != 0 )
+				msg.WriteByte( ( Int32 ) ent.v.modelindex );
+			if ( ( bits & ProtocolDef.U_FRAME ) != 0 )
+				msg.WriteByte( ( Int32 ) ent.v.frame );
+			if ( ( bits & ProtocolDef.U_COLORMAP ) != 0 )
+				msg.WriteByte( ( Int32 ) ent.v.colormap );
+			if ( ( bits & ProtocolDef.U_SKIN ) != 0 )
+				msg.WriteByte( ( Int32 ) ent.v.skin );
+			if ( ( bits & ProtocolDef.U_EFFECTS ) != 0 )
+				msg.WriteByte( ( Int32 ) ent.v.effects );
+			if ( ( bits & ProtocolDef.U_ORIGIN1 ) != 0 )
+				msg.WriteCoord( ent.v.origin.x );
+			if ( ( bits & ProtocolDef.U_ANGLE1 ) != 0 )
+				msg.WriteAngle( ent.v.angles.x );
+			if ( ( bits & ProtocolDef.U_ORIGIN2 ) != 0 )
+				msg.WriteCoord( ent.v.origin.y );
+			if ( ( bits & ProtocolDef.U_ANGLE2 ) != 0 )
+				msg.WriteAngle( ent.v.angles.y );
+			if ( ( bits & ProtocolDef.U_ORIGIN3 ) != 0 )
+				msg.WriteCoord( ent.v.origin.z );
+			if ( ( bits & ProtocolDef.U_ANGLE3 ) != 0 )
+				msg.WriteAngle( ent.v.angles.z );
+		}
+
 		/// <summary>
 		/// SV_WriteEntitiesToClient
 		/// </summary>
@@ -833,84 +916,11 @@ namespace SharpQuake
 					return;
 				}
 
-				// send an update
-				var bits = 0;
-				Vector3f miss;
-				MathLib.VectorSubtract( ref ent.v.origin, ref ent.baseline.origin, out miss );
-				if ( miss.x < -0.1f || miss.x > 0.1f )
-					bits |= ProtocolDef.U_ORIGIN1;
-				if ( miss.y < -0.1f || miss.y > 0.1f )
-					bits |= ProtocolDef.U_ORIGIN2;
-				if ( miss.z < -0.1f || miss.z > 0.1f )
-					bits |= ProtocolDef.U_ORIGIN3;
+				// Send an update
+				var bits = SetupEntityBits( e, ent );
 
-				if ( ent.v.angles.x != ent.baseline.angles.x )
-					bits |= ProtocolDef.U_ANGLE1;
-
-				if ( ent.v.angles.y != ent.baseline.angles.y )
-					bits |= ProtocolDef.U_ANGLE2;
-
-				if ( ent.v.angles.z != ent.baseline.angles.z )
-					bits |= ProtocolDef.U_ANGLE3;
-
-				if ( ent.v.movetype == Movetypes.MOVETYPE_STEP )
-					bits |= ProtocolDef.U_NOLERP;   // don't mess up the step animation
-
-				if ( ent.baseline.colormap != ent.v.colormap )
-					bits |= ProtocolDef.U_COLORMAP;
-
-				if ( ent.baseline.skin != ent.v.skin )
-					bits |= ProtocolDef.U_SKIN;
-
-				if ( ent.baseline.frame != ent.v.frame )
-					bits |= ProtocolDef.U_FRAME;
-
-				if ( ent.baseline.effects != ent.v.effects )
-					bits |= ProtocolDef.U_EFFECTS;
-
-				if ( ent.baseline.modelindex != ent.v.modelindex )
-					bits |= ProtocolDef.U_MODEL;
-
-				if ( e >= 256 )
-					bits |= ProtocolDef.U_LONGENTITY;
-
-				if ( bits >= 256 )
-					bits |= ProtocolDef.U_MOREBITS;
-
-				//
-				// write the message
-				//
-				msg.WriteByte( bits | ProtocolDef.U_SIGNAL );
-
-				if ( ( bits & ProtocolDef.U_MOREBITS ) != 0 )
-					msg.WriteByte( bits >> 8 );
-				if ( ( bits & ProtocolDef.U_LONGENTITY ) != 0 )
-					msg.WriteShort( e );
-				else
-					msg.WriteByte( e );
-
-				if ( ( bits & ProtocolDef.U_MODEL ) != 0 )
-					msg.WriteByte( ( Int32 ) ent.v.modelindex );
-				if ( ( bits & ProtocolDef.U_FRAME ) != 0 )
-					msg.WriteByte( ( Int32 ) ent.v.frame );
-				if ( ( bits & ProtocolDef.U_COLORMAP ) != 0 )
-					msg.WriteByte( ( Int32 ) ent.v.colormap );
-				if ( ( bits & ProtocolDef.U_SKIN ) != 0 )
-					msg.WriteByte( ( Int32 ) ent.v.skin );
-				if ( ( bits & ProtocolDef.U_EFFECTS ) != 0 )
-					msg.WriteByte( ( Int32 ) ent.v.effects );
-				if ( ( bits & ProtocolDef.U_ORIGIN1 ) != 0 )
-					msg.WriteCoord( ent.v.origin.x );
-				if ( ( bits & ProtocolDef.U_ANGLE1 ) != 0 )
-					msg.WriteAngle( ent.v.angles.x );
-				if ( ( bits & ProtocolDef.U_ORIGIN2 ) != 0 )
-					msg.WriteCoord( ent.v.origin.y );
-				if ( ( bits & ProtocolDef.U_ANGLE2 ) != 0 )
-					msg.WriteAngle( ent.v.angles.y );
-				if ( ( bits & ProtocolDef.U_ORIGIN3 ) != 0 )
-					msg.WriteCoord( ent.v.origin.z );
-				if ( ( bits & ProtocolDef.U_ANGLE3 ) != 0 )
-					msg.WriteAngle( ent.v.angles.z );
+				// Write the message
+				WriteEntityBytes( bits, e, ent, msg );
 			}
 		}
 
