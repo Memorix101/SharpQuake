@@ -119,15 +119,8 @@ namespace SharpQuake
             Host = host;
         }
 
-        /// <summary>
-        /// VID_Init (unsigned char *palette)
-        /// Called at startup to set up translation tables, takes 256 8 bit RGB values
-        /// the palette data will go away after the call, so it must be copied off if
-        /// the video driver will need it again
-        /// </summary>
-        /// <param name="palette"></param>
-        public void Initialise( Byte[] palette )
-        {
+        private void InitialiseClientVariables()
+		{
             if ( Host.Cvars.glZTrick == null )
             {
                 Host.Cvars.glZTrick = Host.CVars.Add( "gl_ztrick", true );
@@ -142,11 +135,27 @@ namespace SharpQuake
                 Host.Cvars.StretchBy2 = Host.CVars.Add( "vid_stretch_by_2", 1, ClientVariableFlags.Archive );
                 Host.Cvars.WindowedMouse = Host.CVars.Add( "_windowed_mouse", true, ClientVariableFlags.Archive );
             }
+        }
 
+        private void InitialiseCommands()
+		{
             Host.Commands.Add( "vid_nummodes", NumModes_f );
             Host.Commands.Add( "vid_describecurrentmode", DescribeCurrentMode_f );
             Host.Commands.Add( "vid_describemode", DescribeMode_f );
             Host.Commands.Add( "vid_describemodes", DescribeModes_f );
+        }
+
+        /// <summary>
+        /// VID_Init (unsigned char *palette)
+        /// Called at startup to set up translation tables, takes 256 8 bit RGB values
+        /// the palette data will go away after the call, so it must be copied off if
+        /// the video driver will need it again
+        /// </summary>
+        /// <param name="palette"></param>
+        public void Initialise( Byte[] palette )
+        {
+            InitialiseClientVariables();
+            InitialiseCommands();
 
             Device.Initialise( palette );
 

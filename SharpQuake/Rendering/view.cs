@@ -94,10 +94,19 @@ namespace SharpQuake
 		// V_Init
 		public void Initialise( )
 		{
+			InitialiseCommands();
+			InitialiseClientVariables();
+		}
+
+		private void InitialiseCommands()
+		{
 			Host.Commands.Add( "v_cshift", CShift_f );
 			Host.Commands.Add( "bf", BonusFlash_f );
 			Host.Commands.Add( "centerview", StartPitchDrift );
+		}
 
+		private void InitialiseClientVariables()
+		{
 			if ( Host.Cvars.LcdX == null )
 			{
 				Host.Cvars.LcdX = Host.CVars.Add( "lcd_x", 0f );
