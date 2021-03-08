@@ -327,6 +327,7 @@ namespace SharpQuake
             // Factories
             Commands = AddFactory<CommandFactory>( );
             CVars = AddFactory<ClientVariableFactory>( );
+            WadFactory = AddFactory<WadFactory>();
 
             Commands.Initialise( CVars );
 
@@ -337,7 +338,6 @@ namespace SharpQuake
             //CVar.Initialise( Command );
             View = new View( this );
             ChaseView = new ChaseView( this );
-            WadFactory = new WadFactory();
             Keyboard = new Keyboard( this );
             Console = new Con( this );
             Menu = new Menu( this );
