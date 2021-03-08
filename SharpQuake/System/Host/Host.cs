@@ -27,6 +27,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
+using SharpQuake.Factories.Rendering;
 using SharpQuake.Framework;
 using SharpQuake.Framework.Factories.IO;
 using SharpQuake.Framework.Factories.IO.WAD;
@@ -328,6 +329,7 @@ namespace SharpQuake
             Commands = AddFactory<CommandFactory>( );
             CVars = AddFactory<ClientVariableFactory>( );
             WadFactory = AddFactory<WadFactory>();
+            Model = AddFactory<ModelFactory>();
 
             Commands.Initialise( CVars );
 
@@ -343,7 +345,6 @@ namespace SharpQuake
             Menu = new Menu( this );
             Programs = new Programs( this );
             ProgramsBuiltIn = new ProgramsBuiltIn( this );
-            Model = new ModelFactory( this );
             Network = new Network( this );
             Server = new server( this );
             Client = new client( this );
@@ -445,7 +446,7 @@ namespace SharpQuake
             Menu.Initialise( );
             Programs.Initialise( );
             ProgramsBuiltIn.Initialise( );
-            Model.Initialise( );
+            Model.Initialise( this );
             Network.Initialise( );
             Server.Initialise( );
 

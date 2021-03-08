@@ -26,6 +26,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using SharpQuake.Framework;
+using SharpQuake.Framework.Factories;
 using SharpQuake.Framework.IO;
 using SharpQuake.Game.Data.Models;
 using SharpQuake.Renderer.Textures;
@@ -35,12 +36,12 @@ using SharpQuake.Renderer.Textures;
 // models are the only shared resource between a client and server running
 // on the same machine.
 
-namespace SharpQuake
+namespace SharpQuake.Factories.Rendering
 {
 	/// <summary>
 	/// Mod_functions
 	/// </summary>
-	public class ModelFactory
+	public class ModelFactory : BaseFactory<String, ModelData>
     {
         public Single SubdivideSize
         {
@@ -80,31 +81,20 @@ namespace SharpQuake
             set;
         }
 
-        private List<ModelData> ModelCache
-        {
-            get;
-            set;
-        }
-
         private ModelData CurrentModel
         {
             get;
             set;
         }
 
-        public ModelFactory( Host host )
-        {
-            Host = host;
-        }
-
         /// <summary>
         /// Mod_Init
         /// </summary>
-        public void Initialise( )
+        public void Initialise( Host host )
         {
-            SkinTextures = new List<BaseTexture>( );
-            SpriteTextures = new List<BaseTexture>( );
-            ModelCache = new List<ModelData>( ModelDef.MAX_MOD_KNOWN );
+            Host = host;
+            SkinTextures = new List<BaseTexture>();
+            SpriteTextures = new List<BaseTexture>();
             AliasModelBuilder = new AliasModelBuilder();
 
             if ( _glSubDivideSize == null )
@@ -116,12 +106,10 @@ namespace SharpQuake
         /// </summary>
         public void ClearAll( )
         {
-            for ( var i = 0; i < ModelCache.Count; i++ )
+            foreach ( var model in DictionaryItems )
             {
-                var mod = ModelCache[i];
-
-                if ( mod.Type != ModelType.Alias )
-                    mod.IsLoadRequired = true;
+                if ( model.Value.Type != ModelType.Alias )
+                    model.Value.IsLoadRequired = true;
             }
         }
 
@@ -183,7 +171,7 @@ namespace SharpQuake
         // Mod_Print
         public void Print( CommandMessage msg )
         {
-            var names = String.Join( "\n", ModelCache.Select( m => m.Name ) );
+            var names = String.Join( "\n", DictionaryItems.Select( m => m.Key ) );
             ConsoleWrapper.Print( $"Cached models:\n{names}\n" );
         }
 
@@ -192,37 +180,39 @@ namespace SharpQuake
         /// </summary>
         private ModelData FindName( String name, ModelType type )
         {
+            ModelData result = null;
+
             if ( String.IsNullOrEmpty( name ) )
                 Utilities.Error( "Mod_ForName: NULL name" );
 
-            var mod = ModelCache.Where( m => m.Name == name ).FirstOrDefault( );
-
-            if ( mod == null )
+            if ( !Contains( name ) )
             {
-                if ( ModelCache.Count == ModelDef.MAX_MOD_KNOWN )
+                if ( DictionaryItems.Count == ModelDef.MAX_MOD_KNOWN )
                     Utilities.Error( "mod_numknown == MAX_MOD_KNOWN" );
 
                 switch ( type )
                 {
                     case ModelType.Brush:
-                        mod = new BrushModelData( Host.Model.SubdivideSize, Host.RenderContext.NoTextureMip );
+                        result = new BrushModelData( Host.Model.SubdivideSize, Host.RenderContext.NoTextureMip );
                         break;
 
                     case ModelType.Sprite:
-                        mod = new AliasModelData( Host.RenderContext.NoTextureMip );
+                        result = new AliasModelData( Host.RenderContext.NoTextureMip );
                         break;
 
                     case ModelType.Alias:
-                        mod = new SpriteModelData( Host.RenderContext.NoTextureMip );
+                        result = new SpriteModelData( Host.RenderContext.NoTextureMip );
                         break;
                 }
 
-                mod.Name = name;
-                mod.IsLoadRequired = true;
-                ModelCache.Add( mod );
+                result.Name = name;
+                result.IsLoadRequired = true;
+                Add( result.Name, result );
             }
+            else
+                result = Get( name );
 
-            return mod;
+            return result;
         }
 
         /// <summary>
@@ -257,11 +247,11 @@ namespace SharpQuake
 
                 newMod.Name = mod.Name;
 
-                ModelCache.RemoveAll( k => k.Name == name );
+                Remove( name );
 
                 mod = newMod;
 
-                ModelCache.Add( mod );
+                Add( mod.Name, mod );
             }
 
             if ( !mod.IsLoadRequired )
