@@ -28,6 +28,7 @@ using System.Drawing;
 using System.Runtime.InteropServices;
 using SharpQuake.Framework;
 using SharpQuake.Framework.IO;
+using SharpQuake.Framework.IO.WAD;
 using SharpQuake.Renderer.Textures;
 
 // gl_draw.c
@@ -135,8 +136,10 @@ namespace SharpQuake
             // by hand, because we need to write the version
             // string into the background before turning
             // it into a texture
-            var offset = Host.GfxWad.GetLumpNameOffset( "conchars" );
-            var draw_chars = Host.GfxWad.Data; // draw_chars
+            var concharsWad = Host.WadFactory.FromTexture( "conchars" );
+            var offset = concharsWad.GetLumpNameOffset( "conchars" );
+            var draw_chars = concharsWad.Data; // draw_chars
+
             for ( var i = 0; i < 256 * 64; i++ )
             {
                 if ( draw_chars[offset + i] == 0 )
@@ -173,9 +176,9 @@ namespace SharpQuake
             //
             // get the other pics we need
             //
-            Disc = BasePicture.FromWad( Host.Video.Device, Host.GfxWad, "disc", "GL_NEAREST" );
+            Disc = BasePicture.FromWad( Host.Video.Device, Host.WadFactory.FromTexture( "disc" ), "disc", "GL_NEAREST" );
 
-            BackgroundTile = BasePicture.FromWad( Host.Video.Device, Host.GfxWad, "backtile", "GL_NEAREST" );
+            BackgroundTile = BasePicture.FromWad( Host.Video.Device, Host.WadFactory.FromTexture( "backtile" ), "backtile", "GL_NEAREST" );
 
             IsInitialised = true;
         }

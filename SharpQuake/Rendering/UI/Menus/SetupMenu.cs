@@ -26,6 +26,7 @@ using System;
 using System.Runtime.InteropServices;
 using SharpQuake.Framework;
 using SharpQuake.Framework.IO;
+using SharpQuake.Framework.IO.WAD;
 
 namespace SharpQuake.Rendering.UI
 {

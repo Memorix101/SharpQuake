@@ -374,17 +374,7 @@ namespace SharpQuake
                 }
             }, ( textureFile ) =>             
             {
-				var lowerName = textureFile.ToLower( );
-
-				if ( Host.WadTextures.ContainsKey( lowerName ) )
-				{
-					var wadFile = Host.WadTextures[lowerName];
-					var wad = Host.WadFiles[wadFile];
-
-					return wad.GetLumpBuffer( textureFile );
-				}
-
-				return null;
+                return Host.WadFactory.LoadTexture( textureFile );
 			} );
 
             //

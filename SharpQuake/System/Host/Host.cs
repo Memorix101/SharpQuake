@@ -29,8 +29,10 @@ using System.Linq;
 using System.Text;
 using SharpQuake.Framework;
 using SharpQuake.Framework.Factories.IO;
+using SharpQuake.Framework.Factories.IO.WAD;
 using SharpQuake.Framework.IO;
 using SharpQuake.Framework.IO.Input;
+using SharpQuake.Framework.IO.WAD;
 using SharpQuake.Rendering.UI;
 using SharpQuake.Sys;
 
@@ -179,19 +181,7 @@ namespace SharpQuake
             private set;
         }
 
-        public Wad GfxWad
-        {
-            get;
-            private set;
-        }
-
-        public Dictionary<String, Wad> WadFiles
-        {
-            get;
-            private set;
-        }
-
-        public Dictionary<String, String> WadTextures
+        public WadFactory WadFactory
         {
             get;
             private set;
@@ -347,7 +337,7 @@ namespace SharpQuake
             //CVar.Initialise( Command );
             View = new View( this );
             ChaseView = new ChaseView( this );
-            GfxWad = new Wad( );
+            WadFactory = new WadFactory();
             Keyboard = new Keyboard( this );
             Console = new Con( this );
             Menu = new Menu( this );
@@ -365,9 +355,6 @@ namespace SharpQuake
             CDAudio = new cd_audio( this );
             Hud = new Hud( this );
 			DedicatedServer = new DedicatedServer( );
-
-			WadFiles = new Dictionary<String, Wad>( );
-            WadTextures = new Dictionary<String, String>( );
         }
 
         /// <summary>
@@ -378,22 +365,8 @@ namespace SharpQuake
             // run the world state
             Programs.GlobalStruct.frametime = ( Single ) FrameTime;
 
-            // set the time and clear the general datagram
-            Server.ClearDatagram( );
-
-            // check for new clients
-            Server.CheckForNewClients( );
-
-            // read client messages
-            Server.RunClients( );
-
-            // move things around and think
-            // always pause in single player if in console or menus
-            if ( !Server.sv.paused && ( Server.svs.maxclients > 1 || Keyboard.Destination == KeyDestination.key_game ) )
-                Server.Physics( );
-
-            // send all messages to the clients
-            Server.SendClientMessages( );
+            // Execute server frame
+            Server.Frame( );
         }
 
         /// <summary>
@@ -443,6 +416,11 @@ namespace SharpQuake
             }
         }
 
+        private void InitialiseWAD()
+		{
+            WadFactory.Initialise();
+        }
+
         public void Initialise( QuakeParameters parms )
         {
             Parameters = parms;
@@ -460,37 +438,8 @@ namespace SharpQuake
             MainWindow.Common.Initialise( MainWindow, parms.basedir, parms.argv );
             InitialiseLocal( );
 
-            // Search wads
-            foreach ( var wadFile in FileSystem.Search( "*.wad" ) )
-            {
-                if ( wadFile == "radiant.wad" )
-                    continue;
+            InitialiseWAD();
 
-                if ( wadFile == "gfx.wad" )
-                    continue;
-
-                var data = FileSystem.LoadFile( wadFile );
-
-                if ( data == null )
-                    continue;
-
-                var wad = new Wad( );
-                wad.LoadWadFile( wadFile, data );
-
-                WadFiles.Add( wadFile, wad );
-
-                var textures = wad._Lumps.Values
-                    .Select( s => Encoding.ASCII.GetString( s.name ).Replace( "\0", "" ) )
-                    .ToArray( );
-
-                foreach ( var texture in textures )
-                {
-                    if ( !WadTextures.ContainsKey( texture ) )
-                        WadTextures.Add( texture, wadFile );
-                }
-            }
-            
-            GfxWad.LoadWadFile( "gfx.wad" );
             Keyboard.Initialise( );
             Console.Initialise( );
             Menu.Initialise( );

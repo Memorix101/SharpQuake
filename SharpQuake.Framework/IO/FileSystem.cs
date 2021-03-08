@@ -194,14 +194,6 @@ namespace SharpQuake.Framework.IO
             }
         }
 
-        public static String[] Search( String pattern )
-        {
-            return Directory.GetFiles( _GameDir, pattern, SearchOption.AllDirectories )
-                .OrderBy( f => f )
-                .Select( f => f.Replace( $"{_GameDir}\\", String.Empty ).Replace( "\\", "//" ) )
-                .ToArray( );
-        }
-
         // COM_Path_f
         public static void Path_f( CommandMessage msg )
         {
@@ -254,6 +246,87 @@ namespace SharpQuake.Framework.IO
             }
         }
 
+        public class SearchResult
+		{
+            public String FileName
+			{
+                get;
+                set;
+			}
+
+            public String ArchiveFileName
+			{
+                get;
+                set;
+			}
+		}
+
+        /// <summary>
+        /// Search virtual file system for a file or wildcard (e.g. *.txt)
+        /// </summary>
+        /// <param name="filename"></param>
+        /// <returns></returns>
+        public static SearchResult[] Search( String filename )
+        {
+            var results = new List<SearchResult>();
+            var cachepath = String.Empty;
+            var searchCriteria = filename;
+
+            if ( filename.StartsWith( "*." ) )
+                searchCriteria = filename.Replace( "*.", "." );
+
+            foreach ( var sp in _SearchPaths )
+            {
+                // is the element a pak file?
+                if ( sp.pack != null )
+                {
+                    // look through all the pak file elements
+                    var pak = sp.pack;
+                    foreach ( var pfile in pak.files )
+                    {
+                        // found it!
+                        if ( pfile.name.EndsWith( searchCriteria ) )
+                            results.Add( new SearchResult 
+                            {
+                                FileName = pfile.name, 
+                                ArchiveFileName = sp.pack.filename.Replace( "/", "\\" ).Replace( _GameDir.Replace( "/", "\\" ) + "\\", "" )
+                            } );
+                    }
+                }
+                else if ( sp.pk3 != null ) // is the element a pk3 file?
+                {
+                    // look through all the pak file elements
+                    var pk3 = sp.pk3;
+
+                    foreach ( var pfile in pk3.Entries )
+                    {
+                        // found it!
+                        if ( pfile.FullName.EndsWith( searchCriteria ) )
+                            results.Add( new SearchResult 
+                            { 
+                                FileName = pfile.FullName, 
+                                ArchiveFileName = sp.pack.filename.Replace( _GameDir.Replace( "/", "\\" ) + "\\", "" )
+                            } );
+                    }
+                }
+                else
+				{
+                    var basePath = sp.filename.Replace( "/", "\\" ) + "\\";
+
+                    foreach ( var file in Directory.GetFiles( basePath, filename, SearchOption.AllDirectories ) )
+					{
+                        results.Add( new SearchResult 
+                        { 
+                            FileName = file.Replace( _GameDir.Replace( "/", "\\" ) + "\\", "" ),
+                            ArchiveFileName = null 
+                        } );
+                    }
+                }
+            }
+
+            return results.ToArray();
+        }
+
         /// <summary>
         /// COM_FindFile
         /// Finds the file in the search path.
@@ -261,6 +334,9 @@ namespace SharpQuake.Framework.IO
         private static Int32 FindFile( String filename, out DisposableWrapper<BinaryReader> file, Boolean duplicateStream )
         {
             file = null;
+
+            var isWildcardSearch = filename.StartsWith( "*." );
+            var wildcardFilter = isWildcardSearch ? Path.GetExtension( filename ) : null;
 
             var cachepath = String.Empty;
 

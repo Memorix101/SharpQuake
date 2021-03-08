@@ -25,7 +25,7 @@
 using System;
 using System.Runtime.InteropServices;
 
-namespace SharpQuake.Framework
+namespace SharpQuake.Framework.IO.WAD
 {
     [StructLayout( LayoutKind.Sequential, Pack = 1 )]
     public class WadPicHeader

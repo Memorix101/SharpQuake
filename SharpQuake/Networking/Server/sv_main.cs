@@ -26,6 +26,7 @@ using System;
 using SharpQuake.Framework;
 using SharpQuake.Framework.IO;
 using SharpQuake.Framework.IO.BSP;
+using SharpQuake.Framework.IO.Input;
 using SharpQuake.Framework.Mathematics;
 using SharpQuake.Game.Data.Models;
 using SharpQuake.Game.Networking.Server;
@@ -232,7 +233,7 @@ namespace SharpQuake
 		/// <summary>
 		/// SV_SendClientMessages
 		/// </summary>
-		public void SendClientMessages( )
+		private void SendClientMessages( )
 		{
 			// update frags, names, etc
 			UpdateToReliableMessages();
@@ -298,9 +299,32 @@ namespace SharpQuake
 		}
 
 		/// <summary>
+		/// The start of server frame
+		/// </summary>
+		public void Frame()
+		{
+			// set the time and clear the general datagram
+			ClearDatagram();
+
+			// check for new clients
+			CheckForNewClients();
+
+			// read client messages
+			RunClients();
+
+			// move things around and think
+			// always pause in single player if in console or menus
+			if ( !sv.paused && ( svs.maxclients > 1 || Host.Keyboard.Destination == KeyDestination.key_game ) )
+				Physics();
+
+			// send all messages to the clients
+			SendClientMessages();
+		}
+
+		/// <summary>
 		/// SV_ClearDatagram
 		/// </summary>
-		public void ClearDatagram( )
+		private void ClearDatagram( )
 		{
 			sv.datagram.Clear();
 		}
@@ -545,7 +569,7 @@ namespace SharpQuake
 		/// <summary>
 		/// SV_CheckForNewClients
 		/// </summary>
-		public void CheckForNewClients( )
+		private void CheckForNewClients( )
 		{
 			//
 			// check for new connections

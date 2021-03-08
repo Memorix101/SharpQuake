@@ -180,18 +180,8 @@ namespace SharpQuake
 			WarpableTextures = new WarpableTextures( Host.Video.Device );
 		}
 
-        /// <summary>
-        /// R_Init
-        /// </summary>
-        public void Initialise( )
-        {            
-            for ( var i = 0; i < _Frustum.Length; i++ )
-                _Frustum[i] = new Plane( );
-
-            Host.Commands.Add( "timerefresh", TimeRefresh_f );
-            //Cmd.Add("envmap", Envmap_f);
-            //Cmd.Add("pointfile", ReadPointFile_f);
-
+        private void InitialiseClientVariables()
+		{
             if ( Host.Cvars.NoRefresh == null )
             {
                 Host.Cvars.NoRefresh = Host.CVars.Add( "r_norefresh", false );
@@ -223,6 +213,21 @@ namespace SharpQuake
 
             if ( Host.Video.Device.Desc.SupportsMultiTexture )
                 Host.CVars.Set( "gl_texsort", 0.0f );
+        }
+
+        /// <summary>
+        /// R_Init
+        /// </summary>
+        public void Initialise( )
+        {            
+            for ( var i = 0; i < _Frustum.Length; i++ )
+                _Frustum[i] = new Plane( );
+
+            Host.Commands.Add( "timerefresh", TimeRefresh_f );
+            //Cmd.Add("envmap", Envmap_f);
+            //Cmd.Add("pointfile", ReadPointFile_f);
+
+            InitialiseClientVariables();
 
 			Particles.InitParticles( );
 			Particles.InitParticleTexture( );
@@ -837,74 +842,6 @@ namespace SharpQuake
 		private void SetupGL( )
         {
             Host.Video.Device.Setup3DScene( Host.Cvars.glCull.Get<Boolean>(), _RefDef, _IsEnvMap );
-
-            ////
-            //// set up viewpoint
-            ////
-            //GL.MatrixMode( MatrixMode.Projection );
-            //GL.LoadIdentity();
-            //var x = _RefDef.vrect.x * Host.Screen.glWidth / Host.Screen.vid.width;
-            //var x2 = ( _RefDef.vrect.x + _RefDef.vrect.width ) * Host.Screen.glWidth / Host.Screen.vid.width;
-            //var y = ( Host.Screen.vid.height - _RefDef.vrect.y ) * Host.Screen.glHeight / Host.Screen.vid.height;
-            //var y2 = ( Host.Screen.vid.height - ( _RefDef.vrect.y + _RefDef.vrect.height ) ) * Host.Screen.glHeight / Host.Screen.vid.height;
-
-            //// fudge around because of frac screen scale
-            //if( x > 0 )
-            //    x--;
-            //if( x2 < Host.Screen.glWidth )
-            //    x2++;
-            //if( y2 < 0 )
-            //    y2--;
-            //if( y < Host.Screen.glHeight )
-            //    y++;
-
-            //var w = x2 - x;
-            //var h = y - y2;
-
-            //if( _IsEnvMap )
-            //{
-            //    x = y2 = 0;
-            //    w = h = 256;
-            //}
-
-            //GL.Viewport( Host.Screen.glX + x, Host.Screen.glY + y2, w, h );
-            //var screenaspect = ( Single ) _RefDef.vrect.width / _RefDef.vrect.height;
-            //MYgluPerspective( _RefDef.fov_y, screenaspect, 4, 4096 );
-
-            //if( _IsMirror )
-            //{
-            //    if( _MirrorPlane.normal.Z != 0 )
-            //        GL.Scale( 1f, -1f, 1f );
-            //    else
-            //        GL.Scale( -1f, 1f, 1f );
-            //    GL.CullFace( CullFaceMode.Back );
-            //}
-            //else
-            //    GL.CullFace( CullFaceMode.Front );
-
-            //GL.MatrixMode( MatrixMode.Modelview );
-            //GL.LoadIdentity();
-
-            //GL.Rotate( -90f, 1, 0, 0 );	    // put Z going up
-            //GL.Rotate( 90f, 0, 0, 1 );	    // put Z going up
-            //GL.Rotate( -_RefDef.viewangles.Z, 1, 0, 0 );
-            //GL.Rotate( -_RefDef.viewangles.X, 0, 1, 0 );
-            //GL.Rotate( -_RefDef.viewangles.Y, 0, 0, 1 );
-            //GL.Translate( -_RefDef.vieworg.X, -_RefDef.vieworg.Y, -_RefDef.vieworg.Z );
-
-            //GL.GetFloat( GetPName.ModelviewMatrix, out _WorldMatrix );
-
-            ////
-            //// set drawing parms
-            ////
-            //if( _glCull.Get<Boolean>() )
-            //    GL.Enable( EnableCap.CullFace );
-            //else
-            //    GL.Disable( EnableCap.CullFace );
-
-            //GL.Disable( EnableCap.Blend );
-            //GL.Disable( EnableCap.AlphaTest );
-            //GL.Enable( EnableCap.DepthTest );
         }
 
         /// <summary>

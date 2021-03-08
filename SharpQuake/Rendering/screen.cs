@@ -191,9 +191,9 @@ namespace SharpQuake
             Host.Commands.Add( "sizeup", SizeUp_f );
             Host.Commands.Add( "sizedown", SizeDown_f );
 
-            Ram = BasePicture.FromWad( Host.Video.Device, Host.GfxWad, "ram", "GL_LINEAR" );
-            Net = BasePicture.FromWad( Host.Video.Device, Host.GfxWad, "net", "GL_LINEAR" );
-            Turtle = BasePicture.FromWad( Host.Video.Device, Host.GfxWad, "turtle", "GL_LINEAR" );
+            Ram = BasePicture.FromWad( Host.Video.Device, Host.WadFactory.FromTexture( "ram" ), "ram", "GL_LINEAR" );
+            Net = BasePicture.FromWad( Host.Video.Device, Host.WadFactory.FromTexture( "net" ), "net", "GL_LINEAR" );
+            Turtle = BasePicture.FromWad( Host.Video.Device, Host.WadFactory.FromTexture( "turtle" ), "turtle", "GL_LINEAR" );
 
             if ( CommandLine.HasParam( "-fullsbar" ) )
                 FullSbarDraw = true;

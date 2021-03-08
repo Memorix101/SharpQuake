@@ -39,7 +39,7 @@ namespace SharpQuake
 		/// <summary>
 		/// SV_Physics
 		/// </summary>
-		public void Physics( )
+		private void Physics( )
 		{
 			// let the progs know that a new frame has started
 			Host.Programs.GlobalStruct.self = EdictToProg( sv.edicts[0] );

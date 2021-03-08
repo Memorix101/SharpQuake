@@ -86,7 +86,7 @@ namespace SharpQuake
         /// <summary>
         /// SV_RunClients
         /// </summary>
-        public void RunClients()
+        private void RunClients()
         {
             for( var i = 0; i < svs.maxclients; i++ )
             {
