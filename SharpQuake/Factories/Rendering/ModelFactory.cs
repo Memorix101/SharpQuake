@@ -364,7 +364,7 @@ namespace SharpQuake.Factories.Rendering
                 }
             }, ( textureFile ) =>             
             {
-                return Host.WadFactory.LoadTexture( textureFile );
+                return Host.Wads.LoadTexture( textureFile );
 			} );
 
             //

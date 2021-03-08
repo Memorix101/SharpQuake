@@ -136,7 +136,7 @@ namespace SharpQuake
             // by hand, because we need to write the version
             // string into the background before turning
             // it into a texture
-            var concharsWad = Host.WadFactory.FromTexture( "conchars" );
+            var concharsWad = Host.Wads.FromTexture( "conchars" );
             var offset = concharsWad.GetLumpNameOffset( "conchars" );
             var draw_chars = concharsWad.Data; // draw_chars
 
@@ -176,9 +176,9 @@ namespace SharpQuake
             //
             // get the other pics we need
             //
-            Disc = BasePicture.FromWad( Host.Video.Device, Host.WadFactory.FromTexture( "disc" ), "disc", "GL_NEAREST" );
+            Disc = BasePicture.FromWad( Host.Video.Device, Host.Wads.FromTexture( "disc" ), "disc", "GL_NEAREST" );
 
-            BackgroundTile = BasePicture.FromWad( Host.Video.Device, Host.WadFactory.FromTexture( "backtile" ), "backtile", "GL_NEAREST" );
+            BackgroundTile = BasePicture.FromWad( Host.Video.Device, Host.Wads.FromTexture( "backtile" ), "backtile", "GL_NEAREST" );
 
             IsInitialised = true;
         }

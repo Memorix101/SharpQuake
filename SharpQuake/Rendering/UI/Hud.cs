@@ -121,160 +121,160 @@ namespace SharpQuake.Rendering.UI
             {
                 var str = i.ToString();
 
-                Numbers[0, i] = BasePicture.FromWad( Host.Video.Device, Host.WadFactory.FromTexture( "num_" + str ), "num_" + str, "GL_NEAREST" );
-                Numbers[1, i] = BasePicture.FromWad( Host.Video.Device, Host.WadFactory.FromTexture( "anum_" + str ), "anum_" + str, "GL_NEAREST" );
+                Numbers[0, i] = BasePicture.FromWad( Host.Video.Device, Host.Wads.FromTexture( "num_" + str ), "num_" + str, "GL_NEAREST" );
+                Numbers[1, i] = BasePicture.FromWad( Host.Video.Device, Host.Wads.FromTexture( "anum_" + str ), "anum_" + str, "GL_NEAREST" );
             }
 
-            Numbers[0, 10] = BasePicture.FromWad( Host.Video.Device, Host.WadFactory.FromTexture( "num_minus" ), "num_minus", "GL_NEAREST" );
-            Numbers[1, 10] = BasePicture.FromWad( Host.Video.Device, Host.WadFactory.FromTexture( "anum_minus" ), "anum_minus", "GL_NEAREST" );
+            Numbers[0, 10] = BasePicture.FromWad( Host.Video.Device, Host.Wads.FromTexture( "num_minus" ), "num_minus", "GL_NEAREST" );
+            Numbers[1, 10] = BasePicture.FromWad( Host.Video.Device, Host.Wads.FromTexture( "anum_minus" ), "anum_minus", "GL_NEAREST" );
         }
 
         private void LoadSymbols( )
         {
-            Colon = BasePicture.FromWad( Host.Video.Device, Host.WadFactory.FromTexture( "num_colon" ), "num_colon", "GL_NEAREST" );
-            Slash = BasePicture.FromWad( Host.Video.Device, Host.WadFactory.FromTexture( "num_slash" ), "num_slash", "GL_NEAREST" );
+            Colon = BasePicture.FromWad( Host.Video.Device, Host.Wads.FromTexture( "num_colon" ), "num_colon", "GL_NEAREST" );
+            Slash = BasePicture.FromWad( Host.Video.Device, Host.Wads.FromTexture( "num_slash" ), "num_slash", "GL_NEAREST" );
         }
 
         private void LoadWeapons( )
         {
-            Weapons[0, 0] = BasePicture.FromWad( Host.Video.Device, Host.WadFactory.FromTexture( "inv_shotgun" ), "inv_shotgun", "GL_LINEAR" );
-            Weapons[0, 1] = BasePicture.FromWad( Host.Video.Device, Host.WadFactory.FromTexture( "inv_sshotgun" ), "inv_sshotgun", "GL_LINEAR" );
-            Weapons[0, 2] = BasePicture.FromWad( Host.Video.Device, Host.WadFactory.FromTexture( "inv_nailgun" ), "inv_nailgun", "GL_LINEAR" );
-            Weapons[0, 3] = BasePicture.FromWad( Host.Video.Device, Host.WadFactory.FromTexture( "inv_snailgun" ), "inv_snailgun", "GL_LINEAR" );
-            Weapons[0, 4] = BasePicture.FromWad( Host.Video.Device, Host.WadFactory.FromTexture( "inv_rlaunch" ), "inv_rlaunch", "GL_LINEAR" );
-            Weapons[0, 5] = BasePicture.FromWad( Host.Video.Device, Host.WadFactory.FromTexture( "inv_srlaunch" ), "inv_srlaunch", "GL_LINEAR" );
-            Weapons[0, 6] = BasePicture.FromWad( Host.Video.Device, Host.WadFactory.FromTexture( "inv_lightng" ), "inv_lightng", "GL_LINEAR" );
+            Weapons[0, 0] = BasePicture.FromWad( Host.Video.Device, Host.Wads.FromTexture( "inv_shotgun" ), "inv_shotgun", "GL_LINEAR" );
+            Weapons[0, 1] = BasePicture.FromWad( Host.Video.Device, Host.Wads.FromTexture( "inv_sshotgun" ), "inv_sshotgun", "GL_LINEAR" );
+            Weapons[0, 2] = BasePicture.FromWad( Host.Video.Device, Host.Wads.FromTexture( "inv_nailgun" ), "inv_nailgun", "GL_LINEAR" );
+            Weapons[0, 3] = BasePicture.FromWad( Host.Video.Device, Host.Wads.FromTexture( "inv_snailgun" ), "inv_snailgun", "GL_LINEAR" );
+            Weapons[0, 4] = BasePicture.FromWad( Host.Video.Device, Host.Wads.FromTexture( "inv_rlaunch" ), "inv_rlaunch", "GL_LINEAR" );
+            Weapons[0, 5] = BasePicture.FromWad( Host.Video.Device, Host.Wads.FromTexture( "inv_srlaunch" ), "inv_srlaunch", "GL_LINEAR" );
+            Weapons[0, 6] = BasePicture.FromWad( Host.Video.Device, Host.Wads.FromTexture( "inv_lightng" ), "inv_lightng", "GL_LINEAR" );
 
-            Weapons[1, 0] = BasePicture.FromWad( Host.Video.Device, Host.WadFactory.FromTexture( "inv2_shotgun" ), "inv2_shotgun", "GL_LINEAR" );
-            Weapons[1, 1] = BasePicture.FromWad( Host.Video.Device, Host.WadFactory.FromTexture( "inv2_sshotgun" ), "inv2_sshotgun", "GL_LINEAR" );
-            Weapons[1, 2] = BasePicture.FromWad( Host.Video.Device, Host.WadFactory.FromTexture( "inv2_nailgun" ), "inv2_nailgun", "GL_LINEAR" );
-            Weapons[1, 3] = BasePicture.FromWad( Host.Video.Device, Host.WadFactory.FromTexture( "inv2_snailgun" ), "inv2_snailgun", "GL_LINEAR" );
-            Weapons[1, 4] = BasePicture.FromWad( Host.Video.Device, Host.WadFactory.FromTexture( "inv2_rlaunch" ), "inv2_rlaunch", "GL_LINEAR" );
-            Weapons[1, 5] = BasePicture.FromWad( Host.Video.Device, Host.WadFactory.FromTexture( "inv2_srlaunch" ), "inv2_srlaunch", "GL_LINEAR" );
-            Weapons[1, 6] = BasePicture.FromWad( Host.Video.Device, Host.WadFactory.FromTexture( "inv2_lightng" ), "inv2_lightng", "GL_LINEAR" );
+            Weapons[1, 0] = BasePicture.FromWad( Host.Video.Device, Host.Wads.FromTexture( "inv2_shotgun" ), "inv2_shotgun", "GL_LINEAR" );
+            Weapons[1, 1] = BasePicture.FromWad( Host.Video.Device, Host.Wads.FromTexture( "inv2_sshotgun" ), "inv2_sshotgun", "GL_LINEAR" );
+            Weapons[1, 2] = BasePicture.FromWad( Host.Video.Device, Host.Wads.FromTexture( "inv2_nailgun" ), "inv2_nailgun", "GL_LINEAR" );
+            Weapons[1, 3] = BasePicture.FromWad( Host.Video.Device, Host.Wads.FromTexture( "inv2_snailgun" ), "inv2_snailgun", "GL_LINEAR" );
+            Weapons[1, 4] = BasePicture.FromWad( Host.Video.Device, Host.Wads.FromTexture( "inv2_rlaunch" ), "inv2_rlaunch", "GL_LINEAR" );
+            Weapons[1, 5] = BasePicture.FromWad( Host.Video.Device, Host.Wads.FromTexture( "inv2_srlaunch" ), "inv2_srlaunch", "GL_LINEAR" );
+            Weapons[1, 6] = BasePicture.FromWad( Host.Video.Device, Host.Wads.FromTexture( "inv2_lightng" ), "inv2_lightng", "GL_LINEAR" );
 
             for ( var i = 0; i < 5; i++ )
             {
                 var s = "inva" + ( i + 1 ).ToString();
 
-                Weapons[2 + i, 0] = BasePicture.FromWad( Host.Video.Device, Host.WadFactory.FromTexture( s + "_shotgun" ), s + "_shotgun", "GL_LINEAR" );
-                Weapons[2 + i, 1] = BasePicture.FromWad( Host.Video.Device, Host.WadFactory.FromTexture( s + "_sshotgun" ), s + "_sshotgun", "GL_LINEAR" );
-                Weapons[2 + i, 2] = BasePicture.FromWad( Host.Video.Device, Host.WadFactory.FromTexture( s + "_nailgun" ), s + "_nailgun", "GL_LINEAR" );
-                Weapons[2 + i, 3] = BasePicture.FromWad( Host.Video.Device, Host.WadFactory.FromTexture( s + "_snailgun" ), s + "_snailgun", "GL_LINEAR" );
-                Weapons[2 + i, 4] = BasePicture.FromWad( Host.Video.Device, Host.WadFactory.FromTexture( s + "_rlaunch" ), s + "_rlaunch", "GL_LINEAR" );
-                Weapons[2 + i, 5] = BasePicture.FromWad( Host.Video.Device, Host.WadFactory.FromTexture( s + "_srlaunch" ), s + "_srlaunch", "GL_LINEAR" );
-                Weapons[2 + i, 6] = BasePicture.FromWad( Host.Video.Device, Host.WadFactory.FromTexture( s + "_lightng" ), s + "_lightng", "GL_LINEAR" );
+                Weapons[2 + i, 0] = BasePicture.FromWad( Host.Video.Device, Host.Wads.FromTexture( s + "_shotgun" ), s + "_shotgun", "GL_LINEAR" );
+                Weapons[2 + i, 1] = BasePicture.FromWad( Host.Video.Device, Host.Wads.FromTexture( s + "_sshotgun" ), s + "_sshotgun", "GL_LINEAR" );
+                Weapons[2 + i, 2] = BasePicture.FromWad( Host.Video.Device, Host.Wads.FromTexture( s + "_nailgun" ), s + "_nailgun", "GL_LINEAR" );
+                Weapons[2 + i, 3] = BasePicture.FromWad( Host.Video.Device, Host.Wads.FromTexture( s + "_snailgun" ), s + "_snailgun", "GL_LINEAR" );
+                Weapons[2 + i, 4] = BasePicture.FromWad( Host.Video.Device, Host.Wads.FromTexture( s + "_rlaunch" ), s + "_rlaunch", "GL_LINEAR" );
+                Weapons[2 + i, 5] = BasePicture.FromWad( Host.Video.Device, Host.Wads.FromTexture( s + "_srlaunch" ), s + "_srlaunch", "GL_LINEAR" );
+                Weapons[2 + i, 6] = BasePicture.FromWad( Host.Video.Device, Host.Wads.FromTexture( s + "_lightng" ), s + "_lightng", "GL_LINEAR" );
             }
         }
 
         private void LoadAmmo( )
         {
-            Ammo[0] = BasePicture.FromWad( Host.Video.Device, Host.WadFactory.FromTexture( "anum_minus" ), "sb_shells", "GL_LINEAR" );
-            Ammo[1] = BasePicture.FromWad( Host.Video.Device, Host.WadFactory.FromTexture( "anum_minus" ), "sb_nails", "GL_LINEAR" );
-            Ammo[2] = BasePicture.FromWad( Host.Video.Device, Host.WadFactory.FromTexture( "anum_minus" ), "sb_rocket", "GL_LINEAR" );
-            Ammo[3] = BasePicture.FromWad( Host.Video.Device, Host.WadFactory.FromTexture( "anum_minus" ), "sb_cells", "GL_LINEAR" );
+            Ammo[0] = BasePicture.FromWad( Host.Video.Device, Host.Wads.FromTexture( "anum_minus" ), "sb_shells", "GL_LINEAR" );
+            Ammo[1] = BasePicture.FromWad( Host.Video.Device, Host.Wads.FromTexture( "anum_minus" ), "sb_nails", "GL_LINEAR" );
+            Ammo[2] = BasePicture.FromWad( Host.Video.Device, Host.Wads.FromTexture( "anum_minus" ), "sb_rocket", "GL_LINEAR" );
+            Ammo[3] = BasePicture.FromWad( Host.Video.Device, Host.Wads.FromTexture( "anum_minus" ), "sb_cells", "GL_LINEAR" );
         }
 
         private void LoadArmour( )
         {
-            Armour[0] = BasePicture.FromWad( Host.Video.Device, Host.WadFactory.FromTexture( "anum_minus" ), "sb_armor1", "GL_LINEAR" );
-            Armour[1] = BasePicture.FromWad( Host.Video.Device, Host.WadFactory.FromTexture( "anum_minus" ), "sb_armor2", "GL_LINEAR" );
-            Armour[2] = BasePicture.FromWad( Host.Video.Device, Host.WadFactory.FromTexture( "anum_minus" ), "sb_armor3", "GL_LINEAR" );
+            Armour[0] = BasePicture.FromWad( Host.Video.Device, Host.Wads.FromTexture( "anum_minus" ), "sb_armor1", "GL_LINEAR" );
+            Armour[1] = BasePicture.FromWad( Host.Video.Device, Host.Wads.FromTexture( "anum_minus" ), "sb_armor2", "GL_LINEAR" );
+            Armour[2] = BasePicture.FromWad( Host.Video.Device, Host.Wads.FromTexture( "anum_minus" ), "sb_armor3", "GL_LINEAR" );
         }
 
         private void LoadItems( )
         {
-            Items[0] = BasePicture.FromWad( Host.Video.Device, Host.WadFactory.FromTexture( "anum_minus" ), "sb_key1", "GL_LINEAR" );
-            Items[1] = BasePicture.FromWad( Host.Video.Device, Host.WadFactory.FromTexture( "anum_minus" ), "sb_key2", "GL_LINEAR" );
-            Items[2] = BasePicture.FromWad( Host.Video.Device, Host.WadFactory.FromTexture( "anum_minus" ), "sb_invis", "GL_LINEAR" );
-            Items[3] = BasePicture.FromWad( Host.Video.Device, Host.WadFactory.FromTexture( "anum_minus" ), "sb_invuln", "GL_LINEAR" );
-            Items[4] = BasePicture.FromWad( Host.Video.Device, Host.WadFactory.FromTexture( "anum_minus" ), "sb_suit", "GL_LINEAR" );
-            Items[5] = BasePicture.FromWad( Host.Video.Device, Host.WadFactory.FromTexture( "anum_minus" ), "sb_quad", "GL_LINEAR" );
+            Items[0] = BasePicture.FromWad( Host.Video.Device, Host.Wads.FromTexture( "anum_minus" ), "sb_key1", "GL_LINEAR" );
+            Items[1] = BasePicture.FromWad( Host.Video.Device, Host.Wads.FromTexture( "anum_minus" ), "sb_key2", "GL_LINEAR" );
+            Items[2] = BasePicture.FromWad( Host.Video.Device, Host.Wads.FromTexture( "anum_minus" ), "sb_invis", "GL_LINEAR" );
+            Items[3] = BasePicture.FromWad( Host.Video.Device, Host.Wads.FromTexture( "anum_minus" ), "sb_invuln", "GL_LINEAR" );
+            Items[4] = BasePicture.FromWad( Host.Video.Device, Host.Wads.FromTexture( "anum_minus" ), "sb_suit", "GL_LINEAR" );
+            Items[5] = BasePicture.FromWad( Host.Video.Device, Host.Wads.FromTexture( "anum_minus" ), "sb_quad", "GL_LINEAR" );
         }
 
         private void LoadSigil( )
         {
-            Sigil[0] = BasePicture.FromWad( Host.Video.Device, Host.WadFactory.FromTexture( "anum_minus" ), "sb_sigil1", "GL_LINEAR" );
-            Sigil[1] = BasePicture.FromWad( Host.Video.Device, Host.WadFactory.FromTexture( "anum_minus" ), "sb_sigil2", "GL_LINEAR" );
-            Sigil[2] = BasePicture.FromWad( Host.Video.Device, Host.WadFactory.FromTexture( "anum_minus" ), "sb_sigil3", "GL_LINEAR" );
-            Sigil[3] = BasePicture.FromWad( Host.Video.Device, Host.WadFactory.FromTexture( "anum_minus" ), "sb_sigil4", "GL_LINEAR" );
+            Sigil[0] = BasePicture.FromWad( Host.Video.Device, Host.Wads.FromTexture( "anum_minus" ), "sb_sigil1", "GL_LINEAR" );
+            Sigil[1] = BasePicture.FromWad( Host.Video.Device, Host.Wads.FromTexture( "anum_minus" ), "sb_sigil2", "GL_LINEAR" );
+            Sigil[2] = BasePicture.FromWad( Host.Video.Device, Host.Wads.FromTexture( "anum_minus" ), "sb_sigil3", "GL_LINEAR" );
+            Sigil[3] = BasePicture.FromWad( Host.Video.Device, Host.Wads.FromTexture( "anum_minus" ), "sb_sigil4", "GL_LINEAR" );
         }
 
         private void LoadFaces( )
         {
-            Faces[4, 0] = BasePicture.FromWad( Host.Video.Device, Host.WadFactory.FromTexture( "anum_minus" ), "face1", "GL_NEAREST" );
-            Faces[4, 1] = BasePicture.FromWad( Host.Video.Device, Host.WadFactory.FromTexture( "anum_minus" ), "face_p1", "GL_NEAREST" );
-            Faces[3, 0] = BasePicture.FromWad( Host.Video.Device, Host.WadFactory.FromTexture( "anum_minus" ), "face2", "GL_NEAREST" );
-            Faces[3, 1] = BasePicture.FromWad( Host.Video.Device, Host.WadFactory.FromTexture( "anum_minus" ), "face_p2", "GL_NEAREST" );
-            Faces[2, 0] = BasePicture.FromWad( Host.Video.Device, Host.WadFactory.FromTexture( "anum_minus" ), "face3", "GL_NEAREST" );
-            Faces[2, 1] = BasePicture.FromWad( Host.Video.Device, Host.WadFactory.FromTexture( "anum_minus" ), "face_p3", "GL_NEAREST" );
-            Faces[1, 0] = BasePicture.FromWad( Host.Video.Device, Host.WadFactory.FromTexture( "anum_minus" ), "face4", "GL_NEAREST" );
-            Faces[1, 1] = BasePicture.FromWad( Host.Video.Device, Host.WadFactory.FromTexture( "anum_minus" ), "face_p4", "GL_NEAREST" );
-            Faces[0, 0] = BasePicture.FromWad( Host.Video.Device, Host.WadFactory.FromTexture( "anum_minus" ), "face5", "GL_NEAREST" );
-            Faces[0, 1] = BasePicture.FromWad( Host.Video.Device, Host.WadFactory.FromTexture( "anum_minus" ), "face_p5", "GL_NEAREST" );
+            Faces[4, 0] = BasePicture.FromWad( Host.Video.Device, Host.Wads.FromTexture( "anum_minus" ), "face1", "GL_NEAREST" );
+            Faces[4, 1] = BasePicture.FromWad( Host.Video.Device, Host.Wads.FromTexture( "anum_minus" ), "face_p1", "GL_NEAREST" );
+            Faces[3, 0] = BasePicture.FromWad( Host.Video.Device, Host.Wads.FromTexture( "anum_minus" ), "face2", "GL_NEAREST" );
+            Faces[3, 1] = BasePicture.FromWad( Host.Video.Device, Host.Wads.FromTexture( "anum_minus" ), "face_p2", "GL_NEAREST" );
+            Faces[2, 0] = BasePicture.FromWad( Host.Video.Device, Host.Wads.FromTexture( "anum_minus" ), "face3", "GL_NEAREST" );
+            Faces[2, 1] = BasePicture.FromWad( Host.Video.Device, Host.Wads.FromTexture( "anum_minus" ), "face_p3", "GL_NEAREST" );
+            Faces[1, 0] = BasePicture.FromWad( Host.Video.Device, Host.Wads.FromTexture( "anum_minus" ), "face4", "GL_NEAREST" );
+            Faces[1, 1] = BasePicture.FromWad( Host.Video.Device, Host.Wads.FromTexture( "anum_minus" ), "face_p4", "GL_NEAREST" );
+            Faces[0, 0] = BasePicture.FromWad( Host.Video.Device, Host.Wads.FromTexture( "anum_minus" ), "face5", "GL_NEAREST" );
+            Faces[0, 1] = BasePicture.FromWad( Host.Video.Device, Host.Wads.FromTexture( "anum_minus" ), "face_p5", "GL_NEAREST" );
 
-            FaceInvis = BasePicture.FromWad( Host.Video.Device, Host.WadFactory.FromTexture( "anum_minus" ), "face_invis", "GL_NEAREST" );
-            FaceInvuln = BasePicture.FromWad( Host.Video.Device, Host.WadFactory.FromTexture( "anum_minus" ), "face_invul2", "GL_NEAREST" );
-            FaceInvisInvuln = BasePicture.FromWad( Host.Video.Device, Host.WadFactory.FromTexture( "anum_minus" ), "face_inv2", "GL_NEAREST" );
-            FaceQuad = BasePicture.FromWad( Host.Video.Device, Host.WadFactory.FromTexture( "anum_minus" ), "face_quad", "GL_NEAREST" );
+            FaceInvis = BasePicture.FromWad( Host.Video.Device, Host.Wads.FromTexture( "anum_minus" ), "face_invis", "GL_NEAREST" );
+            FaceInvuln = BasePicture.FromWad( Host.Video.Device, Host.Wads.FromTexture( "anum_minus" ), "face_invul2", "GL_NEAREST" );
+            FaceInvisInvuln = BasePicture.FromWad( Host.Video.Device, Host.Wads.FromTexture( "anum_minus" ), "face_inv2", "GL_NEAREST" );
+            FaceQuad = BasePicture.FromWad( Host.Video.Device, Host.Wads.FromTexture( "anum_minus" ), "face_quad", "GL_NEAREST" );
         }
 
         private void LoadBars( )
         {
-            SBar = BasePicture.FromWad( Host.Video.Device, Host.WadFactory.FromTexture( "anum_minus" ), "sbar", "GL_NEAREST" );
-            IBar = BasePicture.FromWad( Host.Video.Device, Host.WadFactory.FromTexture( "anum_minus" ), "ibar", "GL_NEAREST" );
-            ScoreBar = BasePicture.FromWad( Host.Video.Device, Host.WadFactory.FromTexture( "anum_minus" ), "scorebar", "GL_LINEAR" );
+            SBar = BasePicture.FromWad( Host.Video.Device, Host.Wads.FromTexture( "anum_minus" ), "sbar", "GL_NEAREST" );
+            IBar = BasePicture.FromWad( Host.Video.Device, Host.Wads.FromTexture( "anum_minus" ), "ibar", "GL_NEAREST" );
+            ScoreBar = BasePicture.FromWad( Host.Video.Device, Host.Wads.FromTexture( "anum_minus" ), "scorebar", "GL_LINEAR" );
         }
 
         private void LoadHipnotic()
         {
-            HWeapons[0, 0] = BasePicture.FromWad( Host.Video.Device, Host.WadFactory.FromTexture( "anum_minus" ), "inv_laser", "GL_LINEAR" );
-            HWeapons[0, 1] = BasePicture.FromWad( Host.Video.Device, Host.WadFactory.FromTexture( "anum_minus" ), "inv_mjolnir", "GL_LINEAR" );
-            HWeapons[0, 2] = BasePicture.FromWad( Host.Video.Device, Host.WadFactory.FromTexture( "anum_minus" ), "inv_gren_prox", "GL_LINEAR" );
-            HWeapons[0, 3] = BasePicture.FromWad( Host.Video.Device, Host.WadFactory.FromTexture( "anum_minus" ), "inv_prox_gren", "GL_LINEAR" );
-            HWeapons[0, 4] = BasePicture.FromWad( Host.Video.Device, Host.WadFactory.FromTexture( "anum_minus" ), "inv_prox", "GL_LINEAR" );
+            HWeapons[0, 0] = BasePicture.FromWad( Host.Video.Device, Host.Wads.FromTexture( "anum_minus" ), "inv_laser", "GL_LINEAR" );
+            HWeapons[0, 1] = BasePicture.FromWad( Host.Video.Device, Host.Wads.FromTexture( "anum_minus" ), "inv_mjolnir", "GL_LINEAR" );
+            HWeapons[0, 2] = BasePicture.FromWad( Host.Video.Device, Host.Wads.FromTexture( "anum_minus" ), "inv_gren_prox", "GL_LINEAR" );
+            HWeapons[0, 3] = BasePicture.FromWad( Host.Video.Device, Host.Wads.FromTexture( "anum_minus" ), "inv_prox_gren", "GL_LINEAR" );
+            HWeapons[0, 4] = BasePicture.FromWad( Host.Video.Device, Host.Wads.FromTexture( "anum_minus" ), "inv_prox", "GL_LINEAR" );
 
-            HWeapons[1, 0] = BasePicture.FromWad( Host.Video.Device, Host.WadFactory.FromTexture( "anum_minus" ), "inv2_laser", "GL_LINEAR" );
-            HWeapons[1, 1] = BasePicture.FromWad( Host.Video.Device, Host.WadFactory.FromTexture( "anum_minus" ), "inv2_mjolnir", "GL_LINEAR" );
-            HWeapons[1, 2] = BasePicture.FromWad( Host.Video.Device, Host.WadFactory.FromTexture( "anum_minus" ), "inv2_gren_prox", "GL_LINEAR" );
-            HWeapons[1, 3] = BasePicture.FromWad( Host.Video.Device, Host.WadFactory.FromTexture( "anum_minus" ), "inv2_prox_gren", "GL_LINEAR" );
-            HWeapons[1, 4] = BasePicture.FromWad( Host.Video.Device, Host.WadFactory.FromTexture( "anum_minus" ), "inv2_prox", "GL_LINEAR" );
+            HWeapons[1, 0] = BasePicture.FromWad( Host.Video.Device, Host.Wads.FromTexture( "anum_minus" ), "inv2_laser", "GL_LINEAR" );
+            HWeapons[1, 1] = BasePicture.FromWad( Host.Video.Device, Host.Wads.FromTexture( "anum_minus" ), "inv2_mjolnir", "GL_LINEAR" );
+            HWeapons[1, 2] = BasePicture.FromWad( Host.Video.Device, Host.Wads.FromTexture( "anum_minus" ), "inv2_gren_prox", "GL_LINEAR" );
+            HWeapons[1, 3] = BasePicture.FromWad( Host.Video.Device, Host.Wads.FromTexture( "anum_minus" ), "inv2_prox_gren", "GL_LINEAR" );
+            HWeapons[1, 4] = BasePicture.FromWad( Host.Video.Device, Host.Wads.FromTexture( "anum_minus" ), "inv2_prox", "GL_LINEAR" );
 
             for ( var i = 0; i < 5; i++ )
             {
                 var s = "inva" + ( i + 1 ).ToString();
-                HWeapons[2 + i, 0] = BasePicture.FromWad( Host.Video.Device, Host.WadFactory.FromTexture( "anum_minus" ), s + "_laser", "GL_LINEAR" );
-                HWeapons[2 + i, 1] = BasePicture.FromWad( Host.Video.Device, Host.WadFactory.FromTexture( "anum_minus" ), s + "_mjolnir", "GL_LINEAR" );
-                HWeapons[2 + i, 2] = BasePicture.FromWad( Host.Video.Device, Host.WadFactory.FromTexture( "anum_minus" ), s + "_gren_prox", "GL_LINEAR" );
-                HWeapons[2 + i, 3] = BasePicture.FromWad( Host.Video.Device, Host.WadFactory.FromTexture( "anum_minus" ), s + "_prox_gren", "GL_LINEAR" );
-                HWeapons[2 + i, 4] = BasePicture.FromWad( Host.Video.Device, Host.WadFactory.FromTexture( "anum_minus" ), s + "_prox", "GL_LINEAR" );
+                HWeapons[2 + i, 0] = BasePicture.FromWad( Host.Video.Device, Host.Wads.FromTexture( "anum_minus" ), s + "_laser", "GL_LINEAR" );
+                HWeapons[2 + i, 1] = BasePicture.FromWad( Host.Video.Device, Host.Wads.FromTexture( "anum_minus" ), s + "_mjolnir", "GL_LINEAR" );
+                HWeapons[2 + i, 2] = BasePicture.FromWad( Host.Video.Device, Host.Wads.FromTexture( "anum_minus" ), s + "_gren_prox", "GL_LINEAR" );
+                HWeapons[2 + i, 3] = BasePicture.FromWad( Host.Video.Device, Host.Wads.FromTexture( "anum_minus" ), s + "_prox_gren", "GL_LINEAR" );
+                HWeapons[2 + i, 4] = BasePicture.FromWad( Host.Video.Device, Host.Wads.FromTexture( "anum_minus" ), s + "_prox", "GL_LINEAR" );
             }
 
-            HItems[0] = BasePicture.FromWad( Host.Video.Device, Host.WadFactory.FromTexture( "anum_minus" ), "sb_wsuit", "GL_LINEAR" );
-            HItems[1] = BasePicture.FromWad( Host.Video.Device, Host.WadFactory.FromTexture( "anum_minus" ), "sb_eshld", "GL_LINEAR" );
+            HItems[0] = BasePicture.FromWad( Host.Video.Device, Host.Wads.FromTexture( "anum_minus" ), "sb_wsuit", "GL_LINEAR" );
+            HItems[1] = BasePicture.FromWad( Host.Video.Device, Host.Wads.FromTexture( "anum_minus" ), "sb_eshld", "GL_LINEAR" );
         }
 
         private void LoadRogue()
         {
-            RInvBar[0] = BasePicture.FromWad( Host.Video.Device, Host.WadFactory.FromTexture( "anum_minus" ), "r_invbar1", "GL_LINEAR" );
-            RInvBar[1] = BasePicture.FromWad( Host.Video.Device, Host.WadFactory.FromTexture( "anum_minus" ), "r_invbar2", "GL_LINEAR" );
+            RInvBar[0] = BasePicture.FromWad( Host.Video.Device, Host.Wads.FromTexture( "anum_minus" ), "r_invbar1", "GL_LINEAR" );
+            RInvBar[1] = BasePicture.FromWad( Host.Video.Device, Host.Wads.FromTexture( "anum_minus" ), "r_invbar2", "GL_LINEAR" );
 
-            RWeapons[0] = BasePicture.FromWad( Host.Video.Device, Host.WadFactory.FromTexture( "anum_minus" ), "r_lava", "GL_LINEAR" );
-            RWeapons[1] = BasePicture.FromWad( Host.Video.Device, Host.WadFactory.FromTexture( "anum_minus" ), "r_superlava", "GL_LINEAR" );
-            RWeapons[2] = BasePicture.FromWad( Host.Video.Device, Host.WadFactory.FromTexture( "anum_minus" ), "r_gren", "GL_LINEAR" );
-            RWeapons[3] = BasePicture.FromWad( Host.Video.Device, Host.WadFactory.FromTexture( "anum_minus" ), "r_multirock", "GL_LINEAR" );
-            RWeapons[4] = BasePicture.FromWad( Host.Video.Device, Host.WadFactory.FromTexture( "anum_minus" ), "r_plasma", "GL_LINEAR" );
+            RWeapons[0] = BasePicture.FromWad( Host.Video.Device, Host.Wads.FromTexture( "anum_minus" ), "r_lava", "GL_LINEAR" );
+            RWeapons[1] = BasePicture.FromWad( Host.Video.Device, Host.Wads.FromTexture( "anum_minus" ), "r_superlava", "GL_LINEAR" );
+            RWeapons[2] = BasePicture.FromWad( Host.Video.Device, Host.Wads.FromTexture( "anum_minus" ), "r_gren", "GL_LINEAR" );
+            RWeapons[3] = BasePicture.FromWad( Host.Video.Device, Host.Wads.FromTexture( "anum_minus" ), "r_multirock", "GL_LINEAR" );
+            RWeapons[4] = BasePicture.FromWad( Host.Video.Device, Host.Wads.FromTexture( "anum_minus" ), "r_plasma", "GL_LINEAR" );
 
-            RItems[0] = BasePicture.FromWad( Host.Video.Device, Host.WadFactory.FromTexture( "anum_minus" ), "r_shield1", "GL_LINEAR" );
-            RItems[1] = BasePicture.FromWad( Host.Video.Device, Host.WadFactory.FromTexture( "anum_minus" ), "r_agrav1", "GL_LINEAR" );
+            RItems[0] = BasePicture.FromWad( Host.Video.Device, Host.Wads.FromTexture( "anum_minus" ), "r_shield1", "GL_LINEAR" );
+            RItems[1] = BasePicture.FromWad( Host.Video.Device, Host.Wads.FromTexture( "anum_minus" ), "r_agrav1", "GL_LINEAR" );
 
             // PGM 01/19/97 - team color border
-            RTeamBord = BasePicture.FromWad( Host.Video.Device, Host.WadFactory.FromTexture( "anum_minus" ), "r_teambord", "GL_LINEAR" );
+            RTeamBord = BasePicture.FromWad( Host.Video.Device, Host.Wads.FromTexture( "anum_minus" ), "r_teambord", "GL_LINEAR" );
             // PGM 01/19/97 - team color border
 
-            RAmmo[0] = BasePicture.FromWad( Host.Video.Device, Host.WadFactory.FromTexture( "anum_minus" ), "r_ammolava", "GL_LINEAR" );
-            RAmmo[1] = BasePicture.FromWad( Host.Video.Device, Host.WadFactory.FromTexture( "anum_minus" ), "r_ammomulti", "GL_LINEAR" );
-            RAmmo[2] = BasePicture.FromWad( Host.Video.Device, Host.WadFactory.FromTexture( "anum_minus" ), "r_ammoplasma", "GL_LINEAR" );
+            RAmmo[0] = BasePicture.FromWad( Host.Video.Device, Host.Wads.FromTexture( "anum_minus" ), "r_ammolava", "GL_LINEAR" );
+            RAmmo[1] = BasePicture.FromWad( Host.Video.Device, Host.Wads.FromTexture( "anum_minus" ), "r_ammomulti", "GL_LINEAR" );
+            RAmmo[2] = BasePicture.FromWad( Host.Video.Device, Host.Wads.FromTexture( "anum_minus" ), "r_ammoplasma", "GL_LINEAR" );
         }
 
         // Sbar_Init

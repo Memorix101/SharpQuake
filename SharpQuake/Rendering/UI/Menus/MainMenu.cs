@@ -22,97 +22,102 @@
 /// Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 /// </copyright>
 
-using System;
+using SharpQuake.Factories.Rendering.UI;
 using SharpQuake.Framework;
 using SharpQuake.Framework.IO.Input;
+using System;
 
 namespace SharpQuake.Rendering.UI
 {
-    /// <summary>
-    /// MainMenu
-    /// </summary>
-    public class MainMenu : MenuBase
-    {
-        private const Int32 MAIN_ITEMS = 5;
-        private Int32 _SaveDemoNum;
+	/// <summary>
+	/// MainMenu
+	/// </summary>
+	public class MainMenu : BaseMenu
+	{
+		private const Int32 MAIN_ITEMS = 5;
+		private Int32 _SaveDemoNum;
 
-        public override void Show( Host host )
-        {
-            if ( host.Keyboard.Destination != KeyDestination.key_menu )
-            {
-                _SaveDemoNum = host.Client.cls.demonum;
-                host.Client.cls.demonum = -1;
-            }
+		public MainMenu( MenuFactory menuFactory ) : base( "menu_main", menuFactory )
+		{
+		}
 
-            base.Show( host );
-        }
+		public override void Show( Host host )
+		{
+			if ( host.Keyboard.Destination != KeyDestination.key_menu )
+			{
+				_SaveDemoNum = host.Client.cls.demonum;
+				host.Client.cls.demonum = -1;
+			}
 
-        /// <summary>
-        /// M_Main_Key
-        /// </summary>
-        public override void KeyEvent( Int32 key )
-        {
-            switch ( key )
-            {
-                case KeysDef.K_ESCAPE:
-                    //Host.Keyboard.Destination = keydest_t.key_game;
-                    CurrentMenu.Hide( );
-                    Host.Client.cls.demonum = _SaveDemoNum;
-                    if ( Host.Client.cls.demonum != -1 && !Host.Client.cls.demoplayback && Host.Client.cls.state != cactive_t.ca_connected )
-                        Host.Client.NextDemo( );
-                    break;
+			base.Show( host );
+		}
 
-                case KeysDef.K_DOWNARROW:
-                    Host.Sound.LocalSound( "misc/menu1.wav" );
-                    if ( ++_Cursor >= MAIN_ITEMS )
-                        _Cursor = 0;
-                    break;
+		/// <summary>
+		/// M_Main_Key
+		/// </summary>
+		public override void KeyEvent( Int32 key )
+		{
+			switch ( key )
+			{
+				case KeysDef.K_ESCAPE:
+					//Host.Keyboard.Destination = keydest_t.key_game;
+					MenuFactory.CurrentMenu.Hide();
+					Host.Client.cls.demonum = _SaveDemoNum;
+					if ( Host.Client.cls.demonum != -1 && !Host.Client.cls.demoplayback && Host.Client.cls.state != cactive_t.ca_connected )
+						Host.Client.NextDemo();
+					break;
 
-                case KeysDef.K_UPARROW:
-                    Host.Sound.LocalSound( "misc/menu1.wav" );
-                    if ( --_Cursor < 0 )
-                        _Cursor = MAIN_ITEMS - 1;
-                    break;
+				case KeysDef.K_DOWNARROW:
+					Host.Sound.LocalSound( "misc/menu1.wav" );
+					if ( ++Cursor >= MAIN_ITEMS )
+						Cursor = 0;
+					break;
 
-                case KeysDef.K_ENTER:
-                    Host.Menu.EnterSound = true;
+				case KeysDef.K_UPARROW:
+					Host.Sound.LocalSound( "misc/menu1.wav" );
+					if ( --Cursor < 0 )
+						Cursor = MAIN_ITEMS - 1;
+					break;
 
-                    switch ( _Cursor )
-                    {
-                        case 0:
-                            SinglePlayerMenu.Show( Host );
-                            break;
+				case KeysDef.K_ENTER:
+					Host.Menus.EnterSound = true;
 
-                        case 1:
-                            MultiPlayerMenu.Show( Host );
-                            break;
+					switch ( Cursor )
+					{
+						case 0:
+							MenuFactory.Show( "menu_singleplayer" );
+							break;
 
-                        case 2:
-                            OptionsMenu.Show( Host );
-                            break;
+						case 1:
+							MenuFactory.Show( "menu_multiplayer" );
+							break;
 
-                        case 3:
-                            HelpMenu.Show( Host );
-                            break;
+						case 2:
+							MenuFactory.Show( "menu_options" );
+							break;
 
-                        case 4:
-                            QuitMenu.Show( Host );
-                            break;
-                    }
-                    break;
-            }
-        }
+						case 3:
+							MenuFactory.Show( "menu_help" );
+							break;
 
-        public override void Draw( )
-        {
-            Host.Menu.DrawTransPic( 16, 4, Host.DrawingContext.CachePic( "gfx/qplaque.lmp", "GL_NEAREST" ) );
-            var p = Host.DrawingContext.CachePic( "gfx/ttl_main.lmp", "GL_NEAREST" );
-            Host.Menu.DrawPic( ( 320 - p.Width ) / 2, 4, p );
-            Host.Menu.DrawTransPic(72, 32, Host.DrawingContext.CachePic( "gfx/mainmenu.lmp", "GL_NEAREST" ) );
-            
-            var f = ( Int32 ) ( Host.Time * 10 ) % 6;
+						case 4:
+							MenuFactory.Show( "menu_quit" );
+							break;
+					}
+					break;
+			}
+		}
 
-            Host.Menu.DrawTransPic( 54, 32 + _Cursor * 20, Host.DrawingContext.CachePic( String.Format( "gfx/menudot{0}.lmp", f + 1 ), "GL_NEAREST" ) );
-        }
-    }
+		public override void Draw( )
+		{
+			Host.Menus.DrawTransPic( 16, 4, Host.DrawingContext.CachePic( "gfx/qplaque.lmp", "GL_NEAREST" ) );
+			var p = Host.DrawingContext.CachePic( "gfx/ttl_main.lmp", "GL_NEAREST" );
+			Host.Menus.DrawPic( ( 320 - p.Width ) / 2, 4, p );
+			Host.Menus.DrawTransPic( 72, 32, Host.DrawingContext.CachePic( "gfx/mainmenu.lmp", "GL_NEAREST" ) );
+
+			var f = ( Int32 ) ( Host.Time * 10 ) % 6;
+
+			Host.Menus.DrawTransPic( 54, 32 + Cursor * 20, Host.DrawingContext.CachePic( String.Format( "gfx/menudot{0}.lmp", f + 1 ), "GL_NEAREST" ) );
+		}
+	}
 }

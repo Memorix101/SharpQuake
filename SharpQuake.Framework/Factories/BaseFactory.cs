@@ -135,7 +135,7 @@ namespace SharpQuake.Framework.Factories
                 return ListItems.Select( v => v.Value ).ToArray( )[index];
         }
 
-        public void Add( TKey key, TItem item )
+        public virtual void Add( TKey key, TItem item )
         {
             var exists = Contains( key );
 
@@ -148,7 +148,7 @@ namespace SharpQuake.Framework.Factories
                 ListItems.Add( new KeyValuePair<TKey, TItem>( key, item ) );
         }
 
-        public void Remove( TKey key )
+        public virtual void Remove( TKey key )
         {
             var exists = Contains( key );
 

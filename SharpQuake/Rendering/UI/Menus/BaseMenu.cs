@@ -23,51 +23,25 @@
 /// </copyright>
 
 using System;
+using SharpQuake.Factories.Rendering.UI;
 using SharpQuake.Framework;
 using SharpQuake.Framework.IO.Input;
 
 namespace SharpQuake.Rendering.UI
 {
-    public abstract class MenuBase
+    public abstract class BaseMenu
     {
-        public static MenuBase CurrentMenu
+        public String Name
         {
-            get
-            {
-                return _CurrentMenu;
-            }
+            get;
+            private set;
         }
 
         public Int32 Cursor
         {
-            get
-            {
-                return _Cursor;
-            }
+            get;
+            protected set;
         }
-
-        // Top level menu items
-        public static readonly MenuBase MainMenu = new MainMenu( );
-
-        public static readonly MenuBase SinglePlayerMenu = new SinglePlayerMenu( );
-        public static readonly MenuBase MultiPlayerMenu = new MultiplayerMenu( );
-        public static readonly MenuBase OptionsMenu = new OptionsMenu( );
-        public static readonly MenuBase HelpMenu = new HelpMenu( );
-        public static readonly MenuBase QuitMenu = new QuitMenu( );
-        public static readonly MenuBase LoadMenu = new LoadMenu( );
-        public static readonly MenuBase SaveMenu = new SaveMenu( );
-
-        // Submenus
-        public static readonly MenuBase KeysMenu = new KeysMenu( );
-
-        public static readonly MenuBase LanConfigMenu = new LanConfigMenu( );
-        public static readonly MenuBase SetupMenu = new SetupMenu( );
-        public static readonly MenuBase GameOptionsMenu = new GameOptionsMenu( );
-        public static readonly MenuBase SearchMenu = new SearchMenu( );
-        public static readonly MenuBase ServerListMenu = new ServerListMenu( );
-        public static readonly MenuBase VideoMenu = new VideoMenu( );
-        protected Int32 _Cursor;
-        private static MenuBase _CurrentMenu;
 
         // CHANGE 
         protected Host Host
@@ -76,19 +50,31 @@ namespace SharpQuake.Rendering.UI
             set;
         }
 
+        protected MenuFactory MenuFactory
+		{
+            get;
+            set;
+		}
+
+        public BaseMenu( String name, MenuFactory menuFactory )
+		{
+            Name = name;
+            MenuFactory = menuFactory;
+        }
+
         public void Hide( )
         {
             Host.Keyboard.Destination = KeyDestination.key_game;
-            _CurrentMenu = null;
+            MenuFactory.SetActive( null );
         }
 
         public virtual void Show( Host host )
         {
             Host = host;
 
-            Host.Menu.EnterSound = true;
+            Host.Menus.EnterSound = true;
             Host.Keyboard.Destination = KeyDestination.key_menu;
-            _CurrentMenu = this;
+            MenuFactory.SetActive( this );
         }
 
         public abstract void KeyEvent( Int32 key );

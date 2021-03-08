@@ -23,15 +23,20 @@
 /// </copyright>
 
 using System;
+using SharpQuake.Factories.Rendering.UI;
 using SharpQuake.Framework;
 
 namespace SharpQuake.Rendering.UI
 {
-    public class HelpMenu : MenuBase
+    public class HelpMenu : BaseMenu
     {
         private const Int32 NUM_HELP_PAGES = 6;
 
         private Int32 _Page;
+
+        public HelpMenu( MenuFactory menuFactory ) : base( "help", menuFactory )
+        {
+        }
 
         public override void Show( Host host )
         {
@@ -44,19 +49,19 @@ namespace SharpQuake.Rendering.UI
             switch ( key )
             {
                 case KeysDef.K_ESCAPE:
-                    MainMenu.Show( Host );
+                    MenuFactory.Show( "menu_main" );
                     break;
 
                 case KeysDef.K_UPARROW:
                 case KeysDef.K_RIGHTARROW:
-                    Host.Menu.EnterSound = true;
+                    Host.Menus.EnterSound = true;
                     if ( ++_Page >= NUM_HELP_PAGES )
                         _Page = 0;
                     break;
 
                 case KeysDef.K_DOWNARROW:
                 case KeysDef.K_LEFTARROW:
-                    Host.Menu.EnterSound = true;
+                    Host.Menus.EnterSound = true;
                     if ( --_Page < 0 )
                         _Page = NUM_HELP_PAGES - 1;
                     break;
@@ -65,7 +70,7 @@ namespace SharpQuake.Rendering.UI
 
         public override void Draw( )
         {
-            Host.Menu.DrawPic( 0, 0, Host.DrawingContext.CachePic( String.Format( "gfx/help{0}.lmp", _Page ), "GL_NEAREST" ) );
+            Host.Menus.DrawPic( 0, 0, Host.DrawingContext.CachePic( String.Format( "gfx/help{0}.lmp", _Page ), "GL_NEAREST" ) );
         }
     }
 }

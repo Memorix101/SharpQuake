@@ -192,12 +192,12 @@ namespace SharpQuake
                         break;
 
                     case KeyDestination.key_menu:
-                        Host.Menu.KeyDown( key );
+                        Host.Menus.KeyDown( key );
                         break;
 
                     case KeyDestination.key_game:
                     case KeyDestination.key_console:
-                        Host.Menu.ToggleMenu_f( null );
+                        Host.Menus.ToggleMenu_f( null );
                         break;
 
                     default:
@@ -237,7 +237,7 @@ namespace SharpQuake
             //
             if ( Host.Client.cls.demoplayback && down && _ConsoleKeys[key] && _KeyDest == KeyDestination.key_game )
             {
-                Host.Menu.ToggleMenu_f( null );
+                Host.Menus.ToggleMenu_f( null );
                 return;
             }
 
@@ -280,7 +280,7 @@ namespace SharpQuake
                     break;
 
                 case KeyDestination.key_menu:
-                    Host.Menu.KeyDown( key );
+                    Host.Menus.KeyDown( key );
                     break;
 
                 case KeyDestination.key_game:

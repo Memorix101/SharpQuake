@@ -380,7 +380,7 @@ namespace SharpQuake.Rendering.UI
 				}
 				else
 				{
-					MenuBase.MainMenu.Show( Host );
+					Host.Menus.Show( "menu_main" );
 				}
 			}
 			else

@@ -23,14 +23,19 @@
 /// </copyright>
 
 using System;
+using SharpQuake.Factories.Rendering.UI;
 using SharpQuake.Framework;
 using SharpQuake.Framework.IO.Input;
 
 namespace SharpQuake.Rendering.UI
 {
-    public class SinglePlayerMenu : MenuBase
+    public class SinglePlayerMenu : BaseMenu
     {
         private const Int32 SINGLEPLAYER_ITEMS = 3;
+
+        public SinglePlayerMenu( MenuFactory menuFactory ) : base( "menu_singleplayer", menuFactory )
+        {
+        }
 
         /// <summary>
         /// M_SinglePlayer_Key
@@ -40,25 +45,25 @@ namespace SharpQuake.Rendering.UI
             switch ( key )
             {
                 case KeysDef.K_ESCAPE:
-                    MainMenu.Show( Host );
+                    MenuFactory.Show( "menu_main" );
                     break;
 
                 case KeysDef.K_DOWNARROW:
                     Host.Sound.LocalSound( "misc/menu1.wav" );
-                    if ( ++_Cursor >= SINGLEPLAYER_ITEMS )
-                        _Cursor = 0;
+                    if ( ++Cursor >= SINGLEPLAYER_ITEMS )
+                        Cursor = 0;
                     break;
 
                 case KeysDef.K_UPARROW:
                     Host.Sound.LocalSound( "misc/menu1.wav" );
-                    if ( --_Cursor < 0 )
-                        _Cursor = SINGLEPLAYER_ITEMS - 1;
+                    if ( --Cursor < 0 )
+                        Cursor = SINGLEPLAYER_ITEMS - 1;
                     break;
 
                 case KeysDef.K_ENTER:
-                    Host.Menu.EnterSound = true;
+                    Host.Menus.EnterSound = true;
 
-                    switch ( _Cursor )
+                    switch ( Cursor )
                     {
                         case 0:
                             if ( Host.Server.sv.active )
@@ -72,11 +77,11 @@ namespace SharpQuake.Rendering.UI
                             break;
 
                         case 1:
-                            LoadMenu.Show( Host );
+                            MenuFactory.Show( "menu_load" );
                             break;
 
                         case 2:
-                            SaveMenu.Show( Host );
+                            MenuFactory.Show( "menu_save" );
                             break;
                     }
                     break;
@@ -88,14 +93,14 @@ namespace SharpQuake.Rendering.UI
         /// </summary>
         public override void Draw( )
         {
-            Host.Menu.DrawTransPic( 16, 4, Host.DrawingContext.CachePic( "gfx/qplaque.lmp", "GL_NEAREST" ) );
+            Host.Menus.DrawTransPic( 16, 4, Host.DrawingContext.CachePic( "gfx/qplaque.lmp", "GL_NEAREST" ) );
             var p = Host.DrawingContext.CachePic( "gfx/ttl_sgl.lmp", "GL_NEAREST" );
-            Host.Menu.DrawPic( ( 320 - p.Width ) / 2, 4, p );
-            Host.Menu.DrawTransPic( 72, 32, Host.DrawingContext.CachePic( "gfx/sp_menu.lmp", "GL_NEAREST" ) );
+            Host.Menus.DrawPic( ( 320 - p.Width ) / 2, 4, p );
+            Host.Menus.DrawTransPic( 72, 32, Host.DrawingContext.CachePic( "gfx/sp_menu.lmp", "GL_NEAREST" ) );
 
             var f = ( Int32 ) ( Host.Time * 10 ) % 6;
 
-            Host.Menu.DrawTransPic( 54, 32 + _Cursor * 20, Host.DrawingContext.CachePic( String.Format( "gfx/menudot{0}.lmp", f + 1 ), "GL_NEAREST" ) );
+            Host.Menus.DrawTransPic( 54, 32 + Cursor * 20, Host.DrawingContext.CachePic( String.Format( "gfx/menudot{0}.lmp", f + 1 ), "GL_NEAREST" ) );
         }
     }
 }

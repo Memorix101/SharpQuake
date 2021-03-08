@@ -1050,10 +1050,10 @@ namespace SharpQuake
         {
             Host.Network.LanDriver.CloseSocket( newsock );
 
-            if ( Host.Menu.ReturnOnError && Host.Menu.ReturnMenu != null )
+            if ( Host.Menus.ReturnOnError && Host.Menus.ReturnMenu != null )
             {
-                Host.Menu.ReturnMenu.Show( Host );
-                Host.Menu.ReturnOnError = false;
+                Host.Menus.ReturnMenu.Show( Host );
+                Host.Menus.ReturnOnError = false;
             }
         }
 
@@ -1181,7 +1181,7 @@ namespace SharpQuake
             {
                 reason = "No Response";
                 Host.Console.Print( "{0}\n", reason );
-                Host.Menu.ReturnReason = reason;
+                Host.Menus.ReturnReason = reason;
                 CloseSocketAndError( sock, newsock );
                 return null;
             }
@@ -1190,7 +1190,7 @@ namespace SharpQuake
             {
                 reason = "Network Error";
                 Host.Console.Print( "{0}\n", reason );
-                Host.Menu.ReturnReason = reason;
+                Host.Menus.ReturnReason = reason;
                 CloseSocketAndError( sock, newsock );
                 return null;
             }
@@ -1200,7 +1200,7 @@ namespace SharpQuake
             {
                 reason = Host.Network.Reader.ReadString( );
                 Host.Console.Print( reason );
-                Host.Menu.ReturnReason = reason;
+                Host.Menus.ReturnReason = reason;
                 CloseSocketAndError( sock, newsock );
                 return null;
             }
@@ -1215,7 +1215,7 @@ namespace SharpQuake
             {
                 reason = "Bad Response";
                 Host.Console.Print( "{0}\n", reason );
-                Host.Menu.ReturnReason = reason;
+                Host.Menus.ReturnReason = reason;
                 CloseSocketAndError( sock, newsock );
                 return null;
             }
@@ -1230,12 +1230,12 @@ namespace SharpQuake
             {
                 reason = "Connect to Game failed";
                 Host.Console.Print( "{0}\n", reason );
-                Host.Menu.ReturnReason = reason;
+                Host.Menus.ReturnReason = reason;
                 CloseSocketAndError( sock, newsock );
                 return null;
             }
 
-            Host.Menu.ReturnOnError = false;
+            Host.Menus.ReturnOnError = false;
             return sock;
         }
 

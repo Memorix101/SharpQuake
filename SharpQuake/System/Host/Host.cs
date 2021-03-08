@@ -28,6 +28,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using SharpQuake.Factories.Rendering;
+using SharpQuake.Factories.Rendering.UI;
 using SharpQuake.Framework;
 using SharpQuake.Framework.Factories.IO;
 using SharpQuake.Framework.Factories.IO.WAD;
@@ -182,7 +183,7 @@ namespace SharpQuake
             private set;
         }
 
-        public WadFactory WadFactory
+        public WadFactory Wads
         {
             get;
             private set;
@@ -200,7 +201,7 @@ namespace SharpQuake
             private set;
         }
 
-        public Menu Menu
+        public MenuFactory Menus
         {
             get;
             private set;
@@ -328,8 +329,9 @@ namespace SharpQuake
             // Factories
             Commands = AddFactory<CommandFactory>( );
             CVars = AddFactory<ClientVariableFactory>( );
-            WadFactory = AddFactory<WadFactory>();
+            Wads = AddFactory<WadFactory>();
             Model = AddFactory<ModelFactory>();
+            Menus = AddFactory<MenuFactory>();
 
             Commands.Initialise( CVars );
 
@@ -342,7 +344,6 @@ namespace SharpQuake
             ChaseView = new ChaseView( this );
             Keyboard = new Keyboard( this );
             Console = new Con( this );
-            Menu = new Menu( this );
             Programs = new Programs( this );
             ProgramsBuiltIn = new ProgramsBuiltIn( this );
             Network = new Network( this );
@@ -419,7 +420,7 @@ namespace SharpQuake
 
         private void InitialiseWAD()
 		{
-            WadFactory.Initialise();
+            Wads.Initialise();
         }
 
         public void Initialise( QuakeParameters parms )
@@ -443,7 +444,7 @@ namespace SharpQuake
 
             Keyboard.Initialise( );
             Console.Initialise( );
-            Menu.Initialise( );
+            Menus.Initialise( this );
             Programs.Initialise( );
             ProgramsBuiltIn.Initialise( );
             Model.Initialise( this );

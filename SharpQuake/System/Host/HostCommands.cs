@@ -58,7 +58,7 @@ namespace SharpQuake
         {
             if ( Keyboard.Destination != KeyDestination.key_console && Client.cls.state != cactive_t.ca_dedicated )
             {
-                MenuBase.QuitMenu.Show( this );
+                Menus.Show( "menu_quit" );
                 return;
             }
 
