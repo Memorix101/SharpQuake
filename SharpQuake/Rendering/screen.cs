@@ -26,6 +26,7 @@ using System;
 using SharpQuake.Framework;
 using SharpQuake.Framework.IO;
 using SharpQuake.Framework.IO.Input;
+using SharpQuake.Game.Client;
 using SharpQuake.Renderer;
 using SharpQuake.Renderer.Textures;
 

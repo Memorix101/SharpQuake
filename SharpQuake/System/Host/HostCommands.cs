@@ -29,6 +29,7 @@ using System.Text;
 using SharpQuake.Framework;
 using SharpQuake.Framework.IO;
 using SharpQuake.Framework.IO.Input;
+using SharpQuake.Game.Client;
 using SharpQuake.Game.Data.Models;
 using SharpQuake.Rendering.UI;
 

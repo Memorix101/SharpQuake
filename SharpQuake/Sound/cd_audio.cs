@@ -51,6 +51,7 @@ using System.IO;
 using NVorbis.OpenTKSupport;
 using SharpQuake.Framework;
 using SharpQuake.Framework.IO;
+using SharpQuake.Game.Client;
 
 namespace SharpQuake
 {

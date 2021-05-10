@@ -30,6 +30,7 @@ using System.Runtime.InteropServices;
 using System.Text;
 using SharpQuake.Framework;
 using SharpQuake.Framework.IO;
+using SharpQuake.Game.Client;
 
 namespace SharpQuake
 {

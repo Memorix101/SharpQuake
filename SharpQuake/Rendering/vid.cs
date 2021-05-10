@@ -25,6 +25,7 @@
 using System;
 using System.IO;
 using SharpQuake.Framework;
+using SharpQuake.Framework.Definitions;
 using SharpQuake.Framework.IO;
 using SharpQuake.Renderer;
 
@@ -91,13 +92,7 @@ namespace SharpQuake
             {
                 return Device.ChosenMode;//_ModeNum;
             }
-        }
-
-        public const Int32 VID_CBITS = 6;
-        public const Int32 VID_GRADES = (1 << VID_CBITS);
-        public const Int32 VID_ROW_SIZE = 3;
-        private const Int32 WARP_WIDTH = 320;
-        private const Int32 WARP_HEIGHT = 200;        
+        }    
        
         // Instances
         private Host Host
@@ -204,8 +199,8 @@ namespace SharpQuake
 
         private void UpdateScreen()
         {
-            Host.Screen.vid.maxwarpwidth = WARP_WIDTH;
-            Host.Screen.vid.maxwarpheight = WARP_HEIGHT;
+            Host.Screen.vid.maxwarpwidth = VideoDef.WARP_WIDTH;
+            Host.Screen.vid.maxwarpheight = VideoDef.WARP_HEIGHT;
             Host.Screen.vid.colormap = Host.ColorMap;
             var v = BitConverter.ToInt32( Host.ColorMap, 2048 );
             Host.Screen.vid.fullbright = 256 - EndianHelper.LittleLong( v );

@@ -28,6 +28,7 @@ using SharpQuake.Framework.IO;
 using SharpQuake.Framework.IO.BSP;
 using SharpQuake.Framework.IO.Input;
 using SharpQuake.Framework.Mathematics;
+using SharpQuake.Game.Client;
 using SharpQuake.Game.Data.Models;
 using SharpQuake.Game.Networking.Server;
 using SharpQuake.Game.Rendering;

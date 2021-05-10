@@ -27,6 +27,8 @@ using SharpQuake.Framework.Mathematics;
 using SharpQuake.Framework;
 using SharpQuake.Framework.IO.BSP;
 using SharpQuake.Framework.IO;
+using SharpQuake.Game.Client;
+using SharpQuake.Framework.Definitions;
 
 // view.h
 // view.c -- player eye positioning
@@ -244,7 +246,7 @@ namespace SharpQuake
 			var isnew = false;
 
 			var cl = Host.Client.cl;
-			for ( var i = 0; i < ColorShift.NUM_CSHIFTS; i++ )
+			for ( var i = 0; i < ColourShiftDef.NUM_CSHIFTS; i++ )
 			{
 				if ( cl.cshifts[i].percent != cl.prev_cshifts[i].percent )
 				{
@@ -260,14 +262,14 @@ namespace SharpQuake
 			}
 
 			// drop the damage value
-			cl.cshifts[ColorShift.CSHIFT_DAMAGE].percent -= ( Int32 ) ( Host.FrameTime * 150 );
-			if ( cl.cshifts[ColorShift.CSHIFT_DAMAGE].percent < 0 )
-				cl.cshifts[ColorShift.CSHIFT_DAMAGE].percent = 0;
+			cl.cshifts[ColourShiftDef.CSHIFT_DAMAGE].percent -= ( Int32 ) ( Host.FrameTime * 150 );
+			if ( cl.cshifts[ColourShiftDef.CSHIFT_DAMAGE].percent < 0 )
+				cl.cshifts[ColourShiftDef.CSHIFT_DAMAGE].percent = 0;
 
 			// drop the bonus value
-			cl.cshifts[ColorShift.CSHIFT_BONUS].percent -= ( Int32 ) ( Host.FrameTime * 100 );
-			if ( cl.cshifts[ColorShift.CSHIFT_BONUS].percent < 0 )
-				cl.cshifts[ColorShift.CSHIFT_BONUS].percent = 0;
+			cl.cshifts[ColourShiftDef.CSHIFT_BONUS].percent -= ( Int32 ) ( Host.FrameTime * 100 );
+			if ( cl.cshifts[ColourShiftDef.CSHIFT_BONUS].percent < 0 )
+				cl.cshifts[ColourShiftDef.CSHIFT_BONUS].percent = 0;
 
 			var force = CheckGamma();
 			if ( !isnew && !force )
@@ -357,7 +359,7 @@ namespace SharpQuake
 
 			if ( Host.Cvars.glCShiftPercent.Get<Single>() != 0 )
 			{
-				for ( var j = 0; j < ColorShift.NUM_CSHIFTS; j++ )
+				for ( var j = 0; j < ColourShiftDef.NUM_CSHIFTS; j++ )
 				{
 					var a2 = ( ( cshifts[j].percent * Host.Cvars.glCShiftPercent.Get<Single>() ) / 100.0f ) / 255.0f;
 
@@ -397,29 +399,29 @@ namespace SharpQuake
 			var cl = Host.Client.cl;
 			cl.faceanimtime = ( Single ) cl.time + 0.2f; // put sbar face into pain frame
 
-			cl.cshifts[ColorShift.CSHIFT_DAMAGE].percent += ( Int32 ) ( 3 * count );
-			if ( cl.cshifts[ColorShift.CSHIFT_DAMAGE].percent < 0 )
-				cl.cshifts[ColorShift.CSHIFT_DAMAGE].percent = 0;
-			if ( cl.cshifts[ColorShift.CSHIFT_DAMAGE].percent > 150 )
-				cl.cshifts[ColorShift.CSHIFT_DAMAGE].percent = 150;
+			cl.cshifts[ColourShiftDef.CSHIFT_DAMAGE].percent += ( Int32 ) ( 3 * count );
+			if ( cl.cshifts[ColourShiftDef.CSHIFT_DAMAGE].percent < 0 )
+				cl.cshifts[ColourShiftDef.CSHIFT_DAMAGE].percent = 0;
+			if ( cl.cshifts[ColourShiftDef.CSHIFT_DAMAGE].percent > 150 )
+				cl.cshifts[ColourShiftDef.CSHIFT_DAMAGE].percent = 150;
 
 			if ( armor > blood )
 			{
-				cl.cshifts[ColorShift.CSHIFT_DAMAGE].destcolor[0] = 200;
-				cl.cshifts[ColorShift.CSHIFT_DAMAGE].destcolor[1] = 100;
-				cl.cshifts[ColorShift.CSHIFT_DAMAGE].destcolor[2] = 100;
+				cl.cshifts[ColourShiftDef.CSHIFT_DAMAGE].destcolor[0] = 200;
+				cl.cshifts[ColourShiftDef.CSHIFT_DAMAGE].destcolor[1] = 100;
+				cl.cshifts[ColourShiftDef.CSHIFT_DAMAGE].destcolor[2] = 100;
 			}
 			else if ( armor != 0 )
 			{
-				cl.cshifts[ColorShift.CSHIFT_DAMAGE].destcolor[0] = 220;
-				cl.cshifts[ColorShift.CSHIFT_DAMAGE].destcolor[1] = 50;
-				cl.cshifts[ColorShift.CSHIFT_DAMAGE].destcolor[2] = 50;
+				cl.cshifts[ColourShiftDef.CSHIFT_DAMAGE].destcolor[0] = 220;
+				cl.cshifts[ColourShiftDef.CSHIFT_DAMAGE].destcolor[1] = 50;
+				cl.cshifts[ColourShiftDef.CSHIFT_DAMAGE].destcolor[2] = 50;
 			}
 			else
 			{
-				cl.cshifts[ColorShift.CSHIFT_DAMAGE].destcolor[0] = 255;
-				cl.cshifts[ColorShift.CSHIFT_DAMAGE].destcolor[1] = 0;
-				cl.cshifts[ColorShift.CSHIFT_DAMAGE].destcolor[2] = 0;
+				cl.cshifts[ColourShiftDef.CSHIFT_DAMAGE].destcolor[0] = 255;
+				cl.cshifts[ColourShiftDef.CSHIFT_DAMAGE].destcolor[1] = 0;
+				cl.cshifts[ColourShiftDef.CSHIFT_DAMAGE].destcolor[2] = 0;
 			}
 
 			//
@@ -453,19 +455,19 @@ namespace SharpQuake
 			{
 				case Q1Contents.Empty:
 				case Q1Contents.Solid:
-					Host.Client.cl.cshifts[ColorShift.CSHIFT_CONTENTS] = _CShift_empty;
+					Host.Client.cl.cshifts[ColourShiftDef.CSHIFT_CONTENTS] = _CShift_empty;
 					break;
 
 				case Q1Contents.Lava:
-					Host.Client.cl.cshifts[ColorShift.CSHIFT_CONTENTS] = _CShift_lava;
+					Host.Client.cl.cshifts[ColourShiftDef.CSHIFT_CONTENTS] = _CShift_lava;
 					break;
 
 				case Q1Contents.Slime:
-					Host.Client.cl.cshifts[ColorShift.CSHIFT_CONTENTS] = _CShift_slime;
+					Host.Client.cl.cshifts[ColourShiftDef.CSHIFT_CONTENTS] = _CShift_slime;
 					break;
 
 				default:
-					Host.Client.cl.cshifts[ColorShift.CSHIFT_CONTENTS] = _CShift_water;
+					Host.Client.cl.cshifts[ColourShiftDef.CSHIFT_CONTENTS] = _CShift_water;
 					break;
 			}
 		}
@@ -509,10 +511,10 @@ namespace SharpQuake
 		private void BonusFlash_f( CommandMessage msg )
 		{
 			var cl = Host.Client.cl;
-			cl.cshifts[ColorShift.CSHIFT_BONUS].destcolor[0] = 215;
-			cl.cshifts[ColorShift.CSHIFT_BONUS].destcolor[1] = 186;
-			cl.cshifts[ColorShift.CSHIFT_BONUS].destcolor[2] = 69;
-			cl.cshifts[ColorShift.CSHIFT_BONUS].percent = 50;
+			cl.cshifts[ColourShiftDef.CSHIFT_BONUS].destcolor[0] = 215;
+			cl.cshifts[ColourShiftDef.CSHIFT_BONUS].destcolor[1] = 186;
+			cl.cshifts[ColourShiftDef.CSHIFT_BONUS].destcolor[2] = 69;
+			cl.cshifts[ColourShiftDef.CSHIFT_BONUS].percent = 50;
 		}
 
 		// V_CalcIntermissionRefdef
@@ -849,34 +851,34 @@ namespace SharpQuake
 			var cl = Host.Client.cl;
 			if ( cl.HasItems( QItemsDef.IT_QUAD ) )
 			{
-				cl.cshifts[ColorShift.CSHIFT_POWERUP].destcolor[0] = 0;
-				cl.cshifts[ColorShift.CSHIFT_POWERUP].destcolor[1] = 0;
-				cl.cshifts[ColorShift.CSHIFT_POWERUP].destcolor[2] = 255;
-				cl.cshifts[ColorShift.CSHIFT_POWERUP].percent = 30;
+				cl.cshifts[ColourShiftDef.CSHIFT_POWERUP].destcolor[0] = 0;
+				cl.cshifts[ColourShiftDef.CSHIFT_POWERUP].destcolor[1] = 0;
+				cl.cshifts[ColourShiftDef.CSHIFT_POWERUP].destcolor[2] = 255;
+				cl.cshifts[ColourShiftDef.CSHIFT_POWERUP].percent = 30;
 			}
 			else if ( cl.HasItems( QItemsDef.IT_SUIT ) )
 			{
-				cl.cshifts[ColorShift.CSHIFT_POWERUP].destcolor[0] = 0;
-				cl.cshifts[ColorShift.CSHIFT_POWERUP].destcolor[1] = 255;
-				cl.cshifts[ColorShift.CSHIFT_POWERUP].destcolor[2] = 0;
-				cl.cshifts[ColorShift.CSHIFT_POWERUP].percent = 20;
+				cl.cshifts[ColourShiftDef.CSHIFT_POWERUP].destcolor[0] = 0;
+				cl.cshifts[ColourShiftDef.CSHIFT_POWERUP].destcolor[1] = 255;
+				cl.cshifts[ColourShiftDef.CSHIFT_POWERUP].destcolor[2] = 0;
+				cl.cshifts[ColourShiftDef.CSHIFT_POWERUP].percent = 20;
 			}
 			else if ( cl.HasItems( QItemsDef.IT_INVISIBILITY ) )
 			{
-				cl.cshifts[ColorShift.CSHIFT_POWERUP].destcolor[0] = 100;
-				cl.cshifts[ColorShift.CSHIFT_POWERUP].destcolor[1] = 100;
-				cl.cshifts[ColorShift.CSHIFT_POWERUP].destcolor[2] = 100;
-				cl.cshifts[ColorShift.CSHIFT_POWERUP].percent = 100;
+				cl.cshifts[ColourShiftDef.CSHIFT_POWERUP].destcolor[0] = 100;
+				cl.cshifts[ColourShiftDef.CSHIFT_POWERUP].destcolor[1] = 100;
+				cl.cshifts[ColourShiftDef.CSHIFT_POWERUP].destcolor[2] = 100;
+				cl.cshifts[ColourShiftDef.CSHIFT_POWERUP].percent = 100;
 			}
 			else if ( cl.HasItems( QItemsDef.IT_INVULNERABILITY ) )
 			{
-				cl.cshifts[ColorShift.CSHIFT_POWERUP].destcolor[0] = 255;
-				cl.cshifts[ColorShift.CSHIFT_POWERUP].destcolor[1] = 255;
-				cl.cshifts[ColorShift.CSHIFT_POWERUP].destcolor[2] = 0;
-				cl.cshifts[ColorShift.CSHIFT_POWERUP].percent = 30;
+				cl.cshifts[ColourShiftDef.CSHIFT_POWERUP].destcolor[0] = 255;
+				cl.cshifts[ColourShiftDef.CSHIFT_POWERUP].destcolor[1] = 255;
+				cl.cshifts[ColourShiftDef.CSHIFT_POWERUP].destcolor[2] = 0;
+				cl.cshifts[ColourShiftDef.CSHIFT_POWERUP].percent = 30;
 			}
 			else
-				cl.cshifts[ColorShift.CSHIFT_POWERUP].percent = 0;
+				cl.cshifts[ColourShiftDef.CSHIFT_POWERUP].percent = 0;
 		}
 
 		// V_CheckGamma

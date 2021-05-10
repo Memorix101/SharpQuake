@@ -23,7 +23,9 @@
 /// </copyright>
 
 using SharpQuake.Framework;
+using SharpQuake.Framework.Definitions;
 using SharpQuake.Framework.IO;
+using SharpQuake.Game.Client;
 using SharpQuake.Game.Data.Models;
 using SharpQuake.Game.World;
 using System;
@@ -86,7 +88,7 @@ namespace SharpQuake
 		private Int32[] _BitCounts = new Int32[16]; // bitcounts
 		private Object _MsgState; // used by KeepaliveMessage function
 		private Single _LastMsg; // static float lastmsg from CL_KeepaliveMessage
-		delegate void ProcessMessageDelegate();
+		delegate void ProcessMessageDelegate( );
 
 		private Dictionary<Int32, ProcessMessageDelegate> MessageDelegates;
 
@@ -100,13 +102,13 @@ namespace SharpQuake
 			cl.mtime[0] = Host.Network.Reader.ReadFloat();
 		}
 
-		private void MessageCommandClientData()
+		private void MessageCommandClientData( )
 		{
 			var i = Host.Network.Reader.ReadShort();
 			ParseClientData( i );
 		}
 
-		private void MessageCommandVersion()
+		private void MessageCommandVersion( )
 		{
 			var i = Host.Network.Reader.ReadLong();
 
@@ -114,50 +116,50 @@ namespace SharpQuake
 				Host.Error( "CL_ParseServerMessage: Server is protocol {0} instead of {1}\n", i, ProtocolDef.PROTOCOL_VERSION );
 		}
 
-		private void MessageCommandDisconnect()
+		private void MessageCommandDisconnect( )
 		{
 			Host.EndGame( "Server disconnected\n" );
 		}
 
-		private void MessageCommandPrint()
+		private void MessageCommandPrint( )
 		{
 			Host.Console.Print( Host.Network.Reader.ReadString() );
 		}
 
-		private void MessageCommandCentrePrint()
+		private void MessageCommandCentrePrint( )
 		{
 			Host.Screen.CenterPrint( Host.Network.Reader.ReadString() );
 		}
 
-		private void MessageCommandStuffText()
+		private void MessageCommandStuffText( )
 		{
 			Host.Commands.Buffer.Append( Host.Network.Reader.ReadString() );
 		}
 
-		private void MessageCommandDamage()
+		private void MessageCommandDamage( )
 		{
 			Host.View.ParseDamage();
 		}
 
-		private void MessageCommandServerInfo()
+		private void MessageCommandServerInfo( )
 		{
 			ParseServerInfo();
 			Host.Screen.vid.recalc_refdef = true;   // leave intermission full screen
 		}
 
-		private void MessageCommandSetAngle()
+		private void MessageCommandSetAngle( )
 		{
 			cl.viewangles.X = Host.Network.Reader.ReadAngle();
 			cl.viewangles.Y = Host.Network.Reader.ReadAngle();
 			cl.viewangles.Z = Host.Network.Reader.ReadAngle();
 		}
 
-		private void MessageCommandSetView()
+		private void MessageCommandSetView( )
 		{
 			cl.viewentity = Host.Network.Reader.ReadShort();
 		}
 
-		private void MessageCommandLightStyle()
+		private void MessageCommandLightStyle( )
 		{
 			var i = Host.Network.Reader.ReadByte();
 
@@ -167,18 +169,18 @@ namespace SharpQuake
 			_LightStyle[i].map = Host.Network.Reader.ReadString();
 		}
 
-		private void MessageCommandSound()
+		private void MessageCommandSound( )
 		{
 			ParseStartSoundPacket();
 		}
 
-		private void MessageCommandStopSound()
+		private void MessageCommandStopSound( )
 		{
 			var i = Host.Network.Reader.ReadShort();
 			Host.Sound.StopSound( i >> 3, i & 7 );
 		}
 
-		private void MessageCommandUpdateName()
+		private void MessageCommandUpdateName( )
 		{
 			Host.Hud.Changed();
 
@@ -190,7 +192,7 @@ namespace SharpQuake
 			cl.scores[i].name = Host.Network.Reader.ReadString();
 		}
 
-		private void MessageCommandUpdateFrags()
+		private void MessageCommandUpdateFrags( )
 		{
 			Host.Hud.Changed();
 
@@ -202,7 +204,7 @@ namespace SharpQuake
 			cl.scores[i].frags = Host.Network.Reader.ReadShort();
 		}
 
-		private void MessageCommandUpdateColours()
+		private void MessageCommandUpdateColours( )
 		{
 			Host.Hud.Changed();
 
@@ -215,29 +217,29 @@ namespace SharpQuake
 			NewTranslation( i );
 		}
 
-		private void MessageCommandParticle()
+		private void MessageCommandParticle( )
 		{
 			Host.RenderContext.Particles.ParseParticleEffect( Host.Client.cl.time, Host.Network.Reader );
 		}
 
-		private void MessageCommandSpawnBaseline()
+		private void MessageCommandSpawnBaseline( )
 		{
 			var i = Host.Network.Reader.ReadShort();
 			// must use CL_EntityNum() to force cl.num_entities up
 			ParseBaseline( EntityNum( i ) );
 		}
 
-		private void MessageCommandSpawnStatic()
+		private void MessageCommandSpawnStatic( )
 		{
 			ParseStatic();
 		}
 
-		private void MessageCommandTempEntity()
+		private void MessageCommandTempEntity( )
 		{
 			ParseTempEntity();
 		}
 
-		private void MessageCommandSetPause()
+		private void MessageCommandSetPause( )
 		{
 			cl.paused = Host.Network.Reader.ReadByte() != 0;
 
@@ -251,7 +253,7 @@ namespace SharpQuake
 			}
 		}
 
-		private void MessageCommandSignOnNum()
+		private void MessageCommandSignOnNum( )
 		{
 			var i = Host.Network.Reader.ReadByte();
 
@@ -262,17 +264,17 @@ namespace SharpQuake
 			SignonReply();
 		}
 
-		private void MessageCommandKilledMonster()
+		private void MessageCommandKilledMonster( )
 		{
 			cl.stats[QStatsDef.STAT_MONSTERS]++;
 		}
 
-		private void MessageCommandFoundSecret()
+		private void MessageCommandFoundSecret( )
 		{
 			cl.stats[QStatsDef.STAT_SECRETS]++;
 		}
 
-		private void MessageCommandUpdateStat()
+		private void MessageCommandUpdateStat( )
 		{
 			var i = Host.Network.Reader.ReadByte();
 
@@ -282,12 +284,12 @@ namespace SharpQuake
 			cl.stats[i] = Host.Network.Reader.ReadLong();
 		}
 
-		private void MessageCommandSpawnStaticSound()
+		private void MessageCommandSpawnStaticSound( )
 		{
 			ParseStaticSound();
 		}
 
-		private void MessageCommandCDTrack()
+		private void MessageCommandCDTrack( )
 		{
 			cl.cdtrack = Host.Network.Reader.ReadByte();
 			cl.looptrack = Host.Network.Reader.ReadByte();
@@ -298,14 +300,14 @@ namespace SharpQuake
 				Host.CDAudio.Play( ( Byte ) cl.cdtrack, true );
 		}
 
-		private void MessageCommandIntermission()
+		private void MessageCommandIntermission( )
 		{
 			cl.intermission = 1;
 			cl.completed_time = ( Int32 ) cl.time;
 			Host.Screen.vid.recalc_refdef = true;   // go to full screen
 		}
 
-		private void MessageCommandFinale()
+		private void MessageCommandFinale( )
 		{
 			cl.intermission = 2;
 			cl.completed_time = ( Int32 ) cl.time;
@@ -313,7 +315,7 @@ namespace SharpQuake
 			Host.Screen.CenterPrint( Host.Network.Reader.ReadString() );
 		}
 
-		private void MessageCommandCutScene()
+		private void MessageCommandCutScene( )
 		{
 			cl.intermission = 3;
 			cl.completed_time = ( Int32 ) cl.time;
@@ -321,12 +323,12 @@ namespace SharpQuake
 			Host.Screen.CenterPrint( Host.Network.Reader.ReadString() );
 		}
 
-		private void MessageCommandSellScreen()
+		private void MessageCommandSellScreen( )
 		{
 			Host.Commands.ExecuteString( "help", CommandSource.Command );
 		}
 
-		protected void InitialiseMessageDelegates()
+		protected void InitialiseMessageDelegates( )
 		{
 			MessageDelegates = new Dictionary<Int32, ProcessMessageDelegate>
 			{
@@ -864,7 +866,7 @@ namespace SharpQuake
 
 			Host.RenderContext.TranslatePlayerSkin( slot );
 
-			for ( Int32 i = 0, offset = 0; i < Vid.VID_GRADES; i++ )//, dest += 256, source+=256)
+			for ( Int32 i = 0, offset = 0; i < VideoDef.VID_GRADES; i++ )//, dest += 256, source+=256)
 			{
 				if ( top < 128 )    // the artists made some backwards ranges.  sigh.
 					Buffer.BlockCopy( source, offset + top, dest, offset + render.TOP_RANGE, 16 );  //memcpy (dest + Render.TOP_RANGE, source + top, 16);

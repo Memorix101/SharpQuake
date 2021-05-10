@@ -1,8 +1,3 @@
-using SharpQuake.Framework.Factories;
-using SharpQuake.Framework.IO;
-using SharpQuake.Framework.IO.Input;
-using SharpQuake.Renderer.Textures;
-using SharpQuake.Rendering.UI;
 /// <copyright>
 ///
 /// SharpQuakeEvolved changes by optimus-code, 2019
@@ -27,6 +22,12 @@ using SharpQuake.Rendering.UI;
 /// Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 /// </copyright>
 /// 
+
+using SharpQuake.Framework.Factories;
+using SharpQuake.Framework.IO;
+using SharpQuake.Framework.IO.Input;
+using SharpQuake.Renderer.Textures;
+using SharpQuake.Rendering.UI;
 using System;
 
 // menu.h

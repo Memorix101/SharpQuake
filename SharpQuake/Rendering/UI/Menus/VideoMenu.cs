@@ -25,6 +25,7 @@
 using System;
 using SharpQuake.Factories.Rendering.UI;
 using SharpQuake.Framework;
+using SharpQuake.Framework.Definitions;
 
 namespace SharpQuake.Rendering.UI
 {
@@ -102,7 +103,7 @@ namespace SharpQuake.Rendering.UI
 
                     column += 13 * 8;
 
-                    if ( ( i % Vid.VID_ROW_SIZE ) == ( Vid.VID_ROW_SIZE - 1 ) )
+                    if ( ( i % VideoDef.VID_ROW_SIZE ) == ( VideoDef.VID_ROW_SIZE - 1 ) )
                     {
                         column = 8;
                         row += 8;

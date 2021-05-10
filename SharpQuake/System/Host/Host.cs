@@ -35,6 +35,7 @@ using SharpQuake.Framework.Factories.IO.WAD;
 using SharpQuake.Framework.IO;
 using SharpQuake.Framework.IO.Input;
 using SharpQuake.Framework.IO.WAD;
+using SharpQuake.Game.Client;
 using SharpQuake.Rendering.UI;
 using SharpQuake.Sys;
 

@@ -25,6 +25,7 @@
 using SharpQuake.Factories.Rendering.UI;
 using SharpQuake.Framework;
 using SharpQuake.Framework.IO.Input;
+using SharpQuake.Game.Client;
 using System;
 
 namespace SharpQuake.Rendering.UI
