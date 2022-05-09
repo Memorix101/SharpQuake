@@ -50,6 +50,7 @@ namespace SharpQuake.Factories.Rendering.UI
 		public const String MP_SCOREBOARD = "MPScoreboard";
 		public const String MP_MINI_SCOREBOARD = "MPMiniScoreboard";
 		public const String FRAGS = "Frags";
+		public const String CONSOLE = "VisualConsole";
 
 		// Dynamic text elements
 		public const String CENTRE_PRINT = "CentrePrint";
@@ -89,6 +90,7 @@ namespace SharpQuake.Factories.Rendering.UI
 			Add( new Frags( Host ) );
 			Add( new IntermissionOverlay( Host ) );
 			Add( new FinaleOverlay( Host ) );
+			Add( new VisualConsole( Host ) );
 
 			// Dynamic text elements
 			Add( new CentrePrint( Host ) );
@@ -137,6 +139,21 @@ namespace SharpQuake.Factories.Rendering.UI
 		public void Add( IElementRenderer textRenderer )
 		{
 			Add( textRenderer.GetType( ).Name, textRenderer );
+		}
+
+		/// <summary>
+		/// Get a UI element
+		/// </summary>
+		/// <typeparam name="T"></typeparam>
+		/// <param name="name"></param>
+		/// <returns></returns>
+		public T Get<T>( String name )
+			where T : BaseUIElement
+		{
+			if ( !DictionaryItems.ContainsKey( name ) )
+				return null;
+
+			return ( T ) DictionaryItems[name];
 		}
 
 		/// <summary>
@@ -236,7 +253,7 @@ namespace SharpQuake.Factories.Rendering.UI
 		}
 
 		/// <summary>
-		/// Reset the state of a text element
+		/// Reset the state of an element
 		/// </summary>
 		/// <param name="name"></param>
 		public void Reset( String name )
@@ -244,8 +261,8 @@ namespace SharpQuake.Factories.Rendering.UI
 			if ( !DictionaryItems.ContainsKey( name ) )
 				return;
 
-			if ( DictionaryItems[name] is ITextRenderer textRenderer )
-				textRenderer.Reset( );
+			if ( DictionaryItems[name] is IResetableRenderer renderer )
+				renderer.Reset( );
 		}
 	}
 }

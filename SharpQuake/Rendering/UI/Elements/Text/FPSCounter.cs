@@ -60,11 +60,6 @@ namespace SharpQuake.Rendering.UI.Elements.Text
         {          
         }
 
-        // Not applicable to this component
-        public void Reset( )
-        {
-        }
-
         public override void Draw( )
         {
             base.Draw( );

@@ -30,7 +30,7 @@ using System.Text;
 
 namespace SharpQuake.Rendering.UI.Elements.Text
 {
-    public class CentrePrint : BaseUIElement, ITextRenderer
+    public class CentrePrint : BaseUIElement, ITextRenderer, IResetableRenderer
     {
         private Int32 _CenterLines; // scr_center_lines
         private Int32 _EraseLines; // scr_erase_lines

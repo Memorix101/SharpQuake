@@ -30,7 +30,7 @@ using System.Text;
 
 namespace SharpQuake.Rendering.UI.Elements.Text
 {
-    public class ModalMessage : BaseUIElement, ITextRenderer
+    public class ModalMessage : BaseUIElement, ITextRenderer, IResetableRenderer
     {
         public override Boolean IsVisible
         {
@@ -54,7 +54,6 @@ namespace SharpQuake.Rendering.UI.Elements.Text
             Message = text;
         }
 
-        // Not applicable to this component
         public void Reset( )
         {
             Message = null;

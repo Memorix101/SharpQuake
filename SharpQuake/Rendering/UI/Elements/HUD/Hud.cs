@@ -93,7 +93,7 @@ namespace SharpQuake.Rendering.UI.Elements.HUD
                 return;
 
             var vid = _host.Screen.vid;
-            if ( _host.Screen.ConCurrent == vid.height )
+            if ( _host.Screen.Elements.Get<VisualConsole>( ElementFactory.CONSOLE )?.ConCurrent == vid.height )
                 return;		// console is full screen
 
             if ( _Updates >= vid.numpages )

@@ -28,6 +28,7 @@ using SharpQuake.Framework.IO;
 using SharpQuake.Framework.IO.Input;
 using SharpQuake.Renderer.Textures;
 using SharpQuake.Rendering.UI;
+using SharpQuake.Rendering.UI.Elements;
 using System;
 
 // menu.h
@@ -151,7 +152,7 @@ namespace SharpQuake.Factories.Rendering.UI
 			{
 				Host.Screen.CopyEverithing = true;
 
-				if ( Host.Screen.ConCurrent > 0 )
+				if ( Host.Screen.Elements.Get<VisualConsole>( ElementFactory.CONSOLE )?.ConCurrent > 0 )
 				{
 					Host.DrawingContext.DrawConsoleBackground( Host.Screen.vid.height );
 					Host.Sound.ExtraUpdate();

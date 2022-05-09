@@ -30,6 +30,7 @@ using SharpQuake.Framework.IO.Input;
 using SharpQuake.Game.Client;
 using SharpQuake.Renderer;
 using SharpQuake.Rendering.UI;
+using SharpQuake.Rendering.UI.Elements;
 
 // screen.h
 // gl_screen.c
@@ -64,13 +65,6 @@ namespace SharpQuake
             }
         }
 
-        public Single ConCurrent
-        {
-            get
-            {
-                return _ConCurrent;
-            }
-        }
 
         public Boolean CopyEverithing
         {
@@ -134,11 +128,6 @@ namespace SharpQuake
 
         private Boolean _InUpdate;
         private Boolean _CopyEverything;
-
-        private Single _ConCurrent; // scr_con_current
-        private Single _ConLines;		// lines of console to display
-        private Int32 _ClearConsole; // clearconsole
-                                     // clearnotify
 
         private Single _OldScreenSize; // float oldscreensize
         private Single _OldFov; // float oldfov
@@ -276,7 +265,7 @@ namespace SharpQuake
                 //
                 // do 3D refresh drawing, and then update the screen
                 //
-                SetUpToDrawConsole( );
+                Elements.Get<VisualConsole>( ElementFactory.CONSOLE )?.Configure( );
 
                 Host.View.RenderView( );
 
@@ -341,7 +330,7 @@ namespace SharpQuake
                 Elements.Draw( ElementFactory.PAUSE );
                 Elements.Draw( ElementFactory.CENTRE_PRINT );
                 Elements.Draw( ElementFactory.HUD );
-                DrawConsole( );
+                Elements.Draw( ElementFactory.CONSOLE );
                 Host.Menus.Draw( );
             }
 
@@ -420,7 +409,7 @@ namespace SharpQuake
             // redraw with no console and the loading plaque
             Host.Console.ClearNotify( );
             Host.Screen.Elements.Reset( ElementFactory.CENTRE_PRINT );
-            _ConCurrent = 0;
+            Host.Screen.Elements.Reset( ElementFactory.CONSOLE );
 
             Elements.Show( ElementFactory.LOADING );
             Host.Screen.FullUpdate = 0;
@@ -611,54 +600,6 @@ namespace SharpQuake
             return ( Single ) a;
         }
 
-        /// <summary>
-        /// SCR_SetUpToDrawConsole
-        /// </summary>
-        private void SetUpToDrawConsole( )
-        {
-            Host.Console.CheckResize( );
-
-            if ( Elements.IsVisible( ElementFactory.LOADING ) )
-                return;     // never a console with loading plaque
-
-            // decide on the height of the console
-            Host.Console.ForcedUp = ( Host.Client.cl.worldmodel == null ) || ( Host.Client.cls.signon != ClientDef.SIGNONS );
-
-            if ( Host.Console.ForcedUp )
-            {
-                _ConLines = _VidDef.height; // full screen
-                _ConCurrent = _ConLines;
-            }
-            else if ( Host.Keyboard.Destination == KeyDestination.key_console )
-                _ConLines = _VidDef.height / 2; // half screen
-            else
-                _ConLines = 0; // none visible
-
-            if ( _ConLines < _ConCurrent )
-            {
-                _ConCurrent -= ( Int32 ) ( Host.Cvars.ConSpeed.Get<Int32>( ) * Host.FrameTime );
-                if ( _ConLines > _ConCurrent )
-                    _ConCurrent = _ConLines;
-            }
-            else if ( _ConLines > _ConCurrent )
-            {
-                _ConCurrent += ( Int32 ) ( Host.Cvars.ConSpeed.Get<Int32>( ) * Host.FrameTime );
-                if ( _ConLines < _ConCurrent )
-                    _ConCurrent = _ConLines;
-            }
-
-            if ( _ClearConsole++ < _VidDef.numpages )
-            {
-                Elements.SetDirty( ElementFactory.HUD );
-            }
-            else if ( ClearNotify++ < _VidDef.numpages )
-            {
-                //????????????
-            }
-            else
-                Host.Console.NotifyLines = 0;
-        }
-
         // SCR_TileClear
         private void TileClear( )
         {
@@ -679,22 +620,6 @@ namespace SharpQuake
                 // bottom
                 Host.DrawingContext.TileClear( rdef.vrect.x, rdef.vrect.y + rdef.vrect.height,
                     rdef.vrect.width, _VidDef.height - HudResources.Lines - ( rdef.vrect.height + rdef.vrect.y ) );
-            }
-        }
-
-        // SCR_DrawConsole
-        private void DrawConsole( )
-        {
-            if ( _ConCurrent > 0 )
-            {
-                _CopyEverything = true;
-                Host.Console.Draw( ( Int32 ) _ConCurrent, true );
-                _ClearConsole = 0;
-            }
-            else if ( Host.Keyboard.Destination == KeyDestination.key_game ||
-                Host.Keyboard.Destination == KeyDestination.key_message )
-            {
-                Host.Console.DrawNotify( );	// only draw notify in game
             }
         }
     }

@@ -27,11 +27,10 @@ using System;
 namespace SharpQuake.Framework.Rendering.UI
 {
     /// <summary>
-    /// The interface for text-based UI elements
+    /// An element that can be reset
     /// </summary>
-    public interface ITextRenderer
+    public interface IResetableRenderer
     {
-        void Draw( );
-        void Enqueue( String text );
+        void Reset( );
     }
 }
