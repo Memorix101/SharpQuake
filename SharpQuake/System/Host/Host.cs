@@ -280,12 +280,6 @@ namespace SharpQuake
             private set;
         }
 
-        public Hud Hud
-        {
-            get;
-            private set;
-		}
-
 		public DedicatedServer DedicatedServer
 		{
 			get;
@@ -356,7 +350,6 @@ namespace SharpQuake
             RenderContext = new render( this );
             Sound = new snd( this );
             CDAudio = new cd_audio( this );
-            Hud = new Hud( this );
 			DedicatedServer = new DedicatedServer( );
         }
 
@@ -474,7 +467,7 @@ namespace SharpQuake
                 RenderContext.Initialise( );
                 Sound.Initialise( );
                 CDAudio.Initialise( );
-                Hud.Initialise( );
+                Screen.InitialiseHUD( );
                 Client.Initialise( );
             }
 			else

@@ -26,6 +26,7 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Runtime.InteropServices;
+using SharpQuake.Factories.Rendering.UI;
 using SharpQuake.Framework;
 using SharpQuake.Framework.IO;
 using SharpQuake.Framework.IO.WAD;
@@ -220,7 +221,7 @@ namespace SharpQuake
         public void FadeScreen( )
         {
             Host.Video.Device.Graphics.FadeScreen( );
-            Host.Hud.Changed( );
+            Host.Screen.Elements.SetDirty( ElementFactory.HUD );
         }
 
         // Draw_Character

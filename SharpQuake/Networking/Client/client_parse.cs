@@ -22,6 +22,7 @@
 /// Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 /// </copyright>
 
+using SharpQuake.Factories.Rendering.UI;
 using SharpQuake.Framework;
 using SharpQuake.Framework.Definitions;
 using SharpQuake.Framework.IO;
@@ -128,7 +129,7 @@ namespace SharpQuake
 
 		private void MessageCommandCentrePrint( )
 		{
-			Host.Screen.CenterPrint( Host.Network.Reader.ReadString() );
+			Host.Screen.Elements.Enqueue( ElementFactory.CENTRE_PRINT, Host.Network.Reader.ReadString() );
 		}
 
 		private void MessageCommandStuffText( )
@@ -182,7 +183,7 @@ namespace SharpQuake
 
 		private void MessageCommandUpdateName( )
 		{
-			Host.Hud.Changed();
+			Host.Screen.Elements.SetDirty( ElementFactory.HUD );
 
 			var i = Host.Network.Reader.ReadByte();
 
@@ -194,7 +195,7 @@ namespace SharpQuake
 
 		private void MessageCommandUpdateFrags( )
 		{
-			Host.Hud.Changed();
+			Host.Screen.Elements.SetDirty( ElementFactory.HUD );
 
 			var i = Host.Network.Reader.ReadByte();
 
@@ -206,7 +207,7 @@ namespace SharpQuake
 
 		private void MessageCommandUpdateColours( )
 		{
-			Host.Hud.Changed();
+			Host.Screen.Elements.SetDirty( ElementFactory.HUD );
 
 			var i = Host.Network.Reader.ReadByte();
 
@@ -312,7 +313,7 @@ namespace SharpQuake
 			cl.intermission = 2;
 			cl.completed_time = ( Int32 ) cl.time;
 			Host.Screen.vid.recalc_refdef = true;   // go to full screen
-			Host.Screen.CenterPrint( Host.Network.Reader.ReadString() );
+			Host.Screen.Elements.Enqueue( ElementFactory.CENTRE_PRINT, Host.Network.Reader.ReadString() );
 		}
 
 		private void MessageCommandCutScene( )
@@ -320,7 +321,7 @@ namespace SharpQuake
 			cl.intermission = 3;
 			cl.completed_time = ( Int32 ) cl.time;
 			Host.Screen.vid.recalc_refdef = true;   // go to full screen
-			Host.Screen.CenterPrint( Host.Network.Reader.ReadString() );
+			Host.Screen.Elements.Enqueue( ElementFactory.CENTRE_PRINT, Host.Network.Reader.ReadString() );
 		}
 
 		private void MessageCommandSellScreen( )
@@ -608,7 +609,7 @@ namespace SharpQuake
 
 			if ( cl.items != i2 )
 			{   // set flash times
-				Host.Hud.Changed();
+				Host.Screen.Elements.SetDirty( ElementFactory.HUD );
 				for ( var j = 0; j < 32; j++ )
 					if ( ( i2 & ( 1 << j ) ) != 0 && ( cl.items & ( 1 << j ) ) == 0 )
 						cl.item_gettime[j] = ( Single ) cl.time;
@@ -630,7 +631,7 @@ namespace SharpQuake
 			if ( cl.stats[QStatsDef.STAT_ARMOR] != i2 )
 			{
 				cl.stats[QStatsDef.STAT_ARMOR] = i2;
-				Host.Hud.Changed();
+				Host.Screen.Elements.SetDirty( ElementFactory.HUD );
 			}
 
 			if ( ( bits & ProtocolDef.SU_WEAPON ) != 0 )
@@ -640,21 +641,21 @@ namespace SharpQuake
 			if ( cl.stats[QStatsDef.STAT_WEAPON] != i2 )
 			{
 				cl.stats[QStatsDef.STAT_WEAPON] = i2;
-				Host.Hud.Changed();
+				Host.Screen.Elements.SetDirty( ElementFactory.HUD );
 			}
 
 			i2 = Host.Network.Reader.ReadShort();
 			if ( cl.stats[QStatsDef.STAT_HEALTH] != i2 )
 			{
 				cl.stats[QStatsDef.STAT_HEALTH] = i2;
-				Host.Hud.Changed();
+				Host.Screen.Elements.SetDirty( ElementFactory.HUD );
 			}
 
 			i2 = Host.Network.Reader.ReadByte();
 			if ( cl.stats[QStatsDef.STAT_AMMO] != i2 )
 			{
 				cl.stats[QStatsDef.STAT_AMMO] = i2;
-				Host.Hud.Changed();
+				Host.Screen.Elements.SetDirty( ElementFactory.HUD );
 			}
 
 			for ( i2 = 0; i2 < 4; i2++ )
@@ -663,7 +664,7 @@ namespace SharpQuake
 				if ( cl.stats[QStatsDef.STAT_SHELLS + i2] != j )
 				{
 					cl.stats[QStatsDef.STAT_SHELLS + i2] = j;
-					Host.Hud.Changed();
+					Host.Screen.Elements.SetDirty( ElementFactory.HUD );
 				}
 			}
 
@@ -675,7 +676,7 @@ namespace SharpQuake
 				if ( cl.stats[QStatsDef.STAT_ACTIVEWEAPON] != i2 )
 				{
 					cl.stats[QStatsDef.STAT_ACTIVEWEAPON] = i2;
-					Host.Hud.Changed();
+					Host.Screen.Elements.SetDirty( ElementFactory.HUD );
 				}
 			}
 			else
@@ -683,7 +684,7 @@ namespace SharpQuake
 				if ( cl.stats[QStatsDef.STAT_ACTIVEWEAPON] != ( 1 << i2 ) )
 				{
 					cl.stats[QStatsDef.STAT_ACTIVEWEAPON] = ( 1 << i2 );
-					Host.Hud.Changed();
+					Host.Screen.Elements.SetDirty( ElementFactory.HUD );
 				}
 			}
 		}

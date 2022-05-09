@@ -23,6 +23,7 @@
 /// </copyright>
 
 using System;
+using SharpQuake.Factories.Rendering.UI;
 using SharpQuake.Framework;
 using SharpQuake.Framework.IO;
 using SharpQuake.Framework.IO.BSP;
@@ -629,7 +630,7 @@ namespace SharpQuake
 			if ( String.IsNullOrEmpty( Host.Network.HostName ) )
 				Host.CVars.Set( "hostname", "UNNAMED" );
 
-			Host.Screen.CenterTimeOff = 0;
+			Host.Screen.Elements.Reset( ElementFactory.CENTRE_PRINT );
 
 			Host.Console.DPrint( "SpawnServer: {0}\n", server );
 			svs.changelevel_issued = false;     // now safe to issue another

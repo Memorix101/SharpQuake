@@ -158,7 +158,7 @@ namespace SharpQuake
 		/// the entity origin, so any view position inside that will be valid
 		/// </summary>
 		public void RenderView( )
-		{
+		{		
 			if ( Host.Console.ForcedUp )
 				return;
 
@@ -542,6 +542,7 @@ namespace SharpQuake
 
 			// ent is the player model (visible when out of body)
 			var ent = Host.Client.ViewEntity;
+
 			// view is the weapon model (only visible from inside body)
 			var view = Host.Client.ViewEnt;
 

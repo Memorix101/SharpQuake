@@ -37,10 +37,6 @@ namespace SharpQuake
 {
 	public partial class Host
     {
-        public UInt32 FPSCounter = 0;
-        public UInt32 FPS = 0;
-        public DateTime LastFPSUpdate;
-
         public Boolean ShowFPS
         {
             get;

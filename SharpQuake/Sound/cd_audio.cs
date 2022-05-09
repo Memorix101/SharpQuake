@@ -438,6 +438,9 @@ namespace SharpQuake
             if ( streamer == null )
                 return;
 
+            if ( _noAudio == true )
+                return;
+
             oggStream.Resume( );
         }
 
