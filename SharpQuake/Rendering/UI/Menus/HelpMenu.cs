@@ -70,7 +70,7 @@ namespace SharpQuake.Rendering.UI
 
         public override void Draw( )
         {
-            Host.Menus.DrawPic( 0, 0, Host.DrawingContext.CachePic( String.Format( "gfx/help{0}.lmp", _Page ), "GL_NEAREST" ) );
+            Host.Menus.DrawPic( 0, 0, Host.Pictures.Cache( String.Format( "gfx/help{0}.lmp", _Page ), "GL_NEAREST" ) );
         }
     }
 }

@@ -299,8 +299,13 @@ namespace SharpQuake
             private set;
         }
 
-        // CVars
         public Cvars Cvars
+        {
+            get;
+            private set;
+        }
+
+        public PictureFactory Pictures
         {
             get;
             private set;
@@ -327,6 +332,7 @@ namespace SharpQuake
             Wads = AddFactory<WadFactory>();
             Model = AddFactory<ModelFactory>();
             Menus = AddFactory<MenuFactory>();
+            Pictures = AddFactory<PictureFactory>( );
 
             Commands.Initialise( CVars );
 
@@ -463,6 +469,8 @@ namespace SharpQuake
                 MainWindow.Input.Initialise( this );
                 Video.Initialise( BasePal );
                 DrawingContext.Initialise( );
+                Pictures.Initialise( this );
+                Console.InitialiseBackground( );
                 Screen.Initialise( );
                 RenderContext.Initialise( );
                 Sound.Initialise( );

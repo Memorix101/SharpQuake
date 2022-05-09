@@ -49,7 +49,7 @@ namespace SharpQuake.Rendering.UI.Elements
             if ( !IsVisible || !HasInitialised )
                 return;
 
-            var pic = _host.DrawingContext.CachePic( "gfx/loading.lmp", "GL_LINEAR" );
+            var pic = _host.Pictures.Cache( "gfx/loading.lmp", "GL_LINEAR" );
             _host.Video.Device.Graphics.DrawPicture( pic, ( _host.Screen.vid.width - pic.Width ) / 2, ( _host.Screen.vid.height - 48 - pic.Height ) / 2 );
         }
     }

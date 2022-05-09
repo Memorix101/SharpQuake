@@ -126,7 +126,7 @@ namespace SharpQuake.Rendering.UI
 
         public override void Draw( )
         {
-            var p = Host.DrawingContext.CachePic( "gfx/ttl_cstm.lmp", "GL_NEAREST" );
+            var p = Host.Pictures.Cache( "gfx/ttl_cstm.lmp", "GL_NEAREST" );
             Host.Menus.DrawPic( ( 320 - p.Width ) / 2, 4, p );
 
             if ( _BindGrab )

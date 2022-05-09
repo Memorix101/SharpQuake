@@ -154,7 +154,7 @@ namespace SharpQuake.Factories.Rendering.UI
 
 				if ( Host.Screen.Elements.Get<VisualConsole>( ElementFactory.CONSOLE )?.ConCurrent > 0 )
 				{
-					Host.DrawingContext.DrawConsoleBackground( Host.Screen.vid.height );
+					Host.Console.DrawConsoleBackground( Host.Screen.vid.height );
 					Host.Sound.ExtraUpdate();
 				}
 				else
@@ -263,15 +263,15 @@ namespace SharpQuake.Factories.Rendering.UI
 			// draw left side
 			var cx = x;
 			var cy = y;
-			var p = Host.DrawingContext.CachePic( "gfx/box_tl.lmp", "GL_NEAREST" );
+			var p = Host.Pictures.Cache( "gfx/box_tl.lmp", "GL_NEAREST" );
 			DrawTransPic( cx, cy, p );
-			p = Host.DrawingContext.CachePic( "gfx/box_ml.lmp", "GL_NEAREST" );
+			p = Host.Pictures.Cache( "gfx/box_ml.lmp", "GL_NEAREST" );
 			for ( var n = 0; n < lines; n++ )
 			{
 				cy += 8;
 				DrawTransPic( cx, cy, p );
 			}
-			p = Host.DrawingContext.CachePic( "gfx/box_bl.lmp", "GL_NEAREST" );
+			p = Host.Pictures.Cache( "gfx/box_bl.lmp", "GL_NEAREST" );
 			DrawTransPic( cx, cy + 8, p );
 
 			// draw middle
@@ -279,17 +279,17 @@ namespace SharpQuake.Factories.Rendering.UI
 			while ( width > 0 )
 			{
 				cy = y;
-				p = Host.DrawingContext.CachePic( "gfx/box_tm.lmp", "GL_NEAREST" );
+				p = Host.Pictures.Cache( "gfx/box_tm.lmp", "GL_NEAREST" );
 				DrawTransPic( cx, cy, p );
-				p = Host.DrawingContext.CachePic( "gfx/box_mm.lmp", "GL_NEAREST" );
+				p = Host.Pictures.Cache( "gfx/box_mm.lmp", "GL_NEAREST" );
 				for ( var n = 0; n < lines; n++ )
 				{
 					cy += 8;
 					if ( n == 1 )
-						p = Host.DrawingContext.CachePic( "gfx/box_mm2.lmp", "GL_NEAREST" );
+						p = Host.Pictures.Cache( "gfx/box_mm2.lmp", "GL_NEAREST" );
 					DrawTransPic( cx, cy, p );
 				}
-				p = Host.DrawingContext.CachePic( "gfx/box_bm.lmp", "GL_NEAREST" );
+				p = Host.Pictures.Cache( "gfx/box_bm.lmp", "GL_NEAREST" );
 				DrawTransPic( cx, cy + 8, p );
 				width -= 2;
 				cx += 16;
@@ -297,15 +297,15 @@ namespace SharpQuake.Factories.Rendering.UI
 
 			// draw right side
 			cy = y;
-			p = Host.DrawingContext.CachePic( "gfx/box_tr.lmp", "GL_NEAREST" );
+			p = Host.Pictures.Cache( "gfx/box_tr.lmp", "GL_NEAREST" );
 			DrawTransPic( cx, cy, p );
-			p = Host.DrawingContext.CachePic( "gfx/box_mr.lmp", "GL_NEAREST" );
+			p = Host.Pictures.Cache( "gfx/box_mr.lmp", "GL_NEAREST" );
 			for ( var n = 0; n < lines; n++ )
 			{
 				cy += 8;
 				DrawTransPic( cx, cy, p );
 			}
-			p = Host.DrawingContext.CachePic( "gfx/box_br.lmp", "GL_NEAREST" );
+			p = Host.Pictures.Cache( "gfx/box_br.lmp", "GL_NEAREST" );
 			DrawTransPic( cx, cy + 8, p );
 		}
 

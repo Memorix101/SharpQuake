@@ -583,22 +583,11 @@ namespace SharpQuake
                 rdef.vrect.y = ( h - rdef.vrect.height ) / 2;
 
             rdef.fov_x = Host.Cvars.Fov.Get<Single>( );
-            rdef.fov_y = CalcFov( rdef.fov_x, rdef.vrect.width, rdef.vrect.height );
+            rdef.fov_y = Utilities.CalculateFOV( rdef.fov_x, rdef.vrect.width, rdef.vrect.height );
 
             _VRect = rdef.vrect;
         }
 
-        // CalcFov
-        private Single CalcFov( Single fov_x, Single width, Single height )
-        {
-            if ( fov_x < 1 || fov_x > 179 )
-                Utilities.Error( "Bad fov: {0}", fov_x );
-
-            var x = width / Math.Tan( fov_x / 360.0 * Math.PI );
-            var a = Math.Atan( height / x );
-            a = a * 360.0 / Math.PI;
-            return ( Single ) a;
-        }
 
         // SCR_TileClear
         private void TileClear( )

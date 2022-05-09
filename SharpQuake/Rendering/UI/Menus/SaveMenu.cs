@@ -79,7 +79,7 @@ namespace SharpQuake.Rendering.UI
 
         public override void Draw( )
         {
-            var p = Host.DrawingContext.CachePic( "gfx/p_save.lmp", "GL_NEAREST" );
+            var p = Host.Pictures.Cache( "gfx/p_save.lmp", "GL_NEAREST" );
             Host.Menus.DrawPic( ( 320 - p.Width ) / 2, 4, p );
 
             for ( var i = 0; i < MAX_SAVEGAMES; i++ )

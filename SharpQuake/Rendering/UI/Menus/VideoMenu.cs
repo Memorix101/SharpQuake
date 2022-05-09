@@ -65,7 +65,7 @@ namespace SharpQuake.Rendering.UI
 
         public override void Draw( )
         {
-            var p = Host.DrawingContext.CachePic( "gfx/vidmodes.lmp", "GL_NEAREST" );
+            var p = Host.Pictures.Cache( "gfx/vidmodes.lmp", "GL_NEAREST" );
             Host.Menus.DrawPic( ( 320 - p.Width ) / 2, 4, p );
 
             _WModes = 0;

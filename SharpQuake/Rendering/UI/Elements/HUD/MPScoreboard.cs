@@ -71,7 +71,7 @@ namespace SharpQuake.Rendering.UI.Elements.HUD
         /// </summary>
         private void DeathmatchOverlay( )
         {
-            var pic = _host.DrawingContext.CachePic( "gfx/ranking.lmp", "GL_LINEAR" );
+            var pic = _host.Pictures.Cache( "gfx/ranking.lmp", "GL_LINEAR" );
             _host.Video.Device.Graphics.DrawPicture( pic, ( 320 - pic.Width ) / 2, 8 );
 
             // scores

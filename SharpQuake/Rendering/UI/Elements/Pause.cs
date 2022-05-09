@@ -41,7 +41,7 @@ namespace SharpQuake.Rendering.UI.Elements
 
         public override void Initialise()
         {
-            Picture = _host.DrawingContext.CachePic( "gfx/pause.lmp", "GL_NEAREST" );
+            Picture = _host.Pictures.Cache( "gfx/pause.lmp", "GL_NEAREST" );
             HasInitialised = true;
         }
 

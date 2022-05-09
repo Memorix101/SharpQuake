@@ -63,10 +63,10 @@ namespace SharpQuake.Rendering.UI.Elements.HUD
             if ( !IsVisible || !HasInitialised )
                 return;
 
-            var pic = _host.DrawingContext.CachePic( "gfx/complete.lmp", "GL_LINEAR" );
+            var pic = _host.Pictures.Cache( "gfx/complete.lmp", "GL_LINEAR" );
             _host.Video.Device.Graphics.DrawPicture( pic, 64, 24 );
 
-            pic = _host.DrawingContext.CachePic( "gfx/inter.lmp", "GL_LINEAR" );
+            pic = _host.Pictures.Cache( "gfx/inter.lmp", "GL_LINEAR" );
             _host.Video.Device.Graphics.DrawPicture( pic, 0, 56, hasAlpha: true );
 
             // time

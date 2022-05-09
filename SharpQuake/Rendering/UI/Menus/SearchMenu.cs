@@ -52,7 +52,7 @@ namespace SharpQuake.Rendering.UI
 
         public override void Draw( )
         {
-            var p = Host.DrawingContext.CachePic( "gfx/p_multi.lmp", "GL_NEAREST" );
+            var p = Host.Pictures.Cache( "gfx/p_multi.lmp", "GL_NEAREST" );
             Host.Menus.DrawPic( ( 320 - p.Width ) / 2, 4, p );
             var x = ( 320 / 2 ) - ( ( 12 * 8 ) / 2 ) + 4;
             Host.Menus.DrawTextBox( x - 8, 32, 12, 1 );

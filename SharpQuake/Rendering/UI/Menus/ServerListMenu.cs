@@ -103,7 +103,7 @@ namespace SharpQuake.Rendering.UI
                 _Sorted = true;
             }
 
-            var p = Host.DrawingContext.CachePic( "gfx/p_multi.lmp", "GL_NEAREST" );
+            var p = Host.Pictures.Cache( "gfx/p_multi.lmp", "GL_NEAREST" );
             Host.Menus.DrawPic( ( 320 - p.Width ) / 2, 4, p );
             for ( var n = 0; n < Host.Network.HostCacheCount; n++ )
             {

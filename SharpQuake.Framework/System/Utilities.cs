@@ -289,5 +289,23 @@ namespace SharpQuake.Framework
 				( Math.Abs( v1.Y ) <= COLINEAR_EPSILON ) &&
 				( Math.Abs( v1.Z ) <= COLINEAR_EPSILON ) );
 		}
-	}
+
+        /// <summary>
+        /// Scr_CalcFov
+        /// </summary>
+        /// <param name="fov_x"></param>
+        /// <param name="width"></param>
+        /// <param name="height"></param>
+        /// <returns></returns>
+        public static Single CalculateFOV( Single fov_x, Single width, Single height )
+        {
+            if ( fov_x < 1 || fov_x > 179 )
+                Error( "Bad fov: {0}", fov_x );
+
+            var x = width / Math.Tan( fov_x / 360.0 * Math.PI );
+            var a = Math.Atan( height / x );
+            a = a * 360.0 / Math.PI;
+            return ( Single ) a;
+        }
+    }
 }

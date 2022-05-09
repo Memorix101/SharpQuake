@@ -46,7 +46,7 @@ namespace SharpQuake
         /// and may be a reference to entity_t, in wich case assign *lastlink to ((entity_t)_LastObj).efrag
         /// or to efrag_t in wich case assign *lastlink value to ((efrag_t)_LastObj).entnext
         /// </summary>
-        private System.Object _LastObj; // see comments
+        private Object _LastObj; // see comments
 
         /// <summary>
         /// R_AddEfrags

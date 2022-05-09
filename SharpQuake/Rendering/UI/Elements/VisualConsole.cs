@@ -24,9 +24,13 @@
 
 using SharpQuake.Factories.Rendering.UI;
 using SharpQuake.Framework;
+using SharpQuake.Framework.IO;
 using SharpQuake.Framework.IO.Input;
+using SharpQuake.Framework.IO.WAD;
 using SharpQuake.Framework.Rendering.UI;
+using SharpQuake.Renderer.Textures;
 using System;
+using System.Runtime.InteropServices;
 
 namespace SharpQuake.Rendering.UI.Elements
 {

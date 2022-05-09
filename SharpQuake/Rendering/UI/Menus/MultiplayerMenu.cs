@@ -80,14 +80,14 @@ namespace SharpQuake.Rendering.UI
 
         public override void Draw( )
         {
-            Host.Menus.DrawTransPic( 16, 4, Host.DrawingContext.CachePic( "gfx/qplaque.lmp", "GL_NEAREST" ) );
-            var p = Host.DrawingContext.CachePic( "gfx/p_multi.lmp", "GL_NEAREST" );
+            Host.Menus.DrawTransPic( 16, 4, Host.Pictures.Cache( "gfx/qplaque.lmp", "GL_NEAREST" ) );
+            var p = Host.Pictures.Cache( "gfx/p_multi.lmp", "GL_NEAREST" );
             Host.Menus.DrawPic( ( 320 - p.Width ) / 2, 4, p );
-            Host.Menus.DrawTransPic( 72, 32, Host.DrawingContext.CachePic( "gfx/mp_menu.lmp", "GL_NEAREST" ) );
+            Host.Menus.DrawTransPic( 72, 32, Host.Pictures.Cache( "gfx/mp_menu.lmp", "GL_NEAREST" ) );
 
             Single f = ( Int32 ) ( Host.Time * 10 ) % 6;
 
-            Host.Menus.DrawTransPic( 54, 32 + Cursor * 20, Host.DrawingContext.CachePic( String.Format( "gfx/menudot{0}.lmp", f + 1 ), "GL_NEAREST" ) );
+            Host.Menus.DrawTransPic( 54, 32 + Cursor * 20, Host.Pictures.Cache( String.Format( "gfx/menudot{0}.lmp", f + 1 ), "GL_NEAREST" ) );
 
             if ( Host.Network.TcpIpAvailable )
                 return;

@@ -55,7 +55,7 @@ namespace SharpQuake.Rendering.UI.Elements.HUD
 
             _host.Screen.CopyEverithing = true;
 
-            var pic = _host.DrawingContext.CachePic( "gfx/finale.lmp", "GL_LINEAR" );
+            var pic = _host.Pictures.Cache( "gfx/finale.lmp", "GL_LINEAR" );
             _host.Video.Device.Graphics.DrawPicture( pic, ( _host.Screen.vid.width - pic.Width ) / 2, 16, hasAlpha: true );
         }
     }

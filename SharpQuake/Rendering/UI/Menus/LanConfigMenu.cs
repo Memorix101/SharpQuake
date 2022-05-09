@@ -186,8 +186,8 @@ namespace SharpQuake.Rendering.UI
 
 		public override void Draw( )
 		{
-			Host.Menus.DrawTransPic( 16, 4, Host.DrawingContext.CachePic( "gfx/qplaque.lmp", "GL_NEAREST" ) );
-			var p = Host.DrawingContext.CachePic( "gfx/p_multi.lmp", "GL_NEAREST" );
+			Host.Menus.DrawTransPic( 16, 4, Host.Pictures.Cache( "gfx/qplaque.lmp", "GL_NEAREST" ) );
+			var p = Host.Pictures.Cache( "gfx/p_multi.lmp", "GL_NEAREST" );
 			var basex = ( 320 - p.Width ) / 2;
 			Host.Menus.DrawPic( basex, 4, p );
 

@@ -138,8 +138,8 @@ namespace SharpQuake.Rendering.UI
 
         private void DrawPlaque()
         {
-            Host.Menus.DrawTransPic( 16, 4, Host.DrawingContext.CachePic( "gfx/qplaque.lmp", "GL_NEAREST" ) );
-            var p = Host.DrawingContext.CachePic( "gfx/p_option.lmp", "GL_NEAREST" );
+            Host.Menus.DrawTransPic( 16, 4, Host.Pictures.Cache( "gfx/qplaque.lmp", "GL_NEAREST" ) );
+            var p = Host.Pictures.Cache( "gfx/p_option.lmp", "GL_NEAREST" );
             Host.Menus.DrawPic( ( 320 - p.Width ) / 2, 4, p );
         }
 

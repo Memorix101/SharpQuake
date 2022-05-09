@@ -175,8 +175,8 @@ namespace SharpQuake.Rendering.UI
 
         private void DrawPlaque()
 		{
-            Host.Menus.DrawTransPic( 16, 4, Host.DrawingContext.CachePic( "gfx/qplaque.lmp", "GL_NEAREST" ) );
-            var p = Host.DrawingContext.CachePic( "gfx/p_multi.lmp", "GL_NEAREST" );
+            Host.Menus.DrawTransPic( 16, 4, Host.Pictures.Cache( "gfx/qplaque.lmp", "GL_NEAREST" ) );
+            var p = Host.Pictures.Cache( "gfx/p_multi.lmp", "GL_NEAREST" );
             Host.Menus.DrawPic( ( 320 - p.Width ) / 2, 4, p );
         }
 
@@ -208,13 +208,13 @@ namespace SharpQuake.Rendering.UI
 
         private void DrawBigBox()
         {
-            var p = Host.DrawingContext.CachePic( "gfx/bigbox.lmp", "GL_NEAREST" );
+            var p = Host.Pictures.Cache( "gfx/bigbox.lmp", "GL_NEAREST" );
             Host.Menus.DrawTransPic( 160, 64, p );
         }
 
         private void DrawPlayer()
 		{
-            var p = Host.DrawingContext.CachePic( "gfx/menuplyr.lmp", "GL_NEAREST", true );
+            var p = Host.Pictures.Cache( "gfx/menuplyr.lmp", "GL_NEAREST", true );
 
             if ( !hasPlayPixels && p != null )
             {
