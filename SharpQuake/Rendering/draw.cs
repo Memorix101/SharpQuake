@@ -52,12 +52,6 @@ namespace SharpQuake
         public Int32 _MenuPlayerPixelWidth;
         public Int32 _MenuPlayerPixelHeight;
 
-        public BasePicture Disc
-        {
-            get;
-            private set;
-        }
-
         public BasePicture BackgroundTile
         {
             get;
@@ -135,6 +129,20 @@ namespace SharpQuake
             Host.Commands.Add( "gl_texturemode", TextureMode_f );
             Host.Commands.Add( "imagelist", Imagelist_f );
 
+            InitialiseTypography( );            
+            
+            TranslateTexture = BaseTexture.FromDynamicBuffer( Host.Video.Device, "_TranslateTexture", new ByteArraySegment( _MenuPlayerPixels ), _MenuPlayerPixelWidth, _MenuPlayerPixelHeight, false, true, "GL_LINEAR" );
+
+            //
+            // get the other pics we need
+            //            
+            BackgroundTile = BasePicture.FromWad( Host.Video.Device, Host.Wads.FromTexture( "backtile" ), "backtile", "GL_NEAREST" );
+
+            IsInitialised = true;
+        }
+
+        private void InitialiseTypography()
+        {
             // load the console background and the charset
             // by hand, because we need to write the version
             // string into the background before turning
@@ -156,44 +164,10 @@ namespace SharpQuake
 
             // Temporarily set here
             BaseTexture.PicMip = Host.Cvars.glPicMip.Get<Single>( );
-            BaseTexture.MaxSize = Host.Cvars.glMaxSize.Get<Int32>();
+            BaseTexture.MaxSize = Host.Cvars.glMaxSize.Get<Int32>( );
 
             CharSetFont = new Renderer.Font( Host.Video.Device, "charset" );
             CharSetFont.Initialise( fontBuffer );
-            
-            
-            TranslateTexture = BaseTexture.FromDynamicBuffer( Host.Video.Device, "_TranslateTexture", new ByteArraySegment( _MenuPlayerPixels ), _MenuPlayerPixelWidth, _MenuPlayerPixelHeight, false, true, "GL_LINEAR" );
-
-            //
-            // get the other pics we need
-            //
-            Disc = BasePicture.FromWad( Host.Video.Device, Host.Wads.FromTexture( "disc" ), "disc", "GL_NEAREST" );
-
-            BackgroundTile = BasePicture.FromWad( Host.Video.Device, Host.Wads.FromTexture( "backtile" ), "backtile", "GL_NEAREST" );
-
-            IsInitialised = true;
-        }
-
-        // Draw_BeginDisc
-        //
-        // Draws the little blue disc in the corner of the screen.
-        // Call before beginning any disc IO.
-        public void BeginDisc( )
-        {
-            if ( Disc != null )
-            {
-                Host.Video.Device.SetDrawBuffer( true );
-                Host.Video.Device.Graphics.DrawPicture( Disc, Host.Screen.vid.width - 24, 0 );
-                Host.Video.Device.SetDrawBuffer( false );
-            }
-        }
-
-        // Draw_EndDisc
-        // Erases the disc iHost.Console.
-        // Call after completing any disc IO
-        public void EndDisc( )
-        {
-            // nothing to do?
         }
 
         // Draw_TileClear

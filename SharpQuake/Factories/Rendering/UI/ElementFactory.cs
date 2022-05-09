@@ -59,6 +59,8 @@ namespace SharpQuake.Factories.Rendering.UI
 
 		// Static elements
 		public const String LOADING = "Loading";
+		public const String DISC = "LoadingDisc";
+		public const String CROSSHAIR = "Crosshair";
 		public const String RAM = "RAMWarning";
 		public const String TURTLE = "LagWarning";
 		public const String NET = "NetLagWarning";
@@ -99,6 +101,8 @@ namespace SharpQuake.Factories.Rendering.UI
 
 			// Static elements
 			Add( new Loading( Host ) );
+			Add( new Crosshair( Host ) );
+			Add( new LoadingDisc( Host ) );
 			Add( new RAMWarning( Host ) );
 			Add( new LagWarning( Host ) );
 			Add( new NetLagWarning( Host ) );

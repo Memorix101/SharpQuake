@@ -321,9 +321,7 @@ namespace SharpQuake
             }
             else
             {
-                if ( Host.View.Crosshair > 0 )
-                    Host.DrawingContext.DrawCharacter( _VRect.x + _VRect.width / 2, _VRect.y + _VRect.height / 2, '+' );
-
+                Elements.Draw( ElementFactory.CROSSHAIR );
                 Elements.Draw( ElementFactory.RAM );
                 Elements.Draw( ElementFactory.NET );
                 Elements.Draw( ElementFactory.TURTLE );

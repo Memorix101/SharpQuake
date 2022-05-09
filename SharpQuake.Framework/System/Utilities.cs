@@ -307,5 +307,15 @@ namespace SharpQuake.Framework
             a = a * 360.0 / Math.PI;
             return ( Single ) a;
         }
+
+
+        // angledelta()
+        public static Single AngleDelta( Single a )
+        {
+            a = MathLib.AngleMod( a );
+            if ( a > 180 )
+                a -= 360;
+            return a;
+        }
     }
 }

@@ -136,7 +136,7 @@ namespace SharpQuake.Rendering.UI.Elements.HUD
                 if ( cl.HasItems( QItemsDef.IT_INVULNERABILITY ) )
                 {
                     _resources.DrawNum( 24, 0, 666, 3, 1 );
-                    _host.Video.Device.Graphics.DrawPicture( _host.DrawingContext.Disc, 0, 0 );
+                    _host.Video.Device.Graphics.DrawPicture( _host.Screen.Elements.Get<LoadingDisc>( ElementFactory.DISC )?.Disc, 0, 0 );
                 }
                 else
                 {
