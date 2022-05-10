@@ -411,7 +411,7 @@ namespace SharpQuake
 				{
 					// empty slot
 					if ( ent.forcelink )
-						Host.RenderContext.RemoveEfrags( ent ); // just became empty
+						Host.RenderContext.World.Entities.RemoveEfrags( ent ); // just became empty
 					continue;
 				}
 

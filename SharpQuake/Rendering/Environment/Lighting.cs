@@ -196,8 +196,8 @@ namespace SharpQuake.Rendering.Environment
 				if ( m.Name != null && m.Name.StartsWith( "*" ) )
 					continue;
 
-				_host.RenderContext.CurrentVertBase = m.Vertices;
-				_host.RenderContext.CurrentModel = m;
+				_host.RenderContext.World.Entities.Surfaces.CurrentVertBase = m.Vertices;
+				_host.RenderContext.World.Entities.Surfaces.CurrentModel = m;
 				for ( var i = 0; i < m.NumSurfaces; i++ )
 				{
 					CreateSurfaceLightmap( ref tempBuffer, m.Surfaces[i] );
@@ -207,7 +207,7 @@ namespace SharpQuake.Rendering.Environment
 					if ( ( m.Surfaces[i].flags & ( Int32 ) Q1SurfaceFlags.Sky ) != 0 )
 						continue;
 
-					_host.RenderContext.BuildSurfaceDisplayList( m.Surfaces[i] );
+					_host.RenderContext.World.Entities.Surfaces.BuildSurfaceDisplayList( m.Surfaces[i] );
 				}
 			}
 
@@ -239,7 +239,7 @@ namespace SharpQuake.Rendering.Environment
 			var smax = ( surf.extents[0] >> 4 ) + 1;
 			var tmax = ( surf.extents[1] >> 4 ) + 1;
 
-			surf.lightmaptexturenum = _host.RenderContext.AllocBlock( ref tempBuffer, smax, tmax, ref surf.light_s, ref surf.light_t );
+			surf.lightmaptexturenum = _host.RenderContext.World.Entities.Surfaces.AllocBlock( ref tempBuffer, smax, tmax, ref surf.light_s, ref surf.light_t );
 			var offset = surf.lightmaptexturenum * _LightMapBytes * RenderDef.BLOCK_WIDTH * RenderDef.BLOCK_HEIGHT;
 			offset += ( surf.light_t * RenderDef.BLOCK_WIDTH + surf.light_s ) * _LightMapBytes;
 			BuildLightMap( surf, new ByteArraySegment( LightMaps, offset ), RenderDef.BLOCK_WIDTH * _LightMapBytes );
@@ -400,7 +400,7 @@ namespace SharpQuake.Rendering.Environment
 
 			for ( var i = 0; i < RenderDef.MAX_LIGHTMAPS; i++ )
 			{
-				var p = _host.RenderContext.LightMapPolys[i];
+				var p = _host.RenderContext.World.Entities.Surfaces.LightMapPolys[i];
 				if ( p == null )
 					continue;
 

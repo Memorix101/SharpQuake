@@ -948,7 +948,7 @@ namespace SharpQuake
 			ent.effects = ent.baseline.effects;
 			ent.origin = Utilities.ToVector( ref ent.baseline.origin );
 			ent.angles = Utilities.ToVector( ref ent.baseline.angles );
-			Host.RenderContext.AddEfrags( ent );
+			Host.RenderContext.World.Entities.AddEfrags( ent );
 		}
 
 		/// <summary>

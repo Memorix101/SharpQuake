@@ -61,6 +61,11 @@ namespace SharpQuake.Rendering.Environment
             get;
             private set;
         }
+        public Entities Entities
+        {
+            get;
+            private set;
+        }
 
         private readonly Host _host;
 
@@ -72,6 +77,7 @@ namespace SharpQuake.Rendering.Environment
             Lighting = new Lighting( host );
             WorldEntity = new Entity( );
             Particles = new ParticleSystem( _host.Video.Device );
+            Entities = new Entities( host );
         }
 
         public void Initialise( TextureChains textureChains )

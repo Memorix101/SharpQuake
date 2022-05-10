@@ -268,7 +268,7 @@ namespace SharpQuake.Framework
 		/// R_CullBox
 		/// Returns true if the box is completely outside the frustom
 		/// </summary>
-		public static Boolean CullBox( ref Vector3 mins, ref Vector3 maxs, ref Plane[] frustum )
+		public static Boolean CullBox( ref Vector3 mins, ref Vector3 maxs, Plane[] frustum )
 		{
 			for ( var i = 0; i < 4; i++ )
 			{

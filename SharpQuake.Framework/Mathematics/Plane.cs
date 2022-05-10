@@ -32,6 +32,20 @@ namespace SharpQuake.Framework
         public Vector3 normal;
         public Single dist;
         public Byte type;			// for texture axis selection and fast side tests
-        public Byte signbits;		// signx + signy<<1 + signz<<1
+        public Byte signbits;       // signx + signy<<1 + signz<<1
+
+
+        public Int32 SignbitsForPlane()
+        {
+            // for fast box on planeside test
+            var bits = 0;
+            if ( normal.X < 0 )
+                bits |= 1 << 0;
+            if ( normal.Y < 0 )
+                bits |= 1 << 1;
+            if ( normal.Z < 0 )
+                bits |= 1 << 2;
+            return bits;
+        }
     } //mplane_t;
 }
