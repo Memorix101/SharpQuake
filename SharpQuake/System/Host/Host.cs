@@ -36,6 +36,7 @@ using SharpQuake.Framework.IO;
 using SharpQuake.Framework.IO.Input;
 using SharpQuake.Framework.IO.WAD;
 using SharpQuake.Game.Client;
+using SharpQuake.Rendering.Cameras;
 using SharpQuake.Rendering.UI;
 using SharpQuake.Sys;
 

@@ -30,7 +30,7 @@ using SharpQuake.Framework.World;
 
 // chase.c -- chase camera code
 
-namespace SharpQuake
+namespace SharpQuake.Rendering.Cameras
 {
     /// <summary>
     /// Chase_functions

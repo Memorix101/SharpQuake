@@ -185,7 +185,7 @@ namespace SharpQuake
 			else if ( !Host.Client.cl.paused )
 				CalcRefDef();
 
-			Host.RenderContext.PushDlights();
+			Host.RenderContext.World.Lighting.PushDlights();
 
 			if ( Host.Cvars.LcdX.Get<Single>() != 0 )
 			{
@@ -205,7 +205,7 @@ namespace SharpQuake
 
 				// ???????? vid.buffer += vid.rowbytes>>1;
 
-				Host.RenderContext.PushDlights();
+				Host.RenderContext.World.Lighting.PushDlights();
 
 				rdef.viewangles.Y += Host.Cvars.LcdYaw.Get<Single>() * 2;
 				rdef.vieworg += MainCamera.Right * Host.Cvars.LcdX.Get<Single>() * 2;

@@ -220,7 +220,7 @@ namespace SharpQuake
 
 		private void MessageCommandParticle( )
 		{
-			Host.RenderContext.Particles.ParseParticleEffect( Host.Client.cl.time, Host.Network.Reader );
+			Host.RenderContext.World.Particles.ParseParticleEffect( Host.Client.cl.time, Host.Network.Reader );
 		}
 
 		private void MessageCommandSpawnBaseline( )
@@ -815,10 +815,11 @@ namespace SharpQuake
 			cl.worldmodel = ( BrushModelData ) cl.model_precache[1];
 			_Entities[0].model = cl.model_precache[1];
 
-			Host.RenderContext.NewMap();
+			Host.RenderContext.World.NewMap();
 
 			Host.NoClipAngleHack = false; // noclip is turned off at start
 
+			// EWWWW - GET RID OF THIS ASAP!!
 			GC.Collect();
 		}
 

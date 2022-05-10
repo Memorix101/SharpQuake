@@ -30,7 +30,7 @@ using SharpQuake.Game.Rendering.Memory;
 using SharpQuake.Game.World;
 using System;
 
-namespace SharpQuake.Rendering
+namespace SharpQuake.Rendering.Environment
 {
 	public class Occlusion
 	{

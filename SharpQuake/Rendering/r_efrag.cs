@@ -156,12 +156,12 @@ namespace SharpQuake
                     case ModelType.Alias:
                     case ModelType.Brush:
                     case ModelType.Sprite:
-                        if( ( pent.visframe != _FrameCount ) && ( Host.Client.NumVisEdicts < ClientDef.MAX_VISEDICTS ) )
+                        if( ( pent.visframe != World.Lighting.FrameCount ) && ( Host.Client.NumVisEdicts < ClientDef.MAX_VISEDICTS ) )
                         {
                             Host.Client.VisEdicts[Host.Client.NumVisEdicts++] = pent;
 
                             // mark that we've recorded this entity for this frame
-                            pent.visframe = _FrameCount;
+                            pent.visframe = World.Lighting.FrameCount;
                         }
 
                         ef = ef.leafnext;

@@ -412,7 +412,7 @@ namespace SharpQuake.Renderer
 		/// <summary>
 		/// R_ClearParticles
 		/// </summary>
-		public void ClearParticles( )
+		public void Clear( )
 		{
 			_FreeParticles = _Particles[0];
 			_ActiveParticles = null;

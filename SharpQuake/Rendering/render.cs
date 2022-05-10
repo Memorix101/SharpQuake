@@ -36,6 +36,7 @@ using SharpQuake.Renderer;
 using SharpQuake.Renderer.Models;
 using SharpQuake.Renderer.Textures;
 using SharpQuake.Rendering;
+using SharpQuake.Rendering.Environment;
 
 // refresh.h -- public interface to refresh functions
 // gl_rmisc.c
@@ -99,16 +100,13 @@ namespace SharpQuake
 
         // r_origin
 
-        private Int32[] _LightStyleValue = new Int32[256]; // d_lightstylevalue  // 8.8 fraction of base light value
-        private Entity _WorldEntity = new Entity( ); // r_worldentity
         private Entity _CurrentEntity; // currententity
 
-        private Int32 _SkyTextureNum; // skytexturenum
                                       //private Int32 _MirrorTextureNum; // mirrortexturenum	// quake texturenum, not gltexturenum
 
-        private Int32 _FrameCount; // r_framecount		// used for dlight push checking
        
-        public Occlusion Occlusion
+
+        public World World
         {
             get;
             private set;
@@ -152,7 +150,6 @@ namespace SharpQuake
         private Single _AmbientLight; // ambientlight
         private Single[] _ShadeDots = anorm_dots.Values[0]; // shadedots
         private Vector3 _ShadeVector; // shadevector
-        private Vector3 _LightSpot; // lightspot
 
         // CHANGE
         private Host Host
@@ -160,12 +157,6 @@ namespace SharpQuake
             get;
             set;
         }
-
-		public ParticleSystem Particles
-		{
-			get;
-			private set;
-		}
 
 		public WarpableTextures WarpableTextures
 		{
@@ -176,8 +167,8 @@ namespace SharpQuake
 		public render( Host host )
         {
             Host = host;
-			Particles = new ParticleSystem( Host.Video.Device );
-			WarpableTextures = new WarpableTextures( Host.Video.Device );
+            World = new World( Host );
+            WarpableTextures = new WarpableTextures( Host.Video.Device );
 		}
 
         private void InitialiseClientVariables()
@@ -229,8 +220,8 @@ namespace SharpQuake
 
             InitialiseClientVariables();
 
-			Particles.InitParticles( );
-			Particles.InitParticleTexture( );
+            World.Particles.InitParticles( );
+            World.Particles.InitParticleTexture( );
 
             // reserve 16 textures
             PlayerTextures = new BaseTexture[16];
@@ -241,7 +232,7 @@ namespace SharpQuake
             }
 
             TextureChains = new TextureChains();
-            Occlusion = new Occlusion( Host, TextureChains );
+            World.Initialise( TextureChains );
         }
 
         // R_InitTextures
@@ -286,7 +277,7 @@ namespace SharpQuake
             if ( Host.Cvars.NoRefresh.Get<Boolean>() )
                 return;
 
-            if ( _WorldEntity.model == null || Host.Client.cl.worldmodel == null )
+            if ( World.WorldEntity.model == null || Host.Client.cl.worldmodel == null )
                 Utilities.Error( "R_RenderView: NULL worldmodel" );
 
             Double time1 = 0;
@@ -422,46 +413,6 @@ namespace SharpQuake
         }
 
         /// <summary>
-        /// R_NewMap
-        /// </summary>
-        public void NewMap( )
-        {
-            for ( var i = 0; i < 256; i++ )
-                _LightStyleValue[i] = 264;		// normal light value
-
-            _WorldEntity.Clear( );
-            _WorldEntity.model = Host.Client.cl.worldmodel;
-
-            // clear out efrags in case the level hasn't been reloaded
-            // FIXME: is this one short?
-            for ( var i = 0; i < Host.Client.cl.worldmodel.NumLeafs; i++ )
-                Host.Client.cl.worldmodel.Leaves[i].efrags = null;
-
-            Occlusion.ViewLeaf = null;
-			Particles.ClearParticles( );
-
-            BuildLightMaps( );
-
-            // identify sky texture
-            _SkyTextureNum = -1;
-            //_MirrorTextureNum = -1;
-            var world = Host.Client.cl.worldmodel;
-            for ( var i = 0; i < world.NumTextures; i++ )
-            {
-                if ( world.Textures[i] == null )
-                    continue;
-                if ( world.Textures[i].name != null )
-                {
-                    if ( world.Textures[i].name.StartsWith( "sky" ) )
-                        _SkyTextureNum = i;
-                    //if( world.textures[i].name.StartsWith( "window02_1" ) )
-                    //    _MirrorTextureNum = i;
-                }
-                world.Textures[i].texturechain = null;
-            }
-        }
-
-        /// <summary>
         /// R_PolyBlend
         /// </summary>
         private void PolyBlend( )
@@ -563,7 +514,7 @@ namespace SharpQuake
             if ( _CurrentEntity.model == null )
                 return;
 
-            var j = LightPoint( ref _CurrentEntity.origin );
+            var j = World.Lighting.LightPoint( ref _CurrentEntity.origin );
 
             if ( j < 24 )
                 j = 24;		// allways give some light on gun
@@ -603,7 +554,7 @@ namespace SharpQuake
 
             SetupGL( );
 
-            Occlusion.MarkLeaves( );	// done here so we know if we're in water
+            World.Occlusion.MarkLeaves( );	// done here so we know if we're in water
 
             DrawWorld( );		// adds entities to the list
 
@@ -613,9 +564,9 @@ namespace SharpQuake
 
             Host.Video.Device.DisableMultitexture( );
 
-            RenderDlights( );
+            World.Lighting.RenderDlights( );
 
-			Particles.DrawParticles( Host.Client.cl.time, Host.Client.cl.oldtime, Host.Server.Gravity, Origin, ViewUp, ViewRight, ViewPn );
+            World.Particles.DrawParticles( Host.Client.cl.time, Host.Client.cl.oldtime, Host.Server.Gravity, Origin, ViewUp, ViewRight, ViewPn );
 
 #if GLTEST
 	        Test_Draw ();
@@ -753,7 +704,7 @@ namespace SharpQuake
             // get lighting information
             //
 
-            _AmbientLight = _ShadeLight = LightPoint( ref _CurrentEntity.origin );
+            _AmbientLight = _ShadeLight = World.Lighting.LightPoint( ref _CurrentEntity.origin );
 
             // allways give the gun some light
             if ( e == Host.Client.cl.viewent && _AmbientLight < 24 )
@@ -827,7 +778,7 @@ namespace SharpQuake
             model.AliasDesc.EulerAngles = e.angles;
             model.AliasDesc.AliasFrame = _CurrentEntity.frame;
 
-			model.DrawAliasModel( _ShadeLight, _ShadeVector, _ShadeDots, _LightSpot.Z,
+			model.DrawAliasModel( _ShadeLight, _ShadeVector, _ShadeDots, World.Lighting.LightSpot.Z,
 				Host.RealTime, Host.Client.cl.time,
 				ref e.pose1, ref e.pose2, ref e.frame_start_time, ref e.frame_interval,
 				ref e.origin1, ref e.origin2, ref e.translate_start_time, ref e.angles1,
@@ -900,9 +851,9 @@ namespace SharpQuake
             if ( Host.Client.cl.maxclients > 1 )
                 Host.CVars.Set( "r_fullbright", false );
 
-            AnimateLight( );
+            World.Lighting.UpdateAnimations();
 
-            _FrameCount++;
+            World.Lighting.FrameCount++;
 
             // build the transformation matrix for the given view angles
             Origin = _RefDef.vieworg;
@@ -910,8 +861,8 @@ namespace SharpQuake
             MathLib.AngleVectors( ref _RefDef.viewangles, out ViewPn, out ViewRight, out ViewUp );
 
             // current viewleaf
-            Occlusion.SetupFrame( ref Origin );
-            Host.View.SetContentsColor( Occlusion.ViewLeaf.contents );
+            World.Occlusion.SetupFrame( ref Origin );
+            Host.View.SetContentsColor( World.Occlusion.ViewLeaf.contents );
             Host.View.CalcBlend( );
 
             _CacheThrash = false;
