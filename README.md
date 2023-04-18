@@ -52,7 +52,8 @@
 
 ### Dependencies
 * OpenTK 3.3.1
-* NVorbis 0.10.1
+* NVorbis 0.10.5
+* .NET 6
 * **[OpenAL](https://www.openal.org/downloads/)** (Windows) / libopenal on Linux
 * **[SDL2](https://www.libsdl.org/download-2.0.php)** (Windows and macOS) / libsdl2-2.0 on Linux (Runtime binaries)
   
@@ -62,7 +63,7 @@
 
 1) **Install these nuget packages**
     - `Install-Package OpenTK -Version 3.3.1`
-    - `Install-Package NVorbis -Version 0.10.1`
+    - `Install-Package NVorbis -Version 0.10.5`
     - `Install-Package NVorbis.OpenTKSupport -Version 1.4.0`
 	- `Update-Package –reinstall`
 
@@ -99,7 +100,7 @@ Enjoy! 🙂
 
 ### Credits
 * Made by **[yurykiselev](https://sourceforge.net/u/yurykiselev/profile/)** and **Uze** and brought to Github by **[Memorix101](https://github.com/Memorix101)**
-* QuakeSharpEvolved enhancements by **[optimus-code](https://github.com/optimus-code)**
+* **[SharpQuakeEvolved](https://github.com/optimus-code/SharpQuakeEvolved)** enhancements by **[optimus-code](https://github.com/optimus-code)**
 * Updated to .NET 4.7.1 and OpenTK 3.0.1 by **[Daniel Cornelius (Kerfuffles/NukeAndBeans)](https://github.com/Kerfuffles)**
 * Engine additions and fixes by **[multiguy18](https://github.com/multiguy18)** and **[Memorix101](https://github.com/Memorix101)**
 * Original source code on **[SourceForge.net](https://sourceforge.net/projects/sharpquake/)**
