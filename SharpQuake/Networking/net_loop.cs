@@ -24,6 +24,7 @@
 
 using System;
 using SharpQuake.Framework;
+using SharpQuake.Game.Client;
 
 namespace SharpQuake
 {

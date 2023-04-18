@@ -22,14 +22,19 @@
 /// Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 /// </copyright>
 
+using SharpQuake.Factories.Rendering.UI;
 using System;
 
 namespace SharpQuake.Rendering.UI
 {
-    public class SearchMenu : MenuBase
+    public class SearchMenu : BaseMenu
     {
         private Boolean _SearchComplete;
         private Double _SearchCompleteTime;
+
+        public SearchMenu( MenuFactory menuFactory ) : base( "menu_search", menuFactory )
+        {
+        }
 
         public override void Show( Host host )
         {
@@ -47,11 +52,11 @@ namespace SharpQuake.Rendering.UI
 
         public override void Draw( )
         {
-            var p = Host.DrawingContext.CachePic( "gfx/p_multi.lmp", "GL_NEAREST" );
-            Host.Menu.DrawPic( ( 320 - p.Width ) / 2, 4, p );
+            var p = Host.Pictures.Cache( "gfx/p_multi.lmp", "GL_NEAREST" );
+            Host.Menus.DrawPic( ( 320 - p.Width ) / 2, 4, p );
             var x = ( 320 / 2 ) - ( ( 12 * 8 ) / 2 ) + 4;
-            Host.Menu.DrawTextBox( x - 8, 32, 12, 1 );
-            Host.Menu.Print( x, 40, "Searching..." );
+            Host.Menus.DrawTextBox( x - 8, 32, 12, 1 );
+            Host.Menus.Print( x, 40, "Searching..." );
 
             if ( Host.Network.SlistInProgress )
             {
@@ -67,15 +72,15 @@ namespace SharpQuake.Rendering.UI
 
             if ( Host.Network.HostCacheCount > 0 )
             {
-                ServerListMenu.Show( Host );
+                MenuFactory.Show( "menu_server_list" );
                 return;
             }
 
-            Host.Menu.PrintWhite( ( 320 / 2 ) - ( ( 22 * 8 ) / 2 ), 64, "No Quake servers found" );
+            Host.Menus.PrintWhite( ( 320 / 2 ) - ( ( 22 * 8 ) / 2 ), 64, "No Quake servers found" );
             if ( ( Host.RealTime - _SearchCompleteTime ) < 3.0 )
                 return;
 
-            LanConfigMenu.Show( Host );
+            MenuFactory.Show( "menu_lan_config" );
         }
     }
 }

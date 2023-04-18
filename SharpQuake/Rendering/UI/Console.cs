@@ -23,11 +23,16 @@
 /// </copyright>
 
 using System;
+using System.Drawing;
 using System.IO;
+using System.Runtime.InteropServices;
 using System.Text;
 using SharpQuake.Framework;
 using SharpQuake.Framework.IO;
 using SharpQuake.Framework.IO.Input;
+using SharpQuake.Framework.IO.WAD;
+using SharpQuake.Game.Client;
+using SharpQuake.Renderer.Textures;
 
 namespace SharpQuake.Rendering.UI
 {
@@ -103,6 +108,17 @@ namespace SharpQuake.Rendering.UI
 		private Single _CursorSpeed = 4; // con_cursorspeed
 		private FileStream _Log;
 
+		private Host Host
+		{
+			get;
+			set;
+		}
+
+		public BasePicture ConsoleBackground
+		{
+			get;
+			private set;
+		}
 		public Con( Host host )
 		{
 			Host = host;
@@ -158,13 +174,6 @@ namespace SharpQuake.Rendering.UI
 			_Current = _TotalLines - 1;
 		}
 
-		// Instances
-		private Host Host
-		{
-			get;
-			set;
-		}
-
 		// Con_Init (void)
 		public void Initialise( )
 		{
@@ -215,6 +224,63 @@ namespace SharpQuake.Rendering.UI
 			_IsInitialized = true;
 		}
 
+		public void InitialiseBackground()
+        {
+			var buf = FileSystem.LoadFile( "gfx/conback.lmp" );
+			if ( buf == null )
+				Utilities.Error( "Couldn't load gfx/conback.lmp" );
+
+			var cbHeader = Utilities.BytesToStructure<WadPicHeader>( buf, 0 );
+			EndianHelper.SwapPic( cbHeader );
+
+			// hack the version number directly into the pic
+			var ver = String.Format( $"(c# {QDef.CSQUAKE_VERSION,7:F2}) {QDef.VERSION,7:F2}" );
+			var offset2 = Marshal.SizeOf( typeof( WadPicHeader ) ) + 320 * 186 + 320 - 11 - 8 * ver.Length;
+			var y = ver.Length;
+			for ( var x = 0; x < y; x++ )
+				CharToConback( ver[x], new ByteArraySegment( buf, offset2 + ( x << 3 ) ), new ByteArraySegment( Host.DrawingContext.FontBuffer, Host.DrawingContext.FontBufferOffset ) );
+
+			var ncdataIndex = Marshal.SizeOf( typeof( WadPicHeader ) ); // cb->data;
+
+			ConsoleBackground = BasePicture.FromBuffer( Host.Video.Device, new ByteArraySegment( buf, ncdataIndex ), ( Int32 ) cbHeader.width, ( Int32 ) cbHeader.height, "conback", "GL_LINEAR" );
+		}
+
+		private void CharToConback( Int32 num, ByteArraySegment dest, ByteArraySegment drawChars )
+		{
+			var row = num >> 4;
+			var col = num & 15;
+			var destOffset = dest.StartIndex;
+			var srcOffset = drawChars.StartIndex + ( row << 10 ) + ( col << 3 );
+			//source = draw_chars + (row<<10) + (col<<3);
+			var drawline = 8;
+
+			while ( drawline-- > 0 )
+			{
+				for ( var x = 0; x < 8; x++ )
+					if ( drawChars.Data[srcOffset + x] != 255 )
+						dest.Data[destOffset + x] = ( Byte ) ( 0x60 + drawChars.Data[srcOffset + x] ); // source[x];
+				srcOffset += 128; // source += 128;
+				destOffset += 320; // dest += 320;
+			}
+		}
+
+		// Draw_ConsoleBackground
+		public void DrawConsoleBackground( Int32 lines )
+		{
+			var y = ( Host.Screen.vid.height * 3 ) >> 2;
+
+			if ( lines > y )
+			{
+				Host.Video.Device.Graphics.DrawPicture( ConsoleBackground, 0, lines - Host.Screen.vid.height, Host.Screen.vid.width, Host.Screen.vid.height );
+			}
+			else
+			{
+				var alpha = ( Int32 ) Math.Min( ( 255 * ( ( 1.2f * lines ) / y ) ), 255 );
+
+				Host.Video.Device.Graphics.DrawPicture( ConsoleBackground, 0, lines - Host.Screen.vid.height, Host.Screen.vid.width, Host.Screen.vid.height, Color.FromArgb( alpha, Color.White ) );
+			}
+		}
+
 		// Con_DrawConsole
 		//
 		// Draws the console with the solid background
@@ -225,7 +291,7 @@ namespace SharpQuake.Rendering.UI
 				return;
 
 			// draw the background
-			Host.DrawingContext.DrawConsoleBackground( lines );
+			DrawConsoleBackground( lines );
 
 			// draw the text
 			_VisLines = lines;
@@ -380,7 +446,7 @@ namespace SharpQuake.Rendering.UI
 				}
 				else
 				{
-					MenuBase.MainMenu.Show( Host );
+					Host.Menus.Show( "menu_main" );
 				}
 			}
 			else

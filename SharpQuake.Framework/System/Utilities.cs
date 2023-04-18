@@ -268,7 +268,7 @@ namespace SharpQuake.Framework
 		/// R_CullBox
 		/// Returns true if the box is completely outside the frustom
 		/// </summary>
-		public static Boolean CullBox( ref Vector3 mins, ref Vector3 maxs, ref Plane[] frustum )
+		public static Boolean CullBox( ref Vector3 mins, ref Vector3 maxs, Plane[] frustum )
 		{
 			for ( var i = 0; i < 4; i++ )
 			{
@@ -289,5 +289,33 @@ namespace SharpQuake.Framework
 				( Math.Abs( v1.Y ) <= COLINEAR_EPSILON ) &&
 				( Math.Abs( v1.Z ) <= COLINEAR_EPSILON ) );
 		}
-	}
+
+        /// <summary>
+        /// Scr_CalcFov
+        /// </summary>
+        /// <param name="fov_x"></param>
+        /// <param name="width"></param>
+        /// <param name="height"></param>
+        /// <returns></returns>
+        public static Single CalculateFOV( Single fov_x, Single width, Single height )
+        {
+            if ( fov_x < 1 || fov_x > 179 )
+                Error( "Bad fov: {0}", fov_x );
+
+            var x = width / Math.Tan( fov_x / 360.0 * Math.PI );
+            var a = Math.Atan( height / x );
+            a = a * 360.0 / Math.PI;
+            return ( Single ) a;
+        }
+
+
+        // angledelta()
+        public static Single AngleDelta( Single a )
+        {
+            a = MathLib.AngleMod( a );
+            if ( a > 180 )
+                a -= 360;
+            return a;
+        }
+    }
 }

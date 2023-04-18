@@ -27,10 +27,16 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
+using SharpQuake.Factories.Rendering;
+using SharpQuake.Factories.Rendering.UI;
 using SharpQuake.Framework;
 using SharpQuake.Framework.Factories.IO;
+using SharpQuake.Framework.Factories.IO.WAD;
 using SharpQuake.Framework.IO;
 using SharpQuake.Framework.IO.Input;
+using SharpQuake.Framework.IO.WAD;
+using SharpQuake.Game.Client;
+using SharpQuake.Rendering.Cameras;
 using SharpQuake.Rendering.UI;
 using SharpQuake.Sys;
 
@@ -179,19 +185,7 @@ namespace SharpQuake
             private set;
         }
 
-        public Wad GfxWad
-        {
-            get;
-            private set;
-        }
-
-        public Dictionary<String, Wad> WadFiles
-        {
-            get;
-            private set;
-        }
-
-        public Dictionary<String, String> WadTextures
+        public WadFactory Wads
         {
             get;
             private set;
@@ -209,7 +203,7 @@ namespace SharpQuake
             private set;
         }
 
-        public Menu Menu
+        public MenuFactory Menus
         {
             get;
             private set;
@@ -227,7 +221,7 @@ namespace SharpQuake
             private set;
         }
 
-        public Mod Model
+        public ModelFactory Model
         {
             get;
             private set;
@@ -287,12 +281,6 @@ namespace SharpQuake
             private set;
         }
 
-        public Hud Hud
-        {
-            get;
-            private set;
-		}
-
 		public DedicatedServer DedicatedServer
 		{
 			get;
@@ -312,8 +300,13 @@ namespace SharpQuake
             private set;
         }
 
-        // CVars
         public Cvars Cvars
+        {
+            get;
+            private set;
+        }
+
+        public PictureFactory Pictures
         {
             get;
             private set;
@@ -337,6 +330,10 @@ namespace SharpQuake
             // Factories
             Commands = AddFactory<CommandFactory>( );
             CVars = AddFactory<ClientVariableFactory>( );
+            Wads = AddFactory<WadFactory>();
+            Model = AddFactory<ModelFactory>();
+            Menus = AddFactory<MenuFactory>();
+            Pictures = AddFactory<PictureFactory>( );
 
             Commands.Initialise( CVars );
 
@@ -347,13 +344,10 @@ namespace SharpQuake
             //CVar.Initialise( Command );
             View = new View( this );
             ChaseView = new ChaseView( this );
-            GfxWad = new Wad( );
             Keyboard = new Keyboard( this );
             Console = new Con( this );
-            Menu = new Menu( this );
             Programs = new Programs( this );
             ProgramsBuiltIn = new ProgramsBuiltIn( this );
-            Model = new Mod( this );
             Network = new Network( this );
             Server = new server( this );
             Client = new client( this );
@@ -363,11 +357,7 @@ namespace SharpQuake
             RenderContext = new render( this );
             Sound = new snd( this );
             CDAudio = new cd_audio( this );
-            Hud = new Hud( this );
 			DedicatedServer = new DedicatedServer( );
-
-			WadFiles = new Dictionary<String, Wad>( );
-            WadTextures = new Dictionary<String, String>( );
         }
 
         /// <summary>
@@ -378,22 +368,8 @@ namespace SharpQuake
             // run the world state
             Programs.GlobalStruct.frametime = ( Single ) FrameTime;
 
-            // set the time and clear the general datagram
-            Server.ClearDatagram( );
-
-            // check for new clients
-            Server.CheckForNewClients( );
-
-            // read client messages
-            Server.RunClients( );
-
-            // move things around and think
-            // always pause in single player if in console or menus
-            if ( !Server.sv.paused && ( Server.svs.maxclients > 1 || Keyboard.Destination == KeyDestination.key_game ) )
-                Server.Physics( );
-
-            // send all messages to the clients
-            Server.SendClientMessages( );
+            // Execute server frame
+            Server.Frame( );
         }
 
         /// <summary>
@@ -443,6 +419,11 @@ namespace SharpQuake
             }
         }
 
+        private void InitialiseWAD()
+		{
+            Wads.Initialise();
+        }
+
         public void Initialise( QuakeParameters parms )
         {
             Parameters = parms;
@@ -460,43 +441,14 @@ namespace SharpQuake
             MainWindow.Common.Initialise( MainWindow, parms.basedir, parms.argv );
             InitialiseLocal( );
 
-            // Search wads
-            foreach ( var wadFile in FileSystem.Search( "*.wad" ) )
-            {
-                if ( wadFile == "radiant.wad" )
-                    continue;
+            InitialiseWAD();
 
-                if ( wadFile == "gfx.wad" )
-                    continue;
-
-                var data = FileSystem.LoadFile( wadFile );
-
-                if ( data == null )
-                    continue;
-
-                var wad = new Wad( );
-                wad.LoadWadFile( wadFile, data );
-
-                WadFiles.Add( wadFile, wad );
-
-                var textures = wad._Lumps.Values
-                    .Select( s => Encoding.ASCII.GetString( s.name ).Replace( "\0", "" ) )
-                    .ToArray( );
-
-                foreach ( var texture in textures )
-                {
-                    if ( !WadTextures.ContainsKey( texture ) )
-                        WadTextures.Add( texture, wadFile );
-                }
-            }
-            
-            GfxWad.LoadWadFile( "gfx.wad" );
             Keyboard.Initialise( );
             Console.Initialise( );
-            Menu.Initialise( );
+            Menus.Initialise( this );
             Programs.Initialise( );
             ProgramsBuiltIn.Initialise( );
-            Model.Initialise( );
+            Model.Initialise( this );
             Network.Initialise( );
             Server.Initialise( );
 
@@ -518,11 +470,13 @@ namespace SharpQuake
                 MainWindow.Input.Initialise( this );
                 Video.Initialise( BasePal );
                 DrawingContext.Initialise( );
+                Pictures.Initialise( this );
+                Console.InitialiseBackground( );
                 Screen.Initialise( );
                 RenderContext.Initialise( );
                 Sound.Initialise( );
                 CDAudio.Initialise( );
-                Hud.Initialise( );
+                Screen.InitialiseHUD( );
                 Client.Initialise( );
             }
 			else

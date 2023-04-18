@@ -30,7 +30,7 @@ using SharpQuake.Game.Rendering.Memory;
 using SharpQuake.Game.World;
 using System;
 
-namespace SharpQuake.Rendering
+namespace SharpQuake.Rendering.Environment
 {
 	public class Occlusion
 	{
@@ -120,7 +120,7 @@ namespace SharpQuake.Rendering
 		/// <summary>
 		/// R_RecursiveWorldNode
 		/// </summary>
-		public void RecursiveWorldNode( MemoryNodeBase node, Vector3 modelOrigin, Int32 frameCount, ref Plane[] frustum, Action<MemorySurface> onDrawSurface, Action<EFrag> onStoreEfrags )
+		public void RecursiveWorldNode( MemoryNodeBase node, Vector3 modelOrigin, Int32 frameCount, Plane[] frustum, Action<MemorySurface> onDrawSurface, Action<EFrag> onStoreEfrags )
 		{
 			if ( node.contents == ( Int32 ) Q1Contents.Solid )
 				return;     // solid
@@ -128,7 +128,7 @@ namespace SharpQuake.Rendering
 			if ( node.visframe != VisFrameCount )
 				return;
 
-			if ( Utilities.CullBox( ref node.mins, ref node.maxs, ref frustum ) )
+			if ( Utilities.CullBox( ref node.mins, ref node.maxs, frustum ) )
 				return;
 
 			Int32 c;
@@ -187,7 +187,7 @@ namespace SharpQuake.Rendering
 			var side = ( dot >= 0 ? 0 : 1 );
 
 			// recurse down the children, front side first
-			RecursiveWorldNode( n.children[side], modelOrigin, frameCount, ref frustum, onDrawSurface, onStoreEfrags );
+			RecursiveWorldNode( n.children[side], modelOrigin, frameCount, frustum, onDrawSurface, onStoreEfrags );
 
 			// draw stuff
 			c = n.numsurfaces;
@@ -236,7 +236,7 @@ namespace SharpQuake.Rendering
 			}
 
 			// recurse down the back side
-			RecursiveWorldNode( n.children[side == 0 ? 1 : 0], modelOrigin, frameCount, ref frustum, onDrawSurface, onStoreEfrags );
+			RecursiveWorldNode( n.children[side == 0 ? 1 : 0], modelOrigin, frameCount, frustum, onDrawSurface, onStoreEfrags );
 		}
 	}
 }

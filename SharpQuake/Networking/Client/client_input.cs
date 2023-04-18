@@ -25,6 +25,7 @@
 using System;
 using SharpQuake.Framework;
 using SharpQuake.Framework.IO;
+using SharpQuake.Game.Client;
 
 // cl_input.c
 

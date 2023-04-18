@@ -25,9 +25,12 @@
 using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Linq;
 using System.Runtime.InteropServices;
+using SharpQuake.Factories.Rendering.UI;
 using SharpQuake.Framework;
 using SharpQuake.Framework.IO;
+using SharpQuake.Framework.IO.WAD;
 using SharpQuake.Renderer.Textures;
 
 // gl_draw.c
@@ -45,23 +48,9 @@ namespace SharpQuake
 
         private readonly GLTexture_t[] _glTextures = new GLTexture_t[DrawDef.MAX_GLTEXTURES];
 
-        private readonly Dictionary<String, BasePicture> _MenuCachePics = new Dictionary<String, BasePicture>( );
-
         public Byte[] _MenuPlayerPixels = new Byte[4096];
         public Int32 _MenuPlayerPixelWidth;
         public Int32 _MenuPlayerPixelHeight;
-
-        public BasePicture Disc
-        {
-            get;
-            private set;
-        }
-
-        public BasePicture ConsoleBackground
-        {
-            get;
-            private set;
-        }
 
         public BasePicture BackgroundTile
         {
@@ -91,9 +80,6 @@ namespace SharpQuake
         // cnttextures
         private String CurrentFilter = "GL_LINEAR_MIPMAP_NEAREST";
 
-        // menu_cachepics
-        private Int32 _MenuNumCachePics;
-
         public Boolean IsInitialised
         {
             get;
@@ -105,6 +91,18 @@ namespace SharpQuake
         {
             get;
             set;
+        }
+
+        public Byte[] FontBuffer
+        {
+            get;
+            private set;
+        }
+
+        public Int32 FontBufferOffset
+        {
+            get;
+            private set;
         }
 
         public Drawer( Host host )
@@ -131,75 +129,45 @@ namespace SharpQuake
             Host.Commands.Add( "gl_texturemode", TextureMode_f );
             Host.Commands.Add( "imagelist", Imagelist_f );
 
+            InitialiseTypography( );            
+            
+            TranslateTexture = BaseTexture.FromDynamicBuffer( Host.Video.Device, "_TranslateTexture", new ByteArraySegment( _MenuPlayerPixels ), _MenuPlayerPixelWidth, _MenuPlayerPixelHeight, false, true, "GL_LINEAR" );
+
+            //
+            // get the other pics we need
+            //            
+            BackgroundTile = BasePicture.FromWad( Host.Video.Device, Host.Wads.FromTexture( "backtile" ), "backtile", "GL_NEAREST" );
+
+            IsInitialised = true;
+        }
+
+        private void InitialiseTypography()
+        {
             // load the console background and the charset
             // by hand, because we need to write the version
             // string into the background before turning
             // it into a texture
-            var offset = Host.GfxWad.GetLumpNameOffset( "conchars" );
-            var draw_chars = Host.GfxWad.Data; // draw_chars
+            var concharsWad = Host.Wads.FromTexture( "conchars" );
+            var offset = concharsWad.GetLumpNameOffset( "conchars" );
+            var draw_chars = concharsWad.Data; // draw_chars
+
             for ( var i = 0; i < 256 * 64; i++ )
             {
                 if ( draw_chars[offset + i] == 0 )
                     draw_chars[offset + i] = 255;	// proper transparent color
             }
 
+            var fontBuffer = new ByteArraySegment( draw_chars, offset );
+
+            FontBuffer = draw_chars;
+            FontBufferOffset = offset;
+
             // Temporarily set here
             BaseTexture.PicMip = Host.Cvars.glPicMip.Get<Single>( );
-            BaseTexture.MaxSize = Host.Cvars.glMaxSize.Get<Int32>();
+            BaseTexture.MaxSize = Host.Cvars.glMaxSize.Get<Int32>( );
 
             CharSetFont = new Renderer.Font( Host.Video.Device, "charset" );
-            CharSetFont.Initialise( new ByteArraySegment( draw_chars, offset ) );
-
-            var buf = FileSystem.LoadFile( "gfx/conback.lmp" );
-            if ( buf == null )
-                Utilities.Error( "Couldn't load gfx/conback.lmp" );
-
-            var cbHeader = Utilities.BytesToStructure<WadPicHeader>( buf, 0 );
-            EndianHelper.SwapPic( cbHeader );
-
-            // hack the version number directly into the pic
-            var ver = String.Format( $"(c# {QDef.CSQUAKE_VERSION,7:F2}) {QDef.VERSION,7:F2}" );
-            var offset2 = Marshal.SizeOf( typeof( WadPicHeader ) ) + 320 * 186 + 320 - 11 - 8 * ver.Length;
-            var y = ver.Length;
-            for ( var x = 0; x < y; x++ )
-                CharToConback( ver[x], new ByteArraySegment( buf, offset2 + ( x << 3 ) ), new ByteArraySegment( draw_chars, offset ) );
-
-            var ncdataIndex = Marshal.SizeOf( typeof( WadPicHeader ) ); // cb->data;
-
-            ConsoleBackground = BasePicture.FromBuffer( Host.Video.Device, new ByteArraySegment( buf, ncdataIndex ), ( Int32 ) cbHeader.width, ( Int32 ) cbHeader.height, "conback", "GL_LINEAR" );
-            
-            TranslateTexture = BaseTexture.FromDynamicBuffer( Host.Video.Device, "_TranslateTexture", new ByteArraySegment( _MenuPlayerPixels ), _MenuPlayerPixelWidth, _MenuPlayerPixelHeight, false, true, "GL_LINEAR" );
-
-            //
-            // get the other pics we need
-            //
-            Disc = BasePicture.FromWad( Host.Video.Device, Host.GfxWad, "disc", "GL_NEAREST" );
-
-            BackgroundTile = BasePicture.FromWad( Host.Video.Device, Host.GfxWad, "backtile", "GL_NEAREST" );
-
-            IsInitialised = true;
-        }
-
-        // Draw_BeginDisc
-        //
-        // Draws the little blue disc in the corner of the screen.
-        // Call before beginning any disc IO.
-        public void BeginDisc( )
-        {
-            if ( Disc != null )
-            {
-                Host.Video.Device.SetDrawBuffer( true );
-                Host.Video.Device.Graphics.DrawPicture( Disc, Host.Screen.vid.width - 24, 0 );
-                Host.Video.Device.SetDrawBuffer( false );
-            }
-        }
-
-        // Draw_EndDisc
-        // Erases the disc iHost.Console.
-        // Call after completing any disc IO
-        public void EndDisc( )
-        {
-            // nothing to do?
+            CharSetFont.Initialise( fontBuffer );
         }
 
         // Draw_TileClear
@@ -217,7 +185,7 @@ namespace SharpQuake
         public void FadeScreen( )
         {
             Host.Video.Device.Graphics.FadeScreen( );
-            Host.Hud.Changed( );
+            Host.Screen.Elements.SetDirty( ElementFactory.HUD );
         }
 
         // Draw_Character
@@ -237,27 +205,6 @@ namespace SharpQuake
             CharSetFont.Draw( x, y, str, color );
         }
 
-        // Draw_CachePic
-        public BasePicture CachePic( String path, String filter = "GL_LINEAR_MIPMAP_NEAREST", System.Boolean ignoreAtlas = false )
-        {
-            if ( _MenuCachePics.ContainsKey( path ) )
-                return _MenuCachePics[path];
-
-            if ( _MenuNumCachePics == DrawDef.MAX_CACHED_PICS )
-                Utilities.Error( "menu_numcachepics == MAX_CACHED_PICS" );
-
-            var picture = BasePicture.FromFile( Host.Video.Device, path, filter, ignoreAtlas );
-
-            if ( picture != null )
-            {
-                _MenuNumCachePics++;
-
-                _MenuCachePics.Add( path, picture );
-            }
-
-            return picture;
-        }
-
         /// <summary>
         /// Draw_TransPicTranslate
         /// Only used for the player color selection menu
@@ -265,23 +212,6 @@ namespace SharpQuake
         public void TransPicTranslate( Int32 x, Int32 y, BasePicture pic, Byte[] translation )
         {
             Host.Video.Device.Graphics.DrawTransTranslate( TranslateTexture, x, y, pic.Width, pic.Height, translation );
-        }
-
-        // Draw_ConsoleBackground
-        public void DrawConsoleBackground( Int32 lines )
-        {
-            var y = ( Host.Screen.vid.height * 3 ) >> 2;
-
-            if ( lines > y )
-            {
-                Host.Video.Device.Graphics.DrawPicture( ConsoleBackground, 0, lines - Host.Screen.vid.height, Host.Screen.vid.width, Host.Screen.vid.height );
-            }
-            else
-            {
-                var alpha = ( Int32 ) Math.Min( ( 255 * ( ( 1.2f * lines ) / y ) ), 255 );
-
-                Host.Video.Device.Graphics.DrawPicture( ConsoleBackground, 0, lines - Host.Screen.vid.height, Host.Screen.vid.width, Host.Screen.vid.height, Color.FromArgb( alpha, Color.White ) );
-            }
         }
 
         /// <summary>
@@ -376,25 +306,6 @@ namespace SharpQuake
             }
 
             Host.Console.Print( "{0} textures currently loaded.\n", textureCount );
-        }
-
-        private void CharToConback( Int32 num, ByteArraySegment dest, ByteArraySegment drawChars )
-        {
-            var row = num >> 4;
-            var col = num & 15;
-            var destOffset = dest.StartIndex;
-            var srcOffset = drawChars.StartIndex + ( row << 10 ) + ( col << 3 );
-            //source = draw_chars + (row<<10) + (col<<3);
-            var drawline = 8;
-
-            while ( drawline-- > 0 )
-            {
-                for ( var x = 0; x < 8; x++ )
-                    if ( drawChars.Data[srcOffset + x] != 255 )
-                        dest.Data[destOffset + x] = ( Byte ) ( 0x60 + drawChars.Data[srcOffset + x] ); // source[x];
-                srcOffset += 128; // source += 128;
-                destOffset += 320; // dest += 320;
-            }
         }
     }
 }

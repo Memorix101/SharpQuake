@@ -198,6 +198,150 @@ namespace SharpQuake.Framework.IO
             return Value;
         }
 
+        private void SetSingle( String stringValue )
+		{
+            if ( Single.TryParse( stringValue, out var singleResult ) )
+                Value = singleResult;
+            else
+                Utilities.Error( $"Failed to set value for {Name}, invalid format" );
+        }
+
+        private void SetDouble( String stringValue )
+        {
+            if ( Double.TryParse( stringValue, out var doubleResult ) )
+                Value = doubleResult;
+            else
+                Utilities.Error( $"Failed to set value for {Name}, invalid format" );
+        }
+
+        private void SetInt16( String stringValue )
+        {
+            if ( Int16.TryParse( stringValue, out var int16Result ) )
+                Value = int16Result;
+            else
+                Utilities.Error( $"Failed to set value for {Name}, invalid format" );
+        }
+
+        private void SetBoolean( String stringValue )
+        {
+            if ( Int16.TryParse( stringValue, out var booleanResult ) )
+                Value = booleanResult == 1;
+            else
+                Utilities.Error( $"Failed to set value for {Name}, invalid format" );
+        }
+
+        private void SetInt32( String stringValue )
+        {
+            if ( Int32.TryParse( stringValue, out var int32Result ) )
+                Value = int32Result;
+            else
+                Utilities.Error( $"Failed to set value for {Name}, invalid format" );
+        }
+
+        private void SetInt64( String stringValue )
+        {
+            if ( Int64.TryParse( stringValue, out var int64Result ) )
+                Value = int64Result;
+            else
+                Utilities.Error( $"Failed to set value for {Name}, invalid format" );
+        }
+
+        private void SetUInt16( String stringValue )
+        {
+            if ( UInt16.TryParse( stringValue, out var uint16Result ) )
+                Value = uint16Result;
+            else
+                Utilities.Error( $"Failed to set value for {Name}, invalid format" );
+        }
+
+        private void SetUInt32( String stringValue )
+        {
+            if ( UInt32.TryParse( stringValue, out var uint32Result ) )
+                Value = uint32Result;
+            else
+                Utilities.Error( $"Failed to set value for {Name}, invalid format" );
+        }
+
+        private void SetUInt64( String stringValue )
+        {
+            if ( UInt64.TryParse( stringValue, out var uint64Result ) )
+                Value = uint64Result;
+            else
+                Utilities.Error( $"Failed to set value for {Name}, invalid format" );
+        }
+
+        private void SetVector2( String stringValue )
+		{
+            var vector2Values = stringValue.Split( ' ' )?.Select( s => Single.Parse( s ) ).ToArray();
+
+            if ( vector2Values == null || vector2Values.Length < 2 )
+                Utilities.Error( $"Failed to set value for {Name}, invalid format" );
+            else
+                Value = new Vector2( vector2Values[0], vector2Values[1] );
+        }
+
+        private void SetVector3( String stringValue )
+        {
+            var vector3Values = stringValue.Split( ' ' )?.Select( s => Single.Parse( s ) ).ToArray();
+
+            if ( vector3Values == null || vector3Values.Length < 3 )
+                Utilities.Error( $"Failed to set value for {Name}, invalid format" );
+            else
+                Value = new Vector3( vector3Values[0], vector3Values[1], vector3Values[2] );
+        }
+
+        private void SetVector4( String stringValue )
+        {
+            var vector4Values = stringValue.Split( ' ' )?.Select( s => Single.Parse( s ) ).ToArray();
+
+            if ( vector4Values == null || vector4Values.Length < 4 )
+                Utilities.Error( $"Failed to set value for {Name}, invalid format" );
+            else
+                Value = new Vector4( vector4Values[0], vector4Values[1], vector4Values[2], vector4Values[3] );
+        }
+
+        private void SetRectangle( String stringValue )
+        {
+            var rectValues = stringValue.Split( ' ' )?.Select( s => Int32.Parse( s ) ).ToArray();
+
+            if ( rectValues == null || rectValues.Length < 4 )
+                Utilities.Error( $"Failed to set value for {Name}, invalid format" );
+            else
+                Value = new Rectangle( rectValues[0], rectValues[1], rectValues[2], rectValues[3] );
+        }
+
+        private void SetPoint( String stringValue )
+        {
+            var pointValues = stringValue.Split( ' ' )?.Select( s => Int32.Parse( s ) ).ToArray();
+
+            if ( pointValues == null || pointValues.Length < 2 )
+                Utilities.Error( $"Failed to set value for {Name}, invalid format" );
+            else
+                Value = new Point( pointValues[0], pointValues[1] );
+        }
+
+        private void SetSize( String stringValue )
+        {
+            var sizeValues = stringValue.Split( ' ' )?.Select( s => Int32.Parse( s ) ).ToArray();
+
+            if ( sizeValues == null || sizeValues.Length < 2 )
+                Utilities.Error( $"Failed to set value for {Name}, invalid format" );
+            else
+                Value = new Size( sizeValues[0], sizeValues[1] );
+        }
+
+        private void SetColour( String stringValue )
+        {
+            var colourValues = stringValue.Split( ' ' )?
+                                   .Select( s => ( Int32 ) ( Single.Parse( s ) * 255f ) )
+                                   .ToArray();
+
+            if ( colourValues == null || colourValues.Length < 3 )
+                Utilities.Error( $"Failed to set value for {Name}, invalid format" );
+            else
+                Value = Color.FromArgb( colourValues[0], colourValues[1], colourValues[2], colourValues.Length < 4 ? 255 : colourValues[3] );
+        }
+
         public void Set<T>( T value )
         {
             var newValueType = typeof( T );
@@ -209,131 +353,67 @@ namespace SharpQuake.Framework.IO
                     switch ( ValueType.Name )
                     {
                         case "Single":
-                            if ( Single.TryParse( stringValue, out var singleResult ) )
-                                Value = singleResult;
-                            else
-                                Utilities.Error( $"Failed to set value for {Name}, invalid format" );
+                            SetSingle( stringValue );
                             break;
 
                         case "Double":
-                            if ( Double.TryParse( stringValue, out var doubleResult ) )
-                                Value = doubleResult;
-                            else
-                                Utilities.Error( $"Failed to set value for {Name}, invalid format" );
+                            SetDouble( stringValue );
                             break;
 
                         case "Int16":
-                            if ( Int16.TryParse( stringValue, out var int16Result ) )
-                                Value = int16Result;
-                            else
-                                Utilities.Error( $"Failed to set value for {Name}, invalid format" );
+                            SetInt16( stringValue );
                             break;
 
                         case "Boolean":
-                            if ( Int16.TryParse( stringValue, out var booleanResult ) )
-                                Value = booleanResult == 1;
-                            else
-                                Utilities.Error( $"Failed to set value for {Name}, invalid format" );
+                            SetBoolean( stringValue );
                             break;
 
                         case "Int32":
-                            if ( Int32.TryParse( stringValue, out var int32Result ) )
-                                Value = int32Result;
-                            else
-                                Utilities.Error( $"Failed to set value for {Name}, invalid format" );
+                            SetInt32( stringValue );
                             break;
 
                         case "Int64":
-                            if ( Int64.TryParse( stringValue, out var int64Result ) )
-                                Value = int64Result;
-                            else
-                                Utilities.Error( $"Failed to set value for {Name}, invalid format" );
+                            SetInt64( stringValue );
                             break;
 
                         case "UInt16":
-                            if ( UInt16.TryParse( stringValue, out var uint16Result ) )
-                                Value = uint16Result;
-                            else
-                                Utilities.Error( $"Failed to set value for {Name}, invalid format" );
+                            SetUInt16( stringValue );
                             break;
 
                         case "UInt32":
-                            if ( UInt32.TryParse( stringValue, out var uint32Result ) )
-                                Value = uint32Result;
-                            else
-                                Utilities.Error( $"Failed to set value for {Name}, invalid format" );
+                            SetUInt32( stringValue );
                             break;
 
                         case "UInt64":
-                            if ( UInt64.TryParse( stringValue, out var uint64Result ) )
-                                Value = uint64Result;
-                            else
-                                Utilities.Error( $"Failed to set value for {Name}, invalid format" );
+                            SetUInt64( stringValue );
                             break;
 
                         case "Vector2":
-                            var vector2Values = stringValue.Split( ' ' )?.Select( s => Single.Parse( s ) ).ToArray();
-
-                            if ( vector2Values == null || vector2Values.Length < 2 )
-                                Utilities.Error( $"Failed to set value for {Name}, invalid format" );
-                            else
-                                Value = new Vector2( vector2Values[0], vector2Values[1] );
+                            SetVector2( stringValue );
                             break;
 
                         case "Vector3":
-                            var vector3Values = stringValue.Split( ' ' )?.Select( s => Single.Parse( s ) ).ToArray( );
-
-                            if ( vector3Values == null || vector3Values.Length < 3 )
-                                Utilities.Error( $"Failed to set value for {Name}, invalid format" );
-                            else
-                                Value = new Vector3( vector3Values[0], vector3Values[1], vector3Values[2] );
+                            SetVector3( stringValue );
                             break;
 
                         case "Vector4":
-                            var vector4Values = stringValue.Split( ' ' )?.Select( s => Single.Parse( s ) ).ToArray( );
-
-                            if ( vector4Values == null || vector4Values.Length < 4 )
-                                Utilities.Error( $"Failed to set value for {Name}, invalid format" );
-                            else
-                                Value = new Vector4( vector4Values[0], vector4Values[1], vector4Values[2], vector4Values[3] );
+                            SetVector4( stringValue );
                             break;
 
                         case "Rectangle":
-                            var rectValues = stringValue.Split( ' ' )?.Select( s => Int32.Parse( s ) ).ToArray( );
-
-                            if ( rectValues == null || rectValues.Length < 4 )
-                                Utilities.Error( $"Failed to set value for {Name}, invalid format" );
-                            else
-                                Value = new Rectangle( rectValues[0], rectValues[1], rectValues[2], rectValues[3] );
+                            SetRectangle( stringValue );
                             break;
 
                         case "Point":
-                            var pointValues = stringValue.Split( ' ' )?.Select( s => Int32.Parse( s ) ).ToArray( );
-
-                            if ( pointValues == null || pointValues.Length < 2 )
-                                Utilities.Error( $"Failed to set value for {Name}, invalid format" );
-                            else
-                                Value = new Point( pointValues[0], pointValues[1] );
+                            SetPoint( stringValue );
                             break;
 
                         case "Size":
-                            var sizeValues = stringValue.Split( ' ' )?.Select( s => Int32.Parse( s ) ).ToArray( );
-
-                            if ( sizeValues == null || sizeValues.Length < 2 )
-                                Utilities.Error( $"Failed to set value for {Name}, invalid format" );
-                            else
-                                Value = new Size( sizeValues[0], sizeValues[1] );
+                            SetSize( stringValue );
                             break;
 
                         case "Color":
-                            var colourValues = stringValue.Split( ' ' )?
-                                .Select( s => ( Int32 ) ( Single.Parse( s ) * 255f ) )
-                                .ToArray( );
-
-                            if ( colourValues == null || colourValues.Length < 3 )
-                                Utilities.Error( $"Failed to set value for {Name}, invalid format" );
-                            else
-                                Value = Color.FromArgb( colourValues[0], colourValues[1], colourValues[2], colourValues.Length < 4 ? 255 : colourValues[3] );
+                            SetColour( stringValue );
                             break;
                     }
                 }

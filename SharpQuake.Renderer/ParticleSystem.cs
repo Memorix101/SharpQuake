@@ -369,6 +369,7 @@ namespace SharpQuake.Renderer
 		// R_InitParticles
 		public void InitParticles( )
 		{
+
 			var i = CommandLine.CheckParm( "-particles" );
 			if ( i > 0 && i < CommandLine.Argc - 1 )
 			{
@@ -382,11 +383,13 @@ namespace SharpQuake.Renderer
 			_Particles = new Particle[_NumParticles];
 			for ( i = 0; i < _NumParticles; i++ )
 				_Particles[i] = new Particle( );
+
+			InitParticleTexture( );
 		}
 
 		// beamlength
 		// R_InitParticleTexture
-		public void InitParticleTexture( )
+		private void InitParticleTexture( )
 		{
 			var data = new Byte[8 * 8 * 4];
 			var i = 0;
@@ -412,7 +415,7 @@ namespace SharpQuake.Renderer
 		/// <summary>
 		/// R_ClearParticles
 		/// </summary>
-		public void ClearParticles( )
+		public void Clear( )
 		{
 			_FreeParticles = _Particles[0];
 			_ActiveParticles = null;

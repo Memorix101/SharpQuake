@@ -22,13 +22,12 @@
 /// Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 /// </copyright>
 
-
 namespace SharpQuake.Game.Data.Models
 {
     public enum ModelType
     {
-        mod_brush,
-        mod_sprite,
-        mod_alias
+        Brush,
+        Sprite,
+        Alias
     } // modtype_t;
 }

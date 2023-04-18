@@ -51,6 +51,7 @@ using System.IO;
 using NVorbis.OpenTKSupport;
 using SharpQuake.Framework;
 using SharpQuake.Framework.IO;
+using SharpQuake.Game.Client;
 
 namespace SharpQuake
 {
@@ -435,6 +436,9 @@ namespace SharpQuake
         public void Resume( )
         {
             if ( streamer == null )
+                return;
+
+            if ( _noAudio == true )
                 return;
 
             oggStream.Resume( );

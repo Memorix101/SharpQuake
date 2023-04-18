@@ -29,6 +29,7 @@ using System.Text;
 using SharpQuake.Framework;
 using SharpQuake.Framework.IO;
 using SharpQuake.Framework.IO.Input;
+using SharpQuake.Game.Client;
 using SharpQuake.Game.Data.Models;
 using SharpQuake.Rendering.UI;
 
@@ -36,10 +37,6 @@ namespace SharpQuake
 {
 	public partial class Host
     {
-        public UInt32 FPSCounter = 0;
-        public UInt32 FPS = 0;
-        public DateTime LastFPSUpdate;
-
         public Boolean ShowFPS
         {
             get;
@@ -58,7 +55,7 @@ namespace SharpQuake
         {
             if ( Keyboard.Destination != KeyDestination.key_console && Client.cls.state != cactive_t.ca_dedicated )
             {
-                MenuBase.QuitMenu.Show( this );
+                Menus.Show( "menu_quit" );
                 return;
             }
 
@@ -125,7 +122,7 @@ namespace SharpQuake
             if ( e == null )
                 return;
 
-            var m = Model.ForName( msg.Parameters[0], false, ModelType.mod_alias );
+            var m = Model.ForName( msg.Parameters[0], false, ModelType.Alias );
             if ( m == null )
             {
                 Console.Print( "Can't load {0}\n", msg.Parameters[0] );

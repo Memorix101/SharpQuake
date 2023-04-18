@@ -27,6 +27,9 @@ using SharpQuake.Framework.Mathematics;
 using SharpQuake.Framework;
 using SharpQuake.Framework.IO.BSP;
 using SharpQuake.Framework.IO;
+using SharpQuake.Game.Client;
+using SharpQuake.Framework.Definitions;
+using SharpQuake.Rendering.Cameras;
 
 // view.h
 // view.c -- player eye positioning
@@ -71,14 +74,6 @@ namespace SharpQuake
 		// v_blend[4]		// rgba 0.0 - 1.0
 		private Byte[,] _Ramps = new Byte[3, 256]; // ramps[3][256]
 
-		private Vector3 _Forward; // vec3_t forward
-		private Vector3 _Right; // vec3_t right
-		private Vector3 _Up; // vec3_t up
-
-		private Single _DmgTime; // v_dmg_time
-		private Single _DmgRoll; // v_dmg_roll
-		private Single _DmgPitch; // v_dmg_pitch
-
 		private Single _OldZ = 0; // static oldz  from CalcRefdef()
 		private Single _OldYaw = 0; // static oldyaw from CalcGunAngle
 		private Single _OldPitch = 0; // static oldpitch from CalcGunAngle
@@ -91,13 +86,43 @@ namespace SharpQuake
 			set;
 		}
 
+		public Camera MainCamera
+		{
+			get;
+			private set;
+		}
+
+		public View( Host host )
+		{
+			Host = host;
+
+			_GammaTable = new Byte[256];
+
+			_CShift_empty = new cshift_t( new[] { 130, 80, 50 }, 0 );
+			_CShift_water = new cshift_t( new[] { 130, 80, 50 }, 128 );
+			_CShift_slime = new cshift_t( new[] { 0, 25, 5 }, 150 );
+			_CShift_lava = new cshift_t( new[] { 255, 80, 0 }, 150 );
+
+			MainCamera = new Camera( host );
+		}
+
 		// V_Init
 		public void Initialise( )
+		{
+			InitialiseCommands();
+			InitialiseClientVariables();
+			MainCamera.Initialise( );
+		}
+
+		private void InitialiseCommands()
 		{
 			Host.Commands.Add( "v_cshift", CShift_f );
 			Host.Commands.Add( "bf", BonusFlash_f );
 			Host.Commands.Add( "centerview", StartPitchDrift );
+		}
 
+		private void InitialiseClientVariables()
+		{
 			if ( Host.Cvars.LcdX == null )
 			{
 				Host.Cvars.LcdX = Host.CVars.Add( "lcd_x", 0f );
@@ -105,14 +130,7 @@ namespace SharpQuake
 
 				Host.Cvars.ScrOfsX = Host.CVars.Add( "scr_ofsx", 0f );
 				Host.Cvars.ScrOfsY = Host.CVars.Add( "scr_ofsy", 0f );
-				Host.Cvars.ScrOfsZ = Host.CVars.Add( "scr_ofsz", 0f );
-
-				Host.Cvars.ClRollSpeed = Host.CVars.Add( "cl_rollspeed", 200f );
-				Host.Cvars.ClRollAngle = Host.CVars.Add( "cl_rollangle", 2.0f );
-
-				Host.Cvars.ClBob = Host.CVars.Add( "cl_bob", 0.02f );
-				Host.Cvars.ClBobCycle = Host.CVars.Add( "cl_bobcycle", 0.6f );
-				Host.Cvars.ClBobUp = Host.CVars.Add( "cl_bobup", 0.5f );
+				Host.Cvars.ScrOfsZ = Host.CVars.Add( "scr_ofsz", 0f );				
 
 				Host.Cvars.KickTime = Host.CVars.Add( "v_kicktime", 0.5f );
 				Host.Cvars.KickRoll = Host.CVars.Add( "v_kickroll", 0.6f );
@@ -147,7 +165,7 @@ namespace SharpQuake
 		/// the entity origin, so any view position inside that will be valid
 		/// </summary>
 		public void RenderView( )
-		{
+		{		
 			if ( Host.Console.ForcedUp )
 				return;
 
@@ -167,7 +185,7 @@ namespace SharpQuake
 			else if ( !Host.Client.cl.paused )
 				CalcRefDef();
 
-			Host.RenderContext.PushDlights();
+			Host.RenderContext.World.Lighting.PushDlights();
 
 			if ( Host.Cvars.LcdX.Get<Single>() != 0 )
 			{
@@ -181,16 +199,16 @@ namespace SharpQuake
 				vid.aspect *= 0.5f;
 
 				rdef.viewangles.Y -= Host.Cvars.LcdYaw.Get<Single>();
-				rdef.vieworg -= _Right * Host.Cvars.LcdX.Get<Single>();
+				rdef.vieworg -= MainCamera.Right * Host.Cvars.LcdX.Get<Single>();
 
 				Host.RenderContext.RenderView();
 
 				// ???????? vid.buffer += vid.rowbytes>>1;
 
-				Host.RenderContext.PushDlights();
+				Host.RenderContext.World.Lighting.PushDlights();
 
 				rdef.viewangles.Y += Host.Cvars.LcdYaw.Get<Single>() * 2;
-				rdef.vieworg += _Right * Host.Cvars.LcdX.Get<Single>() * 2;
+				rdef.vieworg += MainCamera.Right * Host.Cvars.LcdX.Get<Single>() * 2;
 
 				Host.RenderContext.RenderView();
 
@@ -207,26 +225,6 @@ namespace SharpQuake
 			}
 		}
 
-		/// <summary>
-		/// V_CalcRoll
-		/// Used by view and sv_user
-		/// </summary>
-		public Single CalcRoll( ref Vector3 angles, ref Vector3 velocity )
-		{
-			MathLib.AngleVectors( ref angles, out _Forward, out _Right, out _Up );
-			var side = Vector3.Dot( velocity, _Right );
-			Single sign = side < 0 ? -1 : 1;
-			side = Math.Abs( side );
-
-			var value = Host.Cvars.ClRollAngle.Get<Single>();
-			if ( side < Host.Cvars.ClRollSpeed.Get<Single>() )
-				side = side * value / Host.Cvars.ClRollSpeed.Get<Single>();
-			else
-				side = value;
-
-			return side * sign;
-		}
-
 		// V_UpdatePalette
 		public void UpdatePalette( )
 		{
@@ -235,7 +233,7 @@ namespace SharpQuake
 			var isnew = false;
 
 			var cl = Host.Client.cl;
-			for ( var i = 0; i < ColorShift.NUM_CSHIFTS; i++ )
+			for ( var i = 0; i < ColourShiftDef.NUM_CSHIFTS; i++ )
 			{
 				if ( cl.cshifts[i].percent != cl.prev_cshifts[i].percent )
 				{
@@ -251,14 +249,14 @@ namespace SharpQuake
 			}
 
 			// drop the damage value
-			cl.cshifts[ColorShift.CSHIFT_DAMAGE].percent -= ( Int32 ) ( Host.FrameTime * 150 );
-			if ( cl.cshifts[ColorShift.CSHIFT_DAMAGE].percent < 0 )
-				cl.cshifts[ColorShift.CSHIFT_DAMAGE].percent = 0;
+			cl.cshifts[ColourShiftDef.CSHIFT_DAMAGE].percent -= ( Int32 ) ( Host.FrameTime * 150 );
+			if ( cl.cshifts[ColourShiftDef.CSHIFT_DAMAGE].percent < 0 )
+				cl.cshifts[ColourShiftDef.CSHIFT_DAMAGE].percent = 0;
 
 			// drop the bonus value
-			cl.cshifts[ColorShift.CSHIFT_BONUS].percent -= ( Int32 ) ( Host.FrameTime * 100 );
-			if ( cl.cshifts[ColorShift.CSHIFT_BONUS].percent < 0 )
-				cl.cshifts[ColorShift.CSHIFT_BONUS].percent = 0;
+			cl.cshifts[ColourShiftDef.CSHIFT_BONUS].percent -= ( Int32 ) ( Host.FrameTime * 100 );
+			if ( cl.cshifts[ColourShiftDef.CSHIFT_BONUS].percent < 0 )
+				cl.cshifts[ColourShiftDef.CSHIFT_BONUS].percent = 0;
 
 			var force = CheckGamma();
 			if ( !isnew && !force )
@@ -348,7 +346,7 @@ namespace SharpQuake
 
 			if ( Host.Cvars.glCShiftPercent.Get<Single>() != 0 )
 			{
-				for ( var j = 0; j < ColorShift.NUM_CSHIFTS; j++ )
+				for ( var j = 0; j < ColourShiftDef.NUM_CSHIFTS; j++ )
 				{
 					var a2 = ( ( cshifts[j].percent * Host.Cvars.glCShiftPercent.Get<Single>() ) / 100.0f ) / 255.0f;
 
@@ -388,29 +386,29 @@ namespace SharpQuake
 			var cl = Host.Client.cl;
 			cl.faceanimtime = ( Single ) cl.time + 0.2f; // put sbar face into pain frame
 
-			cl.cshifts[ColorShift.CSHIFT_DAMAGE].percent += ( Int32 ) ( 3 * count );
-			if ( cl.cshifts[ColorShift.CSHIFT_DAMAGE].percent < 0 )
-				cl.cshifts[ColorShift.CSHIFT_DAMAGE].percent = 0;
-			if ( cl.cshifts[ColorShift.CSHIFT_DAMAGE].percent > 150 )
-				cl.cshifts[ColorShift.CSHIFT_DAMAGE].percent = 150;
+			cl.cshifts[ColourShiftDef.CSHIFT_DAMAGE].percent += ( Int32 ) ( 3 * count );
+			if ( cl.cshifts[ColourShiftDef.CSHIFT_DAMAGE].percent < 0 )
+				cl.cshifts[ColourShiftDef.CSHIFT_DAMAGE].percent = 0;
+			if ( cl.cshifts[ColourShiftDef.CSHIFT_DAMAGE].percent > 150 )
+				cl.cshifts[ColourShiftDef.CSHIFT_DAMAGE].percent = 150;
 
 			if ( armor > blood )
 			{
-				cl.cshifts[ColorShift.CSHIFT_DAMAGE].destcolor[0] = 200;
-				cl.cshifts[ColorShift.CSHIFT_DAMAGE].destcolor[1] = 100;
-				cl.cshifts[ColorShift.CSHIFT_DAMAGE].destcolor[2] = 100;
+				cl.cshifts[ColourShiftDef.CSHIFT_DAMAGE].destcolor[0] = 200;
+				cl.cshifts[ColourShiftDef.CSHIFT_DAMAGE].destcolor[1] = 100;
+				cl.cshifts[ColourShiftDef.CSHIFT_DAMAGE].destcolor[2] = 100;
 			}
 			else if ( armor != 0 )
 			{
-				cl.cshifts[ColorShift.CSHIFT_DAMAGE].destcolor[0] = 220;
-				cl.cshifts[ColorShift.CSHIFT_DAMAGE].destcolor[1] = 50;
-				cl.cshifts[ColorShift.CSHIFT_DAMAGE].destcolor[2] = 50;
+				cl.cshifts[ColourShiftDef.CSHIFT_DAMAGE].destcolor[0] = 220;
+				cl.cshifts[ColourShiftDef.CSHIFT_DAMAGE].destcolor[1] = 50;
+				cl.cshifts[ColourShiftDef.CSHIFT_DAMAGE].destcolor[2] = 50;
 			}
 			else
 			{
-				cl.cshifts[ColorShift.CSHIFT_DAMAGE].destcolor[0] = 255;
-				cl.cshifts[ColorShift.CSHIFT_DAMAGE].destcolor[1] = 0;
-				cl.cshifts[ColorShift.CSHIFT_DAMAGE].destcolor[2] = 0;
+				cl.cshifts[ColourShiftDef.CSHIFT_DAMAGE].destcolor[0] = 255;
+				cl.cshifts[ColourShiftDef.CSHIFT_DAMAGE].destcolor[1] = 0;
+				cl.cshifts[ColourShiftDef.CSHIFT_DAMAGE].destcolor[2] = 0;
 			}
 
 			//
@@ -426,12 +424,12 @@ namespace SharpQuake
 
 			var side = Vector3.Dot( from, right );
 
-			_DmgRoll = count * side * Host.Cvars.KickRoll.Get<Single>();
+			MainCamera.DmgRoll = count * side * Host.Cvars.KickRoll.Get<Single>();
 
 			side = Vector3.Dot( from, forward );
-			_DmgPitch = count * side * Host.Cvars.KickPitch.Get<Single>();
+			MainCamera.DmgPitch = count * side * Host.Cvars.KickPitch.Get<Single>();
 
-			_DmgTime = Host.Cvars.KickTime.Get<Single>();
+			MainCamera.DmgTime = Host.Cvars.KickTime.Get<Single>();
 		}
 
 		/// <summary>
@@ -444,19 +442,19 @@ namespace SharpQuake
 			{
 				case Q1Contents.Empty:
 				case Q1Contents.Solid:
-					Host.Client.cl.cshifts[ColorShift.CSHIFT_CONTENTS] = _CShift_empty;
+					Host.Client.cl.cshifts[ColourShiftDef.CSHIFT_CONTENTS] = _CShift_empty;
 					break;
 
 				case Q1Contents.Lava:
-					Host.Client.cl.cshifts[ColorShift.CSHIFT_CONTENTS] = _CShift_lava;
+					Host.Client.cl.cshifts[ColourShiftDef.CSHIFT_CONTENTS] = _CShift_lava;
 					break;
 
 				case Q1Contents.Slime:
-					Host.Client.cl.cshifts[ColorShift.CSHIFT_CONTENTS] = _CShift_slime;
+					Host.Client.cl.cshifts[ColourShiftDef.CSHIFT_CONTENTS] = _CShift_slime;
 					break;
 
 				default:
-					Host.Client.cl.cshifts[ColorShift.CSHIFT_CONTENTS] = _CShift_water;
+					Host.Client.cl.cshifts[ColourShiftDef.CSHIFT_CONTENTS] = _CShift_water;
 					break;
 			}
 		}
@@ -500,10 +498,10 @@ namespace SharpQuake
 		private void BonusFlash_f( CommandMessage msg )
 		{
 			var cl = Host.Client.cl;
-			cl.cshifts[ColorShift.CSHIFT_BONUS].destcolor[0] = 215;
-			cl.cshifts[ColorShift.CSHIFT_BONUS].destcolor[1] = 186;
-			cl.cshifts[ColorShift.CSHIFT_BONUS].destcolor[2] = 69;
-			cl.cshifts[ColorShift.CSHIFT_BONUS].percent = 50;
+			cl.cshifts[ColourShiftDef.CSHIFT_BONUS].destcolor[0] = 215;
+			cl.cshifts[ColourShiftDef.CSHIFT_BONUS].destcolor[1] = 186;
+			cl.cshifts[ColourShiftDef.CSHIFT_BONUS].destcolor[2] = 69;
+			cl.cshifts[ColourShiftDef.CSHIFT_BONUS].percent = 50;
 		}
 
 		// V_CalcIntermissionRefdef
@@ -521,7 +519,10 @@ namespace SharpQuake
 			view.model = null;
 
 			// allways idle in intermission
-			AddIdle( 1 );
+			var sway = MainCamera.GetTransform<SwayCameraTransform>( );
+			sway.OverrideScale = 1;
+			sway.Apply( );
+			sway.OverrideScale = null;
 		}
 
 		// V_CalcRefdef
@@ -531,6 +532,7 @@ namespace SharpQuake
 
 			// ent is the player model (visible when out of body)
 			var ent = Host.Client.ViewEntity;
+
 			// view is the weapon model (only visible from inside body)
 			var view = Host.Client.ViewEnt;
 
@@ -539,14 +541,11 @@ namespace SharpQuake
 			ent.angles.Y = Host.Client.cl.viewangles.Y; // the model should face the view dir
 			ent.angles.X = -Host.Client.cl.viewangles.X;    // the model should face the view dir
 
-			var bob = CalcBob();
-
 			var rdef = Host.RenderContext.RefDef;
 			var cl = Host.Client.cl;
 
-			// refresh position
-			rdef.vieworg = ent.origin;
-			rdef.vieworg.Z += cl.viewheight + bob;
+			var bob = MainCamera.GetTransform<BobCameraTransform>( );
+			bob.Apply( );
 
 			// never let it sit exactly on a node line, because a water plane can
 			// dissapear when viewed with the eye exactly on it.
@@ -554,8 +553,8 @@ namespace SharpQuake
 			rdef.vieworg += SmallOffset;
 			rdef.viewangles = cl.viewangles;
 
-			CalcViewRoll();
-			AddIdle( Host.Cvars.IdleScale.Get<Single>() );
+			MainCamera.CalculateViewRoll();
+			MainCamera.ApplyTransform<SwayCameraTransform>( );
 
 			// offsets
 			var angles = ent.angles;
@@ -575,8 +574,8 @@ namespace SharpQuake
 
 			view.origin = ent.origin;
 			view.origin.Z += cl.viewheight;
-			view.origin += forward * bob * 0.4f;
-			view.origin.Z += bob;
+			view.origin += forward * bob.CalculatedValue * 0.4f;
+			view.origin.Z += bob.CalculatedValue;
 
 			// fudge position around to keep amount of weapon visible
 			// roughly equal with different FOV
@@ -618,19 +617,6 @@ namespace SharpQuake
 
 			if ( Host.ChaseView.IsActive )
 				Host.ChaseView.Update();
-		}
-
-		// V_AddIdle
-		//
-		// Idle swaying
-		private void AddIdle( Single idleScale )
-		{
-			var time = Host.Client.cl.time;
-			var v = new Vector3(
-				( Single ) ( Math.Sin( time * Host.Cvars.IPitchCycle.Get<Single>() ) * Host.Cvars.IPitchLevel.Get<Single>() ),
-				( Single ) ( Math.Sin( time * Host.Cvars.IYawCycle.Get<Single>() ) * Host.Cvars.IYawLevel.Get<Single>() ),
-				( Single ) ( Math.Sin( time * Host.Cvars.IRollCycle.Get<Single>() ) * Host.Cvars.IRollLevel.Get<Single>() ) );
-			Host.RenderContext.RefDef.viewangles += v * idleScale;
 		}
 
 		// V_DriftPitch
@@ -697,55 +683,6 @@ namespace SharpQuake
 			}
 		}
 
-		// V_CalcBob
-		private Single CalcBob( )
-		{
-			var cl = Host.Client.cl;
-			var bobCycle = Host.Cvars.ClBobCycle.Get<Single>();
-			var bobUp = Host.Cvars.ClBobUp.Get<Single>();
-			var cycle = ( Single ) ( cl.time - ( Int32 ) ( cl.time / bobCycle ) * bobCycle );
-			cycle /= bobCycle;
-			if ( cycle < bobUp )
-				cycle = ( Single ) Math.PI * cycle / bobUp;
-			else
-				cycle = ( Single ) ( Math.PI + Math.PI * ( cycle - bobUp ) / ( 1.0 - bobUp ) );
-
-			// bob is proportional to velocity in the xy plane
-			// (don't count Z, or jumping messes it up)
-			var tmp = cl.velocity.Xy;
-			Double bob = tmp.Length * Host.Cvars.ClBob.Get<Single>();
-			bob = bob * 0.3 + bob * 0.7 * Math.Sin( cycle );
-			if ( bob > 4 )
-				bob = 4;
-			else if ( bob < -7 )
-				bob = -7;
-			return ( Single ) bob;
-		}
-
-		// V_CalcViewRoll
-		//
-		// Roll is induced by movement and damage
-		private void CalcViewRoll( )
-		{
-			var cl = Host.Client.cl;
-			var rdef = Host.RenderContext.RefDef;
-			var side = CalcRoll( ref Host.Client.ViewEntity.angles, ref cl.velocity );
-			rdef.viewangles.Z += side;
-
-			if ( _DmgTime > 0 )
-			{
-				rdef.viewangles.Z += _DmgTime / Host.Cvars.KickTime.Get<Single>() * _DmgRoll;
-				rdef.viewangles.X += _DmgTime / Host.Cvars.KickTime.Get<Single>() * _DmgPitch;
-				_DmgTime -= ( Single ) Host.FrameTime;
-			}
-
-			if ( cl.stats[QStatsDef.STAT_HEALTH] <= 0 )
-			{
-				rdef.viewangles.Z = 80; // dead view angle
-				return;
-			}
-		}
-
 		// V_BoundOffsets
 		private void BoundOffsets( )
 		{
@@ -779,12 +716,12 @@ namespace SharpQuake
 			var yaw = rdef.viewangles.Y;
 			var pitch = -rdef.viewangles.X;
 
-			yaw = AngleDelta( yaw - rdef.viewangles.Y ) * 0.4f;
+			yaw = Utilities.AngleDelta( yaw - rdef.viewangles.Y ) * 0.4f;
 			if ( yaw > 10 )
 				yaw = 10;
 			if ( yaw < -10 )
 				yaw = -10;
-			pitch = AngleDelta( -pitch - rdef.viewangles.X ) * 0.4f;
+			pitch = Utilities.AngleDelta( -pitch - rdef.viewangles.X ) * 0.4f;
 			if ( pitch > 10 )
 				pitch = 10;
 			if ( pitch < -10 )
@@ -825,14 +762,6 @@ namespace SharpQuake
 			cl.viewent.angles.Y -= ( Single ) ( idleScale * Math.Sin( cl.time * Host.Cvars.IYawCycle.Get<Single>() ) * Host.Cvars.IYawLevel.Get<Single>() );
 		}
 
-		// angledelta()
-		private Single AngleDelta( Single a )
-		{
-			a = MathLib.AngleMod( a );
-			if ( a > 180 )
-				a -= 360;
-			return a;
-		}
 
 		// V_CalcPowerupCshift
 		private void CalcPowerupCshift( )
@@ -840,34 +769,34 @@ namespace SharpQuake
 			var cl = Host.Client.cl;
 			if ( cl.HasItems( QItemsDef.IT_QUAD ) )
 			{
-				cl.cshifts[ColorShift.CSHIFT_POWERUP].destcolor[0] = 0;
-				cl.cshifts[ColorShift.CSHIFT_POWERUP].destcolor[1] = 0;
-				cl.cshifts[ColorShift.CSHIFT_POWERUP].destcolor[2] = 255;
-				cl.cshifts[ColorShift.CSHIFT_POWERUP].percent = 30;
+				cl.cshifts[ColourShiftDef.CSHIFT_POWERUP].destcolor[0] = 0;
+				cl.cshifts[ColourShiftDef.CSHIFT_POWERUP].destcolor[1] = 0;
+				cl.cshifts[ColourShiftDef.CSHIFT_POWERUP].destcolor[2] = 255;
+				cl.cshifts[ColourShiftDef.CSHIFT_POWERUP].percent = 30;
 			}
 			else if ( cl.HasItems( QItemsDef.IT_SUIT ) )
 			{
-				cl.cshifts[ColorShift.CSHIFT_POWERUP].destcolor[0] = 0;
-				cl.cshifts[ColorShift.CSHIFT_POWERUP].destcolor[1] = 255;
-				cl.cshifts[ColorShift.CSHIFT_POWERUP].destcolor[2] = 0;
-				cl.cshifts[ColorShift.CSHIFT_POWERUP].percent = 20;
+				cl.cshifts[ColourShiftDef.CSHIFT_POWERUP].destcolor[0] = 0;
+				cl.cshifts[ColourShiftDef.CSHIFT_POWERUP].destcolor[1] = 255;
+				cl.cshifts[ColourShiftDef.CSHIFT_POWERUP].destcolor[2] = 0;
+				cl.cshifts[ColourShiftDef.CSHIFT_POWERUP].percent = 20;
 			}
 			else if ( cl.HasItems( QItemsDef.IT_INVISIBILITY ) )
 			{
-				cl.cshifts[ColorShift.CSHIFT_POWERUP].destcolor[0] = 100;
-				cl.cshifts[ColorShift.CSHIFT_POWERUP].destcolor[1] = 100;
-				cl.cshifts[ColorShift.CSHIFT_POWERUP].destcolor[2] = 100;
-				cl.cshifts[ColorShift.CSHIFT_POWERUP].percent = 100;
+				cl.cshifts[ColourShiftDef.CSHIFT_POWERUP].destcolor[0] = 100;
+				cl.cshifts[ColourShiftDef.CSHIFT_POWERUP].destcolor[1] = 100;
+				cl.cshifts[ColourShiftDef.CSHIFT_POWERUP].destcolor[2] = 100;
+				cl.cshifts[ColourShiftDef.CSHIFT_POWERUP].percent = 100;
 			}
 			else if ( cl.HasItems( QItemsDef.IT_INVULNERABILITY ) )
 			{
-				cl.cshifts[ColorShift.CSHIFT_POWERUP].destcolor[0] = 255;
-				cl.cshifts[ColorShift.CSHIFT_POWERUP].destcolor[1] = 255;
-				cl.cshifts[ColorShift.CSHIFT_POWERUP].destcolor[2] = 0;
-				cl.cshifts[ColorShift.CSHIFT_POWERUP].percent = 30;
+				cl.cshifts[ColourShiftDef.CSHIFT_POWERUP].destcolor[0] = 255;
+				cl.cshifts[ColourShiftDef.CSHIFT_POWERUP].destcolor[1] = 255;
+				cl.cshifts[ColourShiftDef.CSHIFT_POWERUP].destcolor[2] = 0;
+				cl.cshifts[ColourShiftDef.CSHIFT_POWERUP].percent = 30;
 			}
 			else
-				cl.cshifts[ColorShift.CSHIFT_POWERUP].percent = 0;
+				cl.cshifts[ColourShiftDef.CSHIFT_POWERUP].percent = 0;
 		}
 
 		// V_CheckGamma
@@ -889,18 +818,6 @@ namespace SharpQuake
 		{
 			//	VID_SetPalette (palette);
 			//	gammaworks = SetDeviceGammaRamp (maindc, ramps);
-		}
-
-		public View( Host host )
-		{
-			Host = host;
-
-			_GammaTable = new Byte[256];
-
-			_CShift_empty = new cshift_t( new[] { 130, 80, 50 }, 0 );
-			_CShift_water = new cshift_t( new[] { 130, 80, 50 }, 128 );
-			_CShift_slime = new cshift_t( new[] { 0, 25, 5 }, 150 );
-			_CShift_lava = new cshift_t( new[] { 255, 80, 0 }, 150 );
 		}
 	}
 }

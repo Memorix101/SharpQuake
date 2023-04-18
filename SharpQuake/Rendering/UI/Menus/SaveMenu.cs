@@ -23,12 +23,17 @@
 /// </copyright>
 
 using System;
+using SharpQuake.Factories.Rendering.UI;
 using SharpQuake.Framework;
 
 namespace SharpQuake.Rendering.UI
 {
     public class SaveMenu : LoadMenu
     {
+        public SaveMenu( MenuFactory menuFactory ) : base( "menu_save", menuFactory )
+		{
+		}
+
         public override void Show( Host host )
         {
             if ( !Host.Server.sv.active )
@@ -46,42 +51,42 @@ namespace SharpQuake.Rendering.UI
             switch ( key )
             {
                 case KeysDef.K_ESCAPE:
-                    SinglePlayerMenu.Show( Host );
+                    MenuFactory.Show( "menu_singleplayer" );
                     break;
 
                 case KeysDef.K_ENTER:
-                    CurrentMenu.Hide( );
-                    Host.Commands.Buffer.Append( String.Format( "save s{0}\n", _Cursor ) );
+                    MenuFactory.CurrentMenu.Hide( );
+                    Host.Commands.Buffer.Append( String.Format( "save s{0}\n", Cursor ) );
                     return;
 
                 case KeysDef.K_UPARROW:
                 case KeysDef.K_LEFTARROW:
                     Host.Sound.LocalSound( "misc/menu1.wav" );
-                    _Cursor--;
-                    if ( _Cursor < 0 )
-                        _Cursor = MAX_SAVEGAMES - 1;
+                    Cursor--;
+                    if ( Cursor < 0 )
+                        Cursor = MAX_SAVEGAMES - 1;
                     break;
 
                 case KeysDef.K_DOWNARROW:
                 case KeysDef.K_RIGHTARROW:
                     Host.Sound.LocalSound( "misc/menu1.wav" );
-                    _Cursor++;
-                    if ( _Cursor >= MAX_SAVEGAMES )
-                        _Cursor = 0;
+                    Cursor++;
+                    if ( Cursor >= MAX_SAVEGAMES )
+                        Cursor = 0;
                     break;
             }
         }
 
         public override void Draw( )
         {
-            var p = Host.DrawingContext.CachePic( "gfx/p_save.lmp", "GL_NEAREST" );
-            Host.Menu.DrawPic( ( 320 - p.Width ) / 2, 4, p );
+            var p = Host.Pictures.Cache( "gfx/p_save.lmp", "GL_NEAREST" );
+            Host.Menus.DrawPic( ( 320 - p.Width ) / 2, 4, p );
 
             for ( var i = 0; i < MAX_SAVEGAMES; i++ )
-                Host.Menu.Print( 16, 32 + 8 * i, _FileNames[i] );
+                Host.Menus.Print( 16, 32 + 8 * i, _FileNames[i] );
 
             // line cursor
-            Host.Menu.DrawCharacter( 8, 32 + _Cursor * 8, 12 + ( ( Int32 ) ( Host.RealTime * 4 ) & 1 ) );
+            Host.Menus.DrawCharacter( 8, 32 + Cursor * 8, 12 + ( ( Int32 ) ( Host.RealTime * 4 ) & 1 ) );
         }
     }
 }

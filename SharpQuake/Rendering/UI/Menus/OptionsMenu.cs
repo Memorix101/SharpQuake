@@ -23,15 +23,20 @@
 /// </copyright>
 
 using System;
+using SharpQuake.Factories.Rendering.UI;
 using SharpQuake.Framework;
 
 namespace SharpQuake.Rendering.UI
 {
-    public class OptionsMenu : MenuBase
+    public class OptionsMenu : BaseMenu
     {
         private const Int32 OPTIONS_ITEMS = 13;
 
         //private float _BgmVolumeCoeff = 0.1f;
+
+        public OptionsMenu( MenuFactory menuFactory ) : base( "menu_options", menuFactory )
+        {
+        }
 
         public override void Show( Host host )
         {
@@ -40,11 +45,8 @@ namespace SharpQuake.Rendering.UI
                  _BgmVolumeCoeff = 1.0f;
              }*/
 
-            if ( _Cursor > OPTIONS_ITEMS - 1 )
-                _Cursor = 0;
-
-            if ( _Cursor == OPTIONS_ITEMS - 1 && VideoMenu == null )
-                _Cursor = 0;
+            if ( Cursor > OPTIONS_ITEMS - 1 )
+                Cursor = 0;
 
             base.Show( host );
         }
@@ -54,19 +56,19 @@ namespace SharpQuake.Rendering.UI
             switch ( key )
             {
                 case KeysDef.K_ESCAPE:
-                    MainMenu.Show( Host );
+                    MenuFactory.Show( "menu_main" );
                     break;
 
                 case KeysDef.K_ENTER:
-                    Host.Menu.EnterSound = true;
-                    switch ( _Cursor )
+                    Host.Menus.EnterSound = true;
+                    switch ( Cursor )
                     {
                         case 0:
-                            KeysMenu.Show( Host );
+                            MenuFactory.Show( "menu_keys" );
                             break;
 
                         case 1:
-                            CurrentMenu.Hide( );
+                            MenuFactory.CurrentMenu.Hide( );
                             Host.Console.ToggleConsole_f( null );
                             break;
 
@@ -75,7 +77,7 @@ namespace SharpQuake.Rendering.UI
                             break;
 
                         case 12:
-                            VideoMenu.Show( Host );
+                            MenuFactory.Show( "menu_video" );
                             break;
 
                         default:
@@ -86,16 +88,16 @@ namespace SharpQuake.Rendering.UI
 
                 case KeysDef.K_UPARROW:
                     Host.Sound.LocalSound( "misc/menu1.wav" );
-                    _Cursor--;
-                    if ( _Cursor < 0 )
-                        _Cursor = OPTIONS_ITEMS - 1;
+                    Cursor--;
+                    if ( Cursor < 0 )
+                        Cursor = OPTIONS_ITEMS - 1;
                     break;
 
                 case KeysDef.K_DOWNARROW:
                     Host.Sound.LocalSound( "misc/menu1.wav" );
-                    _Cursor++;
-                    if ( _Cursor >= OPTIONS_ITEMS )
-                        _Cursor = 0;
+                    Cursor++;
+                    if ( Cursor >= OPTIONS_ITEMS )
+                        Cursor = 0;
                     break;
 
                 case KeysDef.K_LEFTARROW:
@@ -107,74 +109,92 @@ namespace SharpQuake.Rendering.UI
                     break;
             }
 
-            /*if( _Cursor == 12 && VideoMenu == null )
+            /*if( Cursor == 12 && VideoMenu == null )
             {
                 if( key == KeysDef.K_UPARROW )
-                    _Cursor = 11;
+                    Cursor = 11;
                 else
-                    _Cursor = 0;
+                    Cursor = 0;
             }*/
 
-            if ( _Cursor == 12 )
+            if ( Cursor == 12 )
             {
                 if ( key == KeysDef.K_UPARROW )
-                    _Cursor = 11;
+                    Cursor = 11;
                 else
-                    _Cursor = 0;
+                    Cursor = 0;
             }
 
             /*#if _WIN32
-                        if ((options_cursor == 13) && (modestate != MS_WINDOWED))
+                        if ((optionsCursor == 13) && (modestate != MS_WINDOWED))
                         {
                             if (k == K_UPARROW)
-                                options_cursor = 12;
+                                optionsCursor = 12;
                             else
-                                options_cursor = 0;
+                                optionsCursor = 0;
                         }
             #endif*/
         }
 
+        private void DrawPlaque()
+        {
+            Host.Menus.DrawTransPic( 16, 4, Host.Pictures.Cache( "gfx/qplaque.lmp", "GL_NEAREST" ) );
+            var p = Host.Pictures.Cache( "gfx/p_option.lmp", "GL_NEAREST" );
+            Host.Menus.DrawPic( ( 320 - p.Width ) / 2, 4, p );
+        }
+
+        private void DrawSound()
+		{
+            Host.Menus.Print( 16, 80, "       CD Music Volume" );
+            var r = Host.Sound.BgmVolume;
+            Host.Menus.DrawSlider( 220, 80, r );
+
+            Host.Menus.Print( 16, 88, "          Sound Volume" );
+            r = Host.Sound.Volume;
+            Host.Menus.DrawSlider( 220, 88, r );
+        }
+
+        private void DrawMovementControls()
+        {
+            Host.Menus.Print( 16, 72, "           Mouse Speed" );
+            var r = ( Host.Client.Sensitivity - 1 ) / 10;
+            Host.Menus.DrawSlider( 220, 72, r );
+
+            Host.Menus.Print( 16, 96, "            Always Run" );
+            Host.Menus.DrawCheckbox( 220, 96, Host.Client.ForwardSpeed > 200 );
+
+            Host.Menus.Print( 16, 104, "          Invert Mouse" );
+            Host.Menus.DrawCheckbox( 220, 104, Host.Client.MPitch < 0 );
+
+            Host.Menus.Print( 16, 112, "            Lookspring" );
+            Host.Menus.DrawCheckbox( 220, 112, Host.Client.LookSpring );
+
+            Host.Menus.Print( 16, 120, "            Lookstrafe" );
+            Host.Menus.DrawCheckbox( 220, 120, Host.Client.LookStrafe );
+        }
+
+        private void DrawScreenSettings()
+		{
+            Host.Menus.Print( 16, 56, "           Screen size" );
+            var r = ( Host.Screen.ViewSize.Get<Single>() - 30 ) / ( 120 - 30 );
+            Host.Menus.DrawSlider( 220, 56, r );
+
+            Host.Menus.Print( 16, 64, "            Brightness" );
+            r = ( 1.0f - Host.View.Gamma ) / 0.5f;
+            Host.Menus.DrawSlider( 220, 64, r );
+        }
+
         public override void Draw( )
         {
-            Host.Menu.DrawTransPic( 16, 4, Host.DrawingContext.CachePic( "gfx/qplaque.lmp", "GL_NEAREST" ) );
-            var p = Host.DrawingContext.CachePic( "gfx/p_option.lmp", "GL_NEAREST" );
-            Host.Menu.DrawPic( ( 320 - p.Width ) / 2, 4, p );
+            DrawPlaque();
 
-            Host.Menu.Print( 16, 32, "    Customize controls" );
-            Host.Menu.Print( 16, 40, "         Go to console" );
-            Host.Menu.Print( 16, 48, "     Reset to defaults" );
+            Host.Menus.Print( 16, 32, "    Customize controls" );
+            Host.Menus.Print( 16, 40, "         Go to console" );
+            Host.Menus.Print( 16, 48, "     Reset to defaults" );
 
-            Host.Menu.Print( 16, 56, "           Screen size" );
-            var r = ( Host.Screen.ViewSize.Get<Single>( ) - 30 ) / ( 120 - 30 );
-            Host.Menu.DrawSlider( 220, 56, r );
-
-            Host.Menu.Print( 16, 64, "            Brightness" );
-            r = ( 1.0f - Host.View.Gamma ) / 0.5f;
-            Host.Menu.DrawSlider( 220, 64, r );
-
-            Host.Menu.Print( 16, 72, "           Mouse Speed" );
-            r = ( Host.Client.Sensitivity - 1 ) / 10;
-            Host.Menu.DrawSlider( 220, 72, r );
-
-            Host.Menu.Print( 16, 80, "       CD Music Volume" );
-            r = Host.Sound.BgmVolume;
-            Host.Menu.DrawSlider( 220, 80, r );
-
-            Host.Menu.Print( 16, 88, "          Sound Volume" );
-            r = Host.Sound.Volume;
-            Host.Menu.DrawSlider( 220, 88, r );
-
-            Host.Menu.Print( 16, 96, "            Always Run" );
-            Host.Menu.DrawCheckbox( 220, 96, Host.Client.ForwardSpeed > 200 );
-
-            Host.Menu.Print( 16, 104, "          Invert Mouse" );
-            Host.Menu.DrawCheckbox( 220, 104, Host.Client.MPitch < 0 );
-
-            Host.Menu.Print( 16, 112, "            Lookspring" );
-            Host.Menu.DrawCheckbox( 220, 112, Host.Client.LookSpring );
-
-            Host.Menu.Print( 16, 120, "            Lookstrafe" );
-            Host.Menu.DrawCheckbox( 220, 120, Host.Client.LookStrafe );
+            DrawScreenSettings();
+            DrawSound();
+            DrawMovementControls();
 
             /*if( VideoMenu != null )
                 Host.Menu.Print( 16, 128, "         Video Options" );*/
@@ -188,7 +208,7 @@ namespace SharpQuake.Rendering.UI
 #endif
 
             // cursor
-            Host.Menu.DrawCharacter( 200, 32 + _Cursor * 8, 12 + ( ( Int32 ) ( Host.RealTime * 4 ) & 1 ) );
+            Host.Menus.DrawCharacter( 200, 32 + Cursor * 8, 12 + ( ( Int32 ) ( Host.RealTime * 4 ) & 1 ) );
         }
 
         /// <summary>
@@ -199,7 +219,7 @@ namespace SharpQuake.Rendering.UI
             Host.Sound.LocalSound( "misc/menu3.wav" );
             Single value;
 
-            switch ( _Cursor )
+            switch ( Cursor )
             {
                 case 3:	// screen size
                     value = Host.Screen.ViewSize.Get<Single>( ) + dir * 10;

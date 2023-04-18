@@ -28,9 +28,8 @@ using System.Drawing;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
-using SharpQuake.Framework.Wad;
 
-namespace SharpQuake.Framework.IO
+namespace SharpQuake.Framework.IO.WAD
 {
 	/// <summary>
 	/// W_functions
@@ -154,7 +153,7 @@ namespace SharpQuake.Framework.IO
             return GetLumpInfo( name ).filepos; // GetLumpInfo() never returns null
         }
 
-        public Tuple<Byte[], Size, Byte[]> GetLumpBuffer( String name )
+        public WadLumpBuffer GetLumpBuffer( String name )
         {
             var lump = _Lumps
                 .Where( l => Encoding.ASCII.GetString( l.Value.name ).Replace( "\0", "" ).ToLower() == name.ToLower( ) )
@@ -238,7 +237,7 @@ namespace SharpQuake.Framework.IO
                 ConsoleWrapper.Print( $"Texture info of {name} truncated to fit in bounds of _ModBase\n" );
             }
 
-            return new Tuple<Byte[], Size, Byte[]>( pixels, new Size( width, height ), palette );
+            return new WadLumpBuffer( width, height, pixels, palette );
         }
     }
 }

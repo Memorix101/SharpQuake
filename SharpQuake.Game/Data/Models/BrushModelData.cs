@@ -1,11 +1,35 @@
-﻿using System;
+﻿/// <copyright>
+///
+/// SharpQuakeEvolved changes by optimus-code, 2019
+/// 
+/// Based on SharpQuake (Quake Rewritten in C# by Yury Kiselev, 2010.)
+///
+/// Copyright (C) 1996-1997 Id Software, Inc.
+///
+/// This program is free software; you can redistribute it and/or
+/// modify it under the terms of the GNU General Public License
+/// as published by the Free Software Foundation; either version 2
+/// of the License, or (at your option) any later version.
+///
+/// This program is distributed in the hope that it will be useful,
+/// but WITHOUT ANY WARRANTY; without even the implied warranty of
+/// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+///
+/// See the GNU General Public License for more details.
+///
+/// You should have received a copy of the GNU General Public License
+/// along with this program; if not, write to the Free Software
+/// Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+/// </copyright>
+
+using System;
 using System.Drawing;
 using System.Linq;
 using System.Text;
 using SharpQuake.Framework;
 using SharpQuake.Framework.IO.BSP;
+using SharpQuake.Framework.IO.WAD;
 using SharpQuake.Framework.Mathematics;
-using SharpQuake.Framework.Wad;
 using SharpQuake.Game.Rendering.Memory;
 using SharpQuake.Game.Rendering.Textures;
 
@@ -243,7 +267,7 @@ namespace SharpQuake.Game.Data.Models
         
         public BrushModelData( Single subdivideSize, ModelTexture noTexture ) : base( noTexture )
         {
-            Type = ModelType.mod_brush;
+            Type = ModelType.Brush;
 
             SubdivideSize = subdivideSize;
 
@@ -310,7 +334,7 @@ namespace SharpQuake.Game.Data.Models
         {
             base.CopyFrom( src );
 
-            Type = ModelType.mod_brush;
+            Type = ModelType.Brush;
 
             if ( !( src is BrushModelData ) )
                 return;
@@ -366,7 +390,7 @@ namespace SharpQuake.Game.Data.Models
             Entities = brushSrc.Entities;
         }
 
-        public void Load( String name, Byte[] buffer, Action<ModelTexture> onCheckInitSkyTexture, Func<String, Tuple<Byte[], Size, Byte[]>> onCheckForTexture )
+        public void Load( String name, Byte[] buffer, Action<ModelTexture> onCheckInitSkyTexture, Func<String, WadLumpBuffer> onCheckForTexture )
         {
             Name = name;
             Buffer = buffer;
@@ -609,7 +633,7 @@ namespace SharpQuake.Game.Data.Models
         /// <summary>
         /// Mod_LoadTextures
         /// </summary>
-        private void LoadTextures( ref BspLump l, Action<ModelTexture> onCheckInitSkyTexture, Func<String, Tuple<Byte[], Size, Byte[]>> onCheckForTexture )
+        private void LoadTextures( ref BspLump l, Action<ModelTexture> onCheckInitSkyTexture, Func<String, WadLumpBuffer> onCheckForTexture )
         {
             if ( l.Length == 0 )
             {
@@ -657,10 +681,10 @@ namespace SharpQuake.Game.Data.Models
 
 					var texResult = onCheckForTexture( tx.name );
 
-					if ( texResult?.Item1 != null )
+					if ( texResult?.Pixels != null )
 					{
-						var overrideTex = texResult.Item1;
-						var size = texResult.Item2;
+						var overrideTex = texResult.Pixels;
+						var size = texResult.Size;
 
 						mt.width = ( UInt32 ) size.Width;
 						mt.height = ( UInt32 ) size.Height;
@@ -671,7 +695,7 @@ namespace SharpQuake.Game.Data.Models
 
 						tx.width = mt.width;
 						tx.height = mt.height;
-						tx.localPalette = texResult.Item3;
+						tx.localPalette = texResult.Palette;
 					}
 					else if ( Version == BspDef.Q1_BSPVERSION )
 					{

@@ -23,6 +23,7 @@
 /// </copyright>
 
 using System;
+using SharpQuake.Framework.IO.WAD;
 using SharpQuake.Framework.Mathematics;
 
 namespace SharpQuake.Framework
@@ -116,6 +117,5 @@ namespace SharpQuake.Framework
             pic.width = LittleLong( pic.width );
             pic.height = LittleLong( pic.height );
         }
-
     }
 }
