@@ -476,6 +476,9 @@ namespace SharpQuake
         // void S_LocalSound (char *s)
         public void LocalSound( String sound )
         {
+            if(Host.Cvars.NoSound == null) // workaround for an error below I do not understand right now ...
+                return;
+
             if ( Host.Cvars.NoSound.Get<Boolean>( ) )
                 return;
 
