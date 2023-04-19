@@ -30,7 +30,6 @@
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|AnyCPU'">
-    <DefineConstants></DefineConstants>
     <CodeAnalysisIgnoreBuiltInRuleSets>false</CodeAnalysisIgnoreBuiltInRuleSets>
     <CodeAnalysisIgnoreBuiltInRules>false</CodeAnalysisIgnoreBuiltInRules>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
@@ -64,6 +63,7 @@
     <PackageReference Include="NVorbis" Version="0.10.5" />
     <PackageReference Include="NVorbis.OpenTKSupport" Version="1.4.0" />
     <PackageReference Include="OpenTK" Version="3.3.1" />
+    <PackageReference Include="Silk.NET" Version="2.17.1" />
     <PackageReference Include="System.IO.Compression" Version="4.3.0" />
   </ItemGroup>
 </Project>
